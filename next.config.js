@@ -46,6 +46,16 @@ const nextConfig = {
         destination: '/user/settings',
         permanent: true,
       },
+      {
+        source: '/projectokart',
+        destination: 'https://projectokart.com',
+        permanent: true,
+      },
+      {
+        source: '/projectocart',
+        destination: 'https://projectokart.com',
+        permanent: true,
+      },
     ];
   },
   async headers() {

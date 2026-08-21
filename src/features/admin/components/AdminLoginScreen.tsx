@@ -208,3 +208,5 @@ export const AdminLoginScreen: React.FC = () => {
     </div>
   );
 };
+
+export default AdminLoginScreen;

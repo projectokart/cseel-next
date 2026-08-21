@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { AdminApp } from '@/features/admin';
+import { AdminLayout } from '@/features/admin';
 
 export const metadata: Metadata = {
   title: 'Secure System Administration | CSEEL Governance Console',
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function SecureAdminPortalPage() {
-  return <AdminApp />;
+  return <AdminLayout />;
 }

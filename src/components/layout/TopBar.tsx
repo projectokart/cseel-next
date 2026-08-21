@@ -3,7 +3,10 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from "@/contexts/AuthContext";
-import { User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard, ArrowLeft, Home } from "lucide-react";
+import {
+  User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard,
+  ArrowLeft, Home, MessageSquare, Headphones, Mail, LogIn, Users
+} from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -46,147 +49,155 @@ const TopBar = () => {
     router.push("/login");
   };
 
-  const [canGoBack, setCanGoBack] = React.useState(false);
-
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const historyLength = window.history.length;
-        const prevPath = sessionStorage.getItem('cseel_nav_prev');
-        const currentPath = window.location.pathname;
-
-        if (prevPath && prevPath !== currentPath) {
-          setCanGoBack(true);
-        } else if (historyLength > 2) {
-          setCanGoBack(true);
-        } else {
-          setCanGoBack(false);
-        }
-
-        sessionStorage.setItem('cseel_nav_prev', currentPath);
-      } catch (e) {
-        setCanGoBack(false);
-      }
-    }
-  }, [pathname]);
+  const isSubPage = pathname && pathname !== '/' && pathname !== '';
 
   const handleBack = () => {
-    if (typeof window !== 'undefined' && canGoBack) {
-      window.history.back();
+    if (typeof window !== 'undefined') {
+      if (window.history.length > 1) {
+        router.back();
+      } else {
+        router.push('/');
+      }
     }
   };
 
   const pathSegments = pathname ? pathname.split('/').filter(Boolean) : [];
-  const isSubPage = pathname && pathname !== '/' && pathname !== '';
 
   return (
-    <div className="bg-topbar text-topbar-foreground text-xs md:text-sm border-b border-white/10 relative z-[600]">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-1.5 md:py-2 gap-3 min-h-[38px]">
+    <div className="bg-topbar text-topbar-foreground text-xs md:text-sm border-b border-white/10 relative z-[600] select-none">
+      <div className="container mx-auto px-2.5 sm:px-4">
+        <div className="flex items-center justify-between py-1.5 md:py-2 gap-2 min-h-[38px]">
           
-          {/* ── LEFT SIDE: WHITE BACK BUTTON & DYNAMIC BREADCRUMB TRAIL ────── */}
-          <div className="flex items-center gap-2 min-w-0 flex-1 md:flex-initial">
+          {/* ── LEFT SIDE: BACK BUTTON & BREADCRUMB / BRANDING ────────── */}
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
             {isSubPage ? (
-              <>
-                {/* White Back Button with Fade/Disabled state */}
-                <button
-                  onClick={canGoBack ? handleBack : undefined}
-                  disabled={!canGoBack}
-                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg border text-[11px] md:text-xs transition-all shrink-0 shadow-2xs ${
-                    canGoBack
-                      ? 'bg-white/15 hover:bg-white/25 text-white font-black border-white/30 active:scale-95 group cursor-pointer opacity-100'
-                      : 'bg-white/5 text-white/40 border-white/10 opacity-35 cursor-not-allowed pointer-events-none'
-                  }`}
-                  title={canGoBack ? 'Go Back to Previous Page' : 'No previous history (Refreshed / Entry Page)'}
-                >
-                  <ArrowLeft className={`w-3.5 h-3.5 ${canGoBack ? 'group-hover:-translate-x-0.5 transition-transform' : ''}`} />
-                  <span>Back</span>
-                </button>
-
-                {/* Breadcrumbs Trail */}
-                <div className="hidden sm:flex items-center gap-1.5 text-[11px] md:text-xs text-white/80 font-medium overflow-hidden">
-                  <Link href="/" className="hover:text-white flex items-center gap-1 transition-colors shrink-0">
-                    <Home className="w-3 h-3 text-white/70" />
-                    <span>Home</span>
-                  </Link>
-
-                  {pathSegments.map((segment, index) => {
-                    const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
-                    const isLast = index === pathSegments.length - 1;
-                    const formattedName = segment
-                      .replace(/-/g, ' ')
-                      .replace(/\b\w/g, (l) => l.toUpperCase());
-
-                    return (
-                      <React.Fragment key={href}>
-                        <span className="text-white/40">/</span>
-                        {isLast ? (
-                          <span className="text-white font-black truncate max-w-[140px] md:max-w-[240px]">
-                            {formattedName}
-                          </span>
-                        ) : (
-                          <Link href={href} className="hover:text-white transition-colors truncate max-w-[110px]">
-                            {formattedName}
-                          </Link>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                </div>
-              </>
+              <button
+                type="button"
+                onClick={handleBack}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 active:bg-white/30 text-white font-bold text-[11px] sm:text-xs transition-all border border-white/25 shadow-xs shrink-0 cursor-pointer group"
+                title="Go Back"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                <span>Back</span>
+              </button>
             ) : (
-              <div className="hidden md:flex items-center gap-2 text-white/70 text-xs">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="font-semibold text-white/85">CSEEL National Academic & STEM Research Network</span>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 text-white/90 hover:text-white font-bold text-[11px] sm:text-xs"
+              >
+                <Home className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden xs:inline">C.S.E.E.L</span>
+              </Link>
+            )}
+
+            {/* Breadcrumb on Desktop */}
+            {isSubPage && (
+              <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-white/75 font-medium overflow-hidden">
+                <Link href="/" className="hover:text-white flex items-center gap-1 transition-colors shrink-0">
+                  <Home className="w-3 h-3 text-white/60" />
+                  <span>Home</span>
+                </Link>
+
+                {pathSegments.map((segment, index) => {
+                  const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
+                  const isLast = index === pathSegments.length - 1;
+                  const formattedName = segment
+                    .replace(/-/g, ' ')
+                    .replace(/\b\w/g, (l) => l.toUpperCase());
+
+                  return (
+                    <React.Fragment key={href}>
+                      <span className="text-white/40">/</span>
+                      {isLast ? (
+                        <span className="text-white font-bold truncate max-w-[180px]">
+                          {formattedName}
+                        </span>
+                      ) : (
+                        <Link href={href} className="hover:text-white transition-colors truncate max-w-[100px]">
+                          {formattedName}
+                        </Link>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </div>
             )}
           </div>
 
-          {/* ── RIGHT SIDE: NAVIGATION LINKS & LOGIN / USER PROFILE ────────── */}
-          <div className="flex items-center gap-2 md:gap-5 shrink-0 text-xs md:text-sm font-medium">
-            <Link href="/" className="hidden md:inline hover:text-white transition-colors whitespace-nowrap">Home</Link>
-            <Link href="/feed" className="hover:text-white transition-colors whitespace-nowrap">Community</Link>
-            <Link href="/get-support" className="hidden sm:inline hover:text-white transition-colors whitespace-nowrap">Get Support</Link>
-            <Link href="/contact-us" className="hidden sm:inline hover:text-white transition-colors whitespace-nowrap">Contact Us</Link>
+          {/* ── RIGHT SIDE: COMMUNITY | GET SUPPORT | CONTACT US | LOGIN ──── */}
+          <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0 text-[11px] sm:text-xs font-semibold overflow-x-auto scrollbar-none py-0.5">
+            
+            {/* Community */}
+            <Link
+              href="/feed"
+              className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+            >
+              <Users className="w-3.5 h-3.5 text-cyan-300" />
+              <span>Community</span>
+            </Link>
 
+            {/* Get Support */}
+            <Link
+              href="/get-support"
+              className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+            >
+              <Headphones className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Get Support</span>
+            </Link>
+
+            {/* Contact Us */}
+            <Link
+              href="/contact-us"
+              className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+            >
+              <Mail className="w-3.5 h-3.5 text-amber-300" />
+              <span>Contact Us</span>
+            </Link>
+
+            {/* Login / User Profile Dropdown */}
             {user ? (
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 hover:opacity-80 transition-opacity outline-none ml-1">
-                  <Avatar className="h-6 w-6 md:h-7 md:w-7 border border-white/30">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-[10px] font-bold">{initials}</AvatarFallback>
+                <DropdownMenuTrigger className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg hover:bg-white/10 transition-opacity outline-none ml-0.5 cursor-pointer">
+                  <Avatar className="h-5 w-5 sm:h-6 sm:w-6 border border-white/40">
+                    <AvatarFallback className="bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold">{initials}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden md:inline font-semibold max-w-[110px] truncate text-white">{displayName}</span>
-                  <ChevronDown className="h-3 w-3 hidden md:inline text-white/80" />
+                  <span className="hidden sm:inline font-bold max-w-[80px] md:max-w-[110px] truncate text-white">{displayName}</span>
+                  <ChevronDown className="h-3 w-3 text-white/80" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 z-[700]">
                   <div className="px-2 py-1.5">
-                    <p className="text-sm font-medium">{displayName}</p>
+                    <p className="text-sm font-bold truncate">{displayName}</p>
                     <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                     <span className={`inline-block text-[10px] font-bold uppercase px-2 py-0.5 rounded-full mt-1 ${ROLE_COLORS[primaryRole] || "bg-gray-100 text-gray-600"}`}>
                       {ROLE_LABELS[primaryRole] || "User"}
                     </span>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push(dashboardPath)}>
-                    <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                  <DropdownMenuItem onClick={() => router.push(dashboardPath)} className="cursor-pointer font-medium">
+                    <LayoutDashboard className="mr-2 h-4 w-4 text-emerald-600" /> Dashboard
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push(`${dashboardPath}/profile` === "/user/profile" ? "/user/profile" : dashboardPath)}>
-                    <User className="mr-2 h-4 w-4" /> Profile
+                  <DropdownMenuItem onClick={() => router.push(`${dashboardPath}/profile` === "/user/profile" ? "/user/profile" : dashboardPath)} className="cursor-pointer font-medium">
+                    <User className="mr-2 h-4 w-4 text-blue-600" /> Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push("/help")}>
-                    <HelpCircle className="mr-2 h-4 w-4" /> Help
+                  <DropdownMenuItem onClick={() => router.push("/help")} className="cursor-pointer font-medium">
+                    <HelpCircle className="mr-2 h-4 w-4 text-purple-600" /> Help Center
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive cursor-pointer font-bold">
                     <LogOut className="mr-2 h-4 w-4" /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link href="/login" className="font-bold text-white hover:text-white/80 bg-white/10 hover:bg-white/20 px-2.5 py-0.5 rounded-md border border-white/20 transition-all whitespace-nowrap">
-                Login
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 bg-white text-slate-950 font-black text-[11px] sm:text-xs rounded-lg hover:bg-white/90 transition-all shadow-xs shrink-0 whitespace-nowrap ml-0.5 active:scale-95"
+              >
+                <LogIn className="w-3 h-3 text-slate-900" />
+                <span>Login</span>
               </Link>
             )}
+
           </div>
 
         </div>

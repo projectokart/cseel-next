@@ -192,23 +192,19 @@ const Login = () => {
 
       {/* Right */}
       <motion.div
-        className="flex-1 flex items-center justify-center p-6 bg-background overflow-y-auto"
+        className="flex-1 flex items-start sm:items-center justify-center px-4 sm:px-6 pt-3 sm:pt-8 md:pt-12 pb-8 bg-background overflow-y-auto"
         initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}
       >
-        <div className="w-full max-w-md py-8">
-          <div className="lg:hidden flex items-center gap-3 mb-6">
-            <img src="/images/logo.png" alt="CSEEL" className="h-9 w-9" />
-            <span className="text-lg font-bold text-primary">C.S.E.E.L</span>
-          </div>
+        <div className="w-full max-w-md py-1 sm:py-6">
 
           {/* ── FORGOT PASSWORD ──────────────────────────────────────────── */}
           {forgotMode && (
             <div>
-              <button onClick={() => setForgotMode(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-5">
+              <button onClick={() => setForgotMode(false)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
                 <ArrowLeft className="h-4 w-4" /> Back to login
               </button>
               <h2 className="text-2xl font-bold mb-1">Reset Password</h2>
-              <p className="text-muted-foreground text-sm mb-6">We'll send a reset link to your email</p>
+              <p className="text-muted-foreground text-sm mb-5">We'll send a reset link to your email</p>
               <form onSubmit={handleForgot} className="space-y-4">
                 <div className="space-y-2"><Label>Email</Label><Input type="email" value={email} onChange={e => setEmail(e.target.value)} required /></div>
                 <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send Reset Link"}</Button>
@@ -219,8 +215,8 @@ const Login = () => {
           {/* ── LOGIN ────────────────────────────────────────────────────── */}
           {!forgotMode && !isSignup && (
             <div>
-              <h2 className="text-2xl font-bold mb-1">Welcome back</h2>
-              <p className="text-muted-foreground text-sm mb-6">Sign in to your CSEEL account</p>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mb-1">Welcome back</h2>
+              <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">Sign in to your CSEEL account</p>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2"><Label>Email</Label><Input type="email" value={email} onChange={e => setEmail(e.target.value)} required autoFocus /></div>
                 <div className="space-y-2">

@@ -61,10 +61,60 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
   }
+}
+
+/* Labster Motion & Smooth Fluid Keyframes */
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.labster-motion-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.labster-motion-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(0, 60, 110, 0.12);
 }
 
 /* Logo carousel animation */
@@ -109,5 +159,5 @@
 
 /* About hero gradient */
 .about-hero-gradient {
-  background: linear-gradient(135deg, hsl(207 90% 20%) 0%, hsl(207 90% 35%) 100%);
+  background: linear-gradient(135deg, hsl(207 100% 21.6%) 0%, hsl(207 100% 35%) 100%);
 }

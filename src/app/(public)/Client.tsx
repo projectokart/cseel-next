@@ -202,22 +202,27 @@ function useCountUp(target: number, duration = 2000, suffix = "") {
   return { count, ref };
 }
 
-// Scroll-reveal hook
-function useScrollReveal() {
+// Labster-grade Scroll-reveal hook
+function useScrollReveal(threshold = 0.12) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold, rootMargin: "0px 0px -40px 0px" }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [threshold]);
   return { ref, visible };
 }
 
-// Animated stat card
+// Animated stat card with Labster smooth easing
 function StatCard({ value, label, desc, delay = 0, suffix = "" }: { value: number; label: string; desc: string; delay?: number; suffix?: string }) {
   const { count, ref } = useCountUp(value, 1800);
   const { ref: revealRef, visible } = useScrollReveal();
@@ -227,7 +232,8 @@ function StatCard({ value, label, desc, delay = 0, suffix = "" }: { value: numbe
       className="p-6 md:p-8 rounded-2xl bg-primary-light transition-all duration-700"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(40px)",
+        transform: visible ? "translateY(0)" : "translateY(32px)",
+        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
         transitionDelay: `${delay}ms`,
       }}
     >

@@ -465,30 +465,34 @@ export default function OrgProfileClient({ orgId }: { orgId: string }) {
           </div>
         </div>
 
-        {/* ── COVER BANNER & PROFILE HEADER ───────────────────────────────────── */}
-        <div className="max-w-6xl mx-auto px-4 mt-4">
-          <div className="bg-white rounded-3xl border border-gray-200 shadow-md overflow-hidden">
+        {/* ── COVER BANNER & PROFILE HEADER (FACEBOOK / LINKEDIN STYLE) ────────── */}
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 mt-2 sm:mt-4">
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-200 shadow-md overflow-hidden">
             
-            {/* Cover photo */}
-            <div className="relative h-48 md:h-64 bg-gradient-to-r from-slate-950 via-slate-900 to-[#003c6e] overflow-hidden">
-              <img src={org.bannerImage} alt="" className="w-full h-full object-cover opacity-60" />
-              <div className="absolute top-4 right-4 flex items-center gap-2">
-                <span className="px-3 py-1 bg-black/60 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
+            {/* Cover photo banner */}
+            <div className="relative h-36 sm:h-48 md:h-64 bg-gradient-to-r from-slate-950 via-slate-900 to-[#003c6e] overflow-hidden">
+              <img src={org.bannerImage} alt="" className="w-full h-full object-cover opacity-75" />
+              <div className="absolute top-2.5 right-2.5 sm:top-4 sm:right-4 flex items-center gap-1.5 sm:gap-2">
+                <span className="px-2.5 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold rounded-full border border-white/20">
                   {org.type}
                 </span>
-                <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-black rounded-full shadow-xs">
+                <span className="px-2.5 py-1 bg-emerald-500 text-white text-[10px] sm:text-xs font-black rounded-full shadow-xs">
                   {jobsList.length} Active Jobs
                 </span>
               </div>
             </div>
 
             {/* Profile Info Bar */}
-            <div className="px-6 pb-6 pt-0 relative">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 -mt-16 md:-mt-20 mb-4">
+            <div className="px-3.5 sm:px-6 pb-5 sm:pb-6 pt-0 relative bg-white">
+              
+              {/* Avatar + Main Info + Actions */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4 -mt-10 sm:-mt-16 md:-mt-20 mb-3 sm:mb-4">
                 
-                {/* Avatar Logo with Resilient Fallback */}
-                <div className="flex items-end gap-4">
-                  <div className="w-28 h-28 md:w-36 md:h-36 rounded-2xl bg-white p-2 border-4 border-white shadow-xl flex-shrink-0 relative overflow-hidden flex items-center justify-center">
+                {/* Avatar + Title Container */}
+                <div className="flex flex-col md:flex-row md:items-end gap-3 sm:gap-4">
+                  
+                  {/* School Logo Avatar */}
+                  <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-2xl bg-white p-1.5 sm:p-2 border-4 border-white shadow-xl flex-shrink-0 relative overflow-hidden flex items-center justify-center z-10">
                     {!logoError ? (
                       <img
                         src={org.logo}
@@ -497,61 +501,66 @@ export default function OrgProfileClient({ orgId }: { orgId: string }) {
                         className="w-full h-full object-contain rounded-xl"
                       />
                     ) : (
-                      <div className="w-full h-full rounded-xl bg-gradient-to-br from-primary to-cyan-600 text-white flex flex-col items-center justify-center font-black">
-                        <Building2 className="w-8 h-8 mb-1" />
-                        <span className="text-xs font-black">{orgInitials}</span>
+                      <div className="w-full h-full rounded-xl bg-gradient-to-br from-[#003c6e] to-[#006fcc] text-white flex flex-col items-center justify-center font-black">
+                        <Building2 className="w-6 h-6 sm:w-8 sm:h-8 mb-1" />
+                        <span className="text-[10px] sm:text-xs font-black">{orgInitials}</span>
                       </div>
                     )}
-                    <div className="absolute -bottom-1 -right-1 bg-cyan-500 text-white p-1 rounded-full shadow-md z-10" title="CSEEL Verified Gold">
-                      <ShieldCheck className="w-5 h-5" />
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-[#006fcc] text-white p-1 rounded-full shadow-md z-10" title="CSEEL Verified Gold">
+                      <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                     </div>
                   </div>
 
-                  <div className="space-y-1 pb-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h1 className="text-xl md:text-2xl font-black text-gray-900">{org.name}</h1>
-                      <CheckCircle2 className="w-5 h-5 text-cyan-500 fill-cyan-500" />
+                  {/* School Name & Meta Details (Full Width on Mobile) */}
+                  <div className="space-y-1 pt-1 md:pb-1">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <h1 className="text-lg sm:text-xl md:text-2xl font-black text-slate-950 leading-tight">
+                        {org.name}
+                      </h1>
+                      <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#006fcc] fill-[#006fcc] shrink-0" />
                     </div>
-                    <p className="text-xs font-semibold text-gray-500">{org.affiliation} • Est. {org.established}</p>
-                    <div className="flex items-center gap-1 text-xs text-gray-600 font-medium">
-                      <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-                      <span>{org.address}, {org.city}, {org.state} - <strong>{org.pincode}</strong></span>
+                    <p className="text-xs font-semibold text-slate-600">
+                      {org.affiliation} • Est. {org.established}
+                    </p>
+                    <div className="flex items-start sm:items-center gap-1.5 text-xs text-slate-600 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-[#006fcc] shrink-0 mt-0.5 sm:mt-0" />
+                      <span className="leading-tight">{org.address}, {org.city}, {org.state} - <strong>{org.pincode}</strong></span>
                     </div>
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 self-start md:self-end flex-wrap">
+                {/* Facebook-style Action Buttons Bar */}
+                <div className="flex items-center gap-2 self-stretch md:self-end flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-gray-100">
                   <button
                     onClick={() => {
                       setIsFollowing(!isFollowing);
                       setFollowersCount(isFollowing ? followersCount - 1 : followersCount + 1);
                     }}
-                    className={`px-5 py-2.5 rounded-full text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 ${
+                    className={`flex-1 md:flex-none px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer ${
                       isFollowing
                         ? 'bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300'
-                        : 'bg-primary hover:bg-primary/90 text-white'
+                        : 'bg-[#006fcc] hover:bg-[#005bb8] text-white'
                     }`}
                   >
-                    {isFollowing ? <Check className="w-4 h-4 text-emerald-600" /> : <Plus className="w-4 h-4" />}
-                    <span>{isFollowing ? 'Following' : 'Follow Campus'}</span>
-                    <span className="text-[10px] opacity-80">({followersCount})</span>
+                    {isFollowing ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Plus className="w-3.5 h-3.5 text-white" />}
+                    <span className="text-white">{isFollowing ? 'Following' : 'Follow Campus'}</span>
+                    <span className="text-[10px] opacity-85 text-white">({followersCount})</span>
                   </button>
 
                   <button
                     onClick={() => setIsCreatePostOpen(true)}
-                    className="px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
+                    className="flex-1 md:flex-none px-3 sm:px-4 py-2 sm:py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95 cursor-pointer"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Create Rich Post</span>
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Create Post</span>
                   </button>
 
                   <button
                     onClick={() => handleOpenJobEditor()}
-                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
+                    className="flex-1 md:flex-none px-3 sm:px-4 py-2 sm:py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95 cursor-pointer"
                   >
-                    <Briefcase className="w-4 h-4" />
-                    <span>Post a Job</span>
+                    <Briefcase className="w-3.5 h-3.5 text-white" />
+                    <span>Post Job</span>
                   </button>
 
                   <button
@@ -559,17 +568,17 @@ export default function OrgProfileClient({ orgId }: { orgId: string }) {
                       navigator.clipboard.writeText(window.location.href);
                       alert('Profile URL copied to clipboard!');
                     }}
-                    className="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full transition-colors"
+                    className="p-2 sm:p-2.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold shadow-xs flex items-center justify-center transition-colors active:scale-95 cursor-pointer"
                     title="Share Profile"
                   >
-                    <Share2 className="w-4 h-4" />
+                    <Share2 className="w-4 h-4 text-gray-700" />
                   </button>
                 </div>
 
               </div>
 
               {/* Stats Ribbon */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4 border-t border-gray-100 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 sm:pt-4 border-t border-gray-100 text-xs">
                 <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100 text-center">
                   <p className="text-base font-black text-gray-900 flex items-center justify-center gap-1">
                     <Star className="w-4 h-4 text-amber-500 fill-amber-500" />

@@ -12,49 +12,98 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.cseel.org"),
   title: {
-    default: "CSEEL | Center for Scientific Exploration & Experimental Learning India",
-    template: "%s",
+    default: "CSEEL | #1 STEM & Experiential Science Learning Platform India | NEP 2020",
+    template: "%s | CSEEL India",
   },
   description:
-    "CSEEL – India's leading platform for hands-on science experiments, virtual lab simulations, STEM education, teacher training, science workshops & national exhibitions for students and educators across India.",
+    "CSEEL (Center for Scientific Exploration and Experiential Learning) is India's leading STEM education & experiential science platform. Offering hands-on science experiments, 3D virtual lab simulations, school STEM projects, science kits, teacher training workshops, educational conclaves, and nationwide science educator jobs aligned with NEP 2020.",
   keywords: [
-    "science education India",
-    "experimental learning India",
-    "hands-on science experiments",
-    "virtual science lab India",
-    "science simulations",
-    "STEM education India",
-    "science exhibitions India",
-    "teacher training science",
+    // Top Brand & Core Intent
     "CSEEL",
-    "center for scientific exploration",
+    "Center for Scientific Exploration and Experiential Learning",
+    "cseel.org",
+    "stem education India",
+    "top stem companies India",
+    "experiential learning science platform",
+    "learning by doing NEP 2020",
+    "national education policy experiential science",
+    
+    // Experiments & Working Models
+    "hands-on science experiments",
+    "best science projects for school students",
+    "working science models for class 6 to 12",
+    "CBSE science practical experiments",
+    "ICSE physics chemistry biology experiments",
+    "DIY science kits for kids India",
+    "science exhibition working models",
+    "stem science lab kits",
+    
+    // Virtual Lab & Simulations
+    "virtual science lab simulations India",
+    "interactive physics simulations",
+    "chemistry lab virtual experiments",
+    "biology cell and human body 3D simulations",
+    "online science laboratory for schools",
+    "Atal Tinkering Lab curriculum experiments",
+    
+    // Seminars, Workshops & Teacher Training
+    "science seminars and conclaves India",
+    "national STEM principals symposium",
+    "teacher training science workshops",
+    "experiential pedagogy training for educators",
+    "school science fairs and exhibitions",
+    
+    // Jobs & EduNetwork
+    "STEM educator jobs India",
+    "science teacher vacancies",
+    "school STEM lab coordinator jobs",
+    "physics teacher chemistry teacher jobs",
+    "EduNetwork school partnerships India",
+    
+    // Lab Equipment & Materials Store
+    "buy science experiment materials online",
+    "school laboratory chemicals and apparatus",
+    "affordable STEM kits for schools India",
+    "scientific exploration kits",
   ],
-  authors: [{ name: "CSEEL - Center for Scientific Exploration & Experimental Learning" }],
+  authors: [{ name: "CSEEL National Directorate - Center for Scientific Exploration and Experiential Learning", url: "https://www.cseel.org" }],
+  creator: "CSEEL",
+  publisher: "CSEEL National STEM Directorate",
+  applicationName: "CSEEL Experiential Learning",
+  category: "Education & STEM Technology",
+  classification: "Educational Technology, STEM Science Labs, Experiential Learning",
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   alternates: {
-    canonical: "/",
+    canonical: "https://www.cseel.org",
     languages: {
-      "en-IN": "/",
-      "en": "/",
+      "en-IN": "https://www.cseel.org",
+      "en": "https://www.cseel.org",
     },
   },
   openGraph: {
     type: "website",
-    siteName: "CSEEL",
-    url: "https://www.cseel.org/",
-    title: "CSEEL | India's #1 Experimental Science Learning Platform",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
+    url: "https://www.cseel.org",
+    title: "CSEEL | India's #1 Experiential Science & STEM Learning Platform",
     description:
-      "Hands-on experiments, virtual simulations, science exhibitions & teacher training. India's most comprehensive experimental learning platform for students & educators.",
+      "Transforming Indian education through NEP 2020 experiential learning: 300+ hands-on science experiments, 3D simulations, school working models, teacher training & STEM career network.",
     images: [
       {
-        url: "/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-cover.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning India",
+        alt: "CSEEL - Experiential Science Learning & Virtual Labs India",
       },
     ],
     locale: "en_IN",
@@ -63,10 +112,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@cseel_org",
     creator: "@cseel_org",
-    title: "CSEEL | India's #1 Experimental Science Learning Platform",
+    title: "CSEEL | India's #1 Experiential Science & STEM Learning Platform",
     description:
-      "Hands-on experiments, virtual simulations, science exhibitions & teacher training. India's most comprehensive experimental learning platform.",
-    images: ["/images/og-cover.jpg"],
+      "Hands-on science experiments, virtual simulations, science fairs, school STEM kits & teacher workshops aligned with NEP 2020.",
+    images: ["https://www.cseel.org/images/og-cover.jpg"],
   },
   icons: {
     icon: "/favicon.ico",
@@ -88,6 +137,8 @@ export const metadata: Metadata = {
     "geo.region": "IN",
     "geo.country": "India",
     "revisit-after": "1 days",
+    "rating": "General",
+    "distribution": "Global",
   },
 };
 
@@ -107,7 +158,11 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "EducationalOrganization",
               name: "CSEEL",
-              alternateName: "Center for Scientific Exploration & Experimental Learning",
+              alternateName: [
+                "Center for Scientific Exploration and Experiential Learning",
+                "CSEEL India",
+                "CSEEL STEM Platform",
+              ],
               url: "https://www.cseel.org",
               logo: {
                 "@type": "ImageObject",
@@ -117,26 +172,30 @@ export default function RootLayout({
               },
               image: "https://www.cseel.org/images/og-cover.jpg",
               description:
-                "CSEEL offers hands-on science experiments, virtual simulations, teacher training, workshops, and national-level exhibitions for students and educators across India.",
+                "CSEEL is India's leading experiential science and STEM education platform aligned with NEP 2020. Providing curriculum-mapped hands-on experiments, virtual lab simulations, school science kits, teacher development programs, and national science symposia.",
               address: {
                 "@type": "PostalAddress",
                 addressCountry: "IN",
                 addressRegion: "Odisha",
+                addressLocality: "Bhubaneswar",
               },
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "customer support",
+                email: "support@cseel.org",
                 availableLanguage: ["English", "Hindi"],
               },
               sameAs: [
                 "https://www.instagram.com/cseel_org",
                 "https://www.facebook.com/cseel_org",
                 "https://twitter.com/cseel_org",
+                "https://www.linkedin.com/company/cseel",
               ],
             }),
           }}
         />
-        {/* Structured Data: WebSite */}
+
+        {/* Structured Data: WebSite with SearchAction */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -145,7 +204,8 @@ export default function RootLayout({
               "@type": "WebSite",
               name: "CSEEL",
               url: "https://www.cseel.org",
-              description: "India's leading experimental science learning platform for students and educators",
+              description:
+                "India's premier experiential learning and hands-on STEM platform for CBSE, ICSE, and state boards.",
               inLanguage: "en-IN",
               potentialAction: {
                 "@type": "SearchAction",
@@ -158,8 +218,53 @@ export default function RootLayout({
             }),
           }}
         />
+
+        {/* Structured Data: FAQPage (High-Impact Google Rich Results) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "What is CSEEL and what does it offer?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "CSEEL (Center for Scientific Exploration and Experiential Learning) is a premier Indian STEM educational initiative offering hands-on science experiments, 3D virtual laboratory simulations, curriculum-aligned project kits, teacher training workshops, and national science conclaves aligned with NEP 2020.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How does CSEEL support NEP 2020 experiential learning?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "CSEEL shifts education from rote memorization to active inquiry and hands-on experimentation. Students observe, build, analyze, and apply scientific concepts to real-world challenges, developing critical thinking and scientific temper as envisioned by NEP 2020.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "What subjects and classes are covered in CSEEL simulations and experiments?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "CSEEL provides comprehensive physics, chemistry, biology, environmental science, and applied robotics experiments and simulations for students from Class 6 through Class 12, mapped to CBSE, ICSE, and state curricula.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How can schools, educators, and students access CSEEL programs?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Institutions, teachers, and students can explore live simulations, order DIY lab kits, register for national seminars, and join the CSEEL EduNetwork by visiting https://www.cseel.org.",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

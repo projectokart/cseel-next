@@ -315,46 +315,45 @@ function HeroSlider() {
   );
 }
 
-// ReadMore text component matching cseel.org
+// ReadMore text component matching cseel.org with Labster-style clean typography
 function HeroText() {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="max-w-3xl mx-auto mb-3 md:mb-5 text-center">
+    <div className="max-w-3xl mx-auto mb-5 md:mb-7 px-2 sm:px-4 text-center">
       <div
-        className="text-muted-foreground leading-relaxed text-xs md:text-sm"
+        className="text-slate-600 font-normal leading-relaxed text-xs sm:text-sm md:text-base transition-all duration-300"
         style={{
           textAlign: "center",
           display: expanded ? "block" : "-webkit-box",
           WebkitLineClamp: expanded ? "unset" : 2,
           WebkitBoxOrient: "vertical" as any,
           overflow: expanded ? "visible" : "hidden",
-          transition: "all 0.3s ease",
         }}
       >
-        At CSEEL, we share the vision of the National Education Policy (<strong>NEP</strong>) 2020
-        to transform Indian education from <strong>rote memorization</strong> to{" "}
-        <strong>experiential, inquiry-based, competency-focused</strong>, and{" "}
-        <strong>hands-on</strong> learning.
+        At CSEEL, we share the vision of the National Education Policy (<strong className="text-slate-900 font-bold">NEP</strong>) 2020
+        to transform Indian education from <strong className="text-slate-900 font-bold">rote memorization</strong> to{" "}
+        <strong className="text-slate-900 font-bold">experiential, inquiry-based, competency-focused</strong>, and{" "}
+        <strong className="text-slate-900 font-bold">hands-on</strong> learning.
         <br /><br />
         At CSEEL, we believe the best way to learn science is by doing it.
-        Students learn science most effectively when they <strong>observe</strong>,{" "}
-        <strong>experiment</strong>, <strong>analyse</strong>, <strong>build</strong>, and{" "}
-        <strong>solve real-world problems</strong>, rather than only reading from textbooks.
-        Through <strong>experiential learning</strong> and <strong>hands on learning</strong>, students
+        Students learn science most effectively when they <strong className="text-slate-900 font-bold">observe</strong>,{" "}
+        <strong className="text-slate-900 font-bold">experiment</strong>, <strong className="text-slate-900 font-bold">analyse</strong>, <strong className="text-slate-900 font-bold">build</strong>, and{" "}
+        <strong className="text-slate-900 font-bold">solve real-world problems</strong>, rather than only reading from textbooks.
+        Through <strong className="text-slate-900 font-bold">experiential learning</strong> and <strong className="text-slate-900 font-bold">hands on learning</strong>, students
         discover how things work and why they work, building strong conceptual understanding
         and a deep connection with the world around them.
         <br /><br />
-        This approach strongly aligns with <strong>NEP 2020's</strong> emphasis on{" "}
-        <strong>learning by doing</strong>, <strong>learner-centred pedagogy</strong>,{" "}
-        <strong>development of scientific temper</strong>, and{" "}
-        <strong>real-life application of knowledge</strong>, ensuring that learning is meaningful,
+        This approach strongly aligns with <strong className="text-slate-900 font-bold">NEP 2020's</strong> emphasis on{" "}
+        <strong className="text-slate-900 font-bold">learning by doing</strong>, <strong className="text-slate-900 font-bold">learner-centred pedagogy</strong>,{" "}
+        <strong className="text-slate-900 font-bold">development of scientific temper</strong>, and{" "}
+        <strong className="text-slate-900 font-bold">real-life application of knowledge</strong>, ensuring that learning is meaningful,
         engaging, and future-ready.
       </div>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-primary font-bold text-xs md:text-sm mt-1 hover:underline cursor-pointer inline-block"
+        className="text-blue-700 hover:text-blue-900 font-bold text-xs sm:text-sm mt-2 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
       >
-        {expanded ? "Read Less" : "Read More"}
+        <span>{expanded ? "Read Less ↑" : "Read More ↓"}</span>
       </button>
     </div>
   );
@@ -367,18 +366,18 @@ const Index = () => {
 
   return (
     <PageTransition>
-      {/* ─── Hero Section with Compact Spacing & Full View Fit ─── */}
-      <section className="hero-gradient pt-3 md:pt-5 pb-6 md:pb-10 overflow-hidden">
+      {/* ─── Hero Section with Enhanced Mobile Spacing & Labster-Grade Typography ─── */}
+      <section className="hero-gradient pt-7 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           
-          {/* Title */}
-          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }}>
-            <h1 style={{ fontSize: "clamp(24px, 4.2vw, 38px)", lineHeight: 1.25, letterSpacing: "0.2px" }}>
-              <span className="text-foreground font-light whitespace-nowrap">
-                Welcome to <span className="font-bold text-primary">C.S.E.E.L</span>
+          {/* Dominant Labster-Style Title */}
+          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="mb-4 sm:mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-950 leading-[1.15]">
+              <span className="block sm:inline">Welcome to </span>
+              <span className="font-black bg-gradient-to-r from-blue-700 via-indigo-600 to-cyan-600 bg-clip-text text-transparent drop-shadow-xs">
+                C.S.E.E.L
               </span>
-              <br />
-              <span className="block mt-1 text-primary/75 font-medium" style={{ fontSize: "clamp(13px, 2.2vw, 16px)" }}>
+              <span className="block mt-2.5 sm:mt-3.5 text-xs sm:text-base md:text-lg font-bold text-blue-950/80 tracking-normal max-w-2xl mx-auto">
                 Center for Scientific Exploration and Experiential Learning
               </span>
             </h1>
@@ -389,21 +388,21 @@ const Index = () => {
             <HeroText />
           </div>
 
-          {/* CTA Buttons - Compact margins */}
+          {/* CTA Buttons */}
           <div
-            className="flex flex-col sm:flex-row justify-center gap-3 mb-4 md:mb-6 max-w-sm sm:max-w-none mx-auto"
+            className="flex flex-col sm:flex-row justify-center gap-3.5 mb-6 md:mb-8 max-w-sm sm:max-w-none mx-auto"
             style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
           >
             <Link href="/compare-plans"
-              className="group px-7 py-2.5 bg-primary text-primary-foreground font-bold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg flex items-center justify-center gap-2 text-xs md:text-sm"
+              className="group px-8 py-3 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white font-black rounded-full transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-blue-500/25 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
             >
               <span>Our Plans</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link href="/demo"
-              className="group px-7 py-2.5 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary-light transition-all duration-300 flex items-center justify-center gap-2 text-xs md:text-sm"
+              className="group px-8 py-3 border-2 border-blue-700 text-blue-800 hover:bg-blue-50/80 font-black rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
             >
-              <Play className="w-4 h-4" />
+              <Play className="w-4 h-4 text-blue-700 fill-blue-700/20" />
               <span>Live Lab Tour</span>
             </Link>
           </div>

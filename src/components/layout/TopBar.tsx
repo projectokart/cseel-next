@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,10 +31,15 @@ const TopBar = () => {
   const { user, isTeacher, isStudent, isOrganisation, signOut, roles } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
-  const initials    = displayName.slice(0, 2).toUpperCase();
-  const primaryRole = roles[0] || "user";
+  const initials    = (displayName || "US").slice(0, 2).toUpperCase();
+  const primaryRole = (roles && roles.length > 0) ? roles[0] : "user";
 
   const dashboardPath = isOrganisation
     ? "/org"
@@ -45,19 +50,25 @@ const TopBar = () => {
     : "/user";
 
   const handleLogout = async () => {
-    await signOut();
-    router.push("/login");
+    try {
+      await signOut();
+      router.push("/login");
+    } catch {}
   };
 
   const isSubPage = pathname && pathname !== '/' && pathname !== '';
 
   const handleBack = () => {
-    if (typeof window !== 'undefined') {
-      if (window.history.length > 1) {
-        router.back();
-      } else {
-        router.push('/');
+    try {
+      if (typeof window !== 'undefined') {
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          router.push('/');
+        }
       }
+    } catch {
+      router.push('/');
     }
   };
 
@@ -125,12 +136,12 @@ const TopBar = () => {
           </div>
 
           {/* ── RIGHT SIDE: COMMUNITY | GET SUPPORT | CONTACT US | LOGIN ──── */}
-          <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4 shrink-0 text-[11px] sm:text-xs font-semibold overflow-x-auto scrollbar-none py-0.5">
+          <div className="flex items-center gap-1 sm:gap-3 md:gap-4 shrink-0 text-[11px] sm:text-xs font-semibold overflow-x-auto scrollbar-none py-0.5">
             
             {/* Community */}
             <Link
               href="/feed"
-              className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
             >
               <Users className="w-3.5 h-3.5 text-cyan-300" />
               <span>Community</span>
@@ -139,25 +150,25 @@ const TopBar = () => {
             {/* Get Support */}
             <Link
               href="/get-support"
-              className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
             >
               <Headphones className="w-3.5 h-3.5 text-emerald-300" />
-              <span>Get Support</span>
+              <span className="hidden xs:inline">Get </span><span>Support</span>
             </Link>
 
             {/* Contact Us */}
             <Link
               href="/contact-us"
-              className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md text-white/90 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap"
             >
               <Mail className="w-3.5 h-3.5 text-amber-300" />
-              <span>Contact Us</span>
+              <span>Contact</span><span className="hidden xs:inline"> Us</span>
             </Link>
 
             {/* Login / User Profile Dropdown */}
-            {user ? (
+            {mounted && user ? (
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg hover:bg-white/10 transition-opacity outline-none ml-0.5 cursor-pointer">
+                <DropdownMenuTrigger className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-lg hover:bg-white/10 transition-opacity outline-none ml-0.5 cursor-pointer">
                   <Avatar className="h-5 w-5 sm:h-6 sm:w-6 border border-white/40">
                     <AvatarFallback className="bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold">{initials}</AvatarFallback>
                   </Avatar>
@@ -191,7 +202,7 @@ const TopBar = () => {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 bg-white text-slate-950 font-black text-[11px] sm:text-xs rounded-lg hover:bg-white/90 transition-all shadow-xs shrink-0 whitespace-nowrap ml-0.5 active:scale-95"
+                className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-3 sm:py-1 bg-white text-slate-950 font-black text-[11px] sm:text-xs rounded-lg hover:bg-white/90 transition-all shadow-xs shrink-0 whitespace-nowrap ml-0.5 active:scale-95"
               >
                 <LogIn className="w-3 h-3 text-slate-900" />
                 <span>Login</span>

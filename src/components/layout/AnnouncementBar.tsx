@@ -18,19 +18,25 @@ const AnnouncementBar = () => {
   const [item, setItem] = useState<PromoItem | null>(null);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem("announcement-dismissed");
-    if (dismissed) return;
+    try {
+      if (typeof window !== 'undefined') {
+        const dismissed = sessionStorage.getItem("announcement-dismissed");
+        if (dismissed) return;
+      }
+    } catch {}
 
     const load = async () => {
-      const { data } = await (supabase as any)
-        .from("promotions")
-        .select("id,title,content,cta_text,cta_link,bg_color,accent_color")
-        .eq("type", "announcement")
-        .eq("is_active", true)
-        .order("sort_order")
-        .limit(1)
-        .single();
-      if (data) setItem(data as PromoItem);
+      try {
+        const { data } = await (supabase as any)
+          .from("promotions")
+          .select("id,title,content,cta_text,cta_link,bg_color,accent_color")
+          .eq("type", "announcement")
+          .eq("is_active", true)
+          .order("sort_order")
+          .limit(1)
+          .single();
+        if (data) setItem(data as PromoItem);
+      } catch {}
     };
     load();
   }, []);
@@ -39,13 +45,17 @@ const AnnouncementBar = () => {
 
   const dismiss = () => {
     setItem(null);
-    sessionStorage.setItem("announcement-dismissed", "true");
+    try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem("announcement-dismissed", "true");
+      }
+    } catch {}
   };
 
   return (
     <div style={{
-      background: item.bg_color,
-      color: item.accent_color,
+      background: item.bg_color || "#0a5c8a",
+      color: item.accent_color || "#ffffff",
       padding: "10px 48px 10px 16px",
       display: "flex",
       alignItems: "center",
@@ -58,15 +68,41 @@ const AnnouncementBar = () => {
     }}>
       <span dangerouslySetInnerHTML={{ __html: item.content }} />
       {item.cta_text && item.cta_link && (
-        <a href={item.cta_link} style={{ color: item.accent_color, fontWeight: 700, textDecoration: "underline", whiteSpace: "nowrap" }}>
-          {item.cta_text}
+        <a
+          href={item.cta_link}
+          style={{
+            background: "rgba(255,255,255,0.2)",
+            color: "inherit",
+            padding: "2px 10px",
+            borderRadius: 9999,
+            fontSize: 12,
+            fontWeight: 700,
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
+          {item.cta_text} &rarr;
         </a>
       )}
-      <button onClick={dismiss} style={{
-        position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
-        background: "transparent", border: "none", color: item.accent_color,
-        cursor: "pointer", padding: 4, display: "flex", alignItems: "center",
-      }}>
+      <button
+        onClick={dismiss}
+        aria-label="Dismiss announcement"
+        style={{
+          position: "absolute",
+          right: 12,
+          top: "50%",
+          transform: "translateY(-50%)",
+          background: "none",
+          border: "none",
+          color: "inherit",
+          cursor: "pointer",
+          opacity: 0.7,
+          padding: 4,
+          display: "flex",
+        }}
+      >
         <X size={16} />
       </button>
     </div>

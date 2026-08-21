@@ -215,43 +215,6 @@ const Navbar = () => {
 
       {/* Mobile Drawer */}
       <div className={`lg:hidden border-t border-border bg-background absolute top-full left-0 w-full shadow-2xl overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out z-[410] ${mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
-        
-        {/* Mobile Quick Action Buttons Bar */}
-        <div className="p-3 bg-muted/40 border-b border-border grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <Link
-            href="/feed"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-background border border-border hover:border-primary/50 text-xs font-bold text-foreground transition-all shadow-2xs"
-          >
-            <span className="p-1.5 rounded-lg bg-cyan-50 text-cyan-600 dark:bg-cyan-950">👥</span>
-            <span>Community</span>
-          </Link>
-          <Link
-            href="/get-support"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-background border border-border hover:border-primary/50 text-xs font-bold text-foreground transition-all shadow-2xs"
-          >
-            <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950">🎧</span>
-            <span>Get Support</span>
-          </Link>
-          <Link
-            href="/contact-us"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-background border border-border hover:border-primary/50 text-xs font-bold text-foreground transition-all shadow-2xs"
-          >
-            <span className="p-1.5 rounded-lg bg-amber-50 text-amber-600 dark:bg-amber-950">📞</span>
-            <span>Contact Us</span>
-          </Link>
-          <Link
-            href="/login"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 p-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold transition-all shadow-2xs"
-          >
-            <span className="p-1.5 rounded-lg bg-white/20 text-white">🔑</span>
-            <span>Account / Login</span>
-          </Link>
-        </div>
-
         <div className="px-4 py-4 space-y-2">
           {navItems.map((item) => (
             <div key={item.label} className="flex flex-col border-b border-border/50 pb-1">

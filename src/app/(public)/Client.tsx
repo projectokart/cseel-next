@@ -351,7 +351,7 @@ function HeroText() {
       </div>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-blue-700 hover:text-blue-900 font-bold text-xs sm:text-sm mt-2 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
+        className="text-[#006fcc] hover:text-[#003c6e] font-bold text-xs sm:text-sm mt-2 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
       >
         <span>{expanded ? "Read Less ↑" : "Read More ↓"}</span>
       </button>
@@ -366,18 +366,18 @@ const Index = () => {
 
   return (
     <PageTransition>
-      {/* ─── Hero Section with Enhanced Mobile Spacing & Labster-Grade Typography ─── */}
-      <section className="hero-gradient pt-7 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
+      {/* ─── Hero Section with Brand Palette (#003c6e & #006fcc) ─── */}
+      <section className="hero-gradient pt-5 sm:pt-8 md:pt-12 pb-8 md:pb-12 overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           
-          {/* Dominant Labster-Style Title */}
-          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="mb-4 sm:mb-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-950 leading-[1.15]">
-              <span className="block sm:inline">Welcome to </span>
-              <span className="font-black bg-gradient-to-r from-blue-700 via-indigo-600 to-cyan-600 bg-clip-text text-transparent drop-shadow-xs">
-                C.S.E.E.L
+          {/* Single-Line Brand Title */}
+          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="mb-3 sm:mb-5">
+            <h1 style={{ fontSize: "clamp(22px, 4.4vw, 42px)", lineHeight: 1.2, letterSpacing: "0.2px" }}>
+              <span className="text-slate-800 font-light whitespace-nowrap inline-flex items-baseline justify-center gap-1.5 sm:gap-2">
+                <span>Welcome to</span>
+                <span className="font-extrabold text-[#003c6e]">C.S.E.E.L</span>
               </span>
-              <span className="block mt-2.5 sm:mt-3.5 text-xs sm:text-base md:text-lg font-bold text-blue-950/80 tracking-normal max-w-2xl mx-auto">
+              <span className="block mt-1 sm:mt-2 text-xs sm:text-sm md:text-base font-bold text-[#003c6e]/85 tracking-normal max-w-2xl mx-auto">
                 Center for Scientific Exploration and Experiential Learning
               </span>
             </h1>
@@ -388,21 +388,21 @@ const Index = () => {
             <HeroText />
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons (#006fcc with white icons) */}
           <div
-            className="flex flex-col sm:flex-row justify-center gap-3.5 mb-6 md:mb-8 max-w-sm sm:max-w-none mx-auto"
+            className="flex flex-col sm:flex-row justify-center gap-3 mb-5 md:mb-7 max-w-sm sm:max-w-none mx-auto"
             style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
           >
             <Link href="/compare-plans"
-              className="group px-8 py-3 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white font-black rounded-full transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-blue-500/25 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
+              className="group px-8 py-3 bg-[#006fcc] hover:bg-[#005bb8] text-white font-bold rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
             >
-              <span>Our Plans</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span className="text-white">Our Plans</span>
+              <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
             </Link>
             <Link href="/demo"
-              className="group px-8 py-3 border-2 border-blue-700 text-blue-800 hover:bg-blue-50/80 font-black rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
+              className="group px-8 py-3 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
             >
-              <Play className="w-4 h-4 text-blue-700 fill-blue-700/20" />
+              <Play className="w-4 h-4 text-[#006fcc] fill-[#006fcc]/20 shrink-0" />
               <span>Live Lab Tour</span>
             </Link>
           </div>

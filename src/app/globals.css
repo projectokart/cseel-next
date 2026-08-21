@@ -13,11 +13,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 29% 24%;
 
-    --primary: 207 90% 30%;
+    --primary: 207 100% 21.6%;
     --primary-foreground: 0 0% 100%;
 
     --primary-light: 207 90% 95%;
-    --primary-hover: 207 90% 25%;
+    --primary-hover: 207 100% 17%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 210 29% 24%;
@@ -26,21 +26,21 @@
     --muted-foreground: 215 16% 47%;
 
     --accent: 207 90% 95%;
-    --accent-foreground: 207 90% 30%;
+    --accent-foreground: 207 100% 21.6%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 207 90% 30%;
+    --ring: 207 100% 21.6%;
 
     --radius: 0.5rem;
 
-    --topbar-bg: 207 90% 20%;
+    --topbar-bg: 207 100% 21.6%;
     --topbar-foreground: 0 0% 100%;
 
-    --hero-gradient-start: 207 90% 97%;
+    --hero-gradient-start: 207 80% 97%;
     --hero-gradient-end: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;

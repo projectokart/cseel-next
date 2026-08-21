@@ -177,7 +177,7 @@ const Login = () => {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-[calc(100vh-100px)] flex flex-col lg:flex-row">
       {/* Left */}
       <motion.div
         className="hidden lg:flex lg:w-[42%] about-hero-gradient items-center justify-center p-12"
@@ -192,10 +192,10 @@ const Login = () => {
 
       {/* Right */}
       <motion.div
-        className="flex-1 flex items-start sm:items-center justify-center px-4 sm:px-6 pt-3 sm:pt-8 md:pt-12 pb-8 bg-background overflow-y-auto"
-        initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}
+        className="flex-1 flex items-start justify-center px-4 sm:px-6 pt-4 sm:pt-8 md:pt-10 pb-12 bg-background overflow-y-auto"
+        initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
       >
-        <div className="w-full max-w-md py-1 sm:py-6">
+        <div className="w-full max-w-md py-1 sm:py-3">
 
           {/* ── FORGOT PASSWORD ──────────────────────────────────────────── */}
           {forgotMode && (

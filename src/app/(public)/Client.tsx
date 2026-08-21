@@ -315,13 +315,13 @@ function HeroSlider() {
   );
 }
 
-// ReadMore text component matching cseel.org with Labster-style clean typography
+// ReadMore text component matching cseel.org with clean typography
 function HeroText() {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="max-w-3xl mx-auto mb-5 md:mb-7 px-2 sm:px-4 text-center">
+    <div className="max-w-2xl mx-auto my-4 sm:my-6 px-3 text-center">
       <div
-        className="text-slate-600 font-normal leading-relaxed text-xs sm:text-sm md:text-base transition-all duration-300"
+        className="text-slate-600 font-medium leading-relaxed text-xs sm:text-sm md:text-base transition-all duration-300"
         style={{
           textAlign: "center",
           display: expanded ? "block" : "-webkit-box",
@@ -351,7 +351,7 @@ function HeroText() {
       </div>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-[#006fcc] hover:text-[#003c6e] font-bold text-xs sm:text-sm mt-2 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
+        className="text-[#006fcc] hover:text-[#003c6e] font-bold text-xs sm:text-sm mt-2.5 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
       >
         <span>{expanded ? "Read Less ↑" : "Read More ↓"}</span>
       </button>
@@ -367,20 +367,20 @@ const Index = () => {
   return (
     <PageTransition>
       {/* ─── Hero Section with Brand Palette (#003c6e & #006fcc) ─── */}
-      <section className="hero-gradient pt-5 sm:pt-8 md:pt-12 pb-8 md:pb-12 overflow-hidden">
+      <section className="hero-gradient pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
         <div className="container mx-auto px-4 text-center">
           
-          {/* Single-Line Brand Title */}
-          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="mb-3 sm:mb-5">
-            <h1 style={{ fontSize: "clamp(22px, 4.4vw, 42px)", lineHeight: 1.2, letterSpacing: "0.2px" }}>
-              <span className="text-slate-800 font-light whitespace-nowrap inline-flex items-baseline justify-center gap-1.5 sm:gap-2">
-                <span>Welcome to</span>
-                <span className="font-extrabold text-[#003c6e]">C.S.E.E.L</span>
-              </span>
-              <span className="block mt-1 sm:mt-2 text-xs sm:text-sm md:text-base font-bold text-[#003c6e]/85 tracking-normal max-w-2xl mx-auto">
-                Center for Scientific Exploration and Experiential Learning
+          {/* Single-Line Dominant Brand Title with upper and lower margin */}
+          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
+            <h1 className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center">
+              <span>Welcome to </span>
+              <span className="text-[#003c6e] font-black tracking-normal">
+                C.S.E.E.L
               </span>
             </h1>
+            <p className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-[#003c6e] tracking-tight max-w-xl mx-auto">
+              Center for Scientific Exploration and Experiential Learning
+            </p>
           </div>
 
           {/* Description with Read More */}
@@ -388,19 +388,22 @@ const Index = () => {
             <HeroText />
           </div>
 
-          {/* CTA Buttons (#006fcc with white icons) */}
+          {/* CTA Buttons (#006fcc solid with pure white icons) */}
           <div
-            className="flex flex-col sm:flex-row justify-center gap-3 mb-5 md:mb-7 max-w-sm sm:max-w-none mx-auto"
+            className="flex flex-col sm:flex-row justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4"
             style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
           >
-            <Link href="/compare-plans"
-              className="group px-8 py-3 bg-[#006fcc] hover:bg-[#005bb8] text-white font-bold rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
+            <Link
+              href="/compare-plans"
+              className="group px-8 py-3.5 bg-[#006fcc] hover:bg-[#005bb8] active:bg-[#004e9c] text-white font-black text-sm rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 active:scale-98"
+              style={{ backgroundColor: '#006fcc' }}
             >
               <span className="text-white">Our Plans</span>
               <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
             </Link>
-            <Link href="/demo"
-              className="group px-8 py-3 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm active:scale-98"
+            <Link
+              href="/demo"
+              className="group px-8 py-3.5 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-black text-sm rounded-full transition-all duration-200 flex items-center justify-center gap-2.5 active:scale-98"
             >
               <Play className="w-4 h-4 text-[#006fcc] fill-[#006fcc]/20 shrink-0" />
               <span>Live Lab Tour</span>

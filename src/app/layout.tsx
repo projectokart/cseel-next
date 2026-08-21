@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "google6712398471293847",
+    google: "google986da09e210cb549",
     yandex: "yandex",
     other: {
       "msvalidate.01": "bing-site-verification",

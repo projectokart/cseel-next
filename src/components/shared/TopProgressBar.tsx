@@ -84,13 +84,13 @@ export default function TopProgressBar() {
 
   return (
     <>
-      {/* Top glowing progress bar */}
+      {/* Top glowing progress bar in CSEEL Action Blue */}
       <div
         className="fixed top-0 left-0 right-0 z-[999999] pointer-events-none"
         aria-hidden="true"
       >
         <div
-          className="h-[3.5px] bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 shadow-[0_0_15px_rgba(6,182,212,0.9)] transition-all duration-150 ease-out"
+          className="h-[3.5px] bg-[#006fcc] shadow-[0_0_12px_rgba(0,111,204,0.8)] transition-all duration-150 ease-out"
           style={{
             width: `${progress}%`,
             opacity: loading ? 1 : 0,
@@ -98,12 +98,11 @@ export default function TopProgressBar() {
         />
       </div>
 
-      {/* Screen-Centered Animated Nucleus Science Loader */}
+      {/* Screen-Centered Animated Atom Science Loader */}
       {loading && (
-        <div className="fixed inset-0 z-[999990] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150 pointer-events-none select-none">
+        <div className="fixed inset-0 z-[999990] flex items-center justify-center bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150 pointer-events-none select-none">
           <NucleusLoader
             progress={progress}
-            text="Initializing Science Lab..."
           />
         </div>
       )}

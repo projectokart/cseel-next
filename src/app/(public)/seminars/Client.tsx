@@ -167,7 +167,7 @@ export default function SeminarsClient() {
       <div className="min-h-screen bg-[#F8FAFC] pb-24 text-gray-800">
 
         {/* ── HIGH-IMPACT EXECUTIVE HERO BANNER ───────────────────────────────── */}
-        <section className="relative overflow-hidden bg-[#07172B] text-white min-h-[460px] md:min-h-[520px] flex flex-col justify-end pb-16 md:pb-20 pt-24 md:pt-32 px-4">
+        <section className="relative overflow-hidden bg-[#07172B] text-white min-h-[320px] sm:min-h-[420px] md:min-h-[480px] flex flex-col justify-end pb-10 sm:pb-16 md:pb-20 pt-16 sm:pt-24 md:pt-28 px-3 sm:px-4">
           {/* Background Photography with Natural Balanced Lighting */}
           <div className="absolute inset-0 z-0">
             <img
@@ -184,34 +184,34 @@ export default function SeminarsClient() {
           </div>
 
           {/* Text positioned on the deep bottom gradient for crystal clear contrast */}
-          <div className="max-w-4xl mx-auto text-center relative z-10 space-y-4">
+          <div className="max-w-4xl mx-auto text-center relative z-10 space-y-2.5 sm:space-y-3.5">
             
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-cyan-400/30 text-cyan-300 text-xs font-black shadow-lg">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-cyan-400/30 text-cyan-300 text-[10px] sm:text-xs font-black shadow-lg">
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400" />
               <span>Pan-India School & Institutional Education Meets 2026</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight drop-shadow-2xl">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-2xl">
               National Science Seminars & <span className="bg-gradient-to-r from-cyan-300 via-teal-200 to-emerald-300 bg-clip-text text-transparent">Events</span>
             </h1>
 
-            <p className="text-xs sm:text-sm md:text-base text-slate-100 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+            <p className="text-[11px] sm:text-xs md:text-sm text-slate-100 max-w-2xl mx-auto leading-relaxed font-medium drop-shadow-lg line-clamp-2 sm:line-clamp-none">
               Empowering India's leading school leaders, STEAM educators, and student innovators through experiential summits across <strong className="text-white underline decoration-cyan-400">New Delhi, Bengaluru, Mumbai, Bhubaneswar & Pune</strong> with distinguished scientists.
             </p>
 
             {/* Value Pillars Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2 text-xs font-bold text-white">
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>100% Free School Delegation Passes</span>
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 pt-1 text-[10px] sm:text-xs font-bold text-white">
+              <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/20 shadow-md">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <span>100% Free School Passes</span>
               </span>
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-300" />
+              <span className="flex items-center gap-1 px-2.5 sm:px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/20 shadow-md">
+                <ShieldCheck className="w-3 h-3 text-cyan-300" />
                 <span>Official Letterhead Passes</span>
               </span>
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
-                <Award className="w-3.5 h-3.5 text-amber-300" />
-                <span>Complimentary Exhibition Booths</span>
+              <span className="hidden sm:flex items-center gap-1 px-2.5 sm:px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/20 shadow-md">
+                <Award className="w-3 h-3 text-amber-300" />
+                <span>Complimentary Booths</span>
               </span>
             </div>
 
@@ -1085,11 +1085,11 @@ function SeminarHorizontalCard({
   onOpenIndReg: () => void;
 }) {
   return (
-    <div className="bg-white rounded-3xl border border-gray-200/90 shadow-xs hover:shadow-lg hover:border-primary/40 transition-all overflow-hidden flex flex-col md:flex-row group">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-200/90 shadow-2xs hover:shadow-md hover:border-primary/40 transition-all overflow-hidden flex flex-col md:flex-row group">
       {/* Left Poster Image Column */}
       <Link
         href={`/seminars/${seminar.id}`}
-        className="relative md:w-64 lg:w-72 h-48 md:h-auto shrink-0 bg-slate-900 overflow-hidden flex items-center justify-center cursor-pointer"
+        className="relative md:w-56 lg:w-64 h-36 sm:h-44 md:h-auto shrink-0 bg-slate-900 overflow-hidden flex items-center justify-center cursor-pointer"
       >
         <img
           src={seminar.bannerImage}
@@ -1102,78 +1102,78 @@ function SeminarHorizontalCard({
         <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-slate-950/80 md:from-transparent md:to-slate-950/60 to-transparent pointer-events-none" />
 
         {/* Date Chip */}
-        <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-1.5 text-center shadow-md border border-white/50">
-          <span className="block text-[9px] font-black uppercase text-primary tracking-wider">
+        <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-md rounded-xl px-2.5 py-1 text-center shadow-md border border-white/50">
+          <span className="block text-[8px] sm:text-[9px] font-black uppercase text-primary tracking-wider">
             {seminar.date.split(' ')[0]}
           </span>
-          <span className="block text-base font-black text-gray-900 leading-none">
+          <span className="block text-sm sm:text-base font-black text-gray-900 leading-none">
             {seminar.date.split(' ')[1]?.replace(',', '') || '25'}
           </span>
         </div>
 
         {/* Category & City Pills */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-1">
-          <span className="px-2.5 py-1 bg-primary text-white text-[10px] font-black rounded-lg shadow-xs truncate">
+        <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between gap-1">
+          <span className="px-2 py-0.5 bg-primary text-white text-[9px] sm:text-[10px] font-black rounded shadow-xs truncate">
             {seminar.category}
           </span>
-          <span className="text-[10px] text-white font-bold bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/20 shrink-0">
+          <span className="text-[9px] sm:text-[10px] text-white font-bold bg-black/60 backdrop-blur-md px-2 py-0.5 rounded border border-white/20 shrink-0">
             📍 {seminar.venueDetails.city}
           </span>
         </div>
       </Link>
 
       {/* Right Content & Actions */}
-      <div className="p-5 md:p-6 flex-1 flex flex-col justify-between space-y-3 bg-gradient-to-r from-white via-white to-slate-50/50">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase border ${
+      <div className="p-3.5 sm:p-5 md:p-5 flex-1 flex flex-col justify-between space-y-2.5 bg-gradient-to-r from-white via-white to-slate-50/40">
+        <div className="space-y-1.5 sm:space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <span className={`px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-black uppercase border ${
                 seminar.status === 'Live Now'
                   ? 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse'
                   : seminar.status === 'Completed / Recorded'
                   ? 'bg-slate-100 text-slate-700 border-slate-300'
                   : 'bg-emerald-50 text-emerald-800 border-emerald-300'
               }`}>
-                {seminar.status === 'Live Now' ? '🔴 Live Now' : seminar.status === 'Completed / Recorded' ? '📜 Archive Recording' : '🟢 Upcoming Conclave'}
+                {seminar.status === 'Live Now' ? '🔴 Live' : seminar.status === 'Completed / Recorded' ? '📜 Archive' : '🟢 Upcoming'}
               </span>
             </div>
-            <span className="text-xs font-bold text-gray-500">
+            <span className="text-[11px] sm:text-xs font-bold text-gray-500">
               👥 {seminar.enrolledSchoolsCount}+ Schools
             </span>
           </div>
 
           <Link href={`/seminars/${seminar.id}`} className="group block">
-            <h3 className="text-base sm:text-lg font-black text-gray-900 group-hover:text-primary transition-colors leading-snug">
+            <h3 className="text-sm sm:text-base md:text-lg font-black text-gray-900 group-hover:text-primary transition-colors leading-snug">
               {seminar.title}
             </h3>
           </Link>
 
-          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-gray-600 line-clamp-2 leading-relaxed">
             {seminar.summary}
           </p>
 
           {/* Location & Speaker */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs">
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80 space-y-0.5">
-              <div className="flex items-center gap-1.5 truncate text-gray-800 font-bold">
-                <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50 border border-slate-200/80 space-y-0.5">
+              <div className="flex items-center gap-1.5 truncate text-gray-800 font-bold text-[11px] sm:text-xs">
+                <MapPin className="w-3 h-3 text-primary shrink-0" />
                 <span className="truncate">{seminar.venueDetails.name}</span>
               </div>
-              <div className="flex items-center gap-1.5 text-gray-500 font-semibold text-[10px]">
-                <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+              <div className="flex items-center gap-1.5 text-gray-500 font-semibold text-[9px] sm:text-[10px]">
+                <Clock className="w-3 h-3 text-primary shrink-0" />
                 <span>{seminar.date} • {seminar.time}</span>
               </div>
             </div>
 
-            <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-2">
+            <div className="p-1.5 sm:p-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-2">
               <img
                 src={seminar.speaker.avatar}
                 alt={seminar.speaker.name}
-                className="w-7 h-7 rounded-full object-cover border border-primary/30 shrink-0"
+                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border border-primary/30 shrink-0"
               />
               <div className="min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">{seminar.speaker.name}</p>
-                <p className="text-[10px] text-gray-500 truncate">{seminar.speaker.institution}</p>
+                <p className="text-[11px] sm:text-xs font-bold text-gray-900 truncate">{seminar.speaker.name}</p>
+                <p className="text-[9px] sm:text-[10px] text-gray-500 truncate">{seminar.speaker.institution}</p>
               </div>
             </div>
           </div>
@@ -1181,7 +1181,7 @@ function SeminarHorizontalCard({
 
         {/* CTAs */}
         <div className="pt-2 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <ShareButton
               title={seminar.title}
               text={`CSEEL Conclave: ${seminar.title} - ${seminar.date} (${seminar.venueDetails.city}). Keynote: ${seminar.speaker.name}`}
@@ -1189,24 +1189,24 @@ function SeminarHorizontalCard({
               size="xs"
               variant="outline"
             />
-            <span className="text-[10px] font-bold text-emerald-600">
-              {seminar.status === 'Upcoming' ? '✓ Free Delegation Pass' : ''}
+            <span className="text-[9px] sm:text-[10px] font-bold text-emerald-600">
+              {seminar.status === 'Upcoming' ? '✓ Free Pass' : ''}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {activeTab === 'past' ? (
               <>
                 <button
                   onClick={onOpenVideo}
-                  className="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-bold shadow-xs transition-colors flex items-center gap-1"
+                  className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-[11px] sm:text-xs font-bold shadow-xs transition-colors flex items-center gap-1"
                 >
                   <Play className="w-3 h-3 fill-current" />
-                  <span>Watch Recording</span>
+                  <span>Recording</span>
                 </button>
                 <Link
                   href={`/seminars/${seminar.id}`}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-full text-[11px] sm:text-xs font-bold transition-colors flex items-center gap-1"
                 >
                   <span>Details</span>
                   <ChevronRight className="w-3 h-3" />
@@ -1216,14 +1216,14 @@ function SeminarHorizontalCard({
               <>
                 <button
                   onClick={onOpenVideo}
-                  className="px-4 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-full text-xs font-bold shadow-xs transition-colors flex items-center gap-1 animate-pulse"
+                  className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-full text-[11px] sm:text-xs font-bold shadow-xs transition-colors flex items-center gap-1 animate-pulse"
                 >
                   <Radio className="w-3 h-3" />
-                  <span>Join Stream</span>
+                  <span>Join Live</span>
                 </button>
                 <Link
                   href={`/seminars/${seminar.id}`}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-full text-xs font-bold flex items-center gap-1"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-full text-[11px] sm:text-xs font-bold flex items-center gap-1"
                 >
                   <span>Details</span>
                   <ChevronRight className="w-3 h-3" />
@@ -1233,16 +1233,16 @@ function SeminarHorizontalCard({
               <>
                 <button
                   onClick={onOpenSchoolReg}
-                  className="px-4 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-full text-xs font-black shadow-xs hover:shadow-md transition-all flex items-center gap-1"
+                  className="px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-full text-[11px] sm:text-xs font-black shadow-xs hover:shadow-md transition-all flex items-center gap-1"
                 >
                   <Ticket className="w-3 h-3" />
-                  <span>School Pass (Free)</span>
+                  <span>School Pass</span>
                 </button>
                 <Link
                   href={`/seminars/${seminar.id}`}
-                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-full text-xs font-bold transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-full text-[11px] sm:text-xs font-bold transition-colors flex items-center gap-1"
                 >
-                  <span>Full Agenda</span>
+                  <span>Agenda</span>
                   <ChevronRight className="w-3 h-3" />
                 </Link>
               </>

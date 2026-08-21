@@ -1010,7 +1010,7 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
                         className="bg-white rounded-2xl border border-gray-200 hover:border-primary/50 shadow-2xs hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col md:flex-row group"
                       >
                         {/* ── LEFT CAMPUS IMAGE & BADGES ───────────────────────── */}
-                        <div className="md:w-64 relative bg-slate-900 shrink-0 overflow-hidden min-h-[160px] md:min-h-[190px]">
+                        <div className="md:w-60 lg:w-64 relative bg-slate-900 shrink-0 overflow-hidden min-h-[140px] md:min-h-[180px]">
                           <img
                             src={org.bannerImage}
                             alt={org.name}
@@ -1018,12 +1018,12 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
                           />
 
                           {/* Top Status Badges */}
-                          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
-                            <span className="px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black uppercase rounded shadow-xs">
+                          <div className="absolute top-2 left-2 flex flex-col gap-1 z-10">
+                            <span className="px-2 py-0.5 bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black uppercase rounded shadow-xs">
                               {org.admissionStatus || 'On Going'}
                             </span>
                             {org.isFeatured && (
-                              <span className="px-2 py-0.5 bg-amber-400 text-amber-950 text-[10px] font-black uppercase rounded shadow-xs flex items-center gap-1">
+                              <span className="px-2 py-0.5 bg-amber-400 text-amber-950 text-[9px] sm:text-[10px] font-black uppercase rounded shadow-xs flex items-center gap-1">
                                 <Star className="w-2.5 h-2.5 fill-amber-950" />
                                 <span>Featured</span>
                               </span>
@@ -1031,36 +1031,36 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
                           </div>
 
                           {/* Bottom CSEEL Verified Badge */}
-                          <div className="absolute bottom-2.5 left-2.5 z-10">
-                            <span className="px-2 py-1 bg-black/75 backdrop-blur-md text-cyan-300 text-[10px] font-black rounded-lg border border-white/20 shadow-xs flex items-center gap-1">
-                              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-                              <span>Verified by CSEEL</span>
+                          <div className="absolute bottom-2 left-2 z-10">
+                            <span className="px-2 py-0.5 bg-black/75 backdrop-blur-md text-cyan-300 text-[9px] sm:text-[10px] font-black rounded border border-white/20 shadow-xs flex items-center gap-1">
+                              <ShieldCheck className="w-3 h-3 text-cyan-400" />
+                              <span>Verified</span>
                             </span>
                           </div>
 
                           {/* Top Right Like / Shortlist Heart */}
                           <button
                             onClick={(e) => handleToggleLike(org.id, e)}
-                            className="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-gray-700 hover:text-red-600 transition-colors shadow-xs"
+                            className="absolute top-2 right-2 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-gray-700 hover:text-red-600 transition-colors shadow-xs cursor-pointer"
                             title="Save / Shortlist"
                           >
-                            <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-600 text-red-600' : ''}`} />
+                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isLiked ? 'fill-red-600 text-red-600' : ''}`} />
                           </button>
                         </div>
 
                         {/* ── RIGHT MAIN DETAILS & METRICS ─────────────────────── */}
-                        <div className="p-4 md:p-5 flex-1 flex flex-col justify-between space-y-3">
+                        <div className="p-3.5 sm:p-4 md:p-5 flex-1 flex flex-col justify-between space-y-2.5">
                           
                           {/* Title & Location Row */}
                           <div>
-                            <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start justify-between gap-2">
                               <div>
                                 <Link href={`/edu-network/org/${org.id}`}>
-                                  <h3 className="text-base md:text-lg font-black text-gray-900 group-hover:text-primary transition-colors leading-tight">
+                                  <h3 className="text-sm sm:text-base md:text-lg font-black text-gray-900 group-hover:text-primary transition-colors leading-tight">
                                     {org.name}
                                   </h3>
                                 </Link>
-                                <p className="text-xs text-gray-500 font-semibold mt-0.5 flex items-center gap-1.5 flex-wrap">
+                                <p className="text-[11px] sm:text-xs text-gray-500 font-semibold mt-0.5 flex items-center gap-1.5 flex-wrap">
                                   <span>{org.locality || org.address.split(',')[0]}</span>
                                   <span>•</span>
                                   <span className="text-primary font-bold">{org.city}, {org.state}</span>
@@ -1068,48 +1068,48 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
                                     href={`https://maps.google.com/?q=${encodeURIComponent(`${org.name} ${org.city}`)}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-[11px] text-cyan-700 font-bold underline hover:text-cyan-800 flex items-center gap-0.5 ml-1"
+                                    className="text-[10px] sm:text-[11px] text-cyan-700 font-bold underline hover:text-cyan-800 flex items-center gap-0.5 ml-1"
                                   >
-                                    <MapPin className="w-3 h-3 text-cyan-600" />
-                                    <span>Location Map</span>
+                                    <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-cyan-600" />
+                                    <span>Map</span>
                                   </a>
                                 </p>
                               </div>
 
                               {/* Official Partner Badge */}
-                              <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-full text-[10px] font-black text-amber-800 shrink-0">
-                                <Award className="w-3.5 h-3.5 text-amber-600" />
+                              <div className="hidden sm:flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[9px] sm:text-[10px] font-black text-amber-800 shrink-0">
+                                <Award className="w-3 h-3 text-amber-600" />
                                 <span>Academic Partner</span>
                               </div>
                             </div>
                           </div>
 
-                          {/* ── 4-COLUMN UNIAPPLY METRIC GRID ─────────────────── */}
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-gray-50/80 p-3 rounded-xl border border-gray-200/80 text-xs">
+                          {/* ── 4-COLUMN METRIC GRID (Compact on mobile) ─────────── */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 bg-gray-50/80 p-2 sm:p-3 rounded-xl border border-gray-200/80 text-[11px] sm:text-xs">
                             <div>
-                              <p className="text-[10px] text-gray-500 font-semibold uppercase">Classes Offered</p>
+                              <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase">Classes</p>
                               <p className="font-black text-gray-900 truncate mt-0.5">{org.classesOffered}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-500 font-semibold uppercase">Monthly Fees</p>
+                              <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase">Monthly Fees</p>
                               <p className="font-black text-emerald-700 mt-0.5">{org.monthlyFees}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-500 font-semibold uppercase">Board</p>
+                              <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase">Board</p>
                               <p className="font-black text-gray-900 mt-0.5">{org.board}</p>
                             </div>
                             <div>
-                              <p className="text-[10px] text-gray-500 font-semibold uppercase">Student:Faculty</p>
+                              <p className="text-[9px] sm:text-[10px] text-gray-500 font-semibold uppercase">Ratio</p>
                               <p className="font-black text-purple-700 mt-0.5">{org.studentFacultyRatio}</p>
                             </div>
                           </div>
 
                           {/* ── CSEEL STEM LABS & LIVE JOBS RIBBON ─────────────── */}
-                          <div className="flex items-center justify-between text-xs text-gray-600 pt-1 flex-wrap gap-2">
-                            <div className="flex items-center gap-3 font-semibold text-[11px]">
+                          <div className="flex items-center justify-between text-xs text-gray-600 pt-0.5 flex-wrap gap-1.5">
+                            <div className="flex items-center gap-2.5 font-semibold text-[10px] sm:text-[11px]">
                               <span className="flex items-center gap-1 text-teal-700 font-bold">
-                                <Beaker className="w-3.5 h-3.5 text-teal-600" />
-                                <span>{org.stemLabsCount} STEM Labs</span>
+                                <Beaker className="w-3 h-3 text-teal-600" />
+                                <span>{org.stemLabsCount} Labs</span>
                               </span>
                               {org.openJobsCount > 0 ? (
                                 <span className="flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -1122,28 +1122,28 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
                             </div>
 
                             {/* Shortlist Counter */}
-                            <span className="text-[11px] text-gray-500 font-bold flex items-center gap-1">
-                              <Heart className={`w-3.5 h-3.5 ${isLiked ? 'text-red-600 fill-red-600' : 'text-gray-400'}`} />
+                            <span className="text-[10px] sm:text-[11px] text-gray-500 font-bold flex items-center gap-1">
+                              <Heart className={`w-3 h-3 ${isLiked ? 'text-red-600 fill-red-600' : 'text-gray-400'}`} />
                               <span>{isLiked ? (org.likesCount || 100) + 1 : org.likesCount} Interested</span>
                             </span>
                           </div>
 
                           {/* ── BOTTOM ACTIONS (COMPARE, ENQUIRE, VIEW DETAIL) ── */}
-                          <div className="flex items-center justify-between pt-3 border-t border-gray-100 flex-wrap gap-2">
+                          <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-100 flex-wrap gap-2">
                             
                             {/* Compare Checkbox */}
-                            <label className="flex items-center gap-1.5 text-xs font-bold text-gray-700 cursor-pointer select-none">
+                            <label className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-gray-700 cursor-pointer select-none">
                               <input
                                 type="checkbox"
                                 checked={isCompared}
                                 onChange={(e) => handleToggleCompare(org, e as any)}
-                                className="rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                                className="rounded text-primary focus:ring-primary w-3.5 h-3.5 sm:w-4 sm:h-4 cursor-pointer"
                               />
                               <span>Compare</span>
                             </label>
 
                             {/* CTAs */}
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
                               <ShareButton
                                 title={org.name}
                                 text={`${org.name} - ${org.city}, ${org.state}. Fees: ${org.monthlyFees || '₹5,000'}/mo.`}

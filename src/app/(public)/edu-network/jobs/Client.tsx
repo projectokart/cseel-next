@@ -297,22 +297,22 @@ export default function JobsClient({ initialJobId, isSingleJobPage = false }: Jo
                     <div
                       key={job.id}
                       onClick={() => handleSelectJob(job)}
-                      className={`bg-white rounded-2xl p-4 cursor-pointer transition-all duration-150 border-2 relative ${
+                      className={`bg-white rounded-2xl p-3 sm:p-4 cursor-pointer transition-all duration-150 border-2 relative ${
                         isSelected
                           ? 'border-primary shadow-md bg-blue-50/20'
-                          : 'border-gray-200 hover:border-gray-400 hover:shadow-xs'
+                          : 'border-gray-200 hover:border-gray-400 hover:shadow-2xs'
                       }`}
                     >
                       {/* Top Badges */}
-                      <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {job.easilyApply && (
-                            <span className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                            <span className="text-[10px] sm:text-[11px] font-bold text-primary bg-primary/10 px-1.5 sm:px-2 py-0.5 rounded">
                               Easily apply
                             </span>
                           )}
                           {job.isUrgentlyHiring && (
-                            <span className="text-[11px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-md">
+                            <span className="text-[10px] sm:text-[11px] font-bold text-pink-700 bg-pink-50 px-1.5 sm:px-2 py-0.5 rounded">
                               Urgently hiring
                             </span>
                           )}
@@ -322,17 +322,17 @@ export default function JobsClient({ initialJobId, isSingleJobPage = false }: Jo
                         <div className="flex items-center gap-1">
                           <button
                             onClick={(e) => toggleSaveJob(job.id, e)}
-                            className="p-1 text-gray-400 hover:text-primary transition-colors"
+                            className="p-1 text-gray-400 hover:text-primary transition-colors cursor-pointer"
                             title={isSaved ? 'Job Saved' : 'Save Job'}
                           >
-                            <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-primary text-primary' : ''}`} />
+                            <Bookmark className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isSaved ? 'fill-primary text-primary' : ''}`} />
                           </button>
                           <button
                             onClick={(e) => handleDismissJob(job.id, e)}
-                            className="p-1 text-gray-300 hover:text-gray-600 transition-colors"
+                            className="p-1 text-gray-300 hover:text-gray-600 transition-colors cursor-pointer"
                             title="Not interested"
                           >
-                            <ThumbsDown className="w-3.5 h-3.5" />
+                            <ThumbsDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                           </button>
                         </div>
                       </div>
@@ -341,58 +341,58 @@ export default function JobsClient({ initialJobId, isSingleJobPage = false }: Jo
                       <Link
                         href={`/edu-network/jobs/${job.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-base font-bold text-gray-900 hover:text-primary transition-colors block leading-tight underline-offset-2 hover:underline"
+                        className="text-sm sm:text-base font-black text-gray-900 hover:text-primary transition-colors block leading-tight underline-offset-2 hover:underline"
                       >
                         {job.title}
                       </Link>
 
                       {/* Institution Name & Rating */}
-                      <div className="flex items-center gap-1.5 text-xs text-gray-700 font-semibold mt-1">
+                      <div className="flex items-center gap-1 text-[11px] sm:text-xs text-gray-700 font-semibold mt-1">
                         <Link
                           href={`/edu-network/org/${job.orgId}`}
                           onClick={(e) => e.stopPropagation()}
                           className="hover:underline flex items-center gap-1 text-gray-900 font-bold truncate"
                         >
                           <span className="truncate">{job.orgName}</span>
-                          <ExternalLink className="w-3 h-3 text-gray-400 shrink-0" />
+                          <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-gray-400 shrink-0" />
                         </Link>
                         <span className="text-gray-300">•</span>
                         <span className="flex items-center gap-0.5 text-gray-800 font-bold shrink-0">
                           <span>{job.orgRating}</span>
-                          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                          <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-500 fill-amber-500" />
                         </span>
                       </div>
 
                       {/* City & Address */}
-                      <p className="text-xs text-gray-500 font-medium mt-0.5">
+                      <p className="text-[10px] sm:text-xs text-gray-500 font-medium mt-0.5">
                         {job.city}, {job.state}
                       </p>
 
                       {/* Salary & Type Pills */}
-                      <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                        <span className="px-2.5 py-1 bg-gray-100 text-gray-800 text-xs font-black rounded-lg">
+                      <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                        <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-gray-100 text-gray-800 text-[11px] sm:text-xs font-black rounded-md sm:rounded-lg">
                           {job.salary}
                         </span>
-                        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-lg flex items-center gap-1">
-                          <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
+                        <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] sm:text-xs font-bold rounded-md sm:rounded-lg flex items-center gap-1">
+                          <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-emerald-600 stroke-[3]" />
                           <span>{job.roleType}</span>
                         </span>
                       </div>
 
                       {/* Perks Highlights */}
-                      <div className="flex flex-wrap items-center gap-1.5 mt-2 text-[11px] text-gray-500">
+                      <div className="flex flex-wrap items-center gap-1 mt-1.5 text-[10px] sm:text-[11px] text-gray-500">
                         {job.benefits.slice(0, 2).map((b, i) => (
-                          <span key={i} className="bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md font-medium">
+                          <span key={i} className="bg-gray-50 border border-gray-100 px-1.5 sm:px-2 py-0.5 rounded font-medium">
                             {b}
                           </span>
                         ))}
                         {job.benefits.length > 2 && (
-                          <span className="text-gray-400 font-bold">+{job.benefits.length - 2} perks</span>
+                          <span className="text-gray-400 font-bold">+{job.benefits.length - 2}</span>
                         )}
                       </div>
 
                       {/* Posted Timestamp */}
-                      <div className="flex items-center justify-between text-[10px] text-gray-400 font-semibold mt-3 pt-2 border-t border-gray-100">
+                      <div className="flex items-center justify-between text-[9px] sm:text-[10px] text-gray-400 font-semibold mt-2.5 pt-1.5 border-t border-gray-100">
                         <span>Posted {job.postedDate}</span>
                         <span className="text-primary font-bold">View details →</span>
                       </div>

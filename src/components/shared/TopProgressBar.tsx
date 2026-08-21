@@ -10,25 +10,45 @@ export default function TopProgressBar() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
-  // Complete progress on route change
+  const startTimeRef = useRef<number>(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const minDisplayTime = 550; // Minimum time (ms) loader is displayed for smooth fluid visual experience
+
+  // When pathname or searchParams change (Route has loaded)
   useEffect(() => {
     if (loading) {
-      setProgress(100);
+      const elapsed = Date.now() - startTimeRef.current;
+      const remainingTime = Math.max(minDisplayTime - elapsed, 0);
+
+      // Smoothly advance to 100% after remaining time
       const t1 = setTimeout(() => {
-        setLoading(false);
+        setProgress(100);
+
+        // Hold at 100% briefly so the user sees 100% and complete atom spin
         const t2 = setTimeout(() => {
-          setVisible(false);
-          setProgress(0);
-        }, 220);
+          setIsFadingOut(true);
+
+          // After fade-out animation finishes, hide loader completely
+          const t3 = setTimeout(() => {
+            setLoading(false);
+            setVisible(false);
+            setIsFadingOut(false);
+            setProgress(0);
+          }, 320);
+
+          return () => clearTimeout(t3);
+        }, 180);
+
         return () => clearTimeout(t2);
-      }, 200);
+      }, remainingTime);
+
       return () => clearTimeout(t1);
     }
   }, [pathname, searchParams]);
 
-  // Intercept link clicks to immediately show progress
+  // Intercept internal link clicks to trigger smooth fluid transition
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest("a");
@@ -37,7 +57,7 @@ export default function TopProgressBar() {
       const href = target.getAttribute("href");
       if (!href) return;
 
-      // Ignore external, anchor hash, or target="_blank" links
+      // Ignore external, hash, or target="_blank" links
       if (
         href.startsWith("http://") ||
         href.startsWith("https://") ||
@@ -52,25 +72,29 @@ export default function TopProgressBar() {
         return;
       }
 
-      // If already on this page, don't trigger
+      // If clicking current route, ignore
       const currentFullUrl = window.location.pathname + window.location.search;
       if (href === currentFullUrl) return;
 
-      // Start progress immediately
+      // Start smooth fluid transition
+      startTimeRef.current = Date.now();
+      setIsFadingOut(false);
       setVisible(true);
       setLoading(true);
-      setProgress(30);
+      setProgress(18);
 
       if (timerRef.current) clearInterval(timerRef.current);
+
+      // Smooth progress progression
+      let currentProgress = 18;
       timerRef.current = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 90) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            return 90;
-          }
-          return prev + Math.floor(Math.random() * 12) + 6;
-        });
-      }, 80);
+        currentProgress += Math.floor(Math.random() * 15) + 8;
+        if (currentProgress >= 88) {
+          currentProgress = 88;
+          if (timerRef.current) clearInterval(timerRef.current);
+        }
+        setProgress(currentProgress);
+      }, 75);
     };
 
     document.addEventListener("click", handleAnchorClick, { capture: true });
@@ -90,22 +114,38 @@ export default function TopProgressBar() {
         aria-hidden="true"
       >
         <div
-          className="h-[3.5px] bg-[#006fcc] shadow-[0_0_12px_rgba(0,111,204,0.8)] transition-all duration-150 ease-out"
+          className="h-[3.5px] bg-gradient-to-r from-[#003c6e] via-[#006fcc] to-cyan-400 shadow-[0_0_12px_rgba(0,111,204,0.9)] transition-all duration-200 ease-out"
           style={{
             width: `${progress}%`,
-            opacity: loading ? 1 : 0,
+            opacity: visible ? 1 : 0,
           }}
         />
       </div>
 
-      {/* Screen-Centered Animated Atom Science Loader */}
-      {loading && (
-        <div className="fixed inset-0 z-[999990] flex items-center justify-center bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150 pointer-events-none select-none">
-          <NucleusLoader
-            progress={progress}
-          />
-        </div>
-      )}
+      {/* Screen-Centered Animated Atom Science Loader with Fluid Fade In/Out */}
+      <div
+        className={`fixed inset-0 z-[999990] flex items-center justify-center bg-white/85 dark:bg-slate-950/85 backdrop-blur-sm pointer-events-none select-none transition-opacity duration-300 ${
+          isFadingOut ? "opacity-0" : "opacity-100"
+        }`}
+        style={{
+          animation: isFadingOut ? "none" : "fadeInLoader 0.2s ease-out forwards",
+        }}
+      >
+        <NucleusLoader progress={progress} />
+      </div>
+
+      <style jsx global>{`
+        @keyframes fadeInLoader {
+          from {
+            opacity: 0;
+            transform: scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </>
   );
 }

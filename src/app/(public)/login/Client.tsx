@@ -235,97 +235,20 @@ const Login = () => {
                     </button>
                   </div>
                 </div>
-                <Button type="submit" className="w-full font-bold" disabled={loading}>
+                <Button type="submit" className="w-full font-bold shadow-md hover:shadow-lg transition-all" disabled={loading}>
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign In"}
                 </Button>
               </form>
 
-              {/* ── QUICK DEMO LOGIN & EXCEL CREDENTIALS DOWNLOAD ── */}
-              <div className="mt-6 pt-5 border-t border-border space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black text-foreground flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-                    <span>Quick Demo Logins & Credentials</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      downloadPortalCredentialsCSVFile();
-                      toast({ title: "Excel Downloaded!", description: "Saved CSEEL_Students_Teachers_Schools_Credentials.csv" });
-                    }}
-                    className="inline-flex items-center gap-1 text-[11px] font-black text-emerald-700 hover:text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200 transition-colors"
-                    title="Download Excel Sheet for Students, Teachers & Schools"
-                  >
-                    <Download className="w-3 h-3" />
-                    <span>Excel Sheet</span>
-                  </button>
-                </div>
-
-                {/* Quick Role Badges */}
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmail('aarav.sharma@student.cseel.org');
-                      setPassword('Student@Aarav2026');
-                      toast({ title: "Student Credentials Loaded", description: "Aarav Sharma (Class 10 Innovator)" });
-                    }}
-                    className="p-2 text-left rounded-xl bg-emerald-50/60 border border-emerald-200 hover:bg-emerald-100/70 transition-all flex flex-col"
-                  >
-                    <span className="font-bold text-emerald-950 flex items-center gap-1">👨‍🎓 Student Demo</span>
-                    <span className="text-[10px] text-emerald-700 font-medium truncate">Aarav Sharma (DPS)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmail('ramesh.mukherjee@faculty.cseel.org');
-                      setPassword('Faculty@Ramesh2026');
-                      toast({ title: "Teacher Credentials Loaded", description: "Dr. Ramesh Mukherjee (Physics PGT)" });
-                    }}
-                    className="p-2 text-left rounded-xl bg-purple-50/60 border border-purple-200 hover:bg-purple-100/70 transition-all flex flex-col"
-                  >
-                    <span className="font-bold text-purple-950 flex items-center gap-1">👩‍🏫 Teacher Demo</span>
-                    <span className="text-[10px] text-purple-700 font-medium truncate">Dr. Ramesh (NPS Blr)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEmail('principal@dpsrkp.cseel.org');
-                      setPassword('School@DpsRkp2026');
-                      toast({ title: "School Credentials Loaded", description: "DPS R.K. Puram School Admin" });
-                    }}
-                    className="p-2 text-left rounded-xl bg-blue-50/60 border border-blue-200 hover:bg-blue-100/70 transition-all flex flex-col"
-                  >
-                    <span className="font-bold text-blue-950 flex items-center gap-1">🏫 School / Org Demo</span>
-                    <span className="text-[10px] text-blue-700 font-medium truncate">DPS R.K. Puram Admin</span>
-                  </button>
-
-                  <Link
-                    href="/admin"
-                    className="p-2 text-left rounded-xl bg-slate-900 text-white border border-slate-700 hover:bg-slate-800 transition-all flex flex-col justify-center"
-                  >
-                    <span className="font-bold text-slate-100 flex items-center gap-1">👑 Admin Portal →</span>
-                    <span className="text-[10px] text-slate-300 font-medium">10 Multi-Role Desks</span>
-                  </Link>
-                </div>
-
-                <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1">
-                  <span>Direct Dashboard Access:</span>
-                  <div className="flex items-center gap-2 font-bold">
-                    <Link href="/student" className="text-emerald-700 hover:underline">/student</Link>
-                    <span>•</span>
-                    <Link href="/teacher" className="text-purple-700 hover:underline">/teacher</Link>
-                    <span>•</span>
-                    <Link href="/org" className="text-blue-700 hover:underline">/org</Link>
-                  </div>
-                </div>
+              {/* ── SECURITY BADGE & FOOTER ── */}
+              <div className="mt-6 pt-5 border-t border-border flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Enterprise 256-Bit SSL Encrypted Authentication</span>
               </div>
 
-              <p className="text-center text-sm text-muted-foreground mt-6">
+              <p className="text-center text-sm text-muted-foreground mt-5">
                 Don't have an account?{" "}
-                <button onClick={() => { setIsSignup(true); setStep("role"); }} className="text-primary font-medium hover:underline">Sign up</button>
+                <button onClick={() => { setIsSignup(true); setStep("role"); }} className="text-primary font-bold hover:underline">Sign up</button>
               </p>
             </div>
           )}

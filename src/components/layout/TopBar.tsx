@@ -148,15 +148,6 @@ const TopBar = () => {
             <Link href="/feed" className="hover:text-white transition-colors whitespace-nowrap">Community</Link>
             <Link href="/get-support" className="hidden sm:inline hover:text-white transition-colors whitespace-nowrap">Get Support</Link>
             <Link href="/contact-us" className="hidden sm:inline hover:text-white transition-colors whitespace-nowrap">Contact Us</Link>
-            
-            {/* Admin Governance Quick Link */}
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-purple-600/60 hover:bg-purple-600 text-white text-[11px] font-black rounded-lg border border-purple-400/40 transition-all shadow-xs"
-              title="Open Role-Based Admin Portal"
-            >
-              <span>Admin Portal</span>
-            </Link>
 
             {user ? (
               <DropdownMenu>
@@ -176,9 +167,6 @@ const TopBar = () => {
                     </span>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push("/admin")}>
-                    <LayoutDashboard className="mr-2 h-4 w-4 text-purple-600" /> Admin Portal
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push(dashboardPath)}>
                     <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                   </DropdownMenuItem>

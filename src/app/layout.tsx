@@ -71,16 +71,23 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  manifest: "/site.webmanifest",
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "google6712398471293847",
+    yandex: "yandex",
+    other: {
+      "msvalidate.01": "bing-site-verification",
+    },
+  },
   other: {
-    "theme-color": "#0a5c8a",
+    "theme-color": "#003c6e",
     "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
     "apple-mobile-web-app-title": "CSEEL",
     "application-name": "CSEEL",
-    "msapplication-TileColor": "#0a5c8a",
+    "msapplication-TileColor": "#003c6e",
     "geo.region": "IN",
     "geo.country": "India",
-    "revisit-after": "3 days",
+    "revisit-after": "1 days",
   },
 };
 

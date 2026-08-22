@@ -52,7 +52,7 @@ export const INITIAL_VACANCIES: CareerVacancy[] = [
 class CareersRepository {
   private vacancies: CareerVacancy[] = [...INITIAL_VACANCIES];
 
-  public async getAll(filter?: Partial<CareerFilterState>): Promise<{ items: CareerVacancy[]; total: number }> {
+  public async getAll(filter?: Partial<CareerFilterState>): Promise<{ items: CareerVacancy[]; total: number; departments: string[] }> {
     const { data } = await departmentDb.query<CareerVacancy>('careers', 'vacancies', this.vacancies);
     let result = [...data];
 

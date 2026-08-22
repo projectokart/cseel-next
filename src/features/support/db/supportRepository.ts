@@ -1,4 +1,5 @@
 import { SupportTicket, SupportFilterState } from '../types';
+import { departmentDb } from '@/lib/database/departmentDbAdapter';
 
 export const INITIAL_TICKETS: SupportTicket[] = [
   {
@@ -35,7 +36,8 @@ class SupportRepository {
   private tickets: SupportTicket[] = [...INITIAL_TICKETS];
 
   public async getAll(filter?: Partial<SupportFilterState>): Promise<{ items: SupportTicket[]; total: number }> {
-    let result = [...this.tickets];
+    const { data } = await departmentDb.query<SupportTicket>('support', 'tickets', this.tickets);
+    let result = [...data];
 
     if (filter?.searchQuery) {
       const q = filter.searchQuery.toLowerCase().trim();
@@ -65,7 +67,10 @@ class SupportRepository {
   }
 
   public async getById(id: string): Promise<SupportTicket | null> {
-    const found = this.tickets.find((t) => t.id === id || t.ticketNumber === id);
+    const { data } = await departmentDb.query<SupportTicket>('support', 'tickets', this.tickets, {
+      match: { id },
+    });
+    const found = data.find((t) => t.id === id || t.ticketNumber === id);
     return found ? { ...found } : null;
   }
 
@@ -81,11 +86,14 @@ class SupportRepository {
       createdAt: new Date().toISOString(),
     };
 
+    await departmentDb.insert('support', 'tickets', newTicket);
     this.tickets.unshift(newTicket);
     return newTicket;
   }
 
   public async update(id: string, updates: Partial<SupportTicket>): Promise<SupportTicket | null> {
+    await departmentDb.update('support', 'tickets', id, updates);
+
     const index = this.tickets.findIndex((t) => t.id === id || t.ticketNumber === id);
     if (index === -1) return null;
     const updated = { ...this.tickets[index], ...updates, updatedAt: new Date().toISOString() };
@@ -94,6 +102,8 @@ class SupportRepository {
   }
 
   public async delete(id: string): Promise<boolean> {
+    await departmentDb.delete('support', 'tickets', id);
+
     const index = this.tickets.findIndex((t) => t.id === id || t.ticketNumber === id);
     if (index === -1) return false;
     this.tickets.splice(index, 1);

@@ -1,50 +1,50 @@
-import { CseelEvent, EventsFilterState, EventType } from '../types';
+import { OutreachEvent, EventsFilterState } from '../types';
 import { slugify } from '@/lib/utils';
+import { departmentDb } from '@/lib/database/departmentDbAdapter';
 
-export const INITIAL_EVENTS: CseelEvent[] = [
+export const INITIAL_EVENTS: OutreachEvent[] = [
   {
-    id: 'ev-1',
+    id: 'evt-1',
     slug: 'national-stem-principals-symposium-delhi',
-    title: 'National STEM Principals & Academic Leaders Symposium',
+    title: 'National STEM Principals & Laboratory Leaders Symposium 2026',
     type: 'National Symposium',
-    date: '2026-10-18',
+    date: '2026-09-26',
     time: '09:30 AM - 05:00 PM IST',
-    venue: 'Vigyan Bhawan / Hybrid',
+    venue: 'India Habitat Centre, Lodhi Road',
     city: 'New Delhi',
-    keynoteSpeakers: ['Dr. K. Sivan (Former ISRO Chairman)', 'Prof. Yashpal Pedagogy Panel'],
-    registeredCount: 420,
-    capacity: 500,
-    bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop',
-    agendaSummary: 'Annual gathering of 500+ CBSE school principals to deliberate on institutional experiential learning models, AI-assisted lab grading, and NEP-2020 integration.',
+    keynoteSpeakers: ['Dr. V. K. Saraswat (NITI Aayog)', 'Prof. H. C. Verma', 'Dr. Vikram Sharma (CSEEL)'],
+    registeredCount: 210,
+    capacity: 350,
+    bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+    agendaSummary: 'Keynote addresses on NEP 2020 laboratory infrastructure mandating experiential learning, composite lab safety standards, and CSR funding for rural school ATL labs.',
     status: 'upcoming',
     isRegistrationOpen: true,
-    created_at: new Date().toISOString(),
   },
   {
-    id: 'ev-2',
-    slug: 'chandrayaan-beyond-planetary-science-bengaluru',
-    title: 'Chandrayaan & Beyond: Space Science & Robotics Hackathon',
-    type: 'Science Hackathon',
-    date: '2026-11-08',
-    time: '10:00 AM - 06:00 PM IST',
-    venue: 'IISc Science Innovation Center',
+    id: 'evt-2',
+    slug: 'all-india-student-innovation-hackathon',
+    title: 'All-India Inter-School STEM Innovation Fair & CAD Hackathon',
+    type: 'Innovation Fair & Hackathon',
+    date: '2026-10-18',
+    time: '10:00 AM - 06:30 PM IST',
+    venue: 'IISc Convention Complex',
     city: 'Bengaluru',
-    keynoteSpeakers: ['Senior Flight Dynamics Engineers, ISRO'],
-    registeredCount: 310,
-    capacity: 350,
-    bannerImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop',
-    agendaSummary: 'National student rover design hackathon where 70 school teams demonstrate autonomous lunar terrain navigation using Arduino & ultrasonic telemetry.',
+    keynoteSpeakers: ['ISRO Senior Scientist Team', 'ATL State Mission Directorate'],
+    registeredCount: 480,
+    capacity: 600,
+    bannerImage: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800',
+    agendaSummary: 'Live project demos across 4 tracks: Smart Agriculture & Sensors, Clean Energy, Biomedical Assistive Devices, and Space Tech.',
     status: 'upcoming',
     isRegistrationOpen: true,
-    created_at: new Date().toISOString(),
   },
 ];
 
 class EventsRepository {
-  private events: CseelEvent[] = [...INITIAL_EVENTS];
+  private events: OutreachEvent[] = [...INITIAL_EVENTS];
 
-  public async getAll(filter?: Partial<EventsFilterState>): Promise<{ items: CseelEvent[]; total: number; types: string[] }> {
-    let result = [...this.events];
+  public async getAll(filter?: Partial<EventsFilterState>): Promise<{ items: OutreachEvent[]; total: number }> {
+    const { data } = await departmentDb.query<OutreachEvent>('events', 'symposia', this.events);
+    let result = [...data];
 
     if (filter?.searchQuery) {
       const q = filter.searchQuery.toLowerCase().trim();
@@ -65,85 +65,51 @@ class EventsRepository {
       result = result.filter((e) => e.status === filter.status);
     }
 
-    if (filter?.sortBy) {
-      switch (filter.sortBy) {
-        case 'registered':
-          result.sort((a, b) => b.registeredCount - a.registeredCount);
-          break;
-        case 'date':
-          result.sort((a, b) => a.date.localeCompare(b.date));
-          break;
-        default:
-          result.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-          break;
-      }
-    }
-
-    const types = Array.from(new Set(this.events.map((e) => e.type)));
-    return { items: result, total: result.length, types };
+    return { items: result, total: result.length };
   }
 
-  public async getById(id: string): Promise<CseelEvent | null> {
-    const found = this.events.find((e) => e.id === id || e.slug === id);
+  public async getById(id: string): Promise<OutreachEvent | null> {
+    const { data } = await departmentDb.query<OutreachEvent>('events', 'symposia', this.events, {
+      match: { id },
+    });
+    const found = data.find((e) => e.id === id || e.slug === id);
     return found ? { ...found } : null;
   }
 
-  public async create(data: Omit<CseelEvent, 'id' | 'slug' | 'created_at' | 'updated_at'>): Promise<CseelEvent> {
-    const id = `ev-${Date.now()}`;
-    const slug = slugify(data.title) + `-${Date.now().toString().slice(-4)}`;
+  public async create(eventData: Omit<OutreachEvent, 'id' | 'slug' | 'registeredCount'>): Promise<OutreachEvent> {
+    const id = `evt-${Date.now()}`;
+    const slug = slugify(eventData.title);
 
-    const newEvent: CseelEvent = {
-      ...data,
+    const newEvent: OutreachEvent = {
+      ...eventData,
       id,
       slug,
-      registeredCount: data.registeredCount || 0,
-      isRegistrationOpen: data.isRegistrationOpen !== false,
-      status: data.status || 'upcoming',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      registeredCount: 0,
+      isRegistrationOpen: eventData.isRegistrationOpen ?? true,
     };
 
+    await departmentDb.insert('events', 'symposia', newEvent);
     this.events.unshift(newEvent);
     return newEvent;
   }
 
-  public async update(id: string, updates: Partial<CseelEvent>): Promise<CseelEvent | null> {
+  public async update(id: string, updates: Partial<OutreachEvent>): Promise<OutreachEvent | null> {
+    await departmentDb.update('events', 'symposia', id, updates);
+
     const index = this.events.findIndex((e) => e.id === id || e.slug === id);
     if (index === -1) return null;
-    const updated = { ...this.events[index], ...updates, updated_at: new Date().toISOString() };
+    const updated = { ...this.events[index], ...updates };
     this.events[index] = updated;
     return updated;
   }
 
   public async delete(id: string): Promise<boolean> {
+    await departmentDb.delete('events', 'symposia', id);
+
     const index = this.events.findIndex((e) => e.id === id || e.slug === id);
     if (index === -1) return false;
     this.events.splice(index, 1);
     return true;
-  }
-
-  public async bulkInsert(items: Partial<CseelEvent>[]): Promise<CseelEvent[]> {
-    const created: CseelEvent[] = [];
-    for (const item of items) {
-      if (!item.title || !item.date) continue;
-      const ev = await this.create({
-        title: item.title,
-        type: item.type || 'National Symposium',
-        date: item.date,
-        time: item.time || '10:00 AM - 05:00 PM',
-        venue: item.venue || 'Main Auditorium',
-        city: item.city || 'New Delhi',
-        keynoteSpeakers: item.keynoteSpeakers || ['Keynote Speaker'],
-        registeredCount: 0,
-        capacity: Number(item.capacity) || 300,
-        bannerImage: item.bannerImage || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop',
-        agendaSummary: item.agendaSummary || 'National STEM Symposium.',
-        status: 'upcoming',
-        isRegistrationOpen: true,
-      });
-      created.push(ev);
-    }
-    return created;
   }
 }
 

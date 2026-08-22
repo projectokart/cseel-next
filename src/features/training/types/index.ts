@@ -2,14 +2,14 @@
  * Training & Programs Types
  */
 
-export type TrainingFormat = 'Hands-on Bootcamp' | 'Online Masterclass' | 'Hybrid Certification' | 'ATL Lab Workshop';
-export type TrainingLevel = 'Foundational' | 'Intermediate' | 'Master Educator';
+export type TrainingFormat = 'Hands-on Bootcamp' | 'Online Masterclass' | 'Hybrid Certification' | 'ATL Lab Workshop' | string;
+export type TrainingLevel = 'Foundational' | 'Intermediate' | 'Master Educator' | string;
 
 export interface TrainingProgram {
   id: string;
   slug: string;
   title: string;
-  category: 'Physics' | 'Chemistry' | 'Robotics & IoT' | 'NEP Pedagogy' | 'AI in Classroom';
+  category: 'Physics' | 'Chemistry' | 'Robotics & IoT' | 'NEP Pedagogy' | 'AI in Classroom' | string;
   format: TrainingFormat;
   level: TrainingLevel;
   durationHours: number;

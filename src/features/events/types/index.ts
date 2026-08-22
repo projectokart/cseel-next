@@ -2,7 +2,9 @@
  * Events & Outreach Types
  */
 
-export type EventType = 'National Symposium' | 'Webinar' | 'Science Hackathon' | 'Exhibition' | 'Panel Discussion';
+export type EventType = 'National Symposium' | 'Webinar' | 'Science Hackathon' | 'Exhibition' | 'Panel Discussion' | string;
+
+export type OutreachEvent = CseelEvent;
 
 export interface CseelEvent {
   id: string;

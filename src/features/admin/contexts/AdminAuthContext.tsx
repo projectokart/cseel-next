@@ -160,6 +160,23 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       ipAddress: '127.0.0.1',
     };
     setAuditLogs((prev) => [newLog, ...prev]);
+
+    // Send persistent record to backend API
+    try {
+      fetch('/api/admin/audit-logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminName: currentAdmin?.name || 'Administrator',
+          adminEmail: currentAdmin?.email || 'admin@123',
+          adminRole: currentRole,
+          department: currentAdmin?.department || ADMIN_ROLE_CONFIGS[currentRole]?.department || 'Administration',
+          action,
+          actionCategory: action.startsWith('CREATE') ? 'CREATE' : action.startsWith('DELETE') ? 'DELETE' : action.startsWith('EXPORT') ? 'EXPORT' : action.startsWith('AUTH') || action.startsWith('LOGIN') ? 'AUTH' : 'UPDATE',
+          details,
+        }),
+      }).catch(() => {});
+    } catch {}
   };
 
   const addNewAdminUser = (user: Omit<AdminUser, 'id' | 'lastLogin' | 'status'>) => {

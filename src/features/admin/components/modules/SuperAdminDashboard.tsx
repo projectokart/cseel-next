@@ -282,12 +282,19 @@ export const SuperAdminDashboard: React.FC = () => {
         
         {/* Audit Log Stream (8 Cols) */}
         <div className="lg:col-span-8 bg-white rounded-3xl p-5 border border-gray-200/90 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100 flex-wrap gap-2">
             <h3 className="text-xs font-black uppercase text-gray-900 tracking-wider flex items-center gap-1.5">
               <Activity className="w-4 h-4 text-emerald-600" />
               <span>Real-Time System Security & Activity Audit Log</span>
             </h3>
-            <span className="text-[11px] text-gray-400 font-medium">Auto-logging all actions</span>
+            <button
+              type="button"
+              onClick={() => setActiveModule('audit_logs')}
+              className="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs rounded-xl transition-colors flex items-center gap-1 border border-purple-200"
+            >
+              <span>Daily Work History Ledger</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
           <div className="divide-y divide-gray-100">

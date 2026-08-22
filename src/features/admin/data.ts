@@ -31,7 +31,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'rose',
     badgeBg: 'bg-rose-500/20 border-rose-400/40 text-rose-300',
     badgeText: 'HR & Careers',
-    allowedModules: ['overview', 'hr_careers'],
+    allowedModules: ['overview', 'hr_careers', 'audit_logs'],
     description: 'Manages CSEEL company career vacancies, job applicant pipelines, interview scheduling, and hiring decisions.',
   },
   school_admin: {
@@ -41,7 +41,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'blue',
     badgeBg: 'bg-blue-500/20 border-blue-400/40 text-blue-300',
     badgeText: 'Schools & Institutes',
-    allowedModules: ['overview', 'schools_institutions'],
+    allowedModules: ['overview', 'schools_institutions', 'audit_logs'],
     description: 'Onboards schools, verifies STEM laboratory facilities, audits fee structures, and approves institute KYC profiles.',
   },
   recruitment_admin: {
@@ -51,7 +51,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'purple',
     badgeBg: 'bg-purple-500/20 border-purple-400/40 text-purple-300',
     badgeText: 'Faculty Recruitment',
-    allowedModules: ['overview', 'teaching_recruitment'],
+    allowedModules: ['overview', 'teaching_recruitment', 'audit_logs'],
     description: 'Manages school teaching vacancies, verifies educator degrees, and oversees 72-hour flash job seeker activations.',
   },
   science_admin: {
@@ -61,7 +61,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'cyan',
     badgeBg: 'bg-cyan-500/20 border-cyan-400/40 text-cyan-300',
     badgeText: 'Virtual Labs & Simulations',
-    allowedModules: ['overview', 'science_simulations'],
+    allowedModules: ['overview', 'science_simulations', 'audit_logs'],
     description: 'Configures interactive physics/chemistry/biology simulations, apparatus variables, and NEP-2020 lab practical manuals.',
   },
   projectokart_admin: {
@@ -71,7 +71,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'amber',
     badgeBg: 'bg-amber-500/20 border-amber-400/40 text-amber-300',
     badgeText: 'Projectokart Hardware',
-    allowedModules: ['overview', 'projectokart_inventions'],
+    allowedModules: ['overview', 'projectokart_inventions', 'audit_logs'],
     description: 'Curates science fair hardware kits, BOM lists, downloadable circuit diagrams, CAD schematics, and student awards.',
   },
   inventory_admin: {
@@ -81,7 +81,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'teal',
     badgeBg: 'bg-teal-500/20 border-teal-400/40 text-teal-300',
     badgeText: 'Lab Materials & Stock',
-    allowedModules: ['overview', 'inventory_materials'],
+    allowedModules: ['overview', 'inventory_materials', 'audit_logs'],
     description: 'Oversees STEM lab inventory, wholesale pricing, equipment specifications, stock alerts, and bulk school orders.',
   },
   programs_admin: {
@@ -91,7 +91,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'indigo',
     badgeBg: 'bg-indigo-500/20 border-indigo-400/40 text-indigo-300',
     badgeText: 'Programs & Seminars',
-    allowedModules: ['overview', 'programs_events'],
+    allowedModules: ['overview', 'programs_events', 'audit_logs'],
     description: 'Organizes national science conclaves, live webinars, teacher training bootcamps, and student exhibitions.',
   },
   rnd_admin: {
@@ -101,7 +101,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'violet',
     badgeBg: 'bg-violet-500/20 border-violet-400/40 text-violet-300',
     badgeText: 'R&D Innovation Labs',
-    allowedModules: ['overview', 'research_rnd', 'science_simulations', 'projectokart_inventions'],
+    allowedModules: ['overview', 'research_rnd', 'science_simulations', 'projectokart_inventions', 'audit_logs'],
     description: 'Drives new experimental pedagogical designs, published research whitepapers, and patent-pending ATL tech prototypes.',
   },
   content_admin: {
@@ -111,7 +111,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'sky',
     badgeBg: 'bg-sky-500/20 border-sky-400/40 text-sky-300',
     badgeText: 'Homepage CMS & Media',
-    allowedModules: ['overview', 'content_homepage'],
+    allowedModules: ['overview', 'content_homepage', 'audit_logs'],
     description: 'Controls homepage announcements, hero promotional banners, science articles, blog publishing, and FAQs.',
   },
 };

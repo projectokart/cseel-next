@@ -97,22 +97,56 @@ const DEPARTMENT_SUGGESTIONS = [
 ];
 
 const DEFAULT_JOB_DESCRIPTION = `
-<h2>Role Overview</h2>
-<p>We are looking for a dedicated specialist to join our core team at CSEEL. In this position, you will lead high-impact STEM curriculum design, work directly with partner institutions, and foster experiential hands-on learning across India.</p>
+<h2>1. Role Overview</h2>
+<p>We are looking for a dedicated <span style="color: #7c3aed; font-weight: bold;">Senior STEM Curriculum Architect</span> to lead high-impact experiential learning across India with <mark style="background-color: #fef08a;">NEP-2020 alignment</mark>.</p>
 
-<h2>Key Responsibilities</h2>
-<ul>
+<h2>2. Key Responsibilities</h2>
+<ol>
   <li>Lead experiential laboratory setup and practical curriculum alignment with NEP-2020 guidelines.</li>
   <li>Collaborate with cross-functional academic leads, hardware engineers, and school faculties.</li>
   <li>Evaluate student project submissions, ATL innovation challenges, and national exhibitions.</li>
-</ul>
+</ol>
 
-<h2>Requirements & Qualifications</h2>
+<h2>3. Required Technical Skills & Tools</h2>
 <ul>
-  <li>Bachelor's or Master's degree in relevant Science/Engineering or Educational pedagogy discipline.</li>
+  <li>Strong command of <code>Python</code>, <code>Arduino C++</code>, and Virtual Simulation modeling.</li>
   <li>Demonstrated track record of technical rigor, clarity of thought, and proactive ownership.</li>
   <li>Exceptional verbal and written communication capabilities.</li>
 </ul>
+
+<h2>4. Evaluation Metrics & Milestone Table</h2>
+<table class="editor-table">
+  <thead>
+    <tr>
+      <th>Milestone Phase</th>
+      <th>Deliverable Target</th>
+      <th>Timeline</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Phase 1</td>
+      <td>Virtual Lab Simulations Setup</td>
+      <td>Month 1-2</td>
+      <td><span style="color: #16a34a; font-weight: bold;">Active</span></td>
+    </tr>
+    <tr>
+      <td>Phase 2</td>
+      <td>National STEM Teachers Workshop</td>
+      <td>Month 3-4</td>
+      <td><span style="color: #2563eb; font-weight: bold;">Planned</span></td>
+    </tr>
+    <tr>
+      <td>Phase 3</td>
+      <td>School Hackathon & Exhibition</td>
+      <td>Month 5-6</td>
+      <td><span style="color: #d97706; font-weight: bold;">Upcoming</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For more details, visit our official portal at <a href="https://www.cseel.org" target="_blank" rel="noopener noreferrer">CSEEL STEM Platform</a>.</p>
 `;
 
 export const HrAdminModule: React.FC = () => {

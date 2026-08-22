@@ -51,8 +51,12 @@ export default function UniversalEditor({
   const [lastSaved, setLastSaved] = useState<string>('All changes saved');
   const [isSaving, setIsSaving] = useState(false);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isInternalChangeRef = useRef(false);
+
+  const initialHtmlOrJson = initialContent || (typeof value === 'string' ? value : value?.json || value?.html || '');
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
@@ -157,7 +161,7 @@ export default function UniversalEditor({
       MermaidExtension,
       CalloutExtension,
     ],
-    content: initialContent || (typeof value === 'string' ? value : value?.json || value?.html || ''),
+    content: initialHtmlOrJson,
     editable: !readOnly,
     autofocus: autoFocus,
     editorProps: {
@@ -176,6 +180,7 @@ export default function UniversalEditor({
       },
     },
     onUpdate: ({ editor }) => {
+      isInternalChangeRef.current = true;
       const json = editor.getJSON();
       const html = editor.getHTML();
       const text = editor.getText();
@@ -243,11 +248,17 @@ export default function UniversalEditor({
     [editor]
   );
 
+  // Sync external value ONLY if not caused by internal typing/toolbar actions
   useEffect(() => {
-    if (editor && value && !editor.isFocused) {
+    if (!editor) return;
+    if (isInternalChangeRef.current) {
+      isInternalChangeRef.current = false;
+      return;
+    }
+    if (value) {
       const currentHTML = editor.getHTML();
       const nextHTML = typeof value === 'string' ? value : value?.html || '';
-      if (nextHTML && nextHTML !== currentHTML) {
+      if (nextHTML && nextHTML !== currentHTML && !editor.isFocused) {
         editor.commands.setContent(nextHTML);
       }
     }
@@ -333,6 +344,7 @@ export default function UniversalEditor({
           border-radius: 12px;
           overflow: hidden;
           border: 1px solid #e2e8f0;
+          margin: 16px 0;
         }
         .editor-table th,
         .editor-table td {
@@ -373,27 +385,28 @@ export default function UniversalEditor({
           cursor: col-resize;
           z-index: 20;
         }
-        .ProseMirror table {
-          margin: 16px 0;
-        }
         /* Ordered & Unordered List styling */
         .ProseMirror ol {
-          list-style-type: decimal;
-          padding-left: 1.5rem;
+          list-style-type: decimal !important;
+          padding-left: 1.5rem !important;
+          margin: 8px 0 !important;
         }
-        .ProseMirror ol ol { list-style-type: lower-alpha; }
-        .ProseMirror ol ol ol { list-style-type: lower-roman; }
+        .ProseMirror ol ol { list-style-type: lower-alpha !important; }
+        .ProseMirror ol ol ol { list-style-type: lower-roman !important; }
         .ProseMirror ul {
-          list-style-type: disc;
-          padding-left: 1.5rem;
+          list-style-type: disc !important;
+          padding-left: 1.5rem !important;
+          margin: 8px 0 !important;
         }
-        .ProseMirror ul ul { list-style-type: circle; }
-        .ProseMirror ul ul ul { list-style-type: square; }
+        .ProseMirror ul ul { list-style-type: circle !important; }
+        .ProseMirror ul ul ul { list-style-type: square !important; }
         .ProseMirror li {
-          margin: 2px 0;
+          margin: 3px 0 !important;
+          display: list-item !important;
         }
         .ProseMirror li p {
-          margin: 0;
+          margin: 0 !important;
+          display: inline !important;
         }
         /* Inline code */
         .ProseMirror code {
@@ -462,11 +475,11 @@ export default function UniversalEditor({
         }
         /* Task list */
         .ProseMirror ul[data-type="taskList"] {
-          list-style: none;
-          padding-left: 4px;
+          list-style: none !important;
+          padding-left: 4px !important;
         }
         .ProseMirror ul[data-type="taskList"] li {
-          display: flex;
+          display: flex !important;
           align-items: flex-start;
           gap: 8px;
         }

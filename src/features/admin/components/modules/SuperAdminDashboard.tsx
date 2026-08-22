@@ -23,16 +23,116 @@ export const SuperAdminDashboard: React.FC = () => {
     { label: 'Active Admin Teams', val: '10', desc: 'Role-Based Access Control', icon: Users, color: 'text-rose-500', bg: 'bg-rose-500/10' },
   ];
 
-  const MODULE_SHORTCUTS: { role: AdminRole; label: string; icon: any; color: string; desc: string; modId: any }[] = [
-    { role: 'hr_admin', label: 'HR Careers Portal', icon: Briefcase, color: 'from-rose-600 to-pink-700', desc: 'Manage internal company vacancies on /careers', modId: 'hr_careers' },
-    { role: 'school_admin', label: 'Schools & Institutes', icon: Building2, color: 'from-blue-600 to-cyan-700', desc: 'Verify 104+ schools, fees, and STEM lab assets', modId: 'schools_institutions' },
-    { role: 'recruitment_admin', label: 'Faculty & Job Board', icon: GraduationCap, color: 'from-purple-600 to-indigo-700', desc: 'External teaching jobs & 72h flash seekers', modId: 'teaching_recruitment' },
-    { role: 'science_admin', label: 'Virtual Lab Practicals', icon: Beaker, color: 'from-cyan-600 to-teal-700', desc: 'Virtual simulations & interactive apparatus', modId: 'science_simulations' },
-    { role: 'projectokart_admin', label: 'Projectokart Hardware', icon: Wrench, color: 'from-amber-600 to-orange-700', desc: 'Science fair kits, CAD diagrams, BOM lists', modId: 'projectokart_inventions' },
-    { role: 'inventory_admin', label: 'Materials & Lab Kits', icon: Package, color: 'from-teal-600 to-emerald-700', desc: 'STEM inventory, wholesale quotes & stock', modId: 'inventory_materials' },
-    { role: 'programs_admin', label: 'Seminars & Events', icon: Calendar, color: 'from-indigo-600 to-violet-700', desc: 'National conclaves, webinars & workshops', modId: 'programs_events' },
-    { role: 'rnd_admin', label: 'R&D Innovation Labs', icon: Sparkles, color: 'from-violet-600 to-purple-800', desc: 'Research papers & future tech prototypes', modId: 'research_rnd' },
-    { role: 'content_admin', label: 'Homepage & CMS', icon: FileText, color: 'from-sky-600 to-blue-700', desc: 'Promotional banners, blog articles, FAQs', modId: 'content_homepage' },
+  const MODULE_SHORTCUTS: {
+    role: AdminRole;
+    label: string;
+    icon: any;
+    color: string;
+    desc: string;
+    modId: any;
+    subdomainUrl: string;
+    schema: string;
+  }[] = [
+    {
+      role: 'inventory_admin',
+      label: 'Lab Materials & Store',
+      icon: Package,
+      color: 'from-teal-600 to-emerald-700',
+      desc: 'Manage STEM lab materials, equipment stock & school wholesale quotes.',
+      modId: 'inventory_materials',
+      subdomainUrl: 'https://material.cseel.org/admin',
+      schema: 'materials.*',
+    },
+    {
+      role: 'hr_admin',
+      label: 'HR & Careers Portal',
+      icon: Briefcase,
+      color: 'from-rose-600 to-pink-700',
+      desc: 'Manage internal company vacancies and candidate applications.',
+      modId: 'hr_careers',
+      subdomainUrl: 'https://careers.cseel.org/admin',
+      schema: 'careers.*',
+    },
+    {
+      role: 'school_admin',
+      label: 'Schools & Institutes Network',
+      icon: Building2,
+      color: 'from-blue-600 to-cyan-700',
+      desc: 'Verify 100+ partner schools, accreditation levels & STEM lab KYC.',
+      modId: 'schools_institutions',
+      subdomainUrl: 'https://network.cseel.org/admin',
+      schema: 'network.*',
+    },
+    {
+      role: 'programs_admin',
+      label: 'Teacher Training & Pedagogy',
+      icon: GraduationCap,
+      color: 'from-purple-600 to-indigo-700',
+      desc: 'NEP-2020 teacher bootcamps, masterclasses and certificate issuances.',
+      modId: 'programs_events',
+      subdomainUrl: 'https://training.cseel.org/admin',
+      schema: 'training.*',
+    },
+    {
+      role: 'programs_admin',
+      label: 'Outreach Events & Conclaves',
+      icon: Calendar,
+      color: 'from-indigo-600 to-violet-700',
+      desc: 'National science symposia, principals conclaves and webinars.',
+      modId: 'programs_events',
+      subdomainUrl: 'https://events.cseel.org/admin',
+      schema: 'events.*',
+    },
+    {
+      role: 'super_admin',
+      label: 'Support & Helpdesk',
+      icon: ShieldAlert,
+      color: 'from-orange-600 to-amber-700',
+      desc: 'Lab equipment claims, warranty tickets & institutional assistance.',
+      modId: 'overview',
+      subdomainUrl: 'https://support.cseel.org/admin',
+      schema: 'support.*',
+    },
+    {
+      role: 'science_admin',
+      label: 'Virtual Lab Practicals',
+      icon: Beaker,
+      color: 'from-cyan-600 to-teal-700',
+      desc: 'Virtual simulations, interactive physics & chemistry apparatus.',
+      modId: 'science_simulations',
+      subdomainUrl: 'https://content.cseel.org/admin',
+      schema: 'science.*',
+    },
+    {
+      role: 'projectokart_admin',
+      label: 'Projectokart Hardware',
+      icon: Wrench,
+      color: 'from-amber-600 to-orange-700',
+      desc: 'Science fair kits, CAD diagrams, BOM lists and student awards.',
+      modId: 'projectokart_inventions',
+      subdomainUrl: 'https://material.cseel.org/admin',
+      schema: 'materials.hardware',
+    },
+    {
+      role: 'rnd_admin',
+      label: 'R&D Innovation Labs',
+      icon: Sparkles,
+      color: 'from-violet-600 to-purple-800',
+      desc: 'Research whitepapers, patent filings & futuristic ATL tech.',
+      modId: 'research_rnd',
+      subdomainUrl: 'https://api.cseel.org',
+      schema: 'rnd.*',
+    },
+    {
+      role: 'content_admin',
+      label: 'Homepage & CMS Media',
+      icon: FileText,
+      color: 'from-sky-600 to-blue-700',
+      desc: 'Promotional banners, blog articles, NEP publications and FAQs.',
+      modId: 'content_homepage',
+      subdomainUrl: 'https://blog.cseel.org/admin',
+      schema: 'content.*',
+    },
   ];
 
   return (
@@ -50,14 +150,14 @@ export const SuperAdminDashboard: React.FC = () => {
               CSEEL Central Administrative Governance
             </h2>
             <p className="text-xs sm:text-sm text-purple-200/80 leading-relaxed">
-              Full control over all 10 administrative divisions. You can switch into any department's role below to inspect and manage their dedicated workspace.
+              Full control over all 10 administrative divisions. Click on any department's Subdomain URL to access its dedicated portal or switch into its workspace.
             </p>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/15 text-center shrink-0">
             <p className="text-xs text-purple-200 font-bold uppercase">System Architecture</p>
-            <p className="text-sm font-black text-emerald-400 mt-0.5">Feature-Modular • Subdomain Ready</p>
-            <p className="text-[10px] text-white/60">admin.cseel.org ready</p>
+            <p className="text-sm font-black text-emerald-400 mt-0.5">Microservices • 10 Subdomains</p>
+            <p className="text-[10px] text-white/60">Edge Routed • Pluggable DB</p>
           </div>
         </div>
       </div>
@@ -84,9 +184,9 @@ export const SuperAdminDashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
             <Layers className="w-4 h-4 text-purple-600" />
-            <span>Dedicated Department Portals (Role-Based Team Workspaces)</span>
+            <span>Department Subdomains & Isolated Admin Portals</span>
           </h3>
-          <span className="text-xs text-gray-500">10 Autonomous Modules</span>
+          <span className="text-xs text-gray-500 font-bold">10 Autonomous Subdomains</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -97,44 +197,79 @@ export const SuperAdminDashboard: React.FC = () => {
             return (
               <div
                 key={m.label}
-                className="bg-white rounded-2xl p-4 border border-gray-200/90 hover:border-purple-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group"
+                className="bg-white rounded-3xl p-5 border border-gray-200/90 hover:border-purple-400 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
               >
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-r ${m.color} text-white flex items-center justify-center shadow-xs`}>
-                      <Icon className="w-4 h-4" />
+                    <div className={`w-10 h-10 rounded-2xl bg-gradient-to-r ${m.color} text-white flex items-center justify-center shadow-xs`}>
+                      <Icon className="w-5 h-5" />
                     </div>
-                    {isCurrent && (
-                      <span className="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
-                        Active Role
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200">
+                        {m.schema}
                       </span>
-                    )}
+                      {isCurrent && (
+                        <span className="text-[10px] font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
+                          Active
+                        </span>
+                      )}
+                    </div>
                   </div>
+
                   <div>
                     <h4 className="text-sm font-black text-gray-900 group-hover:text-purple-700 transition-colors">
                       {m.label}
                     </h4>
-                    <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{m.desc}</p>
+                    <p className="text-xs text-gray-500 leading-relaxed mt-1">{m.desc}</p>
+                  </div>
+
+                  {/* Direct Subdomain URL Box */}
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase block">Subdomain Admin URL:</span>
+                      <a
+                        href={m.subdomainUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-mono font-bold text-purple-700 hover:text-purple-900 hover:underline truncate block"
+                      >
+                        {m.subdomainUrl.replace('https://', '')}
+                      </a>
+                    </div>
+                    <a
+                      href={m.subdomainUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg bg-white hover:bg-purple-100 text-purple-700 border border-slate-200 transition-colors shrink-0"
+                      title="Open Subdomain in New Tab"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
                   </div>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between gap-2">
+                <div className="pt-3 border-t border-gray-100 flex items-center justify-between gap-2">
                   <button
+                    type="button"
                     onClick={() => {
                       switchRole(m.role);
                       setActiveModule(m.modId);
                     }}
                     className="text-xs font-black text-purple-700 hover:text-purple-900 flex items-center gap-1"
                   >
-                    <span>Open Department Portal</span>
+                    <span>Embedded Workspace</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
-                  <button
-                    onClick={() => switchRole(m.role)}
-                    className="text-[11px] font-bold text-gray-500 hover:text-gray-900 bg-gray-100 px-2.5 py-1 rounded-lg transition-colors"
+
+                  <a
+                    href={m.subdomainUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg transition-colors flex items-center gap-1 border border-emerald-200"
                   >
-                    Simulate Role
-                  </button>
+                    <span>Launch URL</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
               </div>
             );

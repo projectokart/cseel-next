@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { ChevronDown, Menu, X, Sparkles } from "lucide-react";
 import { useState, useRef } from "react";
+import { useNavVisibility } from '@/contexts/NavigationContext';
 
 const navItems = [
   {
@@ -82,7 +83,7 @@ const navItems = [
       { label: "Contact", to: "/contact-us" },
     ],
   },
-import { useNavVisibility } from '@/contexts/NavigationContext';
+];
 
 const Navbar = () => {
   const { navSettings } = useNavVisibility();

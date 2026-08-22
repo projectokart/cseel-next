@@ -330,7 +330,13 @@ export function downloadAdminCredentialsCSVFile() {
   const link = document.createElement('a');
   link.setAttribute('href', url);
   link.setAttribute('download', `CSEEL_Admin_Credentials_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute('data-skip-progress', 'true');
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  setTimeout(() => {
+    try {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch {}
+  }, 100);
 }

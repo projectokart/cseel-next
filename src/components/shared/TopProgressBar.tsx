@@ -14,37 +14,42 @@ export default function TopProgressBar() {
 
   const startTimeRef = useRef<number>(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const minDisplayTime = 550; // Minimum time (ms) loader is displayed for smooth fluid visual experience
+  const safetyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const minDisplayTime = 400; // Minimum time (ms) loader is displayed for smooth visual experience
 
-  // When pathname or searchParams change (Route has loaded)
+  const finishLoading = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
+
+    const elapsed = Date.now() - startTimeRef.current;
+    const remainingTime = Math.max(minDisplayTime - elapsed, 0);
+
+    const t1 = setTimeout(() => {
+      setProgress(100);
+
+      const t2 = setTimeout(() => {
+        setIsFadingOut(true);
+
+        const t3 = setTimeout(() => {
+          setLoading(false);
+          setVisible(false);
+          setIsFadingOut(false);
+          setProgress(0);
+        }, 250);
+
+        return () => clearTimeout(t3);
+      }, 150);
+
+      return () => clearTimeout(t2);
+    }, remainingTime);
+
+    return () => clearTimeout(t1);
+  };
+
+  // When pathname or searchParams change (Route has loaded successfully)
   useEffect(() => {
     if (loading) {
-      const elapsed = Date.now() - startTimeRef.current;
-      const remainingTime = Math.max(minDisplayTime - elapsed, 0);
-
-      // Smoothly advance to 100% after remaining time
-      const t1 = setTimeout(() => {
-        setProgress(100);
-
-        // Hold at 100% briefly so the user sees 100% and complete atom spin
-        const t2 = setTimeout(() => {
-          setIsFadingOut(true);
-
-          // After fade-out animation finishes, hide loader completely
-          const t3 = setTimeout(() => {
-            setLoading(false);
-            setVisible(false);
-            setIsFadingOut(false);
-            setProgress(0);
-          }, 320);
-
-          return () => clearTimeout(t3);
-        }, 180);
-
-        return () => clearTimeout(t2);
-      }, remainingTime);
-
-      return () => clearTimeout(t1);
+      finishLoading();
     }
   }, [pathname, searchParams]);
 
@@ -57,13 +62,23 @@ export default function TopProgressBar() {
       const href = target.getAttribute("href");
       if (!href) return;
 
-      // Ignore external, hash, or target="_blank" links
+      // ── CRITICAL: Ignore file downloads, data/blob URLs, and non-navigation links ──
       if (
+        target.hasAttribute("download") ||
+        target.hasAttribute("data-skip-progress") ||
+        href.startsWith("blob:") ||
+        href.startsWith("data:") ||
+        href.startsWith("javascript:") ||
         href.startsWith("http://") ||
         href.startsWith("https://") ||
         href.startsWith("mailto:") ||
         href.startsWith("tel:") ||
         href.startsWith("#") ||
+        href.startsWith("/api/") ||
+        href.includes(".csv") ||
+        href.includes(".pdf") ||
+        href.includes(".xlsx") ||
+        href.includes(".zip") ||
         target.getAttribute("target") === "_blank" ||
         e.ctrlKey ||
         e.metaKey ||
@@ -76,31 +91,38 @@ export default function TopProgressBar() {
       const currentFullUrl = window.location.pathname + window.location.search;
       if (href === currentFullUrl) return;
 
-      // Start smooth fluid transition
+      // Start smooth transition
       startTimeRef.current = Date.now();
       setIsFadingOut(false);
       setVisible(true);
       setLoading(true);
-      setProgress(18);
+      setProgress(20);
 
       if (timerRef.current) clearInterval(timerRef.current);
+      if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
 
       // Smooth progress progression
-      let currentProgress = 18;
+      let currentProgress = 20;
       timerRef.current = setInterval(() => {
-        currentProgress += Math.floor(Math.random() * 15) + 8;
+        currentProgress += Math.floor(Math.random() * 15) + 10;
         if (currentProgress >= 88) {
           currentProgress = 88;
           if (timerRef.current) clearInterval(timerRef.current);
         }
         setProgress(currentProgress);
-      }, 75);
+      }, 70);
+
+      // ── SAFETY FALLBACK: Auto-dismiss loader after 2.5 seconds if no route change occurs ──
+      safetyTimeoutRef.current = setTimeout(() => {
+        finishLoading();
+      }, 2500);
     };
 
     document.addEventListener("click", handleAnchorClick, { capture: true });
     return () => {
       document.removeEventListener("click", handleAnchorClick, { capture: true });
       if (timerRef.current) clearInterval(timerRef.current);
+      if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
     };
   }, []);
 

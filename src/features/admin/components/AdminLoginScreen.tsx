@@ -77,19 +77,19 @@ export const AdminLoginScreen: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             
-            {/* Email Field */}
+            {/* Username / Email Field */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-slate-300 block">
-                Administrative Email Address
+                Administrative Username or Email
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="email"
+                  type="text"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin.name@cseel.org"
+                  placeholder="super@123 or hr@123 or material@123"
                   className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-medium outline-none focus:border-purple-500 transition-colors"
                 />
               </div>
@@ -99,9 +99,9 @@ export const AdminLoginScreen: React.FC = () => {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="text-[11px] font-bold text-slate-300 block">
-                  Security Password
+                  Password (Default: Dev@12345)
                 </label>
-                <span className="text-[10px] text-purple-400 font-bold">256-bit Encrypted</span>
+                <span className="text-[10px] text-purple-400 font-bold">Encrypted</span>
               </div>
               <div className="relative">
                 <Key className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -110,7 +110,7 @@ export const AdminLoginScreen: React.FC = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  placeholder="Dev@12345"
                   className="w-full pl-10 pr-10 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono outline-none focus:border-purple-500 transition-colors"
                 />
                 <button
@@ -132,19 +132,34 @@ export const AdminLoginScreen: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </button>
 
-            {/* 1-Click Instant SuperAdmin Login Button */}
-            <button
-              type="button"
-              onClick={() => {
-                const { quickDemoLogin } = useAdminAuth ? (window as any).__adminAuth || {} : {};
-                setEmail('superadmin@cseel.org');
-                setPassword('SuperAdmin@2026#CSEEL');
-              }}
-              className="w-full py-2.5 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-emerald-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 active:scale-98"
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Auto-Fill SuperAdmin Credentials (⚡ 1-Click)</span>
-            </button>
+            {/* Quick Fill Pills */}
+            <div className="space-y-1.5 pt-2">
+              <p className="text-[10px] text-slate-400 font-bold">⚡ Quick Select Role:</p>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { u: 'super@123', label: '👑 Super Admin' },
+                  { u: 'hr@123', label: '💼 HR Admin' },
+                  { u: 'material@123', label: '📦 Materials' },
+                  { u: 'school@123', label: '🏫 Schools' },
+                  { u: 'science@123', label: '🔬 Science' },
+                  { u: 'projectokart@123', label: '🛠️ Hardware' },
+                  { u: 'events@123', label: '📅 Events' },
+                  { u: 'rnd@123', label: '🧪 R&D' },
+                ].map((item) => (
+                  <button
+                    key={item.u}
+                    type="button"
+                    onClick={() => {
+                      setEmail(item.u);
+                      setPassword('Dev@12345');
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-purple-900/50 border border-slate-700 hover:border-purple-500 text-[10px] text-slate-200 font-medium transition-all"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </form>
 
           <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-center gap-2">

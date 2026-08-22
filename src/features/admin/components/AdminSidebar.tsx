@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Briefcase, Building2, GraduationCap,
   Beaker, Wrench, Package, Calendar, Sparkles, Globe,
-  ShieldAlert, Activity, LogOut, ChevronRight
+  ShieldAlert, Activity, LogOut, ChevronRight, X
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS } from '../data';
@@ -31,26 +31,52 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'content_homepage', label: 'Homepage & CMS', icon: Globe },
 ];
 
-export const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ mobileOpen = false, onCloseMobile }) => {
   const { currentRole, activeModule, setActiveModule, hasAccess } = useAdminAuth();
   const roleConfig = ADMIN_ROLE_CONFIGS[currentRole];
 
   const visibleNavItems = ALL_NAV_ITEMS.filter((item) => hasAccess(item.id));
 
-  return (
-    <aside className="w-64 bg-slate-950 text-white min-h-screen p-4 flex flex-col justify-between shrink-0 border-r border-slate-800">
+  const handleSelectModule = (id: AdminModuleId) => {
+    setActiveModule(id);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
+  const sidebarContent = (
+    <aside className="w-72 sm:w-64 bg-slate-950 text-white h-full min-h-screen p-4 flex flex-col justify-between shrink-0 border-r border-slate-800 overflow-y-auto">
       <div className="space-y-6">
         
         {/* Brand Logo & Subdomain Badge */}
         <div className="px-2 pt-2 space-y-1">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 flex items-center justify-center font-black text-white text-sm shadow-md">
-              C
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 flex items-center justify-center font-black text-white text-sm shadow-md">
+                C
+              </div>
+              <div>
+                <h1 className="font-black text-sm text-white tracking-wide">CSEEL ADMIN</h1>
+                <p className="text-[9px] text-purple-300 font-bold uppercase tracking-wider">Enterprise RBAC</p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-black text-sm text-white tracking-wide">CSEEL ADMIN</h1>
-              <p className="text-[9px] text-purple-300 font-bold uppercase tracking-wider">Enterprise RBAC</p>
-            </div>
+
+            {/* Mobile Close Button */}
+            {onCloseMobile && (
+              <button
+                type="button"
+                onClick={onCloseMobile}
+                className="lg:hidden p-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                title="Close Navigation"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           <div className="pt-3">
@@ -74,7 +100,7 @@ export const AdminSidebar: React.FC = () => {
               return (
                 <button
                   key={item.id}
-                  onClick={() => setActiveModule(item.id)}
+                  onClick={() => handleSelectModule(item.id)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left group ${
                     isActive
                       ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md'
@@ -101,13 +127,37 @@ export const AdminSidebar: React.FC = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="pt-4 border-t border-slate-800/80 px-2 space-y-2">
+      <div className="pt-4 border-t border-slate-800/80 px-2 space-y-2 mt-auto">
         <div className="bg-slate-900/90 p-2.5 rounded-xl text-[10px] text-slate-400 space-y-0.5">
           <p className="font-bold text-white">Subdomain Ready 🚀</p>
           <p>Mounts cleanly at <code className="text-purple-300">admin.cseel.org</code></p>
         </div>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      {/* ── DESKTOP SIDEBAR (Visible on Desktop >= 1024px) ── */}
+      <div className="hidden lg:block shrink-0 sticky top-0 h-screen">
+        {sidebarContent}
+      </div>
+
+      {/* ── MOBILE DRAWER MODAL (Visible on Mobile when open) ── */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Dark Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity"
+            onClick={onCloseMobile}
+          />
+          {/* Slide-over Drawer Content */}
+          <div className="fixed inset-y-0 left-0 max-w-[85vw] w-72 z-50 shadow-2xl animate-in slide-in-from-left duration-200">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

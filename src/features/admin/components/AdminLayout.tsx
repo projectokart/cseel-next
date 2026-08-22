@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { AdminAuthProvider, useAdminAuth } from '../contexts/AdminAuthContext';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
@@ -16,7 +16,7 @@ import ProgramsAdminModule from './modules/ProgramsAdminModule';
 import RndAdminModule from './modules/RndAdminModule';
 import ContentAdminModule from './modules/ContentAdminModule';
 
-const AdminContentRouter: React.FC = () => {
+const AdminContentRouter: React.FC<{ onToggleMobileMenu: () => void }> = ({ onToggleMobileMenu }) => {
   const { activeModule, currentRole } = useAdminAuth();
 
   const renderModule = () => {
@@ -47,9 +47,9 @@ const AdminContentRouter: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
-      <AdminHeader />
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+    <div className="flex-1 flex flex-col min-w-0 w-full bg-[#f8fafc] overflow-x-hidden">
+      <AdminHeader onToggleMobileMenu={onToggleMobileMenu} />
+      <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto overflow-x-hidden">
         {renderModule()}
       </main>
     </div>
@@ -58,15 +58,19 @@ const AdminContentRouter: React.FC = () => {
 
 const AdminPortalRoot: React.FC = () => {
   const { isAuthenticated } = useAdminAuth();
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   if (!isAuthenticated) {
     return <AdminLoginScreen />;
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-950 font-sans text-slate-900 selection:bg-purple-500 selection:text-white">
-      <AdminSidebar />
-      <AdminContentRouter />
+    <div className="min-h-screen flex bg-slate-950 font-sans text-slate-900 selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
+      <AdminSidebar
+        mobileOpen={mobileSidebarOpen}
+        onCloseMobile={() => setMobileSidebarOpen(false)}
+      />
+      <AdminContentRouter onToggleMobileMenu={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
     </div>
   );
 };

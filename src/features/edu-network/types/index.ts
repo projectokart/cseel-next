@@ -18,7 +18,7 @@ export interface PartnerSchool {
   phone: string;
   labsEquipped: string[];
   status: 'verified' | 'pending' | 'pending_review' | 'suspended' | string;
-  accreditationLevel: 'Tier 1 Lead' | 'Tier 2 Certified' | 'Associate Partner';
+  accreditationLevel: 'Tier 1 Lead' | 'Tier 2 Certified' | 'Associate Partner' | string;
   joinedDate: string;
   created_at?: string;
   updated_at?: string;

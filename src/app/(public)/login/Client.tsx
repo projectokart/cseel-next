@@ -127,50 +127,17 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Check if administrative credential (e.g. super@123, material@123, hr@123, etc.)
+    // Strictly restrict administrative credentials on public user login
     const cleanEmail = email.trim().toLowerCase();
     const cleanPass = password.trim();
-    if (cleanPass === 'Dev@12345' || cleanPass === 'dev@12345') {
-      const adminRedirects: Record<string, string> = {
-        'material@123': 'https://material.cseel.org/admin',
-        'materials@123': 'https://material.cseel.org/admin',
-        'material@cseel.org': 'https://material.cseel.org/admin',
-        'material': 'https://material.cseel.org/admin',
-        'materials': 'https://material.cseel.org/admin',
-        'hr@123': 'https://careers.cseel.org/admin',
-        'hr@cseel.org': 'https://careers.cseel.org/admin',
-        'hr': 'https://careers.cseel.org/admin',
-        'school@123': 'https://network.cseel.org/admin',
-        'schools@123': 'https://network.cseel.org/admin',
-        'network@123': 'https://network.cseel.org/admin',
-        'school@cseel.org': 'https://network.cseel.org/admin',
-        'school': 'https://network.cseel.org/admin',
-        'training@123': 'https://training.cseel.org/admin',
-        'teacher@123': 'https://training.cseel.org/admin',
-        'events@123': 'https://events.cseel.org/admin',
-        'support@123': 'https://support.cseel.org/admin',
-        'science@123': 'https://content.cseel.org/admin',
-        'projectokart@123': 'https://material.cseel.org/admin',
-        'content@123': 'https://blog.cseel.org/admin',
-        'super@123': '/admin',
-        'super@cseel.org': '/admin',
-        'super': '/admin',
-        'admin@123': '/admin',
-        'admin': '/admin',
-      };
-
-      if (adminRedirects[cleanEmail]) {
-        try {
-          localStorage.setItem('cseel_admin_auth', 'true');
-        } catch {}
-        const target = adminRedirects[cleanEmail];
-        if (target.startsWith('http')) {
-          window.location.href = target;
-        } else {
-          router.push(target);
-        }
-        return;
-      }
+    if (cleanPass === 'Dev@12345' || cleanPass === 'dev@12345' || cleanEmail.includes('@123')) {
+      setLoading(false);
+      toast({
+        title: "Administrative Access Restricted",
+        description: "Departmental and Super Administrators must log in via the Central Governance Portal (/admin).",
+        variant: "destructive",
+      });
+      return;
     }
 
     const { error } = await signIn(email, password);

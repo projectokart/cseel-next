@@ -33,9 +33,9 @@ export default function TrainingAdminDashboard({ onAuditLog }: TrainingAdminDash
 
   // Form Fields
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<'Physics' | 'Chemistry' | 'Robotics & IoT' | 'NEP Pedagogy' | 'AI in Classroom'>('Physics');
-  const [format, setFormat] = useState<TrainingFormat>('Hands-on Bootcamp');
-  const [level, setLevel] = useState<TrainingLevel>('Foundational');
+  const [category, setCategory] = useState<string>('Physics');
+  const [format, setFormat] = useState<string>('Hands-on Bootcamp');
+  const [level, setLevel] = useState<string>('Foundational');
   const [durationHours, setDurationHours] = useState(24);
   const [batchSize, setBatchSize] = useState(40);
   const [leadTrainer, setLeadTrainer] = useState('Dr. Senior Scientist');

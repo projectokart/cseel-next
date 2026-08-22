@@ -16,6 +16,7 @@ export const AdminLoginScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,11 @@ export const AdminLoginScreen: React.FC = () => {
     const res = login(email, password);
     if (!res.success) {
       setErrorMessage(res.error || 'Authentication failed. Please verify your administrative credentials.');
+    } else if (res.redirectUrl && typeof window !== 'undefined') {
+      if (res.redirectUrl.startsWith('http')) {
+        setIsRedirecting(true);
+        window.location.href = res.redirectUrl;
+      }
     }
   };
 

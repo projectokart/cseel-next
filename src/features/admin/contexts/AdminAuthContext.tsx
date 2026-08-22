@@ -11,7 +11,7 @@ interface AdminAuthContextType {
   activeModule: AdminModuleId;
   adminUsers: AdminUser[];
   auditLogs: AuditLogItem[];
-  login: (email: string, pass: string) => { success: boolean; error?: string };
+  login: (email: string, pass: string) => LoginResult;
   logout: () => void;
   quickDemoLogin: (role: AdminRole) => void;
   switchRole: (role: AdminRole) => void;
@@ -23,6 +23,28 @@ interface AdminAuthContextType {
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
+
+export const DEPARTMENT_SUBDOMAIN_REDIRECTS: Record<string, string> = {
+  inventory_admin: 'https://material.cseel.org/admin',
+  hr_admin: 'https://careers.cseel.org/admin',
+  school_admin: 'https://network.cseel.org/admin',
+  recruitment_admin: 'https://careers.cseel.org/admin',
+  science_admin: 'https://content.cseel.org/admin',
+  projectokart_admin: 'https://material.cseel.org/admin',
+  programs_admin: 'https://training.cseel.org/admin',
+  events_admin: 'https://events.cseel.org/admin',
+  support_admin: 'https://support.cseel.org/admin',
+  content_admin: 'https://blog.cseel.org/admin',
+  rnd_admin: 'https://api.cseel.org',
+  super_admin: '/admin',
+};
+
+export interface LoginResult {
+  success: boolean;
+  error?: string;
+  redirectUrl?: string;
+  role?: AdminRole;
+}
 
 export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>(INITIAL_ADMIN_USERS);
@@ -45,7 +67,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const currentAdmin = adminUsers.find((u) => u.role === currentRole) || adminUsers[0];
 
-  const login = (email: string, pass: string): { success: boolean; error?: string } => {
+  const login = (email: string, pass: string): LoginResult => {
     const clean = email.trim().toLowerCase().replace('@cseel.org', '');
     const cleanPass = pass.trim();
 
@@ -84,8 +106,10 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       localStorage.setItem('cseel_admin_role', user.role);
     } catch {}
 
+    const redirectUrl = DEPARTMENT_SUBDOMAIN_REDIRECTS[user.role] || '/admin';
+
     addAuditLog('ADMIN_LOGIN_SUCCESS', 'overview', `Admin ${user.name} logged into ${user.role} workspace.`);
-    return { success: true };
+    return { success: true, redirectUrl, role: user.role };
   };
 
   const quickDemoLogin = (role: AdminRole) => {

@@ -75,7 +75,7 @@ export const CONTENT_TYPE_CONFIGS: Record<EditorContentType, EditorFeatureConfig
     code: false,
     diagrams: false,
     tables: true,
-    images: false,
+    images: true,
     videos: false,
     callouts: true,
     experimentBlocks: false,

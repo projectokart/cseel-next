@@ -8,7 +8,7 @@ import { ShieldAlert } from 'lucide-react';
 export const RndAdminModule: React.FC = () => {
   const { addAuditLog, hasAccess, currentRole } = useAdminAuth();
 
-  if (!hasAccess('events_rnd')) {
+  if (!hasAccess('research_rnd')) {
     return (
       <div className="p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border border-red-200 space-y-3">
         <ShieldAlert className="w-12 h-12 text-red-500 mx-auto" />
@@ -24,7 +24,7 @@ export const RndAdminModule: React.FC = () => {
 
   return (
     <EventsAdminDashboard
-      onAuditLog={(action, module, details) => addAuditLog(action, module as any, details)}
+      onAuditLog={(action, module, details) => addAuditLog(action, 'research_rnd', details)}
     />
   );
 };

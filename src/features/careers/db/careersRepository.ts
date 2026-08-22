@@ -117,6 +117,15 @@ class CareersRepository {
     return updated;
   }
 
+  public async delete(id: string): Promise<boolean> {
+    await departmentDb.delete('careers', 'vacancies', id);
+
+    const index = this.vacancies.findIndex((v) => v.id === id || v.slug === id);
+    if (index === -1) return false;
+    this.vacancies.splice(index, 1);
+    return true;
+  }
+
   public async bulkInsert(items: Partial<CareerVacancy>[]): Promise<CareerVacancy[]> {
     const created: CareerVacancy[] = [];
     for (const item of items) {

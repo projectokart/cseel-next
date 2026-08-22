@@ -1,5 +1,6 @@
-﻿import { Metadata } from 'next';
+import { Metadata } from 'next';
 import CareersAdminDashboard from '@/features/careers/components/admin/CareersAdminDashboard';
+import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
 
 export const metadata: Metadata = {
   title: 'HR & Talent Acquisition Admin Portal | CSEEL Careers',
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
 
 export default function CareersAdminPage() {
   return (
-    <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <CareersAdminDashboard />
+    <AdminAuthProvider>
+      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <CareersAdminDashboard />
+        </div>
       </div>
-    </div>
+    </AdminAuthProvider>
   );
 }

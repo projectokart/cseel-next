@@ -1,5 +1,6 @@
-﻿import { Metadata } from 'next';
+import { Metadata } from 'next';
 import MaterialsAdminDashboard from '@/features/materials/components/admin/MaterialsAdminDashboard';
+import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
 
 export const metadata: Metadata = {
   title: 'Materials & Lab Kits Admin Center | CSEEL Scientific Store',
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
 
 export default function MaterialsAdminPage() {
   return (
-    <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <MaterialsAdminDashboard />
+    <AdminAuthProvider>
+      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <MaterialsAdminDashboard />
+        </div>
       </div>
-    </div>
+    </AdminAuthProvider>
   );
 }

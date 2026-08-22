@@ -1,5 +1,6 @@
-﻿import { Metadata } from 'next';
+import { Metadata } from 'next';
 import SupportAdminDashboard from '@/features/support/components/admin/SupportAdminDashboard';
+import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
 
 export const metadata: Metadata = {
   title: 'Technical Helpdesk & School Support Admin | CSEEL',
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
 
 export default function SupportAdminPage() {
   return (
-    <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <SupportAdminDashboard />
+    <AdminAuthProvider>
+      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <SupportAdminDashboard />
+        </div>
       </div>
-    </div>
+    </AdminAuthProvider>
   );
 }

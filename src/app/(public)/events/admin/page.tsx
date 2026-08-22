@@ -1,5 +1,6 @@
-﻿import { Metadata } from 'next';
+import { Metadata } from 'next';
 import EventsAdminDashboard from '@/features/events/components/admin/EventsAdminDashboard';
+import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
 
 export const metadata: Metadata = {
   title: 'Conclaves & Outreach Events Admin | CSEEL',
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
 
 export default function EventsAdminPage() {
   return (
-    <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <EventsAdminDashboard />
+    <AdminAuthProvider>
+      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <EventsAdminDashboard />
+        </div>
       </div>
-    </div>
+    </AdminAuthProvider>
   );
 }

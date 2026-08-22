@@ -8,7 +8,8 @@ import {
   Briefcase, Plus, Search, Filter, Download, Upload,
   MapPin, Clock, DollarSign, Users, CheckCircle2,
   Calendar, Trash2, Edit2, Copy, X, SlidersHorizontal,
-  ChevronRight, ExternalLink, RefreshCw, AlertTriangle
+  ChevronRight, ExternalLink, RefreshCw, AlertTriangle,
+  Grid2X2, List, Table as TableIcon
 } from 'lucide-react';
 
 interface CareersAdminDashboardProps {
@@ -38,6 +39,9 @@ export default function CareersAdminDashboard({ onAuditLog }: CareersAdminDashbo
   const [departments, setDepartments] = useState<string[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  // View Mode
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid');
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -309,7 +313,35 @@ export default function CareersAdminDashboard({ onAuditLog }: CareersAdminDashbo
               />
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0 flex-wrap">
+              {/* Layout Switcher */}
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 rounded-lg text-xs transition-all ${viewMode === 'grid' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-900'}`}
+                  title="Grid View"
+                >
+                  <Grid2X2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={`p-1.5 rounded-lg text-xs transition-all ${viewMode === 'list' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-900'}`}
+                  title="Detailed List View"
+                >
+                  <List className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('table')}
+                  className={`p-1.5 rounded-lg text-xs transition-all ${viewMode === 'table' ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-900'}`}
+                  title="Spreadsheet Table View"
+                >
+                  <TableIcon className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -326,7 +358,7 @@ export default function CareersAdminDashboard({ onAuditLog }: CareersAdminDashbo
             </div>
           </div>
 
-          {/* Cards Grid */}
+          {/* Cards Grid / List / Table */}
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((n) => (
@@ -341,6 +373,117 @@ export default function CareersAdminDashboard({ onAuditLog }: CareersAdminDashbo
             <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 text-slate-500 space-y-2">
               <Briefcase className="w-12 h-12 text-slate-300 mx-auto" />
               <p className="font-bold">No active job openings match your criteria.</p>
+            </div>
+          ) : viewMode === 'table' ? (
+            /* Table View */
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xs">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 dark:bg-slate-800/80 text-[10px] font-black uppercase text-slate-500 border-b">
+                    <tr>
+                      <th className="p-3">Job Role & Location</th>
+                      <th className="p-3">Department</th>
+                      <th className="p-3">Salary & Type</th>
+                      <th className="p-3">Applicants</th>
+                      <th className="p-3">Deadline</th>
+                      <th className="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    {jobs.map((j) => (
+                      <tr key={j.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                        <td className="p-3">
+                          <p className="font-bold text-slate-900 dark:text-white truncate max-w-xs">{j.title}</p>
+                          <p className="text-[10px] text-slate-400">{j.location}</p>
+                        </td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-md text-[10px] font-bold">
+                            {j.department}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <p className="font-bold text-emerald-700">{j.salary}</p>
+                          <p className="text-[10px] text-slate-400">{j.type}</p>
+                        </td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full font-bold text-[10px]">
+                            {j.applicantsCount} Applicants
+                          </span>
+                        </td>
+                        <td className="p-3 font-mono text-[11px] text-slate-500">{j.deadline}</td>
+                        <td className="p-3 text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => openEditModal(j)}
+                              className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors"
+                              title="Edit"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteJob(j.id, j.title)}
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : viewMode === 'list' ? (
+            /* Detailed List View */
+            <div className="space-y-3">
+              {jobs.map((job) => (
+                <div
+                  key={job.id}
+                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-2xs hover:border-rose-400 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 text-[10px] font-black uppercase">
+                        {job.department}
+                      </span>
+                      <span className="text-[11px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                        {job.salary}
+                      </span>
+                    </div>
+                    <h4 className="font-black text-sm text-slate-900 dark:text-white truncate max-w-lg">
+                      {job.title}
+                    </h4>
+                    <div className="flex items-center gap-4 text-[11px] text-slate-500 flex-wrap">
+                      <span>📍 {job.location}</span>
+                      <span>⏱️ {job.type}</span>
+                      <span>👥 {job.applicantsCount} Applicants</span>
+                      <span className="font-mono text-[10px]">Deadline: {job.deadline}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(job)}
+                      className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl transition-colors flex items-center gap-1"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" /> <span>Edit</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteJob(job.id, job.title)}
+                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

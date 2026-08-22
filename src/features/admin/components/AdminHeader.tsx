@@ -6,11 +6,12 @@ import {
   ShieldCheck, ChevronDown, Bell, LogOut, ArrowLeft,
   ExternalLink, Globe, FileSpreadsheet, Download, Check, Menu,
   Briefcase, Building2, GraduationCap, Beaker, Wrench, Package,
-  Calendar, Sparkles, User, Shield
+  Calendar, Sparkles, User, Shield, Settings
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS, downloadAdminCredentialsCSVFile } from '../data';
 import { AdminRole } from '../types';
+import { AdminSettingsModal } from './AdminSettingsModal';
 
 interface AdminHeaderProps {
   onToggleMobileMenu?: () => void;
@@ -33,6 +34,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleMobileMenu }) 
   const { currentAdmin, currentRole, switchRole, logout } = useAdminAuth();
   const [downloaded, setDownloaded] = useState(false);
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   const roleConfig = ADMIN_ROLE_CONFIGS[currentRole];
@@ -175,13 +177,25 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleMobileMenu }) 
             )}
           </button>
 
-          {/* Admin Profile Pill & Logout */}
+          {/* Settings, Admin Profile Pill & Logout */}
           <div className="flex items-center gap-1.5 pl-1.5 border-l border-gray-200 shrink-0">
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              className="p-1.5 rounded-xl bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-700 border border-slate-200 transition-colors shrink-0"
+              title="Admin Profile & Governance Settings"
+            >
+              <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" />
+            </button>
+
             <img
               src={currentAdmin.avatar}
               alt={currentAdmin.name}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-cover border border-purple-300 shrink-0"
+              onClick={() => setSettingsOpen(true)}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-cover border border-purple-300 shrink-0 cursor-pointer hover:ring-2 hover:ring-purple-400 transition-all"
+              title="Click to edit profile"
             />
+
             <button
               type="button"
               onClick={logout}
@@ -195,6 +209,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleMobileMenu }) 
         </div>
 
       </div>
+
+      {/* Admin Settings Modal */}
+      <AdminSettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
     </header>
   );
 };

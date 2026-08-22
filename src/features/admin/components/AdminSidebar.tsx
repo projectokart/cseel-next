@@ -5,11 +5,12 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Briefcase, Building2, GraduationCap,
   Beaker, Wrench, Package, Calendar, Sparkles, Globe,
-  ShieldAlert, Activity, LogOut, ChevronRight, X
+  ShieldAlert, Activity, LogOut, ChevronRight, X, Settings
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS } from '../data';
 import { AdminModuleId } from '../types';
+import { AdminSettingsModal } from './AdminSettingsModal';
 
 interface NavItem {
   id: AdminModuleId;
@@ -38,6 +39,7 @@ interface AdminSidebarProps {
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ mobileOpen = false, onCloseMobile }) => {
   const { currentRole, activeModule, setActiveModule, hasAccess } = useAdminAuth();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const roleConfig = ADMIN_ROLE_CONFIGS[currentRole];
 
   const visibleNavItems = ALL_NAV_ITEMS.filter((item) => hasAccess(item.id));
@@ -126,13 +128,30 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ mobileOpen = false, 
 
       </div>
 
-      {/* Footer Info */}
+      {/* Footer Settings & Subdomain Info */}
       <div className="pt-4 border-t border-slate-800/80 px-2 space-y-2 mt-auto">
-        <div className="bg-slate-900/90 p-2.5 rounded-xl text-[10px] text-slate-400 space-y-0.5">
+        <button
+          type="button"
+          onClick={() => setSettingsOpen(true)}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Settings className="w-4 h-4 text-purple-400" />
+            <span>Profile & Settings</span>
+          </div>
+          <span className="text-[10px] text-purple-400">Edit</span>
+        </button>
+
+        <div className="bg-slate-900/60 p-2.5 rounded-xl text-[10px] text-slate-400 space-y-0.5 border border-slate-800/50">
           <p className="font-bold text-white">Subdomain Ready 🚀</p>
-          <p>Mounts cleanly at <code className="text-purple-300">admin.cseel.org</code></p>
+          <p>Active Schema: <code className="text-purple-300 font-mono">{roleConfig?.badgeText || 'cseel.admin'}</code></p>
         </div>
       </div>
+
+      <AdminSettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
     </aside>
   );
 

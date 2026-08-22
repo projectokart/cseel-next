@@ -1,5 +1,5 @@
 import { MaterialProduct, MaterialFilterState } from '../types/materialTypes';
-import { INITIAL_MATERIAL_PRODUCTS } from './seedData';
+import { INITIAL_MATERIAL_PRODUCTS, MATERIAL_CATEGORIES } from './seedData';
 import { slugify } from '@/lib/utils';
 import { departmentDb } from '@/lib/database/departmentDbAdapter';
 
@@ -173,6 +173,10 @@ class MaterialsRepository {
       }
     }
     return created;
+  }
+
+  public getCategories() {
+    return MATERIAL_CATEGORIES;
   }
 }
 

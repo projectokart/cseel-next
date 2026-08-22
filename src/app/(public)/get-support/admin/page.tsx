@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import SupportAdminDashboard from '@/features/support/components/admin/SupportAdminDashboard';
-import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
+import DepartmentAdminLayout from '@/features/admin/components/DepartmentAdminLayout';
 
 export const metadata: Metadata = {
   title: 'Technical Helpdesk & School Support Admin | CSEEL',
@@ -10,12 +10,14 @@ export const metadata: Metadata = {
 
 export default function SupportAdminPage() {
   return (
-    <AdminAuthProvider>
-      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          <SupportAdminDashboard />
-        </div>
-      </div>
-    </AdminAuthProvider>
+    <DepartmentAdminLayout
+      departmentName="Helpdesk & School Support Administration"
+      departmentRole="inventory_admin"
+      publicUrl="/get-support"
+      subdomainUrl="https://support.cseel.org/admin"
+      schemaBadge="support.*"
+    >
+      <SupportAdminDashboard />
+    </DepartmentAdminLayout>
   );
 }

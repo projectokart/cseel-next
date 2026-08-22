@@ -156,15 +156,16 @@ export default function CompactAdminProductCard({
       </div>
 
       {/* ── BOTTOM: Admin Action Buttons ── */}
-      <div className="bg-slate-50 dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 p-2 flex items-center justify-between gap-1 text-xs">
+      <div className="bg-slate-50 dark:bg-slate-950/60 border-t border-slate-100 dark:border-slate-800 p-2.5 flex items-center justify-between gap-1 text-xs">
         <a
           href={`/materials/${product.slug}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-1.5 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
-          title="View Public Store Page"
+          className="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 dark:bg-teal-950 dark:hover:bg-teal-900 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 font-bold text-[11px] rounded-lg transition-colors flex items-center gap-1"
+          title="Preview exactly how this product looks to students and customers"
         >
-          <ExternalLink className="w-3.5 h-3.5" />
+          <Eye className="w-3.5 h-3.5 text-teal-600" />
+          <span>Preview Live</span>
         </a>
 
         <div className="flex items-center gap-1">

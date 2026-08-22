@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import EduNetworkAdminDashboard from '@/features/edu-network/components/admin/EduNetworkAdminDashboard';
-import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
+import DepartmentAdminLayout from '@/features/admin/components/DepartmentAdminLayout';
 
 export const metadata: Metadata = {
   title: 'School & Institutional Network Admin | CSEEL',
@@ -10,12 +10,14 @@ export const metadata: Metadata = {
 
 export default function EduNetworkAdminPage() {
   return (
-    <AdminAuthProvider>
-      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          <EduNetworkAdminDashboard />
-        </div>
-      </div>
-    </AdminAuthProvider>
+    <DepartmentAdminLayout
+      departmentName="Institutional Network Administration"
+      departmentRole="school_admin"
+      publicUrl="/edu-network"
+      subdomainUrl="https://network.cseel.org/admin"
+      schemaBadge="network.*"
+    >
+      <EduNetworkAdminDashboard />
+    </DepartmentAdminLayout>
   );
 }

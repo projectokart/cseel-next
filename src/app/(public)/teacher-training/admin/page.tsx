@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import TrainingAdminDashboard from '@/features/training/components/admin/TrainingAdminDashboard';
-import { AdminAuthProvider } from '@/features/admin/contexts/AdminAuthContext';
+import DepartmentAdminLayout from '@/features/admin/components/DepartmentAdminLayout';
 
 export const metadata: Metadata = {
   title: 'Teacher Training & NEP Pedagogy Admin | CSEEL',
@@ -10,12 +10,14 @@ export const metadata: Metadata = {
 
 export default function TrainingAdminPage() {
   return (
-    <AdminAuthProvider>
-      <div className="min-h-screen bg-slate-950 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          <TrainingAdminDashboard />
-        </div>
-      </div>
-    </AdminAuthProvider>
+    <DepartmentAdminLayout
+      departmentName="Teacher Training & Pedagogy Administration"
+      departmentRole="programs_admin"
+      publicUrl="/teacher-training"
+      subdomainUrl="https://training.cseel.org/admin"
+      schemaBadge="training.*"
+    >
+      <TrainingAdminDashboard />
+    </DepartmentAdminLayout>
   );
 }

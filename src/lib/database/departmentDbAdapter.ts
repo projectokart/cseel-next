@@ -113,7 +113,7 @@ export class DepartmentDbAdapter {
       const schema = this.getDepartmentSchema(department);
       if (!schema) return { success: false, error: 'Database schema unavailable' };
 
-      const { data, error } = await schema.from(tableName).insert(record).select().single();
+      const { data, error } = await schema.from(tableName).insert(record as any).select().single();
       if (error) return { success: false, error: error.message };
 
       return { success: true, data: data as T };
@@ -135,7 +135,7 @@ export class DepartmentDbAdapter {
       const schema = this.getDepartmentSchema(department);
       if (!schema) return { success: false, error: 'Database schema unavailable' };
 
-      const { data, error } = await schema.from(tableName).update(updates).eq('id', id).select().single();
+      const { data, error } = await schema.from(tableName).update(updates as any).eq('id', id).select().single();
       if (error) return { success: false, error: error.message };
 
       return { success: true, data: data as T };

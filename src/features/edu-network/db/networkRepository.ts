@@ -64,7 +64,7 @@ export const INITIAL_SCHOOLS: PartnerSchool[] = [
 class NetworkRepository {
   private schools: PartnerSchool[] = [...INITIAL_SCHOOLS];
 
-  public async getAll(filter?: Partial<NetworkFilterState>): Promise<{ items: PartnerSchool[]; total: number }> {
+  public async getAll(filter?: Partial<NetworkFilterState>): Promise<{ items: PartnerSchool[]; total: number; states: string[]; boards: string[] }> {
     const { data } = await departmentDb.query<PartnerSchool>('network', 'schools', this.schools);
     let result = [...data];
 
@@ -91,7 +91,10 @@ class NetworkRepository {
       result = result.filter((s) => s.status === filter.status);
     }
 
-    return { items: result, total: result.length };
+    const states = Array.from(new Set(this.schools.map((s) => s.state)));
+    const boards = Array.from(new Set(this.schools.map((s) => s.board)));
+
+    return { items: result, total: result.length, states, boards };
   }
 
   public async getById(id: string): Promise<PartnerSchool | null> {

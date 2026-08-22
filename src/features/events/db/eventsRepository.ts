@@ -42,7 +42,7 @@ export const INITIAL_EVENTS: OutreachEvent[] = [
 class EventsRepository {
   private events: OutreachEvent[] = [...INITIAL_EVENTS];
 
-  public async getAll(filter?: Partial<EventsFilterState>): Promise<{ items: OutreachEvent[]; total: number }> {
+  public async getAll(filter?: Partial<EventsFilterState>): Promise<{ items: OutreachEvent[]; total: number; types: string[] }> {
     const { data } = await departmentDb.query<OutreachEvent>('events', 'symposia', this.events);
     let result = [...data];
 
@@ -65,7 +65,9 @@ class EventsRepository {
       result = result.filter((e) => e.status === filter.status);
     }
 
-    return { items: result, total: result.length };
+    const types = Array.from(new Set(this.events.map((e) => e.type)));
+
+    return { items: result, total: result.length, types };
   }
 
   public async getById(id: string): Promise<OutreachEvent | null> {

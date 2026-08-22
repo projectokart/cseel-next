@@ -54,7 +54,7 @@ export const INITIAL_PROGRAMS: TrainingProgram[] = [
 class TrainingRepository {
   private programs: TrainingProgram[] = [...INITIAL_PROGRAMS];
 
-  public async getAll(filter?: Partial<TrainingFilterState>): Promise<{ items: TrainingProgram[]; total: number }> {
+  public async getAll(filter?: Partial<TrainingFilterState>): Promise<{ items: TrainingProgram[]; total: number; categories: string[] }> {
     const { data } = await departmentDb.query<TrainingProgram>('training', 'programs', this.programs);
     let result = [...data];
 
@@ -81,7 +81,9 @@ class TrainingRepository {
       result = result.filter((p) => p.status === filter.status);
     }
 
-    return { items: result, total: result.length };
+    const categories = Array.from(new Set(this.programs.map((p) => p.category)));
+
+    return { items: result, total: result.length, categories };
   }
 
   public async getById(id: string): Promise<TrainingProgram | null> {

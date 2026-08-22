@@ -36,8 +36,8 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
   // Form Fields
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
-  const [schoolType, setSchoolType] = useState<'K-12' | 'Higher Ed' | 'ATL School' | 'Vocational'>('ATL School');
-  const [board, setBoard] = useState<'CBSE' | 'ICSE' | 'State Board' | 'IB' | 'Cambridge'>('CBSE');
+  const [schoolType, setSchoolType] = useState<string>('ATL School');
+  const [board, setBoard] = useState<string>('CBSE');
   const [city, setCity] = useState('New Delhi');
   const [state, setState] = useState('Delhi');
   const [pincode, setPincode] = useState('110001');
@@ -47,7 +47,7 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
   const [email, setEmail] = useState('principal@school.edu.in');
   const [phone, setPhone] = useState('+91 9876543210');
   const [labsEquippedInput, setLabsEquippedInput] = useState('ATL Robotics Lab, Chemistry Lab');
-  const [accreditationLevel, setAccreditationLevel] = useState<'Tier 1 Lead' | 'Tier 2 Certified' | 'Associate Partner'>('Tier 1 Lead');
+  const [accreditationLevel, setAccreditationLevel] = useState<string>('Tier 1 Lead');
 
   const loadData = useCallback(async () => {
     setIsLoading(true);

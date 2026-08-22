@@ -79,7 +79,9 @@ class CareersRepository {
       result = result.filter((v) => v.status === filter.status);
     }
 
-    return { items: result, total: result.length };
+    const departments = Array.from(new Set(this.vacancies.map((v) => v.department)));
+
+    return { items: result, total: result.length, departments };
   }
 
   public async getById(id: string): Promise<CareerVacancy | null> {

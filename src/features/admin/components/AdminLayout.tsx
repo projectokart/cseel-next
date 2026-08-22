@@ -59,6 +59,20 @@ const AdminContentRouter: React.FC<{ onToggleMobileMenu: () => void }> = ({ onTo
 const AdminPortalRoot: React.FC = () => {
   const { isAuthenticated } = useAdminAuth();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white space-y-4 font-sans">
+        <div className="w-10 h-10 border-3 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs font-bold text-slate-400 tracking-wider uppercase">Loading CSEEL Governance Portal...</p>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <AdminLoginScreen />;

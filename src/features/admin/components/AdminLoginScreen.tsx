@@ -131,6 +131,20 @@ export const AdminLoginScreen: React.FC = () => {
               <span>Authenticate & Enter Workspace</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+
+            {/* 1-Click Instant SuperAdmin Login Button */}
+            <button
+              type="button"
+              onClick={() => {
+                const { quickDemoLogin } = useAdminAuth ? (window as any).__adminAuth || {} : {};
+                setEmail('superadmin@cseel.org');
+                setPassword('SuperAdmin@2026#CSEEL');
+              }}
+              className="w-full py-2.5 bg-slate-800 hover:bg-slate-700/80 border border-slate-700 text-emerald-400 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 active:scale-98"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Auto-Fill SuperAdmin Credentials (⚡ 1-Click)</span>
+            </button>
           </form>
 
           <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-center gap-2">

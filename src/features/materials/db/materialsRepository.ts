@@ -72,7 +72,11 @@ class MaterialsRepository {
         case 'rating':
           result.sort((a, b) => (b.rating || 5) - (a.rating || 5));
           break;
+        case 'newest':
+          result.sort((a, b) => (new Date(b.created_at || 0).getTime()) - (new Date(a.created_at || 0).getTime()));
+          break;
         case 'popular':
+        case 'featured':
         default:
           result.sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
           break;

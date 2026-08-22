@@ -131,7 +131,7 @@ export interface MaterialFilterState {
   maxPrice: number;
   stockStatus: 'all' | 'in_stock' | 'low_stock' | 'out_of_stock';
   minRating: number;
-  sortBy: 'featured' | 'price_asc' | 'price_desc' | 'rating' | 'newest';
+  sortBy: 'featured' | 'price_asc' | 'price_desc' | 'rating' | 'newest' | 'popular' | string;
 }
 
 export interface MaterialImportRow {

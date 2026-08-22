@@ -111,6 +111,30 @@ class EventsRepository {
     this.events.splice(index, 1);
     return true;
   }
+
+  public async bulkInsert(items: Partial<OutreachEvent>[]): Promise<OutreachEvent[]> {
+    const created: OutreachEvent[] = [];
+    for (const item of items) {
+      if (item.title) {
+        const c = await this.create({
+          title: item.title,
+          type: item.type || 'National Symposium',
+          date: item.date || new Date(Date.now() + 20 * 86400000).toISOString().slice(0, 10),
+          time: item.time || '10:00 AM - 05:00 PM',
+          venue: item.venue || 'Virtual Auditorium',
+          city: item.city || 'Online',
+          keynoteSpeakers: item.keynoteSpeakers || ['CSEEL Advisory Board'],
+          capacity: item.capacity || 300,
+          bannerImage: item.bannerImage || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+          agendaSummary: item.agendaSummary || item.title,
+          status: item.status || 'upcoming',
+          isRegistrationOpen: item.isRegistrationOpen ?? true,
+        });
+        created.push(c);
+      }
+    }
+    return created;
+  }
 }
 
 export const eventsRepository = new EventsRepository();

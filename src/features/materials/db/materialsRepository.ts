@@ -163,6 +163,17 @@ class MaterialsRepository {
     this.products.splice(index, 1);
     return true;
   }
+
+  public async bulkInsert(items: Partial<MaterialProduct>[]): Promise<MaterialProduct[]> {
+    const created: MaterialProduct[] = [];
+    for (const item of items) {
+      if (item.name) {
+        const c = await this.create(item);
+        created.push(c);
+      }
+    }
+    return created;
+  }
 }
 
 export const materialsRepository = new MaterialsRepository();

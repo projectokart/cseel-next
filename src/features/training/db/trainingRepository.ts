@@ -126,6 +126,32 @@ class TrainingRepository {
     this.programs.splice(index, 1);
     return true;
   }
+
+  public async bulkInsert(items: Partial<TrainingProgram>[]): Promise<TrainingProgram[]> {
+    const created: TrainingProgram[] = [];
+    for (const item of items) {
+      if (item.title) {
+        const c = await this.create({
+          title: item.title,
+          category: item.category || 'Physics & Instrumentation',
+          format: item.format || 'Virtual Bootcamp',
+          level: item.level || 'Intermediate',
+          durationHours: item.durationHours || 16,
+          batchSize: item.batchSize || 40,
+          leadTrainer: item.leadTrainer || 'Lead Faculty',
+          trainerRole: item.trainerRole || 'Senior Instructor',
+          certificationOffered: item.certificationOffered || 'CSEEL Certification',
+          startDate: item.startDate || new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
+          feeInr: item.feeInr || 1999,
+          curriculumSummary: item.curriculumSummary || item.title,
+          learningOutcomes: item.learningOutcomes || [],
+          status: item.status || 'upcoming',
+        });
+        created.push(c);
+      }
+    }
+    return created;
+  }
 }
 
 export const trainingRepository = new TrainingRepository();

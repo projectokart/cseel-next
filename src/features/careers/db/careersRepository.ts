@@ -117,13 +117,26 @@ class CareersRepository {
     return updated;
   }
 
-  public async delete(id: string): Promise<boolean> {
-    await departmentDb.delete('careers', 'vacancies', id);
-
-    const index = this.vacancies.findIndex((v) => v.id === id || v.slug === id);
-    if (index === -1) return false;
-    this.vacancies.splice(index, 1);
-    return true;
+  public async bulkInsert(items: Partial<CareerVacancy>[]): Promise<CareerVacancy[]> {
+    const created: CareerVacancy[] = [];
+    for (const item of items) {
+      if (item.title) {
+        const c = await this.create({
+          title: item.title,
+          department: item.department || 'Academic R&D',
+          location: item.location || 'Pan India (Remote / Hybrid)',
+          type: item.type || 'Full-time',
+          experience: item.experience || '1-3 Years',
+          salary: item.salary || 'Competitive',
+          skills: item.skills || [],
+          descriptionHtml: item.descriptionHtml || `<p>${item.title}</p>`,
+          deadline: item.deadline || new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10),
+          status: item.status || 'active',
+        });
+        created.push(c);
+      }
+    }
+    return created;
   }
 }
 

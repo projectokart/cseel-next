@@ -133,6 +133,33 @@ class NetworkRepository {
     this.schools.splice(index, 1);
     return true;
   }
+
+  public async bulkInsert(items: Partial<PartnerSchool>[]): Promise<PartnerSchool[]> {
+    const created: PartnerSchool[] = [];
+    for (const item of items) {
+      if (item.name) {
+        const c = await this.create({
+          name: item.name,
+          code: item.code || `SCH-${Math.floor(1000 + Math.random() * 9000)}`,
+          type: item.type || 'Senior Secondary',
+          board: item.board || 'CBSE',
+          city: item.city || 'National',
+          state: item.state || 'India',
+          pincode: item.pincode || '110001',
+          studentCount: item.studentCount || 500,
+          facultyCount: item.facultyCount || 30,
+          principalName: item.principalName || 'Principal',
+          email: item.email || 'school@cseel.org',
+          phone: item.phone || '+91 9876543210',
+          labsEquipped: item.labsEquipped || ['Composite STEM Lab'],
+          status: item.status || 'verified',
+          accreditationLevel: item.accreditationLevel || 'Tier 1 Lead',
+        });
+        created.push(c);
+      }
+    }
+    return created;
+  }
 }
 
 export const networkRepository = new NetworkRepository();

@@ -2,8 +2,11 @@
  * Careers & HR Service Types
  */
 
-export type JobEmploymentType = 'Full-Time' | 'Part-Time' | 'Contract' | 'Remote / Hybrid' | 'Fellowship';
+export type JobEmploymentType = 'Full-Time' | 'Part-Time' | 'Contract' | 'Remote / Hybrid' | 'Fellowship' | 'Full-time';
 export type JobStatus = 'active' | 'closed' | 'draft' | 'archived';
+
+export type CareerVacancy = JobOpening;
+export type CareerFilterState = JobFilterState;
 
 export interface JobOpening {
   id: string;

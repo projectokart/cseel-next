@@ -505,7 +505,7 @@ export default function MaterialsAdminDashboard({ onAuditLog }: MaterialsAdminDa
                       <tr key={p.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                         <td className="p-3">
                           <div className="flex items-center gap-3">
-                            <img src={p.thumbnail_url} alt={p.name} className="w-10 h-10 rounded-xl object-contain bg-slate-50 border shrink-0" />
+                            <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-xl object-contain bg-slate-50 border shrink-0" />
                             <div className="min-w-0">
                               <p className="font-bold text-slate-900 dark:text-white truncate max-w-xs">{p.name}</p>
                               <p className="text-[10px] font-mono text-slate-400">{p.sku}</p>
@@ -519,16 +519,16 @@ export default function MaterialsAdminDashboard({ onAuditLog }: MaterialsAdminDa
                         </td>
                         <td className="p-3">
                           {p.current_stock > 10 ? (
-                            <span className="text-emerald-700 font-bold text-[11px]">✓ {p.current_stock} {p.unit}</span>
+                            <span className="text-emerald-700 font-bold text-[11px]">✓ {p.current_stock}</span>
                           ) : p.current_stock > 0 ? (
-                            <span className="text-amber-600 font-bold text-[11px]">⚠️ {p.current_stock} {p.unit}</span>
+                            <span className="text-amber-600 font-bold text-[11px]">⚠️ {p.current_stock}</span>
                           ) : (
                             <span className="text-rose-600 font-bold text-[11px]">✕ Out of Stock</span>
                           )}
                         </td>
                         <td className="p-3">
-                          <p className="font-bold text-slate-900 dark:text-white">₹{p.price_inr}</p>
-                          <p className="text-[10px] text-slate-400">MOQ: {p.min_order_qty} {p.unit}</p>
+                          <p className="font-bold text-slate-900 dark:text-white">₹{p.price}</p>
+                          <p className="text-[10px] text-slate-400">MOQ: {p.min_order_qty || 1}</p>
                         </td>
                         <td className="p-3">
                           <span className="text-amber-500 font-bold flex items-center gap-0.5">★ {p.rating.toFixed(1)}</span>
@@ -583,7 +583,7 @@ export default function MaterialsAdminDashboard({ onAuditLog }: MaterialsAdminDa
                 >
                   <div className="flex items-start sm:items-center gap-4 min-w-0">
                     <img
-                      src={product.thumbnail_url}
+                      src={product.image_url}
                       alt={product.name}
                       className="w-16 h-16 rounded-xl object-contain bg-slate-50 dark:bg-slate-800 border shrink-0"
                     />
@@ -598,8 +598,8 @@ export default function MaterialsAdminDashboard({ onAuditLog }: MaterialsAdminDa
                         {product.name}
                       </h4>
                       <div className="flex items-center gap-4 text-[11px] text-slate-500 flex-wrap">
-                        <span className="font-bold text-slate-900 dark:text-white">Price: ₹{product.price_inr}</span>
-                        <span>Stock: <strong className={product.current_stock > 10 ? 'text-emerald-600' : 'text-rose-600'}>{product.current_stock} {product.unit}</strong></span>
+                        <span className="font-bold text-slate-900 dark:text-white">Price: ₹{product.price}</span>
+                        <span>Stock: <strong className={product.current_stock > 10 ? 'text-emerald-600' : 'text-rose-600'}>{product.current_stock}</strong></span>
                         <span>Rating: ★ {product.rating.toFixed(1)}</span>
                       </div>
                     </div>

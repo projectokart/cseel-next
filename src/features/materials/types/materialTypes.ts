@@ -10,7 +10,8 @@ export type MaterialCategoryKey =
   | 'INS' // Laboratory Instruments
   | 'OPT' // Optics & Lasers
   | 'BIO' // Biology & Specimens
-  | 'ELC' // Electronics & Components;
+  | 'ELC' // Electronics & Components
+  | string;
 
 export interface MaterialCategory {
   key: MaterialCategoryKey;
@@ -43,10 +44,12 @@ export interface MaterialProduct {
   common_names: string[];
   category: MaterialCategoryKey;
   categoryLabel?: string;
+  category_label?: string;
   brand?: string;
   price: number;
   original_price: number;
   discountPercentage?: number;
+  discount_percentage?: number;
   rating: number;
   reviews: number;
   stock: number;

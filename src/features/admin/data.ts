@@ -20,6 +20,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
       'programs_events',
       'research_rnd',
       'content_homepage',
+      'navigation_cms',
       'audit_logs',
     ],
     description: 'Unrestricted control over all company settings, admin team rosters, financial metrics, and core infrastructure.',
@@ -111,7 +112,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     color: 'sky',
     badgeBg: 'bg-sky-500/20 border-sky-400/40 text-sky-300',
     badgeText: 'Homepage CMS & Media',
-    allowedModules: ['overview', 'content_homepage', 'audit_logs'],
+    allowedModules: ['overview', 'content_homepage', 'navigation_cms', 'audit_logs'],
     description: 'Controls homepage announcements, hero promotional banners, science articles, blog publishing, and FAQs.',
   },
 };

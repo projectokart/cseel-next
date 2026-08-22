@@ -8,11 +8,14 @@ import Footer from "./Footer";
 import AnnouncementBar from "./AnnouncementBar";
 import OfferPopup from "@/components/offers/OfferPopup";
 
+import { NavigationProvider } from '@/contexts/NavigationContext';
+import DisabledRouteGuard from './DisabledRouteGuard';
+
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const LayoutContent = ({ children }: LayoutProps) => {
   const pathname = usePathname();
   const isAdmin = pathname?.includes('/admin') || pathname?.startsWith('/admin') || pathname?.includes('/system-admin-portal');
 
@@ -25,9 +28,19 @@ const Layout = ({ children }: LayoutProps) => {
       <TopBar />
       <OfferPopup />
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <DisabledRouteGuard>
+        <main className="flex-1">{children}</main>
+      </DisabledRouteGuard>
       <Footer />
     </div>
+  );
+};
+
+export const Layout = ({ children }: LayoutProps) => {
+  return (
+    <NavigationProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </NavigationProvider>
   );
 };
 

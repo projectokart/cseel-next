@@ -21,6 +21,7 @@ export type AdminModuleId =
   | 'programs_events'
   | 'research_rnd'
   | 'content_homepage'
+  | 'navigation_cms'
   | 'admin_management'
   | 'audit_logs';
 

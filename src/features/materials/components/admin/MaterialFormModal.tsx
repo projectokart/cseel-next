@@ -5,7 +5,7 @@ import { MaterialProduct, MaterialCategoryKey } from '../../types/materialTypes'
 import { MATERIAL_CATEGORIES } from '../../db/seedData';
 import {
   X, Plus, Trash2, Upload, Image as ImageIcon,
-  Check, AlertTriangle, Sparkles, Layers, ShieldCheck, Tag
+  Check, AlertTriangle, Sparkles, Layers, ShieldCheck, Tag, Globe, Lock
 } from 'lucide-react';
 
 interface MaterialFormModalProps {
@@ -52,6 +52,7 @@ export default function MaterialFormModal({
     initialData?.includes || ['1x Main Equipment Unit', '1x User Guide & Safety Manual']
   );
   const [newIncludeItem, setNewIncludeItem] = useState('');
+  const [isPublished, setIsPublished] = useState<boolean>(initialData ? (initialData.is_active !== false) : true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -151,7 +152,7 @@ export default function MaterialFormModal({
         image_url: gallery[0],
         gallery,
         includes: includesList,
-        is_active: true,
+        is_active: isPublished,
       });
       onClose();
     } catch (err: any) {
@@ -470,6 +471,40 @@ export default function MaterialFormModal({
                   </button>
                 </span>
               ))}
+            </div>
+          </div>
+
+          {/* ── SECTION 6: Visibility & Publishing Status ── */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                {isPublished ? <Globe className="w-4 h-4 text-emerald-600" /> : <Lock className="w-4 h-4 text-amber-600" />}
+                <span>Visibility & Catalog Publishing Status</span>
+              </p>
+              <p className="text-[11px] text-slate-500">
+                {isPublished ? 'Live & Public — visible to students, schools, and website visitors.' : 'Draft & Private — saved in database but hidden from public catalog.'}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-1 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => setIsPublished(true)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  isPublished ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+                }`}
+              >
+                🌐 Published (Public)
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsPublished(false)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  !isPublished ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+                }`}
+              >
+                🔒 Draft (Private)
+              </button>
             </div>
           </div>
 

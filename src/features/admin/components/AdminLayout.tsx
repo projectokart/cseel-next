@@ -16,6 +16,7 @@ import ProgramsAdminModule from './modules/ProgramsAdminModule';
 import RndAdminModule from './modules/RndAdminModule';
 import ContentAdminModule from './modules/ContentAdminModule';
 import DailyWorkHistoryModule from './modules/DailyWorkHistoryModule';
+import NavigationCmsControlModule from './modules/NavigationCmsControlModule';
 
 const AdminContentRouter: React.FC<{ onToggleMobileMenu: () => void }> = ({ onToggleMobileMenu }) => {
   const { activeModule, currentRole } = useAdminAuth();
@@ -26,6 +27,8 @@ const AdminContentRouter: React.FC<{ onToggleMobileMenu: () => void }> = ({ onTo
         return <SuperAdminDashboard />;
       case 'audit_logs':
         return <DailyWorkHistoryModule />;
+      case 'navigation_cms':
+        return <NavigationCmsControlModule />;
       case 'hr_careers':
         return <HrAdminModule />;
       case 'schools_institutions':

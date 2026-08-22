@@ -21,6 +21,7 @@ interface NavItem {
 
 const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'Command Overview', icon: LayoutDashboard },
+  { id: 'navigation_cms', label: 'Navbar & Route CMS', icon: Globe, badge: 'Control' },
   { id: 'audit_logs', label: 'Daily Work History', icon: History, badge: 'Live Logs' },
   { id: 'hr_careers', label: 'HR & Careers', icon: Briefcase, badge: 'Internal' },
   { id: 'schools_institutions', label: 'Schools & Institutes', icon: Building2, badge: '104' },
@@ -30,7 +31,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'inventory_materials', label: 'Lab Materials & Kits', icon: Package },
   { id: 'programs_events', label: 'Seminars & Events', icon: Calendar },
   { id: 'research_rnd', label: 'R&D Innovation Labs', icon: Sparkles },
-  { id: 'content_homepage', label: 'Homepage & CMS', icon: Globe },
+  { id: 'content_homepage', label: 'Homepage Banners', icon: Sparkles },
 ];
 
 interface AdminSidebarProps {

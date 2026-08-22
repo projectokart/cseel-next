@@ -82,12 +82,38 @@ const navItems = [
       { label: "Contact", to: "/contact-us" },
     ],
   },
-];
+import { useNavVisibility } from '@/contexts/NavigationContext';
 
 const Navbar = () => {
+  const { navSettings } = useNavVisibility();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Dynamically filter sections and children based on Super Admin toggles
+  const visibleNavItems = navItems.filter((item) => {
+    const sectionConfig = navSettings.find(
+      (s) => s.label.toLowerCase() === item.label.toLowerCase() || s.id === item.label.toLowerCase().replace(/\s+/g, '-')
+    );
+    if (sectionConfig && !sectionConfig.enabled) return false;
+    return true;
+  }).map((item) => {
+    if (!item.children) return item;
+    const sectionConfig = navSettings.find(
+      (s) => s.label.toLowerCase() === item.label.toLowerCase() || s.id === item.label.toLowerCase().replace(/\s+/g, '-')
+    );
+    if (!sectionConfig || !sectionConfig.children) return item;
+
+    const filteredChildren = item.children.filter((child) => {
+      const childConfig = sectionConfig.children?.find(
+        (c) => c.route === child.to || c.label.toLowerCase() === child.label.toLowerCase()
+      );
+      if (childConfig && !childConfig.enabled) return false;
+      return true;
+    });
+
+    return { ...item, children: filteredChildren };
+  });
 
   const handleMouseEnter = (label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -113,7 +139,7 @@ const Navbar = () => {
 
         {/* Desktop Nav Items */}
         <div className="hidden lg:flex items-center gap-0.5">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <div
               key={item.label}
               className="relative group"
@@ -216,7 +242,7 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       <div className={`lg:hidden border-t border-border bg-background absolute top-full left-0 w-full shadow-2xl overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out z-[410] ${mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
         <div className="px-4 py-4 space-y-2">
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <div key={item.label} className="flex flex-col border-b border-border/50 pb-1">
               <div className="flex items-center justify-between">
                 <Link

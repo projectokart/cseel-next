@@ -5,7 +5,7 @@ import {
   ShieldAlert, Users, Building2, Briefcase, GraduationCap,
   Sparkles, Beaker, Wrench, Package, Calendar, FileText,
   Activity, ArrowUpRight, CheckCircle2, RefreshCw, Layers,
-  Lock, Globe, Database
+  Lock, Globe, Database, ExternalLink
 } from 'lucide-react';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS } from '../../data';

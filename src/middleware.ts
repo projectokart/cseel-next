@@ -59,6 +59,12 @@ export function middleware(request: NextRequest) {
   if (currentHost && subdomainRoutes[currentHost]) {
     const targetBase = subdomainRoutes[currentHost];
 
+    // Handle login subdomain admin access
+    if ((currentHost === 'login' || currentHost === 'auth') && pathname.startsWith('/admin')) {
+      url.pathname = pathname;
+      return NextResponse.rewrite(url);
+    }
+
     // If accessing root of subdomain, rewrite to target base
     if (pathname === '/' || pathname === '') {
       url.pathname = targetBase;

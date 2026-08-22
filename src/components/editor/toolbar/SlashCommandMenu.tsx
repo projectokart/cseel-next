@@ -265,6 +265,19 @@ export default function SlashCommandMenu({
       c.category.toLowerCase().includes(query.toLowerCase())
   );
 
+  const executeCommand = (cmd: SlashCommandItem) => {
+    // Delete the preceding '/' and any typed search characters
+    const sel = editor.state.selection;
+    const textBefore = editor.state.doc.textBetween(Math.max(0, sel.from - 30), sel.from, '\n');
+    const slashIdx = textBefore.lastIndexOf('/');
+    if (slashIdx !== -1) {
+      const charsToDelete = textBefore.length - slashIdx;
+      editor.chain().focus().deleteRange({ from: sel.from - charsToDelete, to: sel.from }).run();
+    }
+    cmd.action(editor);
+    onClose();
+  };
+
   // Keyboard navigation listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -279,8 +292,7 @@ export default function SlashCommandMenu({
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (filteredCommands[selectedIndex]) {
-          filteredCommands[selectedIndex].action(editor);
-          onClose();
+          executeCommand(filteredCommands[selectedIndex]);
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
@@ -315,8 +327,7 @@ export default function SlashCommandMenu({
               key={cmd.id}
               type="button"
               onClick={() => {
-                cmd.action(editor);
-                onClose();
+                executeCommand(cmd);
               }}
               onMouseEnter={() => setSelectedIndex(idx)}
               className={`w-full flex items-start gap-2.5 px-3 py-2 rounded-xl text-left transition-colors ${

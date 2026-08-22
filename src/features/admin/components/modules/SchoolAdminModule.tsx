@@ -24,7 +24,7 @@ export const SchoolAdminModule: React.FC = () => {
 
   return (
     <EduNetworkAdminDashboard
-      onAuditLog={(action, module, details) => addAuditLog(action, module as any, details)}
+      onAuditLog={(action, module, details) => addAuditLog(action, 'schools_institutions', details)}
     />
   );
 };

@@ -21,6 +21,7 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
       'research_rnd',
       'content_homepage',
       'navigation_cms',
+      'marketing_growth',
       'audit_logs',
     ],
     description: 'Unrestricted control over all company settings, admin team rosters, financial metrics, and core infrastructure.',
@@ -114,6 +115,16 @@ export const ADMIN_ROLE_CONFIGS: Record<AdminRole, AdminRoleConfig> = {
     badgeText: 'Homepage CMS & Media',
     allowedModules: ['overview', 'content_homepage', 'navigation_cms', 'audit_logs'],
     description: 'Controls homepage announcements, hero promotional banners, science articles, blog publishing, and FAQs.',
+  },
+  marketing_admin: {
+    role: 'marketing_admin',
+    title: 'Marketing, Ads & Growth Lead',
+    department: 'Marketing & Institutional Growth',
+    color: 'amber',
+    badgeBg: 'bg-amber-500/20 border-amber-400/40 text-amber-300',
+    badgeText: 'Marketing & Campaigns',
+    allowedModules: ['overview', 'marketing_growth', 'audit_logs'],
+    description: 'Full live management of Special Offers cards, top tickers, popup banners, promo discount coupons, and campaign leads.',
   },
 };
 
@@ -236,6 +247,18 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     department: 'Media & Web Content',
     assignedModules: ADMIN_ROLE_CONFIGS.content_admin.allowedModules,
     lastLogin: 'Yesterday',
+    status: 'active',
+  },
+  {
+    id: 'adm-11',
+    name: 'Marketing & Growth Lead',
+    email: 'marketing@123',
+    password: 'Dev@12345',
+    avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&auto=format&fit=crop',
+    role: 'marketing_admin',
+    department: 'Marketing & Institutional Growth',
+    assignedModules: ADMIN_ROLE_CONFIGS.marketing_admin.allowedModules,
+    lastLogin: 'Today (Active)',
     status: 'active',
   },
 ];

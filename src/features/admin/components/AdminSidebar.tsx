@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {
   LayoutDashboard, Briefcase, Building2, GraduationCap,
   Beaker, Wrench, Package, Calendar, Sparkles, Globe,
-  ShieldAlert, Activity, LogOut, ChevronRight, X, Settings, History
+  ShieldAlert, Activity, LogOut, ChevronRight, X, Settings, History, Megaphone
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS } from '../data';
@@ -21,6 +21,7 @@ interface NavItem {
 
 const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'Command Overview', icon: LayoutDashboard },
+  { id: 'marketing_growth', label: 'Marketing & Offers', icon: Megaphone, badge: 'Offers' },
   { id: 'navigation_cms', label: 'Navbar & Route CMS', icon: Globe, badge: 'Control' },
   { id: 'audit_logs', label: 'Daily Work History', icon: History, badge: 'Live Logs' },
   { id: 'hr_careers', label: 'HR & Careers', icon: Briefcase, badge: 'Internal' },

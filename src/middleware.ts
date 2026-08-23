@@ -62,6 +62,7 @@ export function middleware(request: NextRequest) {
     support: { adminPath: '/get-support/admin', publicFolder: '/get-support' },
     content: { adminPath: '/admin', publicFolder: '/hands-on-experiments' },
     blog: { adminPath: '/admin', publicFolder: '/blog' },
+    marketing: { adminPath: '/marketing/admin', publicFolder: '/why-cseel' },
   };
 
   // 1. Dedicated Public Login Subdomain: login.cseel.org

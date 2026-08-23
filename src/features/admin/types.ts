@@ -8,10 +8,12 @@ export type AdminRole =
   | 'inventory_admin'
   | 'programs_admin'
   | 'rnd_admin'
-  | 'content_admin';
+  | 'content_admin'
+  | 'marketing_admin';
 
 export type AdminModuleId =
   | 'overview'
+  | 'marketing_growth'
   | 'hr_careers'
   | 'schools_institutions'
   | 'teaching_recruitment'

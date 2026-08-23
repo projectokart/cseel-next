@@ -1,26 +1,25 @@
-'use client';
+﻿'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-import { useState, useEffect } from "react";
-
-import { ArrowRight, Tag } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
-
-type Promotion = Tables<"promotions">;
+import { ArrowRight, Tag } from 'lucide-react';
+import { INITIAL_PROMOTIONS } from '@/features/marketing/data/marketingSeed';
+import { MarketingPromotion } from '@/features/marketing/types';
 
 const OffersSection = () => {
-  const [items, setItems] = useState<Promotion[]>([]);
+  const [items, setItems] = useState<MarketingPromotion[]>(
+    INITIAL_PROMOTIONS.filter((p) => p.type === 'offer' && p.is_active)
+  );
 
   useEffect(() => {
-    (supabase as any).from("promotions")
-      .select("*")
-      .eq("type", "offer")
-      .eq("is_active", true)
-      .order("sort_order")
-      .then(({ data }) => {
-        if (data) setItems(data);
-      });
+    fetch('/api/marketing/promotions?type=offer&active=true')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setItems(data.data);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   if (items.length === 0) return null;
@@ -39,10 +38,10 @@ const OffersSection = () => {
             <div
               key={item.id}
               style={{
-                background: item.bg_color,
+                background: item.bg_color || '#eff6ff',
                 borderRadius: 20,
-                padding: "24px",
-                border: `1px solid ${item.accent_color}20`,
+                padding: '24px',
+                border: `1px solid ${item.accent_color || '#2563eb'}20`,
               }}
               className="flex flex-col hover:shadow-lg transition-shadow duration-300"
             >
@@ -50,7 +49,7 @@ const OffersSection = () => {
                 style={{
                   fontSize: 18,
                   fontWeight: 700,
-                  color: "#111827",
+                  color: '#111827',
                   marginBottom: 8,
                   lineHeight: 1.3,
                 }}
@@ -60,7 +59,7 @@ const OffersSection = () => {
               <div
                 style={{
                   fontSize: 14,
-                  color: "#6B7280",
+                  color: '#6B7280',
                   lineHeight: 1.6,
                   flex: 1,
                   marginBottom: 16,
@@ -68,15 +67,16 @@ const OffersSection = () => {
                 dangerouslySetInnerHTML={{ __html: item.content }}
               />
               {item.cta_text && item.cta_link && (
-                <Link href={item.cta_link}
+                <Link
+                  href={item.cta_link}
                   style={{
-                    color: item.accent_color,
+                    color: item.accent_color || '#2563eb',
                     fontWeight: 700,
                     fontSize: 14,
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: 6,
-                    textDecoration: "none",
+                    textDecoration: 'none',
                   }}
                 >
                   {item.cta_text} <ArrowRight size={15} />

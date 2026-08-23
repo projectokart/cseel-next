@@ -65,7 +65,22 @@ export function middleware(request: NextRequest) {
     marketing: { adminPath: '/marketing/admin', publicFolder: '/why-cseel' },
   };
 
-  // 1. Dedicated Public Login Subdomain: login.cseel.org
+  // 1. Dedicated Admin Subdomain: admin.cseel.org
+  if (currentHost === 'admin' || currentHost === 'superadmin' || currentHost === 'portal') {
+    if (pathname === '/' || pathname === '' || pathname === '/login') {
+      url.pathname = '/admin';
+      return NextResponse.rewrite(url);
+    }
+    // If accessing any department admin route on admin.cseel.org (e.g. /materials/admin or /marketing/admin)
+    if (pathname.includes('/admin')) {
+      return NextResponse.rewrite(url);
+    }
+    // Default fallback on admin.cseel.org
+    url.pathname = '/admin';
+    return NextResponse.rewrite(url);
+  }
+
+  // 2. Dedicated Public User Login Subdomain: login.cseel.org
   if (currentHost === 'login' || currentHost === 'auth') {
     if (pathname === '/' || pathname === '' || pathname === '/login') {
       url.pathname = '/login';
@@ -74,27 +89,23 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(pathname, `https://www.${rootDomain}`), { status: 301 });
   }
 
-  // 2. Departmental Admin-Only Subdomains
-  if (currentHost && subdomainConfig[currentHost] !== undefined) {
-    const config = subdomainConfig[currentHost];
-    const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/');
+  // 3. Any other old subdomains (material, careers, marketing, etc.) -> 301 redirect permanently to main domain folders
+  if (currentHost && currentHost !== '' && currentHost !== 'www') {
+    const legacyFolderMap: Record<string, string> = {
+      material: '/materials',
+      materials: '/materials',
+      careers: '/careers',
+      network: '/edu-network',
+      training: '/teacher-training',
+      events: '/events',
+      support: '/get-support',
+      content: '/hands-on-experiments',
+      blog: '/blog',
+      marketing: '/why-cseel',
+    };
 
-    // Admin staff visiting /admin on department subdomain -> rewrite to department admin panel
-    if (isAdminPath) {
-      if (pathname === '/admin' && config.adminPath) {
-        url.pathname = config.adminPath;
-        return NextResponse.rewrite(url);
-      }
-      return NextResponse.next();
-    }
-
-    // Any public user visiting root of subdomain (e.g. material.cseel.org) -> 301 redirect to main domain folder (e.g. www.cseel.org/materials)
-    if (pathname === '/' || pathname === '') {
-      return NextResponse.redirect(new URL(config.publicFolder, `https://www.${rootDomain}`), { status: 301 });
-    }
-
-    // Any other public link clicked on subdomain -> 301 redirect directly to www.cseel.org/<path>
-    return NextResponse.redirect(new URL(pathname, `https://www.${rootDomain}`), { status: 301 });
+    const targetFolder = legacyFolderMap[currentHost] || (pathname !== '/' ? pathname : '/');
+    return NextResponse.redirect(new URL(targetFolder, `https://www.${rootDomain}`), { status: 301 });
   }
 
   return NextResponse.next();

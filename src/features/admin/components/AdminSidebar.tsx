@@ -32,7 +32,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'inventory_materials', label: 'Lab Materials & Kits', icon: Package },
   { id: 'programs_events', label: 'Seminars & Events', icon: Calendar },
   { id: 'research_rnd', label: 'R&D Innovation Labs', icon: Sparkles },
-  { id: 'content_homepage', label: 'Homepage Banners', icon: Sparkles },
+  { id: 'content_homepage', label: 'Homepage Sections CMS', icon: Sparkles, badge: 'Live CMS' },
 ];
 
 interface AdminSidebarProps {

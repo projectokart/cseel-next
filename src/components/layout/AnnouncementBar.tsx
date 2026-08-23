@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+import { useHomepageCms } from "@/features/homepage-cms/hooks/useHomepageCms";
+
 interface PromoItem {
   id: string;
   title: string;
@@ -15,6 +17,7 @@ interface PromoItem {
 }
 
 const AnnouncementBar = () => {
+  const { isSectionEnabled } = useHomepageCms();
   const [item, setItem] = useState<PromoItem | null>(null);
 
   useEffect(() => {
@@ -41,7 +44,7 @@ const AnnouncementBar = () => {
     load();
   }, []);
 
-  if (!item) return null;
+  if (!isSectionEnabled('announcement_bar') || !item) return null;
 
   const dismiss = () => {
     setItem(null);

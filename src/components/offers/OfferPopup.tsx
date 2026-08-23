@@ -5,6 +5,8 @@ import { X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
+import { useHomepageCms } from "@/features/homepage-cms/hooks/useHomepageCms";
+
 interface PromoItem {
   id: string;
   title: string;
@@ -17,6 +19,7 @@ interface PromoItem {
 const STORAGE_KEY = "offer-popup-closed";
 
 const OfferPopup = () => {
+  const { isSectionEnabled } = useHomepageCms();
   const [item, setItem] = useState<PromoItem | null>(null);
   const hasLoaded = useRef(false);
 
@@ -58,6 +61,8 @@ const OfferPopup = () => {
       }
     } catch {}
   };
+
+  if (!isSectionEnabled('offer_popup') || !item) return null;
 
   return (
     <AnimatePresence>

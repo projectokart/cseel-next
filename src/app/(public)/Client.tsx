@@ -10,6 +10,7 @@ import PageTransition from "@/components/shared/PageTransition";
 import OffersSection from "@/components/offers/OffersSection";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import OfferPopup from "@/components/offers/OfferPopup";
+import { useHomepageCms } from "@/features/homepage-cms/hooks/useHomepageCms";
 
 interface PartnerSchoolItem {
   id: string;
@@ -369,61 +370,73 @@ const Index = () => {
   const heroReveal = useScrollReveal();
   const metricsReveal = useScrollReveal();
   const ctaReveal = useScrollReveal();
+  const { isSectionEnabled, getSection } = useHomepageCms();
+
+  const heroConfig = getSection('hero_section');
+  const metricsConfig = getSection('impact_metrics');
+  const featuresConfig = getSection('why_cseel_features');
+  const catalogConfig = getSection('subjects_catalog');
+  const partnerConfig = getSection('partner_schools');
+  const finalCtaConfig = getSection('final_cta');
 
   return (
     <PageTransition>
       {/* ─── Hero Section with Brand Palette (#003c6e & #006fcc) ─── */}
-      <section className="hero-gradient pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
-        <div className="container mx-auto px-4 text-center">
-          
-          {/* Single-Line Dominant Brand Title with upper and lower margin */}
-          <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
-            <h1 className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center">
-              <span>Welcome to </span>
-              <span className="text-[#003c6e] font-black tracking-normal">
-                C.S.E.E.L
-              </span>
-            </h1>
-            <p className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-[#003c6e] tracking-tight max-w-xl mx-auto">
-              Center for Scientific Exploration and Experiential Learning
-            </p>
-          </div>
+      {isSectionEnabled('hero_section') && (
+        <section className="hero-gradient pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
+          <div className="container mx-auto px-4 text-center">
+            
+            {/* Single-Line Dominant Brand Title with upper and lower margin */}
+            <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
+              <h1 className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center">
+                <span>{heroConfig?.title || "Welcome to "}</span>
+                <span className="text-[#003c6e] font-black tracking-normal">
+                  {heroConfig?.subtitle ? "" : "C.S.E.E.L"}
+                </span>
+              </h1>
+              <p className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-[#003c6e] tracking-tight max-w-xl mx-auto">
+                {heroConfig?.subtitle || "Center for Scientific Exploration and Experiential Learning"}
+              </p>
+            </div>
 
-          {/* Description with Read More */}
-          <div style={{ animation: "fadeSlideUp 0.8s ease 0.15s both" }}>
-            <HeroText />
-          </div>
+            {/* Description with Read More */}
+            <div style={{ animation: "fadeSlideUp 0.8s ease 0.15s both" }}>
+              <HeroText />
+            </div>
 
-          {/* CTA Buttons (#006fcc solid with pure white icons) */}
-          <div
-            className="flex flex-col sm:flex-row justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4"
-            style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
-          >
-            <Link
-              href="/compare-plans"
-              className="group px-8 py-3.5 bg-[#006fcc] hover:bg-[#005bb8] active:bg-[#004e9c] text-white font-black text-sm rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 active:scale-98"
-              style={{ backgroundColor: '#006fcc' }}
+            {/* CTA Buttons (#006fcc solid with pure white icons) */}
+            <div
+              className="flex flex-col sm:flex-row justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4"
+              style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
             >
-              <span className="text-white">Our Plans</span>
-              <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
-            </Link>
-            <Link
-              href="/demo"
-              className="group px-8 py-3.5 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-black text-sm rounded-full transition-all duration-200 flex items-center justify-center gap-2.5 active:scale-98"
-            >
-              <Play className="w-4 h-4 text-[#006fcc] fill-[#006fcc]/20 shrink-0" />
-              <span>Live Lab Tour</span>
-            </Link>
-          </div>
+              <Link
+                href={heroConfig?.cta_link || "/compare-plans"}
+                className="group px-8 py-3.5 bg-[#006fcc] hover:bg-[#005bb8] active:bg-[#004e9c] text-white font-black text-sm rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 active:scale-98"
+                style={{ backgroundColor: '#006fcc' }}
+              >
+                <span className="text-white">{heroConfig?.cta_text || "Our Plans"}</span>
+                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
+              </Link>
+              <Link
+                href={heroConfig?.secondary_cta_link || "/demo"}
+                className="group px-8 py-3.5 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-black text-sm rounded-full transition-all duration-200 flex items-center justify-center gap-2.5 active:scale-98"
+              >
+                <Play className="w-4 h-4 text-[#006fcc] fill-[#006fcc]/20 shrink-0" />
+                <span>{heroConfig?.secondary_cta_text || "Live Lab Tour"}</span>
+              </Link>
+            </div>
 
-          {/* Hero Image Slider - Scaled to fit perfectly */}
-          <div style={{ animation: "fadeSlideUp 0.9s ease 0.45s both" }}>
-            <HeroSlider />
-          </div>
+            {/* Hero Image Slider - Scaled to fit perfectly */}
+            <div style={{ animation: "fadeSlideUp 0.9s ease 0.45s both" }}>
+              <HeroSlider />
+            </div>
 
-        </div>
-      </section>
-<OffersSection />
+          </div>
+        </section>
+      )}
+
+      {/* ─── Special Offers Section ─── */}
+      {isSectionEnabled('special_offers') && <OffersSection />}
       {/* ─── Stats ─── */}
       <section className="py-16" style={{ backgroundColor: "hsl(var(--achievement-bg))" }}>
         <div className="container mx-auto px-4">
@@ -448,273 +461,302 @@ const Index = () => {
       </section>
 
       {/* ─── Modern Partner Schools & Academic Network Showcase (Single Row, Circular Logo, Larger Size) ─── */}
-      <section className="py-8 md:py-12 bg-slate-50/70 border-y border-gray-200/80 overflow-hidden">
-        <div className="container mx-auto px-4 text-center mb-6 md:mb-8">
-          <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Our Academic Network</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">CSEEL Powers Opportunity Through STEAM</h2>
-        </div>
+      {isSectionEnabled('partner_schools') && (
+        <section className="py-8 md:py-12 bg-slate-50/70 border-y border-gray-200/80 overflow-hidden">
+          <div className="container mx-auto px-4 text-center mb-6 md:mb-8">
+            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+              {partnerConfig?.badge_text || "Our Academic Network"}
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              {partnerConfig?.title || "CSEEL Powers Opportunity Through STEAM"}
+            </h2>
+          </div>
 
-        {/* Single Seamless Infinite Scrolling Track */}
-        <div className="overflow-hidden py-2 relative">
-          {/* Edge Gradient Fades */}
-          <div className="absolute left-0 top-0 h-full w-16 md:w-32 z-10 pointer-events-none bg-gradient-to-r from-slate-50 to-transparent" />
-          <div className="absolute right-0 top-0 h-full w-16 md:w-32 z-10 pointer-events-none bg-gradient-to-l from-slate-50 to-transparent" />
+          {/* Single Seamless Infinite Scrolling Track */}
+          <div className="overflow-hidden py-2 relative">
+            {/* Edge Gradient Fades */}
+            <div className="absolute left-0 top-0 h-full w-16 md:w-32 z-10 pointer-events-none bg-gradient-to-r from-slate-50 to-transparent" />
+            <div className="absolute right-0 top-0 h-full w-16 md:w-32 z-10 pointer-events-none bg-gradient-to-l from-slate-50 to-transparent" />
 
-          <div className="flex animate-scroll-logos items-center gap-4" style={{ width: "fit-content" }}>
-            {[...partnerSchoolsList, ...partnerSchoolsList].map((school, i) => (
-              <Link
-                href={`/edu-network/org/${school.id}`}
-                key={`single-track-${school.id}-${i}`}
-                className="bg-white hover:bg-gradient-to-r hover:from-white hover:to-blue-50/70 rounded-2xl border border-gray-200 hover:border-primary/50 p-3 md:p-3.5 shadow-2xs hover:shadow-md transition-all flex items-center gap-3.5 min-w-[270px] md:min-w-[310px] shrink-0 group cursor-pointer"
-              >
-                {/* Circular Official School Logo (Larger Size) */}
-                <div className="w-12 h-12 md:w-14 md:h-14 p-1.5 bg-white rounded-full border border-gray-200/90 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 group-hover:border-primary/50 group-hover:shadow-sm transition-all overflow-hidden">
-                  <img
-                    src={school.logo}
-                    alt={school.name}
-                    className="w-full h-full object-contain rounded-full"
-                  />
-                </div>
-
-                {/* Info */}
-                <div className="min-w-0 flex-1 text-left">
-                  <div className="flex items-center gap-1.5">
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 truncate group-hover:text-primary transition-colors leading-tight">
-                      {school.shortName}
-                    </h4>
-                    <CheckCircle className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+            <div className="flex animate-scroll-logos items-center gap-4" style={{ width: "fit-content" }}>
+              {[...partnerSchoolsList, ...partnerSchoolsList].map((school, i) => (
+                <Link
+                  href={`/edu-network/org/${school.id}`}
+                  key={`single-track-${school.id}-${i}`}
+                  className="bg-white hover:bg-gradient-to-r hover:from-white hover:to-blue-50/70 rounded-2xl border border-gray-200 hover:border-primary/50 p-3 md:p-3.5 shadow-2xs hover:shadow-md transition-all flex items-center gap-3.5 min-w-[270px] md:min-w-[310px] shrink-0 group cursor-pointer"
+                >
+                  {/* Circular Official School Logo (Larger Size) */}
+                  <div className="w-12 h-12 md:w-14 md:h-14 p-1.5 bg-white rounded-full border border-gray-200/90 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 group-hover:border-primary/50 group-hover:shadow-sm transition-all overflow-hidden">
+                    <img
+                      src={school.logo}
+                      alt={school.name}
+                      className="w-full h-full object-contain rounded-full"
+                    />
                   </div>
-                  <p className="text-[11px] text-gray-500 truncate font-medium mt-0.5">
-                    {school.city} • {school.board.split('•')[0]}
-                  </p>
-                  <div className="mt-1 flex items-center gap-2">
-                    <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full border ${school.accent}`}>
-                      {school.badge}
-                    </span>
-                    <span className="text-[10px] text-primary font-bold group-hover:underline">
-                      View Profile →
-                    </span>
+
+                  {/* Info */}
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-xs sm:text-sm font-bold text-gray-900 truncate group-hover:text-primary transition-colors leading-tight">
+                        {school.shortName}
+                      </h4>
+                      <CheckCircle className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
+                    </div>
+                    <p className="text-[11px] text-gray-500 truncate font-medium mt-0.5">
+                      {school.city} • {school.board.split('•')[0]}
+                    </p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full border ${school.accent}`}>
+                        {school.badge}
+                      </span>
+                      <span className="text-[10px] text-primary font-bold group-hover:underline">
+                        View Profile →
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom CTA to EduNetwork Directory */}
-        <div className="text-center mt-5">
-          <Link
-            href="/edu-network"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-          >
-            <span>Explore all 100+ Schools & Institutions in CSEEL EduNetwork Directory</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-      </section>
-
-      {/* ─── Key Metrics ─── */}
-      <section className="py-16 hero-gradient" ref={metricsReveal.ref as any}>
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Our Impact</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">CSEEL by the Numbers</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
-            {[
-              { num: "20,000+", label: "Active Learners" },
-              { num: "1000+", label: "Concept Based Experiments" },
-              { num: "25+", label: "Schools Empowered" },
-            ].map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  opacity: metricsReveal.visible ? 1 : 0,
-                  transform: metricsReveal.visible ? "translateY(0) scale(1)" : "translateY(30px) scale(0.95)",
-                  transition: "all 0.6s ease",
-                  transitionDelay: `${i * 150}ms`,
-                }}
-              >
-                <div className="text-5xl font-bold text-primary mb-2">{m.num}</div>
-                <p className="font-semibold text-foreground">{m.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Feature Rows ─── */}
-{/* ─── Feature Rows ─── */}
-<section className="py-16 bg-background">
-  <div className="container mx-auto px-4 space-y-12">
-    <div className="text-center mb-4">
-      <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Why CSEEL</p>
-      <h2 className="text-2xl md:text-3xl font-bold text-foreground">Built for Real Learning Outcomes</h2>
-    </div>
-    
-    {/* Feature 1: Soft Blue/Slate Background */}
-    <div className="bg-[#e3eefb] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s, transform 0.7s' }}>
-        {/* Content Section */}
-        <div className="p-8 md:p-12">
-          <p className="text-sm font-semibold text-primary mb-2">No need for extra grading or planning time</p>
-          <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4">Students look forward to learning at their own pace</h2>
-          <p className="text-sm md:text-base text-muted-foreground mb-6">Educators assign CSEEL experimental labs to actively engage students—without increasing their already busy workloads. Higher engagement naturally leads to better understanding, improved grades, and stronger retention.</p>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-              <div>
-                <p className="font-semibold text-foreground text-sm md:text-base">C- to B+ Grade Improvement</p>
-                <p className="text-xs md:text-sm text-muted-foreground">CSEEL helps students improve their academic performance by an average of one full letter grade or more.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-              <div>
-                <p className="font-semibold text-foreground text-sm md:text-base">82% Student Engagement</p>
-                <p className="text-xs md:text-sm text-muted-foreground">82% of students using CSEEL report high levels of engagement, participation, and interest in learning.</p>
-              </div>
+                </Link>
+              ))}
             </div>
           </div>
-        </div>
-        {/* Image Section */}
-        <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group">
-          <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf9f93d712be6d135ac575_Student-Remote-Room-Labster-reverse-edit.avif" alt="Student learning remotely" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
-        </div>
-      </div>
-    </div>
 
-    {/* Feature 2: Soft Indigo/Lavender Background */}
-    <div className="bg-[#fff1f1] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s 100ms, transform 0.7s' }}>
-        {/* Image Section - order-last on mobile, order-first on desktop for reverse look */}
-        <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group lg:order-first order-last">
-          <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf944f3df098f183b92727_Lab-Scientists-Beakers-edit.avif" alt="Scientists in lab" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
-        </div>
-        {/* Content Section */}
-        <div className="p-8 md:p-12">
-          <p className="text-sm font-semibold text-primary mb-2">Higher Pass Rates. Stronger Retention.</p>
-          <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4">Improved Student Success</h2>
-          <p className="text-sm md:text-base text-muted-foreground mb-6">CSEEL has been proven to increase student grades, pass rates, and overall academic performance.</p>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-              <div>
-                <p className="font-semibold text-foreground text-sm md:text-base">34% Reduction in DFW Rates</p>
-                <p className="text-xs md:text-sm text-muted-foreground">Institutions using CSEEL have observed a 34% decrease in DFW rates across multiple semesters.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-              <div>
-                <p className="font-semibold text-foreground text-sm md:text-base">93% Positive Student Experience</p>
-                <p className="text-xs md:text-sm text-muted-foreground">93% of students report a positive learning experience with CSEEL.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Feature 3: Soft Teal/Emerald Background */}
-    <div className="bg-[#eafff1] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
-      <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s 100ms, transform 0.7s' }}>
-        {/* Content Section */}
-        <div className="p-8 md:p-12">
-          <p className="text-sm font-semibold text-primary mb-2">Increase Access</p>
-          <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4">Dismantle Barriers to Achievement</h2>
-          <p className="text-sm md:text-base text-muted-foreground mb-6">Expand STEM equity and access among your students. Cseel is designed to meet diverse student needs and offer a more consistent, accessible science learning experience.</p>
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-              <div>
-                <p className="font-semibold text-foreground text-sm md:text-base">24% Learning Gains for Struggling Students</p>
-                <p className="text-xs md:text-sm text-muted-foreground">The lowest-performing students show an average 24% improvement in pre-to-post test knowledge.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
-              <div>
-                <p className="font-semibold text-foreground text-sm md:text-base">Trusted by Educators</p>
-                <p className="text-xs md:text-sm text-muted-foreground">9 out of 10 educators say they would recommend CSEEL to other teachers or institutions.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Image Section */}
-        <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group">
-          <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66be608d71d32863b2bf5487_Students-Desk-Classroom-Laptop-reverse.avif" alt="Students in classroom" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-      {/* ─── Catalog ─── */}
-      <section className="py-16 hero-gradient">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Subjects</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Explore the CSEEL Catalog</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {catalogItems.map((item, i) => (
-              <CatalogCard key={item.title} item={item} delay={i * 60} />
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/simulations"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
+          {/* Bottom CTA to EduNetwork Directory */}
+          <div className="text-center mt-5">
+            <Link
+              href={partnerConfig?.cta_link || "/edu-network"}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
             >
-              View the Full Experimental Library <ArrowRight className="w-4 h-4" />
+              <span>{partnerConfig?.cta_text || "Explore all 100+ Schools & Institutions in CSEEL EduNetwork Directory"}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ─── Testimonial ─── */}
-      <TestimonialSection />
-
-      {/* ─── Awards ─── */}
-      <AwardsSection />
-
-      {/* ─── Easy to Use ─── */}
-      <EasySection />
-
-      {/* ─── Final CTA ─── */}
-      <section className="py-16 hero-gradient" ref={ctaReveal.ref as any}>
-        <div className="container mx-auto px-4">
-          <div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-            style={{
-              opacity: ctaReveal.visible ? 1 : 0,
-              transform: ctaReveal.visible ? "translateY(0)" : "translateY(40px)",
-              transition: "all 0.7s ease",
-            }}
-          >
-            <div>
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Get Started</p>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Find the Plan That Works For You</h2>
-              <p className="text-muted-foreground mb-6">
-                See our plan options, learn more about virtual labs, and find out how easy it is to get started with Cseel.
+      {/* ─── Key Metrics ─── */}
+      {isSectionEnabled('impact_metrics') && (
+        <section className="py-16 hero-gradient" ref={metricsReveal.ref as any}>
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-10">
+              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+                {metricsConfig?.badge_text || "Our Impact"}
               </p>
-              <Link href="/compare-plans"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
-              >
-                Compare Plans <ArrowRight className="w-4 h-4" />
-              </Link>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                {metricsConfig?.title || "CSEEL by the Numbers"}
+              </h2>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg group">
-              <img
-                src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66c366924698e845aff6397c_Group-Laptop-Labster-edit-2.avif"
-                alt="Students with laptop"
-                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
+              {(metricsConfig?.items || [
+                { value: "20,000+", label: "Active Learners" },
+                { value: "1000+", label: "Concept Based Experiments" },
+                { value: "25+", label: "Schools Empowered" },
+              ]).map((m: any, i: number) => (
+                <div
+                  key={i}
+                  style={{
+                    opacity: metricsReveal.visible ? 1 : 0,
+                    transform: metricsReveal.visible ? "translateY(0) scale(1)" : "translateY(30px) scale(0.95)",
+                    transition: "all 0.6s ease",
+                    transitionDelay: `${i * 150}ms`,
+                  }}
+                >
+                  <div className="text-5xl font-bold text-primary mb-2">{m.value || m.num}</div>
+                  <p className="font-semibold text-foreground">{m.label}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ─── Feature Rows ─── */}
+      {isSectionEnabled('why_cseel_features') && (
+        <section className="py-16 bg-background">
+          <div className="container mx-auto px-4 space-y-12">
+            <div className="text-center mb-4">
+              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+                {featuresConfig?.badge_text || "Why CSEEL"}
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                {featuresConfig?.title || "Built for Real Learning Outcomes"}
+              </h2>
+            </div>
+            
+            {/* Feature 1: Soft Blue/Slate Background */}
+            <div className="bg-[#e3eefb] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
+              <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s, transform 0.7s' }}>
+                {/* Content Section */}
+                <div className="p-8 md:p-12">
+                  <p className="text-sm font-semibold text-primary mb-2">No need for extra grading or planning time</p>
+                  <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4">Students look forward to learning at their own pace</h2>
+                  <p className="text-sm md:text-base text-muted-foreground mb-6">Educators assign CSEEL experimental labs to actively engage students—without increasing their already busy workloads. Higher engagement naturally leads to better understanding, improved grades, and stronger retention.</p>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm md:text-base">C- to B+ Grade Improvement</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">CSEEL helps students improve their academic performance by an average of one full letter grade or more.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm md:text-base">82% Student Engagement</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">82% of students using CSEEL report high levels of engagement, participation, and interest in learning.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Image Section */}
+                <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group">
+                  <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf9f93d712be6d135ac575_Student-Remote-Room-Labster-reverse-edit.avif" alt="Student learning remotely" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 2: Soft Indigo/Lavender Background */}
+            <div className="bg-[#fff1f1] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
+              <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s 100ms, transform 0.7s' }}>
+                {/* Image Section */}
+                <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group lg:order-first order-last">
+                  <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf944f3df098f183b92727_Lab-Scientists-Beakers-edit.avif" alt="Scientists in lab" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+                {/* Content Section */}
+                <div className="p-8 md:p-12">
+                  <p className="text-sm font-semibold text-primary mb-2">Higher Pass Rates. Stronger Retention.</p>
+                  <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4">Improved Student Success</h2>
+                  <p className="text-sm md:text-base text-muted-foreground mb-6">CSEEL has been proven to increase student grades, pass rates, and overall academic performance.</p>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm md:text-base">34% Reduction in DFW Rates</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Institutions using CSEEL have observed a 34% decrease in DFW rates across multiple semesters.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm md:text-base">93% Positive Student Experience</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">93% of students report a positive learning experience with CSEEL.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature 3: Soft Teal/Emerald Background */}
+            <div className="bg-[#eafff1] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
+              <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s 100ms, transform 0.7s' }}>
+                {/* Content Section */}
+                <div className="p-8 md:p-12">
+                  <p className="text-sm font-semibold text-primary mb-2">Increase Access</p>
+                  <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4">Dismantle Barriers to Achievement</h2>
+                  <p className="text-sm md:text-base text-muted-foreground mb-6">Expand STEM equity and access among your students. Cseel is designed to meet diverse student needs and offer a more consistent, accessible science learning experience.</p>
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm md:text-base">24% Learning Gains for Struggling Students</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">The lowest-performing students show an average 24% improvement in pre-to-post test knowledge.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div>
+                        <p className="font-semibold text-foreground text-sm md:text-base">Trusted by Educators</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">9 out of 10 educators say they would recommend CSEEL to other teachers or institutions.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* Image Section */}
+                <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group">
+                  <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66be608d71d32863b2bf5487_Students-Desk-Classroom-Laptop-reverse.avif" alt="Students in classroom" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+      {/* ─── Catalog ─── */}
+      {isSectionEnabled('subjects_catalog') && (
+        <section className="py-16 hero-gradient">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+                {catalogConfig?.badge_text || "Subjects"}
+              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                {catalogConfig?.title || "Explore the CSEEL Catalog"}
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+              {catalogItems.map((item, i) => (
+                <CatalogCard key={item.title} item={item} delay={i * 60} />
+              ))}
+            </div>
+            <div className="text-center mt-10">
+              <Link href={catalogConfig?.cta_link || "/simulations"}
+                className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
+              >
+                {catalogConfig?.cta_text || "View the Full Experimental Library"} <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── Testimonial ─── */}
+      {isSectionEnabled('testimonials') && <TestimonialSection />}
+
+      {/* ─── Awards ─── */}
+      {isSectionEnabled('awards_accreditations') && <AwardsSection />}
+
+      {/* ─── Easy to Use ─── */}
+      {isSectionEnabled('easy_steps') && <EasySection />}
+
+      {/* ─── Final CTA ─── */}
+      {isSectionEnabled('final_cta') && (
+        <section className="py-16 hero-gradient" ref={ctaReveal.ref as any}>
+          <div className="container mx-auto px-4">
+            <div
+              className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+              style={{
+                opacity: ctaReveal.visible ? 1 : 0,
+                transform: ctaReveal.visible ? "translateY(0)" : "translateY(40px)",
+                transition: "all 0.7s ease",
+              }}
+            >
+              <div>
+                <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+                  {finalCtaConfig?.badge_text || "Get Started"}
+                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                  {finalCtaConfig?.title || "Find the Plan That Works For You"}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {finalCtaConfig?.subtitle || "See our plan options, learn more about virtual labs, and find out how easy it is to get started with Cseel."}
+                </p>
+                <Link href={finalCtaConfig?.cta_link || "/compare-plans"}
+                  className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
+                >
+                  {finalCtaConfig?.cta_text || "Compare Plans"} <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-lg group">
+                <img
+                  src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66c366924698e845aff6397c_Group-Laptop-Labster-edit-2.avif"
+                  alt="Students with laptop"
+                  className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Global keyframes */}
       <style>{`

@@ -6,7 +6,7 @@ import {
   ShieldCheck, ChevronDown, Bell, LogOut, ArrowLeft,
   ExternalLink, Globe, FileSpreadsheet, Download, Check, Menu,
   Briefcase, Building2, GraduationCap, Beaker, Wrench, Package,
-  Calendar, Sparkles, User, Shield, Settings
+  Calendar, Sparkles, User, Shield, Settings, Megaphone
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS, downloadAdminCredentialsCSVFile } from '../data';
@@ -28,6 +28,7 @@ const ROLE_ICONS: Record<AdminRole, any> = {
   programs_admin: Calendar,
   rnd_admin: Sparkles,
   content_admin: Globe,
+  marketing_admin: Megaphone,
 };
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleMobileMenu }) => {

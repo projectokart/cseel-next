@@ -51,46 +51,48 @@ export function middleware(request: NextRequest) {
           .replace('localhost:3000', '')
           .replace('localhost:3001', '');
 
-  // Map subdomain → main-domain base path (used for redirect only)
-  const subdomainToPath: Record<string, string> = {
-    material: '/materials',
-    materials: '/materials',
-    careers: '/careers',
-    network: '/edu-network',
-    training: '/teacher-training',
-    events: '/events',
-    support: '/get-support',
-    content: '/hands-on-experiments',
-    blog: '/blog',
-    login: '',
-    auth: '',
+  // Map subdomain → department admin route & main-domain public folder
+  const subdomainConfig: Record<string, { adminPath: string; publicFolder: string }> = {
+    material: { adminPath: '/materials/admin', publicFolder: '/materials' },
+    materials: { adminPath: '/materials/admin', publicFolder: '/materials' },
+    careers: { adminPath: '/careers/admin', publicFolder: '/careers' },
+    network: { adminPath: '/edu-network/admin', publicFolder: '/edu-network' },
+    training: { adminPath: '/teacher-training/admin', publicFolder: '/teacher-training' },
+    events: { adminPath: '/events/admin', publicFolder: '/events' },
+    support: { adminPath: '/get-support/admin', publicFolder: '/get-support' },
+    content: { adminPath: '/admin', publicFolder: '/hands-on-experiments' },
+    blog: { adminPath: '/admin', publicFolder: '/blog' },
+    login: { adminPath: '/admin', publicFolder: '/login' },
+    auth: { adminPath: '/admin', publicFolder: '/login' },
   };
 
   // Only act if we're on a known subdomain
-  if (currentHost && subdomainToPath[currentHost] !== undefined) {
-    const isAdminPath = pathname.startsWith('/admin');
-    const isLoginPath = pathname === '/login' || pathname.startsWith('/login');
+  if (currentHost && subdomainConfig[currentHost] !== undefined) {
+    const config = subdomainConfig[currentHost];
+    const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/');
+    const isLoginPath = pathname === '/login' || pathname.startsWith('/login/');
 
-    // ✅ ALLOW: admin & login paths on subdomains — pass through as-is
-    // This lets material.cseel.org/admin serve the material dept admin panel
-    if (isAdminPath || isLoginPath) {
+    // 1. If visiting /admin on subdomain -> rewrite to department admin page
+    if (isAdminPath) {
+      if (pathname === '/admin' && config.adminPath) {
+        url.pathname = config.adminPath;
+        return NextResponse.rewrite(url);
+      }
       return NextResponse.next();
     }
 
-    // 🔄 REDIRECT: everything else → main domain equivalent
-    // e.g. material.cseel.org/anything → www.cseel.org/materials (or /materials/anything)
-    const targetBase = subdomainToPath[currentHost];
-    const redirectPath =
-      pathname === '/' || pathname === ''
-        ? targetBase || '/'
-        : targetBase + pathname;
+    // 2. If visiting /login on subdomain -> allow
+    if (isLoginPath) {
+      return NextResponse.next();
+    }
 
-    const redirectUrl = new URL(
-      redirectPath || '/',
-      `https://www.${rootDomain}`
-    );
+    // 3. For homepage of subdomain (e.g. material.cseel.org/) -> redirect to main domain folder (e.g. www.cseel.org/materials)
+    if (pathname === '/' || pathname === '') {
+      return NextResponse.redirect(new URL(config.publicFolder, `https://www.${rootDomain}`), { status: 301 });
+    }
 
-    return NextResponse.redirect(redirectUrl, { status: 301 });
+    // 4. For any other path (e.g. material.cseel.org/hands-on-experiments) -> redirect directly to www.cseel.org/hands-on-experiments
+    return NextResponse.redirect(new URL(pathname, `https://www.${rootDomain}`), { status: 301 });
   }
 
   return NextResponse.next();

@@ -4,7 +4,26 @@ import { ChevronDown, Menu, X, Sparkles } from "lucide-react";
 import { useState, useRef } from "react";
 import { useNavVisibility } from '@/contexts/NavigationContext';
 
-const navItems = [
+export interface NavChildItem {
+  label: string;
+  to: string;
+  badge?: string;
+  badgeText?: string;
+  badgeType?: string;
+}
+
+export interface NavItem {
+  label: string;
+  hasDropdown?: boolean;
+  isSpecial?: boolean;
+  to?: string;
+  badge?: string;
+  badgeText?: string;
+  badgeType?: string;
+  children?: NavChildItem[];
+}
+
+const navItems: NavItem[] = [
   {
     label: "Library",
     hasDropdown: true,
@@ -92,7 +111,7 @@ const Navbar = () => {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Dynamically filter sections and children based on Super Admin toggles
-  const visibleNavItems = navItems.filter((item) => {
+  const visibleNavItems: NavItem[] = navItems.filter((item) => {
     const sectionConfig = navSettings.find(
       (s) => s.label.toLowerCase() === item.label.toLowerCase() || s.id === item.label.toLowerCase().replace(/\s+/g, '-')
     );
@@ -105,7 +124,7 @@ const Navbar = () => {
     );
     if (!sectionConfig || !sectionConfig.children) return item;
 
-    const filteredChildren = item.children.filter((child) => {
+    const filteredChildren: NavChildItem[] = item.children.filter((child) => {
       const childConfig = sectionConfig.children?.find(
         (c) => c.route === child.to || c.label.toLowerCase() === child.label.toLowerCase()
       );

@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
-  ShieldAlert, Lock, Mail, Key, Eye, EyeOff,
-  ArrowRight, ShieldCheck, CheckCircle2,
-  AlertCircle, ArrowLeft, Building2, Briefcase, GraduationCap,
-  Beaker, Wrench, Package, Calendar, Globe, Server
+  ShieldCheck, Lock, Eye, EyeOff,
+  ArrowRight, AlertCircle, ArrowLeft, Building2, Briefcase, GraduationCap,
+  Beaker, Wrench, Package, Calendar, Megaphone, CheckCircle2, Shield
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export const AdminLoginScreen: React.FC = () => {
   const { login } = useAdminAuth();
@@ -16,142 +19,179 @@ export const AdminLoginScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    const res = login(email, password);
+    setLoading(true);
+
+    const res = login(email.trim(), password.trim());
+    setLoading(false);
+
     if (!res.success) {
       setErrorMessage(res.error || 'Authentication failed. Please verify your administrative credentials.');
     } else if (res.redirectUrl && typeof window !== 'undefined') {
       if (res.redirectUrl.startsWith('http')) {
-        setIsRedirecting(true);
         window.location.href = res.redirectUrl;
       }
     }
   };
 
+  const quickRoles = [
+    { u: 'super@123', label: 'Super Admin' },
+    { u: 'marketing@123', label: 'Marketing' },
+    { u: 'material@123', label: 'Materials & Lab' },
+    { u: 'hr@123', label: 'HR & Careers' },
+    { u: 'school@123', label: 'Schools Network' },
+    { u: 'science@123', label: 'Science & NEP' },
+    { u: 'projectokart@123', label: 'Hardware Kits' },
+    { u: 'events@123', label: 'Events & Conclaves' },
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between p-4 sm:p-6 lg:p-10 relative overflow-hidden font-sans">
-      
-      {/* Background ambient lighting */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none" />
-
-      {/* ── TOP NAV BAR ── */}
-      <header className="relative z-10 flex items-center justify-between max-w-6xl w-full mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all border border-white/10"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Return to Public Portal</span>
-        </Link>
-
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[11px] font-bold">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Zero-Trust Enterprise Gateway</span>
-        </div>
-      </header>
-
-      {/* ── MAIN LOGIN CONTAINER ── */}
-      <main className="relative z-10 max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center py-8">
-        
-        {/* Left Side: Auth Box (5 Cols) */}
-        <div className="lg:col-span-5 bg-slate-900/95 backdrop-blur-2xl border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-          
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-[10px] font-black uppercase tracking-wider border border-purple-400/30">
-              <Lock className="w-3 h-3" />
-              <span>Administrative Access Control</span>
-            </div>
-            <h1 className="text-2xl font-black text-white">
-              CSEEL Governance Center
-            </h1>
-            <p className="text-xs text-slate-400">
-              Authorized personnel only. Enter your administrative credentials to access your departmental workspace.
-            </p>
+    <div className="min-h-[calc(100vh-80px)] flex flex-col lg:flex-row bg-background">
+      {/* ── LEFT PANEL (MAIN WEBSITE BRANDING GRADIENT) ── */}
+      <motion.div
+        className="hidden lg:flex lg:w-[42%] about-hero-gradient flex-col items-center justify-between p-12 text-center"
+        initial={{ opacity: 0, x: -40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="w-full flex justify-start">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-semibold text-primary-foreground border border-white/15">
+            <Shield className="w-3.5 h-3.5" />
+            <span>Administrative Governance</span>
           </div>
+        </div>
 
-          {errorMessage && (
-            <div className="p-3.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center gap-2.5 animate-shake">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{errorMessage}</span>
+        <div className="my-auto py-8">
+          <img
+            src="/images/logo.png"
+            alt="CSEEL"
+            className="h-20 w-20 mx-auto mb-6 brightness-200 drop-shadow-md"
+          />
+          <h1 className="text-4xl font-black text-primary-foreground tracking-tight mb-3">
+            C.S.E.E.L
+          </h1>
+          <p className="text-primary-foreground/90 text-base max-w-sm mx-auto leading-relaxed">
+            Center for Scientific Exploration and Experiential Learning
+          </p>
+
+          <div className="mt-8 pt-8 border-t border-white/15 text-left max-w-xs mx-auto space-y-3">
+            <div className="flex items-center gap-3 text-xs text-primary-foreground/90">
+              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+              <span>Multi-departmental role-based access</span>
             </div>
-          )}
+            <div className="flex items-center gap-3 text-xs text-primary-foreground/90">
+              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+              <span>Zero-trust cryptographic audit logs</span>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-primary-foreground/90">
+              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+              <span>Real-time CMS, offers and material logistics</span>
+            </div>
+          </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-            
-            {/* Username / Email Field */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-300 block">
-                Administrative Username or Email
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
+        <div className="text-xs text-primary-foreground/70">
+          CSEEL Enterprise Governance Framework
+        </div>
+      </motion.div>
+
+      {/* ── RIGHT PANEL (CLEAN MAIN WEBSITE FORM) ── */}
+      <motion.div
+        className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 md:py-12 bg-background overflow-y-auto"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="w-full max-w-md py-4">
+          
+          {/* Back link */}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors font-medium"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Return to public website</span>
+          </Link>
+
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-primary/10 text-primary rounded-md text-[11px] font-bold uppercase tracking-wider mb-2">
+              <Lock className="w-3 h-3" />
+              <span>Staff Authentication</span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-1">
+              Admin Portal
+            </h2>
+            <p className="text-muted-foreground text-xs sm:text-sm mb-6">
+              Sign in with your department or super admin credentials
+            </p>
+
+            {errorMessage && (
+              <div className="mb-4 p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs font-semibold flex items-center gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-email">Username or Email</Label>
+                <Input
+                  id="admin-email"
                   type="text"
                   required
+                  autoFocus
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="super@123 or hr@123 or material@123"
-                  className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-medium outline-none focus:border-purple-500 transition-colors"
+                  placeholder="e.g. super@123 or hr@123 or marketing@123"
+                  className="bg-background"
                 />
               </div>
-            </div>
 
-            {/* Password Field */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-bold text-slate-300 block">
-                  Password (Default: Dev@12345)
-                </label>
-                <span className="text-[10px] text-purple-400 font-bold">Encrypted</span>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="admin-password">Password</Label>
+                  <span className="text-[11px] text-muted-foreground">Default: Dev@12345</span>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="admin-password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter admin password"
+                    className="bg-background pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
-              <div className="relative">
-                <Key className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Dev@12345"
-                  className="w-full pl-10 pr-10 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono outline-none focus:border-purple-500 transition-colors"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black text-xs rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all flex items-center justify-center gap-2 mt-3 active:scale-98"
-            >
-              <span>Authenticate & Enter Workspace</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+              <Button
+                type="submit"
+                className="w-full font-bold shadow-md hover:shadow-lg transition-all mt-2"
+                disabled={loading}
+              >
+                <span>Sign In to Governance Portal</span>
+                <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Button>
+            </form>
 
-            {/* Quick Fill Pills */}
-            <div className="space-y-1.5 pt-2">
-              <p className="text-[10px] text-slate-400 font-bold">⚡ Quick Select Role:</p>
+            {/* Quick role selection buttons (Clean without emojis) */}
+            <div className="mt-6 pt-5 border-t border-border space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground">Quick Select Role:</p>
               <div className="flex flex-wrap gap-1.5">
-                {[
-                  { u: 'super@123', label: '👑 Super Admin' },
-                  { u: 'hr@123', label: '💼 HR Admin' },
-                  { u: 'material@123', label: '📦 Materials' },
-                  { u: 'school@123', label: '🏫 Schools' },
-                  { u: 'science@123', label: '🔬 Science' },
-                  { u: 'projectokart@123', label: '🛠️ Hardware' },
-                  { u: 'events@123', label: '📅 Events' },
-                  { u: 'rnd@123', label: '🧪 R&D' },
-                ].map((item) => (
+                {quickRoles.map((item) => (
                   <button
                     key={item.u}
                     type="button"
@@ -159,87 +199,23 @@ export const AdminLoginScreen: React.FC = () => {
                       setEmail(item.u);
                       setPassword('Dev@12345');
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-purple-900/50 border border-slate-700 hover:border-purple-500 text-[10px] text-slate-200 font-medium transition-all"
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/15 hover:text-primary border border-border text-xs font-medium text-muted-foreground transition-all active:scale-95"
                   >
                     {item.label}
                   </button>
                 ))}
               </div>
             </div>
-          </form>
 
-          <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-center gap-2">
-            <Server className="w-3.5 h-3.5 text-purple-400" />
-            <span>Audit logs recorded automatically with IP address</span>
+            {/* Enterprise SSL Security Badge */}
+            <div className="mt-6 pt-5 border-t border-border flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Enterprise 256-Bit SSL Encrypted Authentication</span>
+            </div>
+
           </div>
         </div>
-
-        {/* Right Side: Security & Departmental Overview (7 Cols) */}
-        <div className="lg:col-span-7 space-y-6">
-          
-          <div className="space-y-2">
-            <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-              <ShieldCheck className="w-6 h-6 text-purple-400" />
-              <span>National STEM Academic Governance Framework</span>
-            </h2>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              The CSEEL Central Administrative Console coordinates curriculum compliance, institution verifications, lab hardware supply chains, and faculty onboarding across India.
-            </p>
-          </div>
-
-          {/* Department Coverage Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-2 text-purple-300 font-bold">
-                <Building2 className="w-4 h-4 text-purple-400" />
-                <span>100+ Verified Schools</span>
-              </div>
-              <p className="text-[11px] text-slate-400">CBSE, ICSE, and Atal Tinkering Lab institution accreditations.</p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-2 text-cyan-300 font-bold">
-                <GraduationCap className="w-4 h-4 text-cyan-400" />
-                <span>Faculty Recruitment</span>
-              </div>
-              <p className="text-[11px] text-slate-400">Verified PGT/TGT subject matter experts and lab instructors.</p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-2 text-emerald-300 font-bold">
-                <Beaker className="w-4 h-4 text-emerald-400" />
-                <span>Curriculum Labs (NEP 2020)</span>
-              </div>
-              <p className="text-[11px] text-slate-400">Class 6–12 experiential science experiments and simulations.</p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-2 text-amber-300 font-bold">
-                <Package className="w-4 h-4 text-amber-400" />
-                <span>Projectokart Hardware Kits</span>
-              </div>
-              <p className="text-[11px] text-slate-400">STEM robotics, IoT microcontrollers, and sensor logistics.</p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-purple-950/30 border border-purple-800/40 text-xs text-purple-200 flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-bold">Enterprise Security Policy Active</p>
-              <p className="text-[11px] text-purple-300/80 mt-0.5">
-                All administrative operations are encrypted and audited under PostgreSQL RLS security policies.
-              </p>
-            </div>
-          </div>
-
-        </div>
-
-      </main>
-
-      {/* ── FOOTER ── */}
-      <footer className="relative z-10 text-center py-2 text-[11px] text-slate-500">
-        <p>© 2026 CSEEL — Center for Scientific Exploration & Experimental Learning. All rights reserved.</p>
-      </footer>
+      </motion.div>
     </div>
   );
 };

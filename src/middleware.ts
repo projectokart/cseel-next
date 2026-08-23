@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * CSEEL.org — Dynamic Subdomain & Microservices Edge Router
- * 
- * Supports multi-tenant routing across 10 department subdomains:
- * - login.cseel.org / auth.cseel.org  -> /login
- * - material.cseel.org / materials.cseel.org -> /materials
- * - careers.cseel.org                 -> /careers
- * - network.cseel.org                 -> /edu-network
- * - training.cseel.org                -> /teacher-training
- * - events.cseel.org                  -> /events
- * - support.cseel.org                 -> /get-support
- * - content.cseel.org                 -> /hands-on-experiments
- * - blog.cseel.org                    -> /blog
- * - api.cseel.org                     -> /api
+ * CSEEL.org — Edge Router
+ *
+ * Subdomain routing is ONLY active for admin & login paths:
+ *   material.cseel.org/admin   → renders /admin (material dept dashboard)
+ *   careers.cseel.org/admin    → renders /admin (careers dept dashboard)
+ *   material.cseel.org/login   → renders /login
+ *   (any other subdomain path) → 301 redirect to www.cseel.org/<equivalent-path>
+ *
+ * All public-facing pages use folder-based URLs on the main domain:
+ *   cseel.org/materials
+ *   cseel.org/hands-on-experiments
+ *   cseel.org/edu-network
+ *   cseel.org/careers
+ *   ... etc.
  */
 
 export const config = {
@@ -22,8 +23,8 @@ export const config = {
      * Match all request paths except:
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public asset folder files with extensions (.svg, .png, .jpg, .css, etc.)
+     * - favicon.ico
+     * - public assets with extensions
      */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|woff|woff2|ttf|ico)$).*)',
   ],
@@ -34,15 +35,24 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const pathname = url.pathname;
 
-  // Extract subdomain (e.g. login from login.cseel.org or login.localhost:3000)
-  const currentHost = process.env.NODE_ENV === 'production'
-    ? hostname.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'cseel.org'}`, '').replace('.vercel.app', '')
-    : hostname.replace('.localhost:3000', '').replace('.localhost:3001', '').replace('localhost:3000', '');
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'cseel.org';
 
-  // Subdomain mapping table
-  const subdomainRoutes: Record<string, string> = {
-    login: '/login',
-    auth: '/login',
+  // Extract subdomain
+  const currentHost =
+    process.env.NODE_ENV === 'production'
+      ? hostname
+          .replace(`.${rootDomain}`, '')
+          .replace('.vercel.app', '')
+          .replace(`www.${rootDomain}`, '')
+          .replace(rootDomain, '')
+      : hostname
+          .replace('.localhost:3000', '')
+          .replace('.localhost:3001', '')
+          .replace('localhost:3000', '')
+          .replace('localhost:3001', '');
+
+  // Map subdomain → main-domain base path (used for redirect only)
+  const subdomainToPath: Record<string, string> = {
     material: '/materials',
     materials: '/materials',
     careers: '/careers',
@@ -52,30 +62,35 @@ export function middleware(request: NextRequest) {
     support: '/get-support',
     content: '/hands-on-experiments',
     blog: '/blog',
-    api: '/api',
+    login: '',
+    auth: '',
   };
 
-  // If request is on a recognized department subdomain
-  if (currentHost && subdomainRoutes[currentHost]) {
-    const targetBase = subdomainRoutes[currentHost];
+  // Only act if we're on a known subdomain
+  if (currentHost && subdomainToPath[currentHost] !== undefined) {
+    const isAdminPath = pathname.startsWith('/admin');
+    const isLoginPath = pathname === '/login' || pathname.startsWith('/login');
 
-    // Handle login subdomain admin access
-    if ((currentHost === 'login' || currentHost === 'auth') && pathname.startsWith('/admin')) {
-      url.pathname = pathname;
-      return NextResponse.rewrite(url);
+    // ✅ ALLOW: admin & login paths on subdomains — pass through as-is
+    // This lets material.cseel.org/admin serve the material dept admin panel
+    if (isAdminPath || isLoginPath) {
+      return NextResponse.next();
     }
 
-    // If accessing root of subdomain, rewrite to target base
-    if (pathname === '/' || pathname === '') {
-      url.pathname = targetBase;
-      return NextResponse.rewrite(url);
-    }
+    // 🔄 REDIRECT: everything else → main domain equivalent
+    // e.g. material.cseel.org/anything → www.cseel.org/materials (or /materials/anything)
+    const targetBase = subdomainToPath[currentHost];
+    const redirectPath =
+      pathname === '/' || pathname === ''
+        ? targetBase || '/'
+        : targetBase + pathname;
 
-    // If pathname doesn't already start with the target base or /api
-    if (!pathname.startsWith(targetBase) && !pathname.startsWith('/api')) {
-      url.pathname = `${targetBase}${pathname}`;
-      return NextResponse.rewrite(url);
-    }
+    const redirectUrl = new URL(
+      redirectPath || '/',
+      `https://www.${rootDomain}`
+    );
+
+    return NextResponse.redirect(redirectUrl, { status: 301 });
   }
 
   return NextResponse.next();

@@ -62,17 +62,23 @@ export function middleware(request: NextRequest) {
     support: { adminPath: '/get-support/admin', publicFolder: '/get-support' },
     content: { adminPath: '/admin', publicFolder: '/hands-on-experiments' },
     blog: { adminPath: '/admin', publicFolder: '/blog' },
-    login: { adminPath: '/admin', publicFolder: '/login' },
-    auth: { adminPath: '/admin', publicFolder: '/login' },
   };
 
-  // Only act if we're on a known subdomain
+  // 1. Dedicated Public Login Subdomain: login.cseel.org
+  if (currentHost === 'login' || currentHost === 'auth') {
+    if (pathname === '/' || pathname === '' || pathname === '/login') {
+      url.pathname = '/login';
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.redirect(new URL(pathname, `https://www.${rootDomain}`), { status: 301 });
+  }
+
+  // 2. Departmental Admin-Only Subdomains
   if (currentHost && subdomainConfig[currentHost] !== undefined) {
     const config = subdomainConfig[currentHost];
     const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/');
-    const isLoginPath = pathname === '/login' || pathname.startsWith('/login/');
 
-    // 1. If visiting /admin on subdomain -> rewrite to department admin page
+    // Admin staff visiting /admin on department subdomain -> rewrite to department admin panel
     if (isAdminPath) {
       if (pathname === '/admin' && config.adminPath) {
         url.pathname = config.adminPath;
@@ -81,17 +87,12 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // 2. If visiting /login on subdomain -> allow
-    if (isLoginPath) {
-      return NextResponse.next();
-    }
-
-    // 3. For homepage of subdomain (e.g. material.cseel.org/) -> redirect to main domain folder (e.g. www.cseel.org/materials)
+    // Any public user visiting root of subdomain (e.g. material.cseel.org) -> 301 redirect to main domain folder (e.g. www.cseel.org/materials)
     if (pathname === '/' || pathname === '') {
       return NextResponse.redirect(new URL(config.publicFolder, `https://www.${rootDomain}`), { status: 301 });
     }
 
-    // 4. For any other path (e.g. material.cseel.org/hands-on-experiments) -> redirect directly to www.cseel.org/hands-on-experiments
+    // Any other public link clicked on subdomain -> 301 redirect directly to www.cseel.org/<path>
     return NextResponse.redirect(new URL(pathname, `https://www.${rootDomain}`), { status: 301 });
   }
 

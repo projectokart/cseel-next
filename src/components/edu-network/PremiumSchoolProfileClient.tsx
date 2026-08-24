@@ -83,7 +83,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         orgName: org.name,
         orgLogo: org.logo,
         orgRating: org.rating,
-        title: 'IB DP High School Physics & Mathematics Head',
+        title: 'Senior STEM Practical Instructor',
         subject: 'Physics' as const,
         roleType: 'Full-Time' as const,
         jobTypeCategory: 'Teaching Faculty',
@@ -92,23 +92,23 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         state: org.state,
         pincode: org.pincode,
         address: org.address,
-        salary: '₹75,000 - ₹1,10,000 / month',
-        salaryNumMin: 75000,
-        salaryNumMax: 110000,
-        experienceRequired: '3-6 Years',
-        qualifications: 'M.Sc Physics / B.Ed with IB Certification',
+        salary: '₹60,000 - ₹95,000 a month',
+        salaryNumMin: 60000,
+        salaryNumMax: 95000,
+        experienceRequired: '2-5 Years',
+        qualifications: 'M.Sc / B.Ed with Hands-on Science Lab Experience',
         openings: 1,
-        postedDate: '2 days ago',
+        postedDate: '1 day ago',
         isUrgentlyHiring: true,
         easilyApply: true,
         benefits: ['Health Insurance', 'Lab Allowance', 'Provident Fund', 'Subsidized Transport'],
-        description: 'Lead senior secondary IB DP Physics practicals, supervise scientific inquiry prototypes, and oversee hands-on experiments.',
+        description: 'Lead senior secondary experiential science practicals, supervise scientific inquiry prototypes, and oversee hands-on experiments.',
         responsibilities: [
           'Design hands-on experimental practical lesson plans.',
           'Manage internal lab assessments and safety standards.',
           'Mentor students for National Science Conclaves.'
         ],
-        requirements: ['Minimum 3 years IB/CBSE senior secondary experience', 'Strong experimental apparatus mastery'],
+        requirements: ['Minimum 2 years teaching experience', 'Strong experimental apparatus mastery'],
         verified: true,
       },
       {
@@ -126,7 +126,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         state: org.state,
         pincode: org.pincode,
         address: org.address,
-        salary: '₹50,000 - ₹75,000 / month',
+        salary: '₹50,000 - ₹75,000 a month',
         salaryNumMin: 50000,
         salaryNumMax: 75000,
         experienceRequired: '2-5 Years',
@@ -149,7 +149,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
 
   // Modals state
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
-  const [jobModalForm, setJobModalForm] = useState({ title: '', department: 'Teaching', requirements: '', salary: '₹60,000 - ₹90,000 / month' });
+  const [jobModalForm, setJobModalForm] = useState({ title: '', department: 'Teaching', requirements: '', salary: '₹60,000 - ₹95,000 a month' });
   const [jobModalSuccess, setJobModalSuccess] = useState(false);
 
   const [selectedJobToApply, setSelectedJobToApply] = useState<EduJobItem | null>(null);
@@ -187,7 +187,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
       address: org.address,
       salary: jobModalForm.salary,
       salaryNumMin: 60000,
-      salaryNumMax: 90000,
+      salaryNumMax: 95000,
       experienceRequired: '2-5 Years',
       qualifications: 'B.Ed / Post-Graduate / Relevant Certification',
       openings: 1,
@@ -206,7 +206,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
     setTimeout(() => {
       setJobModalSuccess(false);
       setIsJobModalOpen(false);
-      setJobModalForm({ title: '', department: 'Teaching', requirements: '', salary: '₹60,000 - ₹90,000 / month' });
+      setJobModalForm({ title: '', department: 'Teaching', requirements: '', salary: '₹60,000 - ₹95,000 a month' });
     }, 1800);
   };
 
@@ -392,8 +392,93 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             
-            {/* ── LEFT STICKY QUICK NAVIGATION ── */}
-            <aside className="w-full lg:w-60 shrink-0 lg:sticky lg:top-20 space-y-4">
+            {/* ── LEFT STICKY QUICK NAVIGATION & VERIFICATION WIDGETS ── */}
+            <aside className="w-full lg:w-72 shrink-0 lg:sticky lg:top-20 space-y-5">
+              
+              {/* ── USER REQUESTED WIDGET 1: CSEEL VERIFIED CAMPUS CARD ── */}
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600 shrink-0 shadow-2xs">
+                    <ShieldCheck className="w-5 h-5 text-cyan-600" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-slate-900 leading-tight">CSEEL VERIFIED CAMPUS</h4>
+                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">Government & Board Certified</p>
+                  </div>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <div className="space-y-2.5 text-xs text-slate-600">
+                  <div className="flex items-center gap-2.5">
+                    <Globe className="w-4 h-4 text-cyan-600 shrink-0" />
+                    <a
+                      href={org.website || "https://greenwoodhighinternational-campus56.edu"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-cyan-700 font-bold hover:underline truncate block"
+                    >
+                      {org.website || "https://greenwoodhighinternational-campus56.edu"}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <a href={`mailto:${org.email}`} className="text-slate-600 hover:text-slate-900 truncate block">
+                      {org.email || "contact.campus56@greenwoodhighinternational.edu"}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <Phone className="w-4 h-4 text-purple-600 shrink-0" />
+                    <a href={`tel:${org.phone}`} className="text-slate-700 font-bold">
+                      {org.phone || "+91 80 2981056"}
+                    </a>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsCallbackModalOpen(true)}
+                  className="w-full py-3 bg-[#002b4e] hover:bg-[#003b6d] text-white font-black text-xs rounded-xl shadow-xs transition-all text-center block"
+                >
+                  Send Official Inquiry
+                </button>
+              </div>
+
+              {/* ── USER REQUESTED WIDGET 2: ACTIVE JOBS (INDEED PORTAL STYLE) ── */}
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xs p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                    ACTIVE JOBS ({jobsList.length})
+                  </h4>
+                  <Link
+                    href="/edu-network/jobs"
+                    className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-0.5"
+                  >
+                    <span>Indeed Portal</span>
+                    <span>→</span>
+                  </Link>
+                </div>
+
+                {jobsList.slice(0, 2).map((job) => (
+                  <div key={job.id} className="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl space-y-2">
+                    <div>
+                      <h5 className="font-black text-xs text-slate-900 leading-snug">
+                        {job.title}
+                      </h5>
+                      <p className="text-[11px] font-black text-emerald-600 mt-0.5">
+                        {job.salary}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedJobToApply(job)}
+                      className="w-full py-2 bg-white hover:bg-slate-50 text-blue-600 border border-blue-200 hover:border-blue-400 font-bold text-xs rounded-xl shadow-2xs transition-all text-center"
+                    >
+                      Apply with Resume
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* ── SECTIONS NAVIGATION NAV ── */}
               <nav className="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs" id="mainNav">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 mb-2">Sections</p>
                 <ul className="space-y-1 text-xs font-semibold text-slate-600">
@@ -1213,7 +1298,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                       value={jobModalForm.salary}
                       onChange={(e) => setJobModalForm({ ...jobModalForm, salary: e.target.value })}
                       className="w-full p-2.5 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-500 font-medium text-slate-900 bg-slate-50"
-                      placeholder="e.g. ₹60,000 - ₹90,000 / month"
+                      placeholder="e.g. ₹60,000 - ₹95,000 a month"
                     />
                   </div>
                   <div>

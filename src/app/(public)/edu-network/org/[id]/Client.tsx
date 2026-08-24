@@ -467,7 +467,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             
             {/* ── LEFT SIDEBAR ────────────────────────────────────────────────── */}
-            <aside className="lg:col-span-1 space-y-4 lg:sticky lg:top-20">
+            <aside className="lg:col-span-1 space-y-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:pr-1.5 lg:overscroll-contain pb-8 scrollbar-thin scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
               
               {/* ── USER REQUESTED WIDGET 1: CSEEL VERIFIED CAMPUS CARD ── */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 space-y-3.5">

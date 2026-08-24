@@ -637,45 +637,10 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#f7f8fa] text-gray-900 pb-28">
-
-        {/* ── HERO BANNER ────────────────────────────────────────────────────── */}
-        <section className="relative bg-gradient-to-r from-slate-950 via-[#002b4e] to-slate-950 text-white pt-10 pb-8 px-4 border-b border-white/10">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="space-y-2 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/20 border border-cyan-400/30 rounded-full text-cyan-300 text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>India's National Verified STEM EduNetwork Directory</span>
-              </div>
-              <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight">
-                Find Top Schools, Colleges & Institutes with Lab Infrastructure
-              </h1>
-              <p className="text-xs md:text-sm text-gray-300">
-                Compare fees, boards, student-faculty ratios, verified STEM laboratories, and active teaching faculty jobs across India.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 shrink-0 flex-wrap">
-              <Link
-                href="/edu-network/jobs"
-                className="px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-full text-xs font-bold shadow-md flex items-center gap-1.5 transition-colors"
-              >
-                <Briefcase className="w-4 h-4" />
-                <span>Indeed Jobs Portal</span>
-              </Link>
-              <button
-                onClick={() => setIsCreateProfileOpen(true)}
-                className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-full text-xs font-bold shadow-md flex items-center gap-1.5 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Join Network</span>
-              </button>
-            </div>
-          </div>
-        </section>
+      <div className="min-h-screen bg-[#f7f8fa] text-gray-900 pb-28 pt-6">
 
         {/* ── ROLE TABS WITH SOFT DISTINCT THEMES ───────────────────────────── */}
-        <section className="max-w-7xl mx-auto px-4 mt-5">
+        <section className="max-w-7xl mx-auto px-4 mb-5">
           <div className="bg-white/90 backdrop-blur-md p-2 rounded-2xl border border-gray-200/80 shadow-xs">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
               {[
@@ -738,7 +703,7 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
                   <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id as any)}
-                    className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all duration-200 group ${
+                    className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all duration-200 group cursor-pointer ${
                       isActive ? tab.activeBg : tab.inactiveBg
                     }`}
                   >

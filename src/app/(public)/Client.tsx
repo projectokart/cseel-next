@@ -389,13 +389,13 @@ const Index = () => {
             {/* Single-Line Dominant Brand Title with upper and lower margin */}
             <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
               <h1 className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center">
-                <span>{heroConfig?.title || "Welcome to "}</span>
+                <span>Welcome to </span>
                 <span className="text-[#003c6e] font-black tracking-normal">
-                  {heroConfig?.subtitle ? "" : "C.S.E.E.L"}
+                  C.S.E.E.L
                 </span>
               </h1>
               <p className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-[#003c6e] tracking-tight max-w-xl mx-auto">
-                {heroConfig?.subtitle || "Center for Scientific Exploration and Experiential Learning"}
+                Center for Scientific Exploration and Experiential Learning
               </p>
             </div>
 
@@ -410,19 +410,19 @@ const Index = () => {
               style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
             >
               <Link
-                href={heroConfig?.cta_link || "/compare-plans"}
+                href="/compare-plans"
                 className="group px-8 py-3.5 bg-[#006fcc] hover:bg-[#005bb8] active:bg-[#004e9c] text-white font-black text-sm rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 active:scale-98"
                 style={{ backgroundColor: '#006fcc' }}
               >
-                <span className="text-white">{heroConfig?.cta_text || "Our Plans"}</span>
+                <span className="text-white">Our Plans</span>
                 <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
               </Link>
               <Link
-                href={heroConfig?.secondary_cta_link || "/demo"}
+                href="/demo"
                 className="group px-8 py-3.5 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-black text-sm rounded-full transition-all duration-200 flex items-center justify-center gap-2.5 active:scale-98"
               >
                 <Play className="w-4 h-4 text-[#006fcc] fill-[#006fcc]/20 shrink-0" />
-                <span>{heroConfig?.secondary_cta_text || "Live Lab Tour"}</span>
+                <span>Live Lab Tour</span>
               </Link>
             </div>
 

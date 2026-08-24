@@ -67,7 +67,7 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
           ? '/edu-network/teachers'
           : newTab === 'students'
           ? '/edu-network/students'
-          : '/edu-network';
+          : '/edu-network/school';
       
       window.history.pushState({ tab: newTab }, '', targetPath);
     }
@@ -80,13 +80,13 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
       const params = new URLSearchParams(search);
       const tabParam = params.get('tab');
 
-      if (pathname.includes('/jobs') || tabParam === 'jobs') {
+      if (pathname.includes('/jobs') || pathname.includes('/teacher-jobs') || tabParam === 'jobs') {
         setActiveTab('jobs');
       } else if (pathname.includes('/teachers') || tabParam === 'teachers') {
         setActiveTab('teachers');
       } else if (pathname.includes('/students') || tabParam === 'students') {
         setActiveTab('students');
-      } else if (tabParam === 'orgs' || pathname.includes('/schools') || pathname.includes('/org')) {
+      } else if (tabParam === 'orgs' || pathname.includes('/school') || pathname.includes('/schools') || pathname.includes('/org')) {
         setActiveTab('orgs');
       }
 
@@ -100,7 +100,7 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
         const currentParams = new URLSearchParams(window.location.search);
         const currentTab = currentParams.get('tab');
 
-        if (currentPath.includes('/jobs') || currentTab === 'jobs') {
+        if (currentPath.includes('/jobs') || currentPath.includes('/teacher-jobs') || currentTab === 'jobs') {
           setActiveTab('jobs');
         } else if (currentPath.includes('/teachers') || currentTab === 'teachers') {
           setActiveTab('teachers');
@@ -746,6 +746,40 @@ export default function EduNetworkClient({ initialTab }: { initialTab?: 'orgs' |
           {/* TAB 1: 100+ ORGANISATIONS (UNIAPPLY + CSEEL HYBRID SYSTEM) */}
           {activeTab === 'orgs' && (
             <div className="space-y-4">
+
+              {/* ── CITY QUICK SELECTOR (UNIAPPLY STYLE) ────────────────────── */}
+              <div className="bg-white rounded-2xl p-3 border border-gray-200/90 shadow-2xs">
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider shrink-0 pl-1">
+                    Top Cities:
+                  </span>
+                  {[
+                    { name: 'All India', href: '/edu-network/school' },
+                    { name: 'Delhi NCR', href: '/edu-network/school/schools-in-delhi' },
+                    { name: 'Mumbai', href: '/edu-network/school/schools-in-mumbai' },
+                    { name: 'Bengaluru', href: '/edu-network/school/schools-in-bengaluru' },
+                    { name: 'Pune', href: '/edu-network/school/schools-in-pune' },
+                    { name: 'Bhubaneswar', href: '/edu-network/school/schools-in-bhubaneswar' },
+                    { name: 'Lucknow', href: '/edu-network/school/schools-in-lucknow' },
+                    { name: 'Jaipur', href: '/edu-network/school/schools-in-jaipur' },
+                    { name: 'Hyderabad', href: '/edu-network/school/schools-in-hyderabad' },
+                    { name: 'Chennai', href: '/edu-network/school/schools-in-chennai' },
+                    { name: 'Kolkata', href: '/edu-network/school/schools-in-kolkata' },
+                    { name: 'Ahmedabad', href: '/edu-network/school/schools-in-ahmedabad' },
+                    { name: 'Dehradun', href: '/edu-network/school/schools-in-dehradun' },
+                    { name: 'Patna', href: '/edu-network/school/schools-in-patna' },
+                    { name: 'Bhopal', href: '/edu-network/school/schools-in-bhopal' },
+                  ].map((city) => (
+                    <Link
+                      key={city.name}
+                      href={city.href}
+                      className="px-3 py-1 bg-gray-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-gray-200 rounded-full text-xs font-bold text-gray-700 shrink-0 transition-all"
+                    >
+                      {city.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
               
               {/* ── TOP UNIAPPLY-STYLE SEARCH & CITY BAR (BELOW TABS) ──────── */}
               <div className="bg-white rounded-3xl p-3.5 sm:p-4 border border-gray-200/90 shadow-2xs">

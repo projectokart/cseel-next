@@ -39,6 +39,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function EduNetworkPage({ searchParams }: { searchParams?: { tab?: string; job?: string } }) {
-  return <EduNetworkClient initialTab={searchParams?.tab as any} />;
+export default function EduNetworkPage() {
+  return <EduNetworkClient />;
 }

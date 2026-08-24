@@ -168,7 +168,9 @@ export default function CitySchoolDirectoryClient({
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <Link href="/edu-network" className="hover:text-primary transition-colors">EduNetwork</Link>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-              <Link href="/edu-network/school" className="hover:text-primary transition-colors">Schools</Link>
+              <Link href="/edu-network/organisation/school" className="hover:text-primary transition-colors">Organisation</Link>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+              <Link href="/edu-network/organisation/school" className="hover:text-primary transition-colors">School</Link>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <span className="font-bold text-slate-900">{cityName}</span>
             </nav>
@@ -208,7 +210,7 @@ export default function CitySchoolDirectoryClient({
                   return (
                     <Link
                       key={c.slug}
-                      href={`/edu-network/school/${c.slug}`}
+                      href={`/edu-network/organisation/school/${c.slug}`}
                       className={`px-3.5 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all ${
                         isActive
                           ? 'bg-blue-600 text-white shadow-xs'

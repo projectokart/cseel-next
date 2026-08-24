@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import CitySchoolDirectoryClient from './Client';
+import PremiumSchoolProfileClient from '@/components/edu-network/PremiumSchoolProfileClient';
 import { ALL_ORGANIZATIONS } from '@/lib/eduNetworkData';
 
 // City mapping dictionary (UniApply pattern)
@@ -169,6 +170,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default function CitySchoolDirectoryPage({ params }: { params: { slug: string } }) {
   const slug = params.slug.toLowerCase();
+
+  // Check if individual school ID or slug
+  const matchedOrg = ALL_ORGANIZATIONS.find(
+    (o) => o.id === slug || (o.slug && o.slug === slug)
+  );
+
+  if (matchedOrg) {
+    return <PremiumSchoolProfileClient orgId={matchedOrg.id} />;
+  }
   
   // Clean city name resolution from slug
   let detectedCity = 'All India';

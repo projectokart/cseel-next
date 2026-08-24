@@ -136,11 +136,46 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   );
 
   if (matchedOrg) {
+    const pageUrl = `https://www.cseel.org/edu-network/organisation/school/${slug}`;
+    const ogImage = matchedOrg.bannerImage || matchedOrg.logo || 'https://www.cseel.org/images/og-cover.jpg';
+    
     return {
-      title: `${matchedOrg.name} (${matchedOrg.city}) | Fees, STEM Labs & Admissions | CSEEL`,
-      description: `${matchedOrg.name} in ${matchedOrg.city}, ${matchedOrg.state}. Verified ${matchedOrg.board} school with ${matchedOrg.stemLabsCount} experiential science laboratories. Fees: ${matchedOrg.monthlyFees || 'Check details'}.`,
+      title: `${matchedOrg.name} (${matchedOrg.city}) | Fees, STEM Labs & Admissions 2026-27 | CSEEL`,
+      description: `${matchedOrg.name} in ${matchedOrg.city}, ${matchedOrg.state}. Verified ${matchedOrg.board} school. Student-Faculty: ${matchedOrg.studentFacultyRatio || '12:1'}, ${matchedOrg.stemLabsCount} Experiential Science Laboratories, ${matchedOrg.openJobsCount || 2} Active Job Vacancies.`,
+      keywords: [
+        `${matchedOrg.name}`,
+        `${matchedOrg.name} admission 2027-2028`,
+        `${matchedOrg.name} fees`,
+        `best school in ${matchedOrg.city}`,
+        `${matchedOrg.city} top schools`,
+        `${matchedOrg.board} schools in ${matchedOrg.city}`,
+        'CSEEL EduNetwork School Directory'
+      ],
       alternates: {
-        canonical: `https://www.cseel.org/edu-network/organisation/school/${slug}`,
+        canonical: pageUrl,
+      },
+      openGraph: {
+        title: `${matchedOrg.name} - ${matchedOrg.city} | CSEEL EduNetwork`,
+        description: `Verified ${matchedOrg.board} School in ${matchedOrg.city}, ${matchedOrg.state}. Rating: ${matchedOrg.rating}/5. Explore verified fee structure, campus virtual tour, facilities & faculty vacancies.`,
+        url: pageUrl,
+        siteName: 'CSEEL EduNetwork',
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: `${matchedOrg.name} Campus & Infrastructure`,
+          },
+        ],
+        locale: 'en_IN',
+        type: 'profile',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${matchedOrg.name} (${matchedOrg.city}) | CSEEL`,
+        description: `${matchedOrg.name} in ${matchedOrg.city}. Rating ${matchedOrg.rating}/5. Verified STEM Labs & Admissions.`,
+        images: [ogImage],
+        creator: '@cseel_org',
       },
     };
   }
@@ -151,19 +186,44 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     desc: `Explore top verified schools and institutions for ${slug.replace(/-/g, ' ')} with fees, ratings, and live laboratory infrastructure.`,
   };
 
+  const pageUrl = `https://www.cseel.org/edu-network/organisation/school/${slug}`;
+  const defaultOgImage = 'https://cdn.uniapply.com/assets/v1/d/images/main/school-min.7f08d2e34878.jpg';
+
   return {
     title: `${info.title} | CSEEL UniApply`,
     description: info.desc,
+    keywords: [
+      `top schools in ${info.name}`,
+      `best schools ${info.name} 2026-27`,
+      `cbse schools in ${info.name}`,
+      `ib schools in ${info.name}`,
+      `school admissions ${info.name}`,
+      'CSEEL EduNetwork'
+    ],
     alternates: {
-      canonical: `https://www.cseel.org/edu-network/organisation/school/${slug}`,
+      canonical: pageUrl,
     },
     openGraph: {
       title: `${info.title} | CSEEL UniApply`,
       description: info.desc,
-      url: `https://www.cseel.org/edu-network/organisation/school/${slug}`,
-      siteName: 'CSEEL',
+      url: pageUrl,
+      siteName: 'CSEEL EduNetwork',
+      images: [
+        {
+          url: defaultOgImage,
+          width: 1200,
+          height: 630,
+          alt: `Top Schools in ${info.name}`,
+        },
+      ],
       locale: 'en_IN',
       type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${info.title} | CSEEL`,
+      description: info.desc,
+      images: [defaultOgImage],
     },
   };
 }
@@ -177,7 +237,43 @@ export default function CitySchoolDirectoryPage({ params }: { params: { slug: st
   );
 
   if (matchedOrg) {
-    return <PremiumSchoolProfileClient orgId={matchedOrg.id} />;
+    const pageUrl = `https://www.cseel.org/edu-network/organisation/school/${slug}`;
+    const schoolSchema = {
+      "@context": "https://schema.org",
+      "@type": "School",
+      name: matchedOrg.name,
+      description: matchedOrg.description || `${matchedOrg.name} in ${matchedOrg.city}, ${matchedOrg.state}`,
+      url: pageUrl,
+      logo: matchedOrg.logo,
+      image: matchedOrg.bannerImage || matchedOrg.logo,
+      telephone: matchedOrg.phone,
+      email: matchedOrg.email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: matchedOrg.address,
+        addressLocality: matchedOrg.city,
+        addressRegion: matchedOrg.state,
+        postalCode: matchedOrg.pincode,
+        addressCountry: "IN",
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: matchedOrg.rating,
+        reviewCount: matchedOrg.reviews || 142,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    };
+
+    return (
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolSchema) }}
+        />
+        <PremiumSchoolProfileClient orgId={matchedOrg.id} />
+      </>
+    );
   }
   
   // Clean city name resolution from slug

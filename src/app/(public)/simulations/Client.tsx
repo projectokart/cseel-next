@@ -107,7 +107,7 @@ const CardItem = ({
   );
 };
 
-const Simulations = () => {
+const Experiments = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -453,13 +453,13 @@ const Simulations = () => {
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                       <Search className="w-6 h-6" />
                     </div>
-                    <h3 className="text-base font-bold text-gray-800">No matching simulations found</h3>
-                    <p className="text-xs text-gray-500 max-w-sm">Try clearing your search query or discipline filter to explore all virtual simulations.</p>
+                    <h3 className="text-base font-bold text-gray-800">No matching experiments found</h3>
+                    <p className="text-xs text-gray-500 max-w-sm">Try clearing your search query or discipline filter to explore all hands-on experiments & live labs.</p>
                     <button
                       onClick={() => { setSearch(""); setActiveDisciplines([]); }}
                       className="mt-2 px-5 py-2 bg-primary text-white text-xs font-bold rounded-full hover:bg-primary/90 transition-colors shadow-xs"
                     >
-                      Show All Simulations
+                      Show All Experiments
                     </button>
                   </div>
                 )}
@@ -540,4 +540,4 @@ const Simulations = () => {
   );
 };
 
-export default Simulations;
+export default Experiments;

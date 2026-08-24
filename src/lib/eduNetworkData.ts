@@ -775,7 +775,7 @@ for (let i = 1; i <= 50; i++) {
     reviewsCount: 35 + i * 4,
     avatar: `https://images.unsplash.com/photo-${1534528741775 + (i % 20)}?w=200&auto=format&fit=crop`,
     bio: `Passionate ${subj} educator with ${4 + (i % 18)}+ years of experience creating hands-on lab experiments, guiding CBSE/ICSE board toppers and national science fair finalists.`,
-    skills: ["Hands-on Lab Experiments", "NEP-2020 Pedagogy", "Olympiad Coaching", "Curriculum Design", "Virtual Lab Simulations"],
+    skills: ["Hands-on Lab Experiments", "NEP-2020 Pedagogy", "Olympiad Coaching", "Curriculum Design", "hands-on science labs"],
     expectedSalary: `₹${45 + (i % 10) * 5},000 - ₹${75 + (i % 10) * 8},000 / month`,
     availableFor: ["Full-Time", "Visiting Faculty", "Lab Workshop Instructor"],
     isActivelySeekingJob: isSeeking,
@@ -830,7 +830,7 @@ for (let i = 1; i <= 50; i++) {
     experimentsCompleted: 12 + (i % 25),
     topProject: proj,
     badges: ["National Science Fair Finalist", "Verified Innovator", "Lab Virtuoso", "NEP Explorer", "Hardware Builder"],
-    bio: `Aspiring young innovator & hardware builder from ${c.city}. Working on real-world STEM solutions, practical hardware prototyping, and virtual lab simulations.`,
+    bio: `Aspiring young innovator & hardware builder from ${c.city}. Working on real-world STEM solutions, practical hardware prototyping, and hands-on science labs.`,
     profileVisibility: i % 7 === 0 ? "followers" : "public",
     showContactInfo: false,
     projects: [
@@ -935,7 +935,7 @@ const JOB_TEMPLATES = [
       "Conduct engaging Class 11-12 Physics theory and laboratory practicals.",
       "Lead optics, electromagnetism, and mechanics experiment demos.",
       "Mentor students for national science exhibitions and Olympiads.",
-      "Integrate virtual lab simulations into daily classroom teaching."
+      "Integrate hands-on science labs into daily classroom teaching."
     ]
   },
   {
@@ -1103,7 +1103,7 @@ for (let i = 1; i <= 40; i++) {
     responsibilities: t.responsibilities,
     requirements: [
       "Demonstrated ability in conducting practical science experiments.",
-      "Familiarity with modern lab safety, apparatus, and virtual simulations.",
+      "Familiarity with modern lab safety, apparatus, and hands-on experiments & live labs.",
       "Excellent communication and student mentorship skills."
     ],
     verified: true
@@ -1188,7 +1188,7 @@ export function getJobsByOrgId(orgId: string): EduJobItem[] {
       ],
       requirements: [
         "Hands-on experience with modern optics, mechanics, and electronics apparatus.",
-        "Ability to integrate virtual lab simulations with physical experiments."
+        "Ability to integrate hands-on science labs with physical experiments."
       ],
       verified: true
     }

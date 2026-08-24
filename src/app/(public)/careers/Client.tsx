@@ -13,7 +13,7 @@ import PageTransition from "@/components/shared/PageTransition";
 interface CseelCareerJob {
   id: string;
   title: string;
-  department: "Curriculum & Pedagogy" | "Software & 3D Simulations" | "Atal Tinkering & Robotics" | "Academic Growth & Partnerships";
+  department: "Curriculum & Pedagogy" | "Interactive STEM Software & Live Labs" | "Atal Tinkering & Robotics" | "Academic Growth & Partnerships";
   roleType: "Full-Time" | "Hybrid" | "Remote" | "On-Campus";
   location: string;
   experience: string;
@@ -44,7 +44,7 @@ const CSEEL_CAREERS_DATA: CseelCareerJob[] = [
     responsibilities: [
       "Author experiential physics and chemistry lab activity blueprints aligning with CBSE, ICSE, and IB criteria.",
       "Design safe, low-cost apparatus kits and verify physical experiments before national school rollouts.",
-      "Collaborate closely with 3D simulation engineers to translate real physics apparatus into WebGL interactive virtual labs.",
+      "Collaborate closely with live lab & interactive software engineers to translate real physics apparatus into WebGL interactive live labs.",
       "Conduct masterclass teacher training workshops across partner schools in Delhi-NCR, Bangalore, and Bhubaneswar."
     ],
     requirements: [
@@ -63,8 +63,8 @@ const CSEEL_CAREERS_DATA: CseelCareerJob[] = [
   },
   {
     id: "cseel-3d-engineer",
-    title: "Senior 3D WebGL & Virtual Simulation Engineer",
-    department: "Software & 3D Simulations",
+    title: "Senior 3D WebGL & hands-on experiment Engineer",
+    department: "Interactive STEM Software & Live Labs",
     roleType: "Full-Time",
     location: "Remote (Pan-India) / Bengaluru",
     experience: "3 - 7 Years",
@@ -72,12 +72,12 @@ const CSEEL_CAREERS_DATA: CseelCareerJob[] = [
     openings: 2,
     isUrgent: true,
     postedDate: "3 days ago",
-    shortDescription: "Architect interactive, real-time 3D physics and chemistry virtual laboratory simulations using Three.js, React-Three-Fiber, Next.js, and WebGL raycasting.",
+    shortDescription: "Architect interactive, real-time 3D physics and chemistry live laboratory simulations using Three.js, React-Three-Fiber, Next.js, and WebGL raycasting.",
     responsibilities: [
       "Build high-performance, browser-based 3D laboratory apparatus (optical benches, titrators, pendulums, particle accelerators).",
       "Implement realistic physics kinematics, ray optics refraction, fluid dynamics, and molecular kinematics shaders.",
       "Optimize rendering pipelines for smooth 60 FPS performance on lower-end school Chromebooks and mobile tablets.",
-      "Collaborate with science SMEs to ensure mathematical accuracy in simulation calculations."
+      "Collaborate with science SMEs to ensure mathematical accuracy in practical experiment calculations."
     ],
     requirements: [
       "Strong proficiency in JavaScript/TypeScript, React/Next.js, Three.js, React-Three-Fiber, and GLSL shaders.",
@@ -139,8 +139,8 @@ const CSEEL_CAREERS_DATA: CseelCareerJob[] = [
     shortDescription: "Author cutting-edge genetics, microbiology, and plant physiology experiential practical protocols and interactive digital histology modules.",
     responsibilities: [
       "Develop safe bio-experiments for DNA extraction, gel electrophoresis, microscope slide preparation, and enzyme kinetics.",
-      "Author detailed student lab logbooks and interactive virtual biology experiment guides.",
-      "Review virtual 3D anatomical models and microbiological cell simulations for pedagogical accuracy.",
+      "Author detailed student lab logbooks and interactive hands-on biology practical guides.",
+      "Review interactive 3D anatomical models and microbiological cell interactive practicals for pedagogical accuracy.",
       "Coordinate with partner biotechnology labs for student internships and live workshop sessions."
     ],
     requirements: [
@@ -160,7 +160,7 @@ const CSEEL_CAREERS_DATA: CseelCareerJob[] = [
   {
     id: "cseel-fullstack-dev",
     title: "Full-Stack Platform Engineer (Next.js & Supabase)",
-    department: "Software & 3D Simulations",
+    department: "Interactive STEM Software & Live Labs",
     roleType: "Full-Time",
     location: "Remote / New Delhi",
     experience: "3 - 6 Years",
@@ -320,7 +320,7 @@ export default function CareersClient() {
             </h1>
 
             <p className="text-sm md:text-base text-slate-200 max-w-3xl mx-auto leading-relaxed">
-              Join India's premier experiential learning platform. We are building transformative NEP-2020 physics, chemistry, robotics, biology practical laboratories and 3D simulation tools empowering 500+ schools nationwide.
+              Join India's premier experiential learning platform. We are building transformative NEP-2020 physics, chemistry, robotics, biology practical laboratories and experiential hands-on laboratory tools empowering 500+ schools nationwide.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
@@ -430,7 +430,7 @@ export default function CareersClient() {
                 {[
                   "All",
                   "Curriculum & Pedagogy",
-                  "Software & 3D Simulations",
+                  "Interactive STEM Software & Live Labs",
                   "Atal Tinkering & Robotics",
                   "Academic Growth & Partnerships"
                 ].map((dept) => {

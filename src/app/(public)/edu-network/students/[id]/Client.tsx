@@ -573,7 +573,7 @@ export default function StudentProfileClient({ studentId }: StudentProfileClient
                   </div>
                   <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-xs">
                     <p className="text-2xl font-black">{student.experimentsCompleted}</p>
-                    <p className="text-[11px] text-amber-100 font-bold">Virtual Simulations</p>
+                    <p className="text-[11px] text-amber-100 font-bold">Live Lab Practicals</p>
                   </div>
                 </div>
 

@@ -738,7 +738,7 @@ const Index = () => {
                   {finalCtaConfig?.title || "Find the Plan That Works For You"}
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  {finalCtaConfig?.subtitle || "See our plan options, learn more about virtual labs, and find out how easy it is to get started with Cseel."}
+                  {finalCtaConfig?.subtitle || "See our plan options, learn more about live labs, and find out how easy it is to get started with Cseel."}
                 </p>
                 <Link href={finalCtaConfig?.cta_link || "/compare-plans"}
                   className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
@@ -816,7 +816,7 @@ function CatalogCard({ item, delay }: { item: { title: string; image: string; li
 const FALLBACK_TESTIMONIALS = [
   { id:"f1", name:"Sunil Lakra", role:"Science Teacher", institution:"DAV School, Delhi", quote:"CSEEL emphasizes the theory behind the labs. It's much easier for students to carry knowledge forward into advanced classes without missing core concepts.", initials:"SL", cardBg:"#EBF4FA", avatarBg:"#C7E2F5", avatarColor:"#0a5c8a", starColor:"#0a5c8a", iconColor:"#0a5c8a" },
   { id:"f2", name:"Priya Sharma", role:"KV Teacher", institution:"Kendriya Vidyalaya, Mumbai", quote:"The hands-on experiments have transformed how my students engage with science. Their curiosity and participation has increased manifold since we started.", initials:"PS", cardBg:"#EAF5F0", avatarBg:"#B8E4D4", avatarColor:"#0F6E56", starColor:"#0F6E56", iconColor:"#0F6E56" },
-  { id:"f3", name:"Rajesh Kumar", role:"Physics Educator", institution:"DPS School, Bengaluru", quote:"Virtual simulations are perfectly aligned with our CBSE curriculum. Students practice experiments at home which has greatly improved their practical exam scores.", initials:"RA", cardBg:"#EEF0FA", avatarBg:"#C9CFF5", avatarColor:"#3730A3", starColor:"#3730A3", iconColor:"#3730A3" },
+  { id:"f3", name:"Rajesh Kumar", role:"Physics Educator", institution:"DPS School, Bengaluru", quote:"hands-on experiments & live labs are perfectly aligned with our CBSE curriculum. Students practice experiments at home which has greatly improved their practical exam scores.", initials:"RA", cardBg:"#EEF0FA", avatarBg:"#C9CFF5", avatarColor:"#3730A3", starColor:"#3730A3", iconColor:"#3730A3" },
   { id:"f4", name:"Anita Verma", role:"Biology Teacher", institution:"Navodaya Vidyalaya, Pune", quote:"The interactive experiments keep students engaged longer. I've seen remarkable improvement in my students' understanding of complex biological processes with CSEEL.", initials:"AV", cardBg:"#F0F7EE", avatarBg:"#C3DFB8", avatarColor:"#276B1A", starColor:"#276B1A", iconColor:"#276B1A" },
   { id:"f5", name:"Vikram Singh", role:"Chemistry Professor", institution:"St. Xavier's College, Chennai", quote:"CSEEL bridges theory and practice beautifully. My college students arrive at labs with much better conceptual clarity, reducing experiment failures significantly.", initials:"VS", cardBg:"#F5EEF8", avatarBg:"#DCC5E8", avatarColor:"#6B21A8", starColor:"#6B21A8", iconColor:"#6B21A8" },
 ];
@@ -1025,7 +1025,7 @@ function AwardsSection() {
             <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Recognition</p>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Award-Winning Learning Platform</h2>
             <p className="text-muted-foreground mb-6">
-              Cseel has earned recognition for our research-based learning architecture, best-in-class customer support, and student impact. Learn why our virtual lab simulations have received more than 10 prestigious education awards.
+              Cseel has earned recognition for our research-based learning architecture, best-in-class customer support, and student impact. Learn why our hands-on science labs have received more than 10 prestigious education awards.
             </p>
             <Link href="/about-us"
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
@@ -1043,7 +1043,7 @@ function EasySection() {
   const { ref, visible } = useScrollReveal();
   const cards = [
     { tag: "LMS Integration", title: "Stay with your LMS or use our Course Manager", desc: "Assign CSEEL right from your LMS! Explore and select content, and monitor student results, all without having to leave your course page." },
-    { tag: "Course Mapping", title: "Easily match Cseel to your curriculum", desc: "Browse our Catalog to find virtual labs that match your curriculum, or get our course mapping service with Advanced or Elite plans." },
+    { tag: "Course Mapping", title: "Easily match Cseel to your curriculum", desc: "Browse our Catalog to find live labs that match your curriculum, or get our course mapping service with Advanced or Elite plans." },
     { tag: "Technical Support", title: "Get live support whenever you need it", desc: "Our award-winning support team is ready to help you and your students at every step via Live Chat, Help Center, and training guides." },
   ];
   return (

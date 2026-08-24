@@ -1024,7 +1024,7 @@ export default function OrgProfileClient({ orgId }: { orgId: string }) {
                                 href="/simulations"
                                 className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors"
                               >
-                                <Play className="w-3.5 h-3.5" /> Explore Virtual Simulations
+                                <Play className="w-3.5 h-3.5" /> Explore Live Lab Experiments
                               </Link>
                               <button
                                 onClick={() => setSelectedLabDetails(lab)}
@@ -1883,7 +1883,7 @@ export default function OrgProfileClient({ orgId }: { orgId: string }) {
                       className="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-black flex items-center justify-center gap-2 shadow-md hover:bg-primary-hover transition-colors text-center"
                     >
                       <Play className="w-4 h-4" />
-                      <span>Launch 3D Simulations</span>
+                      <span>Launch Live Lab Practicals</span>
                     </Link>
                     <button
                       onClick={() => setSelectedLabDetails(null)}

@@ -19,10 +19,10 @@ export const ScienceAdminModule: React.FC = () => {
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-50 border border-cyan-200 rounded-full text-xs font-black text-cyan-700">
             <Beaker className="w-3.5 h-3.5" />
-            <span>VIRTUAL SIMULATION & EXPERIMENTAL CURRICULUM DESK</span>
+            <span>hands-on experiment & EXPERIMENTAL CURRICULUM DESK</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-            Interactive Science Simulations & Virtual Practical Labs
+            Interactive hands-on science experiments & Virtual Practical Labs
           </h2>
           <p className="text-xs text-gray-500 max-w-2xl">
             Configure simulations and NEP-2020 experimental manuals live on <code className="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-bold">/demo</code>, <code className="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-bold">/hands-on-experiments</code> and <code className="bg-slate-100 px-1 py-0.5 rounded text-purple-700 font-bold">/experiment/[slug]</code>.

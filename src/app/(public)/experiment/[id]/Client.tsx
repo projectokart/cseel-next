@@ -1419,7 +1419,7 @@ const ExperimentDetail = () => {
             <div className="flex flex-wrap gap-2 mb-2 mt-2">
               <a href={experiment.demo_link!} target="_blank" rel="noreferrer"
                 className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white font-semibold rounded-full text-xs hover:bg-primary/90 transition-colors shadow-sm">
-                <Monitor className="h-3.5 w-3.5" /> Start Simulation
+                <Monitor className="h-3.5 w-3.5" /> Start Live Experiment
               </a>
             </div>
           )}

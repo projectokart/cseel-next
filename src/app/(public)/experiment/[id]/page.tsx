@@ -6,7 +6,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const exp = getExperimentBySlugOrId(params.id);
 
   if (exp) {
-    const title = `${exp.title} (${exp.subject}) | CSEEL Virtual Science Lab`;
+    const title = `${exp.title} (${exp.subject}) | CSEEL Experiential Science & Live Lab`;
     const description = exp.description.slice(0, 160);
     const image = exp.thumbnail_url || 'https://www.cseel.org/images/og-cover.jpg';
 
@@ -32,8 +32,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 
   return {
-    title: 'Science Experiment Simulation | CSEEL Virtual Lab',
-    description: 'Explore interactive virtual science lab simulations covering Chemistry, Biology, Physics, and STEM practicals on CSEEL.',
+    title: 'Hands-on Science Practical Experiment | CSEEL Experiential Live Lab',
+    description: 'Explore interactive hands-on science experiments and live labs covering Chemistry, Biology, Physics, and STEM practicals on CSEEL.',
   };
 }
 

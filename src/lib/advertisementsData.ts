@@ -56,8 +56,8 @@ export const ALL_ADVERTISEMENTS: AdvertisementBanner[] = [
   },
   {
     id: "ad-free-virtual-lab-trial",
-    title: "Free 30-Day Virtual Lab Access for All Science Teachers",
-    subtitle: "Assign 150+ interactive physics, chemistry, and biology simulations directly to student batches with instant automated grading.",
+    title: "Free 30-Day live lab Access for All Science Teachers",
+    subtitle: "Assign 150+ interactive physics, chemistry, and biology practical experiments directly to student batches with instant automated grading.",
     tag: "Teacher Perk",
     badgeColor: "bg-purple-600 text-white",
     imageUrl: "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf9f93d712be6d135ac575_Student-Remote-Room-Labster-reverse-edit.avif",
@@ -82,7 +82,7 @@ export const TOP_ANNOUNCEMENTS = [
   },
   {
     id: "ann-3",
-    text: "🔬 New WebGL 3D Chemistry Titration & Optics Ray Tracer simulations are now live in the Virtual Lab.",
+    text: "🔬 New WebGL 3D Chemistry Titration & Optics Ray Tracer simulations are now live in the live lab.",
     link: "/simulations"
   }
 ];

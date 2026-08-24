@@ -84,7 +84,7 @@ export const ALL_SEMINARS: SeminarItem[] = [
     ],
     keyTakeaways: [
       "Official CSEEL STEM Center of Excellence accreditation for enrolled schools.",
-      "Hands-on training for Science Teachers on modern lab apparatus and virtual simulations.",
+      "Hands-on training for Science Teachers on modern lab apparatus and hands-on experiments & live labs.",
       "Access to ₹5 Lakhs ATL equipment matching grants and curriculum manuals."
     ],
     registeredAttendees: 840,
@@ -442,7 +442,7 @@ export const ALL_SEMINARS: SeminarItem[] = [
     keyTakeaways: [
       "12 downloadable printable optics experiment worksheets.",
       "Instant CPD verified certificate for attending science teachers.",
-      "Access to simulation codes on CSEEL virtual lab."
+      "Access to simulation codes on CSEEL live lab."
     ],
     registeredAttendees: 3420,
     totalSeats: 5000,

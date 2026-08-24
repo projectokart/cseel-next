@@ -29,7 +29,7 @@ const navItems: NavItem[] = [
     hasDropdown: true,
     children: [
       { label: "Hands-on Experiments", to: "/hands-on-experiments" },
-      { label: "Virtual Simulations", to: "/demo" },
+      { label: "hands-on experiments & live labs", to: "/demo" },
       { label: "Projectokart", to: "/projects" },
     ],
   },

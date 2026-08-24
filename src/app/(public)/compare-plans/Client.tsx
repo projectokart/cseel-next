@@ -76,7 +76,7 @@ const ComparePlans = () => {
             <ScrollReveal>
               <div className="text-center mb-16">
                 <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">Choose Your Plan</h1>
-                <p className="text-slate-500 max-w-xl mx-auto">Scale your science department with Cseel's flexible virtual lab solutions.</p>
+                <p className="text-slate-500 max-w-xl mx-auto">Scale your science department with Cseel's flexible live lab solutions.</p>
               </div>
             </ScrollReveal>
 

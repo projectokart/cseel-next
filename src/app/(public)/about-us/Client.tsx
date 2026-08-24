@@ -52,7 +52,7 @@ const AboutUs = () => {
                     CSEEL creates a dynamic and safe space where students can carry out real experiments, work with scientific equipment, and explore complex STEM concepts through practical application. Our goal is to replace passive learning with active scientific discovery.
                   </p>
                   <p className="text-muted-foreground">
-                    Unlike virtual labs, CSEEL is fully physical—students touch, test, build, and innovate using real materials. This makes learning more meaningful, especially in fields that demand tactile understanding and precision.
+                    Unlike live labs, CSEEL is fully physical—students touch, test, build, and innovate using real materials. This makes learning more meaningful, especially in fields that demand tactile understanding and precision.
                   </p>
                 </div>
               </ScrollReveal>

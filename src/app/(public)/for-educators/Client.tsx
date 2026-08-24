@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, BarChart3, Users, ClipboardList } from "lucide-react";
 
 const benefits = [
-  { icon: BookOpen, title: "Rich Content Library", desc: "Access hundreds of curriculum-aligned experiments and simulations ready to assign." },
+  { icon: BookOpen, title: "Rich Content Library", desc: "Access hundreds of curriculum-aligned hands-on experiments and live practicals ready to assign." },
   { icon: ClipboardList, title: "Assignment Management", desc: "Create, assign, and track experiments with built-in grading tools." },
   { icon: BarChart3, title: "Progress Analytics", desc: "Monitor student performance with detailed reports and analytics dashboards." },
   { icon: Users, title: "Class Management", desc: "Organize students into classes with unique codes for easy enrollment." },
@@ -21,7 +21,7 @@ const ForEducators = () => (
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">For Educators</h1>
           <p className="text-lg opacity-90 max-w-2xl mx-auto">
-            Empower your teaching with virtual labs that bring science to life in your classroom.
+            Empower your teaching with live labs that bring science to life in your classroom.
           </p>
           <Link href="/login">
             <Button size="lg" variant="secondary" className="mt-6">Get Started Free</Button>

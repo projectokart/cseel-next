@@ -29,7 +29,7 @@ export const ALL_DEMOS: DemoItem[] = [
     duration: "12 mins",
     videoUrl: "https://www.youtube.com/watch?v=b20VRR9C37Q",
     thumbnail: "https://img.freepik.com/premium-photo/chemistryfilled-beakers-beakers-with-colorful-chemical-generative-ai_722401-1517.jpg",
-    description: "Experience how students interact with digital burettes, indicators, and pH electrodes in our photorealistic WebGL virtual laboratory simulation before doing practicals in the physical lab.",
+    description: "Experience how students interact with digital burettes, indicators, and pH electrodes in our photorealistic WebGL live laboratory simulation before doing practicals in the physical lab.",
     keyFeatures: [
       "Real-time pH curve plotting with live equivalence point detection",
       "Dynamic indicator color transitions (Phenolphthalein, Methyl Orange)",

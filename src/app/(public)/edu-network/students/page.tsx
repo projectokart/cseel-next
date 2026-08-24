@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'National Student Innovator Showcase | CSEEL',
-    description: 'Explore student STEM prototypes, hardware schematics, and virtual simulation portfolios.',
+    description: 'Explore student STEM prototypes, hardware schematics, and hands-on experiment portfolios.',
     url: 'https://www.cseel.org/edu-network/students',
     siteName: 'CSEEL EduNetwork',
     images: [

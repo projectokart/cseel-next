@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { FlaskConical, Gamepad2, Trophy, BookOpenCheck } from "lucide-react";
 
 const benefits = [
-  { icon: FlaskConical, title: "Hands-On Experiments", desc: "Perform virtual experiments just like in a real lab — safely and interactively." },
-  { icon: Gamepad2, title: "Interactive Simulations", desc: "Engage with 3D simulations that make complex concepts easy to understand." },
+  { icon: FlaskConical, title: "Hands-On Experiments", desc: "Perform hands-on experiments just like in a real lab — safely and interactively." },
+  { icon: Gamepad2, title: "interactive hands-on experiments", desc: "Engage with 3D simulations that make complex concepts easy to understand." },
   { icon: Trophy, title: "Earn & Track Progress", desc: "Complete experiments, take quizzes, and track your learning journey." },
   { icon: BookOpenCheck, title: "Curriculum Aligned", desc: "All content is mapped to your school syllabus for relevant learning." },
 ];
@@ -21,7 +21,7 @@ const ForStudents = () => (
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">For Students</h1>
           <p className="text-lg opacity-90 max-w-2xl mx-auto">
-            Learn science by doing — explore virtual labs and experiments from anywhere.
+            Learn science by doing — explore live labs and experiments from anywhere.
           </p>
           <Link href="/login">
             <Button size="lg" variant="secondary" className="mt-6">Start Learning</Button>

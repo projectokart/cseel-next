@@ -95,10 +95,10 @@ export const SuperAdminDashboard: React.FC = () => {
     },
     {
       role: 'science_admin',
-      label: 'Virtual Lab Practicals',
+      label: 'live lab practicals',
       icon: Beaker,
       color: 'from-cyan-600 to-teal-700',
-      desc: 'Virtual simulations, interactive physics & chemistry apparatus.',
+      desc: 'hands-on experiments & live labs, interactive physics & chemistry apparatus.',
       modId: 'science_simulations',
       subdomainUrl: 'https://content.cseel.org/admin',
       schema: 'science.*',

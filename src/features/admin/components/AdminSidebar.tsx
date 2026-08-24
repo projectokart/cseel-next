@@ -27,7 +27,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { id: 'hr_careers', label: 'HR & Careers', icon: Briefcase, badge: 'Internal' },
   { id: 'schools_institutions', label: 'Schools & Institutes', icon: Building2, badge: '104' },
   { id: 'teaching_recruitment', label: 'Faculty & Jobs', icon: GraduationCap, badge: '50+' },
-  { id: 'science_simulations', label: 'Virtual Lab Practicals', icon: Beaker },
+  { id: 'science_simulations', label: 'live lab practicals', icon: Beaker },
   { id: 'projectokart_inventions', label: 'Projectokart Hardware', icon: Wrench },
   { id: 'inventory_materials', label: 'Lab Materials & Kits', icon: Package },
   { id: 'programs_events', label: 'Seminars & Events', icon: Calendar },

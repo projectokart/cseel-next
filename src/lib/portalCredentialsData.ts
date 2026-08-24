@@ -38,7 +38,7 @@ export const ALL_PORTAL_CREDENTIALS: PortalUserCredential[] = [
     dashboardUrl: '/student',
     publicProfileUrl: '/edu-network/students/ananya-iyer-delhi',
     avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop',
-    badge: '🧪 24 Virtual Labs Completed',
+    badge: '🧪 24 Live Lab Practicals Completed',
   },
   {
     id: 'std-3',

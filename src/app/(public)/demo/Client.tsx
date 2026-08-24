@@ -77,7 +77,7 @@ const Demo = () => {
                     <span className="text-blue-600">Video Demos</span>
                   </h1>
                   <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                    Don't just take our word for it—watch how Cseel transforms science education through high-fidelity 3D simulations.
+                    Don't just take our word for it—watch how Cseel transforms science education through interactive hands-on live experiments and practical labs.
                   </p>
                   <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2">
                     Request Full Access <ChevronRight size={18} />
@@ -204,7 +204,7 @@ const Demo = () => {
                           {v.title}
                       </h3>
                       <p className="text-sm text-slate-500 mt-2">
-                        Immersive virtual walkthrough for {v.subject} curriculum.
+                        Interactive live practical walkthrough for {v.subject} curriculum.
                       </p>
                     </div>
                   </motion.div>

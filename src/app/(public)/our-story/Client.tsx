@@ -25,7 +25,7 @@ const OurStory = () => (
           <div>
             <h2 className="text-2xl font-bold text-foreground mb-3">Our Mission</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We aim to bridge the gap between theoretical knowledge and practical application by providing virtual laboratories that simulate real-world experiments. Our platform empowers both educators and students to explore, experiment, and discover.
+              We aim to bridge the gap between theoretical knowledge and practical application by providing live laboratories that simulate real-world experiments. Our platform empowers both educators and students to explore, experiment, and discover.
             </p>
           </div>
           <div>

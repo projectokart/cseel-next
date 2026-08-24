@@ -3,14 +3,14 @@ import Client from './Client';
 
 export const metadata: Metadata = {
   title: "Customer & Technical Support | CSEEL Platform India",
-  description: "Need help with your CSEEL account, virtual lab simulation, or kit order? Reach our dedicated support team for quick assistance.",
-  keywords: "CSEEL support, virtual lab help, science platform customer care",
+  description: "Need help with your CSEEL account, hands-on science lab, or kit order? Reach our dedicated support team for quick assistance.",
+  keywords: "CSEEL support, live lab help, science platform customer care",
   alternates: {
     canonical: "https://www.cseel.org/get-support",
   },
   openGraph: {
     title: "Customer & Technical Support | CSEEL Platform India",
-    description: "Need help with your CSEEL account, virtual lab simulation, or kit order? Reach our dedicated support team for quick assistance.",
+    description: "Need help with your CSEEL account, hands-on science lab, or kit order? Reach our dedicated support team for quick assistance.",
     url: "https://www.cseel.org/get-support",
     siteName: "CSEEL",
     locale: "en_IN",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@cseel_org",
     title: "Customer & Technical Support | CSEEL Platform India",
-    description: "Need help with your CSEEL account, virtual lab simulation, or kit order? Reach our dedicated support team for quick assistance.",
+    description: "Need help with your CSEEL account, hands-on science lab, or kit order? Reach our dedicated support team for quick assistance.",
     images: ["https://www.cseel.org/images/og-cover.jpg"],
   },
 };

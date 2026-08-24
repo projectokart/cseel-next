@@ -28,11 +28,11 @@ export const ALL_BLOGS: BlogPostItem[] = [
 
 ### Key Pillars of Experiential Science Learning:
 1. **Hypothesis-Driven Inquiry**: Rather than giving students pre-determined outcomes, ask open questions such as "How does temperature affect enzyme activity in yeast?"
-2. **Hybrid Virtual-Physical Workflows**: Students perform virtual simulations to master concepts and safety protocols before conducting wet-lab experiments.
+2. **Hybrid Virtual-Physical Workflows**: Students perform hands-on experiments & live labs to master concepts and safety protocols before conducting wet-lab experiments.
 3. **Cross-Disciplinary Integration**: Merging chemistry, IoT sensor logging, and statistical data visualization.
 4. **Formative Competency Assessment**: Assessing understanding through experimental design, error analysis, and viva discussions rather than standardized pen-paper tests.
 
-By adopting integrated STEM lab kits and virtual simulations, schools across India are achieving up to 300% improvement in student retention and national science olympiad performance.`,
+By adopting integrated STEM lab kits and hands-on experiments & live labs, schools across India are achieving up to 300% improvement in student retention and national science olympiad performance.`,
     category: "Pedagogy",
     author: {
       name: "Dr. Arvind Sharma",

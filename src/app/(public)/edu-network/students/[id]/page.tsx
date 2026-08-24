@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     },
     openGraph: {
       title: `${student.name} | ${student.topProject} - CSEEL Innovator`,
-      description: `${student.classGrade} at ${student.schoolCollege}. Explore verified hardware prototypes, virtual experiments, and research vault.`,
+      description: `${student.classGrade} at ${student.schoolCollege}. Explore verified hardware prototypes, hands-on live experiments, and research vault.`,
       url: pageUrl,
       siteName: 'CSEEL EduNetwork',
       images: [

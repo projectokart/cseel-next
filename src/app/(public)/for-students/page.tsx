@@ -3,14 +3,14 @@ import Client from './Client';
 
 export const metadata: Metadata = {
   title: "Science Experiments & Simulations for Students India | CSEEL",
-  description: "CSEEL helps students in India learn science by doing. Explore virtual labs, hands-on experiments, and science projects aligned with CBSE, ICSE, and state boards.",
-  keywords: "science experiments students India, virtual lab students, CBSE science students, ICSE science practical, science project India, online science learning",
+  description: "CSEEL helps students in India learn science by doing. Explore live labs, hands-on experiments, and science projects aligned with CBSE, ICSE, and state boards.",
+  keywords: "science experiments students India, live lab students, CBSE science students, ICSE science practical, science project India, online science learning",
   alternates: {
     canonical: "https://www.cseel.org/for-students",
   },
   openGraph: {
     title: "Science Experiments & Simulations for Students India | CSEEL",
-    description: "CSEEL helps students in India learn science by doing. Explore virtual labs, hands-on experiments, and science projects aligned with CBSE, ICSE, and state boards.",
+    description: "CSEEL helps students in India learn science by doing. Explore live labs, hands-on experiments, and science projects aligned with CBSE, ICSE, and state boards.",
     url: "https://www.cseel.org/for-students",
     siteName: "CSEEL",
     locale: "en_IN",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@cseel_org",
     title: "Science Experiments & Simulations for Students India | CSEEL",
-    description: "CSEEL helps students in India learn science by doing. Explore virtual labs, hands-on experiments, and science projects aligned with CBSE, ICSE, and state boards.",
+    description: "CSEEL helps students in India learn science by doing. Explore live labs, hands-on experiments, and science projects aligned with CBSE, ICSE, and state boards.",
     images: ["https://www.cseel.org/images/og-cover.jpg"],
   },
 };

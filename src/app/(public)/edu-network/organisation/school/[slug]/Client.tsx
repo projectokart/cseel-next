@@ -423,192 +423,319 @@ export default function CitySchoolDirectoryClient({
                     const isLiked = likedOrgIds.includes(org.id);
 
                     return (
-                      <div
-                        key={org.id}
-                        className="bg-white rounded-2xl md:rounded-3xl p-3 sm:p-4 md:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col md:flex-row gap-3 md:gap-5 items-stretch relative group max-w-full overflow-hidden"
-                      >
-                        {/* Image & Logo Section (Mobile: Top Banner, Desktop: Left Side) */}
-                        <div className="relative w-full md:w-52 h-40 sm:h-48 md:h-auto min-h-[140px] rounded-xl md:rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
-                          <img
-                            src={org.bannerImage || org.logo}
-                            alt={org.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
+                      <React.Fragment key={org.id}>
+                        {/* ── MOBILE VIEW CARD (EXACT USER DESIGN) ── */}
+                        <div className="md:hidden bg-white rounded-2xl p-2.5 sm:p-3.5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col gap-2.5 relative group max-w-full overflow-hidden">
                           
-                          {/* Logo */}
-                          <div className="absolute top-2.5 left-2.5 w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-white p-1 shadow-md border border-slate-100 flex items-center justify-center">
-                            <img src={org.logo} alt={org.name} className="w-full h-full object-contain rounded-md" />
-                          </div>
-
-                          {/* Mobile Rating Overlay (Desktop par hide hokar content header me dikhega) */}
-                          <div className="md:hidden absolute top-2.5 right-2.5 inline-flex items-center gap-1 px-2 py-0.5 bg-white/95 backdrop-blur-xs border border-slate-200/80 rounded-lg text-slate-900 text-[11px] font-black shadow-xs">
-                            <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                            <span>{org.rating}</span>
-                            <span className="text-[9px] text-slate-400 font-normal">({org.reviews})</span>
-                          </div>
-
-                          {/* Verified Lab Badge */}
-                          {org.verified && (
-                            <span className="absolute bottom-2.5 left-2.5 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black rounded-full shadow-xs flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3" />
-                              <span>Verified Lab</span>
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Content Section */}
-                        <div className="flex-1 min-w-0 flex flex-col justify-between gap-3">
-                          <div>
-                            {/* Header: School Name, Address & Desktop Rating */}
-                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <h2 className="text-sm sm:text-base md:text-lg font-black text-slate-900 leading-snug group-hover:text-blue-600 transition-colors break-words">
-                                  <Link href={`/edu-network/org/${org.id}`}>{org.name}</Link>
-                                </h2>
-                                
-                                {/* Address & Board */}
-                                <div className="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5 mt-1 font-medium flex-wrap break-words">
-                                  <span className="inline-flex items-center gap-1">
-                                    <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                                    <span>{org.locality ? `${org.locality}, ` : ''}{org.city}, {org.state}</span>
-                                  </span>
-                                  <span className="text-slate-300">•</span>
-                                  <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-bold text-[10px] border border-slate-200 shrink-0">
-                                    {org.board || 'CBSE'}
-                                  </span>
-                                  {org.udiseCode && (
-                                    <>
-                                      <span className="text-slate-300">•</span>
-                                      <span className="text-[10px] font-mono text-slate-500 font-semibold shrink-0">
-                                        UDISE: {org.udiseCode}
-                                      </span>
-                                    </>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Desktop Rating Badge */}
-                              <div className="hidden md:flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-black shrink-0 self-start">
-                                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                                <span>{org.rating}</span>
-                                <span className="text-[10px] text-slate-400 font-normal">({org.reviews})</span>
-                              </div>
+                          {/* Image Banner Section */}
+                          <div className="relative w-full h-36 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
+                            <img 
+                              src={org.bannerImage || org.logo} 
+                              alt={org.name} 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            
+                            {/* Logo Badge */}
+                            <div className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-white p-1 shadow-md border border-slate-100 flex items-center justify-center">
+                              <img 
+                                src={org.logo} 
+                                alt={org.name} 
+                                className="w-full h-full object-contain rounded-md"
+                              />
                             </div>
 
-                            {/* Key Metrics Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 p-2 sm:p-2.5 md:p-3 bg-slate-50 rounded-xl md:rounded-2xl text-[11px] sm:text-xs border border-slate-100">
-                              <div className="min-w-0">
-                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block leading-tight">Monthly Fee</span>
-                                <p className="font-black text-slate-900 text-xs sm:text-sm mt-0.5 truncate">{org.monthlyFees || '₹12.0K'}</p>
-                              </div>
-                              <div className="min-w-0">
-                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block leading-tight">Classes</span>
-                                <p className="font-bold text-slate-800 text-xs sm:text-sm mt-0.5 truncate">{org.classesOffered || 'Undergraduate - Ph.D.'}</p>
-                              </div>
-                              <div className="min-w-0">
-                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block leading-tight">Student Ratio</span>
-                                <p className="font-bold text-slate-800 text-xs sm:text-sm mt-0.5 truncate">{org.studentFacultyRatio || '10:1'}</p>
-                              </div>
-                              <div className="min-w-0">
-                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block leading-tight">Admissions</span>
-                                <span className="inline-block font-bold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] mt-0.5 truncate max-w-full">
-                                  {org.admissionStatus || 'Open for 2026-27'}
+                            {/* Rating Badge */}
+                            <div className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 bg-white/95 backdrop-blur-xs border border-slate-200/80 rounded-lg text-slate-900 text-[11px] font-black shadow-xs">
+                              <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                              <span>{org.rating}</span>
+                              <span className="text-[9px] text-slate-400 font-normal">({org.reviews})</span>
+                            </div>
+
+                            {/* Verified Badge */}
+                            {org.verified && (
+                              <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black rounded-full shadow-xs flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>Verified Lab</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Content Section */}
+                          <div className="flex flex-col gap-2">
+                            {/* Header & Info */}
+                            <div>
+                              <h2 className="text-sm font-extrabold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors break-words">
+                                <Link href={`/edu-network/org/${org.id}`}>{org.name}</Link>
+                              </h2>
+                              <div className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-1 font-medium flex-wrap break-words">
+                                <span className="inline-flex items-center gap-1">
+                                  <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                  <span>{org.locality ? `${org.locality}, ` : ''}{org.city}, {org.state}</span>
                                 </span>
+                                <span className="text-slate-300">•</span>
+                                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-bold text-[10px] border border-slate-200 shrink-0">{org.board || 'CBSE'}</span>
+                                <span className="text-slate-300">•</span>
+                                <span className="text-[10px] font-mono text-slate-500 font-semibold shrink-0">UDISE: {org.udiseCode || '07010200301'}</span>
                               </div>
                             </div>
 
-                            {/* Facilities Pills (Compact with interactive +more popup) */}
-                            <div className="flex items-center gap-1 flex-wrap mt-2 text-[9px] sm:text-[10px]">
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-2 gap-1.5 p-2 bg-slate-50 rounded-xl text-[11px] border border-slate-100">
+                              <div className="min-w-0">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase block leading-tight">Monthly Fee</span>
+                                <p className="font-black text-slate-900 text-xs mt-0.5 truncate">{org.monthlyFees || '₹12.0K'}</p>
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase block leading-tight">Classes</span>
+                                <p className="font-bold text-slate-800 text-xs mt-0.5 truncate">{org.classesOffered || 'Nursery - 12th'}</p>
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase block leading-tight">Student Ratio</span>
+                                <p className="font-bold text-slate-800 text-xs mt-0.5 truncate">{org.studentFacultyRatio || '15:1'}</p>
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase block leading-tight">Admissions</span>
+                                <span className="inline-block font-bold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.5 rounded text-[10px] mt-0.5 truncate max-w-full">{org.admissionStatus || 'Open'}</span>
+                              </div>
+                            </div>
+
+                            {/* Tags & Badges */}
+                            <div className="flex items-center gap-1 flex-wrap text-[10px]">
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); setSelectedOrgForLabsModal(org); }}
-                                className="px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-md border border-blue-100 flex items-center gap-1 transition-colors cursor-pointer text-[9px] sm:text-[10px]"
-                                title="Click to view all labs"
+                                className="px-2 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md border border-blue-100 flex items-center gap-1 cursor-pointer transition-colors"
                               >
                                 <Sparkles className="w-2.5 h-2.5 text-blue-600" />
                                 <span>{org.stemLabsCount} Labs</span>
                               </button>
                               {org.facilities.slice(0, 2).map((f, idx) => (
-                                <span key={idx} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[9px] sm:text-[10px]">
-                                  {f}
-                                </span>
+                                <span key={idx} className="px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-md">{f}</span>
                               ))}
                               {org.facilities.length > 2 && (
                                 <button
                                   type="button"
                                   onClick={(e) => { e.stopPropagation(); setSelectedOrgForLabsModal(org); }}
-                                  className="text-[9px] text-blue-600 hover:text-blue-700 font-bold hover:underline px-1 py-0.5 rounded cursor-pointer"
-                                  title="Click to view all facilities"
+                                  className="text-[9px] text-slate-400 font-semibold hover:text-blue-600 cursor-pointer"
                                 >
                                   +{org.facilities.length - 2} more
                                 </button>
                               )}
                             </div>
-                          </div>
 
-                          {/* Actions Bar (Strict Single-Row Layout) */}
-                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 flex-nowrap w-full overflow-hidden">
-                            {/* Left Action Buttons */}
-                            <div className="flex items-center gap-1 shrink-0">
-                              {/* Compare Button */}
-                              <button
-                                onClick={(e) => handleToggleCompare(org, e)}
-                                className={`px-1.5 sm:px-2 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-colors ${
-                                  isCompared ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                                }`}
-                                title="Compare"
-                              >
-                                <Scale className="w-3.5 h-3.5" />
-                                <span className="hidden sm:inline">{isCompared ? 'Added' : 'Compare'}</span>
-                              </button>
+                            {/* Bottom Action Row */}
+                            <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 flex-nowrap w-full overflow-hidden">
+                              {/* Left Action Buttons */}
+                              <div className="flex items-center gap-1 shrink-0">
+                                {/* Compare Button */}
+                                <button
+                                  onClick={(e) => handleToggleCompare(org, e)}
+                                  className={`px-1.5 sm:px-2 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-colors ${
+                                    isCompared ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                  }`}
+                                  title="Compare"
+                                >
+                                  <Scale className="w-3.5 h-3.5" />
+                                  <span className="hidden sm:inline">{isCompared ? 'Added' : 'Compare'}</span>
+                                </button>
 
-                              {/* Shortlist Button */}
-                              <button
-                                onClick={(e) => handleToggleLike(org.id, e)}
-                                className={`p-1.5 rounded-lg border transition-colors ${
-                                  isLiked
-                                    ? 'bg-rose-50 border-rose-200 text-rose-600'
-                                    : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-rose-500'
-                                }`}
-                                title="Shortlist"
-                              >
-                                <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-rose-600' : ''}`} />
-                              </button>
+                                {/* Shortlist Button */}
+                                <button
+                                  onClick={(e) => handleToggleLike(org.id, e)}
+                                  className={`p-1.5 rounded-lg border transition-colors ${
+                                    isLiked ? 'bg-rose-50 border-rose-200 text-rose-600' : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-rose-500'
+                                  }`}
+                                  title="Shortlist"
+                                >
+                                  <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-rose-600' : ''}`} />
+                                </button>
 
-                              {/* Share Button */}
-                              <button
-                                onClick={() => {
-                                  if (typeof navigator !== 'undefined' && navigator.share) {
-                                    navigator.share({ title: org.name, url: `${window.location.origin}/edu-network/org/${org.id}` }).catch(() => {});
-                                  }
-                                }}
-                                className="p-1.5 rounded-lg border bg-slate-50 border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 transition-colors"
-                                title="Share"
-                              >
-                                <Share2 className="w-3.5 h-3.5" />
-                              </button>
+                                {/* Share Button */}
+                                <button
+                                  onClick={() => {
+                                    if (typeof navigator !== 'undefined' && navigator.share) {
+                                      navigator.share({ title: org.name, url: `${window.location.origin}/edu-network/org/${org.id}` }).catch(() => {});
+                                    }
+                                  }}
+                                  className="p-1.5 rounded-lg border bg-slate-50 border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 transition-colors"
+                                  title="Share"
+                                >
+                                  <Share2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              {/* Right CTA Buttons */}
+                              <div className="flex items-center gap-1 shrink-0">
+                                <button
+                                  onClick={(e) => handleOpenEnquiry(org, e)}
+                                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] sm:text-[11px] rounded-lg transition-colors"
+                                >
+                                  Enquiry
+                                </button>
+
+                                <Link
+                                  href={`/edu-network/org/${org.id}`}
+                                  className="px-2 sm:px-3 py-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-[10px] sm:text-[11px] rounded-lg shadow-xs flex items-center gap-1 transition-all"
+                                >
+                                  <span>View<span className="hidden sm:inline"> Profile</span></span>
+                                  <ArrowRight className="w-3 h-3" />
+                                </Link>
+                              </div>
                             </div>
 
-                            {/* Right CTA Buttons */}
-                            <div className="flex items-center gap-1 shrink-0">
-                              <button
-                                onClick={(e) => handleOpenEnquiry(org, e)}
-                                className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-[10px] sm:text-[11px] rounded-lg transition-colors"
-                              >
-                                Enquiry
-                              </button>
+                          </div>
+                        </div>
 
-                              <Link
-                                href={`/edu-network/org/${org.id}`}
-                                className="px-2 sm:px-3 py-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-[10px] sm:text-[11px] rounded-lg shadow-xs flex items-center gap-1 transition-all"
-                              >
-                                <span>View<span className="hidden sm:inline"> Profile</span></span>
-                                <ArrowRight className="w-3 h-3" />
-                              </Link>
+                        {/* ── DESKTOP VIEW CARD (ORIGINAL FULL HORIZONTAL DESIGN) ── */}
+                        <div className="hidden md:flex bg-white rounded-3xl p-5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex-row gap-5 items-stretch relative group">
+                          {/* School Logo / Image thumbnail */}
+                          <div className="relative w-52 h-auto rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
+                            <img
+                              src={org.bannerImage || org.logo}
+                              alt={org.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <div className="absolute top-2.5 left-2.5 w-10 h-10 rounded-xl bg-white p-1 shadow-md border border-slate-100 flex items-center justify-center">
+                              <img src={org.logo} alt={org.name} className="w-full h-full object-contain rounded-lg" />
+                            </div>
+                            {org.verified && (
+                              <span className="absolute bottom-2.5 left-2.5 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black rounded-full shadow-xs flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>Verified Lab</span>
+                              </span>
+                            )}
+                          </div>
+
+                          {/* School Details */}
+                          <div className="flex-1 min-w-0 flex flex-col justify-between space-y-3">
+                            <div>
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h2 className="text-base sm:text-lg font-black text-slate-900 leading-snug group-hover:text-blue-600 transition-colors">
+                                      <Link href={`/edu-network/org/${org.id}`}>
+                                        {org.name}
+                                      </Link>
+                                    </h2>
+                                  </div>
+
+                                  <div className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5 font-medium flex-wrap">
+                                    <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                    <span>{org.locality ? `${org.locality}, ` : ''}{org.city}, {org.state}</span>
+                                    <span>•</span>
+                                    <span className="font-bold text-slate-700">{org.board || 'CBSE'}</span>
+                                    <span>•</span>
+                                    <span className="inline-flex items-center text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono font-bold border border-slate-200">
+                                      UDISE: {org.udiseCode || '07010200301'}
+                                    </span>
+                                  </div>
+                                </div>
+
+                                {/* Rating badge */}
+                                <div className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-black shrink-0">
+                                  <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                                  <span>{org.rating}</span>
+                                  <span className="text-[10px] text-slate-400 font-normal">({org.reviews})</span>
+                                </div>
+                              </div>
+
+                              {/* UniApply-Style Key Metrics Grid */}
+                              <div className="grid grid-cols-4 gap-2 mt-3 p-3 bg-slate-50 rounded-2xl text-xs border border-slate-100">
+                                <div>
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase">Monthly Fee</span>
+                                  <p className="font-black text-slate-900">{org.monthlyFees || '₹12,000 / mo'}</p>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase">Classes</span>
+                                  <p className="font-bold text-slate-800">{org.classesOffered || 'Nursery - 12th'}</p>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase">Student Ratio</span>
+                                  <p className="font-bold text-slate-800">{org.studentFacultyRatio || '20:1'}</p>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] font-bold text-slate-400 uppercase">Admissions</span>
+                                  <span className="inline-block font-black text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md text-[11px]">
+                                    {org.admissionStatus || 'Open 2026-27'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Facilities Pills */}
+                              <div className="flex items-center gap-1.5 flex-wrap mt-3 text-[11px]">
+                                <button
+                                  type="button"
+                                  onClick={(e) => { e.stopPropagation(); setSelectedOrgForLabsModal(org); }}
+                                  className="px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-lg border border-blue-100 flex items-center gap-1 hover:bg-blue-100 transition cursor-pointer"
+                                >
+                                  <Sparkles className="w-3 h-3 text-blue-600" />
+                                  <span>{org.stemLabsCount} STEM Labs</span>
+                                </button>
+                                {org.facilities.slice(0, 3).map((f, idx) => (
+                                  <span key={idx} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-lg">
+                                    {f}
+                                  </span>
+                                ))}
+                                {org.facilities.length > 3 && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setSelectedOrgForLabsModal(org); }}
+                                    className="text-[10px] text-blue-600 hover:text-blue-700 font-bold hover:underline cursor-pointer"
+                                  >
+                                    +{org.facilities.length - 3} more
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Action Footer */}
+                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                              <div className="flex items-center gap-2">
+                                {/* Compare Checkbox */}
+                                <button
+                                  onClick={(e) => handleToggleCompare(org, e)}
+                                  className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                                    isCompared
+                                      ? 'bg-blue-600 text-white shadow-xs'
+                                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                  }`}
+                                >
+                                  <Scale className="w-3.5 h-3.5" />
+                                  <span>{isCompared ? 'Comparing' : 'Compare'}</span>
+                                </button>
+
+                                {/* Save/Like */}
+                                <button
+                                  onClick={(e) => handleToggleLike(org.id, e)}
+                                  className={`p-1.5 rounded-xl border transition-all ${
+                                    isLiked ? 'bg-rose-50 border-rose-200 text-rose-600' : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-rose-500'
+                                  }`}
+                                  title="Shortlist school"
+                                >
+                                  <Heart className={`w-4 h-4 ${isLiked ? 'fill-rose-600' : ''}`} />
+                                </button>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={(e) => handleOpenEnquiry(org, e)}
+                                  className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition-all"
+                                >
+                                  Apply / Enquire
+                                </button>
+
+                                <Link
+                                  href={`/edu-network/org/${org.id}`}
+                                  className="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-1 transition-all"
+                                >
+                                  <span>View Profile</span>
+                                  <ArrowRight className="w-3.5 h-3.5" />
+                                </Link>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </React.Fragment>
                     );
                   })}
                 </div>

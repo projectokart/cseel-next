@@ -613,9 +613,15 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                     </a>
                   </li>
                   <li>
+                    <a href="#stem_live_labs_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-cyan-50 text-cyan-800 font-bold border border-cyan-200">
+                      <Microscope className="w-4 h-4 text-cyan-600" />
+                      <span>STEM Live Labs & Innovation</span>
+                    </a>
+                  </li>
+                  <li>
                     <a href="#facilities_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
                       <Wand2 className="w-4 h-4 text-sky-600" />
-                      <span>Facilities</span>
+                      <span>Facilities Matrix</span>
                     </a>
                   </li>
                   <li>
@@ -1131,6 +1137,235 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 )}
               </section>
 
+
+              {/* ── USER REQUESTED SPECIAL SECTION: STEM LIVE LAB & INNOVATION ── */}
+              <section id="stem_live_labs_tab" className="bg-gradient-to-br from-[#001f3f] via-[#002b4e] to-slate-900 text-white rounded-2xl p-6 sm:p-7 shadow-xl border border-cyan-500/30 scroll-mt-20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/15 pb-4 mb-6 gap-3 relative z-10">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300">
+                        <Microscope className="w-4 h-4" />
+                      </div>
+                      <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+                        STEM Live Lab & Innovation Ecosystem
+                      </h2>
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        CSEEL Live Practical Ready
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300 mt-1">
+                      Advanced experiential infrastructure for hands-on learning, scientific prototyping, and experiential learning by doing.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-200">
+                      12 Specialized Labs
+                    </span>
+                  </div>
+                </div>
+
+                {/* Lab Grid Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 relative z-10 text-xs">
+                  
+                  {/* Lab 1: Science Experiential Lab (HIGHLIGHTED IN GREEN) */}
+                  <div className="p-4 rounded-xl bg-emerald-950/60 border-2 border-emerald-400/80 shadow-lg space-y-1.5 relative overflow-hidden">
+                    <div className="absolute -top-6 -right-6 w-16 h-16 bg-emerald-500/20 rounded-full blur-lg"></div>
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold">
+                        <Beaker className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-black bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-md uppercase">
+                        Active Verified
+                      </span>
+                    </div>
+                    <h3 className="font-black text-sm text-emerald-200">Science Experiential Lab</h3>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      NEP 2020 experiential practical kits with DIY apparatus for hands-on inquiry and concept mastery.
+                    </p>
+                  </div>
+
+                  {/* Lab 2: Composite Science Lab */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold border border-cyan-400/30">
+                        <Microscope className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Composite Science Lab</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Integrated Physics, Chemistry & Biology laboratory stations with certified safety hoods.
+                    </p>
+                  </div>
+
+                  {/* Lab 3: Atal Tinkering Lab (ATL) */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold border border-amber-400/30">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Atal Tinkering Lab (ATL)</h3>
+                    <p className="text-[11px] text-slate-300">
+                      NITI Aayog aligned design-thinking hub for inventing, tinkering, and building prototypes.
+                    </p>
+                  </div>
+
+                  {/* Lab 4: Robotics & IoT Lab */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold border border-purple-400/30">
+                        <Bot className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Robotics & IoT Lab</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Programmable microcontrollers, sensor kits, drone mechanics, and automated robotics arena.
+                    </p>
+                  </div>
+
+                  {/* Lab 5: AI & Machine Learning Lab */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold border border-blue-400/30">
+                        <Laptop className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">AI & Machine Learning Lab</h3>
+                    <p className="text-[11px] text-slate-300">
+                      High-performance computational workstations with Python, Computer Vision, and Neural Nets.
+                    </p>
+                  </div>
+
+                  {/* Lab 6: AR / VR Immersive Pods */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center font-bold border border-rose-400/30">
+                        <Maximize2 className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">AR / VR Immersive Pods</h3>
+                    <p className="text-[11px] text-slate-300">
+                      3D holographic headsets for virtual biology dissections, planetary walks, and molecular dives.
+                    </p>
+                  </div>
+
+                  {/* Lab 7: Language & Phonetics Lab */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-300 flex items-center justify-center font-bold border border-sky-400/30">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Language & Phonetics Lab</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Acoustic headphone stations for English accent mastery, French, German & Spanish phonology.
+                    </p>
+                  </div>
+
+                  {/* Lab 8: Astronomy & Space Observatory */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold border border-indigo-400/30">
+                        <Eye className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Astronomy & Space Observatory</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Rooftop motorized astronomical telescopes for celestial tracking, lunar phases, and astrophysics.
+                    </p>
+                  </div>
+
+                  {/* Lab 9: Mathematics Activity Lab */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold border border-amber-400/30">
+                        <Scale className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Mathematics Activity Lab</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Tactile 3D geometrical manipulatives, Vedic math apparatus, and probability experimental tools.
+                    </p>
+                  </div>
+
+                  {/* Lab 10: 3D Printing & Rapid Prototyping */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold border border-teal-400/30">
+                        <Wand2 className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">3D Printing & CAD Studio</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Dual-extruder filament 3D printers, laser engravers, and solid modeling engineering suites.
+                    </p>
+                  </div>
+
+                  {/* Lab 11: Biotechnology & Hydroponics */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-lime-500/20 text-lime-300 flex items-center justify-center font-bold border border-lime-400/30">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Bio-Tech & Hydroponics Unit</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Soil-less plant nutrition chambers, microbial culture stations, and DNA extraction toolkits.
+                    </p>
+                  </div>
+
+                  {/* Lab 12: Coding & Cyber-Security Suite */}
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/50 transition space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="w-7 h-7 rounded-lg bg-orange-500/20 text-orange-300 flex items-center justify-center font-bold border border-orange-400/30">
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Available
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-sm text-white">Coding & Cyber-Security Suite</h3>
+                    <p className="text-[11px] text-slate-300">
+                      Linux sandboxes, network simulation racks, cloud containers, and algorithmic challenge decks.
+                    </p>
+                  </div>
+
+                </div>
+              </section>
+
               {/* SECTION 9: Facilities Matrix Breakdown (EXACT IMAGE 1) */}
               <section id="facilities_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 mb-6 gap-3">
@@ -1159,7 +1394,17 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                   <div className="lg:col-span-1 space-y-4 border-r border-slate-100 pr-4">
                     <div>
                       <div className="flex justify-between text-[11px] font-bold text-slate-700">
-                        <span>All Facilities (22/39)</span>
+                        <span>STEM Live Labs (12/12)</span>
+                        <span className="text-emerald-600 font-black">100%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: '100%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>All Facilities (34/51)</span>
                         <span>57%</span>
                       </div>
                       <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
@@ -1354,11 +1599,18 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                       </div>
 
                       <div>
-                        <h4 className="font-black text-slate-900 mb-2.5">Lab</h4>
+                        <h4 className="font-black text-slate-900 mb-2.5">Lab & Innovation Hubs</h4>
                         <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Computer Lab</span></div>
-                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Science Lab</span></div>
-                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Robotics Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Science Experiential Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Composite Science Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Atal Tinkering Lab (ATL)</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Robotics & IoT Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>AI & Machine Learning Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>AR / VR Immersive Pods</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Language & Phonetics Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Astronomy & Space Observatory</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>3D Printing & CAD Studio</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Mathematics Activity Lab</span></div>
                         </div>
                       </div>
 

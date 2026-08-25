@@ -14,7 +14,7 @@ import {
   Scale, Bell, Bookmark, Bot, Video, UserCheck, Key, Copy, CheckCheck,
   Trophy, GraduationCap, ArrowRight, Save, EyeOff, ShieldAlert,
   Activity, Radio, Compass, Stethoscope, Layers, Bus, Compass as MapIcon,
-  LayoutGrid, FileCode2, SlidersHorizontal, CheckCircle
+  LayoutGrid, FileCode2, SlidersHorizontal, CheckCircle, Info
 } from 'lucide-react';
 import PageTransition from '@/components/shared/PageTransition';
 import { ALL_ORGANIZATIONS, OrganizationItem } from '@/lib/eduNetworkData';
@@ -30,11 +30,12 @@ export default function CreateSchoolProfileClient() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [newSchoolId, setNewSchoolId] = useState('');
 
-  // Result Banner Year Selector in preview
+  // Preview Interactive States
   const [previewResultYear, setPreviewResultYear] = useState<'2025-26' | '2024-25'>('2025-26');
   const [previewResultClass, setPreviewResultClass] = useState<'12' | '10'>('12');
+  const [previewSelectedClassFee, setPreviewSelectedClassFee] = useState('Class 9');
 
-  // ── FORM STATE: ALL SINGLE PAGE SECTIONS ──────────────────────────────────
+  // ── FORM STATE: ALL 9 SECTIONS ────────────────────────────────────────────
   const [form, setForm] = useState({
     // Section 1: Card & Basic Info
     name: 'HOCL International School',
@@ -52,7 +53,7 @@ export default function CreateSchoolProfileClient() {
     facilitiesChips: 'Smart Classrooms, Robotics Lab, Swimming Pool, Transport, CCTV Surveillance',
 
     // Section 2: Overview & Leadership
-    description: 'A premier educational ecosystem dedicated to experiential STEM inquiry, holistic K-12 academic excellence, and future-ready scientific leadership with state-of-the-art laboratory infrastructure.',
+    description: 'A premier educational ecosystem dedicated to experiential STEM inquiry, holistic K-12 academic excellence, and future-ready scientific leadership with state-of-the-art laboratory infrastructure and global pedagogical standards.',
     established: 1998,
     studentStrength: 2400,
     campusAcreage: '12 Acres Urban Campus',
@@ -148,9 +149,9 @@ export default function CreateSchoolProfileClient() {
     galleryPhotos: [
       { title: 'Interactive Science Experiential Lab', category: 'STEM Lab', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80' },
       { title: 'Central Research & Digital Library', category: 'Library', url: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80' },
-      { title: 'Olympic Sports Arena & Turf', category: 'Sports', url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80' },
+      { title: 'Olympic Sports Arena & Football Turf', category: 'Sports', url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80' },
       { title: 'Smart Interactive Classroom', category: 'Classroom', url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80' },
-      { title: 'Campus Medical & Wellness Center', category: 'Medical', url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80' }
+      { title: 'Campus Medical & Wellness Infirmary', category: 'Medical', url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80' }
     ],
 
     // Section 9: Address, Location & Google Maps
@@ -162,7 +163,7 @@ export default function CreateSchoolProfileClient() {
     phone: '+91 11 4987 6543 / +91 98765 43210',
     email: 'admissions@institution.edu.in',
     website: 'https://www.institution.edu.in',
-    transportRoutes: 'AC Bus Fleet covering 45+ routes across Delhi NCR with GPS Tracking & Speed Governors',
+    transportRoutes: 'AC Bus Fleet covering 45+ routes across Delhi NCR with GPS Tracking, CCTV & Speed Governors',
     googleMapsEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.604473852084!2d77.1953247!3d28.5516047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce27038e2d469%3A0x89e248b6c4b22c07!2sSri%20Aurobindo%20Marg!5e0!3m2!1sen!2sin!4v1700000000000',
   });
 
@@ -336,7 +337,7 @@ export default function CreateSchoolProfileClient() {
               </div>
               <h2 className="text-2xl font-black text-slate-900">School Profile Published!</h2>
               <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
-                <strong>{form.name}</strong> is now live with all 9 detail sections, verified UDISE code <code>{form.udiseCode}</code>, STEM Live Lab matrix, result banners, and map coordinates.
+                <strong>{form.name}</strong> is now live with all 9 detail sections, verified UDISE code <code>{form.udiseCode}</code>, STEM Live Lab matrix, result banners, gallery, and map coordinates.
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <Link
@@ -1338,9 +1339,9 @@ export default function CreateSchoolProfileClient() {
               <div>
                 <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
                   <Eye className="w-4 h-4 text-blue-600" />
-                  <span>Live Preview Mode: Directory Card &amp; Full Detail Page</span>
+                  <span>Live Preview Mode: Directory Card &amp; Full Detail Profile</span>
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Real-time simulation of how your institution appears across CSEEL EduNetwork.</p>
+                <p className="text-xs text-slate-500 mt-0.5">Complete simulation covering all 9 sections, fee matrix, documents, gallery, and Google Maps.</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -1490,25 +1491,26 @@ export default function CreateSchoolProfileClient() {
               </div>
             )}
 
-            {/* ── PREVIEW PART 2: FULL DETAIL PROFILE PAGE PREVIEW ── */}
+            {/* ── PREVIEW PART 2: FULL DETAIL PROFILE PAGE PREVIEW (ALL SECTIONS) ── */}
             {(previewSubTab === 'both' || previewSubTab === 'detail') && (
-              <div className="space-y-4 pt-4 border-t-2 border-slate-200">
+              <div className="space-y-6 pt-4 border-t-2 border-slate-200">
                 <div className="flex items-center justify-between px-2">
                   <span className="text-xs font-black uppercase tracking-wider text-slate-400">
                     Preview 2: Full Institutional Detail Profile Page
                   </span>
-                  <span className="text-[11px] text-indigo-600 font-bold">Live rendering of all 9 detail sections</span>
+                  <span className="text-[11px] text-indigo-600 font-bold">Complete Live Rendering of All 9 Sections</span>
                 </div>
 
-                {/* Hero Banner Section */}
-                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
-                  <div className="relative h-60 sm:h-72 w-full bg-slate-900">
+                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm space-y-6 pb-8">
+                  
+                  {/* 1. Hero Cover Header */}
+                  <div className="relative h-64 sm:h-80 w-full bg-slate-900">
                     <img
                       src={form.bannerImage}
                       alt={form.name}
                       className="w-full h-full object-cover opacity-80"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                     
                     <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white">
                       <div className="flex items-center gap-4">
@@ -1523,6 +1525,10 @@ export default function CreateSchoolProfileClient() {
                             <span className="px-2.5 py-0.5 bg-emerald-600/90 text-white font-black text-[10px] rounded-md uppercase flex items-center gap-1">
                               <CheckCircle2 className="w-3 h-3" />
                               <span>UDISE: {form.udiseCode}</span>
+                            </span>
+                            <span className="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-md flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-slate-950" />
+                              <span>4.9 (Verified)</span>
                             </span>
                           </div>
                           <h1 className="text-xl sm:text-2xl font-black">{form.name}</h1>
@@ -1544,47 +1550,143 @@ export default function CreateSchoolProfileClient() {
                     </div>
                   </div>
 
-                  {/* Overview & Key Stats */}
-                  <div className="p-6 space-y-6">
-                    <div>
-                      <h3 className="font-black text-sm text-slate-900 mb-1">About Institution</h3>
-                      <p className="text-xs text-slate-600 leading-relaxed">{form.description}</p>
-                    </div>
-
-                    {/* Principal Desk */}
-                    <div className="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 flex items-start gap-4">
-                      <img src={form.principalPhoto} alt={form.principalName} className="w-12 h-12 rounded-xl object-cover border border-blue-300 shrink-0" />
+                  <div className="px-6 sm:px-8 space-y-8">
+                    
+                    {/* 2. Overview & Principal Desk */}
+                    <div className="space-y-4">
                       <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-black text-xs text-blue-950">{form.principalName}</span>
-                          <span className="text-[10px] text-blue-700 font-semibold">{form.principalDesignation}</span>
+                        <h3 className="font-black text-base text-slate-900 mb-1.5 flex items-center gap-2">
+                          <BookOpen className="w-4 h-4 text-blue-600" />
+                          <span>About Institution &amp; Academic Vision</span>
+                        </h3>
+                        <p className="text-xs text-slate-600 leading-relaxed">{form.description}</p>
+                      </div>
+
+                      {/* Principal Desk */}
+                      <div className="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 flex items-start gap-4">
+                        <img src={form.principalPhoto} alt={form.principalName} className="w-14 h-14 rounded-2xl object-cover border-2 border-blue-300 shrink-0" />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-sm text-blue-950">{form.principalName}</span>
+                            <span className="text-[10px] text-blue-700 font-semibold bg-blue-100 px-2 py-0.5 rounded-full">{form.principalDesignation}</span>
+                          </div>
+                          <p className="text-xs text-blue-900/90 italic mt-1.5 font-medium leading-relaxed">
+                            "{form.principalMessage}"
+                          </p>
                         </div>
-                        <p className="text-xs text-blue-900/90 italic mt-1">"{form.principalMessage}"</p>
+                      </div>
+
+                      {/* Key Stats Bar */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Established</span>
+                          <p className="font-black text-slate-900">{form.established}</p>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Student Strength</span>
+                          <p className="font-black text-slate-900">{form.studentStrength} Students</p>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Campus Area</span>
+                          <p className="font-black text-slate-900">{form.campusAcreage}</p>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase">Teaching Faculty</span>
+                          <p className="font-black text-slate-900">{form.totalFacultyCount} Members</p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Key Stats Bar */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Established</span>
-                        <p className="font-black text-slate-900">{form.established}</p>
+                    {/* 3. Comprehensive Class-Wise Fee Structure */}
+                    <div className="space-y-4 p-5 bg-slate-50/80 rounded-3xl border border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Wallet className="w-5 h-5 text-amber-600" />
+                          <h3 className="font-black text-sm text-slate-900">Comprehensive Class-Wise Fee Structure (2026-27)</h3>
+                        </div>
+                        <span className="text-xs font-black text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-lg">
+                          Monthly Avg: {form.monthlyFees}
+                        </span>
                       </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Student Strength</span>
-                        <p className="font-black text-slate-900">{form.studentStrength} Students</p>
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Campus Area</span>
-                        <p className="font-black text-slate-900">{form.campusAcreage}</p>
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Teaching Staff</span>
-                        <p className="font-black text-slate-900">{form.totalFacultyCount} Faculty</p>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Admission (One-time)</span>
+                          <p className="font-black text-slate-900 mt-0.5">₹{form.admissionFee.toLocaleString()}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Registration</span>
+                          <p className="font-black text-slate-900 mt-0.5">₹{form.registrationFee.toLocaleString()}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Tuition (Quarterly)</span>
+                          <p className="font-black text-slate-900 mt-0.5">₹{form.tuitionQuarterly.toLocaleString()}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Security Deposit</span>
+                          <p className="font-black text-slate-900 mt-0.5">₹{form.securityDeposit.toLocaleString()}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Annual Logistics</span>
+                          <p className="font-black text-slate-900 mt-0.5">₹{form.annualLogisticsFee.toLocaleString()}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Development Fund</span>
+                          <p className="font-black text-slate-900 mt-0.5">₹{form.developmentFund.toLocaleString()}</p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* STEM Live Labs Section (Soft Light Theme) */}
-                    <div className="bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100 rounded-2xl p-5 border border-slate-200 space-y-4">
+                    {/* 4. Admission Dates & 12 Required Documents */}
+                    <div className="space-y-4 p-5 bg-emerald-50/40 rounded-3xl border border-emerald-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-5 h-5 text-emerald-700" />
+                          <h3 className="font-black text-sm text-emerald-950">Admission Dates &amp; Mandatory Documents</h3>
+                        </div>
+                        <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-lg">
+                          Session: {form.sessionStartDate}
+                        </span>
+                      </div>
+
+                      {/* Timeline Bar */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-semibold">
+                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
+                          <span className="text-[10px] text-emerald-600 block">Form Submissions</span>
+                          <p className="font-bold text-slate-900">{form.admissionFormStartDate} - {form.admissionFormEndDate}</p>
+                        </div>
+                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
+                          <span className="text-[10px] text-emerald-600 block">Entrance / Interaction</span>
+                          <p className="font-bold text-slate-900">{form.entranceTestDate}</p>
+                        </div>
+                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
+                          <span className="text-[10px] text-emerald-600 block">Merit List</span>
+                          <p className="font-bold text-slate-900">{form.meritListDate}</p>
+                        </div>
+                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
+                          <span className="text-[10px] text-emerald-600 block">Min Age (Nursery)</span>
+                          <p className="font-bold text-slate-900">{form.minAgeNursery}</p>
+                        </div>
+                      </div>
+
+                      {/* 12 Documents Checklist */}
+                      <div className="space-y-2 pt-2">
+                        <span className="text-xs font-black text-emerald-950 uppercase tracking-wide block">
+                          12 Required Admission Documents Checklist ({form.requiredDocs.length}/12 Verified)
+                        </span>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 text-xs">
+                          {form.requiredDocs.map((doc) => (
+                            <div key={doc} className="p-2 bg-white rounded-lg border border-emerald-200 flex items-center gap-1.5 text-[11px] font-bold text-emerald-900">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span className="truncate">{doc}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 5. STEM Live Labs Section (Soft Light Compact Theme) */}
+                    <div className="bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100 rounded-3xl p-5 border border-slate-200 space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Microscope className="w-5 h-5 text-cyan-700" />
@@ -1595,11 +1697,11 @@ export default function CreateSchoolProfileClient() {
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 text-xs">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 text-xs">
                         {form.selectedLabs.map((lab) => (
                           <div
                             key={lab}
-                            className={`p-2.5 rounded-xl border bg-white shadow-2xs flex items-center justify-between ${
+                            className={`p-3 rounded-xl border bg-white shadow-2xs flex items-center justify-between ${
                               lab === 'Science Experiential Lab' ? 'border-emerald-400 bg-emerald-50/40 font-bold text-emerald-950' : 'border-slate-200 text-slate-800 font-semibold'
                             }`}
                           >
@@ -1610,8 +1712,8 @@ export default function CreateSchoolProfileClient() {
                       </div>
                     </div>
 
-                    {/* Academic Results & Year-wise Banners */}
-                    <div className="space-y-4 p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                    {/* 6. Academic Results & Year-wise Banners */}
+                    <div className="space-y-4 p-5 bg-slate-50 rounded-3xl border border-slate-200">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Trophy className="w-5 h-5 text-amber-500" />
@@ -1621,14 +1723,14 @@ export default function CreateSchoolProfileClient() {
                           <button
                             type="button"
                             onClick={() => setPreviewResultClass('12')}
-                            className={`px-2.5 py-1 text-xs font-bold rounded-lg ${previewResultClass === '12' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600'}`}
+                            className={`px-3 py-1 text-xs font-bold rounded-lg transition ${previewResultClass === '12' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600'}`}
                           >
                             Class 12th
                           </button>
                           <button
                             type="button"
                             onClick={() => setPreviewResultClass('10')}
-                            className={`px-2.5 py-1 text-xs font-bold rounded-lg ${previewResultClass === '10' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600'}`}
+                            className={`px-3 py-1 text-xs font-bold rounded-lg transition ${previewResultClass === '10' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600'}`}
                           >
                             Class 10th
                           </button>
@@ -1636,54 +1738,119 @@ export default function CreateSchoolProfileClient() {
                       </div>
 
                       {/* Result Poster Graphic */}
-                      <div className="rounded-2xl overflow-hidden border border-slate-300 bg-black/5 h-48 sm:h-64 relative">
+                      <div className="rounded-2xl overflow-hidden border border-slate-300 bg-black/5 h-52 sm:h-72 relative shadow-inner">
                         <img
                           src={previewResultClass === '12' ? form.banner12th_2026 : form.banner10th_2026}
                           alt="Official Result Banner"
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-2.5 right-2.5 px-3 py-1 bg-black/70 backdrop-blur-md text-white text-[11px] font-bold rounded-xl">
-                          Official Result Poster ({previewResultClass === '12' ? 'Class 12' : 'Class 10'})
+                        <div className="absolute top-3 right-3 px-3 py-1 bg-black/75 backdrop-blur-md text-white text-[11px] font-bold rounded-xl shadow">
+                          Official Board Result Poster ({previewResultClass === '12' ? 'Class 12th' : 'Class 10th'})
                         </div>
                       </div>
 
                       {/* Topper Cards */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                        <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center gap-3">
-                          <img src={form.topper12Photo} alt={form.topper12Name} className="w-12 h-12 rounded-xl object-cover border" />
+                        <div className="p-3.5 bg-white rounded-2xl border border-slate-200 flex items-center gap-3.5">
+                          <img src={form.topper12Photo} alt={form.topper12Name} className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-300" />
                           <div>
-                            <span className="text-[10px] text-amber-600 font-bold uppercase">Class 12th Topper</span>
-                            <h4 className="font-black text-slate-900">{form.topper12Name}</h4>
-                            <p className="text-[11px] text-slate-500 font-bold">{form.topper12Score} • {form.topper12Stream}</p>
+                            <span className="text-[10px] text-amber-600 font-black uppercase">Class 12th Topper</span>
+                            <h4 className="font-black text-slate-900 text-sm">{form.topper12Name}</h4>
+                            <p className="text-xs text-slate-600 font-bold">{form.topper12Score} • {form.topper12Stream}</p>
                           </div>
                         </div>
 
-                        <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center gap-3">
-                          <img src={form.topper10Photo} alt={form.topper10Name} className="w-12 h-12 rounded-xl object-cover border" />
+                        <div className="p-3.5 bg-white rounded-2xl border border-slate-200 flex items-center gap-3.5">
+                          <img src={form.topper10Photo} alt={form.topper10Name} className="w-14 h-14 rounded-2xl object-cover border-2 border-blue-300" />
                           <div>
-                            <span className="text-[10px] text-amber-600 font-bold uppercase">Class 10th Topper</span>
-                            <h4 className="font-black text-slate-900">{form.topper10Name}</h4>
-                            <p className="text-[11px] text-slate-500 font-bold">{form.topper10Score} • {form.topper10Stream}</p>
+                            <span className="text-[10px] text-blue-600 font-black uppercase">Class 10th Topper</span>
+                            <h4 className="font-black text-slate-900 text-sm">{form.topper10Name}</h4>
+                            <p className="text-xs text-slate-600 font-bold">{form.topper10Score} • {form.topper10Stream}</p>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Facilities Checklist Matrix */}
+                    {/* 7. Facilities Checklist Matrix */}
                     <div className="space-y-3">
-                      <h3 className="font-black text-sm text-slate-900">Campus Facilities Matrix</h3>
+                      <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-purple-600" />
+                        <span>UniApply 9-Category Facilities Matrix</span>
+                      </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                         {[
                           ...form.classroomFacilities,
+                          ...form.boardingFacilities,
+                          ...form.infrastructureFacilities,
                           ...form.safetyFacilities,
                           ...form.sportsFacilities,
                           ...form.disabledFacilities
-                        ].slice(0, 12).map((fac) => (
+                        ].map((fac) => (
                           <div key={fac} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-2 font-semibold text-slate-700">
                             <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                             <span className="text-[11px] truncate">{fac}</span>
                           </div>
                         ))}
+                      </div>
+                    </div>
+
+                    {/* 8. Campus Gallery Showcase */}
+                    <div className="space-y-3 pt-2">
+                      <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                        <Camera className="w-4 h-4 text-sky-600" />
+                        <span>Campus Infrastructure Photo Gallery</span>
+                      </h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                        {form.galleryPhotos.map((photo, idx) => (
+                          <div key={idx} className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 space-y-1.5 p-2">
+                            <div className="h-28 rounded-xl overflow-hidden bg-slate-200">
+                              <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
+                            </div>
+                            <p className="text-[11px] font-bold text-slate-900 truncate">{photo.title}</p>
+                            <span className="inline-block text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-semibold">
+                              {photo.category}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 9. 360° Virtual Video Tour & Google Maps */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
+                      {/* Video Tour */}
+                      <div className="p-4 bg-slate-50 rounded-3xl border border-slate-200 space-y-2">
+                        <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                          <Video className="w-4 h-4 text-rose-600" />
+                          <span>360° Virtual Campus Video Tour</span>
+                        </h3>
+                        <div className="h-52 rounded-2xl overflow-hidden bg-black/10 border">
+                          <iframe
+                            src={form.virtualTourEmbedUrl}
+                            title="Virtual Campus Tour"
+                            className="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        </div>
+                      </div>
+
+                      {/* Google Maps Location */}
+                      <div className="p-4 bg-slate-50 rounded-3xl border border-slate-200 space-y-2">
+                        <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-rose-600" />
+                          <span>Campus Address &amp; Google Maps</span>
+                        </h3>
+                        <div className="h-52 rounded-2xl overflow-hidden bg-slate-200 border">
+                          <iframe
+                            src={form.googleMapsEmbedUrl}
+                            title="Campus Map Location"
+                            className="w-full h-full border-0"
+                            loading="lazy"
+                          />
+                        </div>
+                        <p className="text-[11px] text-slate-600 font-medium">
+                          {form.address} • Phone: {form.phone}
+                        </p>
                       </div>
                     </div>
 

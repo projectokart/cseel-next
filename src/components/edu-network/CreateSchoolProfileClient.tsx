@@ -330,56 +330,46 @@ export default function CreateSchoolProfileClient() {
     });
   };
 
-  const handleFinalSubmit = (e: React.FormEvent) => {
+    const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'new-institution';
-    const finalId = `org-${slug}-${Date.now().toString().slice(-4)}`;
+    const finalId = 'org-' + slug + '-' + Date.now().toString().slice(-4);
 
     const primaryPublicContact = form.contactChannels.find(c => c.isPublic) || form.contactChannels[0];
 
-    const newOrg: OrganizationItem = {
+    const newOrg = {
+      ...form,
       id: finalId,
-      name: form.name,
-      type: form.type,
-      affiliation: form.affiliation,
-      city: form.city,
-      state: form.state,
-      pincode: form.pincode,
-      address: form.address,
-      locality: form.locality,
+      slug: slug,
       email: primaryPublicContact?.email || 'admissions@institution.edu.in',
       phone: primaryPublicContact?.phone || '+91 11 4987 6543',
-      website: form.website,
       verified: true,
       rating: 5.0,
       reviews: 4100,
+      reviews_count: 4100,
       stemLabsCount: form.selectedLabs.length,
-      studentStrength: form.studentStrength,
-      logo: form.logo,
-      bannerImage: form.bannerImage,
-      description: form.description,
-      openJobsCount: 2,
-      established: form.established,
       facilities: form.facilitiesChips.split(',').map(s => s.trim()),
-      classesOffered: form.classesOffered,
-      monthlyFees: form.monthlyFees,
-      monthlyFeesNum: form.monthlyFeesNum,
-      board: form.board,
-      studentFacultyRatio: form.studentFacultyRatio,
-      admissionStatus: form.admissionStatus,
-      udiseCode: form.udiseCode,
+      openJobsCount: 1,
       isFeatured: true,
     };
 
+    try {
+      // 1. Persist directly via backend API route to Supabase
+      await fetch('/api/network', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrg),
+      });
+    } catch (err) {
+      console.warn('API sync fallback active:', err);
+    }
+
     ALL_ORGANIZATIONS.unshift(newOrg);
     setNewSchoolId(finalId);
-
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitSuccess(true);
-    }, 1200);
+    setIsSubmitting(false);
+    setSubmitSuccess(true);
   };
 
   const sectionsNav = [

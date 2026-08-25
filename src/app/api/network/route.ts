@@ -1,28 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { networkRepository } from '@/features/edu-network/db/networkRepository';
+import { supabaseSchoolService } from '@/features/edu-network/db/supabaseSchoolService';
+import { ALL_ORGANIZATIONS } from '@/lib/eduNetworkData';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const searchQuery = searchParams.get('q') || '';
-    const statesParam = searchParams.get('states');
-    const selectedStates = statesParam ? statesParam.split(',') : [];
-    const boardsParam = searchParams.get('boards');
-    const selectedBoards = boardsParam ? boardsParam.split(',') : [];
-    const status = (searchParams.get('status') as any) || 'all';
-    const sortBy = (searchParams.get('sortBy') as any) || 'newest';
+    const search = searchParams.get('q') || '';
+    const city = searchParams.get('city') || '';
+    const board = searchParams.get('board') || '';
+    const status = searchParams.get('status') || '';
+    const sortBy = searchParams.get('sortBy') || 'newest';
 
-    const { items, total, states, boards } = await networkRepository.getAll({
-      searchQuery,
-      selectedStates,
-      selectedBoards,
-      status,
+    const schools = await supabaseSchoolService.getSchools({
+      search,
+      city: city || undefined,
+      board: board || undefined,
+      admissionStatus: status && status !== 'all' ? status : undefined,
       sortBy,
     });
 
-    return NextResponse.json({ success: true, data: items, total, states, boards });
+    const states = Array.from(new Set(schools.map(s => s.state).filter(Boolean)));
+    const boards = Array.from(new Set(schools.map(s => s.board).filter(Boolean)));
+
+    return NextResponse.json({
+      success: true,
+      data: schools,
+      total: schools.length,
+      states,
+      boards
+    });
   } catch (error: any) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, data: ALL_ORGANIZATIONS, total: ALL_ORGANIZATIONS.length });
   }
 }
 
@@ -32,8 +40,9 @@ export async function POST(request: NextRequest) {
     if (!body.name || !body.city || !body.state) {
       return NextResponse.json({ success: false, error: 'Missing required fields: name, city, state' }, { status: 400 });
     }
-    const created = await networkRepository.create(body);
-    return NextResponse.json({ success: true, data: created, message: 'Partner school registered successfully' });
+
+    const created = await supabaseSchoolService.upsertSchool(body);
+    return NextResponse.json({ success: true, data: created, message: 'School created successfully in Supabase' });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

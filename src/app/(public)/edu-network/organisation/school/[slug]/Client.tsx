@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { supabaseSchoolService } from '@/features/edu-network/db/supabaseSchoolService';
 import Link from 'next/link';
 import {
   Building2, MapPin, Plus, Star, CheckCircle2, SlidersHorizontal,
@@ -50,6 +51,15 @@ export default function CitySchoolDirectoryClient({
   const [onlyWithLabs, setOnlyWithLabs] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'popularity' | 'rating' | 'feeAsc' | 'feeDesc'>('popularity');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [liveSchools, setLiveSchools] = useState<OrganizationItem[]>(ALL_ORGANIZATIONS);
+
+  React.useEffect(() => {
+    supabaseSchoolService.getSchools().then((data) => {
+      if (data && data.length > 0) {
+        setLiveSchools(data);
+      }
+    }).catch(() => {});
+  }, []);
 
   // Compare & Enquiry state
   const [compareList, setCompareList] = useState<OrganizationItem[]>([]);
@@ -69,7 +79,7 @@ export default function CitySchoolDirectoryClient({
 
   // Filter organizations by city and query
   const cityOrgs = useMemo(() => {
-    return ALL_ORGANIZATIONS.filter((org) => {
+    return liveSchools.filter((org) => {
       // If specific city page, match city
       if (cityName !== 'All India') {
         const matchesCity =

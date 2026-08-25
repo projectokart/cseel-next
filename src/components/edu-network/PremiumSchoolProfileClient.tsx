@@ -4,14 +4,15 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Building2, MapPin, Star, ShieldCheck, CheckCircle2,
-  Menu as MenuIcon, Copy, CheckCheck,
   Briefcase, Heart, MessageSquare, Share2, Send, Plus,
   ChevronRight, Award, Beaker, Users, Calendar, ArrowLeft,
   ThumbsUp, ExternalLink, Check, X, Sparkles, Navigation,
   Clock, Eye, Camera, BookOpen, Microscope, Laptop, Maximize2,
   Phone, Mail, Globe, Wallet, ChartBar, Wand2, Image as ImageIcon,
   Play, Download, Lock, CheckSquare, HelpCircle, FileText, ChevronDown,
-  Scale, Bell, Bookmark, Bot, Video, UserCheck, Key
+  Scale, Bell, Bookmark, Bot, Video, UserCheck, Key, Copy, CheckCheck,
+  Menu as MenuIcon, ChevronLeft, PhoneCall, HelpCircle as HelpIcon,
+  CheckCircle, XCircle, AlertCircle, Info, Trophy, GraduationCap
 } from 'lucide-react';
 import PageTransition from '@/components/shared/PageTransition';
 import {
@@ -28,6 +29,11 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
   const org = useMemo(() => {
     return getOrganizationById(orgId) || ALL_ORGANIZATIONS[0];
   }, [orgId]);
+
+  // Selected Class in Fee Structure (Individual classes: Nursery through Class 12)
+  const [selectedFeeClass, setSelectedFeeClass] = useState('nursery');
+  const [selectedAdmissionSession, setSelectedAdmissionSession] = useState('2027-2028');
+  const [selectedEligibilityGrade, setSelectedEligibilityGrade] = useState('Pre-K');
 
   // Share Modal & Mobile Menu state
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -64,10 +70,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
     }
   };
 
-  // Selected Class in Fee Structure
-  const [selectedFeeClass, setSelectedFeeClass] = useState('nursery');
-
-  // Fee calculation dynamically based on selected class
+  // Fee calculation dynamically based on individual class selection
   const classFeeBreakdown: Record<string, {
     label: string;
     admission: number;
@@ -78,76 +81,21 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
     totalFirstYear: number;
     monthlyAvg: number;
   }> = {
-    'nursery': {
-      label: 'Nursery',
-      admission: 80000,
-      security: 100000,
-      tuitionQuarterly: 78000,
-      annual: 24000,
-      dev: 12000,
-      totalFirstYear: 529000,
-      monthlyAvg: 29000,
-    },
-    'lkg': {
-      label: 'LKG',
-      admission: 80000,
-      security: 100000,
-      tuitionQuarterly: 78000,
-      annual: 24000,
-      dev: 12000,
-      totalFirstYear: 529000,
-      monthlyAvg: 29000,
-    },
-    'ukg': {
-      label: 'UKG',
-      admission: 80000,
-      security: 100000,
-      tuitionQuarterly: 82000,
-      annual: 26000,
-      dev: 14000,
-      totalFirstYear: 549000,
-      monthlyAvg: 30600,
-    },
-    'c1': {
-      label: 'Class 1 to 5',
-      admission: 85000,
-      security: 100000,
-      tuitionQuarterly: 88000,
-      annual: 28000,
-      dev: 15000,
-      totalFirstYear: 581000,
-      monthlyAvg: 32900,
-    },
-    'c6': {
-      label: 'Class 6 to 8',
-      admission: 90000,
-      security: 100000,
-      tuitionQuarterly: 95000,
-      annual: 34000,
-      dev: 20000,
-      totalFirstYear: 625000,
-      monthlyAvg: 36100,
-    },
-    'c9': {
-      label: 'Class 9 & 10',
-      admission: 95000,
-      security: 100000,
-      tuitionQuarterly: 105000,
-      annual: 40000,
-      dev: 25000,
-      totalFirstYear: 681000,
-      monthlyAvg: 40400,
-    },
-    'c11': {
-      label: 'Class 11 & 12 (IB DP)',
-      admission: 100000,
-      security: 100000,
-      tuitionQuarterly: 125000,
-      annual: 48000,
-      dev: 30000,
-      totalFirstYear: 779000,
-      monthlyAvg: 48100,
-    },
+    'nursery': { label: 'Nursery', admission: 80000, security: 100000, tuitionQuarterly: 78000, annual: 24000, dev: 12000, totalFirstYear: 529000, monthlyAvg: 29000 },
+    'lkg': { label: 'LKG', admission: 80000, security: 100000, tuitionQuarterly: 78000, annual: 24000, dev: 12000, totalFirstYear: 529000, monthlyAvg: 29000 },
+    'ukg': { label: 'UKG', admission: 80000, security: 100000, tuitionQuarterly: 82000, annual: 26000, dev: 14000, totalFirstYear: 549000, monthlyAvg: 30600 },
+    'class-1': { label: 'Class 1', admission: 85000, security: 100000, tuitionQuarterly: 85000, annual: 28000, dev: 15000, totalFirstYear: 569000, monthlyAvg: 32000 },
+    'class-2': { label: 'Class 2', admission: 85000, security: 100000, tuitionQuarterly: 85000, annual: 28000, dev: 15000, totalFirstYear: 569000, monthlyAvg: 32000 },
+    'class-3': { label: 'Class 3', admission: 85000, security: 100000, tuitionQuarterly: 88000, annual: 28000, dev: 15000, totalFirstYear: 581000, monthlyAvg: 32900 },
+    'class-4': { label: 'Class 4', admission: 85000, security: 100000, tuitionQuarterly: 88000, annual: 28000, dev: 15000, totalFirstYear: 581000, monthlyAvg: 32900 },
+    'class-5': { label: 'Class 5', admission: 85000, security: 100000, tuitionQuarterly: 88000, annual: 28000, dev: 15000, totalFirstYear: 581000, monthlyAvg: 32900 },
+    'class-6': { label: 'Class 6', admission: 90000, security: 100000, tuitionQuarterly: 95000, annual: 34000, dev: 20000, totalFirstYear: 625000, monthlyAvg: 36100 },
+    'class-7': { label: 'Class 7', admission: 90000, security: 100000, tuitionQuarterly: 95000, annual: 34000, dev: 20000, totalFirstYear: 625000, monthlyAvg: 36100 },
+    'class-8': { label: 'Class 8', admission: 90000, security: 100000, tuitionQuarterly: 95000, annual: 34000, dev: 20000, totalFirstYear: 625000, monthlyAvg: 36100 },
+    'class-9': { label: 'Class 9', admission: 95000, security: 100000, tuitionQuarterly: 105000, annual: 40000, dev: 25000, totalFirstYear: 681000, monthlyAvg: 40400 },
+    'class-10': { label: 'Class 10', admission: 95000, security: 100000, tuitionQuarterly: 105000, annual: 40000, dev: 25000, totalFirstYear: 681000, monthlyAvg: 40400 },
+    'class-11': { label: 'Class 11', admission: 100000, security: 100000, tuitionQuarterly: 125000, annual: 48000, dev: 30000, totalFirstYear: 779000, monthlyAvg: 48100 },
+    'class-12': { label: 'Class 12', admission: 100000, security: 100000, tuitionQuarterly: 125000, annual: 48000, dev: 30000, totalFirstYear: 779000, monthlyAvg: 48100 },
   };
 
   const currentFee = classFeeBreakdown[selectedFeeClass] || classFeeBreakdown['nursery'];
@@ -381,7 +329,13 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
             </div>
 
             <div className="flex items-center space-x-3">
-              <button onClick={handleNativeShare} className="hidden sm:inline-flex items-center text-xs font-bold text-slate-700 hover:text-[#1e3a8a] bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition gap-1.5 border border-slate-200"><Share2 className="w-3.5 h-3.5 text-blue-600" /><span>Share Profile</span></button>
+              <button
+                onClick={handleNativeShare}
+                className="hidden sm:inline-flex items-center text-xs font-bold text-slate-700 hover:text-[#1e3a8a] bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition gap-1.5 border border-slate-200"
+              >
+                <Share2 className="w-3.5 h-3.5 text-blue-600" />
+                <span>Share Profile</span>
+              </button>
               <a
                 href="#vacancies_tab"
                 className="hidden sm:inline-flex items-center text-xs font-bold text-slate-600 hover:text-rose-500 transition gap-1"
@@ -412,6 +366,16 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         {/* ── HERO BANNER WITH OVERLAPPING SCHOOL CARD ────────────────────────── */}
         <div className="relative bg-slate-900 text-white">
           <div className="h-60 sm:h-72 w-full overflow-hidden relative">
+            <div className="absolute top-3 left-3 z-20 bg-black/60 backdrop-blur-xs text-white px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-xs">
+              <Eye className="w-3.5 h-3.5" />
+              <span>46284 Views</span>
+            </div>
+            <button
+              onClick={handleNativeShare}
+              className="lg:hidden absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white/90 text-slate-800 flex items-center justify-center shadow-md"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
             <img
               src={org.bannerImage || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80"}
               alt="Campus Banner"
@@ -476,7 +440,13 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={handleNativeShare} className="px-3.5 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5"><Share2 className="w-3.5 h-3.5 text-blue-600" /><span>Share</span></button>
+                    <button
+                      onClick={handleNativeShare}
+                      className="px-3.5 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Share</span>
+                    </button>
                     <button
                       onClick={() => setIsNotified(!isNotified)}
                       className={`px-3.5 py-2 border rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
@@ -504,7 +474,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
             
-            {/* ── LEFT SIDEBAR ────────────────────────────────────────────────── */}
+            {/* ── LEFT SIDEBAR (EXACT UNiAPPLY NAVIGATION & WIDGETS) ──────────── */}
             <aside className="lg:col-span-1 space-y-4 lg:sticky lg:top-20 lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:pr-1.5 lg:overscroll-contain pb-8 scrollbar-thin scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
               
               {/* ── USER REQUESTED WIDGET 1: CSEEL VERIFIED CAMPUS CARD ── */}
@@ -590,7 +560,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 ))}
               </div>
 
-              {/* ── SECTIONS NAVIGATION MENU ── */}
+              {/* ── EXACT UNiAPPLY SECTIONS NAVIGATION MENU (IMAGE 2) ── */}
               <nav className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs" id="sidebarMenu">
                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-3 mb-2">School Sections</p>
                 <ul className="space-y-1 text-xs font-semibold text-slate-600">
@@ -609,7 +579,31 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                   <li>
                     <a href="#fee_structure_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
                       <Wallet className="w-4 h-4 text-emerald-600" />
-                      <span>Class-wise Fees</span>
+                      <span>Fee Structure</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#academic_stats_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
+                      <GraduationCap className="w-4 h-4 text-indigo-600" />
+                      <span>Academic Stats</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#admission_dates_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
+                      <Calendar className="w-4 h-4 text-amber-600" />
+                      <span>Admission Dates</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#admission_criteria_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
+                      <FileText className="w-4 h-4 text-rose-600" />
+                      <span>Admission Criteria & Eligibility</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#school_results_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
+                      <Trophy className="w-4 h-4 text-amber-500" />
+                      <span>School Results</span>
                     </a>
                   </li>
                   <li>
@@ -619,36 +613,36 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                     </a>
                   </li>
                   <li>
+                    <a href="#facilities_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
+                      <Wand2 className="w-4 h-4 text-sky-600" />
+                      <span>Facilities</span>
+                    </a>
+                  </li>
+                  <li>
                     <a href="#insights_locked_tab" className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
                       <span className="flex items-center gap-2.5">
                         <Lock className="w-4 h-4 text-amber-500" />
-                        <span>Parent Insights</span>
+                        <span>Insights</span>
                       </span>
                       <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded">Lock</span>
                     </a>
                   </li>
                   <li>
-                    <a href="#facilities_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
-                      <Wand2 className="w-4 h-4 text-sky-600" />
-                      <span>Labs & Facilities</span>
+                    <a href="#gallery_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
+                      <ImageIcon className="w-4 h-4 text-indigo-600" />
+                      <span>Gallery</span>
                     </a>
                   </li>
                   <li>
                     <a href="#video_gallery_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-red-50 text-red-600 font-bold">
                       <Video className="w-4 h-4 text-red-600" />
-                      <span>Video Gallery & Tour</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#gallery_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
-                      <ImageIcon className="w-4 h-4 text-indigo-600" />
-                      <span>Photo Gallery</span>
+                      <span>Videos</span>
                     </a>
                   </li>
                   <li>
                     <a href="#address_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-blue-50 hover:text-[#1e3a8a] transition">
                       <MapPin className="w-4 h-4 text-rose-600" />
-                      <span>Map & Contact</span>
+                      <span>Address & Contact</span>
                     </a>
                   </li>
                 </ul>
@@ -683,7 +677,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                   <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-[#1e3a8a]" />
-                    <span>School Connect & Enquiry</span>
+                    <span>School Connect</span>
                   </h2>
                   <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
                     <Sparkles className="w-3.5 h-3.5" /> Quick Response Available
@@ -716,7 +710,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
                   <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                     <ChartBar className="w-4 h-4 text-[#1e3a8a]" />
-                    <span>Key Institutional Stats</span>
+                    <span>Key School Stats</span>
                   </h2>
                   <button
                     onClick={() => alert(`Downloading official brochure of ${org.name}...`)}
@@ -754,15 +748,15 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 3: Fee Structure Details */}
+              {/* SECTION 3: Fee Structure Details (INDIVIDUAL CLASSES) */}
               <section id="fee_structure_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-5 gap-3">
                   <div>
                     <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                       <Wallet className="w-4 h-4 text-[#1e3a8a]" />
-                      <span>Fee Structure Details</span>
+                      <span>Fee Structure</span>
                     </h2>
-                    <p className="text-xs text-slate-400">Class-wise breakdown for active session 2027-2028</p>
+                    <p className="text-xs text-slate-400">Individual class-wise breakdown for active session 2027-2028</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <label className="text-xs font-bold text-slate-500">Select Class:</label>
@@ -774,10 +768,18 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                       <option value="nursery">Nursery</option>
                       <option value="lkg">LKG</option>
                       <option value="ukg">UKG</option>
-                      <option value="c1">Class 1 to 5</option>
-                      <option value="c6">Class 6 to 8</option>
-                      <option value="c9">Class 9 & 10</option>
-                      <option value="c11">Class 11 & 12 (IB DP)</option>
+                      <option value="class-1">Class 1</option>
+                      <option value="class-2">Class 2</option>
+                      <option value="class-3">Class 3</option>
+                      <option value="class-4">Class 4</option>
+                      <option value="class-5">Class 5</option>
+                      <option value="class-6">Class 6</option>
+                      <option value="class-7">Class 7</option>
+                      <option value="class-8">Class 8</option>
+                      <option value="class-9">Class 9</option>
+                      <option value="class-10">Class 10</option>
+                      <option value="class-11">Class 11</option>
+                      <option value="class-12">Class 12</option>
                     </select>
                   </div>
                 </div>
@@ -844,14 +846,211 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 4: School Careers & Job Vacancies */}
+              {/* SECTION 4: Academic Stats (IMAGE 4) */}
+              <section id="academic_stats_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
+                <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-5 flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-[#1e3a8a]" />
+                  <span>Academic Stats</span>
+                </h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs mb-6">
+                  <div>
+                    <span className="text-slate-400 block font-medium">Classes Offered</span>
+                    <span className="text-base font-extrabold text-slate-900">Pre-K - K2 / Nursery to 12</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Language of Instruction</span>
+                    <span className="text-base font-extrabold text-slate-900">English</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">Academic Session</span>
+                    <span className="text-base font-extrabold text-slate-900">April to March</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs pt-4 border-t border-slate-100">
+                  <div>
+                    <span className="text-slate-400 block font-medium">Student Faculty Ratio ⓘ</span>
+                    <span className="text-2xl font-black text-slate-900">13:1</span>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Delhi NCR Ratio : <span className="text-rose-500 font-bold">20:1</span></p>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium mb-1">Total Faculty ⓘ</span>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] text-slate-600">
+                        <span>City Average</span>
+                        <span className="font-bold">25</span>
+                      </div>
+                      <div className="h-1.5 bg-emerald-500 rounded-full w-full"></div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-600 pt-1">
+                        <span>This School</span>
+                        <span className="font-bold text-amber-600">27</span>
+                      </div>
+                      <div className="h-1.5 bg-amber-500 rounded-full w-[95%]"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block font-medium">School Format</span>
+                    <span className="text-base font-extrabold text-slate-900">Day School</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION 5: Admission Dates */}
+              <section id="admission_dates_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#1e3a8a]" />
+                    <span>Admission Dates & Schedule</span>
+                  </h2>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                    Active Session 2027-2028
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                  <div className="p-3.5 bg-slate-50 border rounded-xl">
+                    <span className="text-slate-400 block font-medium">Registration Start Date</span>
+                    <span className="text-sm font-bold text-slate-900">15 November 2026</span>
+                  </div>
+                  <div className="p-3.5 bg-slate-50 border rounded-xl">
+                    <span className="text-slate-400 block font-medium">Registration Last Date</span>
+                    <span className="text-sm font-bold text-slate-900">31 January 2027</span>
+                  </div>
+                  <div className="p-3.5 bg-slate-50 border rounded-xl">
+                    <span className="text-slate-400 block font-medium">Merit List Announcement</span>
+                    <span className="text-sm font-bold text-slate-900">15 February 2027</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION 6: Admission Criteria & Eligibility (IMAGE 3) */}
+              <section id="admission_criteria_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-3">
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-[#1e3a8a]" />
+                    <span>Admission Criteria & Eligibility</span>
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={selectedAdmissionSession}
+                      onChange={(e) => setSelectedAdmissionSession(e.target.value)}
+                      className="text-xs font-semibold bg-slate-50 border border-slate-300 rounded-lg p-2 outline-none"
+                    >
+                      <option value="2027-2028">2027-2028</option>
+                      <option value="2026-2027">2026-2027</option>
+                    </select>
+                    <select
+                      value={selectedEligibilityGrade}
+                      onChange={(e) => setSelectedEligibilityGrade(e.target.value)}
+                      className="text-xs font-semibold bg-[#1e3a8a] text-white rounded-lg p-2 outline-none"
+                    >
+                      <option value="Pre-K">Pre-K</option>
+                      <option value="K1">K1</option>
+                      <option value="K2">K2</option>
+                    </select>
+                  </div>
+                </div>
+
+                <p className="text-xs font-bold text-slate-700 mb-3">Documents required at the time of application/admission</p>
+
+                {/* Exact 12 Documents with Checkmarks matching Image 3 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-6 text-xs text-slate-700 mb-6">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Transfer Certificate</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Birth Certificate</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Photograph - Child</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Photograph - Parents/Guardian</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Marksheet/Report card (if applicable)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Medical Reports</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Character Certificate</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Valid Passport</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Aadhar Card - Child</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Achievement Certificates</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Immunization Certificate</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>Pancard - Parents</span>
+                  </div>
+                </div>
+
+                {/* Additional Notes matching Image 3 */}
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1.5">
+                  <p className="font-bold text-slate-800 mb-1">Additional Notes</p>
+                  <p>Mandatory Documents required:</p>
+                  <p>• One recent passport size photograph</p>
+                  <p>• Copy of Birth Certificate</p>
+                  <p>• Academic records/transcripts for the last 1 or 2 years (for Grades K1 & K2)</p>
+                  <p>• Copy of visa/permit (if the student is not a citizen of India)</p>
+                  <p>• Copy of Immunization Record</p>
+                  <p>• Documentation needed in case of any special needs.</p>
+                </div>
+              </section>
+
+              {/* SECTION 7: School Results */}
+              <section id="school_results_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
+                <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-amber-500" />
+                  <span>School Academic Results & Board Performance</span>
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-center">
+                  <div className="p-4 border rounded-xl bg-slate-50">
+                    <span className="text-slate-400 block font-medium">Board Pass Rate</span>
+                    <span className="text-2xl font-black text-emerald-600">100%</span>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Consecutive 5 Years</p>
+                  </div>
+                  <div className="p-4 border rounded-xl bg-slate-50">
+                    <span className="text-slate-400 block font-medium">Top High Score</span>
+                    <span className="text-2xl font-black text-slate-900">99.2%</span>
+                    <p className="text-[11px] text-slate-400 mt-0.5">IB DP World Conclave</p>
+                  </div>
+                  <div className="p-4 border rounded-xl bg-slate-50">
+                    <span className="text-slate-400 block font-medium">School Batch Average</span>
+                    <span className="text-2xl font-black text-blue-600">88.6%</span>
+                    <p className="text-[11px] text-slate-400 mt-0.5">National Percentile: Top 2%</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION 8: School Careers & Job Vacancies */}
               <section id="vacancies_tab" className="bg-white border-2 border-rose-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 mb-5 gap-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                         <Briefcase className="w-4 h-4 text-rose-500" />
-                        <span>School Careers & Job Vacancies</span>
+                        <span>Vacancies & Careers</span>
                       </h2>
                       <span className="text-[10px] bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded-full">Recruiting</span>
                     </div>
@@ -932,12 +1131,249 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 )}
               </section>
 
-              {/* SECTION 5: Parent Insights & Salary Trends (Locked Member Only Data) */}
+              {/* SECTION 9: Facilities Matrix Breakdown (EXACT IMAGE 1) */}
+              <section id="facilities_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 mb-6 gap-3">
+                  <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <Wand2 className="w-5 h-5 text-[#1e3a8a]" />
+                    <span>Facilities</span>
+                  </h2>
+                  
+                  {/* Legend matching Image 1 */}
+                  <div className="flex items-center gap-4 text-xs font-semibold">
+                    <span className="text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Available
+                    </span>
+                    <span className="text-rose-600 flex items-center gap-1">
+                      <XCircle className="w-3.5 h-3.5 text-rose-500" /> Not Available
+                    </span>
+                    <span className="text-slate-500 flex items-center gap-1">
+                      <HelpIcon className="w-3.5 h-3.5 text-slate-400" /> Information Not Available
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 text-xs">
+                  
+                  {/* Left Column: Progress Bars matching Image 1 */}
+                  <div className="lg:col-span-1 space-y-4 border-r border-slate-100 pr-4">
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>All Facilities (22/39)</span>
+                        <span>57%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-purple-600 rounded-full" style={{ width: '57%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Class (2/3)</span>
+                        <span className="text-rose-500">67%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-rose-500 rounded-full" style={{ width: '67%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Boarding (0/2)</span>
+                        <span className="text-blue-500">0%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-blue-500 rounded-full" style={{ width: '0%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Infrastructure (3/4)</span>
+                        <span className="text-emerald-600">75%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: '75%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Safety and Security (3/3)</span>
+                        <span className="text-amber-500">100%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-amber-500 rounded-full" style={{ width: '100%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Advanced Facilities (3/5)</span>
+                        <span className="text-purple-600">60%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-purple-500 rounded-full" style={{ width: '60%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Extra Curricular (6/7)</span>
+                        <span className="text-orange-500">86%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-orange-500 rounded-full" style={{ width: '86%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Sports and Fitness (2/9)</span>
+                        <span className="text-blue-700">23%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-blue-700 rounded-full" style={{ width: '23%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Lab (1/3)</span>
+                        <span className="text-sky-500">34%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-sky-500 rounded-full" style={{ width: '34%' }}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-700">
+                        <span>Disabled Friendly (2/3)</span>
+                        <span className="text-teal-600">67%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-100 rounded-full mt-1 overflow-hidden">
+                        <div className="h-full bg-teal-500 rounded-full" style={{ width: '67%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right 3 Columns: Categorical Checklists matching Image 1 */}
+                  <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    
+                    {/* Column 1 */}
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Class</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>AC Classes</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Smart Classes</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Wifi</span></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Advanced Facilities</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Alumni Association</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Day care</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Meals</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Medical Room</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Transportation</span></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Disabled Friendly</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Ramps</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Washrooms</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Elevators</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Column 2 */}
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Boarding</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Boys Hostel</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Girls Hostel</span></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Extra Curricular</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Art and Craft</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Dance</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Debate</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Drama</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Gardening</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Music</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Picnics and excursion</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Column 3 */}
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Infrastructure</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Auditorium/Media Room</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Cafeteria/Canteen</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Library/Reading Room</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Playground</span></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Safety and Security</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>CCTV</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>GPS Bus Tracking App</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Student Tracking App</span></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Sports and Fitness</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Skating</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Horse Riding</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Gym</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Indoor Sports</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Outdoor Sports</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Swimming Pool</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Karate</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Taekwondo</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Yoga</span></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="font-black text-slate-900 mb-2.5">Lab</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Computer Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /><span>Science Lab</span></div>
+                          <div className="flex items-center gap-2 text-slate-700"><XCircle className="w-4 h-4 text-rose-500 shrink-0" /><span>Robotics Lab</span></div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </section>
+
+              {/* SECTION 10: Parent Insights & Salary Trends (Locked Member Only Data) */}
               <section id="insights_locked_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative overflow-hidden scroll-mt-20">
                 <div className="flex items-center justify-between border-b pb-3 mb-4">
                   <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                     <ChartBar className="w-4 h-4 text-[#1e3a8a]" />
-                    <span>Parent Insights & Salary Trends</span>
+                    <span>Insights & Salary Trends</span>
                   </h2>
                   <span className="text-xs font-bold text-amber-600 flex items-center gap-1">
                     <Lock className="w-3.5 h-3.5" /> Member Only Data
@@ -982,60 +1418,36 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 6: Labs & Facilities */}
-              <section id="facilities_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
-                <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-5 flex items-center gap-2">
-                  <Wand2 className="w-4 h-4 text-[#1e3a8a]" />
-                  <span>Infrastructure, Specialized Labs & Sports</span>
+              {/* SECTION 11: Photo Gallery */}
+              <section id="gallery_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
+                <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-[#1e3a8a]" />
+                  <span>Gallery</span>
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-sky-500 shrink-0" />
-                    <span>AC Smart Classrooms</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <Bot className="w-4 h-4 text-purple-600 shrink-0" />
-                    <span>Robotics & AI Labs</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <Microscope className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Integrated Science Lab</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <Laptop className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>High-Speed Tech Lab</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-cyan-500 shrink-0" />
-                    <span>All-Weather Pool</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <Award className="w-4 h-4 text-amber-700 shrink-0" />
-                    <span>Horse Riding Field</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-red-500 shrink-0" />
-                    <span>Indoor Shooting Range</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <Navigation className="w-4 h-4 text-orange-500 shrink-0" />
-                    <span>GPS Monitored Buses</span>
-                  </div>
-                  <div className="p-3 border rounded-xl bg-slate-50 flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
-                    <span>Ramp & Elevator Access</span>
-                  </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {galleryPhotos.map((img, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => setLightboxPhoto(img)}
+                      className="h-28 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                    >
+                      <img src={img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Campus Photo" />
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                        <Maximize2 className="w-4 h-4" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </section>
 
-              {/* SECTION 7: Video Gallery & Virtual Tours */}
+              {/* SECTION 12: Video Gallery & Virtual Tours */}
               <section id="video_gallery_tab" className="bg-white border-2 border-red-100 rounded-2xl p-6 shadow-xs scroll-mt-20">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 mb-5 gap-2">
                   <div>
                     <div className="flex items-center gap-2">
                       <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                         <Video className="w-4 h-4 text-red-600" />
-                        <span>Video Gallery & Virtual Tours</span>
+                        <span>Videos</span>
                       </h2>
                       <span className="text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full">HD Media</span>
                     </div>
@@ -1084,33 +1496,11 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 8: Campus Photo Gallery */}
-              <section id="gallery_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
-                <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-[#1e3a8a]" />
-                  <span>Campus Photo Gallery</span>
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {galleryPhotos.map((img, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => setLightboxPhoto(img)}
-                      className="h-28 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
-                    >
-                      <img src={img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Campus Photo" />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                        <Maximize2 className="w-4 h-4" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              {/* SECTION 9: Campus Location & Driving Coordinates */}
+              {/* SECTION 13: Address & Contact */}
               <section id="address_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
                 <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#1e3a8a]" />
-                  <span>Campus Location & Driving Coordinates</span>
+                  <span>Address & Contact</span>
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
                   <div className="space-y-3 text-slate-600">
@@ -1145,7 +1535,75 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
           </div>
         </main>
 
-        {/* ── VIDEO PLAYER MODAL ────────────────────────────────────────────── */}
+        {/* ── FLOATING MOBILE MENU PILL ── */}
+        <div className="fixed bottom-5 right-4 z-50 lg:hidden">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="px-4 py-2.5 bg-black hover:bg-slate-800 text-white font-black text-xs rounded-full shadow-2xl flex items-center gap-2 border border-white/20 transition transform active:scale-95"
+          >
+            <MenuIcon className="w-4 h-4" />
+            <span>Menu</span>
+          </button>
+        </div>
+
+        {/* ── MOBILE MENU DRAWER ── */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center lg:hidden">
+            <div className="bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto p-5 space-y-4 animate-in slide-in-from-bottom duration-200">
+              <div className="flex items-center justify-between border-b pb-3">
+                <h3 className="font-black text-sm text-slate-900">School Sections</h3>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 rounded-full bg-slate-100 text-slate-500"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700">
+                <a href="#school_connect_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><MessageSquare className="w-4 h-4 text-blue-600" /><span>School Connect</span></a>
+                <a href="#key_stats_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><ChartBar className="w-4 h-4 text-blue-600" /><span>Key Stats</span></a>
+                <a href="#fee_structure_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Wallet className="w-4 h-4 text-emerald-600" /><span>Fee Structure</span></a>
+                <a href="#academic_stats_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><GraduationCap className="w-4 h-4 text-indigo-600" /><span>Academic Stats</span></a>
+                <a href="#admission_criteria_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><FileText className="w-4 h-4 text-rose-600" /><span>Eligibility</span></a>
+                <a href="#vacancies_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Briefcase className="w-4 h-4 text-rose-600" /><span>Vacancies</span></a>
+                <a href="#facilities_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Wand2 className="w-4 h-4 text-sky-600" /><span>Facilities</span></a>
+                <a href="#video_gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Video className="w-4 h-4 text-red-600" /><span>Video Tour</span></a>
+                <a href="#gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><ImageIcon className="w-4 h-4 text-indigo-600" /><span>Gallery</span></a>
+                <a href="#address_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><MapPin className="w-4 h-4 text-rose-600" /><span>Address & Contact</span></a>
+              </div>
+              <button onClick={() => { setIsMobileMenuOpen(false); setIsCallbackModalOpen(true); }} className="w-full py-3 bg-[#00875a] text-white font-black text-xs rounded-xl shadow-xs text-center">Request Callback</button>
+            </div>
+          </div>
+        )}
+
+        {/* ── SHARE PROFILE MODAL ── */}
+        {isShareModalOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 transition-all">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-[#1e3a8a] p-5 text-white flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-white" />
+                  <div>
+                    <h3 className="font-bold text-sm leading-tight">Share School Profile</h3>
+                    <p className="text-[11px] text-blue-200">Broadcast to parents & education networks</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsShareModalOpen(false)} className="text-white/80 hover:text-white"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="p-5 space-y-4 text-xs">
+                <div className="grid grid-cols-3 gap-2.5 font-bold text-center">
+                  <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + currentShareUrl)}`} target="_blank" rel="noreferrer" className="p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 flex flex-col items-center justify-center gap-1.5 transition"><span className="text-lg">💬</span><span className="text-[11px]">WhatsApp</span></a>
+                  <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentShareUrl)}`} target="_blank" rel="noreferrer" className="p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 flex flex-col items-center justify-center gap-1.5 transition"><span className="text-lg">in</span><span className="text-[11px]">LinkedIn</span></a>
+                  <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`} target="_blank" rel="noreferrer" className="p-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 flex flex-col items-center justify-center gap-1.5 transition"><span className="text-lg">f</span><span className="text-[11px]">Facebook</span></a>
+                  <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentShareUrl)}`} target="_blank" rel="noreferrer" className="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-900 flex flex-col items-center justify-center gap-1.5 transition"><span className="text-lg">𝕏</span><span className="text-[11px]">X (Twitter)</span></a>
+                  <a href={`https://t.me/share/url?url=${encodeURIComponent(currentShareUrl)}&text=${encodeURIComponent(shareText)}`} target="_blank" rel="noreferrer" className="p-3 rounded-2xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 flex flex-col items-center justify-center gap-1.5 transition"><span className="text-lg">✈️</span><span className="text-[11px]">Telegram</span></a>
+                  <button onClick={handleCopyLink} className="p-3 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 flex flex-col items-center justify-center gap-1.5 transition"><span className="text-lg">📷</span><span className="text-[11px]">Instagram</span></button>
+                </div>
+                <div className="flex items-center gap-2 p-1.5 bg-slate-50 border rounded-xl">
+                  <input type="text" readOnly value={currentShareUrl} className="w-full bg-transparent px-2 text-xs font-mono outline-none select-all truncate" />
+                  <button onClick={handleCopyLink} className={`px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${copiedLink ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'}`}>{copiedLink ? <CheckCheck className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}<span>{copiedLink ? 'Copied' : 'Copy'}</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── VIDEO PLAYER MODAL ──────────────────────────────────────────── */}
         {activeVideo && (
           <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 transition-all">
             <div className="bg-black rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden relative border border-slate-800">

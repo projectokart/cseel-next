@@ -9,6 +9,9 @@ export interface OrganizationItem {
   pincode: string;
   address: string;
   locality?: string;
+  district?: string;
+  block?: string;
+  villageTownCity?: string;
   email: string;
   phone: string;
   website: string;

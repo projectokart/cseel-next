@@ -1503,28 +1503,8 @@ export default function CreateSchoolProfileClient() {
                     </div>
                   </div>
 
-                  {/* Physical Address & Google Maps */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs font-semibold pt-3 border-t border-slate-100">
-                    <div>
-                      <label className="block text-slate-700 mb-1">Locality / Sector *</label>
-                      <input
-                        type="text"
-                        required
-                        value={form.locality}
-                        onChange={(e) => setForm({ ...form, locality: e.target.value })}
-                        className="w-full p-2.5 border rounded-xl bg-slate-50"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-slate-700 mb-1">City *</label>
-                      <input
-                        type="text"
-                        required
-                        value={form.city}
-                        onChange={(e) => setForm({ ...form, city: e.target.value })}
-                        className="w-full p-2.5 border rounded-xl bg-slate-50"
-                      />
-                    </div>
+                  {/* Physical Address, Geographic Hierarchy & Google Maps */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 text-xs font-semibold pt-3 border-t border-slate-100">
                     <div>
                       <label className="block text-slate-700 mb-1">State *</label>
                       <input
@@ -1532,6 +1512,49 @@ export default function CreateSchoolProfileClient() {
                         required
                         value={form.state}
                         onChange={(e) => setForm({ ...form, state: e.target.value })}
+                        placeholder="e.g. Delhi NCR / Maharashtra"
+                        className="w-full p-2.5 border rounded-xl bg-slate-50 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">District *</label>
+                      <input
+                        type="text"
+                        required
+                        value={(form as any).district || ''}
+                        onChange={(e) => setForm({ ...form, district: e.target.value } as any)}
+                        placeholder="e.g. South Delhi / Pune"
+                        className="w-full p-2.5 border rounded-xl bg-slate-50 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Block / Tehsil</label>
+                      <input
+                        type="text"
+                        value={(form as any).block || ''}
+                        onChange={(e) => setForm({ ...form, block: e.target.value } as any)}
+                        placeholder="e.g. Hauz Khas / Haveli"
+                        className="w-full p-2.5 border rounded-xl bg-slate-50 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Village / City / Town *</label>
+                      <input
+                        type="text"
+                        required
+                        value={(form as any).villageTownCity || form.city}
+                        onChange={(e) => setForm({ ...form, villageTownCity: e.target.value, city: e.target.value } as any)}
+                        placeholder="e.g. New Delhi / Hadapsar"
+                        className="w-full p-2.5 border rounded-xl bg-slate-50 font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Locality / Sector</label>
+                      <input
+                        type="text"
+                        value={form.locality}
+                        onChange={(e) => setForm({ ...form, locality: e.target.value })}
+                        placeholder="e.g. Greater Kailash I"
                         className="w-full p-2.5 border rounded-xl bg-slate-50"
                       />
                     </div>
@@ -1542,7 +1565,28 @@ export default function CreateSchoolProfileClient() {
                         required
                         value={form.pincode}
                         onChange={(e) => setForm({ ...form, pincode: e.target.value })}
+                        placeholder="110048"
                         className="w-full p-2.5 border rounded-xl bg-slate-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Official Website URL</label>
+                      <input
+                        type="url"
+                        value={form.website}
+                        onChange={(e) => setForm({ ...form, website: e.target.value })}
+                        placeholder="https://..."
+                        className="w-full p-2.5 border rounded-xl bg-slate-50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Google Maps Embed URL</label>
+                      <input
+                        type="url"
+                        value={form.googleMapsEmbedUrl}
+                        onChange={(e) => setForm({ ...form, googleMapsEmbedUrl: e.target.value })}
+                        placeholder="https://maps.google.com/..."
+                        className="w-full p-2.5 border rounded-xl bg-slate-50 text-[11px]"
                       />
                     </div>
                     <div>

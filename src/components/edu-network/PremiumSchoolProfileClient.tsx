@@ -422,9 +422,9 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                         <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Verified Institution
                       </span>
                     </div>
-                    <p className="text-slate-500 text-xs sm:text-sm mt-1 flex items-center gap-1.5">
+                    <p className="text-slate-500 text-xs sm:text-sm mt-1 flex items-center gap-1.5 flex-wrap">
                       <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                      <span>{org.address || `${org.locality}, ${org.city}, ${org.state}`} - {org.pincode}</span>
+                      <span>{org.address || `${(org as any).villageTownCity || org.city}${(org as any).block ? `, Block: ${(org as any).block}` : ''}${(org as any).district ? `, Dist: ${(org as any).district}` : ''}, ${org.state} - ${org.pincode}`}</span>
                     </p>
                     
                     {/* Quick Metadata Chips */}
@@ -1852,11 +1852,33 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
               <section id="address_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
                 <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#1e3a8a]" />
-                  <span>Address & Contact</span>
+                  <span>Address, Location & Geographic Hierarchy</span>
                 </h2>
+
+                {/* 4-Box Geographic Hierarchy Summary */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">State</span>
+                    <p className="font-black text-slate-900 text-sm mt-0.5">{org.state || 'Delhi NCR'}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">District</span>
+                    <p className="font-black text-slate-900 text-sm mt-0.5">{(org as any).district || (org as any).city || 'South Delhi'}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Block / Tehsil</span>
+                    <p className="font-black text-slate-900 text-sm mt-0.5">{(org as any).block || 'Urban Central Block'}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Village / City / Town</span>
+                    <p className="font-black text-slate-900 text-sm mt-0.5">{(org as any).villageTownCity || org.city || 'New Delhi'}</p>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
                   <div className="space-y-3 text-slate-600">
-                    <p><strong className="text-slate-900">Campus Address:</strong> {org.address || `${org.locality}, ${org.city}, ${org.state}`} - {org.pincode}</p>
+                    <p><strong className="text-slate-900">Campus Physical Address:</strong> {org.address || `${org.locality ? `${org.locality}, ` : ''}${(org as any).villageTownCity || org.city}, ${(org as any).district || org.city}, ${org.state} - ${org.pincode}`}</p>
+                    <p><strong className="text-slate-900">Locality & Pincode:</strong> {org.locality || 'Campus Area'}, PIN: {org.pincode || '110048'}</p>
                     <p>
                       <strong className="text-slate-900">Email Desk:</strong>{' '}
                       <a href={`mailto:${org.email}`} className="text-rose-500 font-bold hover:underline">
@@ -1871,9 +1893,9 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                     </p>
                     <p><strong className="text-slate-900">Direct Helpline:</strong> {org.phone || '+91 98109 56654'}</p>
                   </div>
-                  <div className="h-40 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
+                  <div className="h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
                     <iframe
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(org.name + ' ' + org.city)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(org.name + ' ' + (org.address || org.city))}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                       className="w-full h-full border-0"
                       allowFullScreen
                       loading="lazy"

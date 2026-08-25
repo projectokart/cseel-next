@@ -15,7 +15,7 @@ import {
   Trophy, GraduationCap, ArrowRight, Save, EyeOff, ShieldAlert,
   Activity, Radio, Compass, Stethoscope, Layers, Bus, Compass as MapIcon,
   LayoutGrid, FileCode2, SlidersHorizontal, CheckCircle, Info, Upload,
-  Trash2, Eye as EyeIcon, Unlock
+  Trash2, Eye as EyeIcon, PhoneCall
 } from 'lucide-react';
 import PageTransition from '@/components/shared/PageTransition';
 import { ALL_ORGANIZATIONS, OrganizationItem } from '@/lib/eduNetworkData';
@@ -56,11 +56,13 @@ export default function CreateSchoolProfileClient() {
 
   // Preview Interactive States
   const [previewResultClass, setPreviewResultClass] = useState<'12' | '10'>('12');
+  const [previewSelectedClassFee, setPreviewSelectedClassFee] = useState('class-9');
 
   // ── FORM STATE: ALL 9 SECTIONS ────────────────────────────────────────────
   const [form, setForm] = useState({
     // Section 1: Card & Basic Info
     name: 'HOCL International School',
+    shortName: 'HOCL',
     type: 'School' as const,
     udiseCode: '07010200389',
     board: 'CBSE' as const,
@@ -71,7 +73,7 @@ export default function CreateSchoolProfileClient() {
     studentFacultyRatio: '13:1',
     admissionStatus: 'Open for 2026-27' as const,
     logo: 'https://images.uniapply.com/uploads/college/image/logo/2186/KRMGS_L_220920_174918.jpg',
-    bannerImage: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&h=600&q=80',
+    bannerImage: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1600&q=80',
     facilitiesChips: 'Smart Classrooms, Robotics Lab, Swimming Pool, Transport, CCTV Surveillance',
 
     // Section 2: Overview & Leadership
@@ -294,14 +296,12 @@ export default function CreateSchoolProfileClient() {
     reader.onload = (uploadEvent) => {
       const base64Url = uploadEvent.target?.result as string;
       if (typeof photoIndex === 'number' && photoIndex < form.galleryPhotos.length) {
-        // Update existing photo
         setForm(prev => {
           const updated = [...prev.galleryPhotos];
           updated[photoIndex].url = base64Url;
           return { ...prev, galleryPhotos: updated };
         });
       } else {
-        // Add new photo (Max 10)
         if (form.galleryPhotos.length >= 10) {
           alert('Maximum 10 gallery photos allowed.');
           return;
@@ -420,7 +420,7 @@ export default function CreateSchoolProfileClient() {
                   onClick={() => setViewMode('form')}
                   className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
                     viewMode === 'form'
-                      ? 'bg-blue-600 text-white shadow-xs'
+                      ? 'bg-[#1e3a8a] text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
@@ -433,12 +433,12 @@ export default function CreateSchoolProfileClient() {
                   onClick={() => setViewMode('preview')}
                   className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 ${
                     viewMode === 'preview'
-                      ? 'bg-blue-600 text-white shadow-xs'
+                      ? 'bg-[#1e3a8a] text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Eye className="w-3.5 h-3.5" />
-                  <span>Live Preview (Card &amp; Detail)</span>
+                  <span>Live Preview (Exact Public Layout)</span>
                 </button>
               </div>
 
@@ -471,7 +471,7 @@ export default function CreateSchoolProfileClient() {
               <div className="flex items-center justify-center gap-3 pt-2">
                 <Link
                   href={`/edu-network/org/${newSchoolId}`}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-2"
+                  className="px-6 py-3 bg-[#1e3a8a] hover:bg-blue-900 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-2"
                 >
                   <span>View Live Profile Page</span>
                   <ArrowRight className="w-4 h-4" />
@@ -546,24 +546,20 @@ export default function CreateSchoolProfileClient() {
                         required
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        placeholder="e.g. HOCL School / AIIMS New Delhi"
+                        placeholder="e.g. HOCL International School"
                         className="w-full p-2.5 border rounded-xl bg-slate-50 font-bold text-slate-900"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-slate-700 mb-1">Institution Type *</label>
-                      <select
-                        value={form.type}
-                        onChange={(e) => setForm({ ...form, type: e.target.value as any })}
+                      <label className="block text-slate-700 mb-1">Short Name / Acronym</label>
+                      <input
+                        type="text"
+                        value={form.shortName}
+                        onChange={(e) => setForm({ ...form, shortName: e.target.value })}
+                        placeholder="HOCL"
                         className="w-full p-2.5 border rounded-xl bg-slate-50 font-bold"
-                      >
-                        <option value="School">K-12 School</option>
-                        <option value="University">University</option>
-                        <option value="Research Institute">Medical / Research Institute</option>
-                        <option value="College">Degree College</option>
-                        <option value="Atal Tinkering Lab">Atal Tinkering Lab</option>
-                      </select>
+                      />
                     </div>
 
                     <div>
@@ -1313,7 +1309,7 @@ export default function CreateSchoolProfileClient() {
                         <p className="text-[11px] text-slate-500">Attach photos of smart classrooms, science labs, library, turf, and infirmary.</p>
                       </div>
 
-                      <label className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer shrink-0">
+                      <label className="px-4 py-2 bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer shrink-0">
                         <Upload className="w-3.5 h-3.5" />
                         <span>+ Upload Photo File</span>
                         <input
@@ -1611,7 +1607,7 @@ export default function CreateSchoolProfileClient() {
           </div>
         )}
 
-        {/* ── VIEW 2: LIVE DUAL PREVIEW (CARD PREVIEW & FULL DETAIL PAGE PREVIEW) ── */}
+        {/* ── VIEW 2: LIVE DUAL PREVIEW (EXACT PUBLIC DETAIL PAGE LAYOUT) ── */}
         {!submitSuccess && viewMode === 'preview' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
             
@@ -1620,9 +1616,9 @@ export default function CreateSchoolProfileClient() {
               <div>
                 <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
                   <Eye className="w-4 h-4 text-blue-600" />
-                  <span>Live Preview Mode: Directory Card &amp; Full Detail Profile</span>
+                  <span>Public Live Profile Preview Simulation</span>
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Complete simulation covering all 9 sections, department contact channels, 10-photo gallery, and 3 video tours.</p>
+                <p className="text-xs text-slate-500 mt-0.5">Exact replica matching public layout, typography, badges, and components.</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -1630,21 +1626,21 @@ export default function CreateSchoolProfileClient() {
                   <button
                     type="button"
                     onClick={() => setPreviewSubTab('both')}
-                    className={`px-3 py-1.5 rounded-lg transition ${previewSubTab === 'both' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600'}`}
+                    className={`px-3 py-1.5 rounded-lg transition ${previewSubTab === 'both' ? 'bg-[#1e3a8a] text-white shadow-xs' : 'text-slate-600'}`}
                   >
                     Both Previews
                   </button>
                   <button
                     type="button"
                     onClick={() => setPreviewSubTab('card')}
-                    className={`px-3 py-1.5 rounded-lg transition ${previewSubTab === 'card' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600'}`}
+                    className={`px-3 py-1.5 rounded-lg transition ${previewSubTab === 'card' ? 'bg-[#1e3a8a] text-white shadow-xs' : 'text-slate-600'}`}
                   >
                     Directory Card
                   </button>
                   <button
                     type="button"
                     onClick={() => setPreviewSubTab('detail')}
-                    className={`px-3 py-1.5 rounded-lg transition ${previewSubTab === 'detail' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600'}`}
+                    className={`px-3 py-1.5 rounded-lg transition ${previewSubTab === 'detail' ? 'bg-[#1e3a8a] text-white shadow-xs' : 'text-slate-600'}`}
                   >
                     Full Detail Profile
                   </button>
@@ -1666,7 +1662,7 @@ export default function CreateSchoolProfileClient() {
                   className="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-1.5"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>{isSubmitting ? 'Publishing...' : 'Publish'}</span>
+                  <span>{isSubmitting ? 'Publishing...' : 'Publish Profile'}</span>
                 </button>
               </div>
             </div>
@@ -1682,7 +1678,7 @@ export default function CreateSchoolProfileClient() {
                 </div>
 
                 <div className="bg-white rounded-3xl p-6 border-2 border-blue-200 shadow-md flex flex-col md:flex-row gap-5 items-stretch relative">
-                  <span className="absolute -top-3 right-6 px-3 py-0.5 bg-blue-600 text-white text-[10px] font-black uppercase rounded-full tracking-wider shadow">
+                  <span className="absolute -top-3 right-6 px-3 py-0.5 bg-[#1e3a8a] text-white text-[10px] font-black uppercase rounded-full tracking-wider shadow">
                     Directory Card Simulation
                   </span>
 
@@ -1764,7 +1760,7 @@ export default function CreateSchoolProfileClient() {
                       <span className="text-xs text-slate-400 font-semibold">Listing active on directory</span>
                       <div className="flex items-center gap-2">
                         <span className="px-3 py-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-600">Apply / Enquire</span>
-                        <span className="px-3.5 py-1 bg-blue-600 text-white rounded-xl text-xs font-bold">View Profile →</span>
+                        <span className="px-3.5 py-1 bg-[#1e3a8a] text-white rounded-xl text-xs font-bold">View Profile →</span>
                       </div>
                     </div>
                   </div>
@@ -1772,423 +1768,493 @@ export default function CreateSchoolProfileClient() {
               </div>
             )}
 
-            {/* ── PREVIEW PART 2: FULL DETAIL PROFILE PAGE PREVIEW (ALL SECTIONS) ── */}
+            {/* ── PREVIEW PART 2: FULL DETAIL PROFILE PAGE PREVIEW (EXACT PUBLIC DETAIL PAGE LAYOUT) ── */}
             {(previewSubTab === 'both' || previewSubTab === 'detail') && (
-              <div className="space-y-6 pt-4 border-t-2 border-slate-200">
+              <div className="space-y-4 pt-4 border-t-2 border-slate-200">
                 <div className="flex items-center justify-between px-2">
                   <span className="text-xs font-black uppercase tracking-wider text-slate-400">
                     Preview 2: Full Institutional Detail Profile Page
                   </span>
-                  <span className="text-[11px] text-indigo-600 font-bold">Complete Live Rendering of All 9 Sections</span>
+                  <span className="text-[11px] text-indigo-600 font-bold">Exact Public UI &amp; Component Layout</span>
                 </div>
 
-                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm space-y-6 pb-8">
+                {/* EXACT HERO BANNER WITH OVERLAPPING FLOATING CARD */}
+                <div className="bg-slate-100 text-slate-800 font-sans antialiased rounded-3xl overflow-hidden shadow-sm border border-slate-200">
                   
-                  {/* 1. Hero Cover Header */}
-                  <div className="relative h-64 sm:h-80 w-full bg-slate-900">
-                    <img
-                      src={form.bannerImage}
-                      alt={form.name}
-                      className="w-full h-full object-cover opacity-80"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                    
-                    <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white">
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white p-2 shadow-xl border border-white/20 shrink-0">
-                          <img src={form.logo} alt={form.name} className="w-full h-full object-contain rounded-xl" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <span className="px-2.5 py-0.5 bg-blue-600/90 text-white font-black text-[10px] rounded-md uppercase">
-                              {form.board}
-                            </span>
-                            <span className="px-2.5 py-0.5 bg-emerald-600/90 text-white font-black text-[10px] rounded-md uppercase flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3" />
-                              <span>UDISE: {form.udiseCode}</span>
-                            </span>
-                            <span className="px-2 py-0.5 bg-amber-500 text-slate-950 font-black text-[10px] rounded-md flex items-center gap-1">
-                              <Star className="w-3 h-3 fill-slate-950" />
-                              <span>4.9 (Verified)</span>
-                            </span>
-                          </div>
-                          <h1 className="text-xl sm:text-2xl font-black">{form.name}</h1>
-                          <p className="text-xs text-white/80 flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3.5 h-3.5 text-rose-400" />
-                            <span>{form.locality}, {form.city}, {form.state}</span>
-                          </p>
-                        </div>
+                  {/* Hero Image with 46284 Views badge */}
+                  <div className="relative bg-slate-900 text-white">
+                    <div className="h-60 sm:h-72 w-full overflow-hidden relative">
+                      <div className="absolute top-3 left-3 z-20 bg-black/60 backdrop-blur-xs text-white px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-xs">
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>46284 Views</span>
                       </div>
+                      
+                      <img
+                        src={form.bannerImage}
+                        alt="Campus Banner"
+                        className="w-full h-full object-cover opacity-35"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-black/30"></div>
+                    </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="px-4 py-2 bg-emerald-600 text-white font-black text-xs rounded-xl shadow">
-                          {form.admissionStatus}
-                        </span>
-                        <span className="px-4 py-2 bg-blue-600 text-white font-black text-xs rounded-xl shadow">
-                          Apply / Enquire Now
-                        </span>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                      {/* Floating Card */}
+                      <div className="relative -mt-20 bg-white text-slate-800 rounded-2xl shadow-xl border border-slate-200 p-5 sm:p-7">
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                          
+                          {/* Left School Info */}
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                            <img
+                              src={form.logo}
+                              alt={form.name}
+                              className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-slate-100 bg-white p-1 object-contain shadow-xs shrink-0"
+                            />
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                                  {form.name} <span className="text-slate-400 font-normal text-lg sm:text-xl">({form.shortName || 'HOCL'})</span>
+                                </h1>
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                  <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Verified Institution
+                                </span>
+                              </div>
+                              <p className="text-slate-500 text-xs sm:text-sm mt-1 flex items-center gap-1.5">
+                                <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                <span>{form.address}</span>
+                              </p>
+                              
+                              {/* Quick Metadata Chips */}
+                              <div className="flex flex-wrap gap-2 mt-3 text-xs font-medium">
+                                <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 font-semibold">
+                                  <strong>Board:</strong> {form.board}
+                                </span>
+                                <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 font-semibold">
+                                  <strong>UDISE Code:</strong> {form.udiseCode}
+                                </span>
+                                <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200">
+                                  <strong>Format:</strong> Day School (Co-Ed)
+                                </span>
+                                <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200">
+                                  <strong>Session:</strong> 2026-2027 Admissions Open
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right Ratings & Actions */}
+                          <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between gap-4 border-t lg:border-t-0 pt-4 lg:pt-0 border-slate-100 shrink-0">
+                            <div className="flex items-center gap-2">
+                              <div className="bg-amber-500 text-white font-extrabold text-base px-3 py-1 rounded-lg flex items-center gap-1">
+                                <span>5</span>
+                                <Star className="w-3.5 h-3.5 fill-white" />
+                              </div>
+                              <div className="text-left">
+                                <p className="text-xs font-bold text-slate-800">4100 Reviews</p>
+                                <p className="text-[11px] text-slate-400 font-medium">Ranked #2 IB in Delhi</p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2">
+                              <span className="px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-black flex items-center gap-1.5 shadow-2xs">
+                                <Briefcase className="w-3.5 h-3.5 text-rose-600" />
+                                <span>Careers (1)</span>
+                              </span>
+                              <span className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                                <Share2 className="w-3.5 h-3.5" />
+                                <span>Share</span>
+                              </span>
+                              <span className="px-3.5 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                                <Bell className="w-3.5 h-3.5" />
+                                <span>Notify Me</span>
+                              </span>
+                              <span className="px-5 py-2 bg-[#1e3a8a] text-white rounded-lg text-xs font-bold shadow-xs">
+                                Enquire Now
+                              </span>
+                            </div>
+                          </div>
+
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="px-6 sm:px-8 space-y-8">
-                    
-                    {/* 2. Overview & Principal Desk */}
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="font-black text-base text-slate-900 mb-1.5 flex items-center gap-2">
-                          <BookOpen className="w-4 h-4 text-blue-600" />
-                          <span>About Institution &amp; Academic Vision</span>
-                        </h3>
-                        <p className="text-xs text-slate-600 leading-relaxed">{form.description}</p>
-                      </div>
-
-                      {/* Principal Desk */}
-                      <div className="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 flex items-start gap-4">
-                        <img src={form.principalPhoto} alt={form.principalName} className="w-14 h-14 rounded-2xl object-cover border-2 border-blue-300 shrink-0" />
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-black text-sm text-blue-950">{form.principalName}</span>
-                            <span className="text-[10px] text-blue-700 font-semibold bg-blue-100 px-2 py-0.5 rounded-full">{form.principalDesignation}</span>
+                  {/* 2-COLUMN MAIN CONTENT BODY */}
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                      
+                      {/* LEFT COLUMN: VERIFIED CAMPUS, STEM QUICK, PRINCIPAL DESK & CONTACTS */}
+                      <div className="lg:col-span-1 space-y-6">
+                        
+                        {/* CSEEL Verified Campus Box */}
+                        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black">
+                              <ShieldCheck className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <h3 className="font-bold text-sm text-slate-900">CSEEL VERIFIED CAMPUS</h3>
+                              <p className="text-xs text-slate-500">Government &amp; Board Certified</p>
+                            </div>
                           </div>
-                          <p className="text-xs text-blue-900/90 italic mt-1.5 font-medium leading-relaxed">
+                          <p className="text-xs text-slate-600 leading-relaxed">
+                            Campus labs and scientific equipment are audited under CSEEL Standardized Experiential Framework.
+                          </p>
+                        </div>
+
+                        {/* Principal Desk Quote Box */}
+                        <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-2xl p-5 border border-blue-200/80 shadow-2xs space-y-3">
+                          <div className="flex items-center gap-3">
+                            <img src={form.principalPhoto} alt={form.principalName} className="w-12 h-12 rounded-xl object-cover border border-blue-300 shrink-0" />
+                            <div>
+                              <h4 className="font-bold text-xs text-blue-950">{form.principalName}</h4>
+                              <p className="text-[10px] text-blue-700 font-semibold">{form.principalDesignation}</p>
+                            </div>
+                          </div>
+                          <p className="text-xs text-blue-900/90 italic leading-relaxed">
                             "{form.principalMessage}"
                           </p>
                         </div>
-                      </div>
 
-                      {/* Key Stats Bar */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
-                        <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Established</span>
-                          <p className="font-black text-slate-900">{form.established}</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Student Strength</span>
-                          <p className="font-black text-slate-900">{form.studentStrength} Students</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Campus Area</span>
-                          <p className="font-black text-slate-900">{form.campusAcreage}</p>
-                        </div>
-                        <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase">Teaching Faculty</span>
-                          <p className="font-black text-slate-900">{form.totalFacultyCount} Members</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 3. Comprehensive Class-Wise Fee Structure */}
-                    <div className="space-y-4 p-5 bg-slate-50/80 rounded-3xl border border-slate-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Wallet className="w-5 h-5 text-amber-600" />
-                          <h3 className="font-black text-sm text-slate-900">Comprehensive Class-Wise Fee Structure (2026-27)</h3>
-                        </div>
-                        <span className="text-xs font-black text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-lg">
-                          Monthly Avg: {form.monthlyFees}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
-                        <div className="p-3 bg-white rounded-xl border border-slate-200">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Admission (One-time)</span>
-                          <p className="font-black text-slate-900 mt-0.5">₹{form.admissionFee.toLocaleString()}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-xl border border-slate-200">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Registration</span>
-                          <p className="font-black text-slate-900 mt-0.5">₹{form.registrationFee.toLocaleString()}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-xl border border-slate-200">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Tuition (Quarterly)</span>
-                          <p className="font-black text-slate-900 mt-0.5">₹{form.tuitionQuarterly.toLocaleString()}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-xl border border-slate-200">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Security Deposit</span>
-                          <p className="font-black text-slate-900 mt-0.5">₹{form.securityDeposit.toLocaleString()}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-xl border border-slate-200">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Annual Logistics</span>
-                          <p className="font-black text-slate-900 mt-0.5">₹{form.annualLogisticsFee.toLocaleString()}</p>
-                        </div>
-                        <div className="p-3 bg-white rounded-xl border border-slate-200">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold block">Development Fund</span>
-                          <p className="font-black text-slate-900 mt-0.5">₹{form.developmentFund.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 4. Admission Dates & 12 Required Documents */}
-                    <div className="space-y-4 p-5 bg-emerald-50/40 rounded-3xl border border-emerald-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-5 h-5 text-emerald-700" />
-                          <h3 className="font-black text-sm text-emerald-950">Admission Dates &amp; Mandatory Documents</h3>
-                        </div>
-                        <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-lg">
-                          Session: {form.sessionStartDate}
-                        </span>
-                      </div>
-
-                      {/* Timeline Bar */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-semibold">
-                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
-                          <span className="text-[10px] text-emerald-600 block">Form Submissions</span>
-                          <p className="font-bold text-slate-900">{form.admissionFormStartDate} - {form.admissionFormEndDate}</p>
-                        </div>
-                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
-                          <span className="text-[10px] text-emerald-600 block">Entrance / Interaction</span>
-                          <p className="font-bold text-slate-900">{form.entranceTestDate}</p>
-                        </div>
-                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
-                          <span className="text-[10px] text-emerald-600 block">Merit List</span>
-                          <p className="font-bold text-slate-900">{form.meritListDate}</p>
-                        </div>
-                        <div className="p-2.5 bg-white rounded-xl border border-emerald-200">
-                          <span className="text-[10px] text-emerald-600 block">Min Age (Nursery)</span>
-                          <p className="font-bold text-slate-900">{form.minAgeNursery}</p>
-                        </div>
-                      </div>
-
-                      {/* 12 Documents Checklist */}
-                      <div className="space-y-2 pt-2">
-                        <span className="text-xs font-black text-emerald-950 uppercase tracking-wide block">
-                          12 Required Admission Documents Checklist ({form.requiredDocs.length}/12 Verified)
-                        </span>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 text-xs">
-                          {form.requiredDocs.map((doc) => (
-                            <div key={doc} className="p-2 bg-white rounded-lg border border-emerald-200 flex items-center gap-1.5 text-[11px] font-bold text-emerald-900">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                              <span className="truncate">{doc}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 5. STEM Live Labs Section (Soft Light Compact Theme) */}
-                    <div className="bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100 rounded-3xl p-5 border border-slate-200 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Microscope className="w-5 h-5 text-cyan-700" />
-                          <h3 className="font-black text-sm text-slate-900">STEM Live Lab &amp; Innovation Ecosystem ({form.selectedLabs.length} Labs)</h3>
-                        </div>
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">
-                          NEP-2020 Compliant
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 text-xs">
-                        {form.selectedLabs.map((lab) => (
-                          <div
-                            key={lab}
-                            className={`p-3 rounded-xl border bg-white shadow-2xs flex items-center justify-between ${
-                              lab === 'Science Experiential Lab' ? 'border-emerald-400 bg-emerald-50/40 font-bold text-emerald-950' : 'border-slate-200 text-slate-800 font-semibold'
-                            }`}
-                          >
-                            <span className="text-[11px] truncate">{lab}</span>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 6. Academic Results & Year-wise Banners */}
-                    <div className="space-y-4 p-5 bg-slate-50 rounded-3xl border border-slate-200">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Trophy className="w-5 h-5 text-amber-500" />
-                          <h3 className="font-black text-sm text-slate-900">Board Results &amp; Academic Toppers</h3>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setPreviewResultClass('12')}
-                            className={`px-3 py-1 text-xs font-bold rounded-lg transition ${previewResultClass === '12' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600'}`}
-                          >
-                            Class 12th
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setPreviewResultClass('10')}
-                            className={`px-3 py-1 text-xs font-bold rounded-lg transition ${previewResultClass === '10' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white text-slate-600'}`}
-                          >
-                            Class 10th
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Result Poster Graphic */}
-                      <div className="rounded-2xl overflow-hidden border border-slate-300 bg-black/5 h-52 sm:h-72 relative shadow-inner">
-                        <img
-                          src={previewResultClass === '12' ? form.banner12th_2026 : form.banner10th_2026}
-                          alt="Official Result Banner"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-3 right-3 px-3 py-1 bg-black/75 backdrop-blur-md text-white text-[11px] font-bold rounded-xl shadow">
-                          Official Board Result Poster ({previewResultClass === '12' ? 'Class 12th' : 'Class 10th'})
-                        </div>
-                      </div>
-
-                      {/* Topper Cards */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                        <div className="p-3.5 bg-white rounded-2xl border border-slate-200 flex items-center gap-3.5">
-                          <img src={form.topper12Photo} alt={form.topper12Name} className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-300" />
-                          <div>
-                            <span className="text-[10px] text-amber-600 font-black uppercase">Class 12th Topper</span>
-                            <h4 className="font-black text-slate-900 text-sm">{form.topper12Name}</h4>
-                            <p className="text-xs text-slate-600 font-bold">{form.topper12Score} • {form.topper12Stream}</p>
-                          </div>
-                        </div>
-
-                        <div className="p-3.5 bg-white rounded-2xl border border-slate-200 flex items-center gap-3.5">
-                          <img src={form.topper10Photo} alt={form.topper10Name} className="w-14 h-14 rounded-2xl object-cover border-2 border-blue-300" />
-                          <div>
-                            <span className="text-[10px] text-blue-600 font-black uppercase">Class 10th Topper</span>
-                            <h4 className="font-black text-slate-900 text-sm">{form.topper10Name}</h4>
-                            <p className="text-xs text-slate-600 font-bold">{form.topper10Score} • {form.topper10Stream}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 7. Facilities Checklist Matrix */}
-                    <div className="space-y-3">
-                      <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                        <Layers className="w-4 h-4 text-purple-600" />
-                        <span>UniApply 9-Category Facilities Matrix</span>
-                      </h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                        {[
-                          ...form.classroomFacilities,
-                          ...form.boardingFacilities,
-                          ...form.infrastructureFacilities,
-                          ...form.safetyFacilities,
-                          ...form.sportsFacilities,
-                          ...form.disabledFacilities
-                        ].map((fac) => (
-                          <div key={fac} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-2 font-semibold text-slate-700">
-                            <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span className="text-[11px] truncate">{fac}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 8. Campus Gallery Showcase (All 10 Photos) */}
-                    <div className="space-y-3 pt-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                          <Camera className="w-4 h-4 text-sky-600" />
-                          <span>Campus Infrastructure Photo Gallery ({form.galleryPhotos.length} Photos)</span>
-                        </h3>
-                        <span className="text-[10px] text-slate-400 font-semibold">Direct Uploads &amp; Categories</span>
-                      </div>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                        {form.galleryPhotos.map((photo, idx) => (
-                          <div key={photo.id || idx} className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 space-y-1.5 p-2 shadow-2xs">
-                            <div className="h-28 rounded-xl overflow-hidden bg-slate-200">
-                              <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
-                            </div>
-                            <p className="text-[11px] font-bold text-slate-900 truncate">{photo.title}</p>
-                            <span className="inline-block text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-semibold">
-                              {photo.category}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 9. Virtual Video Tours Showcase (3 Videos) */}
-                    <div className="space-y-3 pt-2">
-                      <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                        <Video className="w-4 h-4 text-rose-600" />
-                        <span>360° Virtual Campus Video Tours ({form.videosList.length} Tours)</span>
-                      </h3>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                        {form.videosList.map((vid, idx) => (
-                          <div key={vid.id || idx} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                            <div className="h-36 rounded-xl overflow-hidden bg-black/10 border">
-                              <iframe
-                                src={vid.url}
-                                title={vid.title}
-                                className="w-full h-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                              />
-                            </div>
-                            <h4 className="font-bold text-xs text-slate-900 truncate">{vid.title}</h4>
-                            <p className="text-[10px] text-slate-500 line-clamp-2 leading-tight">{vid.description}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 10. Department Contacts (Public/Private Badges) & Google Maps */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
-                      {/* Department Communications */}
-                      <div className="p-4 bg-slate-50 rounded-3xl border border-slate-200 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-blue-600" />
-                            <span>Institutional Communication Channels</span>
-                          </h3>
-                        </div>
-
-                        <div className="space-y-2">
-                          {form.contactChannels.map((c, idx) => (
-                            <div key={c.id || idx} className="p-3 bg-white rounded-xl border border-slate-200 flex items-start justify-between gap-3 text-xs">
-                              <div>
-                                <div className="flex items-center gap-2 mb-0.5">
-                                  <span className="font-black text-slate-900 text-xs">{c.type}</span>
+                        {/* Institutional Department Contacts Box */}
+                        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs space-y-3">
+                          <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">Department Communication</h3>
+                          <div className="space-y-2.5">
+                            {form.contactChannels.map((c, idx) => (
+                              <div key={c.id || idx} className="p-2.5 rounded-xl border border-slate-100 bg-slate-50 text-xs">
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className="font-bold text-slate-900 text-[11px]">{c.type}</span>
                                   {c.isPublic ? (
-                                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-md">Public</span>
+                                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded">Public</span>
                                   ) : (
-                                    <span className="px-2 py-0.5 bg-slate-200 text-slate-700 text-[10px] font-bold rounded-md flex items-center gap-1">
-                                      <Lock className="w-2.5 h-2.5" /> Confidential
+                                    <span className="text-[10px] font-bold text-slate-500 bg-slate-200 px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                                      <Lock className="w-2.5 h-2.5" /> Private
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-slate-600 font-semibold">{c.email} • {c.phone}</p>
-                                <p className="text-[10px] text-slate-400 mt-0.5">{c.description}</p>
+                                <p className="text-slate-600 font-medium text-[11px]">{c.email}</p>
+                                <p className="text-slate-500 text-[11px]">{c.phone}</p>
                               </div>
+                            ))}
+                          </div>
+                        </div>
 
-                              {c.isPublic && (
-                                <a
-                                  href={`mailto:${c.email}`}
-                                  className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg hover:bg-blue-100 transition text-[11px] shrink-0"
-                                >
-                                  Email
-                                </a>
-                              )}
+                      </div>
+
+                      {/* RIGHT COLUMN: STATS, FEES, ADMISSIONS, STEM LABS, RESULTS, GALLERY, VIDEOS & MAP */}
+                      <div className="lg:col-span-2 space-y-6">
+                        
+                        {/* Key School Stats */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2">
+                              <BookOpen className="w-4 h-4 text-blue-600" />
+                              <span>Key School Stats</span>
+                            </h3>
+                            <button type="button" className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                              <Download className="w-3.5 h-3.5" />
+                              <span>Download Brochure</span>
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-slate-400 text-[10px] uppercase font-bold block">Established</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">{form.established}</p>
                             </div>
-                          ))}
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-slate-400 text-[10px] uppercase font-bold block">Student Strength</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">{form.studentStrength} Students</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-slate-400 text-[10px] uppercase font-bold block">Campus Acreage</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">{form.campusAcreage}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-slate-400 text-[10px] uppercase font-bold block">Instruction Language</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">{form.instructionLanguage}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-slate-400 text-[10px] uppercase font-bold block">Academic Cycle</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">{form.academicSession}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-slate-400 text-[10px] uppercase font-bold block">Faculty Count</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">{form.totalFacultyCount} Faculty</p>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-slate-600 leading-relaxed pt-1">
+                            {form.description}
+                          </p>
                         </div>
+
+                        {/* Fee Structure */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2">
+                              <Wallet className="w-4 h-4 text-amber-600" />
+                              <span>Fee Structure (Academic Year 2026-2027)</span>
+                            </h3>
+                            <span className="text-xs font-black text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+                              Monthly Avg: {form.monthlyFees}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 uppercase font-bold block">Admission Fee</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">₹{form.admissionFee.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 uppercase font-bold block">Registration Fee</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">₹{form.registrationFee.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 uppercase font-bold block">Tuition (Quarterly)</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">₹{form.tuitionQuarterly.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 uppercase font-bold block">Security Deposit</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">₹{form.securityDeposit.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 uppercase font-bold block">Annual Logistics</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">₹{form.annualLogisticsFee.toLocaleString()}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 uppercase font-bold block">Development Fund</span>
+                              <p className="font-black text-slate-900 text-sm mt-0.5">₹{form.developmentFund.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Admission Dates & 12 Required Documents */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-emerald-600" />
+                              <span>Admission Dates &amp; Mandatory Documents</span>
+                            </h3>
+                            <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                              Session: {form.sessionStartDate}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Form Window</span>
+                              <p className="font-bold text-slate-900 mt-0.5">{form.admissionFormStartDate} - {form.admissionFormEndDate}</p>
+                            </div>
+                            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Entrance Test</span>
+                              <p className="font-bold text-slate-900 mt-0.5">{form.entranceTestDate}</p>
+                            </div>
+                            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Merit List</span>
+                              <p className="font-bold text-slate-900 mt-0.5">{form.meritListDate}</p>
+                            </div>
+                            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Min Age</span>
+                              <p className="font-bold text-slate-900 mt-0.5">{form.minAgeNursery}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2 pt-2">
+                            <span className="text-xs font-black text-slate-900 uppercase tracking-wide block">
+                              12 Required Documents Checklist ({form.requiredDocs.length}/12 Verified)
+                            </span>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                              {form.requiredDocs.map((doc) => (
+                                <div key={doc} className="p-2 bg-emerald-50/50 rounded-lg border border-emerald-200/80 flex items-center gap-1.5 text-[11px] font-bold text-emerald-950">
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                  <span className="truncate">{doc}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* STEM Live Labs Section (Soft Light Theme) */}
+                        <div className="bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100 rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/80 space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                            <div className="flex items-center gap-2">
+                              <Microscope className="w-5 h-5 text-cyan-700" />
+                              <h3 className="font-extrabold text-base text-slate-900">STEM Live Lab &amp; Innovation Ecosystem ({form.selectedLabs.length} Labs)</h3>
+                            </div>
+                            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full">
+                              NEP-2020 Compliant
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+                            {form.selectedLabs.map((lab) => (
+                              <div
+                                key={lab}
+                                className={`p-3 rounded-xl border bg-white shadow-2xs flex items-center justify-between ${
+                                  lab === 'Science Experiential Lab' ? 'border-emerald-400 bg-emerald-50/40 font-bold text-emerald-950' : 'border-slate-200 text-slate-800 font-semibold'
+                                }`}
+                              >
+                                <span className="text-[11px] truncate">{lab}</span>
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Academic Results & Year-wise Banners */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2">
+                              <Trophy className="w-5 h-5 text-amber-500" />
+                              <span>Academic Board Results &amp; Toppers</span>
+                            </h3>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setPreviewResultClass('12')}
+                                className={`px-3 py-1 text-xs font-bold rounded-lg transition ${previewResultClass === '12' ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-100 text-slate-600'}`}
+                              >
+                                Class 12th
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setPreviewResultClass('10')}
+                                className={`px-3 py-1 text-xs font-bold rounded-lg transition ${previewResultClass === '10' ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-100 text-slate-600'}`}
+                              >
+                                Class 10th
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Result Poster Graphic */}
+                          <div className="rounded-2xl overflow-hidden border border-slate-300 bg-black/5 h-52 sm:h-72 relative shadow-inner">
+                            <img
+                              src={previewResultClass === '12' ? form.banner12th_2026 : form.banner10th_2026}
+                              alt="Official Result Banner"
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute top-3 right-3 px-3 py-1 bg-black/75 backdrop-blur-md text-white text-[11px] font-bold rounded-xl shadow">
+                              Official Board Result Poster ({previewResultClass === '12' ? 'Class 12th' : 'Class 10th'})
+                            </div>
+                          </div>
+
+                          {/* Topper Cards */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center gap-3.5">
+                              <img src={form.topper12Photo} alt={form.topper12Name} className="w-14 h-14 rounded-2xl object-cover border-2 border-amber-300" />
+                              <div>
+                                <span className="text-[10px] text-amber-600 font-black uppercase">Class 12th Topper</span>
+                                <h4 className="font-black text-slate-900 text-sm">{form.topper12Name}</h4>
+                                <p className="text-xs text-slate-600 font-bold">{form.topper12Score} • {form.topper12Stream}</p>
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 flex items-center gap-3.5">
+                              <img src={form.topper10Photo} alt={form.topper10Name} className="w-14 h-14 rounded-2xl object-cover border-2 border-blue-300" />
+                              <div>
+                                <span className="text-[10px] text-blue-600 font-black uppercase">Class 10th Topper</span>
+                                <h4 className="font-black text-slate-900 text-sm">{form.topper10Name}</h4>
+                                <p className="text-xs text-slate-600 font-bold">{form.topper10Score} • {form.topper10Stream}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* UniApply Facilities Matrix */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <Layers className="w-4 h-4 text-purple-600" />
+                            <span>UniApply 9-Category Facilities Matrix</span>
+                          </h3>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                            {[
+                              ...form.classroomFacilities,
+                              ...form.boardingFacilities,
+                              ...form.infrastructureFacilities,
+                              ...form.safetyFacilities,
+                              ...form.sportsFacilities,
+                              ...form.disabledFacilities
+                            ].map((fac) => (
+                              <div key={fac} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-2 font-semibold text-slate-700">
+                                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                <span className="text-[11px] truncate">{fac}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Photo Gallery Grid */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2">
+                              <Camera className="w-4 h-4 text-sky-600" />
+                              <span>Campus Infrastructure Photo Gallery ({form.galleryPhotos.length} Photos)</span>
+                            </h3>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {form.galleryPhotos.map((photo, idx) => (
+                              <div key={photo.id || idx} className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 space-y-1.5 p-2 shadow-2xs">
+                                <div className="h-28 rounded-xl overflow-hidden bg-slate-200">
+                                  <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
+                                </div>
+                                <p className="text-[11px] font-bold text-slate-900 truncate">{photo.title}</p>
+                                <span className="inline-block text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-semibold">
+                                  {photo.category}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Video Tours */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <Video className="w-4 h-4 text-rose-600" />
+                            <span>360° Virtual Video Tours</span>
+                          </h3>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            {form.videosList.map((vid, idx) => (
+                              <div key={vid.id || idx} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                                <div className="h-40 rounded-xl overflow-hidden bg-black/10 border">
+                                  <iframe
+                                    src={vid.url}
+                                    title={vid.title}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                  />
+                                </div>
+                                <h4 className="font-bold text-xs text-slate-900 truncate">{vid.title}</h4>
+                                <p className="text-[10px] text-slate-500 line-clamp-2 leading-tight">{vid.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Google Maps Location */}
+                        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-2xs space-y-4">
+                          <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <MapPin className="w-4 h-4 text-rose-600" />
+                            <span>Campus Address &amp; Google Maps</span>
+                          </h3>
+                          <div className="h-60 rounded-2xl overflow-hidden bg-slate-200 border">
+                            <iframe
+                              src={form.googleMapsEmbedUrl}
+                              title="Campus Map Location"
+                              className="w-full h-full border-0"
+                              loading="lazy"
+                            />
+                          </div>
+                          <p className="text-xs text-slate-700 font-medium">
+                            <strong>Physical Campus:</strong> {form.address}
+                          </p>
+                        </div>
+
                       </div>
 
-                      {/* Google Maps Location */}
-                      <div className="p-4 bg-slate-50 rounded-3xl border border-slate-200 space-y-2">
-                        <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-rose-600" />
-                          <span>Campus Address &amp; Google Maps</span>
-                        </h3>
-                        <div className="h-52 rounded-2xl overflow-hidden bg-slate-200 border">
-                          <iframe
-                            src={form.googleMapsEmbedUrl}
-                            title="Campus Map Location"
-                            className="w-full h-full border-0"
-                            loading="lazy"
-                          />
-                        </div>
-                        <p className="text-[11px] text-slate-600 font-medium">
-                          {form.address}
-                        </p>
-                      </div>
                     </div>
-
                   </div>
+
                 </div>
               </div>
             )}

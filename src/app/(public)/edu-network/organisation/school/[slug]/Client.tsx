@@ -238,23 +238,29 @@ export default function CitySchoolDirectoryClient({
                 </button>
               </div>
 
-              {/* Explore Schools by Major City */}
+              {/* Explore Schools by Major City (Vertical Scroll) */}
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1.5">Explore by Major City</label>
-                <div className="flex flex-wrap gap-1.5 max-h-44 overflow-y-auto pr-1">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-slate-700 block">Explore by Major City</label>
+                  <span className="text-[10px] text-slate-400 font-medium">{POPULAR_CITIES.length} Cities</span>
+                </div>
+                <div className="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1">
                   {POPULAR_CITIES.map((c) => {
                     const isActive = slug === c.slug;
                     return (
                       <Link
                         key={c.slug}
                         href={`/edu-network/organisation/school/${c.slug}`}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
                           isActive
-                            ? 'bg-blue-600 text-white shadow-2xs'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-100 hover:border-slate-200'
                         }`}
                       >
-                        {c.name}
+                        <span>{c.name}</span>
+                        {isActive && (
+                          <Check className="w-3.5 h-3.5 text-white" />
+                        )}
                       </Link>
                     );
                   })}

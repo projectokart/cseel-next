@@ -295,73 +295,85 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
   };
 
   // Video Gallery Items
-  const videoItems = [
-    {
-      id: 'rJKzHb76LJs',
-      title: 'Campus Walkthrough & Infrastructure',
-      subtitle: 'Virtual Tour • Academic Blocks',
-      duration: '03:45',
-      thumb: 'https://img.youtube.com/vi/rJKzHb76LJs/hqdefault.jpg'
-    },
-    {
-      id: 'a69t-R5jZl0',
-      title: 'Robotics & Experiential Science Labs',
-      subtitle: 'STEM Highlights • Innovation',
-      duration: '04:12',
-      thumb: 'https://img.youtube.com/vi/a69t-R5jZl0/hqdefault.jpg'
-    },
-    {
-      id: 'fZoVdoZ3Khk',
-      title: 'Sports Arena, Pool & Athletics Day',
-      subtitle: 'Extracurricular • Fitness',
-      duration: '02:50',
-      thumb: 'https://img.youtube.com/vi/fZoVdoZ3Khk/hqdefault.jpg'
-    }
-  ];
+  const videoItems = (org as any).videosList && (org as any).videosList.length > 0
+    ? (org as any).videosList.map((v: any, idx: number) => ({
+        id: v.id || `video-${idx}`,
+        title: v.title || 'Campus Video Tour',
+        subtitle: v.description || 'Virtual Tour • Academic Blocks',
+        duration: '03:45',
+        thumb: v.url && v.url.includes('youtube.com/embed/')
+          ? `https://img.youtube.com/vi/${v.url.split('/embed/')[1]?.split('?')[0] || 'dQw4w9WgXcQ'}/hqdefault.jpg`
+          : 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80'
+      }))
+    : [
+        {
+          id: 'rJKzHb76LJs',
+          title: 'Campus Walkthrough & Infrastructure',
+          subtitle: 'Virtual Tour • Academic Blocks',
+          duration: '03:45',
+          thumb: 'https://img.youtube.com/vi/rJKzHb76LJs/hqdefault.jpg'
+        },
+        {
+          id: 'a69t-R5jZl0',
+          title: 'Robotics & Experiential Science Labs',
+          subtitle: 'STEM Highlights • Innovation',
+          duration: '04:12',
+          thumb: 'https://img.youtube.com/vi/a69t-R5jZl0/hqdefault.jpg'
+        },
+        {
+          id: 'fZoVdoZ3Khk',
+          title: 'Sports Arena, Pool & Athletics Day',
+          subtitle: 'Extracurricular • Fitness',
+          duration: '02:50',
+          thumb: 'https://img.youtube.com/vi/fZoVdoZ3Khk/hqdefault.jpg'
+        }
+      ];
 
   // Gallery with Titles and Labels
-  const galleryPhotos = [
-    {
-      url: "https://images.uniapply.com/uploads/college/image/500/2186/Medical_room_UA_210909_112215.JPG",
-      title: "Medical Room / Infirmary",
-      category: "Health Care"
-    },
-    {
-      url: "https://images.uniapply.com/uploads/college/image/500/2186/Activity_room_UA_210909_112055.jpg",
-      title: "Activity & Play Room",
-      category: "Early Years"
-    },
-    {
-      url: "https://images.uniapply.com/uploads/college/image/500/2186/Classroom_1_UA_210909_112131.jpg",
-      title: "Smart Classroom",
-      category: "Academics"
-    },
-    {
-      url: "https://images.uniapply.com/uploads/college/image/500/2186/Library_UA_210909_112346.jpg",
-      title: "Library & Reading Corner",
-      category: "Learning Hub"
-    },
-    {
-      url: org.bannerImage || "https://images.uniapply.com/uploads/college/image/500/2186/Building_UA_210909_112120.JPG",
-      title: "Main Campus Building",
-      category: "Infrastructure"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1576671081837-49000212a370?auto=format&fit=crop&w=600&q=80",
-      title: "Science & Innovation Lab",
-      category: "STEM Labs"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80",
-      title: "Robotics & AI Studio",
-      category: "Tech Suite"
-    },
-    {
-      url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80",
-      title: "Sports Arena & Gym",
-      category: "Fitness"
-    }
-  ];
+  const galleryPhotos = (org as any).galleryPhotos && (org as any).galleryPhotos.length > 0
+    ? (org as any).galleryPhotos
+    : [
+        {
+          url: "https://images.uniapply.com/uploads/college/image/500/2186/Medical_room_UA_210909_112215.JPG",
+          title: "Medical Room / Infirmary",
+          category: "Health Care"
+        },
+        {
+          url: "https://images.uniapply.com/uploads/college/image/500/2186/Activity_room_UA_210909_112055.jpg",
+          title: "Activity & Play Room",
+          category: "Early Years"
+        },
+        {
+          url: "https://images.uniapply.com/uploads/college/image/500/2186/Classroom_1_UA_210909_112131.jpg",
+          title: "Smart Classroom",
+          category: "Academics"
+        },
+        {
+          url: "https://images.uniapply.com/uploads/college/image/500/2186/Library_UA_210909_112346.jpg",
+          title: "Library & Reading Corner",
+          category: "Learning Hub"
+        },
+        {
+          url: org.bannerImage || "https://images.uniapply.com/uploads/college/image/500/2186/Building_UA_210909_112120.JPG",
+          title: "Main Campus Building",
+          category: "Infrastructure"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1576671081837-49000212a370?auto=format&fit=crop&w=600&q=80",
+          title: "Science & Innovation Lab",
+          category: "STEM Labs"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80",
+          title: "Robotics & AI Studio",
+          category: "Tech Suite"
+        },
+        {
+          url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80",
+          title: "Sports Arena & Gym",
+          category: "Fitness"
+        }
+      ];
 
   return (
     <PageTransition>
@@ -421,13 +433,13 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                         <strong>Board:</strong> {org.board || 'IB (International Baccalaureate)'}
                       </span>
                       <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200 font-semibold">
-                        <strong>UDISE Code:</strong> 07090300124
+                        <strong>UDISE Code:</strong> {(org as any).udiseCode || '07090300124'}
                       </span>
                       <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200">
                         <strong>Format:</strong> Day School (Co-Ed)
                       </span>
                       <span className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200">
-                        <strong>Session:</strong> 2027-2028 Admissions Open
+                        <strong>Session:</strong> {(org as any).admissionStatus ? '2026-2027 ' + (org as any).admissionStatus : '2027-2028 Admissions Open'}
                       </span>
                     </div>
                   </div>
@@ -675,17 +687,16 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                 <p className="font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-2">From Principal's Desk</p>
                 <div className="flex items-center gap-2.5 mb-2">
                   <img
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80"
-                    alt="Principal"
+                    src={(org as any).principalPhoto || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80"} alt="Principal"
                     className="w-10 h-10 rounded-full object-cover border border-rose-400"
                   />
                   <div>
-                    <p className="font-bold text-slate-800">Dr. Sunita Kapoor</p>
-                    <p className="text-[10px] text-slate-400 font-medium">Principal (Ph.D, M.Ed)</p>
+                    <p className="font-bold text-slate-800">{(org as any).principalName || 'Dr. Sunita Kapoor'}</p>
+   <p className="text-[10px] text-slate-400 font-medium">{(org as any).principalDesignation || 'Principal (Ph.D, M.Ed)'}</p>
                   </div>
                 </div>
                 <p className="text-slate-600 italic leading-relaxed text-[11px] border-l-2 border-rose-500 pl-2">
-                  "We inspire holistic global education by instilling critical inquiries, creativity, and empathy in every learner."
+                  "{(org as any).principalMessage || 'We inspire holistic global education by instilling critical inquiries, creativity, and empathy in every learner.'}"
                 </p>
               </div>
 
@@ -730,11 +741,11 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                   </div>
                   <div className="p-3.5 bg-slate-50 border rounded-xl">
                     <span className="text-slate-400 block font-medium">Campus Area</span>
-                    <span className="text-sm font-bold text-slate-900">5.0 Acres (Urban)</span>
+                    <span className="text-sm font-bold text-slate-900">{(org as any).campusAcreage || '5.0 Acres (Urban)'}</span>
                   </div>
                   <div className="p-3.5 bg-slate-50 border rounded-xl">
                     <span className="text-slate-400 block font-medium">Student-Faculty Ratio</span>
-                    <span className="text-sm font-bold text-slate-900">12 : 1 (Delhi Avg: 22:1)</span>
+                    <span className="text-sm font-bold text-slate-900">{(org as any).studentFacultyRatio || '12 : 1'} (Delhi Avg: 22:1)</span>
                   </div>
                 </div>
               </section>
@@ -901,15 +912,15 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                   <div className="p-3.5 bg-slate-50 border rounded-xl">
                     <span className="text-slate-400 block font-medium">Registration Start Date</span>
-                    <span className="text-sm font-bold text-slate-900">15 November 2026</span>
+                    <span className="text-sm font-bold text-slate-900">{(org as any).admissionFormStartDate || '15 November 2026'}</span>
                   </div>
                   <div className="p-3.5 bg-slate-50 border rounded-xl">
                     <span className="text-slate-400 block font-medium">Registration Last Date</span>
-                    <span className="text-sm font-bold text-slate-900">31 January 2027</span>
+                    <span className="text-sm font-bold text-slate-900">{(org as any).admissionFormEndDate || '31 January 2027'}</span>
                   </div>
                   <div className="p-3.5 bg-slate-50 border rounded-xl">
                     <span className="text-slate-400 block font-medium">Merit List Announcement</span>
-                    <span className="text-sm font-bold text-slate-900">15 February 2027</span>
+                    <span className="text-sm font-bold text-slate-900">{(org as any).meritListDate || '15 February 2027'}</span>
                   </div>
                 </div>
               </section>

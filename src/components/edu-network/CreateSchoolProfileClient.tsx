@@ -394,40 +394,19 @@ export default function CreateSchoolProfileClient() {
     { id: 'sec-contacts', label: '9. Department Emails & Map', icon: Mail },
   ];
 
-  // Construct organization object for 100% exact PremiumSchoolProfileClient preview
+  // Construct organization object for 100% exact PremiumSchoolProfileClient preview with all live form fields
   const primaryPublicContact = form.contactChannels.find(c => c.isPublic) || form.contactChannels[0];
-  const exactPreviewOrg: OrganizationItem & { shortName?: string } = {
+  const exactPreviewOrg: any = {
+    ...form,
     id: 'preview-institution-live',
-    name: form.name,
-    shortName: form.shortName,
-    type: form.type,
-    affiliation: form.affiliation,
-    city: form.city,
-    state: form.state,
-    pincode: form.pincode,
-    address: form.address,
-    locality: form.locality,
     email: primaryPublicContact?.email || 'admissions@institution.edu.in',
     phone: primaryPublicContact?.phone || '+91 11 4987 6543',
-    website: form.website,
     verified: true,
     rating: 5.0,
     reviews: 4100,
     stemLabsCount: form.selectedLabs.length,
-    studentStrength: form.studentStrength,
-    logo: form.logo,
-    bannerImage: form.bannerImage,
-    description: form.description,
-    openJobsCount: 1,
-    established: form.established,
     facilities: form.facilitiesChips.split(',').map(s => s.trim()),
-    classesOffered: form.classesOffered,
-    monthlyFees: form.monthlyFees,
-    monthlyFeesNum: form.monthlyFeesNum,
-    board: form.board,
-    studentFacultyRatio: form.studentFacultyRatio,
-    admissionStatus: form.admissionStatus,
-    udiseCode: form.udiseCode,
+    openJobsCount: 1,
     isFeatured: true,
   };
 

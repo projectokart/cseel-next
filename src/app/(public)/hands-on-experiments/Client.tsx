@@ -133,20 +133,35 @@ const Simulations = () => {
   const dragCurrentY = useRef<number>(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [dbExperiments, setDbExperiments] = useState<any[]>([]);
 
-  const allExperiments = useMemo(() => {
-    return ALL_EXPERIMENTS.map((e) => ({
-      id: e.id,
-      slug: e.slug,
-      title: e.title,
-      subject: e.subject,
-      class: e.class,
-      difficulty: e.difficulty,
-      thumbnail_url: e.thumbnail_url,
-      created_at: "2026-01-01",
-      popularity: e.views || 80,
-    }));
+  useEffect(() => {
+    async function loadFromSupabase() {
+      try {
+        const { data, error } = await supabase.from('experiments').select('*');
+        if (!error && data) {
+          setDbExperiments(data.map((e: any) => ({
+            id: e.id,
+            slug: e.slug || e.id,
+            title: e.title,
+            subject: e.subject || 'General Science',
+            class: e.class || 'High School',
+            difficulty: e.difficulty || 'Intermediate',
+            thumbnail_url: e.thumbnail_url,
+            created_at: e.created_at || '2026-01-01',
+            popularity: e.views || e.popularity || 80,
+          })));
+        } else {
+          setDbExperiments([]);
+        }
+      } catch (err) {
+        setDbExperiments([]);
+      }
+    }
+    loadFromSupabase();
   }, []);
+
+  const allExperiments = dbExperiments;
 
   const filtered = useMemo(() => {
     let result = allExperiments.filter((sim) => {

@@ -36,17 +36,6 @@ type Product = {
 };
 type CartItem = Product & { qty: number };
 
-const FALLBACK: any[] = [
-  { id:"m1", name:"Basic Chemistry Kit", description:"Complete chemistry lab kit for Class 9-12. Includes beakers, test tubes, chemicals, and safety equipment.", category:"Chemistry", price:1299, original_price:1599, rating:4.8, reviews:234, stock:50, image_url:"https://img.freepik.com/premium-photo/chemistryfilled-beakers-beakers-with-colorful-chemical-generative-ai_722401-1517.jpg", tag:"Bestseller", includes:["20x Test Tubes","5x Beakers","Safety Goggles","Chemicals Set","Lab Manual"] },
-  { id:"m2", name:"Physics Mechanics Kit", description:"Comprehensive physics mechanics kit covering Newton's laws, pendulum, and inclined plane experiments.", category:"Physics", price:2199, original_price:2799, rating:4.7, reviews:187, stock:30, image_url:"https://img.freepik.com/premium-photo/physics-lab-background-with-pendulums-circuits_641503-120945.jpg", tag:"New", includes:["Pendulum Set","Inclined Plane","Weights & Pulleys","Spring Scale","Activity Guide"] },
-  { id:"m3", name:"Biology Microscope Kit", description:"Professional student microscope with 40x-1000x magnification. Includes 25 prepared slides.", category:"Biology", price:3499, original_price:4299, rating:4.9, reviews:312, stock:20, image_url:"https://png.pngtree.com/thumb_back/fw800/background/20241007/pngtree-biology-laboratory-nature-and-science-plants-with-biochemistry-structure-on-green-image_16319180.jpg", tag:"Bestseller", includes:["Student Microscope 1000x","25 Prepared Slides","Blank Slides","Cover Slips","Immersion Oil"] },
-  { id:"m4", name:"Electronics Circuit Kit", description:"Learn basic electronics with this complete breadboard circuit kit. Build 50+ circuits.", category:"Electronics", price:1799, original_price:2199, rating:4.6, reviews:156, stock:45, image_url:"https://img.freepik.com/premium-photo/technology-abstract-circuit-board-texture-background-hightech-futuristic-circuit-board-banner-wallpaper_1029473-136066.jpg", tag:"", includes:["Breadboard","Component Kit","Digital Multimeter","Power Supply","Project Manual"] },
-  { id:"m5", name:"Robotics Starter Kit", description:"Build and program your first robot! Complete Arduino-based robotics kit for beginners.", category:"Robotics", price:4999, original_price:6499, rating:4.8, reviews:98, stock:15, image_url:"https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf944f3df098f183b92727_Lab-Scientists-Beakers-edit.avif", tag:"Popular", includes:["Arduino UNO","Robot Chassis","Motor Driver","Sensors Kit","USB Cable","Beginner Guide"] },
-  { id:"m6", name:"Environmental Science Kit", description:"Test soil, water, and air quality with this comprehensive environmental science kit.", category:"Environment", price:999, original_price:1299, rating:4.5, reviews:143, stock:60, image_url:"https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf9f93d712be6d135ac575_Student-Remote-Room-Labster-reverse-edit.avif", tag:"", includes:["pH Testing Kit","Soil Test Strips","Water Test Kit","Air Quality Monitor","Data Recording Book"] },
-  { id:"m7", name:"Math Manipulatives Set", description:"Visual math learning tools including fraction bars, geometry shapes, and number lines.", category:"Mathematics", price:799, original_price:999, rating:4.4, reviews:89, stock:80, image_url:"https://img.freepik.com/premium-photo/physics-lab-background-with-pendulums-circuits_641503-120945.jpg", tag:"", includes:["Fraction Bars Set","Geometry Shapes","Number Line","Algebra Tiles","Teacher Guide"] },
-  { id:"m8", name:"Advanced Chemistry Lab Set", description:"Professional-grade chemistry lab set for higher education. Includes titration, chromatography equipment.", category:"Chemistry", price:5999, original_price:7499, rating:4.9, reviews:67, stock:10, image_url:"https://img.freepik.com/premium-photo/chemistryfilled-beakers-beakers-with-colorful-chemical-generative-ai_722401-1517.jpg", tag:"Pro", includes:["Burette & Stand","Chromatography Setup","Electrochemistry Kit","Chemical Reagents","Safety Equipment"] },
-];
-
 const fmt = (n: number) => "₹" + n.toLocaleString("en-IN");
 const PAGE_SIZE = 24;
 const discount = (p: number, op: number) => Math.round((1 - p / op) * 100);
@@ -64,21 +53,49 @@ const SORT_OPTIONS = [
   { label: "Price: High to Low", value: "price-desc" },
 ];
 
-import { ALL_MATERIALS } from "@/lib/materialsData";
-
 const Materials = () => {
   const router = useRouter();
   const { addItem, isInCart, items: cartItems, totalItems, totalPrice, removeItem, updateQty: updateCartQty } = useCart();
-  const [products, setProducts] = useState<Product[]>(() =>
-    ALL_MATERIALS.map((m) => ({
-      ...m,
-      scientific_name: m.name,
-      original_price: m.original_price,
-      stock: m.stock,
-      reviews: m.reviews,
-    }))
-  );
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function loadMaterials() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase.from('materials').select('*');
+        if (!error && data) {
+          setProducts(data.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            scientific_name: m.name,
+            common_names: [],
+            specification: m.description,
+            description: m.description,
+            category: m.category || 'Glassware',
+            price: m.price || 0,
+            original_price: m.original_price || m.price || 0,
+            rating: m.rating || 5,
+            reviews: m.reviews || 0,
+            current_stock: m.stock || 0,
+            stock: m.stock || 0,
+            image_url: m.image_url,
+            warning: null,
+            safety: null,
+            tag: m.tag,
+            includes: m.includes || [],
+          })));
+        } else {
+          setProducts([]);
+        }
+      } catch (err) {
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadMaterials();
+  }, []);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [orderOpen, setOrderOpen] = useState(false);

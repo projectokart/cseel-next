@@ -248,7 +248,7 @@ export class SupabaseSchoolService {
    */
   public async getSchoolByIdOrSlug(idOrSlug: string): Promise<OrganizationItem | null> {
     if (!this.client) {
-      return ALL_ORGANIZATIONS.find(o => o.id === idOrSlug || o.slug === idOrSlug) || ALL_ORGANIZATIONS[0];
+      return ALL_ORGANIZATIONS.find(o => o.id === idOrSlug || o.slug === idOrSlug) || null;
     }
 
     try {
@@ -259,12 +259,12 @@ export class SupabaseSchoolService {
         .single();
 
       if (error || !data) {
-        return ALL_ORGANIZATIONS.find(o => o.id === idOrSlug || o.slug === idOrSlug) || ALL_ORGANIZATIONS[0];
+        return ALL_ORGANIZATIONS.find(o => o.id === idOrSlug || o.slug === idOrSlug) || null;
       }
 
       return this.mapDbToOrg(data);
     } catch {
-      return ALL_ORGANIZATIONS.find(o => o.id === idOrSlug || o.slug === idOrSlug) || ALL_ORGANIZATIONS[0];
+      return ALL_ORGANIZATIONS.find(o => o.id === idOrSlug || o.slug === idOrSlug) || null;
     }
   }
 

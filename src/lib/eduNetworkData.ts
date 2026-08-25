@@ -30,6 +30,7 @@ export interface OrganizationItem {
   board?: "CBSE" | "ICSE" | "IB" | "State Board" | "UGC/AICTE";
   studentFacultyRatio?: string;
   admissionStatus?: "On Going" | "Closing Soon" | "Open for 2026-27" | "Merit Based";
+  udiseCode?: string;
   isFeatured?: boolean;
   likesCount?: number;
 }

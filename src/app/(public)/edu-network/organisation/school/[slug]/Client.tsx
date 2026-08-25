@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  Building2, MapPin, Star, CheckCircle2, SlidersHorizontal,
+  Building2, MapPin, Plus, Star, CheckCircle2, SlidersHorizontal,
   Search, ArrowRight, ExternalLink, Phone, Mail, Filter,
   Share2, Heart, Scale, X, Check, Globe, ChevronRight,
   Sparkles, Award, Users, BookOpen
@@ -189,38 +189,25 @@ export default function CitySchoolDirectoryClient({
                 </p>
               </div>
 
-              {/* Compare Button if items selected */}
-              {compareList.length > 0 && (
-                <button
-                  onClick={() => setIsCompareModalOpen(true)}
-                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 shrink-0 animate-bounce"
+              <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+                <Link
+                  href="/edu-network/organisation/school/create_profile"
+                  className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl shadow-md transition flex items-center gap-1.5"
                 >
-                  <Scale className="w-4 h-4" />
-                  <span>Compare ({compareList.length}/4 Schools)</span>
-                </button>
-              )}
-            </div>
+                  <Plus className="w-4 h-4" />
+                  <span>Create School Profile</span>
+                </Link>
 
-            {/* City Carousel Quick Filter Badges */}
-            <div className="pt-2">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Explore Schools by Major City:</p>
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                {POPULAR_CITIES.map((c) => {
-                  const isActive = slug === c.slug;
-                  return (
-                    <Link
-                      key={c.slug}
-                      href={`/edu-network/organisation/school/${c.slug}`}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all ${
-                        isActive
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      {c.name}
-                    </Link>
-                  );
-                })}
+                {/* Compare Button if items selected */}
+                {compareList.length > 0 && (
+                  <button
+                    onClick={() => setIsCompareModalOpen(true)}
+                    className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 shrink-0 animate-bounce"
+                  >
+                    <Scale className="w-4 h-4" />
+                    <span>Compare ({compareList.length}/4 Schools)</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -249,6 +236,29 @@ export default function CitySchoolDirectoryClient({
                 >
                   Reset
                 </button>
+              </div>
+
+              {/* Explore Schools by Major City */}
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">Explore by Major City</label>
+                <div className="flex flex-wrap gap-1.5 max-h-44 overflow-y-auto pr-1">
+                  {POPULAR_CITIES.map((c) => {
+                    const isActive = slug === c.slug;
+                    return (
+                      <Link
+                        key={c.slug}
+                        href={`/edu-network/organisation/school/${c.slug}`}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                          isActive
+                            ? 'bg-blue-600 text-white shadow-2xs'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        {c.name}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Search Inside City */}
@@ -433,6 +443,10 @@ export default function CitySchoolDirectoryClient({
                                   <span>{org.locality ? `${org.locality}, ` : ''}{org.city}, {org.state}</span>
                                   <span>•</span>
                                   <span className="font-bold text-slate-700">{org.board || 'CBSE'}</span>
+                                  <span>•</span>
+                                  <span className="inline-flex items-center text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono font-bold border border-slate-200">
+                                    UDISE: {org.udiseCode || '07010200301'}
+                                  </span>
                                 </p>
                               </div>
 

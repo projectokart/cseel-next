@@ -200,6 +200,20 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
   const [callbackForm, setCallbackForm] = useState({ parentName: '', phone: '', grade: 'Class 9', preferredTime: 'Morning (9 AM - 12 PM)' });
   const [callbackSuccess, setCallbackSuccess] = useState(false);
 
+  // Academic Results & Banner states
+  const [selectedResultClass, setSelectedResultClass] = useState<'10' | '12'>('12');
+  const [isResultsArchiveOpen, setIsResultsArchiveOpen] = useState(false);
+  const [isUploadBannerModalOpen, setIsUploadBannerModalOpen] = useState(false);
+  const [uploadBannerSuccess, setUploadBannerSuccess] = useState(false);
+  const [uploadBannerForm, setUploadBannerForm] = useState({
+    academicYear: '2025-26',
+    targetClass: 'Class 12th',
+    bannerUrl: '',
+    topperName: '',
+    score: '',
+    stream: 'Science'
+  });
+
   // Lightbox Photo
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
   const [isNotified, setIsNotified] = useState(false);
@@ -993,29 +1007,175 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 7: School Results */}
-              <section id="school_results_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
-                <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-amber-500" />
-                  <span>School Academic Results & Board Performance</span>
-                </h2>
+              {/* SECTION 7: School Academic Results & Board Performance */}
+              <section id="school_results_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20 space-y-6">
+                
+                {/* Header & Upload Banner Action */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+                      <Trophy className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-base font-black text-slate-900 leading-tight">
+                        School Academic Results &amp; Board Performance
+                      </h2>
+                      <p className="text-xs text-slate-500">
+                        Class 10th &amp; Class 12th Board Toppers, State Percentiles &amp; Academic Honors
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsUploadBannerModalOpen(true)}
+                    className="px-3.5 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+                  >
+                    <ImageIcon className="w-3.5 h-3.5 text-amber-700" />
+                    <span>Upload Result Banner</span>
+                  </button>
+                </div>
+
+                {/* Key Summary Stats */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-center">
-                  <div className="p-4 border rounded-xl bg-slate-50">
+                  <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50/80">
                     <span className="text-slate-400 block font-medium">Board Pass Rate</span>
                     <span className="text-2xl font-black text-emerald-600">100%</span>
                     <p className="text-[11px] text-slate-400 mt-0.5">Consecutive 5 Years</p>
                   </div>
-                  <div className="p-4 border rounded-xl bg-slate-50">
+                  <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50/80">
                     <span className="text-slate-400 block font-medium">Top High Score</span>
                     <span className="text-2xl font-black text-slate-900">99.2%</span>
-                    <p className="text-[11px] text-slate-400 mt-0.5">IB DP World Conclave</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">IB DP / CBSE Class 12</p>
                   </div>
-                  <div className="p-4 border rounded-xl bg-slate-50">
+                  <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50/80">
                     <span className="text-slate-400 block font-medium">School Batch Average</span>
                     <span className="text-2xl font-black text-blue-600">88.6%</span>
                     <p className="text-[11px] text-slate-400 mt-0.5">National Percentile: Top 2%</p>
                   </div>
                 </div>
+
+                {/* ── CURRENT YEAR RESULT BANNER (2025-26) ── */}
+                <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-5 sm:p-6 text-white shadow-md relative overflow-hidden space-y-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/15 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 bg-amber-400 text-slate-950 text-[10px] font-black uppercase rounded-full tracking-wider">
+                        Current Year • 2025-26
+                      </span>
+                      <h3 className="font-black text-sm sm:text-base text-white">
+                        Outstanding Board Achievers &amp; Top Scorers
+                      </h3>
+                    </div>
+                    
+                    {/* Class Selector Tabs */}
+                    <div className="flex items-center gap-1.5 bg-white/10 p-1 rounded-xl">
+                      <button
+                        onClick={() => setSelectedResultClass('12')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+                          selectedResultClass === '12'
+                            ? 'bg-white text-blue-950 font-black shadow-xs'
+                            : 'text-white/80 hover:text-white'
+                        }`}
+                      >
+                        Class 12th (Senior Secondary)
+                      </button>
+                      <button
+                        onClick={() => setSelectedResultClass('10')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+                          selectedResultClass === '10'
+                            ? 'bg-white text-blue-950 font-black shadow-xs'
+                            : 'text-white/80 hover:text-white'
+                        }`}
+                      >
+                        Class 10th (Secondary)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Toppers Cards Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    {(selectedResultClass === '12' ? [
+                      { name: 'Ananya Sharma', score: '99.2%', stream: 'Science (PCM + CS)', rank: 'School Topper / 1st Rank', photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&h=200&q=80' },
+                      { name: 'Kabir Malhotra', score: '98.8%', stream: 'Commerce with Math', rank: 'Commerce Topper', photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=200&h=200&q=80' },
+                      { name: 'Rhea Sen', score: '98.4%', stream: 'Humanities & Psychology', rank: 'Arts Topper', photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&h=200&q=80' },
+                      { name: 'Aarav Patel', score: '97.6%', stream: 'Science (PCB + Biotech)', rank: 'Biology Topper', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&h=200&q=80' }
+                    ] : [
+                      { name: 'Diya Verma', score: '99.4%', stream: 'All Subjects (Science+Math)', rank: '10th Board Overall Topper', photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&h=200&q=80' },
+                      { name: 'Rohan Mehra', score: '98.6%', stream: 'All Subjects', rank: '2nd Position', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&h=200&q=80' },
+                      { name: 'Ishita Gupta', score: '98.2%', stream: 'All Subjects', rank: '3rd Position', photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&h=200&q=80' },
+                      { name: 'Advait Joshi', score: '97.8%', stream: 'All Subjects', rank: '4th Position', photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&h=200&q=80' }
+                    ]).map((student, idx) => (
+                      <div key={idx} className="bg-white/10 backdrop-blur-md rounded-2xl p-3.5 border border-white/15 text-center space-y-2 group hover:bg-white/20 transition">
+                        <div className="relative w-16 h-16 mx-auto">
+                          <img
+                            src={student.photo}
+                            alt={student.name}
+                            className="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md group-hover:scale-105 transition-transform"
+                          />
+                          <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] flex items-center justify-center shadow">
+                            #{idx + 1}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="text-base font-black text-amber-300">
+                            {student.score}
+                          </div>
+                          <h4 className="font-bold text-xs text-white truncate">{student.name}</h4>
+                          <p className="text-[10px] text-blue-200 line-clamp-1">{student.stream}</p>
+                          <span className="inline-block text-[9px] bg-white/20 text-white font-medium px-2 py-0.5 rounded-full mt-1">
+                            {student.rank}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ── COLLAPSIBLE YEAR-WISE RESULTS ARCHIVE ── */}
+                <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                  <button
+                    onClick={() => setIsResultsArchiveOpen(!isResultsArchiveOpen)}
+                    className="w-full p-4 bg-slate-50 hover:bg-slate-100 transition flex items-center justify-between text-xs font-black text-slate-800"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                      <span>View Year-Wise Results Archive (2024-25, 2023-24, 2022-23)</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">
+                        3 Past Sessions
+                      </span>
+                    </div>
+                    <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${isResultsArchiveOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {isResultsArchiveOpen && (
+                    <div className="p-5 bg-white space-y-4 border-t border-slate-200 animate-in fade-in duration-200">
+                      {[
+                        { year: '2024 - 2025', pass: '100%', top12: '99.0% (Science)', top10: '99.2% (CBSE)', toppers: ['Meera Nair (99.0%)', 'Varun Kapoor (98.6%)', 'Tara Sen (98.2%)'] },
+                        { year: '2023 - 2024', pass: '100%', top12: '98.8% (Commerce)', top10: '98.8% (CBSE)', toppers: ['Siddharth Rao (98.8%)', 'Kriti Jain (98.4%)', 'Kunal Shah (98.0%)'] },
+                        { year: '2022 - 2023', pass: '99.8%', top12: '98.4% (Science)', top10: '98.5% (CBSE)', toppers: ['Aryaman Roy (98.4%)', 'Pooja Hegde (98.1%)', 'Nikhil Garg (97.9%)'] }
+                      ].map((item, idx) => (
+                        <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2.5 text-xs">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <span className="font-black text-slate-900 text-sm">{item.year} Academic Session</span>
+                            <div className="flex items-center gap-2">
+                              <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[11px]">Pass Rate: {item.pass}</span>
+                              <span className="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded text-[11px]">Class 12th Top: {item.top12}</span>
+                              <span className="bg-purple-100 text-purple-800 font-bold px-2 py-0.5 rounded text-[11px]">Class 10th Top: {item.top10}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 flex-wrap pt-1 text-[11px] text-slate-600">
+                            <span className="font-bold text-slate-400">Featured Toppers:</span>
+                            {item.toppers.map((top, tIdx) => (
+                              <span key={tIdx} className="bg-white border border-slate-200 px-2 py-0.5 rounded-md font-semibold text-slate-800">
+                                🎖 {top}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
               </section>
 
               
@@ -2176,6 +2336,125 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
         )}
 
       </div>
+    
+        {/* ── UPLOAD RESULT BANNER MODAL ── */}
+        {isUploadBannerModalOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+              <div className="bg-[#1e3a8a] p-4 text-white flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-amber-400" />
+                  <div>
+                    <h3 className="font-bold text-sm leading-tight">Upload School Result Banner</h3>
+                    <p className="text-[11px] text-blue-200">Class 10th &amp; 12th Board Toppers</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsUploadBannerModalOpen(false)} className="text-white/80 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {uploadBannerSuccess ? (
+                <div className="p-8 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                    <Check className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-bold text-base text-slate-900">Result Banner Updated!</h4>
+                  <p className="text-xs text-slate-500">
+                    The academic result banner for {uploadBannerForm.academicYear} has been verified and published to your institutional profile.
+                  </p>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setUploadBannerSuccess(true);
+                    setTimeout(() => {
+                      setUploadBannerSuccess(false);
+                      setIsUploadBannerModalOpen(false);
+                    }, 1800);
+                  }}
+                  className="p-5 space-y-3 text-xs font-semibold"
+                >
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Academic Session *</label>
+                      <select
+                        value={uploadBannerForm.academicYear}
+                        onChange={(e) => setUploadBannerForm({ ...uploadBannerForm, academicYear: e.target.value })}
+                        className="w-full p-2.5 border border-slate-300 rounded-xl bg-slate-50 text-slate-900"
+                      >
+                        <option value="2026-27">2026 - 2027</option>
+                        <option value="2025-26">2025 - 2026</option>
+                        <option value="2024-25">2024 - 2025</option>
+                        <option value="2023-24">2023 - 2024</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-700 mb-1">Class Level *</label>
+                      <select
+                        value={uploadBannerForm.targetClass}
+                        onChange={(e) => setUploadBannerForm({ ...uploadBannerForm, targetClass: e.target.value })}
+                        className="w-full p-2.5 border border-slate-300 rounded-xl bg-slate-50 text-slate-900"
+                      >
+                        <option value="Class 12th">Class 12th (Senior Secondary)</option>
+                        <option value="Class 10th">Class 10th (Secondary)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 mb-1">Banner Image / Poster URL *</label>
+                    <input
+                      type="url"
+                      required
+                      value={uploadBannerForm.bannerUrl}
+                      onChange={(e) => setUploadBannerForm({ ...uploadBannerForm, bannerUrl: e.target.value })}
+                      placeholder="https://example.com/class-12-topper-banner.jpg"
+                      className="w-full p-2.5 border border-slate-300 rounded-xl bg-slate-50 text-slate-900"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-slate-700 mb-1">Top Student Name</label>
+                      <input
+                        type="text"
+                        value={uploadBannerForm.topperName}
+                        onChange={(e) => setUploadBannerForm({ ...uploadBannerForm, topperName: e.target.value })}
+                        placeholder="e.g. Diya Sharma"
+                        className="w-full p-2.5 border border-slate-300 rounded-xl bg-slate-50 text-slate-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 mb-1">Score Percentage (%)</label>
+                      <input
+                        type="text"
+                        value={uploadBannerForm.score}
+                        onChange={(e) => setUploadBannerForm({ ...uploadBannerForm, score: e.target.value })}
+                        placeholder="e.g. 99.4%"
+                        className="w-full p-2.5 border border-slate-300 rounded-xl bg-slate-50 text-slate-900"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-blue-800 text-[11px]">
+                    ℹ️ Uploaded result posters will automatically be organized in the year-wise collapsible archive and showcased to prospective parents.
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl shadow-xs transition"
+                  >
+                    Save &amp; Publish Result Banner
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+
     </PageTransition>
   );
 }

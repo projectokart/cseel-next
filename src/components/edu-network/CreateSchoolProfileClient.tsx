@@ -14,10 +14,34 @@ import {
   Scale, Bell, Bookmark, Bot, Video, UserCheck, Key, Copy, CheckCheck,
   Trophy, GraduationCap, ArrowRight, Save, EyeOff, ShieldAlert,
   Activity, Radio, Compass, Stethoscope, Layers, Bus, Compass as MapIcon,
-  LayoutGrid, FileCode2, SlidersHorizontal, CheckCircle, Info
+  LayoutGrid, FileCode2, SlidersHorizontal, CheckCircle, Info, Upload,
+  Trash2, Eye as EyeIcon, Unlock
 } from 'lucide-react';
 import PageTransition from '@/components/shared/PageTransition';
 import { ALL_ORGANIZATIONS, OrganizationItem } from '@/lib/eduNetworkData';
+
+interface ContactChannel {
+  id: string;
+  type: string;
+  email: string;
+  phone: string;
+  isPublic: boolean;
+  description: string;
+}
+
+interface GalleryPhotoItem {
+  id: string;
+  title: string;
+  category: string;
+  url: string;
+}
+
+interface VideoItem {
+  id: string;
+  title: string;
+  url: string;
+  description: string;
+}
 
 export default function CreateSchoolProfileClient() {
   const router = useRouter();
@@ -31,9 +55,7 @@ export default function CreateSchoolProfileClient() {
   const [newSchoolId, setNewSchoolId] = useState('');
 
   // Preview Interactive States
-  const [previewResultYear, setPreviewResultYear] = useState<'2025-26' | '2024-25'>('2025-26');
   const [previewResultClass, setPreviewResultClass] = useState<'12' | '10'>('12');
-  const [previewSelectedClassFee, setPreviewSelectedClassFee] = useState('Class 9');
 
   // ── FORM STATE: ALL 9 SECTIONS ────────────────────────────────────────────
   const [form, setForm] = useState({
@@ -141,18 +163,58 @@ export default function CreateSchoolProfileClient() {
     // Option B: Official Result Graphic Banners (Year-wise)
     banner12th_2026: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&h=600&q=80',
     banner10th_2026: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&h=600&q=80',
-    banner12th_2025: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1200&h=600&q=80',
-    banner10th_2025: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&h=600&q=80',
 
-    // Section 8: Gallery & Virtual Video Tour
-    virtualTourEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    // Section 8: Gallery (Max 10 Photos with Direct File Upload / URL)
     galleryPhotos: [
-      { title: 'Interactive Science Experiential Lab', category: 'STEM Lab', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80' },
-      { title: 'Central Research & Digital Library', category: 'Library', url: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80' },
-      { title: 'Olympic Sports Arena & Football Turf', category: 'Sports', url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80' },
-      { title: 'Smart Interactive Classroom', category: 'Classroom', url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80' },
-      { title: 'Campus Medical & Wellness Infirmary', category: 'Medical', url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80' }
-    ],
+      { id: '1', title: 'Interactive Science Experiential Lab', category: 'STEM Lab', url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80' },
+      { id: '2', title: 'Central Research & Digital Library', category: 'Library', url: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80' },
+      { id: '3', title: 'Olympic Sports Arena & Football Turf', category: 'Sports', url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80' },
+      { id: '4', title: 'Smart Interactive Classroom', category: 'Classroom', url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80' },
+      { id: '5', title: 'Campus Medical & Wellness Infirmary', category: 'Medical', url: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80' }
+    ] as GalleryPhotoItem[],
+
+    // Section 8 (Videos): Max 3 Virtual Tours
+    videosList: [
+      { id: '1', title: '360° Virtual Campus Walkthrough Tour', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', description: 'Comprehensive aerial and interior walkthrough of our 12-acre campus.' },
+      { id: '2', title: 'STEM Live Labs & Innovation Practical Tour', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', description: 'Live student experiments in Robotics, ATL, and Science Experiential Lab.' },
+      { id: '3', title: 'Annual Academic & Sports Conclave Highlights', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', description: 'Annual day performances, athletic turf events, and award ceremony.' }
+    ] as VideoItem[],
+
+    // Section 9: Department Contacts & Emails (Public vs Private Toggles)
+    contactChannels: [
+      {
+        id: 'admissions',
+        type: 'Admissions & Help Desk',
+        email: 'admissions@institution.edu.in',
+        phone: '+91 11 4987 6543',
+        isPublic: true,
+        description: 'Parent admission queries, registration fee, and campus walk-through appointments'
+      },
+      {
+        id: 'careers',
+        type: 'Careers & Faculty Jobs (HR Desk)',
+        email: 'careers@institution.edu.in',
+        phone: '+91 98765 43210',
+        isPublic: true,
+        description: 'Teacher recruitment, CV submissions, and laboratory faculty hiring'
+      },
+      {
+        id: 'principal',
+        type: 'Principal Direct Office',
+        email: 'principal@institution.edu.in',
+        phone: '+91 11 4987 6500',
+        isPublic: false,
+        description: 'Direct confidential leadership communication & academic escalation'
+      },
+      {
+        id: 'admin',
+        type: 'General Admin & Transport Helpline',
+        email: 'info@institution.edu.in',
+        phone: '+91 11 4987 6501',
+        isPublic: true,
+        description: 'School office, bus fleet route tracking, and student affairs'
+      }
+    ] as ContactChannel[],
 
     // Section 9: Address, Location & Google Maps
     locality: 'Sri Aurobindo Marg',
@@ -160,13 +222,12 @@ export default function CreateSchoolProfileClient() {
     state: 'Delhi',
     pincode: '110029',
     address: 'Sri Aurobindo Marg, Ansari Nagar, New Delhi, Delhi 110029',
-    phone: '+91 11 4987 6543 / +91 98765 43210',
-    email: 'admissions@institution.edu.in',
     website: 'https://www.institution.edu.in',
     transportRoutes: 'AC Bus Fleet covering 45+ routes across Delhi NCR with GPS Tracking, CCTV & Speed Governors',
     googleMapsEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.604473852084!2d77.1953247!3d28.5516047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce27038e2d469%3A0x89e248b6c4b22c07!2sSri%20Aurobindo%20Marg!5e0!3m2!1sen!2sin!4v1700000000000',
   });
 
+  // Handlers for dynamic lists
   const handleLabToggle = (lab: string) => {
     setForm(prev => ({
       ...prev,
@@ -206,12 +267,80 @@ export default function CreateSchoolProfileClient() {
     }));
   };
 
+  // Toggle Contact Channel Visibility (Public vs Private)
+  const toggleContactVisibility = (index: number) => {
+    setForm(prev => {
+      const updated = [...prev.contactChannels];
+      updated[index].isPublic = !updated[index].isPublic;
+      return { ...prev, contactChannels: updated };
+    });
+  };
+
+  const handleContactChange = (index: number, field: keyof ContactChannel, value: any) => {
+    setForm(prev => {
+      const updated = [...prev.contactChannels];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, contactChannels: updated };
+    });
+  };
+
+  // Direct Photo Upload Handler (FileReader)
+  const handlePhotoFileUpload = (e: React.ChangeEvent<HTMLInputElement>, photoIndex?: number) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64Url = uploadEvent.target?.result as string;
+      if (typeof photoIndex === 'number' && photoIndex < form.galleryPhotos.length) {
+        // Update existing photo
+        setForm(prev => {
+          const updated = [...prev.galleryPhotos];
+          updated[photoIndex].url = base64Url;
+          return { ...prev, galleryPhotos: updated };
+        });
+      } else {
+        // Add new photo (Max 10)
+        if (form.galleryPhotos.length >= 10) {
+          alert('Maximum 10 gallery photos allowed.');
+          return;
+        }
+        const newPhoto: GalleryPhotoItem = {
+          id: `photo-${Date.now()}`,
+          title: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+          category: 'Campus',
+          url: base64Url
+        };
+        setForm(prev => ({ ...prev, galleryPhotos: [...prev.galleryPhotos, newPhoto] }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeGalleryPhoto = (index: number) => {
+    setForm(prev => ({
+      ...prev,
+      galleryPhotos: prev.galleryPhotos.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleVideoChange = (index: number, field: keyof VideoItem, value: string) => {
+    setForm(prev => {
+      const updated = [...prev.videosList];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, videosList: updated };
+    });
+  };
+
   const handleFinalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'new-institution';
     const finalId = `org-${slug}-${Date.now().toString().slice(-4)}`;
+
+    const primaryPublicContact = form.contactChannels.find(c => c.isPublic) || form.contactChannels[0];
 
     const newOrg: OrganizationItem = {
       id: finalId,
@@ -223,8 +352,8 @@ export default function CreateSchoolProfileClient() {
       pincode: form.pincode,
       address: form.address,
       locality: form.locality,
-      email: form.email,
-      phone: form.phone,
+      email: primaryPublicContact?.email || 'admissions@institution.edu.in',
+      phone: primaryPublicContact?.phone || '+91 11 4987 6543',
       website: form.website,
       verified: true,
       rating: 4.9,
@@ -264,8 +393,8 @@ export default function CreateSchoolProfileClient() {
     { id: 'sec-stem', label: '5. STEM Labs', icon: Microscope },
     { id: 'sec-facilities', label: '6. Facilities Matrix', icon: Layers },
     { id: 'sec-results', label: '7. Results & Banners', icon: Trophy },
-    { id: 'sec-gallery', label: '8. Gallery & Video', icon: Camera },
-    { id: 'sec-address', label: '9. Address & Map', icon: MapPin },
+    { id: 'sec-gallery', label: '8. Gallery & 3 Videos', icon: Camera },
+    { id: 'sec-contacts', label: '9. Department Emails & Map', icon: Mail },
   ];
 
   return (
@@ -337,7 +466,7 @@ export default function CreateSchoolProfileClient() {
               </div>
               <h2 className="text-2xl font-black text-slate-900">School Profile Published!</h2>
               <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
-                <strong>{form.name}</strong> is now live with all 9 detail sections, verified UDISE code <code>{form.udiseCode}</code>, STEM Live Lab matrix, result banners, gallery, and map coordinates.
+                <strong>{form.name}</strong> is now live with all 9 detail sections, department contacts with public/private privacy controls, 10 gallery photos, and 3 video tours.
               </p>
               <div className="flex items-center justify-center gap-3 pt-2">
                 <Link
@@ -1064,7 +1193,7 @@ export default function CreateSchoolProfileClient() {
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                     <span className="font-bold text-xs text-slate-900 flex items-center gap-1.5">
                       <ImageIcon className="w-4 h-4 text-blue-600" />
-                      <span>Official Result Graphic Banners (Upload URL for 10th &amp; 12th)</span>
+                      <span>Official Result Graphic Banners (Upload for 10th &amp; 12th)</span>
                     </span>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold">
@@ -1161,58 +1290,222 @@ export default function CreateSchoolProfileClient() {
                   </div>
                 </section>
 
-                {/* 8. Gallery & Virtual Video Tour */}
-                <section id="sec-gallery" className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5 scroll-mt-20">
+                {/* 8. Campus Gallery (Direct File Upload / URL, Max 10) & 3 Videos */}
+                <section id="sec-gallery" className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-6 scroll-mt-20">
                   <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-                    <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
-                      <Camera className="w-4 h-4 text-sky-600" />
-                      <span>8. Campus Gallery &amp; Virtual Video Tour</span>
-                    </h2>
+                    <div>
+                      <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+                        <Camera className="w-4 h-4 text-sky-600" />
+                        <span>8. Campus Photo Gallery (Max 10) &amp; Virtual Tours (Max 3)</span>
+                      </h2>
+                      <p className="text-xs text-slate-500 mt-0.5">Upload photos directly from device or URL with custom text details.</p>
+                    </div>
                     <span className="text-[10px] bg-sky-50 text-sky-700 font-bold px-2.5 py-0.5 rounded-full border border-sky-200">
-                      Media Showcase
+                      Photos: {form.galleryPhotos.length}/10 • Videos: {form.videosList.length}/3
                     </span>
                   </div>
 
-                  <div className="space-y-3 text-xs font-semibold">
-                    <div>
-                      <label className="block text-slate-700 mb-1">360° Virtual Campus Tour (YouTube Embed URL)</label>
-                      <input
-                        type="url"
-                        value={form.virtualTourEmbedUrl}
-                        onChange={(e) => setForm({ ...form, virtualTourEmbedUrl: e.target.value })}
-                        className="w-full p-2.5 border rounded-xl bg-slate-50"
-                      />
+                  {/* Direct Photo Upload Drop Area */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-300 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <span className="font-black text-xs text-slate-900 block">Upload Campus Photos Directly</span>
+                        <p className="text-[11px] text-slate-500">Attach photos of smart classrooms, science labs, library, turf, and infirmary.</p>
+                      </div>
+
+                      <label className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer shrink-0">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>+ Upload Photo File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handlePhotoFileUpload(e)}
+                          className="hidden"
+                        />
+                      </label>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
+                    {/* Photos Grid with Editable Text Details */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
                       {form.galleryPhotos.map((photo, idx) => (
-                        <div key={idx} className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 space-y-1.5 p-2">
-                          <div className="h-24 rounded-xl overflow-hidden bg-slate-200">
+                        <div key={photo.id || idx} className="p-3 bg-white rounded-2xl border border-slate-200 space-y-2 shadow-2xs">
+                          <div className="h-32 rounded-xl overflow-hidden bg-slate-100 relative group">
                             <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => removeGalleryPhoto(idx)}
+                              className="absolute top-2 right-2 p-1.5 bg-rose-600/90 hover:bg-rose-700 text-white rounded-lg shadow opacity-90 transition"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
                           </div>
-                          <p className="text-[11px] font-bold text-slate-900 truncate">{photo.title}</p>
-                          <span className="inline-block text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-semibold">
-                            {photo.category}
-                          </span>
+
+                          <div className="space-y-1.5 text-xs font-semibold">
+                            <input
+                              type="text"
+                              value={photo.title}
+                              onChange={(e) => {
+                                const newPhotos = [...form.galleryPhotos];
+                                newPhotos[idx].title = e.target.value;
+                                setForm({ ...form, galleryPhotos: newPhotos });
+                              }}
+                              placeholder="Photo Description / Title"
+                              className="w-full p-1.5 border rounded-lg bg-slate-50 text-[11px]"
+                            />
+
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={photo.category}
+                                onChange={(e) => {
+                                  const newPhotos = [...form.galleryPhotos];
+                                  newPhotos[idx].category = e.target.value;
+                                  setForm({ ...form, galleryPhotos: newPhotos });
+                                }}
+                                className="w-full p-1.5 border rounded-lg bg-slate-50 text-[11px] font-bold text-slate-700"
+                              >
+                                <option value="STEM Lab">STEM Lab</option>
+                                <option value="Library">Library</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Classroom">Classroom</option>
+                                <option value="Medical">Medical</option>
+                                <option value="Campus">Campus</option>
+                              </select>
+
+                              <label className="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg cursor-pointer text-slate-700 border text-[11px] shrink-0">
+                                <Upload className="w-3.5 h-3.5" />
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handlePhotoFileUpload(e, idx)}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Max 3 Video Tours Showcase */}
+                  <div className="space-y-3 pt-2">
+                    <span className="font-black text-xs text-slate-900 uppercase tracking-wide block">
+                      Virtual Video Tours Showcase (Max 3 Videos)
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-semibold">
+                      {form.videosList.map((vid, idx) => (
+                        <div key={vid.id || idx} className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                          <span className="font-black text-slate-900 text-xs block">Video #{idx + 1}</span>
+                          <input
+                            type="text"
+                            value={vid.title}
+                            onChange={(e) => handleVideoChange(idx, 'title', e.target.value)}
+                            placeholder="Video Title"
+                            className="w-full p-2 border rounded-xl bg-white text-[11px]"
+                          />
+                          <input
+                            type="url"
+                            value={vid.url}
+                            onChange={(e) => handleVideoChange(idx, 'url', e.target.value)}
+                            placeholder="YouTube Embed URL"
+                            className="w-full p-2 border rounded-xl bg-white text-[11px]"
+                          />
+                          <textarea
+                            rows={2}
+                            value={vid.description}
+                            onChange={(e) => handleVideoChange(idx, 'description', e.target.value)}
+                            placeholder="Brief description of video tour"
+                            className="w-full p-2 border rounded-xl bg-white text-[11px] resize-none"
+                          />
                         </div>
                       ))}
                     </div>
                   </div>
                 </section>
 
-                {/* 9. Address, Contact & Google Maps */}
-                <section id="sec-address" className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5 scroll-mt-20">
+                {/* 9. Department Emails & Contacts with Public/Private Toggles + Address */}
+                <section id="sec-contacts" className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-xs space-y-5 scroll-mt-20">
                   <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-                    <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-rose-600" />
-                      <span>9. Address, Contact &amp; Google Maps</span>
-                    </h2>
+                    <div>
+                      <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-rose-600" />
+                        <span>9. Department Communications (Public / Private) &amp; Google Maps</span>
+                      </h2>
+                      <p className="text-xs text-slate-500 mt-0.5">Set dedicated emails for Admissions, Job/Careers desk, and Principal with individual visibility controls.</p>
+                    </div>
                     <span className="text-[10px] bg-rose-50 text-rose-700 font-bold px-2.5 py-0.5 rounded-full border border-rose-200">
-                      Location Details
+                      Privacy Controls
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs font-semibold">
+                  {/* 4 Department Communication Channels */}
+                  <div className="space-y-3">
+                    <span className="text-xs font-black uppercase tracking-wider text-slate-900 block">
+                      Department Email &amp; Helpline Matrix
+                    </span>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      {form.contactChannels.map((channel, idx) => (
+                        <div
+                          key={channel.id || idx}
+                          className={`p-4 rounded-2xl border transition space-y-2.5 ${
+                            channel.isPublic
+                              ? 'bg-blue-50/40 border-blue-200'
+                              : 'bg-slate-100/70 border-slate-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-black text-xs text-slate-900">{channel.type}</span>
+                            <button
+                              type="button"
+                              onClick={() => toggleContactVisibility(idx)}
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition flex items-center gap-1 ${
+                                channel.isPublic
+                                  ? 'bg-emerald-600 text-white shadow-2xs'
+                                  : 'bg-slate-700 text-white'
+                              }`}
+                            >
+                              {channel.isPublic ? <EyeIcon className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                              <span>{channel.isPublic ? 'Public Visible' : 'Private (Hidden)'}</span>
+                            </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-semibold">
+                            <div>
+                              <label className="block text-slate-500 text-[10px] uppercase mb-0.5">Department Email</label>
+                              <input
+                                type="email"
+                                value={channel.email}
+                                onChange={(e) => handleContactChange(idx, 'email', e.target.value)}
+                                className="w-full p-2 border rounded-xl bg-white text-[11px]"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-slate-500 text-[10px] uppercase mb-0.5">Contact Phone</label>
+                              <input
+                                type="tel"
+                                value={channel.phone}
+                                onChange={(e) => handleContactChange(idx, 'phone', e.target.value)}
+                                className="w-full p-2 border rounded-xl bg-white text-[11px]"
+                              />
+                            </div>
+                          </div>
+
+                          <input
+                            type="text"
+                            value={channel.description}
+                            onChange={(e) => handleContactChange(idx, 'description', e.target.value)}
+                            placeholder="Purpose description"
+                            className="w-full p-1.5 border rounded-lg bg-white/80 text-[10px] text-slate-600"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Physical Address & Google Maps */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs font-semibold pt-3 border-t border-slate-100">
                     <div>
                       <label className="block text-slate-700 mb-1">Locality / Sector *</label>
                       <input
@@ -1254,23 +1547,21 @@ export default function CreateSchoolProfileClient() {
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-700 mb-1">Helpline Phone *</label>
+                      <label className="block text-slate-700 mb-1">Official Website URL</label>
                       <input
-                        type="tel"
-                        required
-                        value={form.phone}
-                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                        type="url"
+                        value={form.website}
+                        onChange={(e) => setForm({ ...form, website: e.target.value })}
                         className="w-full p-2.5 border rounded-xl bg-slate-50"
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-700 mb-1">Official Email *</label>
+                      <label className="block text-slate-700 mb-1">Google Maps Embed URL</label>
                       <input
-                        type="email"
-                        required
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        className="w-full p-2.5 border rounded-xl bg-slate-50"
+                        type="url"
+                        value={form.googleMapsEmbedUrl}
+                        onChange={(e) => setForm({ ...form, googleMapsEmbedUrl: e.target.value })}
+                        className="w-full p-2.5 border rounded-xl bg-slate-50 text-[11px]"
                       />
                     </div>
 
@@ -1284,16 +1575,6 @@ export default function CreateSchoolProfileClient() {
                         className="w-full p-2.5 border rounded-xl bg-slate-50"
                       />
                     </div>
-
-                    <div className="sm:col-span-3">
-                      <label className="block text-slate-700 mb-1">Google Maps Embed URL</label>
-                      <input
-                        type="url"
-                        value={form.googleMapsEmbedUrl}
-                        onChange={(e) => setForm({ ...form, googleMapsEmbedUrl: e.target.value })}
-                        className="w-full p-2.5 border rounded-xl bg-slate-50 text-[11px]"
-                      />
-                    </div>
                   </div>
                 </section>
 
@@ -1301,7 +1582,7 @@ export default function CreateSchoolProfileClient() {
                 <div className="p-5 bg-white rounded-3xl border border-slate-200 flex items-center justify-between gap-4">
                   <div>
                     <h3 className="font-black text-sm text-slate-900">Ready to Publish School Profile?</h3>
-                    <p className="text-xs text-slate-500 mt-0.5">You can also review the live card &amp; full detail page preview before publishing.</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Review the live card &amp; full detail page simulation before publishing.</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -1341,7 +1622,7 @@ export default function CreateSchoolProfileClient() {
                   <Eye className="w-4 h-4 text-blue-600" />
                   <span>Live Preview Mode: Directory Card &amp; Full Detail Profile</span>
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Complete simulation covering all 9 sections, fee matrix, documents, gallery, and Google Maps.</p>
+                <p className="text-xs text-slate-500 mt-0.5">Complete simulation covering all 9 sections, department contact channels, 10-photo gallery, and 3 video tours.</p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -1794,15 +2075,19 @@ export default function CreateSchoolProfileClient() {
                       </div>
                     </div>
 
-                    {/* 8. Campus Gallery Showcase */}
+                    {/* 8. Campus Gallery Showcase (All 10 Photos) */}
                     <div className="space-y-3 pt-2">
-                      <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                        <Camera className="w-4 h-4 text-sky-600" />
-                        <span>Campus Infrastructure Photo Gallery</span>
-                      </h3>
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                          <Camera className="w-4 h-4 text-sky-600" />
+                          <span>Campus Infrastructure Photo Gallery ({form.galleryPhotos.length} Photos)</span>
+                        </h3>
+                        <span className="text-[10px] text-slate-400 font-semibold">Direct Uploads &amp; Categories</span>
+                      </div>
+
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {form.galleryPhotos.map((photo, idx) => (
-                          <div key={idx} className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 space-y-1.5 p-2">
+                          <div key={photo.id || idx} className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 space-y-1.5 p-2 shadow-2xs">
                             <div className="h-28 rounded-xl overflow-hidden bg-slate-200">
                               <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
                             </div>
@@ -1815,22 +2100,71 @@ export default function CreateSchoolProfileClient() {
                       </div>
                     </div>
 
-                    {/* 9. 360° Virtual Video Tour & Google Maps */}
+                    {/* 9. Virtual Video Tours Showcase (3 Videos) */}
+                    <div className="space-y-3 pt-2">
+                      <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                        <Video className="w-4 h-4 text-rose-600" />
+                        <span>360° Virtual Campus Video Tours ({form.videosList.length} Tours)</span>
+                      </h3>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                        {form.videosList.map((vid, idx) => (
+                          <div key={vid.id || idx} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                            <div className="h-36 rounded-xl overflow-hidden bg-black/10 border">
+                              <iframe
+                                src={vid.url}
+                                title={vid.title}
+                                className="w-full h-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              />
+                            </div>
+                            <h4 className="font-bold text-xs text-slate-900 truncate">{vid.title}</h4>
+                            <p className="text-[10px] text-slate-500 line-clamp-2 leading-tight">{vid.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 10. Department Contacts (Public/Private Badges) & Google Maps */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pt-2">
-                      {/* Video Tour */}
-                      <div className="p-4 bg-slate-50 rounded-3xl border border-slate-200 space-y-2">
-                        <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
-                          <Video className="w-4 h-4 text-rose-600" />
-                          <span>360° Virtual Campus Video Tour</span>
-                        </h3>
-                        <div className="h-52 rounded-2xl overflow-hidden bg-black/10 border">
-                          <iframe
-                            src={form.virtualTourEmbedUrl}
-                            title="Virtual Campus Tour"
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
+                      {/* Department Communications */}
+                      <div className="p-4 bg-slate-50 rounded-3xl border border-slate-200 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-blue-600" />
+                            <span>Institutional Communication Channels</span>
+                          </h3>
+                        </div>
+
+                        <div className="space-y-2">
+                          {form.contactChannels.map((c, idx) => (
+                            <div key={c.id || idx} className="p-3 bg-white rounded-xl border border-slate-200 flex items-start justify-between gap-3 text-xs">
+                              <div>
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="font-black text-slate-900 text-xs">{c.type}</span>
+                                  {c.isPublic ? (
+                                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-md">Public</span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 bg-slate-200 text-slate-700 text-[10px] font-bold rounded-md flex items-center gap-1">
+                                      <Lock className="w-2.5 h-2.5" /> Confidential
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-slate-600 font-semibold">{c.email} • {c.phone}</p>
+                                <p className="text-[10px] text-slate-400 mt-0.5">{c.description}</p>
+                              </div>
+
+                              {c.isPublic && (
+                                <a
+                                  href={`mailto:${c.email}`}
+                                  className="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg hover:bg-blue-100 transition text-[11px] shrink-0"
+                                >
+                                  Email
+                                </a>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       </div>
 
@@ -1849,7 +2183,7 @@ export default function CreateSchoolProfileClient() {
                           />
                         </div>
                         <p className="text-[11px] text-slate-600 font-medium">
-                          {form.address} • Phone: {form.phone}
+                          {form.address}
                         </p>
                       </div>
                     </div>

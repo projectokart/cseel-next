@@ -351,53 +351,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
     <PageTransition>
       <div className="bg-slate-100 text-slate-800 font-sans antialiased pb-28">
 
-        {/* ── TOP SUB-HEADER BAR ──────────────────────────────────────────────── */}
-        <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Link href="/edu-network" className="text-2xl font-black tracking-tight text-[#1e3a8a]">
-                CSEEL<span className="text-rose-500">.EDU</span>
-              </Link>
-              <span className="hidden md:inline-flex items-center text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium border border-slate-200">
-                <MapPin className="w-3.5 h-3.5 text-rose-500 mr-1" />
-                <span>{org.locality || org.city}, {org.state}</span>
-              </span>
-            </div>
 
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={handleNativeShare}
-                className="hidden sm:inline-flex items-center text-xs font-bold text-slate-700 hover:text-[#1e3a8a] bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition gap-1.5 border border-slate-200"
-              >
-                <Share2 className="w-3.5 h-3.5 text-blue-600" />
-                <span>Share Profile</span>
-              </button>
-              <a
-                href="#vacancies_tab"
-                className="hidden sm:inline-flex items-center text-xs font-bold text-slate-600 hover:text-rose-500 transition gap-1"
-              >
-                <Briefcase className="w-3.5 h-3.5" />
-                <span>Careers ({jobsList.length} Openings)</span>
-              </a>
-              <button
-                onClick={() => setIsJobModalOpen(true)}
-                className="bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow-xs transition flex items-center gap-1.5"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Post a Job</span>
-              </button>
-              <button
-                onClick={() => {
-                  setAuthType('signin');
-                  setIsAuthModalOpen(true);
-                }}
-                className="border border-[#1e40af] text-[#1e40af] hover:bg-blue-50 text-xs font-bold px-4 py-2 rounded-lg transition"
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
-        </header>
 
         {/* ── HERO BANNER WITH OVERLAPPING SCHOOL CARD ────────────────────────── */}
         <div className="relative bg-slate-900 text-white">
@@ -476,6 +430,13 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Link
+                      href={`/edu-network/organisation/school/${org.id}/vacancy`}
+                      className="px-3.5 py-2 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-black transition flex items-center gap-1.5 shadow-2xs"
+                    >
+                      <Briefcase className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Careers ({jobsList.length})</span>
+                    </Link>
                     <button
                       onClick={handleNativeShare}
                       className="px-3.5 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5"
@@ -568,10 +529,10 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                     ACTIVE JOBS ({jobsList.length})
                   </h4>
                   <Link
-                    href="/edu-network/jobs"
-                    className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-0.5"
+                    href={`/edu-network/organisation/school/${org.id}/vacancy`}
+                    className="text-xs font-bold text-rose-600 hover:underline flex items-center gap-0.5"
                   >
-                    <span>Indeed Portal</span>
+                    <span>View All ({jobsList.length})</span>
                     <span>→</span>
                   </Link>
                 </div>
@@ -586,12 +547,12 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                         {job.salary}
                       </p>
                     </div>
-                    <button
-                      onClick={() => setSelectedJobToApply(job)}
-                      className="w-full py-1.5 bg-white hover:bg-slate-50 text-blue-600 border border-blue-200 hover:border-blue-400 font-bold text-xs rounded-lg shadow-2xs transition-all text-center"
+                    <Link
+                      href={`/edu-network/organisation/school/${org.id}/vacancy`}
+                      className="w-full py-1.5 bg-white hover:bg-slate-50 text-blue-600 border border-blue-200 hover:border-blue-400 font-bold text-xs rounded-lg shadow-2xs transition-all text-center block"
                     >
-                      Apply with Resume
-                    </button>
+                      Apply on Indeed Portal →
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -643,10 +604,18 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                     </a>
                   </li>
                   <li>
-                    <a href="#vacancies_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-rose-50 text-rose-600 font-bold">
-                      <Briefcase className="w-4 h-4 text-rose-500" />
-                      <span>Vacancies & Careers</span>
-                    </a>
+                    <Link
+                      href={`/edu-network/organisation/school/${org.id}/vacancy`}
+                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition border border-rose-200"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Briefcase className="w-4 h-4 text-rose-600" />
+                        <span>Careers & Vacancies</span>
+                      </span>
+                      <span className="text-[10px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded-full">
+                        {jobsList.length} Open
+                      </span>
+                    </Link>
                   </li>
                   <li>
                     <a href="#stem_live_labs_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-cyan-50 text-cyan-800 font-bold border border-cyan-200">
@@ -1085,93 +1054,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 8: School Careers & Job Vacancies */}
-              <section id="vacancies_tab" className="bg-white border-2 border-rose-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 mb-5 gap-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-rose-500" />
-                        <span>Vacancies & Careers</span>
-                      </h2>
-                      <span className="text-[10px] bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded-full">Recruiting</span>
-                    </div>
-                    <p className="text-xs text-slate-500 mt-0.5">Explore open positions for Teaching Faculty and Non-Teaching Administration</p>
-                  </div>
-                  
-                  <button
-                    onClick={() => setIsJobModalOpen(true)}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-xs flex items-center gap-1.5 self-start sm:self-auto"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Post a Job</span>
-                  </button>
-                </div>
-
-                <div className="flex border-b border-slate-200 text-xs font-bold mb-5 gap-6">
-                  <button
-                    onClick={() => setActiveJobTab('current')}
-                    className={`pb-2.5 border-b-2 transition ${
-                      activeJobTab === 'current' ? 'border-rose-500 text-rose-500' : 'border-transparent text-slate-400 hover:text-slate-600'
-                    }`}
-                  >
-                    Current Vacancies ({jobsList.length} Active)
-                  </button>
-                  <button
-                    onClick={() => setActiveJobTab('past')}
-                    className={`pb-2.5 border-b-2 transition ${
-                      activeJobTab === 'past' ? 'border-rose-500 text-rose-500' : 'border-transparent text-slate-400 hover:text-slate-600'
-                    }`}
-                  >
-                    Past / Closed Positions (8 Archived)
-                  </button>
-                </div>
-
-                {activeJobTab === 'current' ? (
-                  <div className="space-y-3.5 text-xs">
-                    {jobsList.map((job) => (
-                      <div
-                        key={job.id}
-                        className="p-4 border rounded-xl bg-slate-50 hover:border-rose-300 transition"
-                      >
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                          <div>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-extrabold text-slate-900 text-sm">{job.title}</h3>
-                              <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-0.5 rounded border border-blue-200 uppercase">
-                                {job.jobTypeCategory || 'Teaching'}
-                              </span>
-                            </div>
-                            <p className="text-slate-500 mt-1">
-                              <Clock className="w-3 h-3 inline mr-1" /> {job.roleType || 'Full-Time'} |{' '}
-                              <Award className="w-3 h-3 inline mr-1" /> {job.qualifications || 'M.Sc / B.Ed with IB Certification'} |{' '}
-                              <span className="font-bold text-slate-700">{job.salary}</span>
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => setSelectedJobToApply(job)}
-                            className="bg-rose-500 hover:bg-rose-600 text-white font-bold px-4 py-2 rounded-lg shadow-xs transition self-start sm:self-center shrink-0"
-                          >
-                            Apply Now
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-3 text-xs">
-                    <div className="p-3.5 border rounded-xl bg-slate-100/70 opacity-75">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h4 className="font-bold text-slate-700">TGT English & Literature Faculty</h4>
-                          <p className="text-slate-400 text-[11px] mt-0.5">Closed on: Dec 2025 • Teaching Role</p>
-                        </div>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Position Filled</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </section>
+              
 
 
               {/* ── USER REQUESTED SPECIAL SECTION: STEM LIVE LAB & INNOVATION ── */}
@@ -1865,7 +1748,7 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 <a href="#fee_structure_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Wallet className="w-4 h-4 text-emerald-600" /><span>Fee Structure</span></a>
                 <a href="#academic_stats_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><GraduationCap className="w-4 h-4 text-indigo-600" /><span>Academic Stats</span></a>
                 <a href="#admission_criteria_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><FileText className="w-4 h-4 text-rose-600" /><span>Eligibility</span></a>
-                <a href="#vacancies_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Briefcase className="w-4 h-4 text-rose-600" /><span>Vacancies</span></a>
+                <Link href={`/edu-network/organisation/school/${org.id}/vacancy`} onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 font-bold"><Briefcase className="w-4 h-4 text-rose-600" /><span>Vacancies & Careers</span></Link>
                 <a href="#facilities_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Wand2 className="w-4 h-4 text-sky-600" /><span>Facilities</span></a>
                 <a href="#video_gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Video className="w-4 h-4 text-red-600" /><span>Video Tour</span></a>
                 <a href="#gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><ImageIcon className="w-4 h-4 text-indigo-600" /><span>Gallery</span></a>

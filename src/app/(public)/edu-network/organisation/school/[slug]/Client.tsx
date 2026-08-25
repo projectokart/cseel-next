@@ -218,7 +218,7 @@ export default function CitySchoolDirectoryClient({
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
             
             {/* ── LEFT FILTER SIDEBAR (DESKTOP) ── */}
-            <div className="hidden lg:block bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-5 sticky top-20">
+            <div className="hidden lg:block bg-white p-5 rounded-3xl border border-slate-200 shadow-2xs space-y-5 sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="font-black text-sm text-slate-900 flex items-center gap-2">
                   <Filter className="w-4 h-4 text-blue-600" />
@@ -234,51 +234,30 @@ export default function CitySchoolDirectoryClient({
                   }}
                   className="text-xs text-blue-600 font-bold hover:underline"
                 >
-                  Reset
+                  Reset All
                 </button>
               </div>
 
-              {/* Explore Schools by Major City (Vertical Scroll) */}
+              {/* Explore Schools by Major City */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-slate-700 block">Explore by Major City</label>
-                  <span className="text-[10px] text-slate-400 font-medium">{POPULAR_CITIES.length} Cities</span>
-                </div>
-                <div className="flex flex-col gap-1 max-h-48 overflow-y-auto pr-1">
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">Explore by Major City</label>
+                <div className="flex flex-wrap gap-1.5">
                   {POPULAR_CITIES.map((c) => {
                     const isActive = slug === c.slug;
                     return (
                       <Link
                         key={c.slug}
                         href={`/edu-network/organisation/school/${c.slug}`}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between ${
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
                           isActive
-                            ? 'bg-blue-600 text-white shadow-xs'
-                            : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-100 hover:border-slate-200'
+                            ? 'bg-blue-600 text-white shadow-2xs'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                         }`}
                       >
-                        <span>{c.name}</span>
-                        {isActive && (
-                          <Check className="w-3.5 h-3.5 text-white" />
-                        )}
+                        {c.name}
                       </Link>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Search Inside City */}
-              <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Search Name or Locality</label>
-                <div className="relative">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={`Search in ${cityName}...`}
-                    className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl"
-                  />
                 </div>
               </div>
 
@@ -353,33 +332,56 @@ export default function CitySchoolDirectoryClient({
             {/* ── RIGHT LISTING AREA ── */}
             <div className="lg:col-span-3 space-y-4">
               
-              {/* Sort & Mobile Filter Button Header */}
-              <div className="bg-white p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 text-xs shadow-2xs">
-                <span className="text-slate-600 font-bold">
-                  Showing <strong className="text-slate-900">{cityOrgs.length}</strong> institutions in {cityName}
-                </span>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setIsMobileFilterOpen(true)}
-                    className="lg:hidden px-3 py-1.5 bg-slate-100 font-bold rounded-xl flex items-center gap-1.5"
-                  >
-                    <SlidersHorizontal className="w-3.5 h-3.5" />
-                    <span>Filter</span>
-                  </button>
-
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-bold hidden sm:inline">Sort:</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      className="p-1.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs"
+              {/* Top Search Bar & Sort Header */}
+              <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-2xs space-y-3">
+                {/* Search Bar Above Cards */}
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={`Search school name, board, or locality in ${cityName}...`}
+                    className="w-full pl-10 pr-10 py-2.5 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-2xl font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
                     >
-                      <option value="popularity">Most Popular</option>
-                      <option value="rating">Highest Rated</option>
-                      <option value="feeAsc">Fee: Low to High</option>
-                      <option value="feeDesc">Fee: High to Low</option>
-                    </select>
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Sort & Count Bar */}
+                <div className="flex items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 flex-wrap">
+                  <span className="text-slate-600 font-bold">
+                    Showing <strong className="text-slate-900 font-black">{cityOrgs.length}</strong> institutions in {cityName}
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setIsMobileFilterOpen(true)}
+                      className="lg:hidden px-3 py-1.5 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl flex items-center gap-1.5 text-slate-700"
+                    >
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Filters</span>
+                    </button>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-slate-400 font-bold hidden sm:inline">Sort:</span>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as any)}
+                        className="p-1.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-xs"
+                      >
+                        <option value="popularity">Most Popular</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="feeAsc">Fee: Low to High</option>
+                        <option value="feeDesc">Fee: High to Low</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>

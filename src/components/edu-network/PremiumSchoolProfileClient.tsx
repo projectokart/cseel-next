@@ -21,14 +21,16 @@ import {
 } from '@/lib/eduNetworkData';
 
 interface PremiumSchoolProfileProps {
-  orgId: string;
+  orgId?: string;
+  overrideOrg?: any;
 }
 
-export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfileProps) {
-  // Find organization or fallback to K.R. Mangalam Global School
+export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: PremiumSchoolProfileProps) {
+  // Find organization or fallback to K.R. Mangalam Global School or use overrideOrg
   const org = useMemo(() => {
-    return getOrganizationById(orgId) || ALL_ORGANIZATIONS[0];
-  }, [orgId]);
+    if (overrideOrg) return overrideOrg;
+    return (orgId ? getOrganizationById(orgId) : null) || ALL_ORGANIZATIONS[0];
+  }, [orgId, overrideOrg]);
 
   // Selected Class in Fee Structure (Individual classes: Nursery through Class 12)
   const [selectedFeeClass, setSelectedFeeClass] = useState('nursery');

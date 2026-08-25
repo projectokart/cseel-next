@@ -424,7 +424,7 @@ export default function CitySchoolDirectoryClient({
                     return (
                       <div
                         key={org.id}
-                        className="bg-white rounded-3xl p-5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col md:flex-row gap-5 items-stretch relative group"
+                        className="bg-white rounded-3xl p-3.5 sm:p-5 border border-slate-200/90 shadow-2xs hover:shadow-md transition-all flex flex-col md:flex-row gap-3.5 sm:gap-5 items-stretch relative group max-w-full overflow-hidden"
                       >
                         {/* School Logo / Image thumbnail */}
                         <div className="relative w-full md:w-48 h-36 md:h-auto rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
@@ -447,29 +447,37 @@ export default function CitySchoolDirectoryClient({
                         {/* School Details */}
                         <div className="flex-1 min-w-0 flex flex-col justify-between space-y-3">
                           <div>
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <h2 className="text-base sm:text-lg font-black text-slate-900 leading-snug group-hover:text-blue-600 transition-colors">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between gap-2">
+                                  <h2 className="text-sm sm:text-base md:text-lg font-black text-slate-900 leading-snug group-hover:text-blue-600 transition-colors break-words flex-1 min-w-0">
                                     <Link href={`/edu-network/org/${org.id}`}>
                                       {org.name}
                                     </Link>
                                   </h2>
+
+                                  {/* Mobile Rating Badge (compact top-right) */}
+                                  <div className="sm:hidden inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-[11px] font-black shrink-0">
+                                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                                    <span>{org.rating}</span>
+                                    <span className="text-[9px] text-slate-400 font-normal">({org.reviews})</span>
+                                  </div>
                                 </div>
-                                <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5 font-medium">
+
+                                <div className="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5 mt-1 font-medium flex-wrap break-words">
                                   <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                                  <span>{org.locality ? `${org.locality}, ` : ''}{org.city}, {org.state}</span>
+                                  <span className="break-words">{org.locality ? `${org.locality}, ` : ''}{org.city}, {org.state}</span>
                                   <span>•</span>
                                   <span className="font-bold text-slate-700">{org.board || 'CBSE'}</span>
                                   <span>•</span>
-                                  <span className="inline-flex items-center text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono font-bold border border-slate-200">
+                                  <span className="inline-flex items-center text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-bold border border-slate-200 shrink-0">
                                     UDISE: {org.udiseCode || '07010200301'}
                                   </span>
-                                </p>
+                                </div>
                               </div>
 
-                              {/* Rating badge */}
-                              <div className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-black shrink-0">
+                              {/* Desktop Rating badge */}
+                              <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-black shrink-0 self-start">
                                 <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                                 <span>{org.rating}</span>
                                 <span className="text-[10px] text-slate-400 font-normal">({org.reviews})</span>
@@ -477,22 +485,22 @@ export default function CitySchoolDirectoryClient({
                             </div>
 
                             {/* UniApply-Style Key Metrics Grid */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 p-3 bg-slate-50 rounded-2xl text-xs border border-slate-100">
-                              <div>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Monthly Fee</span>
-                                <p className="font-black text-slate-900">{org.monthlyFees || '₹12,000 / mo'}</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 p-2.5 sm:p-3 bg-slate-50 rounded-2xl text-[11px] sm:text-xs border border-slate-100">
+                              <div className="min-w-0">
+                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block truncate">Monthly Fee</span>
+                                <p className="font-black text-slate-900 text-xs sm:text-sm truncate">{org.monthlyFees || '₹12,000 / mo'}</p>
                               </div>
-                              <div>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Classes</span>
-                                <p className="font-bold text-slate-800">{org.classesOffered || 'Nursery - 12th'}</p>
+                              <div className="min-w-0">
+                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block truncate">Classes</span>
+                                <p className="font-bold text-slate-800 text-xs sm:text-sm truncate">{org.classesOffered || 'Nursery - 12th'}</p>
                               </div>
-                              <div>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Student Ratio</span>
-                                <p className="font-bold text-slate-800">{org.studentFacultyRatio || '20:1'}</p>
+                              <div className="min-w-0">
+                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block truncate">Student Ratio</span>
+                                <p className="font-bold text-slate-800 text-xs sm:text-sm truncate">{org.studentFacultyRatio || '20:1'}</p>
                               </div>
-                              <div>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Admissions</span>
-                                <span className="inline-block font-black text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md text-[11px]">
+                              <div className="min-w-0">
+                                <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase block truncate">Admissions</span>
+                                <span className="inline-block font-black text-emerald-700 bg-emerald-100/70 px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] truncate max-w-full">
                                   {org.admissionStatus || 'Open 2026-27'}
                                 </span>
                               </div>

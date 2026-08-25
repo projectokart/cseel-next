@@ -303,12 +303,48 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
     }
   ];
 
-  // Gallery
+  // Gallery with Titles and Labels
   const galleryPhotos = [
-    org.bannerImage || "https://images.uniapply.com/uploads/college/image/500/2186/Building_UA_210909_112120.JPG",
-    "https://images.uniapply.com/uploads/college/image/500/2186/Activity_room_UA_210909_112055.jpg",
-    "https://images.uniapply.com/uploads/college/image/500/2186/Classroom_1_UA_210909_112131.jpg",
-    "https://images.uniapply.com/uploads/college/image/500/2186/Library_UA_210909_112346.jpg"
+    {
+      url: "https://images.uniapply.com/uploads/college/image/500/2186/Medical_room_UA_210909_112215.JPG",
+      title: "Medical Room / Infirmary",
+      category: "Health Care"
+    },
+    {
+      url: "https://images.uniapply.com/uploads/college/image/500/2186/Activity_room_UA_210909_112055.jpg",
+      title: "Activity & Play Room",
+      category: "Early Years"
+    },
+    {
+      url: "https://images.uniapply.com/uploads/college/image/500/2186/Classroom_1_UA_210909_112131.jpg",
+      title: "Smart Classroom",
+      category: "Academics"
+    },
+    {
+      url: "https://images.uniapply.com/uploads/college/image/500/2186/Library_UA_210909_112346.jpg",
+      title: "Library & Reading Corner",
+      category: "Learning Hub"
+    },
+    {
+      url: org.bannerImage || "https://images.uniapply.com/uploads/college/image/500/2186/Building_UA_210909_112120.JPG",
+      title: "Main Campus Building",
+      category: "Infrastructure"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1576671081837-49000212a370?auto=format&fit=crop&w=600&q=80",
+      title: "Science & Innovation Lab",
+      category: "STEM Labs"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=600&q=80",
+      title: "Robotics & AI Studio",
+      category: "Tech Suite"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80",
+      title: "Sports Arena & Gym",
+      category: "Fitness"
+    }
   ];
 
   return (
@@ -1670,22 +1706,39 @@ export default function PremiumSchoolProfileClient({ orgId }: PremiumSchoolProfi
                 </div>
               </section>
 
-              {/* SECTION 11: Photo Gallery */}
+              {/* SECTION 11: Photo Gallery with Labels */}
               <section id="gallery_tab" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs scroll-mt-20">
-                <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-[#1e3a8a]" />
-                  <span>Gallery</span>
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {galleryPhotos.map((img, idx) => (
+                <div className="flex items-center justify-between border-b pb-3 mb-5">
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-[#1e3a8a]" />
+                    <span>Campus Gallery</span>
+                  </h2>
+                  <span className="text-xs text-slate-400 font-medium">Click to view full preview</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {galleryPhotos.map((item, idx) => (
                     <div
                       key={idx}
-                      onClick={() => setLightboxPhoto(img)}
-                      className="h-28 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 cursor-pointer group relative"
+                      onClick={() => setLightboxPhoto(item.url)}
+                      className="group cursor-pointer bg-slate-50 rounded-xl overflow-hidden border border-slate-200 hover:border-blue-400 transition-all shadow-2xs hover:shadow-md flex flex-col"
                     >
-                      <img src={img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" alt="Campus Photo" />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                        <Maximize2 className="w-4 h-4" />
+                      <div className="h-32 sm:h-36 overflow-hidden relative">
+                        <img
+                          src={item.url}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          alt={item.title}
+                        />
+                        <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                          <Maximize2 className="w-5 h-5" />
+                        </div>
+                        <span className="absolute top-2 left-2 bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                          {item.category}
+                        </span>
+                      </div>
+                      <div className="p-2.5 bg-white border-t border-slate-100">
+                        <h4 className="font-bold text-xs text-slate-800 truncate group-hover:text-blue-600 transition">
+                          {item.title}
+                        </h4>
                       </div>
                     </div>
                   ))}

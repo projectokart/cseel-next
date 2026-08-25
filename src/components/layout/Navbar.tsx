@@ -29,7 +29,7 @@ const navItems: NavItem[] = [
     hasDropdown: true,
     children: [
       { label: "Hands-on Experiments", to: "/hands-on-experiments" },
-      { label: "hands-on experiments & live labs", to: "/demo" },
+      { label: "Hands-on Experiments & Live Labs", to: "/demo" },
       { label: "Projectokart", to: "/projects" },
     ],
   },
@@ -37,13 +37,12 @@ const navItems: NavItem[] = [
     label: "EduNetwork",
     hasDropdown: true,
     isSpecial: true,
-    to: "/edu-network",
     children: [
-      { label: "Schools & Institutions", to: "/edu-network" },
+      { label: "Schools & Institutions", to: "/edu-network/organisation/school" },
       { label: "Teaching & Lab Jobs", to: "/edu-network/jobs" },
       { label: "Verified Faculty", to: "/edu-network/teachers" },
       { label: "Student Innovators", to: "/edu-network/students" },
-      { label: "Download Credentials", to: "/downloads/CSEEL_EduNetwork_Credentials.csv" },
+      { label: "EduNetwork Overview Hub", to: "/edu-network" },
     ],
   },
   {
@@ -166,54 +165,56 @@ const Navbar = () => {
               onMouseEnter={() => handleMouseEnter(item.label)}
               onMouseLeave={handleMouseLeave}
             >
-              <Link
-                href={item.to || "#"}
-                className={`flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium transition-colors ${
-                  item.isSpecial
-                    ? "text-primary font-bold hover:text-primary/80"
-                    : "text-foreground hover:text-primary"
-                }`}
-                onClick={(e) => {
-                  if (!item.to) {
-                    e.preventDefault();
-                    handleClick(item.label);
-                  }
-                }}
-              >
-                <span>{item.label}</span>
-                {item.isSpecial && (
-                  <span className="px-1.5 py-0.2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-[9px] font-black uppercase rounded-full tracking-wider shadow-2xs animate-pulse">
-                    Hub
-                  </span>
-                )}
-                {item.badgeText && (
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold shadow-2xs ${
-                    item.badgeType === "job"
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-300"
-                      : "bg-amber-50 text-amber-800 border border-amber-300"
-                  }`}>
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                        item.badgeType === "job" ? "bg-emerald-400" : "bg-amber-400"
-                      }`}></span>
-                      <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${
-                        item.badgeType === "job" ? "bg-emerald-500" : "bg-amber-500"
-                      }`}></span>
+              {item.hasDropdown ? (
+                <button
+                  type="button"
+                  className={`flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium transition-colors cursor-pointer ${
+                    item.isSpecial
+                      ? "text-primary font-bold hover:text-primary/80"
+                      : "text-foreground hover:text-primary"
+                  }`}
+                  onClick={() => handleClick(item.label)}
+                >
+                  <span>{item.label}</span>
+                  {item.isSpecial && (
+                    <span className="px-1.5 py-0.2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-[9px] font-black uppercase rounded-full tracking-wider shadow-2xs animate-pulse">
+                      Hub
                     </span>
-                    <span>{item.badgeText}</span>
-                    {item.badge && (
-                      <span className={`text-[8px] font-black px-1 rounded-full text-white ${
-                        item.badgeType === "job" ? "bg-emerald-600" : "bg-amber-600"
-                      }`}>
-                        {item.badge}
+                  )}
+                  {item.badgeText && (
+                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold shadow-2xs ${
+                      item.badgeType === "job"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-300"
+                        : "bg-amber-50 text-amber-800 border border-amber-300"
+                    }`}>
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                          item.badgeType === "job" ? "bg-emerald-400" : "bg-amber-400"
+                        }`}></span>
+                        <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${
+                          item.badgeType === "job" ? "bg-emerald-500" : "bg-amber-500"
+                        }`}></span>
                       </span>
-                    )}
-                  </span>
-                )}
-                {item.hasDropdown && (
+                      <span>{item.badgeText}</span>
+                      {item.badge && (
+                        <span className={`text-[8px] font-black px-1 rounded-full text-white ${
+                          item.badgeType === "job" ? "bg-emerald-600" : "bg-amber-600"
+                        }`}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </span>
+                  )}
                   <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`} />
-                )}
-              </Link>
+                </button>
+              ) : (
+                <Link
+                  href={item.to || "/"}
+                  className="flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium transition-colors text-foreground hover:text-primary"
+                >
+                  <span>{item.label}</span>
+                </Link>
+              )}
 
               {item.hasDropdown && openDropdown === item.label && (
                 <div
@@ -264,36 +265,41 @@ const Navbar = () => {
         <div className="px-4 py-4 space-y-2">
           {visibleNavItems.map((item) => (
             <div key={item.label} className="flex flex-col border-b border-border/50 pb-1">
-              <div className="flex items-center justify-between">
-                <Link
-                  href={item.to || "#"}
-                  className="w-full text-left px-2 py-3 text-sm font-medium text-foreground flex items-center justify-between"
-                  onClick={() => {
-                    if (item.to) setMobileOpen(false);
-                    else setOpenDropdown(openDropdown === item.label ? null : item.label);
-                  }}
-                >
-                  <span className="flex items-center gap-1.5">
-                    {item.label}
-                    {item.isSpecial && (
-                      <span className="px-1.5 py-0.2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-[9px] font-black uppercase rounded-full">
-                        Hub
-                      </span>
-                    )}
-                    {item.badgeText && (
-                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold ${
-                        item.badgeType === "job"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                        <span>{item.badgeText} ({item.badge})</span>
-                      </span>
-                    )}
-                  </span>
-                  <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${openDropdown === item.label ? "rotate-180" : ""}`} />
-                </Link>
-              </div>
+                {item.hasDropdown ? (
+                  <button
+                    type="button"
+                    className="w-full text-left px-2 py-3 text-sm font-medium text-foreground flex items-center justify-between cursor-pointer"
+                    onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      {item.label}
+                      {item.isSpecial && (
+                        <span className="px-1.5 py-0.2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-[9px] font-black uppercase rounded-full">
+                          Hub
+                        </span>
+                      )}
+                      {item.badgeText && (
+                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-extrabold ${
+                          item.badgeType === "job"
+                            ? "bg-emerald-100 text-emerald-800"
+                            : "bg-amber-100 text-amber-800"
+                        }`}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                          <span>{item.badgeText} ({item.badge})</span>
+                        </span>
+                      )}
+                    </span>
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${openDropdown === item.label ? "rotate-180" : ""}`} />
+                  </button>
+                ) : (
+                  <Link
+                    href={item.to || "/"}
+                    className="w-full text-left px-2 py-3 text-sm font-medium text-foreground flex items-center justify-between"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <span>{item.label}</span>
+                  </Link>
+                )}
               <div className={`grid transition-all duration-300 ease-in-out ${openDropdown === item.label ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0"}`}>
                 <div className="overflow-hidden">
                   {item.children?.map((child) => (

@@ -11,18 +11,18 @@ import {
 import PageTransition from '@/components/shared/PageTransition';
 
 const TOP_CITIES = [
-  { name: 'All India', slug: 'top-schools-in-india', count: '104+ Schools' },
-  { name: 'Delhi NCR', slug: 'schools-in-delhi', count: '20+ Schools' },
-  { name: 'Mumbai', slug: 'schools-in-mumbai', count: '15+ Schools' },
-  { name: 'Bengaluru', slug: 'schools-in-bengaluru', count: '18+ Schools' },
-  { name: 'Pune', slug: 'schools-in-pune', count: '12+ Schools' },
-  { name: 'Bhubaneswar', slug: 'schools-in-bhubaneswar', count: '14+ Schools' },
-  { name: 'Lucknow', slug: 'schools-in-lucknow', count: '10+ Schools' },
-  { name: 'Jaipur', slug: 'schools-in-jaipur', count: '10+ Schools' },
-  { name: 'Hyderabad', slug: 'schools-in-hyderabad', count: '12+ Schools' },
-  { name: 'Chennai', slug: 'schools-in-chennai', count: '10+ Schools' },
-  { name: 'Kolkata', slug: 'schools-in-kolkata', count: '10+ Schools' },
-  { name: 'Ahmedabad', slug: 'schools-in-ahmedabad', count: '10+ Schools' },
+  { name: 'All India', slug: 'top-schools-in-india', count: '11,947+ Schools' },
+  { name: 'Delhi NCR', slug: 'schools-in-delhi', count: '1,200+ Schools' },
+  { name: 'Bengaluru', slug: 'schools-in-bengaluru', count: '1,200+ Schools' },
+  { name: 'Pune', slug: 'schools-in-pune', count: '1,200+ Schools' },
+  { name: 'Hyderabad', slug: 'schools-in-hyderabad', count: '1,200+ Schools' },
+  { name: 'Chennai', slug: 'schools-in-chennai', count: '1,000+ Schools' },
+  { name: 'Sonipat', slug: 'schools-in-sonipat', count: '540+ Schools' },
+  { name: 'Gurugram', slug: 'schools-in-gurugram', count: '510+ Schools' },
+  { name: 'Noida', slug: 'schools-in-noida', count: '440+ Schools' },
+  { name: 'Dehradun', slug: 'schools-in-dehradun', count: '440+ Schools' },
+  { name: 'Lucknow', slug: 'schools-in-lucknow', count: '340+ Schools' },
+  { name: 'Jaipur', slug: 'schools-in-jaipur', count: '310+ Schools' },
 ];
 
 export default function EduNetworkHubClient() {
@@ -233,7 +233,7 @@ export default function EduNetworkHubClient() {
               href="/edu-network/organisation/school"
               className="text-xs font-black text-blue-600 hover:underline flex items-center gap-1 shrink-0"
             >
-              <span>View All 100+ Schools</span>
+              <span>View All 11,900+ Listed Schools</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

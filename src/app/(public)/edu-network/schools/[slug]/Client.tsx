@@ -7,7 +7,7 @@ import {
   Building2, MapPin, Plus, Star, CheckCircle2, SlidersHorizontal,
   Search, ArrowRight, ExternalLink, Phone, Mail, Filter,
   Share2, Heart, Scale, X, Check, Globe, ChevronRight,
-  Sparkles, Award, Users, BookOpen
+  Sparkles, Award, Users, BookOpen, Loader2
 } from 'lucide-react';
 import PageTransition from '@/components/shared/PageTransition';
 import ShareButton from '@/components/shared/ShareButton';
@@ -26,14 +26,17 @@ export const POPULAR_CITIES = [
   { name: 'Mumbai', slug: 'schools-in-mumbai' },
   { name: 'Bengaluru', slug: 'schools-in-bengaluru' },
   { name: 'Pune', slug: 'schools-in-pune' },
+  { name: 'Hyderabad', slug: 'schools-in-hyderabad' },
+  { name: 'Chennai', slug: 'schools-in-chennai' },
+  { name: 'Sonipat', slug: 'schools-in-sonipat' },
+  { name: 'Gurugram', slug: 'schools-in-gurugram' },
+  { name: 'Noida', slug: 'schools-in-noida' },
+  { name: 'Dehradun', slug: 'schools-in-dehradun' },
   { name: 'Bhubaneswar', slug: 'schools-in-bhubaneswar' },
   { name: 'Lucknow', slug: 'schools-in-lucknow' },
   { name: 'Jaipur', slug: 'schools-in-jaipur' },
-  { name: 'Hyderabad', slug: 'schools-in-hyderabad' },
-  { name: 'Chennai', slug: 'schools-in-chennai' },
   { name: 'Kolkata', slug: 'schools-in-kolkata' },
   { name: 'Ahmedabad', slug: 'schools-in-ahmedabad' },
-  { name: 'Dehradun', slug: 'schools-in-dehradun' },
   { name: 'Patna', slug: 'schools-in-patna' },
   { name: 'Bhopal', slug: 'schools-in-bhopal' },
 ];
@@ -52,6 +55,12 @@ export default function CitySchoolDirectoryClient({
   const [sortBy, setSortBy] = useState<'popularity' | 'rating' | 'feeAsc' | 'feeDesc'>('popularity');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [liveSchools, setLiveSchools] = useState<OrganizationItem[]>(ALL_ORGANIZATIONS);
+
+  // Pagination & Infinite Scroll State
+  const PAGE_SIZE = 20;
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
     supabaseSchoolService.getSchools().then((data) => {
@@ -83,9 +92,12 @@ export default function CitySchoolDirectoryClient({
     return liveSchools.filter((org) => {
       // If specific city page, match city
       if (cityName !== 'All India') {
+        const target = cityName.toLowerCase();
+        const orgCity = (org.city || '').toLowerCase();
         const matchesCity =
-          org.city.toLowerCase().includes(cityName.toLowerCase()) ||
-          (cityName === 'Delhi' && (org.city.includes('Delhi') || org.city.includes('Noida')));
+          orgCity.includes(target) ||
+          target.includes(orgCity) ||
+          (target.includes('delhi') && (orgCity.includes('delhi') || orgCity.includes('noida') || orgCity.includes('gurugram') || orgCity.includes('sonipat')));
         if (!matchesCity) return false;
       }
 
@@ -101,7 +113,8 @@ export default function CitySchoolDirectoryClient({
           org.name.toLowerCase().includes(q) ||
           org.city.toLowerCase().includes(q) ||
           (org.locality || '').toLowerCase().includes(q) ||
-          (org.board || '').toLowerCase().includes(q);
+          (org.board || '').toLowerCase().includes(q) ||
+          (org.udiseCode || '').toLowerCase().includes(q);
         if (!matches) return false;
       }
 
@@ -124,7 +137,46 @@ export default function CitySchoolDirectoryClient({
       if (sortBy === 'feeDesc') return (b.monthlyFeesNum || 0) - (a.monthlyFeesNum || 0);
       return b.reviews - a.reviews; // popularity
     });
+  }, [liveSchools, cityName, slug, searchQuery, selectedBoard, selectedAdmissionStatus, maxMonthlyFee, onlyWithLabs, sortBy]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
   }, [cityName, slug, searchQuery, selectedBoard, selectedAdmissionStatus, maxMonthlyFee, onlyWithLabs, sortBy]);
+
+  // Paginated visible organizations
+  const visibleOrgs = useMemo(() => {
+    return cityOrgs.slice(0, visibleCount);
+  }, [cityOrgs, visibleCount]);
+
+  const hasMore = visibleCount < cityOrgs.length;
+
+  // Infinite Scroll IntersectionObserver
+  useEffect(() => {
+    if (!hasMore || isLoadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setIsLoadingMore(true);
+          setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, cityOrgs.length));
+            setIsLoadingMore(false);
+          }, 200);
+        }
+      },
+      { rootMargin: '350px' }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, [hasMore, isLoadingMore, cityOrgs.length]);
 
   const handleToggleCompare = (org: OrganizationItem, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -190,13 +242,13 @@ export default function CitySchoolDirectoryClient({
               <div>
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-blue-700 text-[11px] font-bold mb-1.5">
                   <Building2 className="w-3.5 h-3.5" />
-                  <span>Verified STEM & Experiential Science Directory</span>
+                  <span>Verified All-India School Directory • {liveSchools.length.toLocaleString()} Total Listed Schools</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   {categoryTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-600 max-w-3xl mt-1">
-                  {categoryDesc} Showing <strong className="text-slate-900 font-black">{cityOrgs.length} verified schools & institutions</strong> with live laboratory infrastructure, fees, and admission status.
+                  {categoryDesc} Showing <strong className="text-slate-900 font-black">{cityOrgs.length.toLocaleString()} verified schools</strong> in {cityName} (out of {liveSchools.length.toLocaleString()} total listed in database) with live STEM laboratory infrastructure, fees, and admission status.
                 </p>
               </div>
 
@@ -368,7 +420,7 @@ export default function CitySchoolDirectoryClient({
                 {/* Sort & Count Bar */}
                 <div className="flex items-center justify-between gap-3 text-xs pt-1 border-t border-slate-100 flex-wrap">
                   <span className="text-slate-600 font-bold">
-                    Showing <strong className="text-slate-900 font-black">{cityOrgs.length}</strong> institutions in {cityName}
+                    Showing <strong className="text-slate-900 font-black">{visibleOrgs.length} of {cityOrgs.length.toLocaleString()}</strong> institutions in {cityName}
                   </span>
 
                   <div className="flex items-center gap-2">
@@ -418,7 +470,7 @@ export default function CitySchoolDirectoryClient({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {cityOrgs.map((org) => {
+                  {visibleOrgs.map((org) => {
                     const isCompared = compareList.some((c) => c.id === org.id);
                     const isLiked = likedOrgIds.includes(org.id);
 
@@ -738,6 +790,31 @@ export default function CitySchoolDirectoryClient({
                       </React.Fragment>
                     );
                   })}
+
+                  {/* Infinite Scroll Loader & Progress Sentinel */}
+                  {hasMore && (
+                    <div ref={loadMoreRef} className="py-6 flex flex-col items-center justify-center space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-blue-600 bg-blue-50 px-4 py-2.5 rounded-2xl border border-blue-200 shadow-2xs">
+                        <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                        <span>Loading more schools... ({visibleOrgs.length} of {cityOrgs.length.toLocaleString()})</span>
+                      </div>
+                      <button
+                        onClick={() => setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, cityOrgs.length))}
+                        className="text-[11px] font-bold text-slate-500 hover:text-blue-600 underline pt-1 cursor-pointer"
+                      >
+                        Click here to load more schools
+                      </button>
+                    </div>
+                  )}
+
+                  {!hasMore && cityOrgs.length > 0 && (
+                    <div className="py-6 text-center">
+                      <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 border border-slate-200 rounded-full text-slate-600 text-xs font-bold shadow-2xs">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>All {cityOrgs.length.toLocaleString()} schools in database loaded</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

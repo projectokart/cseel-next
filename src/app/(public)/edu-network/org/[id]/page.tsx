@@ -3,9 +3,11 @@ import { notFound } from "next/navigation";
 import OrgProfileClient from "./Client";
 import { getOrganizationById, ALL_ORGANIZATIONS, getOrgSlug } from "@/lib/eduNetworkData";
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   const ids = new Set<string>();
-  ALL_ORGANIZATIONS.forEach((org) => {
+  ALL_ORGANIZATIONS.slice(0, 100).forEach((org) => {
     if (org.id) ids.add(org.id);
     if (org.slug) ids.add(org.slug);
   });

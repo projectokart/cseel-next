@@ -1,3 +1,5 @@
+import rawSchoolsData from '@/data/schools_database.json';
+
 export interface OrganizationItem {
   id: string;
   slug?: string;
@@ -200,16 +202,14 @@ export interface OrgReviewItem {
   verifiedReviewer: boolean;
 }
 
-// ─── 100+ REALISTIC ORGANIZATIONS ACROSS ALL INDIAN STATES ───────────────────
-export const ALL_ORGANIZATIONS: OrganizationItem[] = [];
+// ─── 11,947 REAL SCHOOLS ACROSS ALL INDIAN CITIES & STATES ─────────────────
+export const ALL_ORGANIZATIONS: OrganizationItem[] = (rawSchoolsData as unknown as OrganizationItem[]);
 
-// Expand to 100 organizations programmatically
-const ALL_CITIES = [
+export const ALL_CITIES = [
   { city: "Bhubaneswar", state: "Odisha", pin: "751024" },
   { city: "Cuttack", state: "Odisha", pin: "753001" },
   { city: "Rourkela", state: "Odisha", pin: "769008" },
-  { city: "New Delhi", state: "Delhi", pin: "110001" },
-  { city: "South Delhi", state: "Delhi", pin: "110049" },
+  { city: "Delhi", state: "Delhi", pin: "110001" },
   { city: "Noida", state: "Uttar Pradesh", pin: "201301" },
   { city: "Lucknow", state: "Uttar Pradesh", pin: "226001" },
   { city: "Mumbai", state: "Maharashtra", pin: "400001" },
@@ -223,109 +223,10 @@ const ALL_CITIES = [
   { city: "Dehradun", state: "Uttarakhand", pin: "248001" },
   { city: "Patna", state: "Bihar", pin: "800001" },
   { city: "Bhopal", state: "Madhya Pradesh", pin: "462001" },
-  { city: "Kochi", state: "Kerala", pin: "682001" },
-  { city: "Guwahati", state: "Assam", pin: "781001" }
+  { city: "Sonipat", state: "Haryana", pin: "131001" },
+  { city: "Gurugram", state: "Haryana", pin: "122001" }
 ];
 
-const ORG_NAMES = [
-  "Army Public School", "DAV International School", "Kendriya Vidyalaya Sangathan",
-  "Ryan International School", "St. Joseph's Higher Secondary", "Bal Bharati Public School",
-  "Birla High School", "Amity International School", "Greenwood High International",
-  "National Institute of Technology", "Atal Tinkering Research Hub", "State Institute of Science & Technology"
-];
-
-for (let i = 14; i <= 100; i++) {
-  const c = ALL_CITIES[i % ALL_CITIES.length];
-  const namePrefix = ORG_NAMES[i % ORG_NAMES.length];
-  const type: OrganizationItem["type"] = i % 4 === 0 ? "Atal Tinkering Lab" : i % 5 === 0 ? "University" : "School";
-  const pinNum = parseInt(c.pin) + (i % 20);
-
-  ALL_ORGANIZATIONS.push({
-    id: `org-campus-${i}`,
-    name: `${namePrefix} (Campus ${i})`,
-    type,
-    affiliation: type === "School" ? "CBSE / State Board" : type === "Atal Tinkering Lab" ? "NITI Aayog AIM Affiliated" : "UGC / AICTE Approved",
-    city: c.city,
-    state: c.state,
-    pincode: pinNum.toString(),
-    address: `Sector ${i % 30 + 1}, Institutional Area, ${c.city}`,
-    email: `contact.campus${i}@${namePrefix.toLowerCase().replace(/[^a-z0-9]/g, "")}.edu.in`,
-    phone: `+91 ${c.city === "Delhi" ? "11" : "80"} 298${1000 + i}`,
-    website: `https://${namePrefix.toLowerCase().replace(/[^a-z0-9]/g, "")}-campus${i}.edu.in`,
-    verified: true,
-    rating: Number((4.5 + (i % 5) * 0.1).toFixed(1)),
-    reviews: 120 + i * 8,
-    stemLabsCount: 3 + (i % 8),
-    studentStrength: 800 + i * 35,
-    logo: `https://images.unsplash.com/photo-${1580582932707 + (i % 10)}?w=200&auto=format&fit=crop`,
-    bannerImage: `https://images.unsplash.com/photo-${1509062522246 + (i % 10)}?w=800&auto=format&fit=crop`,
-    description: `A premier ${type.toLowerCase()} in ${c.city}, ${c.state} committed to experiential learning, student science projects, and NEP-2020 hands-on education.`,
-    openJobsCount: (i % 4) + 1,
-    established: 1980 + (i % 40),
-    facilities: ["Physics Lab", "Chemistry Lab", "Composite STEM Lab", "Robotics Lab"]
-  });
-}
-
-// ─── ENRICH ALL ORGANIZATIONS WITH UNIAPPLY HYBRID PROPERTIES ────────────────
-ALL_ORGANIZATIONS.forEach((org, idx) => {
-  const isSchool = org.type === "School";
-  const isUniversity = org.type === "University" || org.type === "College";
-  const isResearch = org.type === "Research Institute";
-  
-  if (!org.board) {
-    if (org.affiliation?.toLowerCase().includes("ib") || org.name.toLowerCase().includes("international")) org.board = "IB";
-    else if (org.affiliation?.toLowerCase().includes("icse") || org.name.toLowerCase().includes("convent")) org.board = "ICSE";
-    else if (isUniversity || isResearch) org.board = "UGC/AICTE";
-    else org.board = "CBSE";
-  }
-
-  if (!org.classesOffered) {
-    if (org.name.toLowerCase().includes("petite") || org.name.toLowerCase().includes("pre-school")) org.classesOffered = "Pre-Nursery - UKG";
-    else if (isUniversity) org.classesOffered = "Undergraduate - Ph.D.";
-    else if (isResearch) org.classesOffered = "Ph.D. & Fellowships";
-    else if (org.type === "Atal Tinkering Lab") org.classesOffered = "Class 6 - Class 12 (STEM)";
-    else org.classesOffered = "Nursery - Class 12";
-  }
-
-  if (org.monthlyFeesNum === undefined) {
-    if (org.board === "IB") {
-      org.monthlyFeesNum = 33900;
-      org.monthlyFees = "₹33.9K";
-    } else if (org.name.toLowerCase().includes("heritage") || org.name.toLowerCase().includes("apeejay") || org.name.toLowerCase().includes("goenka")) {
-      org.monthlyFeesNum = 29000;
-      org.monthlyFees = "₹29.0K";
-    } else if (org.name.toLowerCase().includes("sapphire") || org.name.toLowerCase().includes("dps") || isSchool) {
-      org.monthlyFeesNum = 17000 + ((idx * 1300) % 15000);
-      org.monthlyFees = `₹${(org.monthlyFeesNum / 1000).toFixed(1)}K`;
-    } else if (isUniversity) {
-      org.monthlyFeesNum = 12000;
-      org.monthlyFees = "₹12.0K";
-    } else {
-      org.monthlyFeesNum = 0;
-      org.monthlyFees = "Govt. Subsidized";
-    }
-  }
-
-  if (!org.studentFacultyRatio) {
-    org.studentFacultyRatio = org.board === "IB" ? "12:1" : isResearch ? "6:1" : isUniversity ? "10:1" : "15:1";
-  }
-
-  if (!org.admissionStatus) {
-    org.admissionStatus = idx % 2 === 0 ? "On Going" : "Open for 2026-27";
-  }
-
-  if (org.isFeatured === undefined) {
-    org.isFeatured = idx % 3 === 0 || org.rating >= 4.9;
-  }
-
-  if (!org.likesCount) {
-    org.likesCount = 200 + ((idx * 67) % 2000);
-  }
-
-  if (!org.locality) {
-    org.locality = org.address.split(',')[0] || org.city;
-  }
-});
 
 // ─── 50 VERIFIED TEACHERS ACROSS SUBJECTS ────────────────────────────────────
 const TEACHER_NAMES = [

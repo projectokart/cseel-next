@@ -718,12 +718,6 @@ export default function SchoolProfileView({
                 <span className="text-xs font-mono font-bold text-slate-400">UDISE: {udiseCode}</span>
               </div>
 
-              <div className="space-y-3 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                {buildRealAboutParagraphs().map((para, idx) => (
-                  <p key={idx}>{para}</p>
-                ))}
-              </div>
-
               <div className="bg-slate-50/60 rounded-xl overflow-hidden border border-slate-200">
                 <table className="w-full text-xs sm:text-sm">
                   <tbody>

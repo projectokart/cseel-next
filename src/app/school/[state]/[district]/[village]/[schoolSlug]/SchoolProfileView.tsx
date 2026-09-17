@@ -145,6 +145,7 @@ export default function SchoolProfileView({
   // Modal state for community story submission
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isWelcomePopupOpen, setIsWelcomePopupOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [storyAuthor, setStoryAuthor] = useState('');
   const [storyRole, setStoryRole] = useState('Parent');
   const [storyRating, setStoryRating] = useState(5);
@@ -343,15 +344,26 @@ export default function SchoolProfileView({
   };
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `${schoolName} - UDISE Profile`,
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
+    setIsShareModalOpen(true);
+  };
+
+  const handleCopyLink = () => {
+    if (typeof window !== 'undefined') {
       navigator.clipboard.writeText(window.location.href);
       setCopiedToast(true);
       setTimeout(() => setCopiedToast(false), 3000);
+    }
+  };
+
+  const handleNativeShare = () => {
+    if (typeof window !== 'undefined' && navigator.share) {
+      navigator.share({
+        title: `${schoolName} - UDISE+ School Profile`,
+        text: `Check out verified UDISE profile for ${schoolName} in ${district}, ${state}:`,
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      handleCopyLink();
     }
   };
 
@@ -450,24 +462,34 @@ export default function SchoolProfileView({
       {/* ─── Breadcrumb Navigation Bar ─── */}
       <div className="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-30 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
-          <nav className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-500 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5" aria-label="Breadcrumb">
-            <Link href="/" className="flex items-center gap-1.5 hover:text-blue-600 font-medium transition-colors shrink-0">
-              <Home className="h-3.5 w-3.5" />
-              <span>Home</span>
+          <div className="flex items-center justify-between gap-3">
+            <nav className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-500 overflow-x-auto whitespace-nowrap scrollbar-none py-0.5" aria-label="Breadcrumb">
+              <Link href="/" className="flex items-center gap-1.5 hover:text-blue-600 font-medium transition-colors shrink-0">
+                <Home className="h-3.5 w-3.5" />
+                <span>Home</span>
+              </Link>
+              <span className="text-slate-300">/</span>
+              <Link href="/school-finder" className="hover:text-blue-600 font-medium transition-colors shrink-0">
+                India Directory
+              </Link>
+              <span className="text-slate-300">/</span>
+              <span className="hover:text-blue-600 font-medium transition-colors shrink-0">{state}</span>
+              <span className="text-slate-300">/</span>
+              <span className="hover:text-blue-600 font-medium transition-colors shrink-0">{district}</span>
+              <span className="text-slate-300">/</span>
+              <span className="hover:text-blue-600 font-medium transition-colors shrink-0">{blockName}</span>
+              <span className="text-slate-300">/</span>
+              <span className="text-blue-600 font-bold truncate max-w-[140px] sm:max-w-xs">{schoolName}</span>
+            </nav>
+
+            <Link
+              href="/school-finder"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              <span>Find Schools Near You</span>
             </Link>
-            <span className="text-slate-300">/</span>
-            <Link href="/school-finder" className="hover:text-blue-600 font-medium transition-colors shrink-0">
-              India Directory
-            </Link>
-            <span className="text-slate-300">/</span>
-            <span className="hover:text-blue-600 font-medium transition-colors shrink-0">{state}</span>
-            <span className="text-slate-300">/</span>
-            <span className="hover:text-blue-600 font-medium transition-colors shrink-0">{district}</span>
-            <span className="text-slate-300">/</span>
-            <span className="hover:text-blue-600 font-medium transition-colors shrink-0">{blockName}</span>
-            <span className="text-slate-300">/</span>
-            <span className="text-blue-600 font-bold truncate max-w-[140px] sm:max-w-xs">{schoolName}</span>
-          </nav>
+          </div>
         </div>
       </div>
 
@@ -478,9 +500,17 @@ export default function SchoolProfileView({
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl space-y-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 text-[11px] font-bold uppercase tracking-wider">
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-              <span>UDISE+ Verified Institution · {district}, {state}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 text-[11px] font-bold uppercase tracking-wider">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                <span>UDISE+ Verified Institution · {district}, {state}</span>
+              </div>
+              <Link
+                href="/school-finder"
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold hover:bg-emerald-100 transition-colors sm:hidden"
+              >
+                <span>📍 School Finder</span>
+              </Link>
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-snug uppercase">
@@ -534,7 +564,14 @@ export default function SchoolProfileView({
             </div>
 
             {/* Quick Action CTAs */}
-            <div className="pt-3 flex flex-wrap items-center gap-3">
+            <div className="pt-3 flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <Link
+                href={`/school-finder?city=${encodeURIComponent(district)}`}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5"
+              >
+                <Navigation className="h-4 w-4" />
+                <span>Find Schools Near You</span>
+              </Link>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`}
                 target="_blank"
@@ -542,14 +579,14 @@ export default function SchoolProfileView({
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5"
               >
                 <Compass className="h-4 w-4" />
-                <span>View on Google Maps</span>
+                <span>View on Map</span>
               </a>
               <button
                 type="button"
                 onClick={handleShare}
                 className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
               >
-                <Share2 className="h-4 w-4 text-slate-500" />
+                <Share2 className="h-4 w-4 text-blue-600" />
                 <span>Share Profile</span>
               </button>
               {copiedToast && (
@@ -1158,6 +1195,29 @@ export default function SchoolProfileView({
               </button>
             </div>
 
+            {/* 1.5 Interactive School Finder & Map Card */}
+            <div className="bg-linear-to-br from-slate-900 to-blue-950 text-white rounded-2xl p-5 border border-blue-800 shadow-md space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-cyan-300 flex items-center justify-center border border-blue-400/30 shrink-0">
+                  <Navigation className="w-4 h-4 text-cyan-400 animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="font-black text-white text-xs sm:text-sm">Find Schools Near You</h4>
+                  <p className="text-[10px] text-cyan-300 font-medium">Live GPS &amp; Radius Map</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Discover private schools in {district} and across India with interactive map pins, distance calculator, board &amp; fee filters.
+              </p>
+              <Link
+                href={`/school-finder?city=${encodeURIComponent(district)}`}
+                className="w-full py-2.5 px-3 rounded-xl bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>Explore Schools Near {district} →</span>
+              </Link>
+            </div>
+
             {/* 2. CSEEL.org Brand Card with Direct Portal Link */}
             <div className="relative overflow-hidden bg-slate-950 text-white rounded-2xl shadow-lg border border-blue-500/30">
               {/* Background Images Crossfade Slider with Opacity Filter */}
@@ -1503,6 +1563,136 @@ export default function SchoolProfileView({
                   Continue to School Profile
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Social Share Profile Modal with Live Preview Card ─── */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+            {/* Top Header & Close */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Share2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-900 text-base">Share School Profile</h3>
+                  <p className="text-xs text-slate-400">Share with parents, educators, and community</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsShareModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Rich Social Card Preview */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
+              <div className="relative h-32 sm:h-36 w-full bg-slate-900 overflow-hidden">
+                <img
+                  src="/images/cseel-science-slide-3.jpg"
+                  alt={schoolName}
+                  className="h-full w-full object-cover opacity-85"
+                />
+                <div className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-950/80 backdrop-blur-xs text-[10px] font-bold text-cyan-300 border border-cyan-500/30">
+                  <FileText className="w-3 h-3" />
+                  <span>UDISE: {udiseCode}</span>
+                </div>
+                <div className="absolute bottom-2.5 left-2.5 right-2.5">
+                  <h4 className="font-black text-white text-sm sm:text-base drop-shadow-md truncate">
+                    {schoolName}
+                  </h4>
+                  <p className="text-[11px] text-slate-200 drop-shadow-xs truncate">
+                    {village ? `${village}, ` : ''}{district}, {state} · {board}
+                  </p>
+                </div>
+              </div>
+              <div className="p-3 text-[11px] text-slate-600 bg-white border-t border-slate-100 flex items-center justify-between">
+                <span className="font-medium text-slate-500">Verified by CSEEL National Directory</span>
+                <span className="font-bold text-blue-600">schoolsearch.cseel.org</span>
+              </div>
+            </div>
+
+            {/* Share Channels Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-bold">
+              {/* WhatsApp */}
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out verified UDISE school profile of ${schoolName} in ${district}, ${state}: ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition-colors gap-1.5 text-center"
+              >
+                <span className="text-xl">💬</span>
+                <span>WhatsApp</span>
+              </a>
+
+              {/* Twitter / X */}
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Official UDISE profile of ${schoolName}, ${district} (${board}): ${typeof window !== 'undefined' ? window.location.href : ''}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 transition-colors gap-1.5 text-center"
+              >
+                <span className="text-xl">𝕏</span>
+                <span>Twitter / X</span>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 transition-colors gap-1.5 text-center"
+              >
+                <span className="text-xl">📘</span>
+                <span>Facebook</span>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 transition-colors gap-1.5 text-center"
+              >
+                <span className="text-xl">💼</span>
+                <span>LinkedIn</span>
+              </a>
+            </div>
+
+            {/* Copy Link Input & Native Share */}
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center gap-2 p-1.5 rounded-xl border border-slate-200 bg-slate-50">
+                <input
+                  type="text"
+                  readOnly
+                  value={typeof window !== 'undefined' ? window.location.href : ''}
+                  className="flex-1 px-2.5 py-1 text-xs text-slate-700 font-mono bg-transparent border-none focus:outline-hidden truncate"
+                />
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition-colors cursor-pointer shrink-0"
+                >
+                  {copiedToast ? 'Copied!' : 'Copy Link'}
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleNativeShare}
+                className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>More Sharing Options (Device Share)</span>
+              </button>
             </div>
           </div>
         </div>

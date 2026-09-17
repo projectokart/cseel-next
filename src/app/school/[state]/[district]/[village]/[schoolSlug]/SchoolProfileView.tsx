@@ -512,9 +512,18 @@ export default function SchoolProfileView({
               </Link>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-snug uppercase">
-              {schoolName}
-            </h1>
+            <div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-snug uppercase">
+                {schoolName}
+              </h1>
+              <p className="text-xs sm:text-sm font-semibold text-slate-600 mt-1 flex items-center gap-1.5 flex-wrap">
+                <span>📍 {village ? `${village}, ` : ''}{district}, {state}</span>
+                <span className="text-slate-300">·</span>
+                <span>UDISE: <strong className="font-mono text-blue-700">{udiseCode}</strong></span>
+                <span className="text-slate-300">·</span>
+                <span>{management}</span>
+              </p>
+            </div>
 
             {/* 100% Real Dynamic Description strictly from actual data */}
             <div className="space-y-2.5 text-xs sm:text-sm md:text-base text-slate-700 leading-relaxed font-normal">

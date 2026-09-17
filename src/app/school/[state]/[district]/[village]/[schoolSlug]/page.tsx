@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const canonicalUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(state)}/${encodeURIComponent(district)}/${encodeURIComponent(village)}/${cleanSlug}.html`;
   const metaTitle = `${schoolName} - UDISE+ School Profile & Admissions | ${district}, ${state} | CSEEL`;
   const metaDesc = `Official verified profile of ${schoolName} in ${village}, ${district}, ${state} (UDISE: ${dbSchool?.udise_code || 'Verified'}). Explore student-teacher ratio, campus facilities, verified curriculum, 3D lab simulations, and reviews.`;
-  const metaImage = dbSchool?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-3.jpg';
+  const metaImage = dbSchool?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg';
 
   return {
     title: metaTitle,
@@ -180,24 +180,64 @@ export default async function SchoolPage({ params }: PageProps) {
   const rawAddress = schoolData?.address ? schoolData.address.split('\n')[0] : `${displayVillage}, ${displayBlock}, ${displayDistrict}`;
 
   // JSON-LD structured data for Google Rich Snippets
+  const pageUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
+  
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'School',
-    name: displaySchoolName,
-    description: `Official UDISE+ educational profile for ${displaySchoolName} in ${displayVillage}, ${displayDistrict}, ${displayState}.`,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: displayVillage,
-      addressRegion: displayDistrict,
-      addressCountry: 'India',
-      postalCode: pincode,
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: lat,
-      longitude: lng,
-    },
-    url: website || `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`,
+    '@graph': [
+      {
+        '@type': 'School',
+        '@id': `${pageUrl}#school`,
+        name: displaySchoolName,
+        description: `Official UDISE+ educational profile for ${displaySchoolName} in ${displayVillage}, ${displayDistrict}, ${displayState}.`,
+        identifier: udiseCode || undefined,
+        image: schoolData?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: rawAddress,
+          addressLocality: displayVillage,
+          addressRegion: displayDistrict,
+          addressCountry: 'IN',
+          postalCode: pincode,
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: lat,
+          longitude: lng,
+        },
+        url: website || pageUrl,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${pageUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://schoolsearch.cseel.org',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: displayState,
+            item: `https://schoolsearch.cseel.org/state/${encodeURIComponent(displayState)}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: displayDistrict,
+            item: `https://schoolsearch.cseel.org/school-finder?city=${encodeURIComponent(displayDistrict)}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 4,
+            name: displaySchoolName,
+            item: pageUrl,
+          },
+        ],
+      },
+    ],
   };
 
   return (

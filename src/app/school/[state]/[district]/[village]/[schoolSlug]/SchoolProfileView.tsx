@@ -155,11 +155,10 @@ export default function SchoolProfileView({
   const [storySubmittedMsg, setStorySubmittedMsg] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
 
-  // Background Science Images Slideshow state
+  // Background Science Images Slideshow state (2 clean high-res photos without overlay text)
   const scienceSlideImages = [
     '/images/cseel-science-slide-1.jpg',
     '/images/cseel-science-slide-2.png',
-    '/images/cseel-science-slide-3.jpg',
   ];
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
@@ -984,107 +983,107 @@ export default function SchoolProfileView({
             </article>
 
             {/* Featured Innovation Banner: Why should children learn SCIENCE BY DOING? */}
-            <article className="relative overflow-hidden rounded-3xl border border-blue-500/30 bg-slate-950 text-white shadow-xl">
+            <article className="relative overflow-hidden rounded-3xl border border-teal-500/30 bg-slate-950 text-white shadow-2xl">
               {/* Background Images Crossfade Slider with Opacity Filter */}
               {scienceSlideImages.map((imgSrc, sIdx) => (
                 <div 
                   key={sIdx}
                   className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
-                    currentSlideIndex === sIdx ? 'opacity-40 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                    currentSlideIndex === sIdx ? 'opacity-35 scale-105' : 'opacity-0 scale-100 pointer-events-none'
                   }`}
                   style={{ backgroundImage: `url('${imgSrc}')` }}
                 />
               ))}
-              {/* Dark Gradient Overlay Filter */}
-              <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/90 to-blue-950/75" />
+              {/* Dark Gradient Overlay Filter for Crisp Text Contrast */}
+              <div className="absolute inset-0 bg-linear-to-r from-slate-950/95 via-slate-950/85 to-slate-900/80 backdrop-blur-[1px]" />
 
               <div className="relative p-6 sm:p-8 md:p-10 space-y-6 z-10">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold uppercase tracking-wider backdrop-blur-xs">
-                    <Atom className="w-4 h-4 text-cyan-400" />
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#00E5BE] text-xs font-semibold tracking-wide backdrop-blur-md shadow-xs">
+                    <Atom className="w-4 h-4 text-[#00E5BE]" />
                     <span>Center for Scientific Exploration and Experiential Learning</span>
                   </div>
-                  <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1 rounded-full backdrop-blur-xs">
                     NEP 2020 Aligned
                   </span>
                 </div>
 
-                <div className="space-y-3 max-w-2xl">
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
-                    Why should children learn <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-emerald-400 to-lime-300">SCIENCE BY DOING?</span>
+                <div className="space-y-3.5 max-w-3xl">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md">
+                    Why should children learn <span className="text-[#00E5BE] font-black">SCIENCE BY DOING?</span>
                   </h2>
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium">
+                  <p className="text-sm sm:text-base text-slate-100 leading-relaxed font-normal drop-shadow-xs">
                     Because real scientific breakthroughs start with curiosity, hands-on discovery, and tangible experiments — not passive memorization. CSEEL empowers forward-thinking schools, educators, and students with experiential STEM kits, interactive 3D virtual laboratories, and experiential learning pedagogy.
                   </p>
                 </div>
 
-                {/* Key Pillars */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 backdrop-blur-xs space-y-1">
-                    <div className="text-cyan-400 font-bold text-xs flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5" />
+                {/* Key Pillars - Google Card Aesthetic */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                  <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-[#00C49F]/50 transition-all shadow-sm">
+                    <div className="text-[#00E5BE] font-bold text-xs flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[#00E5BE]" />
                       <span>Hands-on Lab Kits</span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-normal">
+                    <p className="text-xs text-slate-200 leading-relaxed">
                       Class 1–12 physical experiment sets mapped directly to CBSE, ICSE &amp; State Boards.
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 backdrop-blur-xs space-y-1">
-                    <div className="text-emerald-400 font-bold text-xs flex items-center gap-1.5">
-                      <Atom className="w-3.5 h-3.5" />
+                  <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-cyan-400/50 transition-all shadow-sm">
+                    <div className="text-cyan-300 font-bold text-xs flex items-center gap-1.5">
+                      <Atom className="w-4 h-4 text-cyan-300" />
                       <span>Virtual 3D Simulations</span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-normal">
+                    <p className="text-xs text-slate-200 leading-relaxed">
                       Interactive digital experiments enabling students to explore advanced physics &amp; chemistry concepts.
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 backdrop-blur-xs space-y-1">
-                    <div className="text-amber-400 font-bold text-xs flex items-center gap-1.5">
-                      <Award className="w-3.5 h-3.5" />
+                  <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-amber-400/50 transition-all shadow-sm">
+                    <div className="text-amber-300 font-bold text-xs flex items-center gap-1.5">
+                      <Award className="w-4 h-4 text-amber-300" />
                       <span>Teacher Enablement</span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-normal">
+                    <p className="text-xs text-slate-200 leading-relaxed">
                       Certified experiential pedagogy training transforming teachers into visionary STEM mentors.
                     </p>
                   </div>
                 </div>
 
-                {/* Call To Action Buttons */}
+                {/* Call To Action Buttons - Google & CSEEL Theme Light Color */}
                 <div className="pt-2 flex flex-wrap items-center gap-3.5">
                   <a
                     href="https://www.cseel.org"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-linear-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-extrabold text-sm shadow-lg shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-[#00C49F]/30 hover:shadow-[#00C49F]/50 transition-all transform hover:-translate-y-0.5 cursor-pointer"
                   >
                     <span>Explore Experiential Learning at CSEEL.org</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-4 h-4 text-slate-950 stroke-[2.5]" />
                   </a>
                   <a
                     href="https://www.cseel.org/seminars"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-xs transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs backdrop-blur-md transition-all cursor-pointer"
                   >
                     <span>Book School Science Demo</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-300" />
                   </a>
                 </div>
 
                 {/* Slide indicator dots */}
-                <div className="flex items-center gap-1.5 pt-1">
+                <div className="flex items-center gap-2 pt-1">
                   {scienceSlideImages.map((_, dotIdx) => (
                     <button
                       key={dotIdx}
                       type="button"
                       onClick={() => setCurrentSlideIndex(dotIdx)}
-                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                        currentSlideIndex === dotIdx ? 'w-6 bg-cyan-400' : 'w-2 bg-slate-700 hover:bg-slate-500'
+                      className={`h-2 rounded-full transition-all cursor-pointer ${
+                        currentSlideIndex === dotIdx ? 'w-7 bg-[#00E5BE]' : 'w-2 bg-slate-700 hover:bg-slate-500'
                       }`}
                       aria-label={`Go to slide ${dotIdx + 1}`}
                     />
                   ))}
-                  <span className="text-[10px] text-slate-400 ml-2 font-medium">Experiential Science Gallery</span>
+                  <span className="text-[11px] text-slate-300 ml-2 font-medium">Experiential Science Gallery</span>
                 </div>
               </div>
             </article>
@@ -1219,39 +1218,39 @@ export default function SchoolProfileView({
             </div>
 
             {/* 2. CSEEL.org Brand Card with Direct Portal Link */}
-            <div className="relative overflow-hidden bg-slate-950 text-white rounded-2xl shadow-lg border border-blue-500/30">
+            <div className="relative overflow-hidden bg-slate-950 text-white rounded-2xl shadow-lg border border-teal-500/30">
               {/* Background Images Crossfade Slider with Opacity Filter */}
               {scienceSlideImages.map((imgSrc, sIdx) => (
                 <div 
                   key={sIdx}
                   className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out ${
-                    currentSlideIndex === sIdx ? 'opacity-35 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                    currentSlideIndex === sIdx ? 'opacity-30 scale-105' : 'opacity-0 scale-100 pointer-events-none'
                   }`}
                   style={{ backgroundImage: `url('${imgSrc}')` }}
                 />
               ))}
-              <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-900/90 to-blue-950/85" />
+              <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-900/90 to-slate-950/85" />
               
               <div className="relative p-5 sm:p-6 space-y-4 z-10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-cyan-300 flex items-center justify-center border border-cyan-400/30 shrink-0">
-                    <Atom className="w-6 h-6 text-cyan-400" />
+                  <div className="w-10 h-10 rounded-xl bg-white/10 text-[#00E5BE] flex items-center justify-center border border-white/20 shrink-0 backdrop-blur-md">
+                    <Atom className="w-6 h-6 text-[#00E5BE]" />
                   </div>
                   <div>
                     <h4 className="text-xs sm:text-sm font-black text-white leading-snug">
                       Center for Scientific Exploration and Experiential Learning
                     </h4>
-                    <span className="text-[10px] text-cyan-300 font-bold uppercase tracking-wider block mt-0.5">
+                    <span className="text-[10px] text-[#00E5BE] font-bold uppercase tracking-wider block mt-0.5">
                       CSEEL National Network
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <p className="text-xs font-black text-emerald-400">
+                  <p className="text-xs font-black text-[#00E5BE]">
                     Why should children learn Science by Doing?
                   </p>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-100 leading-relaxed font-normal">
                     Empower your students with hands-on STEM experiment kits, 3D science simulations, and NEP 2020 aligned experiential curricula trusted across 500+ Indian institutions.
                   </p>
                 </div>
@@ -1261,11 +1260,11 @@ export default function SchoolProfileView({
                     href="https://www.cseel.org"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-2.5 px-4 rounded-xl bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 px-4 rounded-full bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs shadow-md shadow-[#00C49F]/25 hover:shadow-[#00C49F]/40 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Atom className="h-4 w-4 text-cyan-200" />
+                    <Atom className="h-4 w-4 text-slate-950 stroke-[2.5]" />
                     <span>Visit CSEEL.org Portal</span>
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ExternalLink className="h-3.5 w-3.5 text-slate-950" />
                   </a>
                 </div>
               </div>
@@ -1486,32 +1485,32 @@ export default function SchoolProfileView({
       {/* ─── Site Visit Welcome Popup Modal with Full Background Image & Opacity Filter ─── */}
       {isWelcomePopupOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-cyan-500/40 bg-slate-950 text-white shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-teal-500/40 bg-slate-950 text-white shadow-2xl animate-in zoom-in-95 duration-300">
             {/* Full Background Image Slider with Smooth Crossfade & Opacity Filter */}
             {scienceSlideImages.map((imgSrc, sIdx) => (
               <div
                 key={sIdx}
                 className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
-                  currentSlideIndex === sIdx ? 'opacity-40 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                  currentSlideIndex === sIdx ? 'opacity-35 scale-105' : 'opacity-0 scale-100 pointer-events-none'
                 }`}
                 style={{ backgroundImage: `url('${imgSrc}')` }}
               />
             ))}
-            {/* Dark Opacity Gradient Overlay */}
-            <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-950/90 to-blue-950/85" />
+            {/* Dark Opacity Gradient Overlay for Crisp Readability */}
+            <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-950/90 to-slate-900/85 backdrop-blur-[1px]" />
 
             {/* Modal Content */}
             <div className="relative p-6 sm:p-8 md:p-10 space-y-6 z-10">
               {/* Top Header & Close Button */}
               <div className="flex items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-xs font-black uppercase tracking-wider backdrop-blur-xs">
-                  <Atom className="w-4 h-4 text-cyan-400" />
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#00E5BE] text-xs font-semibold tracking-wide backdrop-blur-md shadow-xs">
+                  <Atom className="w-4 h-4 text-[#00E5BE]" />
                   <span>Center for Scientific Exploration and Experiential Learning</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsWelcomePopupOpen(false)}
-                  className="p-2 rounded-full bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors cursor-pointer shrink-0"
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white border border-white/20 transition-colors cursor-pointer shrink-0 backdrop-blur-md"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
@@ -1520,27 +1519,27 @@ export default function SchoolProfileView({
 
               {/* Main Headline & Question */}
               <div className="space-y-3">
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
-                  Why should children learn <span className="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-emerald-400 to-lime-300">SCIENCE BY DOING?</span>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-md">
+                  Why should children learn <span className="text-[#00E5BE]">SCIENCE BY DOING?</span>
                 </h3>
-                <p className="text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed font-medium">
+                <p className="text-xs sm:text-sm md:text-base text-slate-100 leading-relaxed font-normal drop-shadow-xs">
                   Hands-on experimentation sparks true scientific discovery! Elevate your school with CSEEL’s NEP 2020 aligned experiential STEAM kits, interactive 3D virtual science labs, and certified teacher training modules.
                 </p>
               </div>
 
               {/* Value Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl bg-slate-900/85 border border-slate-800 backdrop-blur-xs space-y-0.5">
-                  <span className="text-cyan-400 font-extrabold text-xs block">🧪 100+ Science Kits</span>
-                  <p className="text-[11px] text-slate-400">Class 1 to 12 physics, chemistry & bio physical kits.</p>
+                <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
+                  <span className="text-[#00E5BE] font-bold text-xs block">🧪 100+ Science Kits</span>
+                  <p className="text-xs text-slate-200 leading-normal">Class 1 to 12 physics, chemistry &amp; bio physical kits.</p>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900/85 border border-slate-800 backdrop-blur-xs space-y-0.5">
-                  <span className="text-emerald-400 font-extrabold text-xs block">🔬 3D Virtual Labs</span>
-                  <p className="text-[11px] text-slate-400">Interactive simulations for deep concept mastery.</p>
+                <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
+                  <span className="text-cyan-300 font-bold text-xs block">🔬 3D Virtual Labs</span>
+                  <p className="text-xs text-slate-200 leading-normal">Interactive simulations for deep concept mastery.</p>
                 </div>
-                <div className="p-3 rounded-xl bg-slate-900/85 border border-slate-800 backdrop-blur-xs space-y-0.5">
-                  <span className="text-amber-400 font-extrabold text-xs block">🚀 500+ Top Schools</span>
-                  <p className="text-[11px] text-slate-400">Trusted institutional STEM development partner.</p>
+                <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
+                  <span className="text-amber-300 font-bold text-xs block">🚀 500+ Top Schools</span>
+                  <p className="text-xs text-slate-200 leading-normal">Trusted institutional STEM development partner.</p>
                 </div>
               </div>
 
@@ -1550,15 +1549,15 @@ export default function SchoolProfileView({
                   href="https://www.cseel.org"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-linear-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black text-sm shadow-xl shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5 text-center cursor-pointer"
+                  className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-[#00C49F]/30 hover:shadow-[#00C49F]/50 transition-all transform hover:-translate-y-0.5 text-center cursor-pointer"
                 >
                   <span>Explore Science Kits at CSEEL.org</span>
-                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  <ArrowRight className="w-4 h-4 shrink-0 text-slate-950 stroke-[2.5]" />
                 </a>
                 <button
                   type="button"
                   onClick={() => setIsWelcomePopupOpen(false)}
-                  className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white font-bold text-xs transition-colors text-center cursor-pointer"
+                  className="w-full sm:w-auto px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs backdrop-blur-md transition-colors text-center cursor-pointer"
                 >
                   Continue to School Profile
                 </button>

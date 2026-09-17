@@ -1011,42 +1011,54 @@ export default function SchoolProfileView({
                   </span>
                 </div>
 
-                <div className="space-y-3.5 max-w-3xl">
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-md">
-                    Why should children learn <span className="text-[#00E5BE] font-black">SCIENCE BY DOING?</span>
+                <div className="space-y-3 max-w-3xl">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+                    Why should children learn <span className="text-[#00E5BE]">SCIENCE BY DOING?</span>
                   </h2>
-                  <p className="text-sm sm:text-base text-slate-100 leading-relaxed font-normal drop-shadow-xs">
-                    Because real scientific breakthroughs start with curiosity, hands-on discovery, and tangible experiments — not passive memorization. CSEEL empowers forward-thinking schools, educators, and students with experiential STEM kits, interactive 3D virtual laboratories, and experiential learning pedagogy.
+                  <p className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight drop-shadow-sm">
+                    Turn Textbook Concepts into Reality. Feel the Science.
+                  </p>
+                  <p className="text-xs sm:text-sm text-slate-100/90 leading-relaxed font-normal drop-shadow-xs">
+                    Turning Every Concept into Practical Reality. Experiential STEM kits and interactive laboratories empower students to explore, discover, and truly master scientific principles.
                   </p>
                 </div>
 
-                {/* Key Pillars - Google Card Aesthetic */}
+                {/* Key Pillars - Google Card Aesthetic with 900+ Experiments Breakdown */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
                   <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-[#00C49F]/50 transition-all shadow-sm">
-                    <div className="text-[#00E5BE] font-bold text-xs flex items-center gap-1.5">
+                    <div className="text-[#00E5BE] font-black text-sm flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-[#00E5BE]" />
-                      <span>Hands-on Lab Kits</span>
+                      <span>900+ Real Science Experiments</span>
                     </div>
-                    <p className="text-xs text-slate-200 leading-relaxed">
-                      Class 1–12 physical experiment sets mapped directly to CBSE, ICSE &amp; State Boards.
+                    <p className="text-xs font-semibold text-white">
+                      500 Physics • 200 Chemistry • 200 Biology
+                    </p>
+                    <p className="text-[11px] text-slate-300 leading-normal">
+                      Hands-on physical kits covering Class 1–12 board curricula.
                     </p>
                   </div>
                   <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-cyan-400/50 transition-all shadow-sm">
-                    <div className="text-cyan-300 font-bold text-xs flex items-center gap-1.5">
+                    <div className="text-cyan-300 font-black text-sm flex items-center gap-1.5">
                       <Atom className="w-4 h-4 text-cyan-300" />
-                      <span>Virtual 3D Simulations</span>
+                      <span>Feel the Science</span>
                     </div>
-                    <p className="text-xs text-slate-200 leading-relaxed">
-                      Interactive digital experiments enabling students to explore advanced physics &amp; chemistry concepts.
+                    <p className="text-xs font-semibold text-white">
+                      Interactive 3D Virtual Simulations
+                    </p>
+                    <p className="text-[11px] text-slate-300 leading-normal">
+                      Visualizing complex physics &amp; chemical reactions in real-time.
                     </p>
                   </div>
                   <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-amber-400/50 transition-all shadow-sm">
-                    <div className="text-amber-300 font-bold text-xs flex items-center gap-1.5">
+                    <div className="text-amber-300 font-black text-sm flex items-center gap-1.5">
                       <Award className="w-4 h-4 text-amber-300" />
-                      <span>Teacher Enablement</span>
+                      <span>Practical Reality</span>
                     </div>
-                    <p className="text-xs text-slate-200 leading-relaxed">
-                      Certified experiential pedagogy training transforming teachers into visionary STEM mentors.
+                    <p className="text-xs font-semibold text-white">
+                      NEP 2020 Experiential Pedagogy
+                    </p>
+                    <p className="text-[11px] text-slate-300 leading-normal">
+                      Certified teacher enablement &amp; student innovation programs.
                     </p>
                   </div>
                 </div>
@@ -1253,8 +1265,11 @@ export default function SchoolProfileView({
                   <p className="text-xs font-black text-[#00E5BE]">
                     Why should children learn Science by Doing?
                   </p>
-                  <p className="text-xs text-slate-100 leading-relaxed font-normal">
-                    Empower your students with hands-on STEM experiment kits, 3D science simulations, and NEP 2020 aligned experiential curricula trusted across 500+ Indian institutions.
+                  <p className="text-[11px] font-bold text-white">
+                    Turn Textbook Concepts into Reality. Feel the Science.
+                  </p>
+                  <p className="text-xs text-slate-200 leading-relaxed font-normal">
+                    900+ Real Science Experiments (500 Physics • 200 Chemistry • 200 Biology). Turning every concept into practical reality.
                   </p>
                 </div>
 
@@ -1525,24 +1540,27 @@ export default function SchoolProfileView({
                 <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-md">
                   Why should children learn <span className="text-[#00E5BE]">SCIENCE BY DOING?</span>
                 </h3>
-                <p className="text-xs sm:text-sm md:text-base text-slate-100 leading-relaxed font-normal drop-shadow-xs">
-                  Hands-on experimentation sparks true scientific discovery! Elevate your school with CSEEL’s NEP 2020 aligned experiential STEAM kits, interactive 3D virtual science labs, and certified teacher training modules.
+                <p className="text-sm sm:text-base font-bold text-white drop-shadow-sm">
+                  Turn Textbook Concepts into Reality. Feel the Science.
+                </p>
+                <p className="text-xs sm:text-sm text-slate-100 leading-relaxed font-normal drop-shadow-xs">
+                  Turning Every Concept into Practical Reality. Elevate your school with CSEEL’s 900+ real science experiments, interactive 3D virtual science labs, and NEP 2020 experiential curricula.
                 </p>
               </div>
 
               {/* Value Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
-                  <span className="text-[#00E5BE] font-bold text-xs block">🧪 100+ Science Kits</span>
-                  <p className="text-xs text-slate-200 leading-normal">Class 1 to 12 physics, chemistry &amp; bio physical kits.</p>
+                  <span className="text-[#00E5BE] font-black text-xs block">🧪 900+ Real Experiments</span>
+                  <p className="text-[11px] text-slate-200 leading-tight">500 Physics • 200 Chemistry • 200 Biology</p>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
-                  <span className="text-cyan-300 font-bold text-xs block">🔬 3D Virtual Labs</span>
-                  <p className="text-xs text-slate-200 leading-normal">Interactive simulations for deep concept mastery.</p>
+                  <span className="text-cyan-300 font-black text-xs block">🔬 3D Virtual Labs</span>
+                  <p className="text-[11px] text-slate-200 leading-tight">Interactive simulations for deep concept mastery.</p>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
-                  <span className="text-amber-300 font-bold text-xs block">🚀 500+ Top Schools</span>
-                  <p className="text-xs text-slate-200 leading-normal">Trusted institutional STEM development partner.</p>
+                  <span className="text-amber-300 font-black text-xs block">🚀 Practical Reality</span>
+                  <p className="text-[11px] text-slate-200 leading-tight">NEP 2020 experiential pedagogy &amp; kits.</p>
                 </div>
               </div>
 

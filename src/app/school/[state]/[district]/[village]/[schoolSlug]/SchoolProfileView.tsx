@@ -154,6 +154,22 @@ export default function SchoolProfileView({
   const [storySubmittedMsg, setStorySubmittedMsg] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
 
+  // Background Science Images Slideshow state
+  const scienceSlideImages = [
+    '/images/cseel-science-slide-1.jpg',
+    '/images/cseel-science-slide-2.png',
+    '/images/cseel-science-slide-3.jpg',
+  ];
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+
+  useEffect(() => {
+    // Smooth slideshow background crossfade interval
+    const slideTimer = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % scienceSlideImages.length);
+    }, 3500);
+    return () => clearInterval(slideTimer);
+  }, [scienceSlideImages.length]);
+
   useEffect(() => {
     // Show high-converting science experiential welcome popup on site visit
     const popupTimer = setTimeout(() => {
@@ -932,11 +948,16 @@ export default function SchoolProfileView({
 
             {/* Featured Innovation Banner: Why should children learn SCIENCE BY DOING? */}
             <article className="relative overflow-hidden rounded-3xl border border-blue-500/30 bg-slate-950 text-white shadow-xl">
-              {/* Background Image with Opacity Filter */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-35 scale-105 transition-transform duration-700 hover:scale-100"
-                style={{ backgroundImage: "url('/images/cseel-science-lab-hero.png')" }}
-              />
+              {/* Background Images Crossfade Slider with Opacity Filter */}
+              {scienceSlideImages.map((imgSrc, sIdx) => (
+                <div 
+                  key={sIdx}
+                  className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
+                    currentSlideIndex === sIdx ? 'opacity-40 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                  }`}
+                  style={{ backgroundImage: `url('${imgSrc}')` }}
+                />
+              ))}
               {/* Dark Gradient Overlay Filter */}
               <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/90 to-blue-950/75" />
 
@@ -1011,6 +1032,22 @@ export default function SchoolProfileView({
                     <span>Book School Science Demo</span>
                     <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
                   </a>
+                </div>
+
+                {/* Slide indicator dots */}
+                <div className="flex items-center gap-1.5 pt-1">
+                  {scienceSlideImages.map((_, dotIdx) => (
+                    <button
+                      key={dotIdx}
+                      type="button"
+                      onClick={() => setCurrentSlideIndex(dotIdx)}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        currentSlideIndex === dotIdx ? 'w-6 bg-cyan-400' : 'w-2 bg-slate-700 hover:bg-slate-500'
+                      }`}
+                      aria-label={`Go to slide ${dotIdx + 1}`}
+                    />
+                  ))}
+                  <span className="text-[10px] text-slate-400 ml-2 font-medium">Experiential Science Gallery</span>
                 </div>
               </div>
             </article>
@@ -1123,11 +1160,16 @@ export default function SchoolProfileView({
 
             {/* 2. CSEEL.org Brand Card with Direct Portal Link */}
             <div className="relative overflow-hidden bg-slate-950 text-white rounded-2xl shadow-lg border border-blue-500/30">
-              {/* Opacity image overlay */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center opacity-30"
-                style={{ backgroundImage: "url('/images/cseel-science-lab-hero.png')" }}
-              />
+              {/* Background Images Crossfade Slider with Opacity Filter */}
+              {scienceSlideImages.map((imgSrc, sIdx) => (
+                <div 
+                  key={sIdx}
+                  className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-in-out ${
+                    currentSlideIndex === sIdx ? 'opacity-35 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                  }`}
+                  style={{ backgroundImage: `url('${imgSrc}')` }}
+                />
+              ))}
               <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-900/90 to-blue-950/85" />
               
               <div className="relative p-5 sm:p-6 space-y-4 z-10">
@@ -1385,11 +1427,16 @@ export default function SchoolProfileView({
       {isWelcomePopupOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
           <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-cyan-500/40 bg-slate-950 text-white shadow-2xl animate-in zoom-in-95 duration-300">
-            {/* Full Background Image with Opacity Filter */}
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-35 scale-105"
-              style={{ backgroundImage: "url('/images/cseel-science-lab-hero.png')" }}
-            />
+            {/* Full Background Image Slider with Smooth Crossfade & Opacity Filter */}
+            {scienceSlideImages.map((imgSrc, sIdx) => (
+              <div
+                key={sIdx}
+                className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
+                  currentSlideIndex === sIdx ? 'opacity-40 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                }`}
+                style={{ backgroundImage: `url('${imgSrc}')` }}
+              />
+            ))}
             {/* Dark Opacity Gradient Overlay */}
             <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-950/90 to-blue-950/85" />
 

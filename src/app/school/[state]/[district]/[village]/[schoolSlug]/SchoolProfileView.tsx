@@ -154,6 +154,20 @@ export default function SchoolProfileView({
   const [storyBody, setStoryBody] = useState('');
   const [storySubmittedMsg, setStorySubmittedMsg] = useState(false);
   const [copiedToast, setCopiedToast] = useState(false);
+  // Formspree School Verification & Update Form State
+  const [updateImageUrl, setUpdateImageUrl] = useState('');
+  const [updateContact, setUpdateContact] = useState('');
+  const [updateEmail, setUpdateEmail] = useState('');
+  const [updateWebsite, setUpdateWebsite] = useState('');
+  const [updateIsCorrect, setUpdateIsCorrect] = useState('Yes, all profile details are 100% accurate');
+  const [updateRating, setUpdateRating] = useState(5);
+  const [updateReview, setUpdateReview] = useState('');
+  const [updateSuggestions, setUpdateSuggestions] = useState('');
+  const [updateSubmitterName, setUpdateSubmitterName] = useState('');
+  const [updateSubmitterRole, setUpdateSubmitterRole] = useState('Parent');
+  const [isUpdateSubmitting, setIsUpdateSubmitting] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateError, setUpdateError] = useState('');
 
   // Background Science Images Slideshow state (2 clean high-res photos without overlay text)
   const scienceSlideImages = [
@@ -316,9 +330,106 @@ export default function SchoolProfileView({
     },
   ]);
 
-  const handleStorySubmit = (e: React.FormEvent) => {
+  const handleProfileUpdateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUpdateSubmitting(true);
+    setUpdateError('');
+
+    const payload = {
+      // 1. Auto-filled & Locked Fields
+      school_name: schoolName,
+      udise_code: udiseCode,
+      state: state,
+      district: district,
+      block: blockName,
+      village: village,
+      registered_address: rawAddress,
+      pincode: pincode,
+      geo_coordinates: `${lat}, ${lng}`,
+      management_authority: management,
+      board: board,
+      medium: medium,
+
+      // 2. User Editable Fields
+      school_image_url: updateImageUrl.trim(),
+      contact_number: updateContact.trim(),
+      official_email: updateEmail.trim(),
+      official_website: updateWebsite.trim(),
+      is_information_correct: updateIsCorrect,
+      user_rating: `${updateRating} / 5 Stars`,
+      review_feedback: updateReview.trim(),
+      suggestions_notes: updateSuggestions.trim(),
+      submitter_name: updateSubmitterName.trim(),
+      submitter_role: updateSubmitterRole,
+      submitted_at: new Date().toISOString(),
+      source_page_url: typeof window !== 'undefined' ? window.location.href : '',
+    };
+
+    try {
+      const response = await fetch('https://formspree.io/f/xbgljegy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setUpdateSuccess(true);
+        if (updateReview.trim() && updateSubmitterName.trim()) {
+          setStories((prev) => [
+            {
+              id: Date.now(),
+              author: updateSubmitterName.trim(),
+              role: `${updateSubmitterRole} (Community Verification)`,
+              rating: updateRating,
+              year: '2025-26',
+              title: updateReview.slice(0, 35) + '...',
+              content: updateReview.trim(),
+              date: 'Just now',
+            },
+            ...prev,
+          ]);
+        }
+      } else {
+        const errData = await response.json();
+        setUpdateError(errData.error || 'Submission failed. Please try again.');
+      }
+    } catch (err: any) {
+      setUpdateError(err.message || 'Network error. Please check your connection.');
+    } finally {
+      setIsUpdateSubmitting(false);
+    }
+  };
+
+  const handleStorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!storyAuthor.trim() || !storyBody.trim()) return;
+
+    // Send to Formspree as well
+    try {
+      await fetch('https://formspree.io/f/xbgljegy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          school_name: schoolName,
+          udise_code: udiseCode,
+          state: state,
+          district: district,
+          author: storyAuthor.trim(),
+          role: storyRole,
+          year: storyYear,
+          rating: `${storyRating} / 5`,
+          title: storyTitle.trim() || 'Community Experience',
+          review_body: storyBody.trim(),
+          source_page_url: typeof window !== 'undefined' ? window.location.href : '',
+        }),
+      });
+    } catch (err) {}
 
     const newStory = {
       id: Date.now(),
@@ -597,6 +708,13 @@ export default function SchoolProfileView({
                 <Share2 className="h-4 w-4 text-blue-600" />
                 <span>Share Profile</span>
               </button>
+              <a
+                href="#school-update-form"
+                className="px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs rounded-xl border border-purple-200 transition-all flex items-center gap-1.5"
+              >
+                <ShieldCheck className="h-4 w-4 text-purple-600" />
+                <span>Verify &amp; Update Info</span>
+              </a>
               {copiedToast && (
                 <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 animate-in fade-in">
                   Link copied to clipboard!
@@ -1143,6 +1261,297 @@ export default function SchoolProfileView({
                   );
                 })}
               </div>
+            </article>
+
+            {/* Card 7: School Information Update & Community Verification Form (Formspree) */}
+            <article id="school-update-form" className="bg-white shadow-xs border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6">
+              <div className="pb-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                    <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                      <ShieldCheck className="w-4 h-4" />
+                    </span>
+                    <span>Update School Information &amp; Submit Review</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Official representatives, parents &amp; alumni can verify or update profile details for {schoolName}.
+                  </p>
+                </div>
+                <span className="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
+                  Formspree Verified
+                </span>
+              </div>
+
+              {updateSuccess ? (
+                <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-3 animate-in zoom-in-95">
+                  <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto animate-bounce" />
+                  <h3 className="text-base font-black text-emerald-900">Thank You! Information Submitted Successfully</h3>
+                  <p className="text-xs sm:text-sm text-emerald-700 max-w-md mx-auto leading-relaxed">
+                    Your updates, image link, contact details, and review for <strong>{schoolName}</strong> have been received and sent for verification.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setUpdateSuccess(false)}
+                    className="mt-2 px-5 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                  >
+                    Submit Another Update / Note
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleProfileUpdateSubmit} className="space-y-5">
+                  {/* 1. AUTO-FILLED & LOCKED READ-ONLY DATA SECTION */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wider">
+                        <Lock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Verified Database Record (Auto-Filled &amp; Locked)</span>
+                      </label>
+                      <span className="text-[10px] text-slate-400 italic">Read-only system data</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">School Name</span>
+                        <input
+                          type="text"
+                          readOnly
+                          value={schoolName}
+                          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 font-bold text-slate-800 cursor-not-allowed text-xs mt-0.5"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">UDISE Code</span>
+                        <input
+                          type="text"
+                          readOnly
+                          value={udiseCode}
+                          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 font-mono font-bold text-blue-700 cursor-not-allowed text-xs mt-0.5"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">State &amp; District</span>
+                        <input
+                          type="text"
+                          readOnly
+                          value={`${district}, ${state}`}
+                          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 font-semibold text-slate-800 cursor-not-allowed text-xs mt-0.5"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Registered Address</span>
+                        <input
+                          type="text"
+                          readOnly
+                          value={`${rawAddress} (PIN: ${pincode})`}
+                          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 font-medium text-slate-800 cursor-not-allowed text-xs mt-0.5 truncate"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Location / Coordinates</span>
+                        <input
+                          type="text"
+                          readOnly
+                          value={`${lat}, ${lng}`}
+                          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5 font-mono text-slate-700 cursor-not-allowed text-xs mt-0.5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. USER EDITABLE UPDATE & CONTACT FIELDS */}
+                  <div className="space-y-4 pt-1">
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                      Edit / Add School Information
+                    </label>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          School Image URL (Campus Photo Link)
+                        </label>
+                        <input
+                          type="url"
+                          value={updateImageUrl}
+                          onChange={(e) => setUpdateImageUrl(e.target.value)}
+                          placeholder="https://example.com/school-photo.jpg"
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Contact / Helpline Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={updateContact}
+                          onChange={(e) => setUpdateContact(e.target.value)}
+                          placeholder="e.g. +91 98765 43210"
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Official School Email
+                        </label>
+                        <input
+                          type="email"
+                          value={updateEmail}
+                          onChange={(e) => setUpdateEmail(e.target.value)}
+                          placeholder="e.g. principal@school.edu.in"
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Official Website
+                        </label>
+                        <input
+                          type="url"
+                          value={updateWebsite}
+                          onChange={(e) => setUpdateWebsite(e.target.value)}
+                          placeholder="https://www.schoolname.org"
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Verification Dropdown & Star Rating */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Is above information correct? *
+                        </label>
+                        <select
+                          value={updateIsCorrect}
+                          onChange={(e) => setUpdateIsCorrect(e.target.value)}
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white font-medium"
+                        >
+                          <option value="Yes, all profile details are 100% accurate">✅ Yes, all information is 100% accurate</option>
+                          <option value="Minor updates required in contact/facilities">⚠️ Some minor corrections needed</option>
+                          <option value="Information is outdated or incorrect">❌ Information is outdated / incorrect</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Your Overall Rating
+                        </label>
+                        <div className="flex items-center gap-1.5 h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setUpdateRating(star)}
+                              className="text-amber-400 hover:scale-110 transition-transform cursor-pointer"
+                            >
+                              <Star
+                                className={`h-5 w-5 ${
+                                  star <= updateRating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'
+                                }`}
+                              />
+                            </button>
+                          ))}
+                          <span className="text-xs font-bold text-slate-700 ml-2">{updateRating} / 5 Stars</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Submitter Name & Role */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Your Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={updateSubmitterName}
+                          onChange={(e) => setUpdateSubmitterName(e.target.value)}
+                          placeholder="e.g. Ramesh Sharma"
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          Your Relationship / Role
+                        </label>
+                        <select
+                          value={updateSubmitterRole}
+                          onChange={(e) => setUpdateSubmitterRole(e.target.value)}
+                          className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white font-medium"
+                        >
+                          <option value="Parent">Parent / Guardian</option>
+                          <option value="Principal / School Admin">Principal / School Official</option>
+                          <option value="Teacher / Faculty">Teacher / Faculty</option>
+                          <option value="Current Student">Current Student</option>
+                          <option value="Alumni">Alumnus / Former Student</option>
+                          <option value="Community Member">Local Community Member</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* School Review / Feedback */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        School Review &amp; Community Feedback *
+                      </label>
+                      <textarea
+                        required
+                        rows={3}
+                        value={updateReview}
+                        onChange={(e) => setUpdateReview(e.target.value)}
+                        placeholder={`Share your review regarding academics, faculty quality, lab infrastructure, sports, or admission experience at ${schoolName}...`}
+                        className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden resize-none bg-white"
+                      />
+                    </div>
+
+                    {/* Suggestions / Additional Info */}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                        Suggestions &amp; Additional Information (Optional)
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={updateSuggestions}
+                        onChange={(e) => setUpdateSuggestions(e.target.value)}
+                        placeholder="Any additional feedback, new facility additions, science lab kit requests, or correction details..."
+                        className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden resize-none bg-white"
+                      />
+                    </div>
+
+                    {updateError && (
+                      <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 font-semibold">
+                        {updateError}
+                      </p>
+                    )}
+
+                    {/* Submit Button */}
+                    <div className="pt-1">
+                      <button
+                        type="submit"
+                        disabled={isUpdateSubmitting}
+                        className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-[#00C49F]/25 hover:shadow-[#00C49F]/40 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                      >
+                        {isUpdateSubmitting ? (
+                          <>
+                            <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                            <span>Submitting to Formspree...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 text-slate-950" />
+                            <span>Submit Information &amp; Review</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
             </article>
           </main>
 

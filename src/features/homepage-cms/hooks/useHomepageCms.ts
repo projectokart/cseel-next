@@ -1,40 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { HomepageSectionConfig, HomepageSectionId } from '../types';
 import { INITIAL_HOMEPAGE_SECTIONS } from '../data/homepageSeed';
+import { useSmartSWR } from '@/lib/cache/useSmartSWR';
 
-const STORAGE_KEY = 'cseel_homepage_sections_cms';
+const CACHE_KEY = 'homepage_sections';
 
 export function useHomepageCms() {
-  const [sections, setSections] = useState<HomepageSectionConfig[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = localStorage.getItem(STORAGE_KEY);
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-        }
-      } catch {}
-    }
-    return INITIAL_HOMEPAGE_SECTIONS;
+  const { data: sections, isValidating, mutate } = useSmartSWR<HomepageSectionConfig[]>({
+    key: CACHE_KEY,
+    initialData: INITIAL_HOMEPAGE_SECTIONS,
+    ttlMs: 1000 * 60 * 10, // 10 minutes cache
+    fetcher: async () => {
+      const res = await fetch('/api/homepage-sections');
+      if (!res.ok) throw new Error('Failed to fetch sections');
+      const json = await res.json();
+      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        return json.data;
+      }
+      return INITIAL_HOMEPAGE_SECTIONS;
+    },
   });
-
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetch('/api/homepage-sections')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
-          setSections(data.data);
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.data));
-          } catch {}
-        }
-      })
-      .catch(() => {});
-  }, []);
 
   const isSectionEnabled = (id: HomepageSectionId): boolean => {
     const sec = sections.find((s) => s.id === id);
@@ -46,29 +32,33 @@ export function useHomepageCms() {
   };
 
   const toggleSection = async (id: HomepageSectionId) => {
-    const updated = sections.map((s) => (s.id === id ? { ...s, enabled: !s.enabled, updated_at: new Date().toISOString() } : s));
-    setSections(updated);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch {}
+    const target = sections.find((s) => s.id === id);
+    const newEnabled = target ? !target.enabled : true;
+    const updated = sections.map((s) =>
+      s.id === id ? { ...s, enabled: newEnabled, updated_at: new Date().toISOString() } : s
+    );
+    
+    // Instant optimistic mutate in cache
+    mutate(updated);
 
     try {
       await fetch('/api/homepage-sections', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, enabled: !sections.find((s) => s.id === id)?.enabled }),
+        body: JSON.stringify({ id, enabled: newEnabled }),
       });
-    } catch {}
+    } catch (e) {
+      console.error('Failed to sync section toggle to backend:', e);
+    }
   };
 
   const updateSection = async (id: HomepageSectionId, changes: Partial<HomepageSectionConfig>) => {
     const updated = sections.map((s) =>
       s.id === id ? { ...s, ...changes, updated_at: new Date().toISOString() } : s
     );
-    setSections(updated);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch {}
+
+    // Instant optimistic mutate in cache
+    mutate(updated);
 
     try {
       await fetch('/api/homepage-sections', {
@@ -76,12 +66,14 @@ export function useHomepageCms() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, ...changes }),
       });
-    } catch {}
+    } catch (e) {
+      console.error('Failed to sync section update to backend:', e);
+    }
   };
 
   return {
     sections,
-    loading,
+    loading: isValidating,
     isSectionEnabled,
     getSection,
     toggleSection,

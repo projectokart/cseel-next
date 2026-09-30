@@ -3,8 +3,7 @@
 import Link from 'next/link';
 
 import { supabase } from "@/integrations/supabase/client";
-import useEmblaCarousel from "embla-carousel-react";
-import { CheckCircle, ArrowRight, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle, ArrowRight, Play, ChevronLeft, ChevronRight, School, GraduationCap, MapPin, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import PageTransition from "@/components/shared/PageTransition";
 import OffersSection from "@/components/offers/OffersSection";
@@ -12,157 +11,191 @@ import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import OfferPopup from "@/components/offers/OfferPopup";
 import { useHomepageCms } from "@/features/homepage-cms/hooks/useHomepageCms";
 
+// Swiper React Component & Modules
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules';
+
+// Swiper Styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-fade';
+
 interface PartnerSchoolItem {
   id: string;
   name: string;
   shortName: string;
   city: string;
   board: string;
-  logo: string;
+  initials: string;
+  studentsCount: string;
   badge: string;
   accent: string;
+  avatarBg: string;
+  avatarGradient: string;
+  image: string;
 }
 
 const partnerSchoolsList: PartnerSchoolItem[] = [
   {
-    id: "dps-rkp",
-    name: "Delhi Public School (DPS)",
-    shortName: "DPS R.K. Puram",
-    city: "New Delhi",
+    id: "st-columbas-delhi",
+    name: "St. Columba's School",
+    shortName: "St. Columba's School",
+    city: "Ashok Place, New Delhi",
     board: "CBSE Affiliated",
-    logo: "https://www.jigyasu.co.in/assets/images/logo5.png",
-    badge: "Active STEM Partner",
-    accent: "text-emerald-700 bg-emerald-50 border-emerald-200",
-  },
-  {
-    id: "apeejay",
-    name: "Apeejay School International",
-    shortName: "Apeejay International",
-    city: "Panchsheel Park, Delhi",
-    board: "IB World School",
-    logo: "https://www.jigyasu.co.in/assets/images/logo3.png",
-    badge: "IB Continuum",
-    accent: "text-amber-700 bg-amber-50 border-amber-200",
-  },
-  {
-    id: "mothers",
-    name: "The Mother's International School",
-    shortName: "Mother's International",
-    city: "New Delhi",
-    board: "CBSE & Sri Aurobindo",
-    logo: "https://www.jigyasu.co.in/assets/images/logo2.png",
-    badge: "Science Leader",
+    initials: "SCS",
+    studentsCount: "2,814+ Students",
+    badge: "Senior Secondary",
     accent: "text-blue-700 bg-blue-50 border-blue-200",
+    avatarBg: "bg-blue-600 text-white",
+    avatarGradient: "from-blue-600 to-indigo-700 text-white",
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=320&q=80",
   },
   {
-    id: "dav-bbsr-cspur",
-    name: "DAV Public School",
-    shortName: "DAV Chandrasekharpur",
-    city: "Bhubaneswar",
-    board: "CBSE • National Olympiad Hub",
-    logo: "https://www.jigyasu.co.in/assets/images/logo6.png",
-    badge: "National Gold",
-    accent: "text-cyan-700 bg-cyan-50 border-cyan-200",
+    id: "sanskriti-school-delhi",
+    name: "Sanskriti School",
+    shortName: "Sanskriti School",
+    city: "Chanakyapuri, New Delhi",
+    board: "CBSE • STEM Excellence",
+    initials: "SS",
+    studentsCount: "2,481+ Students",
+    badge: "ATL Tinkering Lab",
+    accent: "text-emerald-700 bg-emerald-50 border-emerald-200",
+    avatarBg: "bg-emerald-600 text-white",
+    avatarGradient: "from-emerald-600 to-teal-700 text-white",
+    image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=320&q=80",
   },
   {
-    id: "amrita",
-    name: "Amrita Vidyalayam",
-    shortName: "Amrita Vidyalayam",
-    city: "Pushp Vihar, New Delhi",
-    board: "CBSE • ATL Innovation Lab",
-    logo: "https://www.jigyasu.co.in/assets/images/logo4.png",
-    badge: "ATL Tinkering",
-    accent: "text-rose-700 bg-rose-50 border-rose-200",
-  },
-  {
-    id: "kvs-iit-powai",
-    name: "Kendriya Vidyalaya Sangathan",
-    shortName: "KVS IIT Powai",
-    city: "Mumbai & Pan-India",
-    board: "Govt. of India • CBSE",
-    logo: "https://www.jigyasu.co.in/assets/images/logo1.png",
-    badge: "Govt. Partner",
-    accent: "text-slate-800 bg-slate-100 border-slate-300",
-  },
-  {
-    id: "sai-international",
-    name: "SAI International School",
-    shortName: "SAI International",
-    city: "Bhubaneswar",
-    board: "CBSE / Cambridge",
-    logo: "https://www.jigyasu.co.in/assets/images/logo7.png",
-    badge: "Rank #1 Day-Boarding",
+    id: "modern-school-barakhamba",
+    name: "Modern School",
+    shortName: "Modern School",
+    city: "Barakhamba Road, New Delhi",
+    board: "CBSE Affiliated • Est. 1920",
+    initials: "MS",
+    studentsCount: "2,337+ Students",
+    badge: "Century of Excellence",
     accent: "text-indigo-700 bg-indigo-50 border-indigo-200",
+    avatarBg: "bg-indigo-600 text-white",
+    avatarGradient: "from-indigo-600 to-violet-700 text-white",
+    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=320&q=80",
   },
   {
-    id: "indus",
-    name: "Indus International School",
-    shortName: "Indus International",
-    city: "Bengaluru",
-    board: "IB & Cambridge (CIE)",
-    logo: "https://www.jigyasu.co.in/assets/images/logo8.png",
-    badge: "Rank #1 International",
+    id: "st-thomas-girls-delhi",
+    name: "St. Thomas' Girls Senior Secondary School",
+    shortName: "St. Thomas' Girls",
+    city: "Mandir Marg, New Delhi",
+    board: "CBSE Affiliated",
+    initials: "STG",
+    studentsCount: "2,377+ Students",
+    badge: "Science & Arts Hub",
+    accent: "text-rose-700 bg-rose-50 border-rose-200",
+    avatarBg: "bg-rose-600 text-white",
+    avatarGradient: "from-rose-600 to-pink-700 text-white",
+    image: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=320&q=80",
+  },
+  {
+    id: "convent-jesus-mary-delhi",
+    name: "Convent of Jesus & Mary",
+    shortName: "Convent of Jesus & Mary",
+    city: "Bangla Sahib Marg, New Delhi",
+    board: "CBSE Affiliated",
+    initials: "CJM",
+    studentsCount: "1,965+ Students",
+    badge: "Heritage School",
+    accent: "text-amber-700 bg-amber-50 border-amber-200",
+    avatarBg: "bg-amber-600 text-white",
+    avatarGradient: "from-amber-600 to-orange-700 text-white",
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=320&q=80",
+  },
+  {
+    id: "bhavans-mehta-delhi",
+    name: "Bharatiya Vidya Bhavan's Mehta Vidyalaya",
+    shortName: "BVB Mehta Vidyalaya",
+    city: "K.G. Marg, New Delhi",
+    board: "CBSE • Holistic STEM",
+    initials: "BVB",
+    studentsCount: "1,837+ Students",
+    badge: "National Science Lead",
+    accent: "text-cyan-700 bg-cyan-50 border-cyan-200",
+    avatarBg: "bg-cyan-600 text-white",
+    avatarGradient: "from-cyan-600 to-blue-700 text-white",
+    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=320&q=80",
+  },
+  {
+    id: "mater-dei-delhi",
+    name: "Mater Dei School",
+    shortName: "Mater Dei School",
+    city: "Tilak Lane, New Delhi",
+    board: "CBSE Affiliated",
+    initials: "MDS",
+    studentsCount: "1,649+ Students",
+    badge: "Value Education",
     accent: "text-purple-700 bg-purple-50 border-purple-200",
+    avatarBg: "bg-purple-600 text-white",
+    avatarGradient: "from-purple-600 to-fuchsia-700 text-white",
+    image: "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=320&q=80",
   },
   {
-    id: "isro-hq",
-    name: "ISRO Space Outreach",
-    shortName: "ISRO Space Labs",
-    city: "Bengaluru",
-    board: "Govt. Space Agency",
-    logo: "https://www.jigyasu.co.in/assets/images/logo9.png",
-    badge: "Space Research",
+    id: "guru-harkrishan-delhi",
+    name: "Guru Harkrishan Public School",
+    shortName: "Guru Harkrishan Public",
+    city: "Purana Quila Road, New Delhi",
+    board: "CBSE • Innovation Lab",
+    initials: "GHPS",
+    studentsCount: "1,514+ Students",
+    badge: "Smart Classrooms",
     accent: "text-orange-700 bg-orange-50 border-orange-200",
+    avatarBg: "bg-orange-600 text-white",
+    avatarGradient: "from-orange-600 to-red-700 text-white",
+    image: "https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?auto=format&fit=crop&w=320&q=80",
   },
   {
-    id: "drdo-hq",
-    name: "DRDO Research Labs",
-    shortName: "DRDO Technology",
-    city: "New Delhi",
-    board: "Defence Research",
-    logo: "https://www.jigyasu.co.in/assets/images/logo10.png",
-    badge: "Defense STEM",
-    accent: "text-emerald-800 bg-emerald-50 border-emerald-200",
+    id: "sardar-patel-vidyalaya-delhi",
+    name: "Sardar Patel Vidyalaya",
+    shortName: "Sardar Patel Vidyalaya",
+    city: "Lodi Estate, New Delhi",
+    board: "CBSE Affiliated",
+    initials: "SPV",
+    studentsCount: "1,463+ Students",
+    badge: "Progressive Learning",
+    accent: "text-teal-700 bg-teal-50 border-teal-200",
+    avatarBg: "bg-teal-600 text-white",
+    avatarGradient: "from-teal-600 to-emerald-700 text-white",
+    image: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=320&q=80",
   },
   {
-    id: "iisc-bangalore",
-    name: "IISc Scientific Network",
-    shortName: "IISc Bangalore",
-    city: "Bengaluru",
-    board: "Apex Science Institute",
-    logo: "https://www.jigyasu.co.in/assets/images/logo11.png",
-    badge: "National Importance",
-    accent: "text-blue-900 bg-blue-50 border-blue-200",
-  },
-  {
-    id: "iit-delhi",
-    name: "IIT Delhi Tinkering Hub",
-    shortName: "IIT Delhi Lab",
-    city: "New Delhi",
-    board: "Premier Technology",
-    logo: "https://www.jigyasu.co.in/assets/images/logo12.png",
-    badge: "Innovation Hub",
-    accent: "text-red-700 bg-red-50 border-red-200",
+    id: "carmel-convent-delhi",
+    name: "Carmel Convent School",
+    shortName: "Carmel Convent School",
+    city: "Chanakyapuri, New Delhi",
+    board: "CBSE Affiliated",
+    initials: "CCS",
+    studentsCount: "1,284+ Students",
+    badge: "Academic Leader",
+    accent: "text-sky-700 bg-sky-50 border-sky-200",
+    avatarBg: "bg-sky-600 text-white",
+    avatarGradient: "from-sky-600 to-blue-700 text-white",
+    image: "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=320&q=80",
   },
 ];
 
 const catalogItems = [
-  { title: "Chemistry", image: "https://img.freepik.com/premium-photo/chemistryfilled-beakers-beakers-with-colorful-chemical-generative-ai_722401-1517.jpg", link: "/simulations" },
-  { title: "Biology", image: "https://png.pngtree.com/thumb_back/fw800/background/20241007/pngtree-biology-laboratory-nature-and-science-plants-with-biochemistry-structure-on-green-image_16319180.jpg", link: "/simulations" },
-  { title: "Physics", image: "https://img.freepik.com/premium-photo/physics-lab-background-with-pendulums-circuits_641503-120945.jpg", link: "/simulations" },
-  { title: "Technology", image: "https://img.freepik.com/premium-photo/technology-abstract-circuit-board-texture-background-hightech-futuristic-circuit-board-banner-wallpaper_1029473-136066.jpg", link: "/simulations" },
-  { title: "Engineering", image: "https://img.freepik.com/premium-photo/engineer-inspects-assembled-products-engineering_697211-20295.jpg", link: "/simulations" },
-  { title: "Art", image: "https://www.poolewood.co.uk/wp-content/uploads/woodworking-525x311.jpg", link: "/simulations" },
-  { title: "Mathematics", image: "https://wallpaperaccess.com/full/1308246.jpg", link: "/simulations" },
+  { title: "Chemistry", image: "/images/categories/chemistry.jpg", link: "/subject/chemistry", labs: "6 Labs", desc: "Molecular Reactions, Crystal Growth & Chemical Magic", badge: "NEP 2020" },
+  { title: "Biology", image: "/images/categories/biology.jpg", link: "/subject/biology", labs: "3 Labs", desc: "Cellular Machinery, Genetics & Bio-Ecosystems", badge: "CBSE Lab" },
+  { title: "Physics", image: "/images/categories/physics.jpg", link: "/subject/physics", labs: "4 Labs", desc: "Classical Mechanics, Quantum Light & Electromagnetism", badge: "ICSE Lab" },
+  { title: "Technology", image: "/images/categories/technology.jpg", link: "/subject/technology", labs: "1 Labs", desc: "AI Vision, Logic Circuits & IoT Smart Systems", badge: "Future Skills" },
+  { title: "Engineering", image: "/images/categories/engineering.jpg", link: "/subject/engineering", labs: "1 Labs", desc: "Structural Bridges, Aerodynamics & Solar Engines", badge: "ATL Tinkering" },
+  { title: "Art & STEAM", image: "/images/categories/art.jpg", link: "/subject/art", labs: "2 Labs", desc: "Color Physics, Photochemistry & Creative STEAM", badge: "Experiential" },
+  { title: "Mathematics", image: "/images/categories/mathematics.jpg", link: "/subject/mathematics", labs: "2 Labs", desc: "Fractal Geometry, Golden Ratio & Logic Puzzles", badge: "Applied Math" },
 ];
 
 const heroImages = [
-  "https://www.thoughtco.com/thmb/kbjOeU1CqYiCzmKIH0FtZ4LrBEQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-556450927-58b5b1d95f9b586046b7f7d9.jpg",
-  "https://cdn.mos.cms.futurecdn.net/ide7QUU2eMp8ePMs6JAwR6-1200-80.jpg",
-  "https://i.pinimg.com/originals/33/2b/3b/332b3b6ee4ff9e2bb34ac529e39ab5ec.jpg",
-  "https://www.ase.org.uk/sites/default/files/Spacestation%20by%20S%2BB%20UK.JPG",
-  "https://png.pngtree.com/thumb_back/fw800/background/20240801/pngtree-botanical-research-in-a-modern-lab-with-microscope-and-plants-image_16123408.jpg",
-  "https://wallpaperaccess.com/full/758537.png"
+  "/images/hero/hero-1.jpg",
+  "/images/hero/hero-2.jpg",
+  "/images/hero/hero-3.jpg",
+  "/images/hero/hero-4.jpg",
+  "/images/hero/hero-5.jpg",
+  "/images/hero/hero-6.png"
 ];
 
 // Counter animation hook
@@ -230,7 +263,7 @@ function StatCard({ value, label, desc, delay = 0, suffix = "" }: { value: numbe
   return (
     <div
       ref={revealRef as any}
-      className="p-6 md:p-8 rounded-2xl bg-primary-light transition-all duration-700"
+      className="p-6 md:p-8 rounded-2xl bg-[#dcedfc] border border-[#a2d0f5] shadow-xs hover:shadow-md hover:border-[#3b82f6] transition-all duration-500 hover:-translate-y-1"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(32px)",
@@ -238,11 +271,11 @@ function StatCard({ value, label, desc, delay = 0, suffix = "" }: { value: numbe
         transitionDelay: `${delay}ms`,
       }}
     >
-      <div ref={ref} className="text-3xl md:text-5xl font-bold text-primary mb-2">
+      <div ref={ref} className="text-3xl md:text-5xl font-black text-[#004f98] mb-2 tracking-tight">
         +{count}%
       </div>
-      <h3 className="text-base md:text-lg font-semibold text-foreground mb-2">{label}{suffix && <sup className="text-xs">{suffix}</sup>}</h3>
-      <p className="text-xs md:text-sm text-muted-foreground">{desc}</p>
+      <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2">{label}{suffix && <sup className="text-xs text-primary font-bold">{suffix}</sup>}</h3>
+      <p className="text-xs md:text-sm text-slate-600 font-medium leading-relaxed">{desc}</p>
     </div>
   );
 }
@@ -283,41 +316,49 @@ function FeatureRow({
         </div>
       </div>
       <div className={`rounded-2xl overflow-hidden shadow-lg group ${reverse ? "order-2 lg:order-1" : ""}`}>
-        <img src={imgSrc} alt={imgAlt} className="w-full h-52 md:h-80 object-cover transition-transform duration-700 group-hover:scale-105" />
+        <img src={imgSrc} alt={imgAlt} loading="lazy" decoding="async" className="w-full h-52 md:h-80 object-cover transition-transform duration-700 group-hover:scale-105" />
       </div>
     </div>
   );
 }
 
-// Hero image slider
+// Hero image slider with Swiper
 function HeroSlider() {
-  const [current, setCurrent] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setCurrent(p => (p + 1) % heroImages.length), 4000);
-    return () => clearInterval(t);
-  }, []);
   return (
-    <div className="relative w-full max-w-4xl mx-auto h-52 sm:h-64 md:h-72 lg:h-[320px] xl:h-[360px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl border border-white/60">
-      {heroImages.map((src, i) => (
-        <img
-          key={i}
-          src={src}
-          alt="CSEEL Lab"
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-          style={{ opacity: i === current ? 1 : 0 }}
-        />
-      ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-        {heroImages.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            className="w-2 h-2 rounded-full transition-all duration-300"
-            style={{ background: i === current ? "white" : "rgba(255,255,255,0.5)", transform: i === current ? "scale(1.3)" : "scale(1)" }}
-          />
+    <div className="relative w-full max-w-4xl mx-auto h-52 sm:h-64 md:h-72 lg:h-[320px] xl:h-[360px] rounded-2xl md:rounded-3xl overflow-hidden shadow-xl border border-white/60 group">
+      <Swiper
+        modules={[Autoplay, Pagination, EffectFade]}
+        effect="fade"
+        speed={1000}
+        loop={true}
+        autoplay={{
+          delay: 4000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        pagination={{
+          clickable: true,
+          el: '.homepage-hero-pagination',
+          bulletClass: 'inline-block w-2.5 h-2.5 bg-white/50 rounded-full cursor-pointer transition-all duration-300 mx-1 hover:bg-white/80',
+          bulletActiveClass: '!bg-white !scale-125 !w-6',
+        }}
+        className="w-full h-full"
+      >
+        {heroImages.map((src, i) => (
+          <SwiperSlide key={i} className="relative w-full h-full">
+            <img
+              src={src}
+              alt="CSEEL Experiential Lab"
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding={i === 0 ? "sync" : "async"}
+              fetchPriority={i === 0 ? "high" : "low"}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
+      <div className="homepage-hero-pagination !absolute !bottom-3 !left-1/2 !-translate-x-1/2 !flex !items-center !justify-center !z-20 !w-auto" />
     </div>
   );
 }
@@ -379,6 +420,14 @@ const Index = () => {
   const partnerConfig = getSection('partner_schools');
   const finalCtaConfig = getSection('final_cta');
 
+  const catalogScrollRef = useRef<HTMLDivElement>(null);
+  const scrollCatalog = (direction: 'left' | 'right') => {
+    if (catalogScrollRef.current) {
+      const offset = direction === 'left' ? -320 : 320;
+      catalogScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
+
   return (
     <PageTransition>
       {/* ─── Hero Section with Brand Palette (#003c6e & #006fcc) ─── */}
@@ -386,15 +435,28 @@ const Index = () => {
         <section className="hero-gradient pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
           <div className="container mx-auto px-4 text-center">
             
-            {/* Single-Line Dominant Brand Title with upper and lower margin */}
+            {/* Single-Line Dominant Brand Title (Geometric Sans-Serif Matching Logo Typography) */}
             <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
-              <h1 className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center">
+              <h1
+                className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center"
+                style={{ fontFamily: "var(--font-montserrat), 'Montserrat', 'Poppins', sans-serif" }}
+              >
                 <span>Welcome to </span>
-                <span className="text-[#003c6e] font-black tracking-normal">
-                  C.S.E.E.L
+                <span
+                  className="text-[#003c6e] font-bold tracking-wide inline-block"
+                  style={{
+                    fontFamily: "var(--font-fredoka), 'Fredoka', 'Varela Round', 'Nunito', sans-serif",
+                    fontWeight: 700,
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  CSEEL
                 </span>
               </h1>
-              <p className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-[#003c6e] tracking-tight max-w-xl mx-auto">
+              <p
+                className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-[#003c6e] tracking-tight max-w-xl mx-auto"
+                style={{ fontFamily: "var(--font-poppins), 'Poppins', 'Montserrat', sans-serif" }}
+              >
                 Center for Scientific Exploration and Experiential Learning
               </p>
             </div>
@@ -418,7 +480,7 @@ const Index = () => {
                 <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
               </Link>
               <Link
-                href="/demo"
+                href="/virtual-lab-tour"
                 className="group px-8 py-3.5 border-2 border-[#006fcc] text-[#006fcc] hover:bg-[#006fcc]/10 font-black text-sm rounded-full transition-all duration-200 flex items-center justify-center gap-2.5 active:scale-98"
               >
                 <Play className="w-4 h-4 text-[#006fcc] fill-[#006fcc]/20 shrink-0" />
@@ -438,7 +500,7 @@ const Index = () => {
       {/* ─── Special Offers Section ─── */}
       {isSectionEnabled('special_offers') && <OffersSection />}
       {/* ─── Stats ─── */}
-      <section className="py-16" style={{ backgroundColor: "hsl(var(--achievement-bg))" }}>
+      <section className="py-16 bg-slate-50/70 border-y border-slate-200/80">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
             <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Research Backed</p>
@@ -448,28 +510,31 @@ const Index = () => {
             <StatCard value={42} label="Higher Retention Rate" desc="Students engaged in hands-on STEAM/STEM learning show up to 42% higher knowledge retention." delay={0} suffix="¹" />
             <StatCard value={25} label="Engagement" desc="Gamified, interactive STEAM environments increase student engagement and motivation by 25%." delay={150} suffix="²" />
             <div
-              className="p-6 md:p-8 rounded-2xl bg-primary-light transition-all duration-700"
+              className="p-6 md:p-8 rounded-2xl bg-[#dcedfc] border border-[#a2d0f5] shadow-xs hover:shadow-md hover:border-[#3b82f6] transition-all duration-500 hover:-translate-y-1"
               style={{ animation: "fadeSlideUp 0.7s ease 0.4s both" }}
             >
-              <div className="text-3xl md:text-5xl font-bold text-primary mb-2">≧ C</div>
-              <h3 className="text-base md:text-lg font-semibold text-foreground mb-2">Higher Academic Success<sup className="text-xs">³</sup></h3>
-              <p className="text-xs md:text-sm text-muted-foreground">Students earning C or higher in foundational science courses are more likely to persist in STEAM careers.</p>
+              <div className="text-3xl md:text-5xl font-black text-[#004f98] mb-2 tracking-tight">≧ C</div>
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2">Higher Academic Success<sup className="text-xs text-primary font-bold">³</sup></h3>
+              <p className="text-xs md:text-sm text-slate-600 font-medium leading-relaxed">Students earning C or higher in foundational science courses are more likely to persist in STEAM careers.</p>
             </div>
           </div>
-         
         </div>
       </section>
 
-      {/* ─── Modern Partner Schools & Academic Network Showcase (Single Row, Circular Logo, Larger Size) ─── */}
+      {/* ─── Top Verified Delhi Schools Showcase (Single Row, Crest Badges, Real UDISE Verified) ─── */}
       {isSectionEnabled('partner_schools') && (
         <section className="py-8 md:py-12 bg-slate-50/70 border-y border-gray-200/80 overflow-hidden">
           <div className="container mx-auto px-4 text-center mb-6 md:mb-8">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
-              {partnerConfig?.badge_text || "Our Academic Network"}
-            </p>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-bold mb-2.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>{partnerConfig?.badge_text || "DELHI VERIFIED SCHOOLS NETWORK"}</span>
+            </div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              {partnerConfig?.title || "CSEEL Powers Opportunity Through STEAM"}
+              {partnerConfig?.title || "Featured Premier Schools in Delhi NCR"}
             </h2>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl mx-auto">
+              Empowering leading schools across New Delhi with experiential STEAM learning & verified UDISE infrastructure.
+            </p>
           </div>
 
           {/* Single Seamless Infinite Scrolling Track */}
@@ -481,17 +546,24 @@ const Index = () => {
             <div className="flex animate-scroll-logos items-center gap-4" style={{ width: "fit-content" }}>
               {[...partnerSchoolsList, ...partnerSchoolsList].map((school, i) => (
                 <Link
-                  href={`/edu-network/org/${school.id}`}
+                  href={`/school-finder?search=${encodeURIComponent(school.shortName)}`}
                   key={`single-track-${school.id}-${i}`}
-                  className="bg-white hover:bg-gradient-to-r hover:from-white hover:to-blue-50/70 rounded-2xl border border-gray-200 hover:border-primary/50 p-3 md:p-3.5 shadow-2xs hover:shadow-md transition-all flex items-center gap-3.5 min-w-[270px] md:min-w-[310px] shrink-0 group cursor-pointer"
+                  className="bg-white hover:bg-gradient-to-r hover:from-white hover:to-blue-50/70 rounded-2xl border border-gray-200 hover:border-primary/50 p-3 md:p-3.5 shadow-2xs hover:shadow-md transition-all flex items-center gap-3.5 min-w-[280px] md:min-w-[320px] shrink-0 group cursor-pointer"
                 >
-                  {/* Circular Official School Logo (Larger Size) */}
-                  <div className="w-12 h-12 md:w-14 md:h-14 p-1.5 bg-white rounded-full border border-gray-200/90 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 group-hover:border-primary/50 group-hover:shadow-sm transition-all overflow-hidden">
+                  {/* School Campus Photo Thumbnail */}
+                  <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl overflow-hidden shrink-0 shadow-xs group-hover:scale-105 group-hover:shadow-md transition-all border border-slate-200/90 bg-slate-100">
                     <img
-                      src={school.logo}
+                      src={school.image}
                       alt={school.name}
-                      className="w-full h-full object-contain rounded-full"
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-1 left-1.5 right-1.5 flex items-center justify-between">
+                      <span className="text-[8px] font-black tracking-wider text-white bg-black/60 backdrop-blur-xs px-1 py-0.5 rounded leading-none">
+                        {school.initials}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Info */}
@@ -510,7 +582,7 @@ const Index = () => {
                         {school.badge}
                       </span>
                       <span className="text-[10px] text-primary font-bold group-hover:underline">
-                        View Profile →
+                        View Details →
                       </span>
                     </div>
                   </div>
@@ -519,13 +591,13 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Bottom CTA to EduNetwork Directory */}
+          {/* Bottom CTA to Delhi Schools Directory */}
           <div className="text-center mt-5">
             <Link
-              href={partnerConfig?.cta_link || "/edu-network"}
+              href={partnerConfig?.cta_link || "/school/india/delhi"}
               className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
             >
-              <span>{partnerConfig?.cta_text || "Explore all 100+ Schools & Institutions in CSEEL EduNetwork Directory"}</span>
+              <span>{partnerConfig?.cta_text || "Explore All 2,750+ Verified Schools in Delhi Directory"}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -582,7 +654,7 @@ const Index = () => {
             </div>
             
             {/* Feature 1: Soft Blue/Slate Background */}
-            <div className="bg-[#e3eefb] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
+            <div className="bg-[#d8e9fa] border border-[#a2cbef] rounded-3xl overflow-hidden transition-all duration-300 shadow-xs hover:shadow-md">
               <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s, transform 0.7s' }}>
                 {/* Content Section */}
                 <div className="p-8 md:p-12">
@@ -608,17 +680,17 @@ const Index = () => {
                 </div>
                 {/* Image Section */}
                 <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group">
-                  <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf9f93d712be6d135ac575_Student-Remote-Room-Labster-reverse-edit.avif" alt="Student learning remotely" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src="/images/features/student-remote-room.avif" alt="Student learning remotely" loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
               </div>
             </div>
 
-            {/* Feature 2: Soft Indigo/Lavender Background */}
-            <div className="bg-[#fff1f1] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
+            {/* Feature 2: Soft Peach/Rose Background */}
+            <div className="bg-[#ffe4e4] border border-[#fca5a5] rounded-3xl overflow-hidden transition-all duration-300 shadow-xs hover:shadow-md">
               <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s 100ms, transform 0.7s' }}>
                 {/* Image Section */}
                 <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group lg:order-first order-last">
-                  <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66bf944f3df098f183b92727_Lab-Scientists-Beakers-edit.avif" alt="Scientists in lab" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src="/images/features/lab-scientists-beakers.avif" alt="Scientists in lab" loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
                 {/* Content Section */}
                 <div className="p-8 md:p-12">
@@ -646,7 +718,7 @@ const Index = () => {
             </div>
 
             {/* Feature 3: Soft Teal/Emerald Background */}
-            <div className="bg-[#eafff1] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-sm">
+            <div className="bg-[#d2f4dc] border border-[#86efac] rounded-3xl overflow-hidden transition-all duration-300 shadow-xs hover:shadow-md">
               <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch" style={{ opacity: 1, transform: 'translateY(0px)', transition: 'opacity 0.7s 100ms, transform 0.7s' }}>
                 {/* Content Section */}
                 <div className="p-8 md:p-12">
@@ -672,7 +744,7 @@ const Index = () => {
                 </div>
                 {/* Image Section */}
                 <div className="relative w-full h-48 lg:h-auto lg:min-h-full overflow-hidden group">
-                  <img src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66be608d71d32863b2bf5487_Students-Desk-Classroom-Laptop-reverse.avif" alt="Students in classroom" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src="/images/features/students-classroom.avif" alt="Students in classroom" loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
               </div>
             </div>
@@ -681,28 +753,65 @@ const Index = () => {
         </section>
       )}
 
-      {/* ─── Catalog ─── */}
+      {/* ─── Subjects & Disciplines Catalog (Horizontal Scrollable Rail) ─── */}
       {isSectionEnabled('subjects_catalog') && (
-        <section className="py-16 hero-gradient">
+        <section className="py-16 hero-gradient overflow-hidden">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
-                {catalogConfig?.badge_text || "Subjects"}
-              </p>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                {catalogConfig?.title || "Explore the CSEEL Catalog"}
-              </h2>
+            
+            {/* Header with Navigation Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+              <div className="text-left max-w-2xl">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-[#006fcc] border border-blue-200/80 mb-2">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>{catalogConfig?.badge_text || "SUBJECTS & DISCIPLINES"}</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">
+                  {catalogConfig?.title || "Explore Curriculum-Mapped STEAM Subjects"}
+                </h2>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
+                  Discover interactive virtual simulators, hands-on lab experiments, and NEP 2020 concept modules across core disciplines.
+                </p>
+              </div>
+
+              {/* Scroll Arrow Controls for Desktop & Tablet */}
+              <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                <button
+                  type="button"
+                  onClick={() => scrollCatalog('left')}
+                  aria-label="Previous Subjects"
+                  className="w-10 h-10 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center transition-all shadow-xs hover:shadow-md active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollCatalog('right')}
+                  aria-label="Next Subjects"
+                  className="w-10 h-10 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center transition-all shadow-xs hover:shadow-md active:scale-95 cursor-pointer"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+
+            {/* Horizontal Scrollable Track */}
+            <div
+              ref={catalogScrollRef}
+              className="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-2 px-1 snap-x scroll-smooth select-none"
+              style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+            >
               {catalogItems.map((item, i) => (
-                <CatalogCard key={item.title} item={item} delay={i * 60} />
+                <CatalogCard key={item.title} item={item} delay={i * 40} />
               ))}
             </div>
+
+            {/* Bottom Explore Button */}
             <div className="text-center mt-10">
-              <Link href={catalogConfig?.cta_link || "/simulations"}
-                className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-all duration-300 hover:shadow-lg hover:scale-105"
+              <Link href={catalogConfig?.cta_link || "/subject"}
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#006fcc] hover:bg-[#005bb8] text-white font-black text-sm rounded-full transition-all duration-300 shadow-md hover:shadow-xl hover:scale-105 active:scale-98"
               >
-                {catalogConfig?.cta_text || "View the Full Experimental Library"} <ArrowRight className="w-4 h-4" />
+                <span>{catalogConfig?.cta_text || "View All Subject Hubs & Interactive Labs"}</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -748,8 +857,10 @@ const Index = () => {
               </div>
               <div className="rounded-2xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66c366924698e845aff6397c_Group-Laptop-Labster-edit-2.avif"
+                  src="/images/features/group-laptop.avif"
                   alt="Students with laptop"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
@@ -784,29 +895,60 @@ const Index = () => {
   );
 };
 
-// Catalog card with staggered scroll reveal
-function CatalogCard({ item, delay }: { item: { title: string; image: string; link: string }; delay: number }) {
+// Catalog card with full background image & layered typography
+function CatalogCard({ item, delay }: { item: typeof catalogItems[0]; delay: number }) {
   const { ref, visible } = useScrollReveal();
   return (
     <div
       ref={ref}
+      className="w-[230px] sm:w-[265px] md:w-[280px] shrink-0 snap-start"
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0) scale(1)" : "translateY(30px) scale(0.9)",
+        transform: visible ? "translateY(0) scale(1)" : "translateY(24px) scale(0.96)",
         transition: "opacity 0.5s ease, transform 0.5s ease",
         transitionDelay: `${delay}ms`,
       }}
     >
-      <Link href={item.link}
-        className="group relative rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 aspect-square block hover:-translate-y-1"
+      <Link
+        href={item.link}
+        className="group relative h-40 sm:h-44 md:h-48 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 block hover:-translate-y-1 border border-slate-200/80 hover:border-blue-400 select-none p-3.5 flex flex-col justify-between"
       >
+        {/* Full Image Background */}
         <img
           src={item.image}
           alt={item.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent flex items-end p-3">
-          <h3 className="text-primary-foreground font-semibold text-sm">{item.title}</h3>
+
+        {/* Multi-stage Dark Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/60 to-slate-950/25 group-hover:via-slate-950/50 transition-all duration-300 pointer-events-none" />
+
+        {/* Top Badges (Over Image) */}
+        <div className="relative z-10 flex items-center justify-between">
+          <span className="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 text-white backdrop-blur-md border border-white/20">
+            {item.badge}
+          </span>
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-black/50 text-white backdrop-blur-md border border-white/20">
+            {item.labs}
+          </span>
+        </div>
+
+        {/* Bottom Typography & Explore Link (Over Image) */}
+        <div className="relative z-10 space-y-1">
+          <div className="flex items-center justify-between gap-1">
+            <h3 className="text-sm sm:text-base font-black text-white group-hover:text-blue-200 transition-colors drop-shadow-sm truncate">
+              {item.title}
+            </h3>
+            <div className="flex items-center gap-1 text-[10px] font-bold text-blue-200 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0">
+              <span>Explore</span>
+              <ArrowRight className="w-3 h-3" />
+            </div>
+          </div>
+          <p className="text-[10px] sm:text-[11px] text-slate-200/90 line-clamp-1 font-medium drop-shadow-xs">
+            {item.desc}
+          </p>
         </div>
       </Link>
     </div>
@@ -823,25 +965,12 @@ const FALLBACK_TESTIMONIALS = [
 
 function TestimonialSection() {
   const [items, setItems] = useState<any[]>(FALLBACK_TESTIMONIALS);
-  const [current, setCurrent] = useState(0);
   const { ref, visible } = useScrollReveal();
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
-    align: "start",
-    duration: 28,
-    slidesToScroll: 1,
-  });
 
   useEffect(() => {
     (supabase as any).from("testimonials").select("*").eq("is_active", true).order("sort_order")
       .then(({ data }) => { if (data && data.length > 0) setItems(data); });
   }, []);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    emblaApi.on("select", () => setCurrent(emblaApi.selectedScrollSnap()));
-  }, [emblaApi]);
 
   return (
     <section
@@ -860,12 +989,11 @@ function TestimonialSection() {
               Trusted by Teachers<br/>
               <span style={{ color:"#5F6368" }}>across the nation.</span>
             </h2>
-
           </div>
           {/* Arrows */}
           <div style={{ display:"flex", gap:12, flexShrink:0 }}>
             <button
-              onClick={() => emblaApi?.scrollPrev()}
+              className="testimonial-swiper-prev"
               style={{ width:48, height:48, borderRadius:"50%", background:"white", border:"1px solid #DADCE0", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all 0.2s", color:"#5F6368" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background="#F1F3F4"; (e.currentTarget as HTMLElement).style.color="#202124"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background="white"; (e.currentTarget as HTMLElement).style.color="#5F6368"; }}
@@ -873,7 +1001,7 @@ function TestimonialSection() {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
             </button>
             <button
-              onClick={() => emblaApi?.scrollNext()}
+              className="testimonial-swiper-next"
               style={{ width:48, height:48, borderRadius:"50%", background:"white", border:"1px solid #DADCE0", display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", transition:"all 0.2s", color:"#5F6368" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background="#F1F3F4"; (e.currentTarget as HTMLElement).style.color="#202124"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background="white"; (e.currentTarget as HTMLElement).style.color="#5F6368"; }}
@@ -883,112 +1011,119 @@ function TestimonialSection() {
           </div>
         </div>
 
-        {/* Embla */}
-        <div ref={emblaRef} style={{ overflow:"hidden" }}>
-          <div style={{ display:"flex", alignItems:"stretch" }}>
-            {items.map((t, i) => {
-              const THEMES = [
-                { cardBg:"#EBF4FA", avatarBg:"#C7E2F5", color:"#0a5c8a" },
-                { cardBg:"#EAF5F0", avatarBg:"#B8E4D4", color:"#0F6E56" },
-                { cardBg:"#F5EEF8", avatarBg:"#DCC5E8", color:"#6B21A8" },
-                { cardBg:"#FFF7ED", avatarBg:"#FED7AA", color:"#9A3412" },
-                { cardBg:"#EEF2FF", avatarBg:"#C7D2FE", color:"#3730A3" },
-              ];
-              const theme = THEMES[i % THEMES.length];
-              const cardBg = t.cardBg || theme.cardBg;
-              const avatarBg = t.avatarBg || theme.avatarBg;
-              const avatarColor = t.avatarColor || theme.color;
-              const starColor = t.starColor || theme.color;
-              const iconColor = t.iconColor || theme.color;
-              const initials = t.initials || t.name?.slice(0,2).toUpperCase();
-              return (
-                <div key={t.id||i} className="t-slide">
-                  <div
-                    style={{
-                      background: cardBg,
-                      borderRadius:28,
-                      border:"1px solid rgba(0,0,0,0.07)",
-                      padding:"32px",
-                      height:"100%",
-                      display:"flex",
-                      flexDirection:"column",
-                      transition:"border-color 0.3s, box-shadow 0.3s",
-                      cursor:"default",
-                    }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(0,0,0,0.10)";
-                      (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.boxShadow = "none";
-                      (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                    }}
-                  >
-                    {/* Avatar + name */}
-                    <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
-                      <div style={{ width:52, height:52, borderRadius:"50%", background:avatarBg, display:"flex", alignItems:"center", justifyContent:"center", color:avatarColor, fontWeight:700, fontSize:15, flexShrink:0 }}>
-                        {t.photo_url ? (
-                          <img src={t.photo_url} alt={t.name} style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }} />
-                        ) : initials}
-                      </div>
-                      <div>
-                        <p style={{ fontWeight:500, color:"#202124", fontSize:15, lineHeight:1.3 }}>{t.name}</p>
-                        <p style={{ fontSize:13, color:"#5F6368", marginTop:2 }}>{t.institution || t.role}</p>
-                      </div>
+        {/* Swiper Testimonials Carousel */}
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation]}
+          spaceBetween={24}
+          slidesPerView={1.1}
+          speed={600}
+          loop={true}
+          autoplay={{
+            delay: 4500,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          navigation={{
+            prevEl: '.testimonial-swiper-prev',
+            nextEl: '.testimonial-swiper-next',
+          }}
+          pagination={{
+            clickable: true,
+            el: '.testimonial-swiper-pagination',
+            bulletClass: 'inline-block w-2 h-2 bg-slate-300 rounded-full cursor-pointer transition-all duration-300 mx-1',
+            bulletActiveClass: '!bg-blue-600 !w-6',
+          }}
+          breakpoints={{
+            640: { slidesPerView: 1.8, spaceBetween: 24 },
+            1024: { slidesPerView: 2.8, spaceBetween: 28 },
+          }}
+          className="w-full !overflow-visible"
+        >
+          {items.map((t, i) => {
+            const THEMES = [
+              { cardBg:"#d9ecfa", avatarBg:"#b5daf5", color:"#034a75" },
+              { cardBg:"#d5f2e5", avatarBg:"#a5e5cb", color:"#085542" },
+              { cardBg:"#eedaf7", avatarBg:"#d3abeb", color:"#551788" },
+              { cardBg:"#fee5c9", avatarBg:"#fbc28b", color:"#852b0d" },
+              { cardBg:"#dee5ff", avatarBg:"#b5c4fe", color:"#2b2586" },
+            ];
+            const theme = THEMES[i % THEMES.length];
+            const cardBg = t.cardBg || theme.cardBg;
+            const avatarBg = t.avatarBg || theme.avatarBg;
+            const avatarColor = t.avatarColor || theme.color;
+            const starColor = t.starColor || theme.color;
+            const iconColor = t.iconColor || theme.color;
+            const initials = t.initials || t.name?.slice(0,2).toUpperCase();
+            return (
+              <SwiperSlide key={t.id||i} className="h-auto">
+                <div
+                  style={{
+                    background: cardBg,
+                    borderRadius:28,
+                    border:"1px solid rgba(0,0,0,0.07)",
+                    padding:"32px",
+                    height:"100%",
+                    display:"flex",
+                    flexDirection:"column",
+                    transition:"border-color 0.3s, box-shadow 0.3s, transform 0.3s",
+                    cursor:"default",
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(0,0,0,0.10)";
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                  }}
+                >
+                  {/* Avatar + name */}
+                  <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
+                    <div style={{ width:52, height:52, borderRadius:"50%", background:avatarBg, display:"flex", alignItems:"center", justifyContent:"center", color:avatarColor, fontWeight:700, fontSize:15, flexShrink:0 }}>
+                      {t.photo_url ? (
+                        <img src={t.photo_url} alt={t.name} style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }} />
+                      ) : initials}
                     </div>
-
-                    {/* Quote */}
-                    <p style={{ color:"#3C4043", fontSize:16, lineHeight:1.7, flex:1 }}>
-                      "{t.quote}"
-                    </p>
-
-                    {/* Footer */}
-                    <div style={{ marginTop:24, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                      <div style={{ color:starColor, fontSize:16, letterSpacing:2 }}>★★★★★</div>
-                      <svg style={{ width:22, height:22, color:iconColor, fill:iconColor }} viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                      </svg>
+                    <div>
+                      <p style={{ fontWeight:500, color:"#202124", fontSize:15, lineHeight:1.3 }}>{t.name}</p>
+                      <p style={{ fontSize:13, color:"#5F6368", marginTop:2 }}>{t.institution || t.role}</p>
                     </div>
                   </div>
+
+                  {/* Quote */}
+                  <p style={{ color:"#3C4043", fontSize:16, lineHeight:1.7, flex:1 }}>
+                    "{t.quote}"
+                  </p>
+
+                  {/* Footer */}
+                  <div style={{ marginTop:24, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                    <div style={{ color:starColor, fontSize:16, letterSpacing:2 }}>★★★★★</div>
+                    <svg style={{ width:22, height:22, color:iconColor, fill:iconColor }} viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
 
-        {/* Dots */}
-        <div style={{ display:"flex", justifyContent:"center", gap:8, marginTop:40 }}>
-          {items.map((_, i) => (
-            <button key={i} onClick={() => emblaApi?.scrollTo(i)}
-              style={{
-                width: i === current ? 24 : 8,
-                height: 8,
-                borderRadius: 4,
-                background: i === current ? "#4285F4" : "#DADCE0",
-                border: "none",
-                padding: 0,
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-              }}
-            />
-          ))}
-        </div>
-
+        {/* Swiper Pagination Dots */}
+        <div className="testimonial-swiper-pagination !flex !justify-center !items-center !gap-1.5 !mt-10" />
       </div>
     </section>
   );
 }
 
-
 function AwardsSection() {
   const { ref, visible } = useScrollReveal();
   const awardImgs = [
-    "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66b6088ed6f732140b977d32_gsv.avif",
-    "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66b6088eb79f5af91f5f4c8e_promise.avif",
-    "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66b6088e74ca012dd9db92f8_edtech.avif",
-    "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66b6088eb05eb79120a532a2_advocate.avif",
-    "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66b6088e98414361f6b7c4e3_leader.avif",
-    "https://cdn.prod.website-files.com/63105b5082760e06eb992f00/66b6088e39ada1f2e6d15101_ability.avif",
+    "/images/awards/gsv.avif",
+    "/images/awards/promise.avif",
+    "/images/awards/edtech.avif",
+    "/images/awards/advocate.avif",
+    "/images/awards/leader.avif",
+    "/images/awards/ability.avif",
   ];
   return (
     <section className="py-16 hero-gradient" ref={ref as any}>
@@ -1011,6 +1146,8 @@ function AwardsSection() {
                 key={i}
                 src={src}
                 alt="Award badge"
+                loading="lazy"
+                decoding="async"
                 className="h-20 w-20 object-contain transition-transform duration-300 hover:scale-110"
                 style={{
                   opacity: visible ? 1 : 0,
@@ -1057,7 +1194,7 @@ function EasySection() {
           {cards.map((c, i) => (
             <div
               key={i}
-              className="p-8 rounded-xl border border-border text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="p-8 rounded-2xl bg-[#eef6ff] border border-[#b9dbf8] shadow-xs hover:shadow-md hover:border-primary text-center transition-all duration-300 hover:-translate-y-1"
               style={{
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(40px)",
@@ -1065,9 +1202,9 @@ function EasySection() {
                 transitionDelay: `${i * 120}ms`,
               }}
             >
-              <div className="text-sm font-semibold text-primary mb-2">{c.tag}</div>
-              <h3 className="text-lg font-bold text-foreground mb-3">{c.title}</h3>
-              <p className="text-sm text-muted-foreground">{c.desc}</p>
+              <div className="text-sm font-bold text-primary mb-2 uppercase tracking-wide">{c.tag}</div>
+              <h3 className="text-lg font-bold text-slate-900 mb-3">{c.title}</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">{c.desc}</p>
             </div>
           ))}
         </div>

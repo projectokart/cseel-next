@@ -1,7 +1,10 @@
-﻿'use client';
+'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { DEFAULT_NAV_SETTINGS, NavItemConfig } from '@/app/api/admin/navigation-settings/route';
+import { smartCache } from '@/lib/cache/smartCache';
+
+const CACHE_KEY = 'navigation_settings';
 
 interface NavigationContextType {
   navSettings: NavItemConfig[];
@@ -16,39 +19,44 @@ interface NavigationContextType {
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
 export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [navSettings, setNavSettings] = useState<NavItemConfig[]>(DEFAULT_NAV_SETTINGS);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [navSettings, setNavSettings] = useState<NavItemConfig[]>(() => {
+    return smartCache.getInstant<NavItemConfig[]>(CACHE_KEY, DEFAULT_NAV_SETTINGS);
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Sync from server / storage
+  // Sync from server in background with SWR
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const savedLocal = localStorage.getItem('cseel_nav_settings');
-        if (savedLocal) {
-          setNavSettings(JSON.parse(savedLocal));
-        }
+    const unsub = smartCache.subscribe<NavItemConfig[]>(CACHE_KEY, (fresh) => {
+      if (fresh && Array.isArray(fresh)) {
+        setNavSettings(fresh);
+      }
+    });
 
+    smartCache.fetchSWR<NavItemConfig[]>({
+      key: CACHE_KEY,
+      ttlMs: 1000 * 60 * 10,
+      fetcher: async () => {
         const res = await fetch('/api/admin/navigation-settings');
         if (res.ok) {
           const data = await res.json();
           if (data.settings && Array.isArray(data.settings)) {
-            setNavSettings(data.settings);
-            localStorage.setItem('cseel_nav_settings', JSON.stringify(data.settings));
+            return data.settings;
           }
         }
-      } catch (err) {
-        console.error('Failed to fetch nav settings:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadSettings();
+        return DEFAULT_NAV_SETTINGS;
+      },
+      onUpdate: (fresh) => {
+        setNavSettings(fresh);
+      },
+    }).catch(() => {});
+
+    return () => unsub();
   }, []);
 
   const saveSettings = useCallback((newSettings: NavItemConfig[]) => {
     setNavSettings(newSettings);
+    smartCache.mutate(CACHE_KEY, newSettings);
     try {
-      localStorage.setItem('cseel_nav_settings', JSON.stringify(newSettings));
       fetch('/api/admin/navigation-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

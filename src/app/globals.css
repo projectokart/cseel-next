@@ -65,12 +65,24 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     @apply bg-background text-foreground font-sans;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-poppins), var(--font-inter), 'Poppins', 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.011em;
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-montserrat), var(--font-poppins), sans-serif;
+    letter-spacing: -0.022em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  button, input, optgroup, select, textarea {
+    font-family: inherit;
   }
 }
 
@@ -161,3 +173,67 @@
 .about-hero-gradient {
   background: linear-gradient(135deg, hsl(207 100% 21.6%) 0%, hsl(207 100% 35%) 100%);
 }
+
+/* Cross-browser scrollbar hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─── A4 Perfect Print & PDF Export Styles ─── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide web chrome & interactive UI */
+  header,
+  nav,
+  footer,
+  aside,
+  .no-print,
+  button,
+  .fixed:not(.printable-container),
+  .hero-swiper-prev,
+  .hero-swiper-next,
+  .hero-swiper-pagination,
+  #experiments-grid,
+  .swiper,
+  .experiment-page-body {
+    display: none !important;
+  }
+
+  /* Ensure printable lab manual is fully visible and nicely formatted */
+  .printable-lab-manual {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-inside: auto;
+  }
+
+  .printable-lab-manual h1,
+  .printable-lab-manual h2,
+  .printable-lab-manual h3,
+  .printable-lab-manual h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+}
+

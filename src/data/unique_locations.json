@@ -1,0 +1,912 @@
+{
+  "totalSchools": 11947,
+  "states": [
+    {
+      "state": "Maharashtra",
+      "totalSchools": 1804,
+      "cities": [
+        {
+          "city": "Pune",
+          "totalSchools": 1203
+        },
+        {
+          "city": "Thane",
+          "totalSchools": 365
+        },
+        {
+          "city": "Nagpur",
+          "totalSchools": 220
+        },
+        {
+          "city": "Aurangabad",
+          "totalSchools": 13
+        },
+        {
+          "city": "Ahmednagar",
+          "totalSchools": 3
+        }
+      ]
+    },
+    {
+      "state": "Haryana",
+      "totalSchools": 1403,
+      "cities": [
+        {
+          "city": "Sonipat",
+          "totalSchools": 544
+        },
+        {
+          "city": "Gurugram",
+          "totalSchools": 515
+        },
+        {
+          "city": "Faridabad",
+          "totalSchools": 265
+        },
+        {
+          "city": "Rohtak",
+          "totalSchools": 79
+        }
+      ]
+    },
+    {
+      "state": "Delhi NCR",
+      "totalSchools": 1205,
+      "cities": [
+        {
+          "city": "Delhi",
+          "totalSchools": 1205
+        }
+      ]
+    },
+    {
+      "state": "Karnataka",
+      "totalSchools": 1205,
+      "cities": [
+        {
+          "city": "Bengaluru",
+          "totalSchools": 1205
+        }
+      ]
+    },
+    {
+      "state": "Telangana",
+      "totalSchools": 1200,
+      "cities": [
+        {
+          "city": "Hyderabad",
+          "totalSchools": 1200
+        }
+      ]
+    },
+    {
+      "state": "Uttar Pradesh",
+      "totalSchools": 1059,
+      "cities": [
+        {
+          "city": "Noida",
+          "totalSchools": 444
+        },
+        {
+          "city": "Lucknow",
+          "totalSchools": 347
+        },
+        {
+          "city": "Greater Noida",
+          "totalSchools": 268
+        }
+      ]
+    },
+    {
+      "state": "Tamil Nadu",
+      "totalSchools": 1008,
+      "cities": [
+        {
+          "city": "Chennai",
+          "totalSchools": 1008
+        }
+      ]
+    },
+    {
+      "state": "Madhya Pradesh",
+      "totalSchools": 766,
+      "cities": [
+        {
+          "city": "Jabalpur",
+          "totalSchools": 380
+        },
+        {
+          "city": "Bhopal",
+          "totalSchools": 283
+        },
+        {
+          "city": "Indore",
+          "totalSchools": 103
+        }
+      ]
+    },
+    {
+      "state": "Rajasthan",
+      "totalSchools": 704,
+      "cities": [
+        {
+          "city": "Udaipur",
+          "totalSchools": 336
+        },
+        {
+          "city": "Jaipur",
+          "totalSchools": 313
+        },
+        {
+          "city": "Jodhpur",
+          "totalSchools": 55
+        }
+      ]
+    },
+    {
+      "state": "Uttarakhand",
+      "totalSchools": 441,
+      "cities": [
+        {
+          "city": "Dehradun",
+          "totalSchools": 441
+        }
+      ]
+    },
+    {
+      "state": "West Bengal",
+      "totalSchools": 295,
+      "cities": [
+        {
+          "city": "Kolkata",
+          "totalSchools": 295
+        }
+      ]
+    },
+    {
+      "state": "Gujarat",
+      "totalSchools": 293,
+      "cities": [
+        {
+          "city": "Vadodara",
+          "totalSchools": 286
+        },
+        {
+          "city": "Ahmedabad",
+          "totalSchools": 7
+        }
+      ]
+    },
+    {
+      "state": "Punjab",
+      "totalSchools": 291,
+      "cities": [
+        {
+          "city": "Ludhiana",
+          "totalSchools": 177
+        },
+        {
+          "city": "Mohali",
+          "totalSchools": 114
+        }
+      ]
+    },
+    {
+      "state": "Jharkhand",
+      "totalSchools": 171,
+      "cities": [
+        {
+          "city": "Ranchi",
+          "totalSchools": 171
+        }
+      ]
+    },
+    {
+      "state": "Andhra Pradesh",
+      "totalSchools": 58,
+      "cities": [
+        {
+          "city": "Visakhapatnam",
+          "totalSchools": 58
+        }
+      ]
+    },
+    {
+      "state": "Chandigarh",
+      "totalSchools": 44,
+      "cities": [
+        {
+          "city": "Chandigarh",
+          "totalSchools": 44
+        }
+      ]
+    }
+  ],
+  "cities": [
+    {
+      "city": "Delhi",
+      "district": "Delhi",
+      "state": "Delhi NCR",
+      "totalSchools": 1205,
+      "popularLocalities": [
+        "Pitampura, Delhi",
+        "Sangam Vihar, Delhi",
+        "Mohan Garden, Uttam Nagar, Delhi",
+        "Paschim Vihar, Delhi",
+        "Janakpuri, Delhi",
+        "Uttam Nagar, Delhi",
+        "Vikaspuri, Delhi",
+        "Devli, Sangam Vihar, Delhi",
+        "Nangloi, Delhi",
+        "Kailash Hills, East Of Kailash, Delhi",
+        "Chhatarpur, Delhi",
+        "Phase 1, Ashok Vihar, Delhi",
+        "Vikas Nagar, Hastsal, Delhi",
+        "Kalkaji, Delhi",
+        "Patel Nagar, Delhi"
+      ]
+    },
+    {
+      "city": "Bengaluru",
+      "district": "Bengaluru",
+      "state": "Karnataka",
+      "totalSchools": 1205,
+      "popularLocalities": [
+        "Yelahanka, Bangalore",
+        "Vidyaranyapura, Bangalore",
+        "Tumkur, Bangalore",
+        "Attur Layout, Yelahanka New Town, Bangalore",
+        "Jayanagar, Bangalore",
+        "Chikkabanavara, Bangalore",
+        "Whitefield, Bangalore",
+        "Stage 3, Banashankari, Bangalore",
+        "Electronic City, Bangalore",
+        "Krishnarajapura, Bangalore",
+        "Rajajinagar, Bangalore",
+        "RT Nagar, Bangalore",
+        "Yelahanka New Town, Bangalore",
+        "Malleswaram, Bangalore",
+        "Naagarabhaavi, Bangalore"
+      ]
+    },
+    {
+      "city": "Pune",
+      "district": "Pune",
+      "state": "Maharashtra",
+      "totalSchools": 1203,
+      "popularLocalities": [
+        "Pune, Pune",
+        "Wagholi, Pune, Pune",
+        "Hadapsar, Pune, Pune",
+        "Chinchwad, Pimpri-Chinchwad, Pune",
+        "Baramati, Pune",
+        "Kondhwa, Pune, Pune",
+        "Pimpri-Chinchwad, Pune",
+        "Nigdi, Pimpri-Chinchwad, Pune",
+        "Shirur, Pune",
+        "Chikhali, Pimpri-Chinchwad, Pune",
+        "Talegaon Dabhade, Pune",
+        "Camp, Pune, Pune",
+        "Undri, Pune, Pune",
+        "Bhosari, Pimpri-Chinchwad, Pune",
+        "Manjri, Pune, Pune"
+      ]
+    },
+    {
+      "city": "Hyderabad",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "totalSchools": 1200,
+      "popularLocalities": [
+        "Hyderabad, Hyderabad",
+        "Secunderabad, Hyderabad, Hyderabad",
+        "Amberpet, Hyderabad, Hyderabad",
+        "Banjara Hills, Hyderabad, Hyderabad",
+        "Saidabad, Hyderabad, Hyderabad",
+        "Chandrayangutta, Hyderabad, Hyderabad",
+        "Gudimalkapur, Hyderabad, Hyderabad",
+        "Falaknuma, Hyderabad, Hyderabad",
+        "New Nallakunta, Hyderabad, Hyderabad",
+        "Nawab Saheb Kunta, Hyderabad, Hyderabad",
+        "Hafiz Baba Nagar, Hyderabad, Hyderabad",
+        "Mehdipatnam, Hyderabad, Hyderabad",
+        "Malakpet, Hyderabad, Hyderabad",
+        "Bahadurpura, Hyderabad, Hyderabad",
+        "Khairtabad, Hyderabad, Hyderabad"
+      ]
+    },
+    {
+      "city": "Chennai",
+      "district": "Chennai",
+      "state": "Tamil Nadu",
+      "totalSchools": 1008,
+      "popularLocalities": [
+        "Alandur, Chennai, Chennai",
+        "Adyar, Chennai, Chennai",
+        "Ambattur, Chennai, Chennai",
+        "Anna Nagar, Chennai, Chennai",
+        "Tondiarpet, Chennai, Chennai",
+        "Teynampet, Chennai, Chennai",
+        "Chennai, Chennai",
+        "Thiruvotriyur, Chennai, Chennai",
+        "Royapuram, Chennai, Chennai",
+        "Kodambakkam, Chennai, Chennai",
+        "Perambur, Chennai, Chennai",
+        "Oragadam, Chennai, Chennai",
+        "Injambakkam, Chennai, Chennai",
+        "Velachery, Chennai, Chennai",
+        "Thiru Vi Ka Nagar, Chennai, Chennai"
+      ]
+    },
+    {
+      "city": "Sonipat",
+      "district": "Sonipat",
+      "state": "Haryana",
+      "totalSchools": 544,
+      "popularLocalities": [
+        "Sonipat, Sonipat",
+        "Gohana, Sonipat",
+        "Rai, Sonipat",
+        "Ganaur, Sonipat",
+        "Kharkhoda, Sonipat",
+        "Sonipat, Sonipat, Sonipat",
+        "Kharkhoda, Sonipat, Sonipat",
+        "Ganaur Village, Ganaur, Sonipat",
+        "Rai, Sonipat, Sonipat",
+        "Shiv Colony, Sonipat, Sonipat",
+        "Ganaur Village, Sonipat, Sonipat",
+        "Murthal, Sonipat",
+        "Kundli, Sonipat, Sonipat",
+        "Gohana Village, Sonipat, Sonipat",
+        "Aggarsain Nagar, Sonipat, Sonipat"
+      ]
+    },
+    {
+      "city": "Gurugram",
+      "district": "Gurugram",
+      "state": "Haryana",
+      "totalSchools": 515,
+      "popularLocalities": [
+        "Palam Vihar, Gurugram, Gurugram",
+        "Sector 5, Gurugram, Gurugram",
+        "Sector 10, Gurugram, Gurugram",
+        "Pataudi, Pataudi, Gurugram",
+        "Manesar, Gurugram, Gurugram",
+        "Sector 10 A, Gurugram, Gurugram",
+        "Sector 46, Gurugram, Gurugram",
+        "Bhondsi, Gurugram, Gurugram",
+        "Sector 7, Gurugram, Gurugram",
+        "Bhorakalan, Pataudi, Gurugram",
+        "Sector 49, Gurugram, Gurugram",
+        "Sector 50, Gurugram, Gurugram",
+        "Sector 109, Gurugram, Gurugram",
+        "DLF Phase 4, Gurugram, Gurugram",
+        "Jamalpur, Farrukh Nagar, Gurugram"
+      ]
+    },
+    {
+      "city": "Noida",
+      "district": "Noida",
+      "state": "Uttar Pradesh",
+      "totalSchools": 444,
+      "popularLocalities": [
+        "Noida, Noida",
+        "Sector 49, Noida, Noida",
+        "Sector 63, Noida, Noida",
+        "Sector 45, Noida, Noida",
+        "Sector 102, Noida, Noida",
+        "Sector 44, Noida, Noida",
+        "Jewar, Noida, Noida",
+        "Sector 128, Noida, Noida",
+        "Sector 31, Noida, Noida",
+        "Sector 22, Noida, Noida",
+        "Sector 73, Noida, Noida",
+        "Sector 53, Noida, Noida",
+        "Dankaur, Noida, Noida",
+        "Sector 115, Noida, Noida",
+        "Sector 51, Noida, Noida"
+      ]
+    },
+    {
+      "city": "Dehradun",
+      "district": "Dehradun",
+      "state": "Uttarakhand",
+      "totalSchools": 441,
+      "popularLocalities": [
+        "Dalanwala, Dehradun, Dehradun",
+        "Clement Town, Dehradun, Dehradun",
+        "Chironwali, Dehradun, Dehradun",
+        "Dehradun, Dehradun",
+        "Majra, Dehradun, Dehradun",
+        "Ajabpur Kalan, Dehradun, Dehradun",
+        "Chukkuwala, Dehradun, Dehradun",
+        "Banjarawala, Dehradun, Dehradun",
+        "Khurbura Mohalla, Dehradun, Dehradun",
+        "Jakhan, Dehradun, Dehradun",
+        "Race Course, Dehradun, Dehradun",
+        "Nehrugram, Dehradun, Dehradun",
+        "Adhoiwala, Dehradun, Dehradun",
+        "Patel Nagar, Dehradun, Dehradun",
+        "Niranjanpur, Dehradun, Dehradun"
+      ]
+    },
+    {
+      "city": "Jabalpur",
+      "district": "Jabalpur",
+      "state": "Madhya Pradesh",
+      "totalSchools": 380,
+      "popularLocalities": [
+        "Jabalpur, Jabalpur",
+        "Adhartal, Jabalpur, Jabalpur",
+        "Karmeta, Jabalpur, Jabalpur",
+        "Garha, Jabalpur, Jabalpur",
+        "Napier Town, Jabalpur, Jabalpur",
+        "Gwarighat, Jabalpur, Jabalpur",
+        "Vijay Nagar, Jabalpur, Jabalpur",
+        "Sihora, Jabalpur, Jabalpur",
+        "Shastri Nagar, Jabalpur, Jabalpur",
+        "Sarvodaya Nagar, Jabalpur, Jabalpur",
+        "Kundam, Jabalpur, Jabalpur",
+        "Lalmati, Jabalpur, Jabalpur",
+        "Wright Town, Jabalpur, Jabalpur",
+        "Majholi, Jabalpur, Jabalpur",
+        "Cantt, Jabalpur, Jabalpur"
+      ]
+    },
+    {
+      "city": "Thane",
+      "district": "Thane",
+      "state": "Maharashtra",
+      "totalSchools": 365,
+      "popularLocalities": [
+        "Thane West, Thane",
+        "Bhayandar East, Thane",
+        "Dombivli East, Thane",
+        "Kalyan West, Thane",
+        "Mira Road East, Thane",
+        "Ulhasnagar, Thane",
+        "Bhiwandi, Thane",
+        "Hendrepada, Badlapur West, Thane",
+        "Kausa, Mumbra, Thane",
+        "Kalyan East, Thane",
+        "Badlapur West, Thane",
+        "Badlapur, Thane",
+        "Ambernath East, Thane",
+        "Naupada, Thane West, Thane",
+        "Ambernath West, Thane"
+      ]
+    },
+    {
+      "city": "Lucknow",
+      "district": "Lucknow",
+      "state": "Uttar Pradesh",
+      "totalSchools": 347,
+      "popularLocalities": [
+        "Gomti Nagar, Lucknow, Lucknow",
+        "Alambagh, Lucknow, Lucknow",
+        "Indira Nagar, Lucknow, Lucknow",
+        "Chinhat, Lucknow, Lucknow",
+        "Rajajipuram, Lucknow, Lucknow",
+        "Jankipuram, Lucknow, Lucknow",
+        "Lucknow, Lucknow",
+        "Telibagh, Lucknow, Lucknow",
+        "Miranpur Pinvat, Lucknow, Lucknow",
+        "Vrindavan Yojna, Lucknow, Lucknow",
+        "Sushant Golf City, Lucknow, Lucknow",
+        "Aliganj, Lucknow, Lucknow",
+        "Husainabad, Lucknow, Lucknow",
+        "Jankipuram Extention, Lucknow, Lucknow",
+        "Habibpur, Lucknow, Lucknow"
+      ]
+    },
+    {
+      "city": "Udaipur",
+      "district": "Udaipur",
+      "state": "Rajasthan",
+      "totalSchools": 336,
+      "popularLocalities": [
+        "Girwa, Udaipur, Udaipur",
+        "Badgaon, Udaipur, Udaipur",
+        "Mavli, Udaipur, Udaipur",
+        "Kherwara, Udaipur, Udaipur",
+        "Hiran Magri, Udaipur, Udaipur",
+        "Gogunda, Udaipur, Udaipur",
+        "Udaipur, Udaipur",
+        "Bhinder, Udaipur, Udaipur",
+        "Rishabhdev, Udaipur, Udaipur",
+        "Phalasiya, Udaipur, Udaipur",
+        "Khemli, Udaipur, Udaipur",
+        "Nayagaon, Udaipur, Udaipur",
+        "Titrdi, Udaipur, Udaipur",
+        "Old City, Udaipur, Udaipur",
+        "Jhadol, Udaipur, Udaipur"
+      ]
+    },
+    {
+      "city": "Jaipur",
+      "district": "Jaipur",
+      "state": "Rajasthan",
+      "totalSchools": 313,
+      "popularLocalities": [
+        "Sanganer, Jaipur, Jaipur",
+        "Jhotwara, Jaipur, Jaipur",
+        "Mansarovar, Jaipur, Jaipur",
+        "Pratap Nagar, Jaipur, Jaipur",
+        "Jagatpura, Jaipur, Jaipur",
+        "Vaishali Nagar, Jaipur, Jaipur",
+        "Jaipur East, Jaipur, Jaipur",
+        "Sirsi Road, Jaipur, Jaipur",
+        "Bassi, Jaipur, Jaipur",
+        "Chomu, Jaipur, Jaipur",
+        "Jaipur West, Jaipur, Jaipur",
+        "Ajmer Road, Jaipur, Jaipur",
+        "Sikar Road, Jaipur, Jaipur",
+        "Malviya Nagar, Jaipur, Jaipur",
+        "Sitapura, Jaipur, Jaipur"
+      ]
+    },
+    {
+      "city": "Kolkata",
+      "district": "Kolkata",
+      "state": "West Bengal",
+      "totalSchools": 295,
+      "popularLocalities": [
+        "Bhowanipore, Kolkata, Kolkata",
+        "Ballygunge, Kolkata, Kolkata",
+        "Behala, Kolkata, Kolkata",
+        "Barrackpore, Kolkata, Kolkata",
+        "Kalighat, Kolkata, Kolkata",
+        "Tangra, Kolkata, Kolkata",
+        "Entally, Kolkata, Kolkata",
+        "Tollygunge, Kolkata, Kolkata",
+        "Alipore, Kolkata, Kolkata",
+        "New Town, Kolkata, Kolkata",
+        "Bowbazar, Kolkata, Kolkata",
+        "Taltala, Kolkata, Kolkata",
+        "Salt Lake, Kolkata, Kolkata",
+        "Garden Reach, Kolkata, Kolkata",
+        "Bansdroni, Kolkata, Kolkata"
+      ]
+    },
+    {
+      "city": "Vadodara",
+      "district": "Vadodara",
+      "state": "Gujarat",
+      "totalSchools": 286,
+      "popularLocalities": [
+        "Manjalpur, Vadodara, Vadodara",
+        "Karelibagh, Vadodara, Vadodara",
+        "Gotri, Vadodara, Vadodara",
+        "Gorwa, Vadodara, Vadodara",
+        "Tandalja, Vadodara, Vadodara",
+        "Waghodia, Vadodara, Vadodara",
+        "Tarsali, Vadodara, Vadodara",
+        "Bajwa, Vadodara, Vadodara",
+        "Vadodara, Vadodara",
+        "Makarpura, Vadodara, Vadodara",
+        "Atladara, Vadodara, Vadodara",
+        "Sevasi, Vadodara, Vadodara",
+        "Alkapuri, Vadodara, Vadodara",
+        "New Sama, Vadodara, Vadodara",
+        "Subhanpura, Vadodara, Vadodara"
+      ]
+    },
+    {
+      "city": "Bhopal",
+      "district": "Bhopal",
+      "state": "Madhya Pradesh",
+      "totalSchools": 283,
+      "popularLocalities": [
+        "Bhanpur, Bhopal, Bhopal",
+        "Karond, Bhopal, Bhopal",
+        "Gandhi Nagar, Bhopal, Bhopal",
+        "Ayodhya Nagar, Bhopal, Bhopal",
+        "Jahangirabad, Bhopal, Bhopal",
+        "Shahjahanabad, Bhopal, Bhopal",
+        "Bairagarh, Bhopal, Bhopal",
+        "Govindpura, Bhopal, Bhopal",
+        "Lalghati, Bhopal, Bhopal",
+        "Bawadiya Kalan, Bhopal, Bhopal",
+        "Misrod, Bhopal, Bhopal",
+        "Ashoka Garden, Bhopal, Bhopal",
+        "Bagmugaliya, Bhopal, Bhopal",
+        "Piplani, Bhopal, Bhopal",
+        "Bhopal, Bhopal"
+      ]
+    },
+    {
+      "city": "Greater Noida",
+      "district": "Greater Noida",
+      "state": "Uttar Pradesh",
+      "totalSchools": 268,
+      "popularLocalities": [
+        "Greater Noida, Greater Noida",
+        "Dadri, Greater Noida, Greater Noida",
+        "Knowledge Park 5, Greater Noida, Greater Noida",
+        "Noida Extension, Greater Noida, Greater Noida",
+        "Knowledge Park 1, Greater Noida, Greater Noida",
+        "Surajpur, Greater Noida, Greater Noida",
+        "Haldoni, Greater Noida, Greater Noida",
+        "Jalpura, Greater Noida, Greater Noida",
+        "Omega 1, Greater Noida, Greater Noida",
+        "Kasna, Greater Noida, Greater Noida",
+        "Techzone 7, Greater Noida, Greater Noida",
+        "Roza Jalalpur, Greater Noida, Greater Noida",
+        "Gaur City 2, Greater Noida, Greater Noida",
+        "Techzone 4, Greater Noida, Greater Noida",
+        "Phase-II, Greater Noida, Greater Noida"
+      ]
+    },
+    {
+      "city": "Faridabad",
+      "district": "Faridabad",
+      "state": "Haryana",
+      "totalSchools": 265,
+      "popularLocalities": [
+        "NIT, Faridabad, Faridabad",
+        "Sector 23, Faridabad, Faridabad",
+        "Sector 7C, Faridabad, Faridabad",
+        "Sector 91, Faridabad, Faridabad",
+        "Sector 88, Greater Faridabad, Faridabad",
+        "Sector 89, Greater Faridabad, Faridabad",
+        "Sector 48, Faridabad, Faridabad",
+        "Ballabgarh, Faridabad",
+        "Sector 50, Faridabad, Faridabad",
+        "Sector 29, Faridabad, Faridabad",
+        "Sehatpur, Faridabad, Faridabad",
+        "Sector 21A, Faridabad, Faridabad",
+        "Sector 87, Greater Faridabad, Faridabad",
+        "Sector 37, Faridabad, Faridabad",
+        "Dabua Colony, Faridabad, Faridabad"
+      ]
+    },
+    {
+      "city": "Nagpur",
+      "district": "Nagpur",
+      "state": "Maharashtra",
+      "totalSchools": 220,
+      "popularLocalities": [
+        "Mahal, Nagpur, Nagpur",
+        "Nandanvan, Nagpur, Nagpur",
+        "Binaki, Nagpur, Nagpur",
+        "Nagpur, Nagpur",
+        "Jaripatka, Nagpur, Nagpur",
+        "New Mankapur, Nagpur, Nagpur",
+        "Jafar Nagar, Nagpur, Nagpur",
+        "Rameshwari, Nagpur, Nagpur",
+        "Shantinagar Colony, Nagpur, Nagpur",
+        "Teka Naka, Nagpur, Nagpur",
+        "Mihan, Nagpur, Nagpur",
+        "Waroda, Nagpur, Nagpur",
+        "Sadar, Nagpur, Nagpur",
+        "Mominpura, Nagpur, Nagpur",
+        "Sitabuldi, Nagpur, Nagpur"
+      ]
+    },
+    {
+      "city": "Ludhiana",
+      "district": "Ludhiana",
+      "state": "Punjab",
+      "totalSchools": 177,
+      "popularLocalities": [
+        "Mangat, Ludhiana, Ludhiana",
+        "Doraha, Ludhiana, Ludhiana",
+        "Jagraon, Ludhiana, Ludhiana",
+        "Pakhowal, Ludhiana, Ludhiana",
+        "Dugri, Ludhiana, Ludhiana",
+        "Sahnewal, Ludhiana, Ludhiana",
+        "Khanna, Ludhiana, Ludhiana",
+        "Giaspura, Ludhiana, Ludhiana",
+        "Sunil Nagar, Ludhiana, Ludhiana",
+        "Civil Lines, Ludhiana, Ludhiana",
+        "Shimlapuri, Ludhiana, Ludhiana",
+        "Dhandari Kalan, Ludhiana, Ludhiana",
+        "Samrala, Ludhiana, Ludhiana",
+        "Atam Nagar, Ludhiana, Ludhiana",
+        "Ludhiana-1, Ludhiana, Ludhiana"
+      ]
+    },
+    {
+      "city": "Ranchi",
+      "district": "Ranchi",
+      "state": "Jharkhand",
+      "totalSchools": 171,
+      "popularLocalities": [
+        "Bundu, Ranchi, Ranchi",
+        "Tamar, Ranchi, Ranchi",
+        "Hulhundu, Ranchi, Ranchi",
+        "Doranda, Ranchi, Ranchi",
+        "Bariatu, Ranchi, Ranchi",
+        "Tatisilwai, Ranchi, Ranchi",
+        "Hardag, Ranchi, Ranchi",
+        "Semla, Ranchi, Ranchi",
+        "Dhurwa, Ranchi, Ranchi",
+        "Ranchi, Ranchi",
+        "Pundag, Ranchi, Ranchi",
+        "Piska Nagri, Ranchi, Ranchi",
+        "Brambe, Ranchi, Ranchi",
+        "Tangtang, Ranchi, Ranchi",
+        "Namkum, Ranchi, Ranchi"
+      ]
+    },
+    {
+      "city": "Mohali",
+      "district": "Mohali",
+      "state": "Punjab",
+      "totalSchools": 114,
+      "popularLocalities": [
+        "Kharar, Mohali, Mohali",
+        "Sector 71, Mohali, Mohali",
+        "Mohali, Mohali",
+        "Sector 64, Mohali, Mohali",
+        "Sector 69, Mohali, Mohali",
+        "Derabassi, Mohali, Mohali",
+        "Sector 70, Mohali, Mohali",
+        "Sector 119, Mohali, Mohali",
+        "Sector 59, Mohali, Mohali",
+        "Sector 56, Mohali, Mohali",
+        "Sector 66, Mohali, Mohali",
+        "Sector 65, Mohali, Mohali",
+        "Sector 92, Mohali, Mohali",
+        "Sector 127, Mohali, Mohali",
+        "Bar Majra, Mohali, Mohali"
+      ]
+    },
+    {
+      "city": "Indore",
+      "district": "Indore",
+      "state": "Madhya Pradesh",
+      "totalSchools": 103,
+      "popularLocalities": [
+        "Vijay Nagar, Indore, Indore",
+        "Rau, Indore, Indore",
+        "Khandwa Road, Indore, Indore",
+        "Mhow, Indore, Indore",
+        "Rajendra Nagar, Indore, Indore",
+        "Raj Mohalla, Indore, Indore",
+        "Indore, Indore",
+        "Bhicholi Mardana, Indore, Indore",
+        "Nayata Mundla, Indore, Indore",
+        "Sanawadia, Indore, Indore",
+        "Betma, Indore, Indore",
+        "Chhatribagh, Indore, Indore",
+        "Navlakha, Indore, Indore",
+        "Sukhliya, Indore, Indore",
+        "Annapurna Road, Indore, Indore"
+      ]
+    },
+    {
+      "city": "Rohtak",
+      "district": "Rohtak",
+      "state": "Haryana",
+      "totalSchools": 79,
+      "popularLocalities": [
+        "Sampla, Rohtak, Rohtak",
+        "Meham, Rohtak, Rohtak",
+        "Kalanaur, Rohtak, Rohtak",
+        "Gohana Road, Rohtak, Rohtak",
+        "Kiloi, Rohtak, Rohtak",
+        "Ladhot Road, Rohtak, Rohtak",
+        "Jind Road, Rohtak, Rohtak",
+        "Madina, Rohtak, Rohtak",
+        "Company Bagh, Rohtak, Rohtak",
+        "Arya Nagar, Rohtak, Rohtak",
+        "Sonepat Road, Rohtak, Rohtak",
+        "Sunarian, Rohtak, Rohtak",
+        "Baland, Rohtak, Rohtak",
+        "Lakhan Majra, Rohtak, Rohtak",
+        "Bhiwani Road, Rohtak, Rohtak"
+      ]
+    },
+    {
+      "city": "Visakhapatnam",
+      "district": "Visakhapatnam",
+      "state": "Andhra Pradesh",
+      "totalSchools": 58,
+      "popularLocalities": [
+        "Narsipatnam, Visakhapatnam, Visakhapatnam",
+        "Visakhapatnam, Visakhapatnam",
+        "Ukkunagaram, Visakhapatnam, Visakhapatnam",
+        "Kancharapalem, Visakhapatnam, Visakhapatnam",
+        "Mvp Colony, Visakhapatnam, Visakhapatnam",
+        "Gajuwaka, Visakhapatnam, Visakhapatnam",
+        "Madhurawada, Visakhapatnam, Visakhapatnam",
+        "Kapuluppada, Visakhapatnam, Visakhapatnam",
+        "Rushikonda, Visakhapatnam, Visakhapatnam",
+        "Payakaraopeta, Visakhapatnam, Visakhapatnam",
+        "Araku Valley, Visakhapatnam, Visakhapatnam",
+        "New Gajuwaka, Visakhapatnam, Visakhapatnam",
+        "Malkapuram, Visakhapatnam, Visakhapatnam",
+        "Buchirajupalem, Visakhapatnam, Visakhapatnam",
+        "Dabagardens, Visakhapatnam, Visakhapatnam"
+      ]
+    },
+    {
+      "city": "Jodhpur",
+      "district": "Jodhpur",
+      "state": "Rajasthan",
+      "totalSchools": 55,
+      "popularLocalities": [
+        "Pal Gaon, Jodhpur, Jodhpur",
+        "Banar Cantt., Jodhpur, Jodhpur",
+        "Kamla Nehru Nagar, Jodhpur, Jodhpur",
+        "Basni, Jodhpur, Jodhpur",
+        "Jhalamand, Jodhpur, Jodhpur",
+        "Pratap Nagar, Jodhpur, Jodhpur",
+        "Siwanchi Gate, Jodhpur, Jodhpur",
+        "Ratanada, Jodhpur, Jodhpur",
+        "Chopasni Housing Board, Jodhpur, Jodhpur",
+        "Dangiyawas, Jodhpur, Jodhpur",
+        "Uchiyarda, Jodhpur, Jodhpur",
+        "Surpura, Jodhpur, Jodhpur",
+        "Phalodi, Jodhpur, Jodhpur",
+        "Saran Nagar, Jodhpur, Jodhpur",
+        "Boranada, Jodhpur, Jodhpur"
+      ]
+    },
+    {
+      "city": "Chandigarh",
+      "district": "Chandigarh",
+      "state": "Chandigarh",
+      "totalSchools": 44,
+      "popularLocalities": [
+        "Sector 26, Chandigarh, Chandigarh",
+        "Sector-27A, Chandigarh, Chandigarh",
+        "Sector 46B, Chandigarh, Chandigarh",
+        "Sector 38-B, Chandigarh, Chandigarh",
+        "Sector 44, Chandigarh, Chandigarh",
+        "Sector 40-C, Chandigarh, Chandigarh",
+        "Mani Majra, Chandigarh, Chandigarh",
+        "Sector 41D, Chandigarh, Chandigarh",
+        "Sector 21C, Chandigarh, Chandigarh",
+        "Sector 22a, Chandigarh, Chandigarh",
+        "Sector 18-B, Chandigarh, Chandigarh",
+        "Sector 8-C, Chandigarh, Chandigarh",
+        "Sector 15-C, Chandigarh, Chandigarh",
+        "Sector 29D, Chandigarh, Chandigarh",
+        "Sector 33-B, Chandigarh, Chandigarh"
+      ]
+    },
+    {
+      "city": "Aurangabad",
+      "district": "Aurangabad",
+      "state": "Maharashtra",
+      "totalSchools": 13,
+      "popularLocalities": [
+        "Aurangabad, Aurangabad",
+        "Adgaon Bk, Aurangabad, Aurangabad",
+        "Garkhedha, Aurangabad, Aurangabad",
+        "Chilkalthana, Aurangabad, Aurangabad",
+        "Satara Parisar, Aurangabad, Aurangabad",
+        "Satara Deolai Parisar, Aurangabad, Aurangabad",
+        "Kanchanwadi, Aurangabad, Aurangabad",
+        "Kubhephal, Aurangabad, Aurangabad"
+      ]
+    },
+    {
+      "city": "Ahmedabad",
+      "district": "Ahmedabad",
+      "state": "Gujarat",
+      "totalSchools": 7,
+      "popularLocalities": [
+        "Ellisbridge, Ahmedabad, Ahmedabad",
+        "Thaltej, Ahmedabad, Ahmedabad",
+        "Bodakdev, Ahmedabad, Ahmedabad",
+        "Shenbhai Nagar, Ahmedabad, Ahmedabad",
+        "Chharodi, Ahmedabad",
+        "Ahmedabad, Ahmedabad",
+        "Shantigram, Ahmedabad, Ahmedabad"
+      ]
+    },
+    {
+      "city": "Ahmednagar",
+      "district": "Ahmednagar",
+      "state": "Maharashtra",
+      "totalSchools": 3,
+      "popularLocalities": [
+        "Dhangarwadi, Ahmednagar, Ahmednagar",
+        "Sangamner, Ahmednagar"
+      ]
+    }
+  ]
+}

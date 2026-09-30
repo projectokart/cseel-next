@@ -126,26 +126,31 @@ export default function SchoolProfileView({
   clusterSchools = [],
   districtSchools = [],
 }: SchoolProfileViewProps) {
-  // CSEEL Welcome Popup state (Opens on first visit)
-  const [isCseelModalOpen, setIsCseelModalOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+  // Interactive Science By Doing Modal (Human Visitors Only, Safe from Googlebot)
+  const [isScienceModalOpen, setIsScienceModalOpen] = useState(false);
 
   useEffect(() => {
-    // Show CSEEL popup once per session
-    const hasSeen = sessionStorage.getItem('cseel_profile_popup_seen');
+    if (typeof window === 'undefined') return;
+    const ua = (navigator.userAgent || '').toLowerCase();
+    const isBot = /googlebot|bingbot|yandexbot|duckduckbot|slurp|baiduspider|crawler|spider|robot|crawling/i.test(ua);
+    if (isBot) return;
+
+    const hasSeen = sessionStorage.getItem('cseel_science_popup_v2_seen');
     if (!hasSeen) {
       const timer = setTimeout(() => {
-        setIsCseelModalOpen(true);
-        sessionStorage.setItem('cseel_profile_popup_seen', 'true');
-      }, 700);
+        setIsScienceModalOpen(true);
+        sessionStorage.setItem('cseel_science_popup_v2_seen', 'true');
+      }, 1500);
       return () => clearTimeout(timer);
     }
   }, []);
 
   // Modal state for community story submission
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
-  const [isWelcomePopupOpen, setIsWelcomePopupOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  // Formspree Contact Number Popup Modal state
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [storyAuthor, setStoryAuthor] = useState('');
   const [storyRole, setStoryRole] = useState('Parent');
   const [storyRating, setStoryRating] = useState(5);
@@ -183,14 +188,6 @@ export default function SchoolProfileView({
     }, 3500);
     return () => clearInterval(slideTimer);
   }, [scienceSlideImages.length]);
-
-  useEffect(() => {
-    // Show high-converting science experiential welcome popup on site visit
-    const popupTimer = setTimeout(() => {
-      setIsWelcomePopupOpen(true);
-    }, 1200);
-    return () => clearTimeout(popupTimer);
-  }, []);
 
   // FAQ open/close state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -502,72 +499,123 @@ export default function SchoolProfileView({
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white">
-      {/* ─── 0. CSEEL.org Welcome & Brand Popup Modal ─── */}
-      {isCseelModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden text-center animate-in zoom-in-95 duration-200">
-            {/* Top Glowing Ambient Orb */}
-            <div className="absolute -top-16 -right-16 w-36 h-36 bg-blue-500/20 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+      {/* ─── Science By Doing Interactive Popup Modal (Human Visitors Only, Safe from Googlebot) ─── */}
+      {isScienceModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-teal-500/40 bg-slate-950 text-white shadow-2xl animate-in zoom-in-95 duration-300">
+            {/* Full Background Image Slider with Smooth Crossfade & Vivid Opacity Filter */}
+            {scienceSlideImages.map((imgSrc, sIdx) => (
+              <div
+                key={sIdx}
+                className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
+                  currentSlideIndex === sIdx ? 'opacity-70 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                }`}
+                style={{ backgroundImage: `url('${imgSrc}')` }}
+              />
+            ))}
+            {/* Soft Dark Opacity Gradient Overlay for Clear Background Photo Visibility */}
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-slate-950/45 to-slate-900/60 backdrop-blur-[0.5px]" />
 
-            <button
-              type="button"
-              onClick={() => setIsCseelModalOpen(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
-              aria-label="Close CSEEL Popup"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            {/* Modal Content */}
+            <div className="relative p-6 sm:p-8 md:p-10 space-y-6 z-10">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#00E5BE] text-xs font-semibold tracking-wide backdrop-blur-md shadow-xs">
+                  <Atom className="w-4 h-4 text-[#00E5BE]" />
+                  <span>Center for Scientific Exploration and Experiential Learning</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1 rounded-full backdrop-blur-xs">
+                    NEP 2020 Aligned
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setIsScienceModalOpen(false)}
+                    className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white border border-white/20 transition-colors cursor-pointer shrink-0 backdrop-blur-md"
+                    aria-label="Close modal"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
 
-            {/* CSEEL Logo & Brand Icon */}
-            <div className="w-16 h-16 rounded-2xl bg-linear-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-2xl mx-auto shadow-lg shadow-blue-500/30 mb-4">
-              <Atom className="w-9 h-9 animate-spin-slow" />
-            </div>
+              <div className="space-y-3 max-w-3xl">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+                  Why should children learn <span className="text-[#00E5BE]">SCIENCE BY DOING?</span>
+                </h2>
+                <p className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight drop-shadow-sm">
+                  Turn Textbook Concepts into Reality. Feel the Science.
+                </p>
+                <p className="text-xs sm:text-sm text-slate-100/90 leading-relaxed font-normal drop-shadow-xs">
+                  Turning Every Concept into Practical Reality. Experiential STEM kits and interactive laboratories empower students to explore, discover, and truly master scientific principles.
+                </p>
+              </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mb-2">
-              <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-              <span>CSEEL.org National Network</span>
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-[#00C49F]/50 transition-all shadow-sm">
+                  <div className="text-[#00E5BE] font-black text-sm flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-[#00E5BE]" />
+                    <span>900+ Real Science Experiments</span>
+                  </div>
+                  <p className="text-xs font-semibold text-white">500 Physics • 200 Chemistry • 200 Biology</p>
+                  <p className="text-[11px] text-slate-300 leading-normal">Hands-on physical kits covering Class 1–12 board curricula.</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-cyan-400/50 transition-all shadow-sm">
+                  <div className="text-cyan-300 font-black text-sm flex items-center gap-1.5">
+                    <Atom className="w-4 h-4 text-cyan-300" />
+                    <span>Feel the Science</span>
+                  </div>
+                  <p className="text-xs font-semibold text-white">Interactive 3D Virtual Simulations</p>
+                  <p className="text-[11px] text-slate-300 leading-normal">Visualizing complex physics &amp; chemical reactions in real-time.</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1.5 hover:border-amber-400/50 transition-all shadow-sm">
+                  <div className="text-amber-300 font-black text-sm flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-amber-300" />
+                    <span>Practical Reality</span>
+                  </div>
+                  <p className="text-xs font-semibold text-white">NEP 2020 Experiential Pedagogy</p>
+                  <p className="text-[11px] text-slate-300 leading-normal">Certified teacher enablement &amp; student innovation programs.</p>
+                </div>
+              </div>
 
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-2 tracking-tight">
-              Welcome to CSEEL.org
-            </h3>
+              <div className="pt-2 flex flex-wrap items-center gap-3.5">
+                <a
+                  href="https://www.cseel.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-[#00C49F]/30 hover:shadow-[#00C49F]/50 transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                >
+                  <span>Explore Experiential Learning at CSEEL.org</span>
+                  <ArrowRight className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setIsScienceModalOpen(false)}
+                  className="px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition-all cursor-pointer backdrop-blur-md"
+                >
+                  Continue to {schoolName} Profile →
+                </button>
+              </div>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
-              India’s Premier <strong>STEAM Education, Virtual Science Labs &amp; Verified School Directory</strong>. Discover top institutions, interactive experiments, and UDISE+ school facts.
-            </p>
-
-            <div className="space-y-2.5">
-              <a
-                href="https://www.cseel.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 px-4 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-blue-600/30 transition-all flex items-center justify-center gap-2 group"
-              >
-                <span>Visit Main CSEEL.org Portal</span>
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-
-              <Link
-                href="/subject/chemistry"
-                onClick={() => setIsCseelModalOpen(false)}
-                className="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2"
-              >
-                <Flame className="h-3.5 w-3.5 text-amber-600" />
-                <span>Try Virtual Science Simulators</span>
-              </Link>
-
-              <button
-                type="button"
-                onClick={() => setIsCseelModalOpen(false)}
-                className="w-full py-2 text-slate-400 hover:text-slate-600 text-xs font-semibold"
-              >
-                Continue to {schoolName} Profile →
-              </button>
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setCurrentSlideIndex(0)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${currentSlideIndex === 0 ? 'w-7 bg-[#00E5BE]' : 'w-2 bg-slate-700 hover:bg-slate-500'}`}
+                  aria-label="Go to slide 1"
+                />
+                <button
+                  type="button"
+                  onClick={() => setCurrentSlideIndex(1)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${currentSlideIndex === 1 ? 'w-7 bg-[#00E5BE]' : 'w-2 bg-slate-700 hover:bg-slate-500'}`}
+                  aria-label="Go to slide 2"
+                />
+                <span className="text-[11px] text-slate-300 ml-2 font-medium">Experiential Science Gallery</span>
+              </div>
             </div>
           </div>
         </div>
       )}
+
 
       {/* ─── Breadcrumb Navigation Bar ─── */}
       <div className="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-30 shadow-2xs">
@@ -1100,23 +1148,44 @@ export default function SchoolProfileView({
                     {schoolName}, {rawAddress}, {village}, {blockName} Block, {district} District, {state} - {pincode}.
                   </p>
                 </div>
+
+                {/* Ask Contact Number Action Row */}
+                <div className="pt-3 sm:col-span-2 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 mt-1">
+                  <div className="space-y-0.5">
+                    <span className="text-xs font-bold text-slate-900 block flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Need Direct Official Contact Details?</span>
+                    </span>
+                    <p className="text-[11px] text-slate-500">
+                      Request unmasked phone numbers, official email &amp; counseling desk for {schoolName}.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsContactModalOpen(true)}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-xs shadow-md shadow-blue-500/20 hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Ask Contact Number</span>
+                  </button>
+                </div>
               </div>
             </article>
 
             {/* Featured Innovation Banner: Why should children learn SCIENCE BY DOING? */}
             <article className="relative overflow-hidden rounded-3xl border border-teal-500/30 bg-slate-950 text-white shadow-2xl">
-              {/* Background Images Crossfade Slider with Opacity Filter */}
+              {/* Background Images Crossfade Slider with Vivid Opacity Filter */}
               {scienceSlideImages.map((imgSrc, sIdx) => (
                 <div 
                   key={sIdx}
                   className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
-                    currentSlideIndex === sIdx ? 'opacity-35 scale-105' : 'opacity-0 scale-100 pointer-events-none'
+                    currentSlideIndex === sIdx ? 'opacity-70 scale-105' : 'opacity-0 scale-100 pointer-events-none'
                   }`}
                   style={{ backgroundImage: `url('${imgSrc}')` }}
                 />
               ))}
-              {/* Dark Gradient Overlay Filter for Crisp Text Contrast */}
-              <div className="absolute inset-0 bg-linear-to-r from-slate-950/95 via-slate-950/85 to-slate-900/80 backdrop-blur-[1px]" />
+              {/* Soft Dark Gradient Overlay Filter for Clear Background Photo Visibility & Crisp Contrast */}
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/65 via-slate-950/45 to-slate-900/60 backdrop-blur-[0.5px]" />
 
               <div className="relative p-6 sm:p-8 md:p-10 space-y-6 z-10">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -1192,15 +1261,6 @@ export default function SchoolProfileView({
                     <span>Explore Experiential Learning at CSEEL.org</span>
                     <ArrowRight className="w-4 h-4 text-slate-950 stroke-[2.5]" />
                   </a>
-                  <a
-                    href="https://www.cseel.org/seminars"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs backdrop-blur-md transition-all cursor-pointer"
-                  >
-                    <span>Book School Science Demo</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-300" />
-                  </a>
                 </div>
 
                 {/* Slide indicator dots */}
@@ -1264,7 +1324,10 @@ export default function SchoolProfileView({
             </article>
 
             {/* Card 7: School Information Update & Community Verification Form (Formspree) */}
-            <article id="school-update-form" className="bg-white shadow-xs border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-6">
+            <article id="school-update-form" className="bg-gradient-to-br from-indigo-50/60 via-sky-50/50 to-teal-50/50 shadow-md border border-sky-200/80 rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+              {/* Soft Ambient Light Glows */}
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-sky-300/15 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-teal-300/15 rounded-full blur-2xl pointer-events-none" />
               <div className="pb-3 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h2 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
@@ -1309,7 +1372,7 @@ export default function SchoolProfileView({
                       <span className="text-[10px] text-slate-400 italic">Read-only system data</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-4 bg-white/85 backdrop-blur-xs rounded-2xl border border-sky-100 shadow-2xs text-xs">
                       <div>
                         <span className="text-[10px] text-slate-400 font-bold uppercase block">School Name</span>
                         <input
@@ -1909,90 +1972,224 @@ export default function SchoolProfileView({
         </div>
       )}
 
-      {/* ─── Site Visit Welcome Popup Modal with Full Background Image & Opacity Filter ─── */}
-      {isWelcomePopupOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-teal-500/40 bg-slate-950 text-white shadow-2xl animate-in zoom-in-95 duration-300">
-            {/* Full Background Image Slider with Smooth Crossfade & Opacity Filter */}
-            {scienceSlideImages.map((imgSrc, sIdx) => (
-              <div
-                key={sIdx}
-                className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out ${
-                  currentSlideIndex === sIdx ? 'opacity-35 scale-105' : 'opacity-0 scale-100 pointer-events-none'
-                }`}
-                style={{ backgroundImage: `url('${imgSrc}')` }}
-              />
-            ))}
-            {/* Dark Opacity Gradient Overlay for Crisp Readability */}
-            <div className="absolute inset-0 bg-linear-to-b from-slate-950/95 via-slate-950/90 to-slate-900/85 backdrop-blur-[1px]" />
 
-            {/* Modal Content */}
-            <div className="relative p-6 sm:p-8 md:p-10 space-y-6 z-10">
-              {/* Top Header & Close Button */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#00E5BE] text-xs font-semibold tracking-wide backdrop-blur-md shadow-xs">
-                  <Atom className="w-4 h-4 text-[#00E5BE]" />
-                  <span>Center for Scientific Exploration and Experiential Learning</span>
+
+
+      {/* ─── Ask Contact Number & Formspree Update Popup Modal ─── */}
+      {isContactModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-sky-200 bg-white shadow-2xl p-5 sm:p-7 space-y-5 animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-xl bg-blue-50 text-blue-600">
+                  <ShieldCheck className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900">
+                    Official Contact Request &amp; Verification
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {schoolName} ({village}, {district})
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsWelcomePopupOpen(false)}
-                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white border border-white/20 transition-colors cursor-pointer shrink-0 backdrop-blur-md"
-                  aria-label="Close modal"
-                >
-                  <X className="w-5 h-5" />
-                </button>
               </div>
+              <button
+                type="button"
+                onClick={() => setIsContactModalOpen(false)}
+                className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-              {/* Main Headline & Question */}
-              <div className="space-y-3">
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-                  Why should children learn <span className="text-[#00E5BE]">SCIENCE BY DOING?</span>
-                </h3>
-                <p className="text-sm sm:text-base font-bold text-white drop-shadow-sm">
-                  Turn Textbook Concepts into Reality. Feel the Science.
+            {/* Temporary Notice Message */}
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-start gap-2.5 text-amber-900 text-xs sm:text-sm">
+              <span className="p-1 rounded-lg bg-amber-100 text-amber-700 shrink-0 mt-0.5">
+                <Sparkles className="w-3.5 h-3.5" />
+              </span>
+              <div>
+                <strong className="font-bold text-amber-950 block">Submit this form to get official school contact details</strong>
+                <p className="text-[11px] sm:text-xs text-amber-800 mt-0.5 leading-relaxed">
+                  Please submit your verification request below to receive direct unmasked phone number, official email, and admission counseling desk details for <strong>{schoolName}</strong>.
                 </p>
-                <p className="text-xs sm:text-sm text-slate-100 leading-relaxed font-normal drop-shadow-xs">
-                  Turning Every Concept into Practical Reality. Elevate your school with CSEEL’s 900+ real science experiments, interactive 3D virtual science labs, and NEP 2020 experiential curricula.
-                </p>
-              </div>
-
-              {/* Value Highlights */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
-                  <span className="text-[#00E5BE] font-black text-xs block">🧪 900+ Real Experiments</span>
-                  <p className="text-[11px] text-slate-200 leading-tight">500 Physics • 200 Chemistry • 200 Biology</p>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
-                  <span className="text-cyan-300 font-black text-xs block">🔬 3D Virtual Labs</span>
-                  <p className="text-[11px] text-slate-200 leading-tight">Interactive simulations for deep concept mastery.</p>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700/60 backdrop-blur-md space-y-1">
-                  <span className="text-amber-300 font-black text-xs block">🚀 Practical Reality</span>
-                  <p className="text-[11px] text-slate-200 leading-tight">NEP 2020 experiential pedagogy &amp; kits.</p>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-                <a
-                  href="https://www.cseel.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-[#00C49F]/30 hover:shadow-[#00C49F]/50 transition-all transform hover:-translate-y-0.5 text-center cursor-pointer"
-                >
-                  <span>Explore Science Kits at CSEEL.org</span>
-                  <ArrowRight className="w-4 h-4 shrink-0 text-slate-950 stroke-[2.5]" />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setIsWelcomePopupOpen(false)}
-                  className="w-full sm:w-auto px-5 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 text-white font-semibold text-xs backdrop-blur-md transition-colors text-center cursor-pointer"
-                >
-                  Continue to School Profile
-                </button>
               </div>
             </div>
+
+            {updateSuccess ? (
+              <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-3 animate-in zoom-in-95">
+                <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto animate-bounce" />
+                <h3 className="text-base font-black text-emerald-900">Thank You! Information Submitted Successfully</h3>
+                <p className="text-xs sm:text-sm text-emerald-700 max-w-md mx-auto leading-relaxed">
+                  Your request and feedback for <strong>{schoolName}</strong> have been received. Our team will verify and connect regarding official contact &amp; admission assistance.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUpdateSuccess(false);
+                    setIsContactModalOpen(false);
+                  }}
+                  className="mt-2 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                >
+                  Done / Close
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleProfileUpdateSubmit} className="space-y-4">
+                {/* 1. AUTO-FILLED & LOCKED READ-ONLY DATA */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1 uppercase tracking-wider">
+                      <Lock className="w-3 h-3 text-slate-400" />
+                      <span>Verified Record (Auto-Filled)</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 italic">Read-only</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase block">School</span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={schoolName}
+                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 font-bold text-slate-800 cursor-not-allowed text-xs mt-0.5 truncate"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase block">UDISE</span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={udiseCode}
+                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 font-mono font-bold text-blue-700 cursor-not-allowed text-xs mt-0.5"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase block">District, State</span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={`${district}, ${state}`}
+                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-800 cursor-not-allowed text-xs mt-0.5 truncate"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. SUBMITTER & CONTACT INPUTS */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Your Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={updateSubmitterName}
+                      onChange={(e) => setUpdateSubmitterName(e.target.value)}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Your Contact / WhatsApp Number *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={updateContact}
+                      onChange={(e) => setUpdateContact(e.target.value)}
+                      placeholder="e.g. +91 98765 43210"
+                      className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Your Email Address (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      value={updateEmail}
+                      onChange={(e) => setUpdateEmail(e.target.value)}
+                      placeholder="name@example.com"
+                      className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Your Role
+                    </label>
+                    <select
+                      value={updateSubmitterRole}
+                      onChange={(e) => setUpdateSubmitterRole(e.target.value)}
+                      className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden bg-white font-medium"
+                    >
+                      <option value="Parent">Parent / Guardian Seeking Admission</option>
+                      <option value="Principal / School Admin">Principal / School Official</option>
+                      <option value="Teacher / Faculty">Teacher / Faculty</option>
+                      <option value="Current Student">Current Student</option>
+                      <option value="Alumni">Alumnus</option>
+                      <option value="Community Member">Local Community Member</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Additional notes / suggestions */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Your Requirement / Inquiry Note *
+                  </label>
+                  <textarea
+                    required
+                    rows={2}
+                    value={updateReview}
+                    onChange={(e) => setUpdateReview(e.target.value)}
+                    placeholder="e.g. Requesting contact number for Class 6th admission inquiries and fee structure..."
+                    className="w-full px-3 py-2 text-xs sm:text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-hidden resize-none bg-white"
+                  />
+                </div>
+
+                {updateError && (
+                  <p className="text-xs text-red-600 bg-red-50 p-2.5 rounded-xl border border-red-200 font-semibold">
+                    {updateError}
+                  </p>
+                )}
+
+                {/* Submit Action */}
+                <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setIsContactModalOpen(false)}
+                    className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isUpdateSubmitting}
+                    className="px-6 py-2.5 rounded-xl bg-[#00C49F] hover:bg-[#00D9B0] text-slate-950 font-black text-xs shadow-md shadow-[#00C49F]/25 hover:shadow-[#00C49F]/40 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                  >
+                    {isUpdateSubmitting ? (
+                      <>
+                        <span className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5 text-slate-950" />
+                        <span>Submit &amp; Get Contact Details</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

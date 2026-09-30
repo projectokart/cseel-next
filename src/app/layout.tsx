@@ -123,6 +123,14 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <head>
+        {/* Resource Hints: Preconnect and DNS-Prefetch for zero-latency origin handshakes */}
+        <link rel="preconnect" href="https://ukazkxthavxphibdbspd.supabase.co" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ukazkxthavxphibdbspd.supabase.co" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
         {/* Structured Data: Unified @graph (EducationalOrganization, WebSite, FAQPage) */}
         <script
           type="application/ld+json"
@@ -377,8 +385,20 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.variable} ${montserrat.variable} ${poppins.variable} ${fredoka.variable} font-sans antialiased`} suppressHydrationWarning>
-        <Providers>{children}</Providers>
+      <body className={`${inter.variable} ${montserrat.variable} ${poppins.variable} ${fredoka.variable} font-sans antialiased text-slate-900 bg-white min-h-screen selection:bg-sky-100 selection:text-sky-900`} suppressHydrationWarning>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2.5 focus:bg-sky-900 focus:text-white focus:rounded-md focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 font-medium text-sm transition-all"
+        >
+          Skip to main content
+        </a>
+        <Providers>
+          <div className="flex flex-col min-h-screen">
+            <div id="main-content" className="flex-1 focus:outline-none" tabIndex={-1}>
+              {children}
+            </div>
+          </div>
+        </Providers>
       </body>
     </html>
   );

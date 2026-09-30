@@ -237,3 +237,26 @@
   }
 }
 
+/* Core Web Vitals: DOM Containment for Long Virtualized / Catalog Grids */
+.cv-contain-cards {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 380px;
+}
+
+.cv-contain-list-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 120px;
+}
+
+/* WCAG 2.2 Minimum Mobile Touch Target Enforcement */
+@media (max-width: 768px) {
+  .touch-target-min {
+    min-height: 48px;
+    min-width: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+

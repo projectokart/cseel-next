@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from "react";
-import { X, Sparkles, ArrowRight, Video, Compass } from "lucide-react";
+import { X, Sparkles, ArrowRight, Compass, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ interface PromoItem {
   cta_text?: string | null;
   cta_link?: string | null;
   accent_color?: string;
+  video_id?: string;
   video_url?: string | null;
   badge_text?: string | null;
 }
@@ -26,7 +27,8 @@ const DEFAULT_POPUP: PromoItem = {
   content: "Discovery Lab teaches children science with hands-on educational experiments. <strong class=\"text-cyan-400 font-semibold\">Book a free school demo</strong> today!",
   cta_text: "Book Free Demo Now",
   cta_link: "/get-support",
-  video_url: "https://www.youtube.com/embed/28rAN41mCDk?autoplay=1&mute=1&controls=0&loop=1&playlist=28rAN41mCDk&rel=0&playsinline=1",
+  video_id: "28rAN41mCDk",
+  video_url: "https://www.youtube.com/embed/28rAN41mCDk",
   badge_text: "Live CSEEL Lab Preview",
   accent_color: "#06b6d4",
 };
@@ -35,6 +37,7 @@ const OfferPopup = () => {
   const { isSectionEnabled } = useHomepageCms();
   const [item, setItem] = useState<PromoItem | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const hasLoaded = useRef(false);
 
   useEffect(() => {
@@ -46,7 +49,7 @@ const OfferPopup = () => {
         const closed = localStorage.getItem(STORAGE_KEY);
         if (closed) {
           const hoursAgo = (Date.now() - Number(closed)) / 3600000;
-          if (hoursAgo < 12) return; // Re-show after 12 hours for new visitors
+          if (hoursAgo < 12) return; // Re-show after 12 hours for visitors
         }
       }
     } catch {}
@@ -92,9 +95,18 @@ const OfferPopup = () => {
     } catch {}
   };
 
+  const toggleSound = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMuted((prev) => !prev);
+  };
+
   if (!isSectionEnabled('offer_popup') && isSectionEnabled('offer_popup') !== undefined) {
     return null;
   }
+
+  const videoSrc = item?.video_id
+    ? `https://www.youtube.com/embed/${item.video_id}?autoplay=1&mute=${isMuted ? '1' : '0'}&controls=0&loop=1&playlist=${item.video_id}&rel=0&playsinline=1&enablejsapi=1`
+    : `https://www.youtube.com/embed/28rAN41mCDk?autoplay=1&mute=${isMuted ? '1' : '0'}&controls=0&loop=1&playlist=28rAN41mCDk&rel=0&playsinline=1&enablejsapi=1`;
 
   return (
     <AnimatePresence>
@@ -124,6 +136,29 @@ const OfferPopup = () => {
             {/* Top Neon Accent Glow Line */}
             <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-[#006fcc] shadow-[0_0_18px_rgba(6,182,212,0.85)]" />
 
+            {/* Sound Toggle Button */}
+            <button
+              onClick={toggleSound}
+              aria-label={isMuted ? "Unmute video sound" : "Mute video sound"}
+              className={`absolute top-3.5 left-3.5 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer z-20 border shadow-md hover:scale-105 active:scale-95 ${
+                isMuted
+                  ? 'bg-slate-900/85 hover:bg-slate-800 text-slate-300 border-slate-700/80'
+                  : 'bg-cyan-950/90 hover:bg-cyan-900 text-cyan-300 border-cyan-500/60 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
+              }`}
+            >
+              {isMuted ? (
+                <>
+                  <VolumeX size={14} className="text-slate-400" />
+                  <span>Sound Off</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 size={14} className="text-cyan-400 animate-pulse" />
+                  <span>Sound ON</span>
+                </>
+              )}
+            </button>
+
             {/* Close Button */}
             <button
               onClick={close}
@@ -133,22 +168,15 @@ const OfferPopup = () => {
               <X size={17} strokeWidth={2.5} />
             </button>
 
-            {/* YouTube / Media Video Container (Autoplay, Loop & Muted) */}
+            {/* YouTube / Media Video Container (Autoplay & Loop with interactive Sound) */}
             <div className="relative w-full h-[210px] sm:h-[240px] bg-slate-900 overflow-hidden">
-              {item.video_url ? (
-                <iframe
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] object-cover opacity-90 pointer-events-none"
-                  src={item.video_url}
-                  title="Discovery Lab Science Experiments"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                />
-              ) : (
-                <img
-                  src="/images/categories/chemistry.jpg"
-                  alt="CSEEL Lab Preview"
-                  className="w-full h-full object-cover opacity-85"
-                />
-              )}
+              <iframe
+                key={isMuted ? 'muted' : 'unmuted'}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] object-cover opacity-90 pointer-events-none"
+                src={videoSrc}
+                title="Discovery Lab Science Experiments"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              />
 
               {/* Gradient Overlay for seamless dark integration */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />

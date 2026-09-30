@@ -47,6 +47,21 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/searchschool',
+        destination: '/school-finder',
+        permanent: false,
+      },
+      {
+        source: '/schoolsearch',
+        destination: '/school-finder',
+        permanent: false,
+      },
+      {
+        source: '/school-search',
+        destination: '/school-finder',
+        permanent: false,
+      },
+      {
         source: '/projectokart',
         destination: 'https://projectokart.com',
         permanent: true,
@@ -59,10 +74,22 @@ const nextConfig = {
     ];
   },
   async headers() {
+    if (process.env.NODE_ENV !== 'production') {
+      return [
+        {
+          source: '/:path*',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'no-cache, no-store, must-revalidate',
+            },
+          ],
+        },
+      ];
+    }
     return [
       {
-        source: '/:all*(svg|jpg|png|webp|avif|ico|css|js)',
-        locale: false,
+        source: '/_next/static/:path*',
         headers: [
           {
             key: 'Cache-Control',

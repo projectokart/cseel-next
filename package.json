@@ -83,6 +83,7 @@
     "react-resizable-panels": "^2.1.9",
     "recharts": "^2.15.4",
     "sonner": "^1.7.4",
+    "swiper": "^14.3.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
@@ -98,7 +99,9 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.29",
+    "pg": "^8.23.0",
     "postcss": "^8.5.6",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
   }

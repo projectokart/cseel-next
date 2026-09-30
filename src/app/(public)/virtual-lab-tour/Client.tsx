@@ -31,6 +31,10 @@ import {
   Radio,
   Eye,
   Sliders,
+  X,
+  Layers,
+  HelpCircle,
+  PhoneCall,
 } from 'lucide-react';
 
 interface Hotspot {
@@ -80,8 +84,8 @@ const labEnvironments: LabEnvironment[] = [
     cameraAngles: [
       { id: 'cam-chem-1', name: 'Main Workstation', yaw: 0, pitch: 0 },
       { id: 'cam-chem-2', name: 'Titration Bay', yaw: 75, pitch: -5 },
-      { id: 'cam-chem-3', name: 'Fume Hood & Safety Station', yaw: 160, pitch: 5 },
-      { id: 'cam-chem-4', name: 'Reagent Dispenser Rack', yaw: 250, pitch: -2 },
+      { id: 'cam-chem-3', name: 'Fume Hood Station', yaw: 160, pitch: 5 },
+      { id: 'cam-chem-4', name: 'Reagent Dispenser', yaw: 250, pitch: -2 },
     ],
     hotspots: [
       {
@@ -96,384 +100,378 @@ const labEnvironments: LabEnvironment[] = [
         fullDesc: 'The Class-A motorized burette delivers ultra-precise droplets with a resolution of ±0.01 mL. Combined with a variable-speed PTFE magnetic stirrer, it eliminates parallax errors during acid-base neutralisation and redox assays.',
         specifications: [
           'Volumetric Accuracy: ±0.01 mL Class-A DIN EN ISO 8655',
-          'Digital LED Titrant Volume Readout',
+          'Digital LED Titrant Volume Readout with auto-zero tare',
           'Teflon Piston with chemically inert borosilicate barrel',
-          'Integrated optical endpoint photo-detector',
+          'Speed-controlled magnetic stirrer with LED tachometer',
         ],
         nepAlignedPracticals: [
-          'Class 11 CBSE: Standard Oxalic Acid vs. NaOH Titration',
-          'Class 12 CBSE: Redox Titration of Potassium Permanganate vs Mohr’s Salt',
-          'NEP 2020: Buffering capacity of real-world antacid medicines',
+          'Class 11: Determination of strength of given NaOH solution with standard Oxalic Acid',
+          'Class 12: Permanganometric titration of KMnO4 against Mohr Salt',
+          'Class 10: Quantitative pH neutralization curves of common household acids',
         ],
-        modelNumber: 'CSEEL-TITRA-X200',
-        simulatorUrl: '/subject/chemistry',
-        audioNarration: 'This digital burette ensures zero liquid wastage and micro-scale precision, allowing students to accurately detect equivalent neutralization points.',
+        modelNumber: 'CS-TITRA-900X',
+        simulatorUrl: '/hands-on-experiments?subject=chemistry',
+        audioNarration: 'This is the Digital Titration Station. It eliminates meniscus reading error with a precision digital drop counter and magnetic vortex stirrer.',
       },
       {
-        id: 'chem-fumehood',
-        name: 'Aerodynamic Laminar Fume Hood & Scrubber',
-        category: 'Hazard Containment',
+        id: 'chem-fume-hood',
+        name: 'Automated Ducted Laminar Fume Hood',
+        category: 'Laboratory Safety',
         xPercent: 62,
-        yPercent: 36,
-        badge: 'ISO 14644-1 Safe',
-        safetyLevel: 'Blue',
-        shortDesc: 'High-velocity HEPA-carbon dual exhaust chamber for volatile reaction synthesis.',
-        fullDesc: 'Engineered for hazardous gas generation experiments such as chlorine gas, nitrogen dioxide emissions, and ester synthesis. Constant face velocity monitoring ensures 100% student safety with automated glass sash interlocks.',
+        yPercent: 38,
+        badge: 'HEPA & Carbon Filtration',
+        safetyLevel: 'Green',
+        shortDesc: 'Continuous air-velocity containment chamber for handling volatile and toxic vapors.',
+        fullDesc: 'Equipped with a micro-processor controller maintaining face velocity at 0.5 m/s. Fitted with gas taps, internal LED lighting, acid-resistant ceramic floor, and multi-stage active carbon gas scrubber filters.',
         specifications: [
-          'Face Velocity: 0.5 m/s uniform laminar air flow',
-          'Activated carbon scrubber + HEPA particulate filters',
-          'Toughened explosion-resistant polycarbonate sash',
-          'Integrated spark-proof LED internal illumination',
+          'Face Velocity: 0.5 m/s auto-regulated airflow sensor',
+          'Tempered 6mm explosion-proof vertical sliding sash',
+          'Chemical Resistant Phenolic Resin internal lining',
+          'Integrated utility taps for inert gas, vacuum, and DI water',
         ],
         nepAlignedPracticals: [
-          'Class 10 CBSE: Thermal decomposition of Lead Nitrate (NO₂ emissions)',
-          'Class 12 CBSE: Synthesis of Aspirin & Esterification aroma trials',
-          'NEP 2020: Environmental capture of sulfurous emissions',
+          'Class 11: Preparation of Colloidal Sol of Ferric Hydroxide',
+          'Class 12: Tests for Functional Groups: Carbonyl, Carboxylic & Phenolic fumes',
+          'Class 12: Qualitative Salt Analysis: Evolution of pungent gases (SO2, NO2, Cl2, NH3)',
         ],
-        modelNumber: 'CSEEL-FUME-PRO70',
-        simulatorUrl: '/subject/chemistry',
-        audioNarration: 'The aerodynamic fume hood safely isolates all toxic chemical fumes, exhausting them through multi-stage eco scrubbers.',
+        modelNumber: 'CS-FUME-HEPA40',
+        simulatorUrl: '/hands-on-experiments?subject=chemistry',
+        audioNarration: 'The Laminar Fume Hood protects students during noxious gas evolution with an automated air extraction scrubber.',
       },
       {
         id: 'chem-spectro',
-        name: 'UV-Vis Dual-Beam Digital Spectrophotometer',
-        category: 'Optical Spectroscopy',
+        name: 'Dual-Beam UV-Visible Spectrophotometer',
+        category: 'Optical Analytical Spectroscopy',
         xPercent: 82,
-        yPercent: 54,
-        badge: '190 - 1100 nm',
-        safetyLevel: 'Green',
-        shortDesc: 'Measures light absorption spectra for Beer-Lambert law verification and complexometry.',
-        fullDesc: 'Provides direct absorption spectrum measurement of transition metal solutions (CuSO₄, KMnO₄, FeCl₃). Allows high school learners to plot calibration curves and calculate unknown sample concentrations with research-level clarity.',
+        yPercent: 55,
+        badge: '190-1100 nm Wavelength',
+        safetyLevel: 'Blue',
+        shortDesc: 'High-throughput spectrometer for Beer-Lambert concentration absorption analysis.',
+        fullDesc: 'Features dual silicon photodiode detectors with holographic grating (1200 lines/mm). Connects over USB to real-time spectral graphing software on student tablets for Beer-Lambert law verification.',
         specifications: [
-          'Wavelength Range: 190 nm to 1100 nm (UV to Near-IR)',
-          'Spectral Bandwidth: 1.8 nm with deuterium & tungsten halogen lamps',
-          'USB & Wi-Fi Data Export directly to student tablet apps',
+          'Spectral Bandwidth: 1.8 nm with Deuterium & Tungsten halogen lamps',
+          'Wavelength Accuracy: ±0.3 nm with automatic wavelength calibration',
+          'Photometric Range: 0 to 3.0 Absorbance units',
+          'Matched optical quartz cuvettes (10mm path length)',
         ],
         nepAlignedPracticals: [
-          'Class 12 CBSE: Beer-Lambert Law validation using Copper Sulfate',
-          'Class 12 CBSE: Chemical kinetics of Crystal Violet fading reaction',
+          'Class 12: Determination of concentration of unknown Copper Sulfate solution using Colorimetry',
+          'Class 12: Rate of reaction between Potassium Persulfate and Potassium Iodide',
+          'Class 11: Study of reaction kinetics of Ester hydrolysis',
         ],
-        modelNumber: 'CSEEL-SPEC-UV2026',
-        simulatorUrl: '/subject/chemistry',
-        audioNarration: 'This spectrophotometer allows students to visually see molecular absorption peaks and verify Beer-Lambert law in real time.',
+        modelNumber: 'CS-UV-VIS200',
+        simulatorUrl: '/hands-on-experiments?subject=chemistry',
+        audioNarration: 'The UV-Visible Spectrophotometer measures light absorption at specific wavelengths to calculate chemical reaction kinetics.',
       },
       {
         id: 'chem-centrifuge',
-        name: 'High-Speed Analytical Micro-Centrifuge',
-        category: 'Precipitate Separation',
+        name: 'Digital Benchtop Angle Centrifuge 6000 RPM',
+        category: 'Separation Science',
         xPercent: 44,
-        yPercent: 58,
-        badge: '12,000 RPM',
+        yPercent: 65,
+        badge: 'RCF 3500 x g',
         safetyLevel: 'Yellow',
-        shortDesc: 'Rapid separation of qualitative inorganic analysis precipitates and colloids.',
-        fullDesc: 'Equipped with electronic lid safety locks and unbalanced rotor detection. Replaces tedious filtration with rapid centrifugal sedimentation in salt analysis tests.',
+        shortDesc: 'Brushless motor centrifuge for rapid precipitate separation and biological fractionation.',
+        fullDesc: 'Features an electronic lid-lock safety mechanism, imbalance sensor, and LCD timer. Accommodates 8 x 15 mL conical centrifuge tubes for quick supernatant isolation.',
         specifications: [
-          'Speed Range: 500 – 12,000 RPM with soft braking',
-          'Capacity: 12 x 1.5/2.0 mL microcentrifuge tubes',
-          'Quiet brushless induction motor (<54 dB)',
+          'Max Speed: 6000 RPM adjustable in steps of 100 RPM',
+          'Max RCF: 3500 x g with brushless maintenance-free induction drive',
+          'Lid-drop safety interlock and dynamic imbalance detector',
+          'Microprocessor timer from 1 to 99 minutes with continuous hold',
         ],
         nepAlignedPracticals: [
-          'Class 11/12 CBSE: Qualitative Salt Analysis (Separation of Cations Gr I-VI)',
-          'NEP 2020: Colloid precipitation and Tyndall effect verification',
+          'Class 11: Purification of impure samples of solids by recrystallization & centrifugation',
+          'Class 12: Separation of pigments from spinach extract',
+          'Class 9: Separation of colloidal mixtures and suspensions',
         ],
-        modelNumber: 'CSEEL-CENTRI-12K',
-        simulatorUrl: '/subject/chemistry',
-        audioNarration: 'Our micro-centrifuge separates chemical precipitates in seconds without requiring single-use filter paper.',
+        modelNumber: 'CS-CENTRI-6K',
+        simulatorUrl: '/hands-on-experiments?subject=chemistry',
+        audioNarration: 'The Digital Centrifuge separates fine precipitates and colloidal mixtures through high centrifugal acceleration.',
       },
     ],
   },
   {
     id: 'physics',
-    name: 'Physics & Quantum Optics Lab',
+    name: 'Physics & Optics Innovation Studio',
     discipline: 'Physics',
     icon: Atom,
-    tagline: 'Precision laser optical benches, digital storage oscilloscopes, and air tracks.',
-    badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
+    tagline: 'Precision laser optical benches, digital storage oscilloscopes, and kinematics tracks.',
+    badgeColor: 'bg-blue-50 text-[#006fcc] border-blue-200',
     backgroundImage: '/images/categories/physics.jpg',
-    capacity: '36 Students (Modular Benches)',
-    curriculum: 'CBSE, ICSE, Cambridge AS/A-Level',
-    narrationIntro: 'Welcome to the CSEEL Physics Pavilion. Here students test classical mechanics, wave optics, semiconductor physics, and electromagnetism.',
+    capacity: '36 Students (Modular Stations)',
+    curriculum: 'CBSE, ICSE, Cambridge STEM Aligned',
+    narrationIntro: 'Welcome to the Physics Innovation Studio. Featuring low-friction air kinematics rails, 100 MHz digital storage oscilloscopes, and computerized laser diffraction optical benches.',
     cameraAngles: [
-      { id: 'cam-phy-1', name: 'Laser Optics Bench', yaw: 0, pitch: 0 },
-      { id: 'cam-phy-2', name: 'Electronics & Oscilloscope Rig', yaw: 90, pitch: -3 },
-      { id: 'cam-phy-3', name: 'Mechanics Air Track', yaw: 180, pitch: -8 },
-      { id: 'cam-phy-4', name: 'High-Voltage Van de Graaff', yaw: 270, pitch: 6 },
+      { id: 'cam-phy-1', name: 'Optics Bench', yaw: 0, pitch: 0 },
+      { id: 'cam-phy-2', name: 'Electronics DSO Station', yaw: 90, pitch: 5 },
+      { id: 'cam-phy-3', name: 'Mechanics Air Track', yaw: 180, pitch: -5 },
+      { id: 'cam-phy-4', name: 'Electromagnetism Bay', yaw: 270, pitch: 0 },
     ],
     hotspots: [
       {
-        id: 'phy-optical-bench',
-        name: 'Precision Laser Optical Bench & Interferometer',
-        category: 'Wave & Ray Optics',
+        id: 'phy-optics-bench',
+        name: 'Precision 2-Meter Laser Optical Bench System',
+        category: 'Geometrical & Wave Optics',
         xPercent: 30,
+        yPercent: 52,
+        badge: '0.1 mm Vernier Scale',
+        safetyLevel: 'Green',
+        shortDesc: 'Extruded aluminum optical rail with red/green laser diodes and digital photodetectors.',
+        fullDesc: 'Heavy anodized aluminum rail with dual mm/inch laser engraved scales. Includes kinematic lens mounts, precision slit apertures, biprism adapters, and screen mounts with micro-adjusters.',
+        specifications: [
+          'Bench Length: 2000 mm heavy rigid extruded profile',
+          'He-Ne & Solid-State 650nm Laser Sources with diffraction slits',
+          'Kinematic mounts with 3-axis angular fine adjustment screws',
+          'Achromatic doublet lens sets (focal lengths: +50, +100, +150, -100 mm)',
+        ],
+        nepAlignedPracticals: [
+          'Class 12: Finding focal length of convex lens & concave mirror by u-v graph',
+          'Class 12: Refractive index of glass prism using angle of minimum deviation',
+          'Class 12: Wave optics: Young’s Double Slit interference & diffraction fringe width',
+        ],
+        modelNumber: 'CS-OPTIC-200L',
+        simulatorUrl: '/hands-on-experiments?subject=physics',
+        audioNarration: 'The 2-meter Optical Bench allows students to verify geometrical lens equations and laser wave interference patterns with sub-millimeter precision.',
+      },
+      {
+        id: 'phy-dso',
+        name: '100 MHz Dual-Channel Digital Storage Oscilloscope (DSO)',
+        category: 'Electronics & Waveforms',
+        xPercent: 70,
         yPercent: 44,
-        badge: 'Class 2 Red/Green Laser',
-        safetyLevel: 'Yellow',
-        shortDesc: '2-meter rigid extruded rail with micrometer Vernier riders and diffraction slits.',
-        fullDesc: 'Designed for high-accuracy focal length measurements, Young’s Double Slit experiment, and laser wavelength diffraction. Magnetic self-aligning lens holders prevent axis misalignment.',
-        specifications: [
-          'Bed Length: 2000 mm dual-scale metric & vernier engraving',
-          'Laser Sources: 650 nm Red (2mW) and 532 nm Green (1mW) Class II',
-          'Diffraction Grating: 300 & 600 lines/mm holographic glass',
-        ],
-        nepAlignedPracticals: [
-          'Class 12 CBSE: Refractive index of glass prism using spectrometer',
-          'Class 12 CBSE: Focal length of convex lens by displacement method',
-          'NEP 2020: Laser wavelength determination using diffraction grating',
-        ],
-        modelNumber: 'CSEEL-OPTIC-2M',
-        simulatorUrl: '/subject/physics',
-        audioNarration: 'The 2-meter optical bench provides nanometer precision for laser wave optics and lens aberration experiments.',
-      },
-      {
-        id: 'phy-oscilloscope',
-        name: 'Dual-Channel Digital Storage Oscilloscope (DSO)',
-        category: 'Electronics & Signals',
-        xPercent: 68,
-        yPercent: 42,
-        badge: '100 MHz / 1 GSa/s',
+        badge: '1 GSa/s Sampling',
         safetyLevel: 'Green',
-        shortDesc: '7-inch color display for analyzing AC waveforms, resonance curves, and sound harmonics.',
-        fullDesc: 'Students observe live alternating currents, rectify signals using PN junction diodes, and analyze LCR resonant circuits. Features automated frequency, peak-to-peak voltage, and FFT frequency spectrum analysis.',
+        shortDesc: 'High-speed waveform visualizer with FFT spectral analysis and USB waveform capture.',
+        fullDesc: '7-inch color TFT display with 1 GSa/s real-time sampling rate. Supports 32 automatic waveform parameter measurements, cursor tracking, and AC/DC circuit analysis.',
         specifications: [
-          'Bandwidth: 100 MHz, 2 Channels + External Trigger',
-          'Real-time Sampling Rate: 1 GSa/s per channel',
-          'Auto-measurement of 32 waveform parameters',
+          'Bandwidth: 100 MHz with 2 independent analog input channels',
+          'Sample Rate: 1 GSa/s per channel with 28 Mpts memory depth',
+          'Built-in 25 MHz arbitrary function generator with sine/square/ramp waves',
+          'Auto-triggering: Edge, Pulse, Video, Slope, and Pattern triggers',
         ],
         nepAlignedPracticals: [
-          'Class 12 CBSE: Half-wave and Full-wave Rectifier waveform profiling',
-          'Class 12 CBSE: Series LCR Circuit Resonance & Quality Factor (Q-factor)',
-          'NEP 2020: Audio frequencies and Doppler effect sound wave visualization',
+          'Class 12: Study of half-wave and full-wave rectifier ripple factor and filter circuits',
+          'Class 12: V-I characteristics of PN junction diode and Zener voltage regulator',
+          'Class 11: Determination of frequency of AC mains using Sonometer and electromagnet',
         ],
-        modelNumber: 'CSEEL-DSO-100X',
-        simulatorUrl: '/subject/physics',
-        audioNarration: 'This digital oscilloscope translates invisible electronic oscillations and alternating currents into clear, interactive graphs.',
+        modelNumber: 'CS-DSO-100D',
+        simulatorUrl: '/hands-on-experiments?subject=physics',
+        audioNarration: 'The Digital Storage Oscilloscope displays real-time voltage waveforms, AC signals, and diode rectification characteristics.',
       },
       {
-        id: 'phy-vandegraaff',
-        name: 'Van de Graaff Electrostatic High-Voltage Generator',
-        category: 'Electrostatics',
-        xPercent: 88,
-        yPercent: 32,
-        badge: '250,000 Volts (Safe mA)',
-        safetyLevel: 'Yellow',
-        shortDesc: 'Generates static high-voltage potentials for spark discharge and Faraday cage demos.',
-        fullDesc: 'Demonstrates charge accumulation, Coulomb’s electric field lines, and electrical breakdown in air. Built with student-safe micro-ampere current limitations and grounding wands.',
-        specifications: [
-          'Output Potential: Up to 250 kV with dry belt transmission',
-          'Spark Discharge Distance: 60 - 80 mm in ambient air',
-          'Polished 250 mm stainless steel spherical dome',
-        ],
-        nepAlignedPracticals: [
-          'Class 12 CBSE: Electrostatic induction and electric field distribution',
-          'NEP 2020: Faraday Cage lightning shielding demonstrations',
-        ],
-        modelNumber: 'CSEEL-VDG-250',
-        simulatorUrl: '/subject/physics',
-        audioNarration: 'The Van de Graaff generator creates dramatic electrostatic discharges while remaining safely in micro-ampere current ranges.',
-      },
-      {
-        id: 'phy-airtrack',
-        name: 'Linear Air Track Frictionless Mechanics Station',
+        id: 'phy-air-track',
+        name: 'Linear Air Track Momentum & Kinematics Bench',
         category: 'Classical Mechanics',
-        xPercent: 12,
-        yPercent: 62,
-        badge: 'Near Zero Friction',
+        xPercent: 15,
+        yPercent: 68,
+        badge: 'Frictionless Air Cushion',
         safetyLevel: 'Green',
-        shortDesc: 'High-volume blower air cushion rail with millimeter photogate timers.',
-        fullDesc: 'Eliminates friction to deliver textbook-perfect conservation of momentum and energy demonstrations. Dual photogates record microsecond glider transit times.',
+        shortDesc: 'Precision leveled triangular track with digital photogate timer for conservation laws.',
+        fullDesc: 'Air blower generates a uniform air cushion supporting low-friction aluminum gliders. Dual photogate sensors measure velocities to calculate momentum and kinetic energy before and after collision.',
         specifications: [
-          'Track Length: 1500 mm anodized aluminum triangular prism',
-          'Air Cushion: 240 uniform precision micro-orifices',
-          'Timer Resolution: 0.0001 seconds (0.1 ms)',
+          'Track Length: 1.5 meters triangular hollow extrusion with precision orifices',
+          'Photogate Resolution: 0.0001 seconds digital microsecond timer',
+          'Elastic and Inelastic collision bumpers with mass add-on weights',
+          'Quiet variable-speed centrifugal air pump with flexible hose',
         ],
         nepAlignedPracticals: [
-          'Class 11 CBSE: Elastic and Inelastic Collisions in One Dimension',
-          'Class 11 CBSE: Verification of Newton’s Second Law ($F = ma$)',
-          'Class 11 CBSE: Simple Harmonic Motion with spring gliders',
+          'Class 11: Verification of Law of Conservation of Linear Momentum in 1D',
+          'Class 11: Determination of acceleration due to gravity (g) using photogates',
+          'Class 11: Study of Newton’s Second Law: Force vs Acceleration',
         ],
-        modelNumber: 'CSEEL-AIR-150',
-        simulatorUrl: '/subject/physics',
-        audioNarration: 'By floating gliders on a cushion of pressurized air, students experience pure frictionless Newtonian physics.',
+        modelNumber: 'CS-AIR-KIN150',
+        simulatorUrl: '/hands-on-experiments?subject=physics',
+        audioNarration: 'The Air Track creates a virtually frictionless surface to experimentally demonstrate Newton’s laws of motion and elastic collisions.',
       },
     ],
   },
   {
     id: 'biology',
-    name: 'Biology & Cellular Microscopy Studio',
+    name: 'Biology & Cellular Microscopy Lab',
     discipline: 'Biology',
     icon: Microscope,
-    tagline: 'Binocular LED compound microscopes, DNA gel electrophoresis, and physiology rigs.',
+    tagline: 'Trinocular research microscopes, DNA electrophoresis tanks, and human anatomy stations.',
     badgeColor: 'bg-teal-50 text-teal-700 border-teal-200',
     backgroundImage: '/images/categories/biology.jpg',
-    capacity: '32 Students (Dual-Microscope)',
-    curriculum: 'CBSE, ICSE, NEET Practical Focus',
-    narrationIntro: 'Welcome to the CSEEL Biology and Cytology Lab. Students explore the microscopic world, isolate real plant DNA, and analyze enzyme kinetics.',
+    capacity: '32 Students (Observation Pods)',
+    curriculum: 'CBSE, ICSE, NCERT Biology Lab Manual',
+    narrationIntro: 'Welcome to the Biology & Life Sciences Laboratory. Featuring 1000x trinocular microscopes with 4K camera output, horizontal agarose gel electrophoresis systems, and botanical sectioning stations.',
     cameraAngles: [
-      { id: 'cam-bio-1', name: 'Microscopy Station', yaw: 0, pitch: 0 },
-      { id: 'cam-bio-2', name: 'Electrophoresis Bench', yaw: 85, pitch: -4 },
-      { id: 'cam-bio-3', name: 'Plant Physiology Station', yaw: 175, pitch: 2 },
-      { id: 'cam-bio-4', name: 'Anatomy 3D Model Center', yaw: 260, pitch: -6 },
+      { id: 'cam-bio-1', name: 'Microscopy Bay', yaw: 0, pitch: 0 },
+      { id: 'cam-bio-2', name: 'DNA Electrophoresis Pod', yaw: 80, pitch: -3 },
+      { id: 'cam-bio-3', name: 'Anatomy Models Stand', yaw: 170, pitch: 5 },
+      { id: 'cam-bio-4', name: 'Specimen Prep Station', yaw: 260, pitch: -4 },
     ],
     hotspots: [
       {
         id: 'bio-microscope',
-        name: 'Binocular Research Compound LED Microscope (1000x)',
+        name: 'Trinocular Research Microscope with 4K HDMI Digital Camera',
         category: 'Cellular Cytology',
-        xPercent: 28,
+        xPercent: 32,
         yPercent: 46,
-        badge: 'Plan Achromatic Optics',
+        badge: '1000x Plan-Achromatic',
         safetyLevel: 'Green',
-        shortDesc: '1000x oil-immersion optics with digital HDMI camera for group screen projection.',
-        fullDesc: 'Features Plan Achromatic infinity-corrected lenses (4x, 10x, 40x, 100x Oil). Includes coaxial coarse and fine focus with 0.002 mm graduations, Kohler illumination, and a 4K digital camera mount.',
+        shortDesc: 'Research-grade optics with live 4K projection onto student screen tablets.',
+        fullDesc: 'Equipped with 4x, 10x, 40x, and 100x Oil Immersion Plan Achromatic objectives. The trinocular head mounts a 4K CMOS sensor for capturing high-definition micrographs of mitosis, pollen tubes, and blood smears.',
         specifications: [
-          'Magnification Range: 40x, 100x, 400x, 1000x Oil',
-          'Illumination: 3W Kohler Variable LED with Abbe N.A. 1.25 condenser',
-          'Live 4K USB/HDMI live stream sensor to school smartboards',
+          'Magnification: 40x to 1000x with Widefield WF10x/20mm eyepieces',
+          'Camera: 4K UHD 60fps HDMI/USB CMOS Live Imaging Sensor',
+          'Illumination: 3W Köhler LED with adjustable iris diaphragm condenser',
+          'Coaxial coarse and fine focusing with 0.002 mm micro-step sensitivity',
         ],
         nepAlignedPracticals: [
-          'Class 9 CBSE: Temporary mount of Onion Peel and Human Cheek Cells',
-          'Class 11 CBSE: Study of Mitosis in Onion Root Tip Squash',
-          'Class 12 CBSE: Pollen germination on stigma and pollen tube growth',
+          'Class 12: Preparation and study of temporary mount of Onion Root Tip to observe stages of Mitosis',
+          'Class 12: Pollen germination on slide and pollen tube growth measurement',
+          'Class 11: Study of plant anatomy: T.S. of Monocot and Dicot stem/root',
         ],
-        modelNumber: 'CSEEL-MIC-1000X',
-        simulatorUrl: '/subject/biology',
-        audioNarration: 'Our research-grade binocular microscope lets students view cellular organelles and stream live slide images directly to the smartboard.',
+        modelNumber: 'CS-MIC-4KUHD',
+        simulatorUrl: '/hands-on-experiments?subject=biology',
+        audioNarration: 'The 4K Trinocular Microscope magnifies cellular specimens up to 1000 times, broadcasting live feeds directly to student screens.',
       },
       {
         id: 'bio-electrophoresis',
-        name: 'Agarose Gel DNA Electrophoresis & UV Transilluminator',
-        category: 'Molecular Genetics',
-        xPercent: 72,
-        yPercent: 40,
-        badge: 'Blue LED Non-UV Safe',
-        safetyLevel: 'Green',
-        shortDesc: 'Separates DNA fragments by molecular size using uniform electric fields.',
-        fullDesc: 'Gives high school students real hands-on biotechnology experience. Safely visualize separated DNA bands from plant leaf tissue and plasmid vectors using non-carcinogenic blue LED transillumination.',
+        name: 'Horizontal DNA Agarose Gel Electrophoresis Tank & UV Transilluminator',
+        category: 'Biotechnology & Genetics',
+        xPercent: 68,
+        yPercent: 54,
+        badge: '0-150V Regulated Power',
+        safetyLevel: 'Blue',
+        shortDesc: 'DNA & RNA fragment separation chamber with blue LED visualization tray.',
+        fullDesc: 'Transparent UV-transmissible polycarbonate chamber with platinum electrodes. Coupled with a digital power supply and safe 470nm blue-light transilluminator for real-time visualization of DNA bands without harmful UV.',
         specifications: [
-          'Submarine Gel Tank with Platinum Electrodes',
-          'Voltage Supply: 50V / 100V / 150V constant current regulation',
-          'Safe Blue-Light (470 nm) Transilluminator (No hazardous UV required)',
+          'Gel Size: 7 x 10 cm and 10 x 10 cm casting trays with multi-tooth combs',
+          'Power Supply: 10-150V / 10-300mA constant voltage/current modes',
+          'Safe Blue Light (470 nm) transilluminator for safe fluorescent dyes',
+          'Safety cover with electrical interlock and auto-shutoff mechanism',
         ],
         nepAlignedPracticals: [
-          'Class 12 CBSE: Isolation of DNA from plant material (Spinach / Papaya)',
-          'NEP 2020: Simulated DNA fingerprinting in forensic crime solving',
+          'Class 12: Isolation of DNA from available plant material (Spinach / Green Pea)',
+          'Class 12: Separation of DNA fragments by Agarose Gel Electrophoresis (Simulation)',
+          'Class 12: Study of Mendelian inheritance through pedigree analysis',
         ],
-        modelNumber: 'CSEEL-GEL-BIO20',
-        simulatorUrl: '/subject/biology',
-        audioNarration: 'Students separate DNA molecules under an electric field, turning abstract genetic theory into visible fluorescent bands.',
+        modelNumber: 'CS-GEL-DNA150',
+        simulatorUrl: '/hands-on-experiments?subject=biology',
+        audioNarration: 'The Electrophoresis system uses electrical potential to separate DNA molecules based on their size and molecular weight.',
       },
       {
-        id: 'bio-potometer',
-        name: 'Digital Ganong’s Potometer & Environmental Chamber',
+        id: 'bio-respiration',
+        name: 'Digital Photosynthesis & Respiration Chamber with CO2/O2 Probes',
         category: 'Plant Physiology',
-        xPercent: 48,
-        yPercent: 56,
-        badge: '0.001 mL/min Rate',
+        xPercent: 18,
+        yPercent: 66,
+        badge: 'Dual Gas Sensors',
         safetyLevel: 'Green',
-        shortDesc: 'Real-time digital transpiration rate tracker under varied humidity, wind, and light.',
-        fullDesc: 'Automates transpiration measurement with optical meniscus tracking. Students observe how wind currents, light intensity, and stomata density directly alter water uptake in leafy twigs.',
+        shortDesc: 'Sealed environmental chamber logging real-time gas exchange curves during plant metabolism.',
+        fullDesc: 'Includes high-precision optical Oxygen and NDIR Carbon Dioxide gas probes connected to digital data loggers. Allows students to graph photosynthetic rate under varying light spectrums and temperatures.',
         specifications: [
-          'Precision Capillary Tube with motorized air bubble injector',
-          'Dual digital sensors for leaf temperature and ambient humidity',
-          'Adjustable LED grow lamp and mini wind fan attachment',
+          'CO2 Sensor Range: 0 to 10,000 ppm (±50 ppm accuracy)',
+          'O2 Sensor Range: 0 to 25% (±0.2% resolution)',
+          'Programmable RGB LED light array for spectral wavelength experiments',
+          'Bluetooth data telemetry to mobile and desktop graph analysis apps',
         ],
         nepAlignedPracticals: [
-          'Class 10 CBSE: Stomatal distribution in monocot and dicot leaves',
-          'Class 11 CBSE: Transpiration rates under variable environmental stressors',
+          'Class 11: Study of rate of respiration in germinating seeds',
+          'Class 11: Comparison of the rate of transpiration on upper and lower surfaces of leaf',
+          'Class 10: Experimental proof that Carbon Dioxide is given out during respiration',
         ],
-        modelNumber: 'CSEEL-POTO-DIGI',
-        simulatorUrl: '/subject/biology',
-        audioNarration: 'The digital potometer tracks how environmental variables like sunlight and wind alter transpiration rates in real-time.',
+        modelNumber: 'CS-RESP-DUAL',
+        simulatorUrl: '/hands-on-experiments?subject=biology',
+        audioNarration: 'This sensor chamber monitors real-time changes in oxygen and carbon dioxide levels during cellular respiration and photosynthesis.',
       },
     ],
   },
   {
     id: 'robotics',
-    name: 'ATL Tinkering, IoT & Robotics Studio',
-    discipline: 'Technology & AI',
+    name: 'ATL Robotics, AI & IoT Tinkering Hub',
+    discipline: 'ATL Robotics & AI',
     icon: Cpu,
-    tagline: 'Dual 3D printers, Arduino/Raspberry Pi IoT stations, and autonomous robotics arenas.',
-    badgeColor: 'bg-amber-50 text-amber-700 border-amber-200',
-    backgroundImage: '/images/categories/technology.jpg',
-    capacity: '30 Students (4 per Workstation)',
-    curriculum: 'NITI Aayog ATL, CBSE AI & Coding',
-    narrationIntro: 'Welcome to the CSEEL Atal Tinkering and Robotics Studio. A modern maker-space for rapid 3D prototyping, embedded IoT coding, and robotics competitions.',
+    tagline: 'Microcontroller experimentation stations, 3D printers, and edge AI computer vision.',
+    badgeColor: 'bg-purple-50 text-purple-700 border-purple-200',
+    backgroundImage: '/images/categories/engineering.jpg',
+    capacity: '40 Innovators (Team Pods)',
+    curriculum: 'Atal Innovation Mission (AIM), NITI Aayog, NEP 2020 AI Framework',
+    narrationIntro: 'Welcome to the ATL Robotics & IoT Tinkering Hub. Equipped with Arduino, ESP32, Raspberry Pi 5 AI kits, rapid 3D prototyping printers, and autonomous robotics arenas.',
     cameraAngles: [
-      { id: 'cam-atl-1', name: '3D Prototyping Bay', yaw: 0, pitch: 0 },
-      { id: 'cam-atl-2', name: 'IoT Microcontroller Bench', yaw: 80, pitch: -5 },
-      { id: 'cam-atl-3', name: 'Soldering & Rework Station', yaw: 170, pitch: -2 },
-      { id: 'cam-atl-4', name: 'Autonomous Rover Arena', yaw: 260, pitch: -10 },
+      { id: 'cam-atl-1', name: 'IoT Sensor Station', yaw: 0, pitch: 0 },
+      { id: 'cam-atl-2', name: '3D Prototyping Bay', yaw: 85, pitch: 5 },
+      { id: 'cam-atl-3', name: 'Robotics Arena', yaw: 175, pitch: -4 },
+      { id: 'cam-atl-4', name: 'AI Computer Vision Rig', yaw: 265, pitch: 0 },
     ],
     hotspots: [
       {
-        id: 'atl-3dprinter',
-        name: 'Dual-Nozzle CoreXY High-Speed 3D Printer',
-        category: 'Additive Manufacturing',
-        xPercent: 32,
-        yPercent: 42,
-        badge: '500 mm/s Speed',
-        safetyLevel: 'Yellow',
-        shortDesc: 'Enclosed chamber 3D printer for student engineering CAD designs and robot chassis.',
-        fullDesc: 'Allows students to turn 3D CAD models into durable functional parts within minutes. Dual nozzles enable soluble PVA supports for complex mechanical gears, planetary transmissions, and drone frames.',
-        specifications: [
-          'Build Volume: 250 x 250 x 250 mm',
-          'Print Speed: Up to 500 mm/s with active vibration compensation',
-          'Supported Filaments: PLA, PETG, ABS, Carbon-Fiber Reinforced Nylon',
-        ],
-        nepAlignedPracticals: [
-          'ATL Tinkering: CAD Modeling of Robotic Grippers and Pinion Gears',
-          'NEP 2020: Sustainable product design using biodegradable PLA',
-        ],
-        modelNumber: 'CSEEL-PRINT-3DX',
-        simulatorUrl: '/subject/technology',
-        audioNarration: 'This high-speed 3D printer transforms digital student CAD models into physical working mechanisms in under thirty minutes.',
-      },
-      {
-        id: 'atl-iot-station',
-        name: 'Arduino, ESP32 & AI Vision Microcontroller Workbench',
-        category: 'Embedded IoT & AI',
-        xPercent: 68,
-        yPercent: 48,
-        badge: '50+ Sensor Modules',
+        id: 'atl-iot-kit',
+        name: 'ESP32 IoT Sensor & Smart Agriculture Experimentation Dock',
+        category: 'Internet of Things & Microcontrollers',
+        xPercent: 28,
+        yPercent: 50,
+        badge: 'Wi-Fi & BLE 5.0',
         safetyLevel: 'Green',
-        shortDesc: 'Comprehensive sensor arrays, OLED displays, servo actuators, and AI camera modules.',
-        fullDesc: 'Pre-wired breadboards with quick-connect magnetic probe headers. Students build smart agriculture moisture monitors, IoT weather stations, and AI object-recognition sorting bots.',
+        shortDesc: 'Modular sensory prototyping dock with cloud dashboard telemetry.',
+        fullDesc: 'Comprehensive IoT bench with soil moisture, ultrasonic distance, DHT22 temp/humidity, PIR motion, and light sensors. Students code block-based and C++ scripts to transmit sensor data to real-time cloud dashboards.',
         specifications: [
-          'Core Boards: ESP32 Dual-Core Wi-Fi/BLE + Arduino Mega + Raspberry Pi 5',
-          'Sensors: Ultrasonic, Lidar, DHT22, MQ-135 Air Quality, Gyroscope IMU',
-          'Output Actuators: Continuous rotation servos, stepper motors, relay banks',
+          'Controller: Dual-Core ESP32 240MHz with 4MB Flash and Wi-Fi/Bluetooth',
+          '20+ Plug-and-Play Grove sensor modules with protected reverse polarity',
+          '0.96-inch OLED I2C visual telemetry screen on dock',
+          'Cloud dashboard integration for remote IoT actuator control',
         ],
         nepAlignedPracticals: [
-          'CBSE Class 10 AI: Smart Irrigation System with ESP32 and Soil Sensors',
-          'ATL Challenge: Automated Waste Segregation using AI Vision',
-          'NEP 2020: Solar tracking panel efficiency optimization',
+          'Middle & Secondary: Building an automated smart plant watering IoT system',
+          'Class 9-12: Air quality monitoring station with cloud alert notification',
+          'ATL Tinkering Challenge: Home automation and smart energy management',
         ],
-        modelNumber: 'CSEEL-IOT-MAKER50',
-        simulatorUrl: '/subject/technology',
-        audioNarration: 'Students learn embedded coding by interfacing environmental sensors, Wi-Fi telemetry, and neural vision camera modules.',
+        modelNumber: 'CS-ATL-IOT32',
+        simulatorUrl: '/hands-on-experiments?subject=engineering',
+        audioNarration: 'The IoT Experimentation Dock enables students to build smart city prototypes and wireless sensor telemetry networks.',
       },
       {
-        id: 'atl-soldering',
-        name: 'Lead-Free ESD-Safe Digital Soldering & Rework Station',
-        category: 'Hardware Electronics',
-        xPercent: 86,
-        yPercent: 54,
-        badge: 'PID Temp Control',
+        id: 'atl-3d-printer',
+        name: 'CoreXY High-Speed Rapid Prototyping 3D Printer',
+        category: 'Additive Manufacturing',
+        xPercent: 72,
+        yPercent: 42,
+        badge: '500 mm/s Print Speed',
         safetyLevel: 'Yellow',
-        shortDesc: 'Temperature-controlled rapid heating iron with smoke absorption suction fan.',
-        fullDesc: 'Features rapid PID temperature control from 150°C to 480°C with automated standby sleep when placed in the cradle. Anti-static ESD protection safeguards delicate microchips.',
+        shortDesc: 'Enclosed 3D printer for student engineering CAD designs and mechanical robotics parts.',
+        fullDesc: 'Features direct-drive all-metal hotend up to 300°C, auto-bed leveling sensor, and HEPA air filter. Prints biodegradable PLA and PETG filaments with 0.1 mm layer precision.',
         specifications: [
-          'Power: 90W Rapid High-Frequency Heating (<6 sec to 350°C)',
-          'Integrated Mini Activated-Carbon Fume Absorber',
-          'ESD-Safe Silicone High-Temp Heat Mat',
+          'Build Volume: 220 x 220 x 250 mm with PEI textured spring steel plate',
+          'Max Print Speed: 500 mm/s with 20000 mm/s² acceleration',
+          'Auto Bed Leveling with 36-point dual inductive mesh compensation',
+          'Filament run-out sensor and power-loss resume recovery',
         ],
         nepAlignedPracticals: [
-          'ATL Tinkering: PCB Soldering of 555-Timer Flashing LED Circuit',
-          'NEP 2020: Hardware rework and repair of consumer electronics',
+          'Middle School: Designing and 3D printing custom robotic chassis wheels and gears',
+          'Secondary: Aerodynamic airfoil testing in miniature wind tunnel',
+          'ATL Innovation: Creating ergonomic prosthetic assistive devices',
         ],
-        modelNumber: 'CSEEL-SOLDER-90W',
-        simulatorUrl: '/subject/technology',
-        audioNarration: 'Our ESD-safe soldering station features rapid temperature stabilization and direct fume extraction for clean classroom assembly.',
+        modelNumber: 'CS-PRINT-3D500',
+        simulatorUrl: '/hands-on-experiments?subject=engineering',
+        audioNarration: 'The Rapid Prototyping 3D Printer turns student 3D computer designs into physical, functional robotic components in minutes.',
+      },
+      {
+        id: 'atl-arm-robot',
+        name: '6-DOF Programmable Robotic Arm with AI Vision Gripper',
+        category: 'Robotics & Computer Vision',
+        xPercent: 48,
+        yPercent: 62,
+        badge: 'Inverse Kinematics',
+        safetyLevel: 'Green',
+        shortDesc: 'Articulated servo robotic arm with onboard camera for color/shape sorting.',
+        fullDesc: 'Aluminum alloy robotic arm with metal gear digital servos and magnetic encoders. The wrist-mounted camera runs onboard OpenCV color detection to identify, track, and sort objects autonomously.',
+        specifications: [
+          'Degrees of Freedom: 6-Axis articulating arm with parallel jaw gripper',
+          'Payload Capacity: 350 grams with 0.5 mm repeatability precision',
+          'Vision: HD wide-angle camera with integrated OpenCV color & QR tracking',
+          'Control: Python API, ROS (Robot Operating System), and Scratch visual blocks',
+        ],
+        nepAlignedPracticals: [
+          'Class 10-12: Programming inverse kinematics for robotic pick-and-place routines',
+          'AI Module: Machine learning object classification and automated sorting',
+          'Robotics Competition: Precision trajectory path planning and obstacle evasion',
+        ],
+        modelNumber: 'CS-ROBOT-6DOF',
+        simulatorUrl: '/hands-on-experiments?subject=engineering',
+        audioNarration: 'The 6-Axis Robotic Arm teaches inverse kinematics, precision coordinate mapping, and artificial intelligence computer vision sorting.',
       },
     ],
   },
@@ -482,128 +480,110 @@ const labEnvironments: LabEnvironment[] = [
 export default function VirtualLabTourClient() {
   const [selectedLabId, setSelectedLabId] = useState<string>('chemistry');
   const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
-  const [panX, setPanX] = useState<number>(0); // -180 to 180 deg
-  const [panY, setPanY] = useState<number>(0); // -35 to 35 deg
-  const [zoomLevel, setZoomLevel] = useState<number>(1); // 1 to 2.0
-  const [isAutoRotating, setIsAutoRotating] = useState<boolean>(true);
-  const [isAudioMuted, setIsAudioMuted] = useState<boolean>(false);
-  const [audioTranscript, setAudioTranscript] = useState<string>('');
-  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'tour' | 'curriculum' | 'safety' | 'booking'>('tour');
 
+  // 360 Panoramic Drag & Orientation State
+  const [panX, setPanX] = useState<number>(0);
+  const [panY, setPanY] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const [isAutoRotating, setIsAutoRotating] = useState<boolean>(true);
+  const [isAudioMuted, setIsAudioMuted] = useState<boolean>(true);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [audioTranscript, setAudioTranscript] = useState<string>('');
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState<boolean>(false);
+
   const tourContainerRef = useRef<HTMLDivElement>(null);
-  const isDraggingRef = useRef<boolean>(false);
-  const startDragRef = useRef<{ x: number; y: number; startPanX: number; startPanY: number }>({
-    x: 0,
-    y: 0,
-    startPanX: 0,
-    startPanY: 0,
-  });
+  const animationFrameRef = useRef<number | null>(null);
 
   const activeLab = labEnvironments.find((l) => l.id === selectedLabId) || labEnvironments[0];
 
-  // Auto-narration speech update
+  // Auto-pan loop
   useEffect(() => {
-    if (selectedHotspot) {
-      setAudioTranscript(selectedHotspot.audioNarration);
-      if (!isAudioMuted && typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(selectedHotspot.audioNarration);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
+    let lastTime = performance.now();
+    const rotate = (time: number) => {
+      const delta = (time - lastTime) / 1000;
+      lastTime = time;
+      if (isAutoRotating && !isDragging) {
+        setPanX((prev) => (prev + delta * 6) % 360);
       }
-    } else {
-      setAudioTranscript(activeLab.narrationIntro);
-    }
-  }, [selectedHotspot, activeLab, isAudioMuted]);
-
-  // Handle auto-rotation loop
-  useEffect(() => {
-    if (!isAutoRotating) return;
-    const interval = setInterval(() => {
-      setPanX((prev) => (prev >= 180 ? -180 : prev + 0.22));
-    }, 40);
-    return () => clearInterval(interval);
-  }, [isAutoRotating]);
-
-  // Pan drag interactions (Mouse and Touch)
-  const handleMouseDown = (e: React.MouseEvent) => {
-    isDraggingRef.current = true;
-    setIsAutoRotating(false);
-    startDragRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      startPanX: panX,
-      startPanY: panY,
+      animationFrameRef.current = requestAnimationFrame(rotate);
     };
+
+    animationFrameRef.current = requestAnimationFrame(rotate);
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [isAutoRotating, isDragging]);
+
+  // Audio speech narration for current lab or hotspot
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    if (isAudioMuted) {
+      window.speechSynthesis.cancel();
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const textToSpeak = selectedHotspot ? selectedHotspot.audioNarration : activeLab.narrationIntro;
+    setAudioTranscript(textToSpeak);
+
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+    utterance.lang = 'en-US';
+    window.speechSynthesis.speak(utterance);
+
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, [selectedLabId, selectedHotspot, isAudioMuted, activeLab.narrationIntro]);
+
+  // Drag Handlers for 360 Canvas (Mouse & Touch)
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setIsAutoRotating(false);
+    setDragStart({ x: e.clientX, y: e.clientY });
   };
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!isDraggingRef.current) return;
-      const deltaX = e.clientX - startDragRef.current.x;
-      const deltaY = e.clientY - startDragRef.current.y;
-
-      let newPanX = startDragRef.current.startPanX - deltaX * 0.25;
-      let newPanY = startDragRef.current.startPanY + deltaY * 0.18;
-
-      if (newPanX > 180) newPanX -= 360;
-      if (newPanX < -180) newPanX += 360;
-      newPanY = Math.max(-35, Math.min(35, newPanY));
-
-      setPanX(newPanX);
-      setPanY(newPanY);
-    },
-    [panX, panY]
-  );
-
-  const handleMouseUp = () => {
-    isDraggingRef.current = false;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setPanX((prev) => (prev - deltaX * 0.35) % 360);
+    setPanY((prev) => Math.max(-25, Math.min(25, prev + deltaY * 0.25)));
   };
 
-  // Touch support for mobile devices
+  const handleMouseUp = () => setIsDragging(false);
+
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
-      isDraggingRef.current = true;
+      setIsDragging(true);
       setIsAutoRotating(false);
-      startDragRef.current = {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY,
-        startPanX: panX,
-        startPanY: panY,
-      };
+      setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current || e.touches.length !== 1) return;
-    const deltaX = e.touches[0].clientX - startDragRef.current.x;
-    const deltaY = e.touches[0].clientY - startDragRef.current.y;
-
-    let newPanX = startDragRef.current.startPanX - deltaX * 0.35;
-    let newPanY = startDragRef.current.startPanY + deltaY * 0.22;
-
-    if (newPanX > 180) newPanX -= 360;
-    if (newPanX < -180) newPanX += 360;
-    newPanY = Math.max(-35, Math.min(35, newPanY));
-
-    setPanX(newPanX);
-    setPanY(newPanY);
+    if (!isDragging || e.touches.length !== 1) return;
+    const deltaX = e.touches[0].clientX - dragStart.x;
+    const deltaY = e.touches[0].clientY - dragStart.y;
+    setDragStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    setPanX((prev) => (prev - deltaX * 0.45) % 360);
+    setPanY((prev) => Math.max(-25, Math.min(25, prev + deltaY * 0.3)));
   };
 
-  const handleTouchEnd = () => {
-    isDraggingRef.current = false;
-  };
+  const handleTouchEnd = () => setIsDragging(false);
 
-  // Switch camera angle preset
   const setCameraAngle = (yaw: number, pitch: number) => {
     setIsAutoRotating(false);
     setPanX(yaw);
     setPanY(pitch);
   };
 
-  // Fullscreen toggle
   const toggleFullscreen = () => {
     if (!tourContainerRef.current) return;
     if (!document.fullscreenElement) {
@@ -615,7 +595,6 @@ export default function VirtualLabTourClient() {
     }
   };
 
-  // Compass Heading Calculation
   const getCompassDirection = (deg: number) => {
     const normalized = (deg + 360) % 360;
     if (normalized >= 337.5 || normalized < 22.5) return 'N (0°)';
@@ -629,67 +608,65 @@ export default function VirtualLabTourClient() {
   };
 
   return (
-    <div className="min-h-screen bg-[#eef2f6] text-slate-800 selection:bg-[#006fcc] selection:text-white pb-16">
+    <div className="min-h-screen bg-[#eef2f6] text-slate-800 selection:bg-[#006fcc] selection:text-white pb-20">
       
-      {/* ─── Hero Header & Lab Switcher ─── */}
-      <section className="pt-6 pb-4 sm:pt-8 sm:pb-6 px-4 max-w-7xl mx-auto">
+      {/* ─── Top Header & Lab Switcher ─── */}
+      <section className="pt-4 sm:pt-8 pb-3 sm:pb-6 px-3 sm:px-6 max-w-7xl mx-auto">
         
-        {/* Breadcrumbs & Status Badges */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-            <Link href="/" className="hover:text-[#006fcc] transition-colors">
-              Home
-            </Link>
-            <span>/</span>
-            <span className="text-[#003c6e] font-bold">360° Virtual Lab Tour</span>
+        {/* Breadcrumb & Live Badges */}
+        <div className="flex items-center justify-between gap-2 mb-3 sm:mb-4">
+          <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-500 truncate">
+            <Link href="/" className="hover:text-[#006fcc] transition-colors">Home</Link>
+            <ChevronRight size={12} className="text-slate-400 shrink-0" />
+            <span className="text-[#003c6e] font-bold truncate">360° Virtual Lab Tour</span>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#006fcc] border border-blue-200 text-xs font-bold shadow-xs">
-              <Radio className="w-3.5 h-3.5 text-[#006fcc] animate-pulse" />
-              LIVE 360° SIMULATION ACTIVE
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-[#006fcc] border border-blue-200 text-[10px] sm:text-xs font-bold shadow-2xs">
+              <Radio className="w-3 h-3 text-[#006fcc] animate-pulse" />
+              <span className="hidden xs:inline">LIVE</span> 360°
             </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold shadow-xs">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              NEP 2020 CERTIFIED
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] sm:text-xs font-bold shadow-2xs">
+              <ShieldCheck className="w-3 h-3 text-emerald-600" />
+              NEP 2020
             </span>
           </div>
         </div>
 
-        {/* Headline & Overview */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+        {/* Title Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#006fcc] mb-1.5">
-              <Sparkles className="w-4 h-4 text-amber-500" />
+            <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#006fcc] mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>Interactive Experiential Laboratory</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[#003c6e]">
-              CSEEL 360° Interactive Science Lab Tour
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-[#003c6e] leading-tight">
+              CSEEL 360° Science Lab Tour
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 mt-2 max-w-2xl leading-relaxed font-medium">
-              Step inside our high-precision CBSE & ICSE certified STEM laboratories. Drag with mouse or touch to pan 360°, inspect instruments, and launch live interactive simulations.
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+              Drag anywhere to look around in 360°. Tap any glowing hotspot to inspect laboratory equipment specifications and syllabus practicals.
             </p>
           </div>
 
           {/* Quick Stats Pill */}
-          <div className="flex items-center gap-3 bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shrink-0 shadow-xs">
-            <div className="px-3 py-1 text-center border-r border-slate-100">
-              <p className="text-[10px] uppercase font-bold text-slate-400">Disciplines</p>
-              <p className="text-base font-black text-[#003c6e]">4 Labs</p>
+          <div className="flex items-center gap-2 bg-white border border-slate-200/90 rounded-2xl p-2 sm:p-2.5 shrink-0 shadow-2xs self-start md:self-auto">
+            <div className="px-2.5 py-0.5 text-center border-r border-slate-100">
+              <p className="text-[9px] uppercase font-bold text-slate-400">Labs</p>
+              <p className="text-xs sm:text-sm font-black text-[#003c6e]">4 Studios</p>
             </div>
-            <div className="px-3 py-1 text-center border-r border-slate-100">
-              <p className="text-[10px] uppercase font-bold text-slate-400">Hotspots</p>
-              <p className="text-base font-black text-[#006fcc]">16+ Stations</p>
+            <div className="px-2.5 py-0.5 text-center border-r border-slate-100">
+              <p className="text-[9px] uppercase font-bold text-slate-400">Stations</p>
+              <p className="text-xs sm:text-sm font-black text-[#006fcc]">16+ Hotspots</p>
             </div>
-            <div className="px-3 py-1 text-center">
-              <p className="text-[10px] uppercase font-bold text-slate-400">Batch Size</p>
-              <p className="text-base font-black text-emerald-700">40 Students</p>
+            <div className="px-2.5 py-0.5 text-center">
+              <p className="text-[9px] uppercase font-bold text-slate-400">Capacity</p>
+              <p className="text-xs sm:text-sm font-black text-emerald-700">40 Students</p>
             </div>
           </div>
         </div>
 
-        {/* Discipline Tab Switcher */}
-        <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2 scrollbar-thin">
+        {/* Discipline Tab Switcher - Horizontal Scroll on Mobile */}
+        <div className="flex items-center gap-2 mt-4 sm:mt-6 overflow-x-auto no-scrollbar pb-1">
           {labEnvironments.map((lab) => {
             const Icon = lab.icon;
             const isSelected = lab.id === selectedLabId;
@@ -702,16 +679,16 @@ export default function VirtualLabTourClient() {
                   setPanX(0);
                   setPanY(0);
                 }}
-                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 border cursor-pointer shadow-xs ${
+                className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 border cursor-pointer shrink-0 ${
                   isSelected
-                    ? 'bg-[#006fcc] text-white border-[#006fcc] shadow-md shadow-blue-500/20 scale-[1.02]'
-                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900'
+                    ? 'bg-[#003c6e] text-white border-[#003c6e] shadow-sm shadow-blue-900/20'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 shadow-2xs'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-[#006fcc]'}`} />
+                <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isSelected ? 'text-white' : 'text-[#006fcc]'}`} />
                 <span>{lab.name.split('&')[0]}</span>
                 {isSelected && (
-                  <span className="w-2 h-2 rounded-full bg-white animate-pulse ml-1" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse ml-0.5" />
                 )}
               </button>
             );
@@ -720,11 +697,10 @@ export default function VirtualLabTourClient() {
       </section>
 
       {/* ─── Main 360° Interactive Canvas ─── */}
-      <section className="max-w-7xl mx-auto px-4 py-4">
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-4">
         <div
           ref={tourContainerRef}
-          className="relative rounded-3xl overflow-hidden border-2 border-slate-200/90 bg-slate-900 shadow-xl group select-none"
-          style={{ height: '70vh', minHeight: '520px', maxHeight: '760px' }}
+          className="relative rounded-3xl overflow-hidden border border-slate-300/80 bg-slate-950 shadow-lg group select-none touch-none aspect-[4/3] sm:aspect-auto sm:h-[65vh] sm:min-h-[480px] sm:max-h-[720px]"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -756,18 +732,18 @@ export default function VirtualLabTourClient() {
           />
 
           {/* Soft Vignette Overlay */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/70 via-transparent to-black/50" />
+          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/60" />
 
           {/* 360 Hotspot Markers */}
           {activeLab.hotspots.map((hotspot) => {
             const normalizedX = (hotspot.xPercent + (panX * 0.3) + 100) % 100;
-            const normalizedY = Math.max(10, Math.min(90, hotspot.yPercent - (panY * 0.35)));
+            const normalizedY = Math.max(12, Math.min(88, hotspot.yPercent - (panY * 0.35)));
             const isSelected = selectedHotspot?.id === hotspot.id;
 
             return (
               <div
                 key={hotspot.id}
-                className="absolute z-20 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-150 hover:scale-125"
+                className="absolute z-20 cursor-pointer transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-150 active:scale-95"
                 style={{
                   left: `${normalizedX}%`,
                   top: `${normalizedY}%`,
@@ -780,22 +756,22 @@ export default function VirtualLabTourClient() {
               >
                 {/* Hotspot Pulse Ring */}
                 <div className="relative flex items-center justify-center">
-                  <span className={`absolute w-10 h-10 rounded-full animate-ping opacity-60 ${isSelected ? 'bg-amber-400' : 'bg-[#006fcc]'}`} />
-                  <span className={`absolute w-6 h-6 rounded-full opacity-80 ${isSelected ? 'bg-amber-500' : 'bg-[#006fcc]'}`} />
+                  <span className={`absolute w-8 sm:w-10 h-8 sm:h-10 rounded-full animate-ping opacity-60 ${isSelected ? 'bg-amber-400' : 'bg-cyan-400'}`} />
+                  <span className={`absolute w-5 sm:w-6 h-5 sm:h-6 rounded-full opacity-80 ${isSelected ? 'bg-amber-500' : 'bg-cyan-500'}`} />
                   <div
-                    className={`relative w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white font-black text-[10px] text-white ${
+                    className={`relative w-7 sm:w-8 h-7 sm:h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white font-black text-white ${
                       isSelected
                         ? 'bg-amber-500'
                         : 'bg-[#006fcc]'
                     }`}
                   >
-                    <Eye className="w-4 h-4 text-white" />
+                    <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
 
                   {/* Hotspot Floating Label */}
-                  <div className="absolute top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-200 shadow-xl pointer-events-none flex items-center gap-1.5">
+                  <div className="hidden sm:flex absolute top-9 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white/95 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-slate-200 shadow-lg pointer-events-none items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#006fcc] animate-pulse" />
-                    <span className="text-[11px] font-bold text-slate-900 tracking-tight">
+                    <span className="text-[10px] font-bold text-slate-900 tracking-tight">
                       {hotspot.name.split(' ')[0]} {hotspot.name.split(' ')[1] || ''}
                     </span>
                   </div>
@@ -804,181 +780,156 @@ export default function VirtualLabTourClient() {
             );
           })}
 
-          {/* Top HUD: Current Lab Info & Compass */}
-          <div className="absolute top-4 left-4 right-4 z-30 flex items-center justify-between gap-3 pointer-events-none">
-            <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-2.5 sm:px-4 sm:py-3 shadow-lg flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-[#006fcc] flex items-center justify-center shrink-0">
-                <activeLab.icon className="w-5 h-5 text-[#006fcc]" />
+          {/* Top HUD: Current Lab Info & Orientation */}
+          <div className="absolute top-3 left-3 right-3 z-30 flex items-center justify-between gap-2 pointer-events-none">
+            <div className="pointer-events-auto bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-2 sm:px-3.5 sm:py-2.5 shadow-lg flex items-center gap-2 sm:gap-3 max-w-[80%] sm:max-w-md">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50 border border-blue-200 text-[#006fcc] flex items-center justify-center shrink-0">
+                <activeLab.icon className="w-4 h-4 text-[#006fcc]" />
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xs sm:text-sm font-black text-slate-900 truncate">
-                    {activeLab.name}
-                  </h2>
-                  <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-[#006fcc] border border-blue-200">
-                    {activeLab.curriculum}
-                  </span>
-                </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium truncate">
-                  Capacity: {activeLab.capacity} • {activeLab.hotspots.length} Interactive Stations
+                <h2 className="text-xs sm:text-sm font-black text-slate-900 truncate leading-tight">
+                  {activeLab.name}
+                </h2>
+                <p className="text-[9px] sm:text-[10px] text-slate-500 font-medium truncate mt-0.5">
+                  {activeLab.capacity} • {activeLab.hotspots.length} Stations
                 </p>
               </div>
             </div>
 
-            {/* Compass Heading & Camera Controls */}
-            <div className="pointer-events-auto hidden sm:flex items-center gap-2 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl px-3.5 py-2 shadow-lg">
-              <Compass className="w-4 h-4 text-[#006fcc] animate-spin-slow" />
+            {/* Compass Heading */}
+            <div className="pointer-events-auto hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl px-3 py-1.5 shadow-lg">
+              <Compass className="w-3.5 h-3.5 text-[#006fcc]" />
               <div className="text-left">
-                <p className="text-[9px] font-bold text-slate-400 uppercase leading-none">Orientation</p>
-                <p className="text-xs font-black text-slate-900">{getCompassDirection(panX)}</p>
+                <p className="text-[8px] font-bold text-slate-400 uppercase leading-none">Orientation</p>
+                <p className="text-[11px] font-black text-slate-900">{getCompassDirection(panX)}</p>
               </div>
             </div>
           </div>
 
-          {/* Camera Angles Selector Toolbar */}
-          <div className="absolute bottom-20 sm:bottom-6 left-4 z-30 flex items-center gap-1.5 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-1.5 shadow-lg overflow-x-auto max-w-[calc(100%-2rem)]">
-            <span className="text-[10px] font-black uppercase text-slate-500 px-2 flex items-center gap-1 shrink-0">
-              <Camera className="w-3.5 h-3.5 text-[#006fcc]" />
-              <span className="hidden md:inline">Presets:</span>
-            </span>
-            {activeLab.cameraAngles.map((cam) => (
+          {/* Center Drag Hint on Mobile / Desktop */}
+          <div className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 z-20 pointer-events-none bg-black/60 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold shadow-md opacity-75 sm:opacity-90 transition-opacity whitespace-nowrap">
+            👆 Drag to look around in 360°
+          </div>
+
+          {/* Bottom Floating Control Bar (Unified & Non-overlapping on Mobile) */}
+          <div className="absolute bottom-3 left-3 right-3 z-30 flex items-center justify-between gap-2 pointer-events-none">
+            
+            {/* Camera Angle Presets on the Left */}
+            <div className="pointer-events-auto flex items-center gap-1 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-full p-1 shadow-lg max-w-[60%] sm:max-w-none overflow-x-auto no-scrollbar">
+              <Camera className="w-3.5 h-3.5 text-[#006fcc] ml-1.5 mr-0.5 shrink-0" />
+              {activeLab.cameraAngles.map((cam) => (
+                <button
+                  key={cam.id}
+                  onClick={() => setCameraAngle(cam.yaw, cam.pitch)}
+                  className="px-2 py-1 rounded-full text-[10px] sm:text-xs font-bold text-slate-700 hover:text-white hover:bg-[#003c6e] transition-colors whitespace-nowrap cursor-pointer shrink-0"
+                >
+                  {cam.name.split(' ')[0]}
+                </button>
+              ))}
+            </div>
+
+            {/* Viewer Controls on the Right */}
+            <div className="pointer-events-auto flex items-center gap-1 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-full p-1 shadow-lg shrink-0">
+              {/* Auto-Rotation */}
               <button
-                key={cam.id}
-                onClick={() => setCameraAngle(cam.yaw, cam.pitch)}
-                className="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-700 hover:text-white hover:bg-[#006fcc] transition-colors whitespace-nowrap border border-slate-100 hover:border-[#006fcc] cursor-pointer"
+                onClick={() => setIsAutoRotating(!isAutoRotating)}
+                aria-label={isAutoRotating ? 'Pause auto-pan' : 'Start auto-pan'}
+                className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                  isAutoRotating ? 'bg-blue-50 text-[#006fcc]' : 'text-slate-600 hover:bg-slate-100'
+                }`}
               >
-                {cam.name}
+                {isAutoRotating ? <Pause size={14} /> : <Play size={14} />}
               </button>
-            ))}
+
+              {/* Reset */}
+              <button
+                onClick={() => {
+                  setPanX(0);
+                  setPanY(0);
+                  setZoomLevel(1);
+                }}
+                aria-label="Reset view"
+                className="p-1.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <RotateCw size={14} />
+              </button>
+
+              {/* Zoom Controls */}
+              <button
+                onClick={() => setZoomLevel((prev) => Math.min(1.8, prev + 0.2))}
+                aria-label="Zoom in"
+                className="p-1.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer hidden xs:inline-flex"
+              >
+                <ZoomIn size={14} />
+              </button>
+
+              {/* Audio Toggle */}
+              <button
+                onClick={() => setIsAudioMuted(!isAudioMuted)}
+                aria-label={isAudioMuted ? 'Unmute guide' : 'Mute guide'}
+                className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+                  !isAudioMuted ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {isAudioMuted ? <VolumeX size={14} /> : <Volume2 size={14} className="text-emerald-600" />}
+              </button>
+
+              {/* Fullscreen */}
+              <button
+                onClick={toggleFullscreen}
+                aria-label="Toggle fullscreen"
+                className="p-1.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer hidden sm:inline-flex"
+              >
+                {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              </button>
+            </div>
+
           </div>
 
-          {/* 360 Viewer Controls Toolbar */}
-          <div className="absolute bottom-6 right-4 z-30 flex items-center gap-2 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl p-1.5 sm:p-2 shadow-lg">
-            {/* Auto Rotation Toggle */}
-            <button
-              onClick={() => setIsAutoRotating(!isAutoRotating)}
-              title={isAutoRotating ? 'Pause Auto-Pan' : 'Start Auto-Pan'}
-              className={`p-2 rounded-xl transition-all ${
-                isAutoRotating
-                  ? 'bg-blue-50 text-[#006fcc] border border-blue-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              {isAutoRotating ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            </button>
-
-            {/* Reset View */}
-            <button
-              onClick={() => {
-                setPanX(0);
-                setPanY(0);
-                setZoomLevel(1);
-              }}
-              title="Reset View"
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            >
-              <RotateCw className="w-4 h-4" />
-            </button>
-
-            {/* Zoom In */}
-            <button
-              onClick={() => setZoomLevel((prev) => Math.min(2.0, prev + 0.2))}
-              title="Zoom In"
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-
-            {/* Zoom Out */}
-            <button
-              onClick={() => setZoomLevel((prev) => Math.max(1.0, prev - 0.2))}
-              title="Zoom Out"
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-
-            {/* Voice Narration Audio Toggle */}
-            <button
-              onClick={() => setIsAudioMuted(!isAudioMuted)}
-              title={isAudioMuted ? 'Unmute Audio Guide' : 'Mute Audio Guide'}
-              className={`p-2 rounded-xl transition-all ${
-                !isAudioMuted
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-            </button>
-
-            {/* Fullscreen */}
-            <button
-              onClick={toggleFullscreen}
-              title="Toggle Fullscreen"
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-            >
-              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-            </button>
-          </div>
-
-          {/* Mouse/Touch Drag Instruction */}
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none bg-white/90 backdrop-blur-sm border border-slate-200 text-slate-700 px-3.5 py-1 rounded-full text-[11px] font-bold shadow-md opacity-85 group-hover:opacity-100 transition-opacity">
-            👆 Click & drag anywhere to look around in 360°
-          </div>
-
-          {/* Active Equipment Popover Inspector */}
+          {/* Desktop Floating Equipment Popover Inspector (Hidden on mobile <768px, replaced by bottom drawer) */}
           {selectedHotspot && (
             <div
-              className="absolute top-16 right-4 sm:right-6 z-40 max-w-sm sm:max-w-md w-full bg-white/98 backdrop-blur-xl border-2 border-[#006fcc]/60 rounded-3xl p-4 sm:p-5 shadow-2xl text-left animate-in fade-in zoom-in-95 duration-200"
+              className="hidden md:block absolute top-16 right-6 z-40 max-w-sm w-full bg-white/98 backdrop-blur-xl border-2 border-[#006fcc]/70 rounded-3xl p-5 shadow-2xl text-left animate-in fade-in zoom-in-95 duration-200 max-h-[82%] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+              <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-blue-50 text-[#006fcc] border border-blue-200">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-50 text-[#006fcc] border border-blue-200">
                       {selectedHotspot.category}
                     </span>
-                    <span
-                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                        selectedHotspot.safetyLevel === 'Green'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : selectedHotspot.safetyLevel === 'Yellow'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-blue-50 text-[#006fcc] border border-blue-200'
-                      }`}
-                    >
+                    <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                       Safety: {selectedHotspot.safetyLevel}
                     </span>
                   </div>
-                  <h3 className="text-sm sm:text-base font-black text-slate-900 leading-snug">
+                  <h3 className="text-sm font-black text-slate-900 leading-snug">
                     {selectedHotspot.name}
                   </h3>
-                  <p className="text-[11px] text-[#006fcc] font-mono font-bold mt-0.5">
+                  <p className="text-[10px] text-[#006fcc] font-mono font-bold mt-0.5">
                     Model: {selectedHotspot.modelNumber} • {selectedHotspot.badge}
                   </p>
                 </div>
 
                 <button
                   onClick={() => setSelectedHotspot(null)}
-                  className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center font-bold text-sm shrink-0 transition-colors"
+                  className="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center font-bold text-xs shrink-0 transition-colors cursor-pointer"
                 >
-                  ✕
+                  <X size={13} />
                 </button>
               </div>
 
-              {/* Description */}
-              <p className="text-xs text-slate-600 leading-relaxed mt-3">
+              <p className="text-xs text-slate-600 leading-relaxed mt-2.5">
                 {selectedHotspot.fullDesc}
               </p>
 
               {/* Specifications */}
-              <div className="mt-3 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80 space-y-1">
-                <p className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
+              <div className="mt-2.5 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80 space-y-1">
+                <p className="text-[9px] font-black uppercase text-slate-500 tracking-wider">
                   Key Specifications:
                 </p>
-                <ul className="text-[11px] text-slate-700 space-y-1 pl-1">
+                <ul className="text-[11px] text-slate-700 space-y-0.5 pl-1">
                   {selectedHotspot.specifications.map((spec, idx) => (
-                    <li key={idx} className="flex items-start gap-1.5">
+                    <li key={idx} className="flex items-start gap-1">
                       <span className="text-[#006fcc] font-bold">•</span>
                       <span>{spec}</span>
                     </li>
@@ -986,33 +937,31 @@ export default function VirtualLabTourClient() {
                 </ul>
               </div>
 
-              {/* NEP Aligned Practicals */}
-              <div className="mt-3 space-y-1">
-                <p className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
-                  Associated CBSE & NEP 2020 Practicals:
+              {/* NEP Practicals */}
+              <div className="mt-2.5 space-y-1">
+                <p className="text-[9px] font-black uppercase text-slate-500 tracking-wider">
+                  Associated CBSE Practicals:
                 </p>
-                <div className="space-y-1">
-                  {selectedHotspot.nepAlignedPracticals.map((prac, idx) => (
-                    <div
-                      key={idx}
-                      className="text-[11px] bg-emerald-50/70 border border-emerald-200/80 px-2 py-1 rounded-lg text-emerald-800 font-medium flex items-center gap-1.5"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span className="truncate">{prac}</span>
-                    </div>
-                  ))}
-                </div>
+                {selectedHotspot.nepAlignedPracticals.slice(0, 2).map((prac, idx) => (
+                  <div
+                    key={idx}
+                    className="text-[10px] bg-emerald-50/80 border border-emerald-200/80 px-2 py-1 rounded-lg text-emerald-800 font-medium flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                    <span className="truncate">{prac}</span>
+                  </div>
+                ))}
               </div>
 
-              {/* Action Buttons */}
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+              {/* Actions */}
+              <div className="mt-3.5 pt-2.5 border-t border-slate-100 flex items-center gap-2">
                 {selectedHotspot.simulatorUrl && (
                   <Link
                     href={selectedHotspot.simulatorUrl}
-                    className="flex-1 py-2 px-3 rounded-xl bg-[#006fcc] hover:bg-[#005bb8] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-98"
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#003c6e] hover:bg-[#002d54] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all text-decoration-none"
                   >
                     <span>Launch Simulator</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <ExternalLink size={13} />
                   </Link>
                 )}
                 <button
@@ -1023,25 +972,114 @@ export default function VirtualLabTourClient() {
                       window.speechSynthesis.speak(utterance);
                     }
                   }}
-                  className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 transition-colors"
+                  className="py-2 px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1 border border-slate-200 transition-colors cursor-pointer"
                 >
-                  <Volume2 className="w-3.5 h-3.5 text-[#006fcc]" />
-                  <span>Hear Audio</span>
+                  <Volume2 size={13} className="text-[#006fcc]" />
+                  <span>Audio</span>
                 </button>
               </div>
             </div>
           )}
+
         </div>
 
+        {/* Mobile Slide-Up Bottom Drawer for Selected Hotspot (<768px) */}
+        {selectedHotspot && (
+          <div className="md:hidden fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl border-t border-slate-300 shadow-2xl p-4 max-h-[75vh] overflow-y-auto animate-in slide-in-from-bottom duration-200">
+            {/* Drag Bar */}
+            <div className="w-12 h-1 rounded-full bg-slate-300 mx-auto mb-3" />
+
+            <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-2.5">
+              <div>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-50 text-[#006fcc] border border-blue-200">
+                    {selectedHotspot.category}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Safety: {selectedHotspot.safetyLevel}
+                  </span>
+                </div>
+                <h3 className="text-sm font-black text-slate-900 leading-snug">
+                  {selectedHotspot.name}
+                </h3>
+                <p className="text-[10px] text-[#006fcc] font-mono font-bold mt-0.5">
+                  {selectedHotspot.badge} • Model {selectedHotspot.modelNumber}
+                </p>
+              </div>
+
+              <button
+                onClick={() => setSelectedHotspot(null)}
+                className="w-7 h-7 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0 cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed mt-2.5">
+              {selectedHotspot.fullDesc}
+            </p>
+
+            {/* Specifications */}
+            <div className="mt-2.5 bg-slate-50 rounded-xl p-2.5 border border-slate-200/80 space-y-1">
+              <p className="text-[9px] font-black uppercase text-slate-500 tracking-wider">
+                Key Specifications:
+              </p>
+              <ul className="text-[11px] text-slate-700 space-y-0.5 pl-1">
+                {selectedHotspot.specifications.map((spec, idx) => (
+                  <li key={idx} className="flex items-start gap-1">
+                    <span className="text-[#006fcc] font-bold">•</span>
+                    <span>{spec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Associated Practicals */}
+            <div className="mt-2.5 space-y-1">
+              <p className="text-[9px] font-black uppercase text-slate-500 tracking-wider">
+                CBSE & NEP 2020 Practicals:
+              </p>
+              {selectedHotspot.nepAlignedPracticals.map((prac, idx) => (
+                <div
+                  key={idx}
+                  className="text-[10px] bg-emerald-50/80 border border-emerald-200/80 px-2 py-1 rounded-lg text-emerald-800 font-medium flex items-center gap-1.5"
+                >
+                  <CheckCircle2 size={12} className="text-emerald-600 shrink-0" />
+                  <span className="truncate">{prac}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Action Bar */}
+            <div className="mt-3.5 pt-2.5 border-t border-slate-100 flex items-center gap-2">
+              {selectedHotspot.simulatorUrl && (
+                <Link
+                  href={selectedHotspot.simulatorUrl}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-[#003c6e] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs text-decoration-none"
+                >
+                  <span>Launch Simulator</span>
+                  <ExternalLink size={13} />
+                </Link>
+              )}
+              <button
+                onClick={() => setSelectedHotspot(null)}
+                className="py-2.5 px-4 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Live Audio Guide Transcript Banner */}
-        <div className="mt-4 bg-white border border-slate-200/90 rounded-2xl p-3 sm:px-4 sm:py-3 flex items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-200 text-[#006fcc] flex items-center justify-center shrink-0">
-              <Volume2 className="w-4 h-4 text-[#006fcc]" />
+        <div className="mt-3 bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-xl bg-blue-50 border border-blue-200 text-[#006fcc] flex items-center justify-center shrink-0">
+              <Volume2 className="w-3.5 h-3.5 text-[#006fcc]" />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase text-[#006fcc] tracking-wider">
-                Virtual Lab Audio Commentary
+              <p className="text-[9px] font-black uppercase text-[#006fcc] tracking-wider">
+                Audio Guide Narration
               </p>
               <p className="text-xs text-slate-700 font-medium truncate">
                 "{audioTranscript || activeLab.narrationIntro}"
@@ -1050,121 +1088,122 @@ export default function VirtualLabTourClient() {
           </div>
           <button
             onClick={() => setIsAudioMuted(!isAudioMuted)}
-            className="text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap shrink-0 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors"
+            className="text-xs font-bold text-slate-600 hover:text-slate-900 whitespace-nowrap shrink-0 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
           >
-            {isAudioMuted ? 'Unmute Audio' : 'Mute'}
+            {isAudioMuted ? '🔊 Unmute' : '🔇 Mute'}
           </button>
         </div>
       </section>
 
       {/* ─── Laboratory Architecture & Curriculum Standards ─── */}
-      <section className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
-        <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-[#003c6e]">
               Laboratory Architecture & Standards
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 mt-0.5 font-medium">
               Explore equipment specifications, safety protocols, and CBSE practical syllabus mapping.
             </p>
           </div>
 
           {/* Tabs */}
-          <div className="flex items-center gap-1.5 bg-white border border-slate-200/90 p-1.5 rounded-2xl shadow-xs">
+          <div className="flex items-center gap-1 bg-white border border-slate-200/90 p-1 rounded-full shadow-2xs overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveTab('tour')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === 'tour'
-                  ? 'bg-[#006fcc] text-white font-black shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-[#003c6e] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Equipment Roster
             </button>
             <button
               onClick={() => setActiveTab('curriculum')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === 'curriculum'
-                  ? 'bg-[#006fcc] text-white font-black shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-[#003c6e] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              CBSE & NEP Mapping
+              CBSE Mapping
             </button>
             <button
               onClick={() => setActiveTab('safety')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === 'safety'
-                  ? 'bg-[#006fcc] text-white font-black shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-[#003c6e] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Safety Protocols
             </button>
             <button
               onClick={() => setActiveTab('booking')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === 'booking'
-                  ? 'bg-[#006fcc] text-white font-black shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-[#003c6e] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              School Lab Setup
+              School Setup
             </button>
           </div>
         </div>
 
         {/* Tab 1: Equipment Roster Grid */}
         {activeTab === 'tour' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {activeLab.hotspots.map((station) => (
               <div
                 key={station.id}
-                className="bg-white rounded-2xl border border-slate-200/90 p-5 hover:border-[#006fcc]/50 transition-all hover:shadow-md group shadow-xs"
+                className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 hover:border-[#006fcc]/50 transition-all hover:shadow-md group shadow-2xs flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-blue-50 text-[#006fcc] border border-blue-200">
-                    {station.category}
-                  </span>
-                  <span className="text-xs font-mono font-bold text-slate-500">
-                    {station.badge}
-                  </span>
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2.5">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-blue-50 text-[#006fcc] border border-blue-200">
+                      {station.category}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-slate-500">
+                      {station.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-[#006fcc] transition-colors mb-1.5 leading-snug">
+                    {station.name}
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                    {station.shortDesc}
+                  </p>
+
+                  <div className="space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 mb-3">
+                    <p className="text-[9px] font-black uppercase text-slate-500">Key Features:</p>
+                    {station.specifications.slice(0, 2).map((s, idx) => (
+                      <p key={idx} className="text-[11px] text-slate-700 flex items-start gap-1">
+                        <span className="text-[#006fcc] font-bold">✓</span> {s}
+                      </p>
+                    ))}
+                  </div>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 group-hover:text-[#006fcc] transition-colors mb-2">
-                  {station.name}
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                  {station.shortDesc}
-                </p>
-
-                <div className="space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200/80 mb-4">
-                  <p className="text-[10px] font-black uppercase text-slate-500">Features:</p>
-                  {station.specifications.slice(0, 2).map((s, idx) => (
-                    <p key={idx} className="text-[11px] text-slate-700 flex items-start gap-1">
-                      <span className="text-[#006fcc] font-bold">✓</span> {s}
-                    </p>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
                   <button
                     onClick={() => {
                       setSelectedHotspot(station);
                       window.scrollTo({ top: 120, behavior: 'smooth' });
                     }}
-                    className="flex-1 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1 transition-colors"
+                    className="flex-1 py-2 px-3 rounded-full bg-[#003c6e] text-white font-bold text-xs hover:bg-[#002d54] transition-colors cursor-pointer shadow-xs text-center"
                   >
-                    <span>Inspect in 360°</span>
-                    <Eye className="w-3.5 h-3.5 text-[#006fcc]" />
+                    View in 360° Studio
                   </button>
                   {station.simulatorUrl && (
                     <Link
                       href={station.simulatorUrl}
-                      className="py-2 px-3 rounded-xl bg-[#006fcc] hover:bg-[#005bb8] text-white font-bold text-xs flex items-center justify-center gap-1 transition-colors shadow-xs"
+                      className="p-2 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors text-decoration-none"
+                      title="Launch Practical"
                     >
-                      <span>Simulate</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ExternalLink size={14} />
                     </Link>
                   )}
                 </div>
@@ -1173,162 +1212,109 @@ export default function VirtualLabTourClient() {
           </div>
         )}
 
-        {/* Tab 2: CBSE & NEP 2020 Mapping */}
+        {/* Tab 2: Curriculum Mapping */}
         {activeTab === 'curriculum' && (
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 space-y-6 shadow-xs">
-            <div className="max-w-2xl">
-              <h3 className="text-lg font-black text-[#003c6e]">
-                Aligned with National Education Policy (NEP 2020) & Board Practicals
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 shadow-2xs space-y-6">
+            <div className="border-b border-slate-100 pb-4">
+              <h3 className="text-lg font-black text-slate-900">
+                CBSE, ICSE & NEP 2020 Hands-on Mapping ({activeLab.discipline})
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-                Every CSEEL laboratory station is engineered to meet 100% of the prescribed CBSE, ICSE, and State Board practical syllabi for secondary and senior secondary stages.
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                Every station is aligned with national curriculum mandates for Class 9 to 12 practical assessments.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-[#006fcc] flex items-center justify-center mb-3">
-                  <BookOpen className="w-5 h-5" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activeLab.hotspots.map((station) => (
+                <div key={station.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                  <h4 className="text-sm font-bold text-slate-900">{station.name}</h4>
+                  <div className="space-y-1.5">
+                    {station.nepAlignedPracticals.map((prac, idx) => (
+                      <div key={idx} className="flex items-start gap-1.5 text-xs text-slate-700">
+                        <CheckCircle2 size={13} className="text-emerald-600 mt-0.5 shrink-0" />
+                        <span>{prac}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h4 className="font-bold text-sm text-slate-900 mb-1">Class 9 & 10 Secondary Stage</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Foundational experiments in chemical reactions, optics, electric circuits, and plant cytology.
-                </p>
-              </div>
-
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center mb-3">
-                  <Award className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-sm text-slate-900 mb-1">Class 11 & 12 Senior Secondary</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Advanced volumetric titration, LCR resonance, wave diffraction, organic synthesis, and DNA isolation.
-                </p>
-              </div>
-
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mb-3">
-                  <Cpu className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-sm text-slate-900 mb-1">NEP 2020 Experiential Tinkering</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Cross-disciplinary problem solving, 3D rapid fabrication, IoT environmental monitoring, and robotics.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
         {/* Tab 3: Safety Protocols */}
         {activeTab === 'safety' && (
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 space-y-6 shadow-xs">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-black text-[#003c6e]">
-                  Zero-Accident Safety Compliance (ISO 17025 Certified)
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
-                  Built-in multi-tier safety mechanisms protect student researchers across all experiment types.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <Flame className="w-5 h-5 text-rose-500 mb-2" />
-                <h4 className="font-bold text-xs text-slate-900">Emergency Cut-Off</h4>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Master electrical and gas cutoff switches located at teacher station and laboratory exits.
-                </p>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <ShieldCheck className="w-5 h-5 text-[#006fcc] mb-2" />
-                <h4 className="font-bold text-xs text-slate-900">Eye-Wash & Drench Shower</h4>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Immediate 15-second foot-activated eye-wash stations with tempered water delivery.
-                </p>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <FlaskConical className="w-5 h-5 text-emerald-600 mb-2" />
-                <h4 className="font-bold text-xs text-slate-900">Micro-Scale Chemistry</h4>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  Green Chemistry protocols reduce reagent volume by 85%, eliminating toxic runoff.
-                </p>
-              </div>
-
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <CheckCircle2 className="w-5 h-5 text-amber-600 mb-2" />
-                <h4 className="font-bold text-xs text-slate-900">Shatter-Proof Glassware</h4>
-                <p className="text-[11px] text-slate-600 mt-1">
-                  High thermal shock borosilicate 3.3 glassware with double-jacketed safety rims.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 4: School Lab Setup Booking */}
-        {activeTab === 'booking' && (
-          <div className="bg-gradient-to-br from-[#003c6e] via-[#004f98] to-[#006fcc] text-white rounded-3xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
-            <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-cyan-200 mb-2">
-                <Sparkles className="w-4 h-4 text-amber-300" />
-                <span>On-Campus Turnkey Setup</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white">
-                Transform Your School's Science Laboratory
+          <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-8 shadow-2xs space-y-6">
+            <div className="border-b border-slate-100 pb-4">
+              <h3 className="text-lg font-black text-slate-900">
+                Institutional Safety & Environmental Compliance
               </h3>
-              <p className="text-xs sm:text-sm text-blue-100 mt-2 leading-relaxed">
-                CSEEL provides turnkey experiential lab architecture, custom furniture, ISO apparatus, digital simulators, and comprehensive teacher training for premier schools across India.
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                Standard operating procedures certified for school laboratory environments.
               </p>
-              <div className="flex flex-wrap gap-4 mt-6">
-                <Link
-                  href="/contact-us"
-                  className="px-6 py-3 rounded-full bg-white hover:bg-blue-50 text-[#003c6e] font-black text-sm flex items-center gap-2 shadow-md transition-all active:scale-98"
-                >
-                  <span>Request Lab Consultation</span>
-                  <ArrowRight className="w-4 h-4 text-[#003c6e]" />
-                </Link>
-                <Link
-                  href="/compare-plans"
-                  className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/30 backdrop-blur-xs transition-colors"
-                >
-                  View Institutional Plans
-                </Link>
-              </div>
             </div>
 
-            <div className="w-full md:w-80 bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 space-y-3 shadow-lg">
-              <h4 className="font-bold text-xs uppercase tracking-wider text-cyan-200">
-                Institutional Lab Package Includes:
-              </h4>
-              <ul className="text-xs text-white space-y-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
-                  <span>Custom Anti-Corrosive Lab Workstations</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
-                  <span>Complete CBSE/ICSE Instrument Kits</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
-                  <span>Digital 3D Interactive Simulators License</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-300 shrink-0" />
-                  <span>On-Site Teacher Mentorship Workshops</span>
-                </li>
-              </ul>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200">
+                <ShieldCheck className="w-6 h-6 text-emerald-600 mb-2" />
+                <h4 className="text-sm font-bold text-emerald-900">Classroom Safe Reagents</h4>
+                <p className="text-xs text-emerald-700 mt-1">
+                  Non-toxic, micro-scale chemical reagents minimizing environmental hazard and student exposure.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200">
+                <Sliders className="w-6 h-6 text-[#006fcc] mb-2" />
+                <h4 className="text-sm font-bold text-blue-900">Emergency Isolation</h4>
+                <p className="text-xs text-blue-700 mt-1">
+                  Central electrical circuit breakers, fire blankets, eyewash stations, and acid spill neutralization kits.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl bg-purple-50/80 border border-purple-200">
+                <Award className="w-6 h-6 text-purple-600 mb-2" />
+                <h4 className="text-sm font-bold text-purple-900">Certified ISO 9001:2015</h4>
+                <p className="text-xs text-purple-700 mt-1">
+                  All instruments undergo calibrated optical, volumetric, and electrical testing before school dispatch.
+                </p>
+              </div>
             </div>
           </div>
         )}
+
+        {/* Tab 4: School Lab Setup */}
+        {activeTab === 'booking' && (
+          <div className="bg-gradient-to-br from-[#003c6e] to-[#001f3b] rounded-3xl p-6 sm:p-10 text-white shadow-xl space-y-6">
+            <div className="max-w-2xl">
+              <span className="px-3 py-1 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/30 text-xs font-bold uppercase tracking-wider">
+                Institutional Partnership
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-black mt-3 text-white">
+                Set Up a State-of-the-Art CSEEL Experiential Lab in Your School
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-200 mt-2 leading-relaxed">
+                Complete turnkey solution: Custom lab furniture, certified equipment, digital data loggers, teacher master training, and annual consumable refill kits.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Link
+                href="/compare-plans"
+                className="px-6 py-3 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-xs sm:text-sm transition-all shadow-md text-decoration-none"
+              >
+                Compare School Lab Packages
+              </Link>
+              <Link
+                href="/get-support"
+                className="px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs sm:text-sm transition-all text-decoration-none flex items-center gap-2"
+              >
+                <PhoneCall size={14} />
+                <span>Request Quotation / Callback</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
       </section>
+
     </div>
   );
 }

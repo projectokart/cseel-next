@@ -3,30 +3,21 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * CSEEL.org — Edge Router
  *
- * Subdomain routing is ONLY active for admin & login paths:
- *   material.cseel.org/admin   → renders /admin (material dept dashboard)
- *   careers.cseel.org/admin    → renders /admin (careers dept dashboard)
- *   material.cseel.org/login   → renders /login
- *   (any other subdomain path) → 301 redirect to www.cseel.org/<equivalent-path>
+ * Active Subdomains:
+ *   1. admin.cseel.org        → /admin (Governance Console)
+ *   2. design.cseel.org       → /design (Design & Creative Studio)
+ *   3. resumes.cseel.org      → /best-Teacherfaculty/physics/[filename] & /users (Faculty Portal)
+ *   4. schoolsearch.cseel.org  → /school-finder (School Directory & Interactive GIS Map)
  *
- * All public-facing pages use folder-based URLs on the main domain:
- *   cseel.org/materials
- *   cseel.org/hands-on-experiments
- *   cseel.org/edu-network
- *   cseel.org/careers
- *   ... etc.
+ * All public departments use standard folder-based URLs on the main domain (cseel.org).
  */
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico
-     * - public assets with extensions
+     * Match all request paths except static files & images
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|woff|woff2|ttf|ico)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:xml|txt|svg|png|jpg|jpeg|gif|webp|css|js|woff|woff2|ttf|ico)$).*)',
   ],
 };
 
@@ -51,61 +42,99 @@ export function middleware(request: NextRequest) {
           .replace('localhost:3000', '')
           .replace('localhost:3001', '');
 
-  // Map subdomain → department admin route & main-domain public folder
-  const subdomainConfig: Record<string, { adminPath: string; publicFolder: string }> = {
-    material: { adminPath: '/materials/admin', publicFolder: '/materials' },
-    materials: { adminPath: '/materials/admin', publicFolder: '/materials' },
-    careers: { adminPath: '/careers/admin', publicFolder: '/careers' },
-    network: { adminPath: '/edu-network/admin', publicFolder: '/edu-network' },
-    training: { adminPath: '/teacher-training/admin', publicFolder: '/teacher-training' },
-    events: { adminPath: '/events/admin', publicFolder: '/events' },
-    support: { adminPath: '/get-support/admin', publicFolder: '/get-support' },
-    content: { adminPath: '/admin', publicFolder: '/hands-on-experiments' },
-    blog: { adminPath: '/admin', publicFolder: '/blog' },
-    marketing: { adminPath: '/marketing/admin', publicFolder: '/why-cseel' },
-  };
-
   // 1. Dedicated Admin Subdomain: admin.cseel.org
-  if (currentHost === 'admin' || currentHost === 'superadmin' || currentHost === 'portal') {
+  if (currentHost === 'admin') {
     if (pathname === '/' || pathname === '' || pathname === '/login') {
       url.pathname = '/admin';
       return NextResponse.rewrite(url);
     }
-    // If accessing any department admin route on admin.cseel.org (e.g. /materials/admin or /marketing/admin)
-    if (pathname.includes('/admin')) {
+    if (pathname.startsWith('/admin')) {
       return NextResponse.rewrite(url);
     }
-    // Default fallback on admin.cseel.org
-    url.pathname = '/admin';
+    url.pathname = `/admin${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
     return NextResponse.rewrite(url);
   }
 
-  // 2. Dedicated Public User Login Subdomain: login.cseel.org
-  if (currentHost === 'login' || currentHost === 'auth') {
-    if (pathname === '/' || pathname === '' || pathname === '/login') {
-      url.pathname = '/login';
-      return NextResponse.rewrite(url);
+  // Redirect public /admin or /faculty-admin hits to dedicated admin subdomains
+  if (currentHost === '' || currentHost === 'www') {
+    if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+      return NextResponse.redirect('https://admin.cseel.org', 308);
     }
-    return NextResponse.redirect(new URL(pathname, `https://www.${rootDomain}`), { status: 301 });
   }
 
-  // 3. Any other old subdomains (material, careers, marketing, etc.) -> 301 redirect permanently to main domain folders
-  if (currentHost && currentHost !== '' && currentHost !== 'www') {
-    const legacyFolderMap: Record<string, string> = {
-      material: '/materials',
-      materials: '/materials',
-      careers: '/careers',
-      network: '/edu-network',
-      training: '/teacher-training',
-      events: '/events',
-      support: '/get-support',
-      content: '/hands-on-experiments',
-      blog: '/blog',
-      marketing: '/why-cseel',
-    };
+  // 2. Dedicated Design Subdomain: design.cseel.org
+  if (currentHost === 'design') {
+    if (pathname === '/' || pathname === '') {
+      url.pathname = '/design';
+      return NextResponse.rewrite(url);
+    }
+    if (pathname.startsWith('/design')) {
+      return NextResponse.rewrite(url);
+    }
+    url.pathname = `/design${pathname.startsWith('/') ? pathname : `/${pathname}`}`;
+    return NextResponse.rewrite(url);
+  }
 
-    const targetFolder = legacyFolderMap[currentHost] || (pathname !== '/' ? pathname : '/');
-    return NextResponse.redirect(new URL(targetFolder, `https://www.${rootDomain}`), { status: 301 });
+  // 3. Dedicated Resumes Subdomain: resumes.cseel.org
+  if (currentHost === 'resumes') {
+    // Dedicated Faculty Admin Portal
+    if (pathname === '/admin' || pathname === '/faculty-admin') {
+      url.pathname = '/faculty-admin';
+      return NextResponse.rewrite(url);
+    }
+    // Dedicated Faculty Resumes Dashboard (/user, /users, /dashboard)
+    if (pathname === '/user' || pathname === '/user/' || pathname === '/dashboard' || pathname === '/users' || pathname === '/users/') {
+      url.pathname = '/users';
+      return NextResponse.rewrite(url);
+    }
+    // Resume Studio Editor paths (/user/editor, /users/editor)
+    if (pathname === '/user/editor' || pathname === '/users/editor') {
+      url.pathname = '/users/editor';
+      return NextResponse.rewrite(url);
+    }
+    // Allow API routes to pass through
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.next();
+    }
+    // Root-level single file HTML (e.g. /DevSharma.html) -> rewrite to /best-Teacherfaculty/physics/[filename]
+    const rootHtmlMatch = pathname.match(/^\/([a-zA-Z0-9_-]+(?:\.html|-videos\.html|-gallery\.html))$/i);
+    if (rootHtmlMatch) {
+      url.pathname = `/best-Teacherfaculty/physics/${rootHtmlMatch[1]}`;
+      return NextResponse.rewrite(url);
+    }
+
+    // Allow videos, gallery, images, and static html pages
+    if (pathname.includes('-videos') || pathname.includes('-gallery') || pathname.endsWith('.html') || pathname.startsWith('/images/')) {
+      return NextResponse.next();
+    }
+    // Support without .html extension - redirect cleanly to static .html
+    if (pathname.startsWith('/best-Teacherfaculty/') || pathname.startsWith('/best-physics-faculty/')) {
+      return NextResponse.redirect(new URL(`${pathname}.html`, request.url), { status: 301 });
+    }
+    if (pathname === '/' || pathname === '') {
+      url.pathname = '/users';
+      return NextResponse.rewrite(url);
+    }
+    return NextResponse.next();
+  }
+
+  // 4. Dedicated School Finder Subdomain: schoolsearch.cseel.org
+  if (currentHost === 'schoolsearch') {
+    if (pathname === '/' || pathname === '') {
+      url.pathname = '/school-finder';
+      return NextResponse.rewrite(url);
+    }
+    if (pathname.startsWith('/school') || pathname.startsWith('/school-profile') || pathname.startsWith('/school-finder') || pathname.startsWith('/schoolsearch') || pathname.startsWith('/api/') || pathname.startsWith('/auth/')) {
+      return NextResponse.next();
+    }
+    return NextResponse.next();
+  }
+
+  // 5. Dynamic /org/org-school-${school_id} routing
+  if (pathname.startsWith('/org/org-school-')) {
+    const orgId = pathname.replace('/org/', '');
+    url.pathname = `/edu-network/org/${orgId}`;
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next();

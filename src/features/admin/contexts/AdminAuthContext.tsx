@@ -25,18 +25,19 @@ interface AdminAuthContextType {
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
 export const DEPARTMENT_SUBDOMAIN_REDIRECTS: Record<string, string> = {
-  inventory_admin: 'https://material.cseel.org/admin',
-  hr_admin: 'https://careers.cseel.org/admin',
-  school_admin: 'https://network.cseel.org/admin',
-  recruitment_admin: 'https://careers.cseel.org/admin',
-  science_admin: 'https://content.cseel.org/admin',
-  projectokart_admin: 'https://material.cseel.org/admin',
-  programs_admin: 'https://training.cseel.org/admin',
-  events_admin: 'https://events.cseel.org/admin',
-  support_admin: 'https://support.cseel.org/admin',
-  content_admin: 'https://blog.cseel.org/admin',
-  rnd_admin: 'https://api.cseel.org',
-  super_admin: '/admin',
+  inventory_admin: 'https://admin.cseel.org',
+  hr_admin: 'https://admin.cseel.org',
+  school_admin: 'https://admin.cseel.org',
+  recruitment_admin: 'https://admin.cseel.org',
+  science_admin: 'https://admin.cseel.org',
+  projectokart_admin: 'https://admin.cseel.org',
+  programs_admin: 'https://admin.cseel.org',
+  events_admin: 'https://admin.cseel.org',
+  support_admin: 'https://admin.cseel.org',
+  content_admin: 'https://admin.cseel.org',
+  marketing_admin: 'https://admin.cseel.org',
+  rnd_admin: 'https://admin.cseel.org',
+  super_admin: 'https://admin.cseel.org',
 };
 
 export interface LoginResult {

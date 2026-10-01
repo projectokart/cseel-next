@@ -23,13 +23,13 @@ const STORAGE_KEY = "offer-popup-closed-v3";
 
 const DEFAULT_POPUP: PromoItem = {
   id: "cseel-nextgen-preview",
-  title: "Transforming STEM into Experiential Discovery",
-  content: "Move beyond rote memorization. Equip your school with curriculum-aligned hands-on science labs, 300+ practical activities, and NEP 2020 kits that spark genuine curiosity.",
+  title: "Beyond Textbooks: Where Learning Becomes an Experience",
+  content: "Move past one-way lectures and rote formulas. Turn your classrooms into dynamic innovation labs with 1,000+ experiments in Chemistry, Biology, Mathematics, Physics, as well as Robotics—where students don't just read science—they touch, test, and discover it.",
   cta_text: "Book Free School Demo",
   cta_link: "/get-support",
   video_id: "28rAN41mCDk",
   video_url: "https://www.youtube.com/embed/28rAN41mCDk",
-  badge_text: "NEP 2020 Practical Framework",
+  badge_text: "1,000+ STEM & Robotics Labs",
   accent_color: "#0284c7",
 };
 
@@ -215,7 +215,8 @@ const OfferPopup = () => {
                     <TrendingUp size={13} strokeWidth={2.5} />
                     <span className="text-xs sm:text-sm font-extrabold">+68%</span>
                   </div>
-                  <span className="text-[10px] font-medium text-stone-500 leading-tight">Retention Rate</span>
+                  <span className="text-[10px] font-bold text-stone-700 leading-tight">Retention Rate</span>
+                  <span className="text-[8.5px] text-stone-500 leading-tight mt-0.5">Practical recall</span>
                 </div>
 
                 <div className="bg-white p-2.5 rounded-2xl border border-stone-200/90 shadow-sm flex flex-col items-center text-center">
@@ -223,7 +224,8 @@ const OfferPopup = () => {
                     <Award size={13} strokeWidth={2.5} />
                     <span className="text-xs sm:text-sm font-extrabold">2.4x</span>
                   </div>
-                  <span className="text-[10px] font-medium text-stone-500 leading-tight">Exam Outcomes</span>
+                  <span className="text-[10px] font-bold text-stone-700 leading-tight">Exam Scores</span>
+                  <span className="text-[8.5px] text-stone-500 leading-tight mt-0.5">Application clarity</span>
                 </div>
 
                 <div className="bg-white p-2.5 rounded-2xl border border-stone-200/90 shadow-sm flex flex-col items-center text-center">
@@ -231,7 +233,8 @@ const OfferPopup = () => {
                     <CheckCircle2 size={13} strokeWidth={2.5} />
                     <span className="text-xs sm:text-sm font-extrabold">100%</span>
                   </div>
-                  <span className="text-[10px] font-medium text-stone-500 leading-tight">Practical Hands-On</span>
+                  <span className="text-[10px] font-bold text-stone-700 leading-tight">Active Engagement</span>
+                  <span className="text-[8.5px] text-stone-500 leading-tight mt-0.5">Zero passive memory</span>
                 </div>
               </div>
 

@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     url: "https://www.cseel.org",
     title: "CSEEL | India's #1 Experiential Science & STEM Learning Platform",
     description:
-      "Transforming Indian education through NEP 2020 experiential learning: 300+ hands-on science experiments, 3D hands-on experiments, school working models, teacher training & STEM career network.",
+      "Transforming Indian education through NEP 2020 experiential learning: 1,000+ hands-on science experiments in Chemistry, Biology, Mathematics, Physics & Robotics, virtual lab simulations, school working models, teacher training & STEM career network.",
     images: [
       {
         url: "https://www.cseel.org/images/og-cover.jpg",

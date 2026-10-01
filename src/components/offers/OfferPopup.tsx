@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from "react";
-import { X, Sparkles, ArrowRight, Compass, Volume2, VolumeX } from "lucide-react";
+import { X, Sparkles, ArrowRight, Compass, Volume2, VolumeX, TrendingUp, Award, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,18 +19,18 @@ interface PromoItem {
   badge_text?: string | null;
 }
 
-const STORAGE_KEY = "offer-popup-closed-v2";
+const STORAGE_KEY = "offer-popup-closed-v3";
 
 const DEFAULT_POPUP: PromoItem = {
   id: "cseel-nextgen-preview",
-  title: "Experience Next-Gen Science!",
-  content: "Discovery Lab teaches children science with hands-on educational experiments. <strong class=\"text-cyan-400 font-semibold\">Book a free school demo</strong> today!",
-  cta_text: "Book Free Demo Now",
+  title: "Transforming STEM into Experiential Discovery",
+  content: "Move beyond rote memorization. Equip your school with curriculum-aligned hands-on science labs, 300+ practical activities, and NEP 2020 kits that spark genuine curiosity.",
+  cta_text: "Book Free School Demo",
   cta_link: "/get-support",
   video_id: "28rAN41mCDk",
   video_url: "https://www.youtube.com/embed/28rAN41mCDk",
-  badge_text: "Live CSEEL Lab Preview",
-  accent_color: "#06b6d4",
+  badge_text: "NEP 2020 Practical Framework",
+  accent_color: "#0284c7",
 };
 
 const OfferPopup = () => {
@@ -104,140 +104,165 @@ const OfferPopup = () => {
     return null;
   }
 
-  const videoSrc = item?.video_id
-    ? `https://www.youtube.com/embed/${item.video_id}?autoplay=1&mute=${isMuted ? '1' : '0'}&controls=0&loop=1&playlist=${item.video_id}&rel=0&playsinline=1&enablejsapi=1`
-    : `https://www.youtube.com/embed/28rAN41mCDk?autoplay=1&mute=${isMuted ? '1' : '0'}&controls=0&loop=1&playlist=28rAN41mCDk&rel=0&playsinline=1&enablejsapi=1`;
+  const videoId = item?.video_id || "28rAN41mCDk";
+  const videoSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${isMuted ? '1' : '0'}&controls=0&loop=1&playlist=${videoId}&rel=0&playsinline=1&enablejsapi=1`;
 
   return (
     <AnimatePresence>
       {isOpen && item && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
           
-          {/* Backdrop Blur & Dark Gradient */}
+          {/* Backdrop Blur & Neutral Dark Overlay */}
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25 }}
             onClick={close}
-            className="fixed inset-0 bg-black/75 backdrop-blur-md z-0"
+            className="fixed inset-0 bg-[#0f172a]/70 backdrop-blur-sm z-0"
           />
 
-          {/* Premium Neon Dark Modal */}
+          {/* Premium Warm Off-White Modal */}
           <motion.div
             key="popup-modal"
-            initial={{ opacity: 0, scale: 0.9, y: 24 }}
+            initial={{ opacity: 0, scale: 0.94, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 16 }}
-            transition={{ type: "spring", damping: 25, stiffness: 320 }}
-            className="pointer-events-auto w-full max-w-[490px] bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl shadow-cyan-950/60 border border-cyan-500/30 relative z-10 my-auto"
+            exit={{ opacity: 0, scale: 0.94, y: 16 }}
+            transition={{ type: "spring", damping: 26, stiffness: 340 }}
+            className="pointer-events-auto w-full max-w-[500px] bg-[#fafaf9] text-[#1c1917] rounded-3xl overflow-hidden shadow-2xl shadow-slate-900/40 border border-stone-200 relative z-10 my-auto"
           >
-            {/* Top Neon Accent Glow Line */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-[#006fcc] shadow-[0_0_18px_rgba(6,182,212,0.85)]" />
+            {/* Top Navy-Cyan Accent Line */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-[#0f172a] via-[#0284c7] to-[#0ea5e9]" />
 
-            {/* Sound Toggle Button */}
-            <button
-              onClick={toggleSound}
-              aria-label={isMuted ? "Unmute video sound" : "Mute video sound"}
-              className={`absolute top-3.5 left-3.5 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer z-20 border shadow-md hover:scale-105 active:scale-95 ${
-                isMuted
-                  ? 'bg-slate-900/85 hover:bg-slate-800 text-slate-300 border-slate-700/80'
-                  : 'bg-cyan-950/90 hover:bg-cyan-900 text-cyan-300 border-cyan-500/60 shadow-[0_0_12px_rgba(6,182,212,0.5)]'
-              }`}
-            >
-              {isMuted ? (
-                <>
-                  <VolumeX size={14} className="text-slate-400" />
-                  <span>Sound Off</span>
-                </>
-              ) : (
-                <>
-                  <Volume2 size={14} className="text-cyan-400 animate-pulse" />
-                  <span>Sound ON</span>
-                </>
-              )}
-            </button>
-
-            {/* Close Button */}
-            <button
-              onClick={close}
-              aria-label="Close offer"
-              className="absolute top-3.5 right-3.5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-900/85 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer z-20 border border-slate-700/80 shadow-md hover:scale-105 active:scale-95"
-            >
-              <X size={17} strokeWidth={2.5} />
-            </button>
-
-            {/* YouTube / Media Video Container (Autoplay & Loop with interactive Sound) */}
-            <div className="relative w-full h-[210px] sm:h-[240px] bg-slate-900 overflow-hidden">
+            {/* 16:9 Video Header Container */}
+            <div className="relative w-full aspect-video bg-slate-900 overflow-hidden group">
               <iframe
                 key={isMuted ? 'muted' : 'unmuted'}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] object-cover opacity-90 pointer-events-none"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[135%] h-[135%] object-cover opacity-95 pointer-events-none"
                 src={videoSrc}
-                title="Discovery Lab Science Experiments"
+                title="CSEEL Hands-on STEM Science Labs"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               />
 
-              {/* Gradient Overlay for seamless dark integration */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent pointer-events-none" />
+              {/* Subtle Bottom Shade */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
 
-              {/* Floating Live Badge */}
-              <div className="absolute bottom-3 left-4 flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-cyan-500/40 shadow-lg pointer-events-none">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
-                <span className="text-[11px] sm:text-xs font-bold text-cyan-300 tracking-wider uppercase">
-                  {item.badge_text || "Live CSEEL Lab Preview"}
+              {/* Floating Frosted Glass Sound Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleSound}
+                aria-label={isMuted ? "Unmute video sound" : "Mute video sound"}
+                className={`absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md transition-all cursor-pointer z-20 border shadow-md active:scale-95 ${
+                  isMuted
+                    ? 'bg-slate-900/70 hover:bg-slate-900/90 text-white/90 border-white/20'
+                    : 'bg-[#0284c7]/90 hover:bg-[#0284c7] text-white border-cyan-300/40 shadow-[0_0_12px_rgba(2,132,199,0.5)]'
+                }`}
+              >
+                {isMuted ? (
+                  <>
+                    <VolumeX size={14} className="text-stone-300" />
+                    <span>Sound Off</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={14} className="text-white animate-pulse" />
+                    <span>Sound ON</span>
+                  </>
+                )}
+              </button>
+
+              {/* Floating Frosted Glass Close Button */}
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Close offer"
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/70 hover:bg-slate-900/95 text-white/90 hover:text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer z-20 border border-white/20 shadow-md active:scale-95"
+              >
+                <X size={16} strokeWidth={2.5} />
+              </button>
+
+              {/* Badge Tag */}
+              <div className="absolute bottom-2.5 left-3 flex items-center gap-1.5 bg-black/65 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="text-[11px] font-semibold text-white tracking-wide">
+                  {item.badge_text || "NEP 2020 Practical Framework"}
                 </span>
               </div>
             </div>
 
-            {/* Content & Call to Action Area */}
-            <div className="p-5 sm:p-6 pt-3 space-y-4">
+            {/* Content & Conversion Area */}
+            <div className="p-5 sm:p-6 pt-4 space-y-4">
               
-              {/* Header */}
+              {/* Header & Hook */}
               <div className="space-y-1.5">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-950/70 border border-cyan-500/30 text-[11px] font-bold text-cyan-300">
-                  <Sparkles size={12} className="text-cyan-400" />
-                  <span>Interactive Science Education</span>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-[11px] font-bold text-[#0284c7]">
+                  <Sparkles size={12} className="text-[#0284c7]" />
+                  <span>Experiential STEM Learning</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white leading-snug">
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-[#0f172a] leading-tight">
                   {item.title}
                 </h3>
+                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed pt-0.5">
+                  {item.content}
+                </p>
               </div>
 
-              {/* Description */}
-              <div
-                className="text-xs sm:text-sm text-slate-300 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: item.content }}
-              />
+              {/* 3 Proof & Metric Chips */}
+              <div className="grid grid-cols-3 gap-2 pt-0.5">
+                <div className="bg-white p-2.5 rounded-2xl border border-stone-200/90 shadow-sm flex flex-col items-center text-center">
+                  <div className="flex items-center gap-1 text-[#0284c7] mb-0.5">
+                    <TrendingUp size={13} strokeWidth={2.5} />
+                    <span className="text-xs sm:text-sm font-extrabold">+68%</span>
+                  </div>
+                  <span className="text-[10px] font-medium text-stone-500 leading-tight">Retention Rate</span>
+                </div>
 
-              {/* Action Buttons */}
+                <div className="bg-white p-2.5 rounded-2xl border border-stone-200/90 shadow-sm flex flex-col items-center text-center">
+                  <div className="flex items-center gap-1 text-[#0f172a] mb-0.5">
+                    <Award size={13} strokeWidth={2.5} />
+                    <span className="text-xs sm:text-sm font-extrabold">2.4x</span>
+                  </div>
+                  <span className="text-[10px] font-medium text-stone-500 leading-tight">Exam Outcomes</span>
+                </div>
+
+                <div className="bg-white p-2.5 rounded-2xl border border-stone-200/90 shadow-sm flex flex-col items-center text-center">
+                  <div className="flex items-center gap-1 text-emerald-600 mb-0.5">
+                    <CheckCircle2 size={13} strokeWidth={2.5} />
+                    <span className="text-xs sm:text-sm font-extrabold">100%</span>
+                  </div>
+                  <span className="text-[10px] font-medium text-stone-500 leading-tight">Practical Hands-On</span>
+                </div>
+              </div>
+
+              {/* Conversion CTAs */}
               <div className="space-y-2.5 pt-1">
                 {item.cta_link && (
                   <Link
                     href={item.cta_link}
                     onClick={close}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 via-[#006fcc] to-[#0a5c8a] hover:from-cyan-500 hover:via-[#0080eb] hover:to-[#084b71] text-white py-3.5 px-6 rounded-2xl font-bold text-sm sm:text-base shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 active:scale-98 border border-cyan-400/30 text-decoration-none group"
+                    className="w-full flex items-center justify-center gap-2 bg-[#0f172a] hover:bg-[#1e293b] text-white py-3.5 px-6 rounded-2xl font-bold text-sm sm:text-base shadow-lg shadow-slate-900/15 transition-all transform hover:-translate-y-0.5 active:scale-98 text-decoration-none group"
                   >
-                    <span>{item.cta_text || "Book Free Demo Now"}</span>
-                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+                    <span>{item.cta_text || "Book Free School Demo"}</span>
+                    <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
                   </Link>
                 )}
 
-                {/* Secondary 360 Tour Quick Link */}
+                {/* Secondary 360 Tour Quick Link & Dismiss */}
                 <div className="flex items-center justify-between pt-1 px-1">
                   <Link
                     href="/virtual-lab-tour"
                     onClick={close}
-                    className="inline-flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 font-semibold transition-colors group"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#0284c7] hover:text-sky-700 font-bold transition-colors group"
                   >
-                    <Compass size={14} className="text-cyan-400 group-hover:rotate-45 transition-transform" />
+                    <Compass size={14} className="text-[#0284c7] group-hover:rotate-45 transition-transform" />
                     <span>Explore 360° Virtual Lab</span>
                   </Link>
 
                   <button
                     type="button"
                     onClick={close}
-                    className="text-xs text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+                    className="text-xs text-stone-400 hover:text-stone-700 transition-colors cursor-pointer font-medium"
                   >
                     Maybe later
                   </button>

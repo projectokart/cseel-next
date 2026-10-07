@@ -547,7 +547,7 @@ export default function SchoolPhotoBook({
           {Array.from({ length: totalPages }).map((_, idx) => {
             const isActive = isMobile
               ? currentPage === idx
-              : Math.floor(currentPage / 2) === Math.floor(idx / 2);
+              : (currentPage === 0 && idx === 0) || (currentPage > 0 && currentPage === idx);
             const isThankYou = idx === 5;
             return (
               <button
@@ -576,9 +576,10 @@ export default function SchoolPhotoBook({
       <div ref={templateRef} style={{ display: 'none' }}>
         {/* PAGE 0: ELEGANT DECORATED INSTITUTIONAL COVER PAGE */}
         <div
-          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer text-[#002B49] p-3.5 sm:p-5 pb-10 sm:pb-10 flex flex-col justify-between shadow-2xl"
+          className="pf-template-page pf-cover-page relative w-full h-full overflow-hidden select-none cursor-pointer text-[#002B49] p-3.5 sm:p-5 pb-10 sm:pb-10 flex flex-col justify-between shadow-2xl bg-[#FAF8F5]"
           data-density="hard"
           style={{
+            backgroundColor: '#FAF8F5',
             background: 'radial-gradient(ellipse 90% 80% at 50% 36%, #FFFFFF 0%, #FAF8F5 55%, #F0ECE1 100%)',
           }}
         >
@@ -690,7 +691,7 @@ export default function SchoolPhotoBook({
           return (
             <div
               key={page.id}
-              className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer bg-slate-900"
+              className="pf-template-page pf-photo-page relative w-full h-full overflow-hidden select-none cursor-pointer bg-slate-900"
               data-density="soft"
             >
               <img
@@ -877,7 +878,16 @@ export default function SchoolPhotoBook({
           transform-style: preserve-3d !important;
           backface-visibility: hidden !important;
           -webkit-backface-visibility: hidden !important;
-          background-color: #0b1524 !important;
+        }
+        .stf__item.pf-cover-page,
+        .pf-cover-page {
+          background-color: #FAF8F5 !important;
+          background: radial-gradient(ellipse 90% 80% at 50% 36%, #FFFFFF 0%, #FAF8F5 55%, #F0ECE1 100%) !important;
+          color: #002B49 !important;
+        }
+        .stf__item.pf-photo-page,
+        .pf-photo-page {
+          background-color: #0f172a !important;
         }
         .stf__item.pf-thankyou-page,
         .pf-thankyou-page {

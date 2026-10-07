@@ -126,12 +126,30 @@ interface SchoolProfileViewProps {
   isTemplate?: boolean;
 }
 
-type TabType = 'home' | 'about' | 'facilities' | 'admissions' | 'reviews' | 'contact';
+type TabType =
+  | 'home'
+  | 'about'
+  | 'academics'
+  | 'facilities'
+  | 'extracurricular'
+  | 'awards'
+  | 'events'
+  | 'faculty'
+  | 'gallery'
+  | 'admissions'
+  | 'reviews'
+  | 'contact';
 
 const navTabs: { id: TabType; label: string; shortLabel: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'home', label: 'Home', shortLabel: 'Home', icon: Home },
   { id: 'about', label: 'About Us', shortLabel: 'About', icon: Info },
+  { id: 'academics', label: 'Academics', shortLabel: 'Academics', icon: BookOpen },
   { id: 'facilities', label: 'Facilities', shortLabel: 'Facilities', icon: Layers },
+  { id: 'extracurricular', label: 'Extracurricular & Sports', shortLabel: 'Activities', icon: Activity },
+  { id: 'awards', label: 'Awards & Honors', shortLabel: 'Awards', icon: Award },
+  { id: 'events', label: 'Events & Life', shortLabel: 'Events', icon: Calendar },
+  { id: 'faculty', label: 'Faculty & Mentors', shortLabel: 'Faculty', icon: Users },
+  { id: 'gallery', label: 'Campus Gallery', shortLabel: 'Gallery', icon: Eye },
   { id: 'admissions', label: 'Admissions & Fees', shortLabel: 'Admissions', icon: GraduationCap },
   { id: 'reviews', label: 'Reviews & Ratings', shortLabel: 'Reviews', icon: Star },
   { id: 'contact', label: 'Contact Us', shortLabel: 'Contact', icon: Phone }
@@ -1333,8 +1351,8 @@ export default function SchoolProfileView({
             </div>
           </button>
 
-          {/* Desktop Nav Links (Tab Switcher: Icon on Top, Text Below) */}
-          <nav className="hidden lg:flex items-center gap-2 xl:gap-4 text-xs font-semibold">
+          {/* Desktop Nav Links (Tab Switcher: Horizontal Scrollable List) */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-semibold overflow-x-auto scrollbar-none py-1 max-w-[64vw]">
             {navTabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;
@@ -1343,14 +1361,14 @@ export default function SchoolProfileView({
                   key={tab.id}
                   type="button"
                   onClick={() => handleTabSwitch(tab.id)}
-                  className={`flex flex-col items-center justify-center gap-1 px-3 py-1.5 rounded-xl cursor-pointer transition-all ${
+                  className={`flex flex-col items-center justify-center gap-0.5 px-2.5 py-1 rounded-xl cursor-pointer transition-all shrink-0 ${
                     isActive
-                      ? 'text-[#005689] font-bold border-b-2 border-[#FBBC04]'
+                      ? 'text-[#005689] font-bold border-b-2 border-[#FBBC04] bg-sky-50/50'
                       : 'text-gray-600 hover:text-[#006FCC] hover:bg-slate-50'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#005689] stroke-[2.5]' : 'text-gray-500'}`} />
-                  <span className="text-xs leading-tight whitespace-nowrap">{tab.label}</span>
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#005689] stroke-[2.5]' : 'text-gray-500'}`} />
+                  <span className="text-[11px] leading-tight whitespace-nowrap">{tab.shortLabel}</span>
                 </button>
               );
             })}
@@ -2057,6 +2075,245 @@ export default function SchoolProfileView({
 
 
       {/* ========================================================= */}
+      {/* 3.5 ACADEMICS, CURRICULUM & NEP 2020 PEDAGOGY TAB         */}
+      {/* ========================================================= */}
+      {activeTab === 'academics' && (
+        <section id="academics" className="py-12 sm:py-16 bg-white relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* AI Template Instruction: Section 10 (Academics & Curriculum) */}
+            <AiSectionInstructionBadge sectionKey="academics" isVisible={isTemplate && showAiGuide} />
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+                <span>ACADEMIC EXCELLENCE & CURRICULUM</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                Rigorous Academics, <br className="hidden sm:inline" />
+                <span className="text-[#005689]">NEP 2020 Aligned Pedagogy</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+                At {displayName}, education transcends rote memorization. We integrate experiential STEM learning, critical inquiry, and comprehensive continuous evaluation from foundational years to senior secondary board examinations.
+              </p>
+            </div>
+
+            {/* 4 Pillars of Learning */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-14">
+              {[
+                {
+                  icon: '🔬',
+                  stage: 'Foundational Years',
+                  grades: 'Nursery to Grade 2',
+                  desc: 'Play-based, sensory exploration, phonics, and foundational numeracy with dedicated activity rooms.',
+                  color: 'border-blue-200 bg-blue-50/40 text-blue-900'
+                },
+                {
+                  icon: '📐',
+                  stage: 'Preparatory Stage',
+                  grades: 'Grades 3 to 5',
+                  desc: 'Interactive discovery, bilingual comprehension, basic mathematical logic, and hands-on nature studies.',
+                  color: 'border-amber-200 bg-amber-50/40 text-amber-900'
+                },
+                {
+                  icon: '⚙️',
+                  stage: 'Middle School',
+                  grades: 'Grades 6 to 8',
+                  desc: 'Experiential science experiments, computational thinking, coding bootcamps, and vocational crafts.',
+                  color: 'border-emerald-200 bg-emerald-50/40 text-emerald-900'
+                },
+                {
+                  icon: '🎓',
+                  stage: 'Secondary & Senior',
+                  grades: 'Grades 9 to 12',
+                  desc: 'Stream specialization (Science, Commerce, Arts), board exam masterclasses, and JEE/NEET/CUET mentorship.',
+                  color: 'border-indigo-200 bg-indigo-50/40 text-indigo-900'
+                }
+              ].map((p, idx) => (
+                <div key={idx} className={`p-5 rounded-2xl border ${p.color} transition-all hover:shadow-md`}>
+                  <div className="text-3xl mb-3">{p.icon}</div>
+                  <span className="text-[10.5px] font-bold uppercase tracking-wider text-gray-500 block mb-0.5">
+                    {p.grades}
+                  </span>
+                  <h3 className="text-base font-extrabold text-gray-900 mb-2">{p.stage}</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">{p.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Senior Secondary Academic Streams */}
+            <div className="mb-14">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-gray-950">
+                    Senior Secondary Academic Streams (Grades 11 & 12)
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Structured subject combinations affiliated with {board || 'CBSE Board'}
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-[#006FCC] bg-blue-50 px-3 py-1 rounded-full border border-blue-200 self-start sm:self-auto">
+                  Accredited Curricula
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Science */}
+                <div className="bg-white rounded-3xl p-6 border-2 border-blue-200/80 shadow-md hover:border-blue-400 transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl mb-4 shadow-sm">
+                    🔬
+                  </div>
+                  <h4 className="text-lg font-black text-gray-950 mb-1">Science Stream (STEM)</h4>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Medical & Non-Medical specializations with daily practical laboratory sessions.
+                  </p>
+                  <div className="space-y-2 text-xs">
+                    <div className="font-bold text-gray-800">Core Subjects:</div>
+                    <ul className="space-y-1 text-gray-600">
+                      <li>• Physics (Theory + Hands-on Lab)</li>
+                      <li>• Chemistry (Organic, Inorganic, Physical)</li>
+                      <li>• Mathematics / Applied Mathematics</li>
+                      <li>• Biology / Biotechnology (Medical track)</li>
+                      <li>• English Core & Technical Writing</li>
+                    </ul>
+                    <div className="font-bold text-gray-800 pt-2">Skill Electives:</div>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Computer Science', 'AI & Data Science', 'Physical Education'].map((el, i) => (
+                        <span key={i} className="bg-blue-50 text-blue-700 text-[10.5px] font-semibold px-2 py-0.5 rounded-md border border-blue-200">
+                          {el}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Commerce */}
+                <div className="bg-white rounded-3xl p-6 border-2 border-emerald-200/80 shadow-md hover:border-emerald-400 transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xl mb-4 shadow-sm">
+                    📈
+                  </div>
+                  <h4 className="text-lg font-black text-gray-950 mb-1">Commerce Stream</h4>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Business finance, chartered accountancy foundations, and entrepreneurship.
+                  </p>
+                  <div className="space-y-2 text-xs">
+                    <div className="font-bold text-gray-800">Core Subjects:</div>
+                    <ul className="space-y-1 text-gray-600">
+                      <li>• Accountancy (Financial & Management)</li>
+                      <li>• Business Studies & Organizational Management</li>
+                      <li>• Economics (Micro & Macroeconomics)</li>
+                      <li>• Mathematics / Informatics Practices</li>
+                      <li>• English Core & Business Communication</li>
+                    </ul>
+                    <div className="font-bold text-gray-800 pt-2">Skill Electives:</div>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Financial Market Mgmt', 'Entrepreneurship', 'Informatics'].map((el, i) => (
+                        <span key={i} className="bg-emerald-50 text-emerald-700 text-[10.5px] font-semibold px-2 py-0.5 rounded-md border border-emerald-200">
+                          {el}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Humanities */}
+                <div className="bg-white rounded-3xl p-6 border-2 border-amber-200/80 shadow-md hover:border-amber-400 transition-all">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center font-bold text-xl mb-4 shadow-sm">
+                    ⚖️
+                  </div>
+                  <h4 className="text-lg font-black text-gray-950 mb-1">Humanities & Liberal Arts</h4>
+                  <p className="text-xs text-gray-500 mb-4">
+                    Critical social analysis, civil services foundations, law and creative writing.
+                  </p>
+                  <div className="space-y-2 text-xs">
+                    <div className="font-bold text-gray-800">Core Subjects:</div>
+                    <ul className="space-y-1 text-gray-600">
+                      <li>• Political Science & International Relations</li>
+                      <li>• History (Indian & World Civilizations)</li>
+                      <li>• Psychology & Human Behavior</li>
+                      <li>• Sociology & Social Anthropology</li>
+                      <li>• English Core & Literature Electives</li>
+                    </ul>
+                    <div className="font-bold text-gray-800 pt-2">Skill Electives:</div>
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {['Legal Studies', 'Fine Arts & Design', 'Mass Media'].map((el, i) => (
+                        <span key={i} className="bg-amber-50 text-amber-700 text-[10.5px] font-semibold px-2 py-0.5 rounded-md border border-amber-200">
+                          {el}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Academic Track Record & Board Examination Results */}
+            <div className="bg-[#EDF5FA] rounded-3xl p-6 sm:p-10 border border-[#D6EDFF]">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div className="lg:col-span-6 space-y-4">
+                  <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#005689]">
+                    <Award className="w-4 h-4 text-amber-500" />
+                    <span>PROVEN ACADEMIC RESULTS</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-[#002B49]">
+                    Consistent 100% Board Results & Competitive Edge
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                    Our scholars consistently attain distinction scores in CBSE Board Examinations. With dedicated faculty mentorship, regular doubt clinics, and individual academic attention, students excel without relying on external coaching centers.
+                  </p>
+                  <div className="pt-2 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleTabSwitch('admissions')}
+                      className="button_primary bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+                    >
+                      <span>Apply for Admission</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleTabSwitch('awards')}
+                      className="button_secondary bg-white hover:bg-gray-50 text-[#005689] border border-[#D6EDFF] font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>View Honors & Toppers</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 grid grid-cols-2 gap-4">
+                  <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs text-center">
+                    <div className="text-3xl sm:text-4xl font-black text-[#005689]">100%</div>
+                    <div className="text-xs font-bold text-gray-800 mt-1">Board Pass Rate</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">CBSE 10th & 12th</div>
+                  </div>
+                  <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs text-center">
+                    <div className="text-3xl sm:text-4xl font-black text-amber-600">86.4%</div>
+                    <div className="text-xs font-bold text-gray-800 mt-1">Average Aggregate</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">School Batch Median</div>
+                  </div>
+                  <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs text-center">
+                    <div className="text-3xl sm:text-4xl font-black text-emerald-600">42+</div>
+                    <div className="text-xs font-bold text-gray-800 mt-1">90%+ Scorers</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">Recent Board Session</div>
+                  </div>
+                  <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs text-center">
+                    <div className="text-3xl sm:text-4xl font-black text-indigo-600">1:20</div>
+                    <div className="text-xs font-bold text-gray-800 mt-1">Teacher-Student Ratio</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">Personal Mentorship</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+
+      {/* ========================================================= */}
       {/* 6. OUR FACILITIES SECTION (10-GRID)                       */}
       {/* ========================================================= */}
       {/* ─── TAB 5: FACILITIES ─── */}
@@ -2252,6 +2509,612 @@ export default function SchoolProfileView({
 
         </div>
       </section>
+      )}
+
+
+      {/* ========================================================= */}
+      {/* 6.1 EXTRACURRICULAR ACTIVITIES & SPORTS TAB               */}
+      {/* ========================================================= */}
+      {activeTab === 'extracurricular' && (
+        <section id="extracurricular" className="py-12 sm:py-16 bg-white relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* AI Template Instruction */}
+            <AiSectionInstructionBadge sectionKey="extracurricular" isVisible={isTemplate && showAiGuide} />
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+                <span>BEYOND THE TEXTBOOKS</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                Extracurricular Excellence, <br className="hidden sm:inline" />
+                <span className="text-[#005689]">Sports Academies & Creative Arts</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+                At {displayName}, holistic development is built on the athletic field and arts studio. We provide professional coaching, dedicated music conservatories, and compulsory physical training so every child discovers their inner talent.
+              </p>
+            </div>
+
+            {/* Sports Academies 4-Card Grid */}
+            <div className="mb-14">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-gray-950">
+                    Professional Sports Academies & Coaching
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Supervised by certified NIS coaches with state-of-the-art sports infrastructure
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-[#006FCC] bg-blue-50 px-3 py-1 rounded-full border border-blue-200 self-start sm:self-auto">
+                  SGFI & CBSE Cluster Aligned
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  {
+                    icon: '🏏',
+                    sport: 'Cricket Academy',
+                    infra: 'Turf Pitch & Practice Nets',
+                    desc: 'Batting nets with automated bowling machine, certified coaches, and district tournament hosting.',
+                    badge: 'Under-14 & U-17 Teams'
+                  },
+                  {
+                    icon: '⚽',
+                    sport: 'Football & Athletics',
+                    infra: 'FIFA Standard Turf & 400m Track',
+                    desc: 'Full-size grass ground, specialized sprint tracks, and regular inter-school friendly leagues.',
+                    badge: 'State Finalists'
+                  },
+                  {
+                    icon: '🏀',
+                    sport: 'Basketball & Badminton',
+                    infra: 'Synthetic Floodlit Courts',
+                    desc: 'Indoor wooden badminton hall and dual floodlit basketball arenas with daily drills.',
+                    badge: 'Inter-House League'
+                  },
+                  {
+                    icon: '🏊',
+                    sport: 'Swimming Pool',
+                    infra: 'Half-Olympic Size (25m)',
+                    desc: 'Temperature-controlled filtration, separate shallow pool for primary students, and certified lifeguards.',
+                    badge: '100% Safety Certified'
+                  }
+                ].map((sp, idx) => (
+                  <div key={idx} className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-md hover:border-blue-400 hover:shadow-lg transition-all flex flex-col justify-between">
+                    <div>
+                      <div className="text-4xl mb-3">{sp.icon}</div>
+                      <span className="text-[10.5px] font-bold text-[#006FCC] uppercase tracking-wider block mb-1">
+                        {sp.infra}
+                      </span>
+                      <h4 className="text-lg font-black text-gray-950 mb-2">{sp.sport}</h4>
+                      <p className="text-xs text-gray-600 leading-relaxed mb-4">{sp.desc}</p>
+                    </div>
+                    <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                      <span className="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded border border-emerald-200">
+                        {sp.badge}
+                      </span>
+                      <Activity className="w-3.5 h-3.5 text-blue-600" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Performing Arts, Music & Martial Arts */}
+            <div className="bg-[#EDF5FA] rounded-3xl p-6 sm:p-10 border border-[#D6EDFF]">
+              <h3 className="text-xl sm:text-2xl font-black text-[#002B49] mb-2">
+                Visual & Performing Arts Conservatory
+              </h3>
+              <p className="text-xs text-gray-600 mb-6">
+                Specialized art educators nurture imagination, self-expression, and musical discipline.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs">
+                  <div className="text-3xl mb-2">🎵</div>
+                  <h4 className="font-extrabold text-sm text-gray-900 mb-1">Indian & Western Music Studio</h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Acoustically treated studio equipped with keyboards, drums, classical sitar, tabla, and school choral group training.
+                  </p>
+                </div>
+                <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs">
+                  <div className="text-3xl mb-2">💃</div>
+                  <h4 className="font-extrabold text-sm text-gray-900 mb-1">Classical & Contemporary Dance</h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Spacious wooden-floor dance studio for Kathak, Bharatnatyam, folk dance, and contemporary rhythm choreography.
+                  </p>
+                </div>
+                <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs">
+                  <div className="text-3xl mb-2">🥋</div>
+                  <h4 className="font-extrabold text-sm text-gray-900 mb-1">Taekwondo & Self Defense</h4>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    Mandatory self-defense martial arts modules for all students from Grade 3 onwards, led by black-belt instructors.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+
+      {/* ========================================================= */}
+      {/* 6.2 AWARDS & HONORS TAB                                   */}
+      {/* ========================================================= */}
+      {activeTab === 'awards' && (
+        <section id="awards" className="py-12 sm:py-16 bg-white relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* AI Template Instruction */}
+            <AiSectionInstructionBadge sectionKey="awards" isVisible={isTemplate && showAiGuide} />
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+                <span>HALL OF FAME & HONORS</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                Celebrating Excellence, <br className="hidden sm:inline" />
+                <span className="text-[#005689]">Trophies & National Accolades</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+                Over the decades, {displayName} has earned prestigious recognitions across board examinations, STEM tinkering, green campus sustainability, and state-level sports championships.
+              </p>
+            </div>
+
+            {/* Institutional Awards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+              {[
+                {
+                  icon: '🏆',
+                  title: 'National Green School Award',
+                  org: 'Ministry of Education & Environment',
+                  year: '2025 - 2026',
+                  desc: 'Ranked #1 for zero-waste campus protocols, solar power utilization, and organic biodiversity gardens.',
+                  badge: 'National Rank #1'
+                },
+                {
+                  icon: '🔬',
+                  title: 'Top STEM Tinkering School',
+                  org: 'Atal Innovation Mission / NITI Aayog',
+                  year: '2024 - 2025',
+                  desc: 'Awarded for exemplary student robotics prototypes, drone models, and patent-worthy school inventions.',
+                  badge: 'Excellence in STEM'
+                },
+                {
+                  icon: '🥇',
+                  title: 'Academic Excellence Shield',
+                  org: 'State Education Directorate',
+                  year: '2023 - 2024',
+                  desc: 'Consecutive 100% board examination pass results with highest distinction percentage in the zone.',
+                  badge: '100% CBSE Results'
+                },
+                {
+                  icon: '⚽',
+                  title: 'State Sports Championship',
+                  org: 'School Games Federation of India (SGFI)',
+                  year: '2024 - 2025',
+                  desc: 'Gold trophy in Under-17 Inter-School Athletics and State Basketball Championship runners-up.',
+                  badge: 'State Champions'
+                }
+              ].map((aw, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-md hover:border-blue-300 hover:shadow-lg transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-4xl">{aw.icon}</span>
+                      <span className="text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-full">
+                        {aw.year}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-bold text-[#006FCC] block mb-1">{aw.org}</span>
+                    <h3 className="text-lg font-black text-gray-950 mb-2 leading-snug">{aw.title}</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed mb-4">{aw.desc}</p>
+                  </div>
+                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                      ✓ {aw.badge}
+                    </span>
+                    <Award className="w-4 h-4 text-amber-500" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Board Toppers & Wall of Fame */}
+            <div className="bg-[#EDF5FA] rounded-3xl p-6 sm:p-10 border border-[#D6EDFF]">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#005689] mb-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>ACADEMIC WALL OF FAME</span>
+                  </div>
+                  <h3 className="text-2xl font-black text-[#002B49]">
+                    CBSE Board High Achievers & Olympiad Laureates
+                  </h3>
+                </div>
+                <span className="text-xs font-semibold text-gray-600 bg-white px-3 py-1 rounded-full border border-blue-200 self-start sm:self-auto">
+                  Audited Board Scores
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { name: 'Aarav Singhania', score: '98.8%', exam: 'Class 12th (Science)', rank: 'District Rank 1', mentor: 'IIT-JEE Qualified' },
+                  { name: 'Ananya Sharma', score: '98.4%', exam: 'Class 12th (Commerce)', rank: 'School Topper', mentor: 'SRCC Admitted' },
+                  { name: 'Kavya Pillai', score: '99.2%', exam: 'Class 10th Board', rank: 'State Rank 3', mentor: '100/100 in Maths' },
+                  { name: 'Rohan Mehra', score: 'Gold Medal', exam: 'Intl. Science Olympiad', rank: 'National Finalist', mentor: 'SOF Medalist' }
+                ].map((top, tIdx) => (
+                  <div key={tIdx} className="bg-white p-5 rounded-2xl border border-blue-100 shadow-2xs hover:shadow-sm transition-all">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#005689] to-[#006FCC] text-white font-bold flex items-center justify-center text-sm shadow-xs">
+                        {top.name.charAt(0)}
+                      </div>
+                      <span className="text-lg font-black text-[#005689]">{top.score}</span>
+                    </div>
+                    <h4 className="font-extrabold text-gray-950 text-sm">{top.name}</h4>
+                    <p className="text-[11px] font-semibold text-gray-500 mt-0.5">{top.exam}</p>
+                    <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                      <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded">
+                        {top.rank}
+                      </span>
+                      <span className="text-gray-400">{top.mentor}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+
+      {/* ========================================================= */}
+      {/* 6.3 EVENTS, FESTS & STUDENT CLUBS TAB                     */}
+      {/* ========================================================= */}
+      {activeTab === 'events' && (
+        <section id="events" className="py-12 sm:py-16 bg-white relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* AI Template Instruction */}
+            <AiSectionInstructionBadge sectionKey="events" isVisible={isTemplate && showAiGuide} />
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+                <span>VIBRANT CAMPUS LIFE</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                Annual Celebrations, <br className="hidden sm:inline" />
+                <span className="text-[#005689]">STEAM Exhibitions & Student Clubs</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+                Campus life at {displayName} is a celebration of student inquiry, cultural heritage, and leadership. From our flagship Annual Science Fair to Model United Nations, every event fosters collaboration and creative confidence.
+              </p>
+            </div>
+
+            {/* 3 Column Events Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+              {[
+                {
+                  title: 'Annual Day & Cultural Fest "Udaan"',
+                  term: 'Winter Term (December)',
+                  badge: 'Flagship Event',
+                  desc: 'Over 1,200 students take the grand auditorium stage in musical drama, orchestra, classical dance, and mime theatre celebrating unity in diversity.',
+                  highlights: ['100% Student Participation', 'Dignitary Guest Lectures', 'Theme-Based Productions']
+                },
+                {
+                  title: 'National STEAM & ATL Innovation Fair',
+                  term: 'Autumn Term (October)',
+                  badge: 'Robotics & Science',
+                  desc: 'A 2-day student-curated exhibition presenting working prototypes, smart-city models, solar irrigation devices, and AI automated systems.',
+                  highlights: ['60+ Working Working Models', 'Jury by IIT & CSIR Scientists', 'Community Demo Sessions']
+                },
+                {
+                  title: 'Athletics Meet & Annual Sports Day',
+                  term: 'Spring Term (February)',
+                  badge: 'Field & Track',
+                  desc: 'Inter-house march past, 400m relay races, high jumps, taekwondo demonstrations, and the prestigious House Championship Trophy.',
+                  highlights: ['4 Houses Competition', 'Parent-Teacher Race Track', 'Medal Podium Ceremony']
+                }
+              ].map((ev, eIdx) => (
+                <div key={eIdx} className="bg-white rounded-3xl p-6 sm:p-7 border-2 border-gray-100 shadow-md hover:border-blue-400 hover:shadow-lg transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-[11px] font-bold text-[#006FCC] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                        {ev.badge}
+                      </span>
+                      <span className="text-[11px] text-gray-500 font-semibold">{ev.term}</span>
+                    </div>
+                    <h3 className="text-lg font-black text-gray-950 mb-2 leading-snug">{ev.title}</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed mb-4">{ev.desc}</p>
+                  </div>
+                  <div className="pt-4 border-t border-gray-100 space-y-1.5">
+                    {ev.highlights.map((h, hIdx) => (
+                      <div key={hIdx} className="flex items-center gap-2 text-[11px] text-gray-700 font-medium">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <span>{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Active Student Clubs Strip */}
+            <div className="bg-[#EDF5FA] rounded-3xl p-6 sm:p-10 border border-[#D6EDFF]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black text-[#002B49]">
+                    Student-Led Co-Curricular Clubs & Societies
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Meeting weekly to pursue passions, elect club officers, and organize campus initiatives.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-[#005689] bg-white px-3 py-1.5 rounded-full border border-blue-200 shadow-2xs self-start sm:self-auto">
+                  Every Friday Activity Period
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                {[
+                  { name: 'Robotics & Coding', icon: '🤖', count: '120 Members' },
+                  { name: 'Eco & Nature Club', icon: '🌱', count: '95 Members' },
+                  { name: 'Debate & MUN', icon: '🎙️', count: '80 Members' },
+                  { name: 'Astronomy & Space', icon: '🔭', count: '65 Members' },
+                  { name: 'Heritage & History', icon: '🏛️', count: '70 Members' },
+                  { name: 'Math & Vedic Club', icon: '📐', count: '85 Members' }
+                ].map((club, cIdx) => (
+                  <div key={cIdx} className="bg-white p-4 rounded-2xl border border-blue-100 text-center hover:border-blue-400 transition-colors shadow-2xs">
+                    <div className="text-2xl mb-1.5">{club.icon}</div>
+                    <div className="text-xs font-black text-gray-900 leading-tight">{club.name}</div>
+                    <div className="text-[10px] text-gray-500 mt-1">{club.count}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </section>
+      )}
+
+
+      {/* ========================================================= */}
+      {/* 6.4 FACULTY & MENTORS TAB                                 */}
+      {/* ========================================================= */}
+      {activeTab === 'faculty' && (
+        <section id="faculty" className="py-12 sm:py-16 bg-white relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* AI Template Instruction */}
+            <AiSectionInstructionBadge sectionKey="faculty" isVisible={isTemplate && showAiGuide} />
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+                <span>EXEMPLARY EDUCATORS</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                Passionate Faculty, <br className="hidden sm:inline" />
+                <span className="text-[#005689]">Distinguished Mentors & Subject Specialists</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+                The heart of {displayName} is our team of certified, empathetic educators. With an optimal 1:20 teacher-student ratio, every child is personally mentored, supported in difficulties, and challenged to excel.
+              </p>
+            </div>
+
+            {/* Faculty Key Stat Highlights */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
+              {[
+                { val: '65+', label: 'Certified Educators', desc: '100% CTET / B.Ed / M.Ed Qualified' },
+                { val: '1 : 20', label: 'Teacher-Student Ratio', desc: 'Individual Attention Assured' },
+                { val: '9.4 Yrs', label: 'Average Experience', desc: 'High Faculty Retention & Stability' },
+                { val: '40+ Hrs', label: 'Annual Training', desc: 'NEP 2020 Pedagogical Workshops' }
+              ].map((stat, sIdx) => (
+                <div key={sIdx} className="bg-[#EDF5FA] rounded-2xl p-5 border border-[#D6EDFF] text-center">
+                  <div className="text-2xl sm:text-3xl font-black text-[#005689]">{stat.val}</div>
+                  <div className="text-xs sm:text-sm font-bold text-gray-950 mt-1">{stat.label}</div>
+                  <div className="text-[10px] sm:text-[11px] text-gray-600 mt-0.5">{stat.desc}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Department Leadership Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  role: 'Principal & Director',
+                  name: 'Dr. Sunita K. Sharma',
+                  qual: 'Ph.D. in Physics, M.Ed (Gold Medalist)',
+                  exp: '24 Years in Academic Leadership',
+                  focus: 'Former CBSE Board Observer, passionate about experiential inquiry and holistic student character development.'
+                },
+                {
+                  role: 'Head of Senior Secondary (Science)',
+                  name: 'Prof. Rajeshwar Verma',
+                  qual: 'M.Sc. Chemistry, B.Ed, CSIR-NET',
+                  exp: '18 Years Teaching Experience',
+                  focus: 'Spearheaded 100+ students into IITs and AIIMS; designer of hands-on green chemistry practical micro-kits.'
+                },
+                {
+                  role: 'Head of Mathematics & Innovation',
+                  name: 'Mrs. Neha K. Deshmukh',
+                  qual: 'M.Sc. Applied Maths, CTET Certified',
+                  exp: '14 Years Teaching Experience',
+                  focus: 'Author of student problem-solving guides and mentor to regional Math Olympiad gold medalists.'
+                },
+                {
+                  role: 'Student Counselor & Child Psychologist',
+                  name: 'Dr. Alok Nath Banerjee',
+                  qual: 'M.Phil Clinical Psychology, RCI Licensed',
+                  exp: '11 Years in Student Guidance',
+                  focus: 'Full-time on-campus guidance counseling, career aptitude assessment, and social-emotional wellness programs.'
+                }
+              ].map((prof, pIdx) => (
+                <div key={pIdx} className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-md hover:border-blue-400 hover:shadow-lg transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#005689] to-[#006FCC] text-white font-black text-xl flex items-center justify-center mb-4 shadow-sm">
+                      {prof.name.split(' ')[1]?.charAt(0) || prof.name.charAt(0)}
+                    </div>
+                    <span className="text-[10px] font-bold text-[#006FCC] uppercase tracking-wider block mb-1">
+                      {prof.role}
+                    </span>
+                    <h3 className="text-base font-black text-gray-950 mb-1">{prof.name}</h3>
+                    <p className="text-[11px] font-semibold text-gray-600 mb-2">{prof.qual}</p>
+                    <p className="text-xs text-gray-600 leading-relaxed mb-4">{prof.focus}</p>
+                  </div>
+                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                    <span className="bg-blue-50 text-[#005689] font-bold px-2 py-0.5 rounded border border-blue-200">
+                      {prof.exp}
+                    </span>
+                    <GraduationCap className="w-4 h-4 text-blue-600" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+      )}
+
+
+      {/* ========================================================= */}
+      {/* 6.5 CAMPUS GALLERY & PHOTOBOOK TAB                        */}
+      {/* ========================================================= */}
+      {activeTab === 'gallery' && (
+        <section id="gallery" className="py-12 sm:py-16 bg-white relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* AI Template Instruction */}
+            <AiSectionInstructionBadge sectionKey="gallery" isVisible={isTemplate && showAiGuide} />
+
+            {/* Header */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+                <span>VISUAL CAMPUS TOUR</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                Campus Gallery, <br className="hidden sm:inline" />
+                <span className="text-[#005689]">Modern Architecture & Learning Spaces</span>
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+                Explore the green lawns, state-of-the-art laboratory benches, smart interactive classrooms, and multi-sport complexes at {displayName}. Complete transparency for visiting parents.
+              </p>
+            </div>
+
+            {/* Gallery Category Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {[
+                {
+                  title: 'Smart Digital Classrooms',
+                  category: 'Classroom Tech',
+                  icon: '🖥️',
+                  desc: 'Acoustically insulated classrooms with interactive touch panels, dual projection, ergonomic desks, and natural sunlight.',
+                  tags: ['86" IFP Displays', 'Air-Circulated', 'Ergonomic Desks']
+                },
+                {
+                  title: 'Composite Science & ATL Labs',
+                  category: 'STEM Spaces',
+                  icon: '🔬',
+                  desc: 'Specialized lab setups with dedicated gas lines, digital spectrometers, 3D printers, and electronics soldering stations.',
+                  tags: ['Individual Benches', 'Eye-Wash Stations', 'Robotics Kits']
+                },
+                {
+                  title: 'Junior & Senior Central Library',
+                  category: 'Knowledge Hub',
+                  icon: '📚',
+                  desc: 'Over 14,000 catalogued titles, quiet study carrels, Kindle e-readers, and subscribed national science periodicals.',
+                  tags: ['14,000+ Books', 'Kindle Corner', 'Quiet Study Pods']
+                },
+                {
+                  title: 'Synthetic Multi-Sport Arena',
+                  category: 'Athletics & Fitness',
+                  icon: '🏟️',
+                  desc: 'Floodlit basketball court, cricket practice turf, 400m sprint track, and indoor badminton court.',
+                  tags: ['Floodlit Courts', 'NIS Coaching', 'Locker Rooms']
+                },
+                {
+                  title: 'Performing Arts & Music Studio',
+                  category: 'Creative Arts',
+                  icon: '🎭',
+                  desc: 'Sound-treated conservatory with classical harmoniums, tablas, synthesizers, drum kits, and full dance mirror wall.',
+                  tags: ['Soundproofed', 'Indian & Western', 'Mirrored Dance Floor']
+                },
+                {
+                  title: 'Safe Fleet of GPS GPS Buses',
+                  category: 'Transport & Safety',
+                  icon: '🚌',
+                  desc: 'Clean CNG fleet with live parent GPS tracking app, on-board female attendants, speed governors, and CCTV.',
+                  tags: ['Live Tracking', 'Female Attendant', 'Speed Regulated']
+                }
+              ].map((item, gIdx) => (
+                <div key={gIdx} className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-md hover:border-blue-400 hover:shadow-lg transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-3xl">{item.icon}</span>
+                      <span className="text-[10px] font-bold text-[#006FCC] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                        {item.category}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-black text-gray-950 mb-2">{item.title}</h3>
+                    <p className="text-xs text-gray-600 leading-relaxed mb-4">{item.desc}</p>
+                  </div>
+                  <div className="pt-3 border-t border-gray-100 flex flex-wrap items-center gap-1.5">
+                    {item.tags.map((t, tIdx) => (
+                      <span key={tIdx} className="bg-gray-100 text-gray-700 text-[10px] font-semibold px-2 py-0.5 rounded">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Virtual Campus Tour Prompt Card */}
+            <div className="bg-gradient-to-r from-[#002B49] to-[#005689] rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+              <div className="max-w-xl text-center md:text-left">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                  Interactive Experience
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black mt-1">
+                  Want to Experience {displayName} in Person?
+                </h3>
+                <p className="text-xs sm:text-sm text-blue-100/90 mt-2">
+                  Schedule a 45-minute guided campus walkthrough with our admissions team. Experience classrooms, labs, sports arenas, and interact with senior faculty.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsTourModalOpen(true)}
+                  className="bg-white hover:bg-blue-50 text-[#005689] font-bold px-6 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
+                >
+                  <Play className="w-4 h-4 fill-current text-[#005689]" />
+                  <span>Watch Video Tour</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsApplyModalOpen(true)}
+                  className="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold px-6 py-3 rounded-xl text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer"
+                >
+                  Book Campus Visit
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
       )}
 
 

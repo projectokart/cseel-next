@@ -215,6 +215,125 @@ export const AI_TEMPLATE_SECTIONS: Record<string, AiSectionGuideData> = {
       'Use an official domain email rather than a generic Gmail address to maintain high trust.',
       'Verify the Google Maps pin points precisely to your school entrance gate.'
     ]
+  },
+  academics: {
+    sectionKey: 'academics',
+    sectionNumber: 10,
+    title: 'Academics, Curriculum & Streams',
+    summary: 'Comprehensive academic framework, subject offerings, pedagogical methodology, and board examination track record.',
+    wordCount: 'Curriculum & Streams: 150-250 words',
+    requiredFields: [
+      'Board Affiliation (CBSE / ICSE / State Board curriculum details)',
+      'Streams offered in Senior Secondary: Science (PCM/PCB), Commerce, Humanities/Arts',
+      'Subject combinations, elective choices (AI, Robotics, Informatics, Physical Ed)',
+      'NEP 2020 Experiential & Competency-based Learning framework',
+      'Board Results Track Record (100% Pass rate, Distinctions, Subject toppers)',
+      'Competitive Exam Coaching & Career Guidance (JEE, NEET, CUET, NDA, CLAT)'
+    ],
+    mediaSpecs: 'Academic charts, textbook/curriculum infographics, or classroom interactive learning photos.',
+    aiPromptSnippet: 'Write a comprehensive Academic Overview for an Indian CBSE school covering Science, Commerce, and Arts streams, NEP 2020 experiential learning, and competitive exam preparation.',
+    adminTips: [
+      'List all skill subjects approved by CBSE (e.g. Artificial Intelligence, Data Science, Financial Literacy).',
+      'Mention remedial class support for students needing extra academic attention.'
+    ]
+  },
+  awards: {
+    sectionKey: 'awards',
+    sectionNumber: 11,
+    title: 'Awards, Accolades & Wall of Fame',
+    summary: 'Celebrates school achievements, national recognition, academic toppers, and sports triumphs.',
+    wordCount: 'Accolades list with 10-20 words per award',
+    requiredFields: [
+      'Institutional Awards (Best STEM School, Green Campus, Cleanest School Award)',
+      'Academic Board Examination Toppers (Class 10th & 12th percentage and ranks)',
+      'Science & Mathematics Olympiad medalists (SOF, SilverZone, NTSE, KVPY)',
+      'State & National Sports Championships (Athletics, Basketball, Cricket, Football)',
+      'Year of award and official awarding body / government ministry'
+    ],
+    mediaSpecs: 'Photos of award trophies, citation certificates, and student medal ceremonies.',
+    aiPromptSnippet: 'Draft a celebratory "Wall of Fame & Honors" list for an Indian school highlighting recent state board results, Olympiad ranks, and national sports trophies.',
+    adminTips: [
+      'Keep awards organized chronologically, featuring the latest 3 years prominently.',
+      'Include student names and classes for individual Olympiad and sports achievements.'
+    ]
+  },
+  events: {
+    sectionKey: 'events',
+    sectionNumber: 12,
+    title: 'Events, Extracurriculars & Clubs',
+    summary: 'Vibrant co-curricular life, annual celebrations, clubs, and experiential learning activities.',
+    wordCount: 'Event calendar points: 20-30 words per event',
+    requiredFields: [
+      'Annual School Celebrations (Annual Day Fest, Sports Day, Republic & Independence Day)',
+      'Academic & STEM Fairs (Science Exhibition, STEAM Carnival, Model United Nations)',
+      'Student Clubs & Societies (Robotics, Astronomy, Debate, Music & Dance, Eco Club)',
+      'Community Outreach, Social Work & Environmental Plantation drives',
+      'Inter-School Competitions & Cultural Exchange programs'
+    ],
+    mediaSpecs: 'Action photographs of student performances, sports competitions, and science exhibitions.',
+    aiPromptSnippet: 'Create an engaging Annual School Events Calendar and Co-Curricular Clubs overview showcasing arts, sports, science fairs, and community leadership.',
+    adminTips: [
+      'Highlight active student leadership roles such as the Student Council, Head Boy, and Head Girl.',
+      'Provide dates or academic terms for upcoming major school events.'
+    ]
+  },
+  extracurricular: {
+    sectionKey: 'extracurricular',
+    sectionNumber: 13,
+    title: 'Extracurricular Activities & Sports Academies',
+    summary: 'Showcases sports training, visual and performing arts, music, martial arts, and holistic development beyond textbooks.',
+    wordCount: 'Activities breakdown: 30-50 words per academy',
+    requiredFields: [
+      'Sports Facilities & Dimensions (Standard cricket turf, football ground, basketball court, swimming pool)',
+      'Specialized Professional Sports Coaching (NIS coaches, martial arts/taekwondo, chess academy)',
+      'Visual & Performing Arts (Indian classical dance, western music, choir, pottery, drama)',
+      'Compulsory Physical Education periods per week and inter-house leagues'
+    ],
+    mediaSpecs: 'Dynamic sports in action photos and arts studio exhibitions.',
+    aiPromptSnippet: 'Write an inspiring Extracurricular and Sports Academy overview for an Indian school highlighting cricket, basketball, swimming, classical arts, and character development.',
+    adminTips: [
+      'Detail safety protocols during sports (first aid kits, ambulance tie-ups, certified lifeguards).',
+      'Mention participation in CBSE Cluster Games and SGFI tournaments.'
+    ]
+  },
+  faculty: {
+    sectionKey: 'faculty',
+    sectionNumber: 14,
+    title: 'Faculty Strength & Academic Mentorship',
+    summary: 'Presents teaching credentials, teacher-student ratios, experience, and academic leadership.',
+    wordCount: 'Faculty overview: 100-150 words',
+    requiredFields: [
+      'Total Certified Faculty count & average teaching experience in years',
+      'Qualifications profile (100% B.Ed, M.Ed, PhD, and CTET certified educators)',
+      'Specialist Educators (Special educator, child psychologist / behavioral counselor, sports NIS coaches)',
+      'Continuous Professional Development (CBSE workshops, NEP 2020 pedagogy seminars attended annually)'
+    ],
+    mediaSpecs: 'Professional group faculty portrait or individual department head photos.',
+    aiPromptSnippet: 'Draft a Faculty and Mentorship overview for a CBSE school highlighting passionate, qualified teachers, 1:20 teacher-student ratio, and dedicated student counseling.',
+    adminTips: [
+      'Emphasize stability and low teacher turnover rate as proof of institution quality.',
+      'Mention availability of remedial teachers for slow-paced learners.'
+    ]
+  },
+  gallery: {
+    sectionKey: 'gallery',
+    sectionNumber: 15,
+    title: 'Campus Visual Gallery & Virtual Walkthrough',
+    summary: 'Comprehensive photographic and video tour giving prospective parents complete physical transparency.',
+    wordCount: 'Captions: 5-10 words per photo',
+    requiredFields: [
+      'Campus exterior facade, aerial drone view & central courtyard',
+      'Smart digital classrooms with interactive flat panels (IFPs)',
+      'Science laboratories (Physics, Chemistry, Biology, Atal Tinkering Lab)',
+      'Sports arena, swimming pool, basketball court, and play areas',
+      'Auditorium, library, dining cafeteria, and school buses'
+    ],
+    mediaSpecs: '12 to 24 high-definition photos (1200x800 px, 3:2 ratio) plus optional 360-degree tour link.',
+    aiPromptSnippet: 'List the essential photo categories and caption ideas for a school website gallery to provide full transparency to visiting parents.',
+    adminTips: [
+      'Group photos into clear categories (Academics, Labs, Sports, Arts, Campus).',
+      'Keep gallery photos updated each academic session.'
+    ]
   }
 };
 

@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-flex items-center mb-4 hover:opacity-95 transition-opacity">
               <img
-                src="/images/cseel_final_exact_color_logo.png?v=20261004-exact"
+                src="/images/cseel-logo.png"
                 alt="CSEEL - Centre for Scientific Exploration & Experiential Learning"
                 className="h-12 w-auto object-contain shrink-0"
               />

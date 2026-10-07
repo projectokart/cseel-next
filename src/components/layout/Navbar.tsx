@@ -530,7 +530,7 @@ const Navbar = () => {
           {/* Brand Logo */}
           <Link href="/" className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-3 xl:mr-5">
             <img
-              src="/images/cseel_final_exact_color_logo.png?v=20261004-exact"
+              src="/images/cseel-logo.png"
               alt="CSEEL - Centre for Scientific Exploration & Experiential Learning"
               className="h-9 sm:h-10 w-auto object-contain shrink-0"
             />

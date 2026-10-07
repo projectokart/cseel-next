@@ -84,7 +84,6 @@ import {
   PrincipalDeskIllustration,
   SchoolCampusIllustration
 } from '@/components/illustrations/FacilityIllustrations';
-import Footer from '@/components/layout/Footer';
 import SchoolPhotoBook from '@/components/schools/SchoolPhotoBook';
 import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolTemplateContext';
 import TemplateControlBar from '@/components/schools/template/TemplateControlBar';

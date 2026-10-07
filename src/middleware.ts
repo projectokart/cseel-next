@@ -30,18 +30,15 @@ export function middleware(request: NextRequest) {
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'cseel.org';
 
   // Extract subdomain
-  const currentHost =
-    process.env.NODE_ENV === 'production'
-      ? hostname
-          .replace(`.${rootDomain}`, '')
-          .replace('.vercel.app', '')
-          .replace(`www.${rootDomain}`, '')
-          .replace(rootDomain, '')
-      : hostname
-          .replace('.localhost:3000', '')
-          .replace('.localhost:3001', '')
-          .replace('localhost:3000', '')
-          .replace('localhost:3001', '');
+  const currentHost = hostname
+    .replace(`.${rootDomain}`, '')
+    .replace('.vercel.app', '')
+    .replace(`www.${rootDomain}`, '')
+    .replace(rootDomain, '')
+    .replace('.localhost:3000', '')
+    .replace('.localhost:3001', '')
+    .replace('localhost:3000', '')
+    .replace('localhost:3001', '');
 
   // 1. Dedicated Admin Subdomain: admin.cseel.org
   if (currentHost === 'admin') {

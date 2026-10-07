@@ -20,7 +20,10 @@ interface LayoutProps {
 const LayoutContent = ({ children }: LayoutProps) => {
   const pathname = usePathname();
   const isAdmin = pathname?.includes('/admin') || pathname?.startsWith('/admin') || pathname?.includes('/system-admin-portal');
-  const isDedicated = pathname?.startsWith('/school-finder') || pathname?.startsWith('/schoolsearch');
+  const isDedicated =
+    pathname?.startsWith('/school-finder') ||
+    pathname?.startsWith('/schoolsearch') ||
+    pathname?.startsWith('/school-template');
   const isHomePage = pathname === '/' || pathname === '';
 
   if (isAdmin || isDedicated) {

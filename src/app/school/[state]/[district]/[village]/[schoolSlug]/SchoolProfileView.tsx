@@ -64,7 +64,11 @@ import {
   Menu,
   Home,
   Info,
-  Lightbulb
+  Lightbulb,
+  Edit3,
+  Trash2,
+  Plus,
+  EyeOff
 } from 'lucide-react';
 import {
   ScienceLabIllustration,
@@ -83,6 +87,11 @@ import {
 import Footer from '@/components/layout/Footer';
 import SchoolPhotoBook from '@/components/schools/SchoolPhotoBook';
 import AiProfileTemplateGuide, { AiSectionInstructionBadge } from '@/components/schools/AiProfileTemplateGuide';
+import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolTemplateContext';
+import TemplateControlBar from '@/components/schools/template/TemplateControlBar';
+import EditableText from '@/components/schools/template/EditableText';
+import EditableImage from '@/components/schools/template/EditableImage';
+import AddCardModal, { ICON_MAP, ILLUSTRATION_MAP } from '@/components/schools/template/AddCardModal';
 
 interface SchoolProfileViewProps {
   state: string;
@@ -239,11 +248,31 @@ export default function SchoolProfileView({
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Interactive Live Template Context
+  const templateCtx = useOptionalSchoolTemplate();
+  const isLiveTemplate = isTemplate && !!templateCtx;
+  const templateData = templateCtx?.data;
+  const isEditMode = isLiveTemplate ? (templateCtx?.isEditMode ?? true) : false;
+
+  // Add Card Modals for Facilities and Admissions
+  const [isAddFacilityModalOpen, setIsAddFacilityModalOpen] = useState(false);
+  const [editingFacility, setEditingFacility] = useState<any | null>(null);
+  const [isAddAdmissionModalOpen, setIsAddAdmissionModalOpen] = useState(false);
+  const [editingAdmission, setEditingAdmission] = useState<any | null>(null);
+
   const handleTabSwitch = (tab: TabType) => {
     setActiveTab(tab);
     setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Filter tabs according to school's tab visibility settings (in preview mode)
+  const effectiveNavTabs = navTabs.filter((tab) => {
+    if (isLiveTemplate && !isEditMode) {
+      return templateData?.tabVisibility?.[tab.id] !== false;
+    }
+    return true;
+  });
 
   // Mobile swipe gestures: STRICTLY Left Edge Swipe (< 30px) or Handle to prevent accidental triggering when swiping cards/flipbook
   useEffect(() => {
@@ -583,29 +612,47 @@ export default function SchoolProfileView({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Display texts matching the exact reference design or template mode
-  const displayName = isTemplate
-    ? 'Write Your School Name Here'
-    : ((!schoolName || /^\d+$/.test(schoolName.trim()))
-      ? 'BrightFuture Public School'
-      : schoolName);
-  const displayEstablished = establishedYear || '1975';
-  const displayStudents = totalStudents > 0 ? `${totalStudents.toLocaleString()}+` : '2,500+';
-  const displayTeachers = totalTeachers > 0 ? `${totalTeachers}+` : '120+';
-  const displayYears = establishedYear && !isNaN(parseInt(establishedYear))
-    ? `${Math.max(10, 2026 - parseInt(establishedYear))}+`
-    : '50+';
-  const displayPrincipal = isTemplate
-    ? 'Write Principal / Headmaster Name Here'
-    : (principalName || 'Dr. Meera Sharma');
-  const displayAddress = isTemplate
-    ? 'Plot No. 12, Knowledge Park / Main Road, Your City - PIN Code'
-    : (rawAddress || '123 Green Valley Road, Bangalore - 560001');
-  const displayPhone = isTemplate
-    ? '+91 98XXXXXXXX / Official School Helpline'
-    : (rawPhone || '+91 98765 43210');
-  const displayEmail = isTemplate
-    ? 'admissions@yourschoolname.edu.in'
-    : (rawEmail || 'info@brightfuture.edu.in');
+  const displayName = isLiveTemplate
+    ? (templateData?.schoolName || 'Write Your School Name Here')
+    : (isTemplate
+      ? 'Write Your School Name Here'
+      : ((!schoolName || /^\d+$/.test(schoolName.trim()))
+        ? 'BrightFuture Public School'
+        : schoolName));
+  const displayEstablished = isLiveTemplate
+    ? (templateData?.establishedYear || '2008')
+    : (establishedYear || '1975');
+  const displayStudents = isLiveTemplate
+    ? `${(templateData?.totalStudents || 1250).toLocaleString()}+`
+    : (totalStudents > 0 ? `${totalStudents.toLocaleString()}+` : '2,500+');
+  const displayTeachers = isLiveTemplate
+    ? `${templateData?.totalTeachers || 65}+`
+    : (totalTeachers > 0 ? `${totalTeachers}+` : '120+');
+  const displayYears = isLiveTemplate
+    ? `${Math.max(5, 2026 - parseInt(templateData?.establishedYear || '2008'))}+`
+    : (establishedYear && !isNaN(parseInt(establishedYear))
+      ? `${Math.max(10, 2026 - parseInt(establishedYear))}+`
+      : '50+');
+  const displayPrincipal = isLiveTemplate
+    ? (templateData?.principalName || 'Write Principal / Headmaster Name Here')
+    : (isTemplate
+      ? 'Write Principal / Headmaster Name Here'
+      : (principalName || 'Dr. Meera Sharma'));
+  const displayAddress = isLiveTemplate
+    ? (templateData?.address || 'Plot No. 12, Knowledge Park / Main Road, Your City - PIN Code')
+    : (isTemplate
+      ? 'Plot No. 12, Knowledge Park / Main Road, Your City - PIN Code'
+      : (rawAddress || '123 Green Valley Road, Bangalore - 560001'));
+  const displayPhone = isLiveTemplate
+    ? (templateData?.phone || '+91 98XXXXXXXX / Official School Helpline')
+    : (isTemplate
+      ? '+91 98XXXXXXXX / Official School Helpline'
+      : (rawPhone || '+91 98765 43210'));
+  const displayEmail = isLiveTemplate
+    ? (templateData?.email || 'admissions@yourschoolname.edu.in')
+    : (isTemplate
+      ? 'admissions@yourschoolname.edu.in'
+      : (rawEmail || 'info@brightfuture.edu.in'));
 
   // Copy feedback state
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -621,8 +668,12 @@ export default function SchoolProfileView({
   const [isCredOpen, setIsCredOpen] = useState(false);
 
   // Official Institutional & Govt Accreditation Details
-  const displayUdise = udiseCode || '06070123456';
-  const displayBoard = board || 'CBSE (Central Board of Secondary Education)';
+  const displayUdise = isLiveTemplate
+    ? (templateData?.udiseCode || '06170100101')
+    : (udiseCode || '06070123456');
+  const displayBoard = isLiveTemplate
+    ? (templateData?.board || 'CBSE (Central Board of Secondary Education)')
+    : (board || 'CBSE (Central Board of Secondary Education)');
   const cleanUdiseDigits = displayUdise.replace(/\D/g, '');
   const displayAffiliationNo = displayBoard.toUpperCase().includes('CBSE')
     ? `CBSE/AFF/${cleanUdiseDigits.slice(-6) || '530492'}`
@@ -1237,6 +1288,46 @@ export default function SchoolProfileView({
     }
   ];
 
+  // Dynamic Facilities for Live Template (Initial template starts with 0 cards; user adds them)
+  const effectiveFacilities = isLiveTemplate
+    ? (templateData?.facilities || []).map((f) => {
+        const IconComponent = (f.icon && ICON_MAP[f.icon]) ? ICON_MAP[f.icon] : Layers;
+        const IllusComponent = (f.illustration && ILLUSTRATION_MAP[f.illustration])
+          ? ILLUSTRATION_MAP[f.illustration]
+          : ScienceLabIllustration;
+        return {
+          id: f.id,
+          name: f.title,
+          desc: f.desc,
+          photo: '',
+          Illustration: IllusComponent,
+          category: f.badge || 'School Facility',
+          icon: IconComponent,
+          color: 'bg-[#006FCC]',
+          tagline: f.title,
+          details: f.desc,
+          specs: [
+            { label: 'Category', val: f.badge || 'General' },
+            { label: 'Access', val: 'Open to all students' }
+          ],
+          capacity: 'Open Access',
+          timings: 'School Working Hours',
+          _raw: f
+        };
+      })
+    : facilities;
+
+  // Dynamic Admissions for Live Template (Initial template starts with 0 cards; user adds them)
+  const effectiveAdmissionSteps = isLiveTemplate
+    ? (templateData?.admissions || []).map((a, idx) => ({
+        id: a.id,
+        step: `0${idx + 1}`,
+        title: a.title,
+        desc: a.criteria + (a.fees ? ` • Fees: ${a.fees}` : ''),
+        _raw: a
+      }))
+    : admissionSteps;
+
   const handleApplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
@@ -1314,9 +1405,17 @@ export default function SchoolProfileView({
     <div className="min-h-screen bg-white font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
       
       {/* ========================================================= */}
-      {/* 0. AI MASTER TEMPLATE ASSISTANT (VISIBLE IN TEMPLATE MODE) */}
+      {/* 0. LIVE TEMPLATE WYSIWYG CONTROL BAR                      */}
       {/* ========================================================= */}
-      {isTemplate && (
+      {isLiveTemplate && (
+        <TemplateControlBar
+          currentTab={activeTab}
+          onTabChange={(tab) => handleTabSwitch(tab as TabType)}
+        />
+      )}
+
+      {/* 0. AI MASTER TEMPLATE ASSISTANT (VISIBLE IN REGULAR TEMPLATE MODE) */}
+      {isTemplate && !isLiveTemplate && (
         <AiProfileTemplateGuide
           showAiGuide={showAiGuide}
           setShowAiGuide={setShowAiGuide}
@@ -1343,9 +1442,17 @@ export default function SchoolProfileView({
             </div>
             <div className="flex flex-col min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm xs:text-base sm:text-2xl font-black tracking-tight text-gray-950 font-serif leading-tight truncate">
-                  {displayName}
-                </span>
+                {isLiveTemplate && isEditMode ? (
+                  <EditableText
+                    value={templateData?.schoolName || displayName}
+                    fieldKey="schoolName"
+                    className="text-sm xs:text-base sm:text-2xl font-black tracking-tight text-gray-950 font-serif leading-tight truncate"
+                  />
+                ) : (
+                  <span className="text-sm xs:text-base sm:text-2xl font-black tracking-tight text-gray-950 font-serif leading-tight truncate">
+                    {displayName}
+                  </span>
+                )}
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EDF5FA] border border-[#D6EDFF] text-[#005689] text-[10px] sm:text-xs font-bold tracking-wide shrink-0">
                   <span className="text-[#006FCC] font-extrabold">UDISE:</span>
                   <span className="font-mono">{displayUdise}</span>
@@ -1359,7 +1466,7 @@ export default function SchoolProfileView({
 
           {/* Desktop Nav Links (Tab Switcher: Horizontal Scrollable List) */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-semibold overflow-x-auto scrollbar-none py-1 max-w-[64vw]">
-            {navTabs.map((tab) => {
+            {effectiveNavTabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;
               return (
@@ -1374,7 +1481,12 @@ export default function SchoolProfileView({
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#005689] stroke-[2.5]' : 'text-gray-500'}`} />
-                  <span className="text-[11px] leading-tight whitespace-nowrap">{tab.shortLabel}</span>
+                  <span className="text-[11px] leading-tight whitespace-nowrap flex items-center gap-1">
+                    {tab.shortLabel}
+                    {isLiveTemplate && isEditMode && templateData?.tabVisibility?.[tab.id] === false && (
+                      <span className="text-[9px] text-amber-500 font-bold" title="Tab is set to Private (Hidden in Preview)">🔒</span>
+                    )}
+                  </span>
                 </button>
               );
             })}
@@ -1444,7 +1556,7 @@ export default function SchoolProfileView({
 
         {/* Center: Mini Icons List with min-h-0 flex-1, smooth inertia touch scroll & slim scrollbar */}
         <div className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain py-1 px-1 flex flex-col gap-1 [scrollbar-width:thin] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-400 touch-pan-y">
-          {navTabs.map((tab) => {
+          {effectiveNavTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
             return (
@@ -1463,11 +1575,14 @@ export default function SchoolProfileView({
               >
                 <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-600'}`} />
                 <span
-                  className={`text-[8px] font-bold tracking-tight text-center leading-tight truncate w-full ${
+                  className={`text-[8px] font-bold tracking-tight text-center leading-tight truncate w-full flex items-center justify-center gap-0.5 ${
                     isActive ? 'text-white' : 'text-slate-700'
                   }`}
                 >
-                  {tab.shortLabel}
+                  <span>{tab.shortLabel}</span>
+                  {isLiveTemplate && isEditMode && templateData?.tabVisibility?.[tab.id] === false && (
+                    <span className="text-[7px] text-amber-400">🔒</span>
+                  )}
                 </span>
               </button>
             );
@@ -1563,6 +1678,32 @@ export default function SchoolProfileView({
           </button>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Live Template Onboarding & UDISE Fetch Guide Banner */}
+            {isLiveTemplate && (
+              <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#005689] via-[#004b77] to-[#003c6e] text-white shadow-xl border border-sky-400/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-xl bg-[#FBBC04] text-slate-950 flex items-center justify-center font-black text-xl shrink-0 shadow-md">
+                    ⚡
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-extrabold text-sm sm:text-base text-white">Live Interactive School Editor</span>
+                      <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
+                        Auto-Save Active
+                      </span>
+                    </div>
+                    <p className="text-xs text-sky-100 mt-1 max-w-xl leading-relaxed">
+                      Enter your 11-digit UDISE code in the top bar to auto-populate all institutional data (Board, Principal, Address, Teachers, Students). You can edit any text or photos directly on this page!
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 bg-white/10 px-3.5 py-2 rounded-xl border border-white/20">
+                  <span className="text-[11px] text-sky-200">Active UDISE:</span>
+                  <span className="font-mono font-bold text-xs text-amber-300">{displayUdise}</span>
+                </div>
+              </div>
+            )}
+
             {/* AI Template Instruction: Section 1 (Hero & Identity) */}
             <AiSectionInstructionBadge sectionKey="hero" isVisible={isTemplate && showAiGuide} />
 
@@ -2345,178 +2486,248 @@ export default function SchoolProfileView({
             </div>
 
             <div className="flex items-center gap-3 self-end md:self-auto">
-              <button
-                onClick={() => setSelectedFacility(facilities[0])}
-                className="button_secondary inline-flex items-center gap-2 bg-[#EDF5FA] hover:bg-[#D6EDFF] border border-[#D6EDFF] text-[#006FCC] px-5 py-2.5 rounded-[12px] text-sm font-bold transition-all shadow-xs cursor-pointer"
-              >
-                <span>All Details</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </button>
+              {isLiveTemplate && isEditMode && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingFacility(null);
+                    setIsAddFacilityModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-2 bg-[#006FCC] hover:bg-[#005499] text-white px-5 py-2.5 rounded-[12px] text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <Plus className="w-4 h-4 stroke-[2.5]" />
+                  <span>+ Add Facility Card</span>
+                </button>
+              )}
+              {effectiveFacilities.length > 0 && (
+                <button
+                  onClick={() => setSelectedFacility(effectiveFacilities[0])}
+                  className="button_secondary inline-flex items-center gap-2 bg-[#EDF5FA] hover:bg-[#D6EDFF] border border-[#D6EDFF] text-[#006FCC] px-5 py-2.5 rounded-[12px] text-sm font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  <span>All Details</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Responsive Grid: 2 Cards per row on Mobile, 3 on Tablet, 4 on Desktop */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5 pb-8 pt-3">
-            {facilities.map((facility) => {
-              const IconComponent = facility.icon;
-              return (
-                <div
-                  key={facility.id}
-                  className="w-full h-[340px] sm:h-[375px] [perspective:1200px] group cursor-pointer"
+          {/* Dynamic Grid / Empty State */}
+          {effectiveFacilities.length === 0 ? (
+            <div className="my-10 py-16 px-6 text-center bg-white rounded-3xl border-2 border-dashed border-sky-200 max-w-2xl mx-auto shadow-sm">
+              <div className="w-16 h-16 rounded-2xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center mx-auto mb-4 border border-[#D6EDFF]">
+                <Layers className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">No Facility Cards Added Yet</h3>
+              <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
+                Clean starting template with 0 cards. Click below to add labs, sports, libraries, transport, and smart classrooms from our built-in school icon & illustration library.
+              </p>
+              {isEditMode ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingFacility(null);
+                    setIsAddFacilityModalOpen(true);
+                  }}
+                  className="inline-flex items-center gap-2 bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer"
                 >
-                  <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-xl">
-                    
-                    {/* ================= FRONT FACE: REAL PHOTOGRAPH ================= */}
-                    <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-gray-200/90 flex flex-col justify-between shadow-xs">
+                  <Plus className="w-4 h-4 stroke-[2.5]" />
+                  <span>+ Add First Facility Card</span>
+                </button>
+              ) : (
+                <p className="text-xs text-gray-400">Switch to Edit Mode in top bar to add facility cards.</p>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-5 pb-8 pt-3">
+              {effectiveFacilities.map((facility) => {
+                const IconComponent = facility.icon;
+                return (
+                  <div
+                    key={facility.id}
+                    className="w-full h-[340px] sm:h-[375px] [perspective:1200px] group cursor-pointer relative"
+                  >
+                    <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-xl">
                       
-                      {/* Real Facility Photograph or Fallback SVG Illustration */}
-                      <div className="relative h-[130px] sm:h-[165px] w-full overflow-hidden bg-slate-900 flex items-center justify-center">
-                        {!facility.photo || imageErrors[facility.id] ? (
-                          <div className="w-full h-full bg-slate-50 flex items-center justify-center p-2 sm:p-3">
-                            <facility.Illustration className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
-                          </div>
-                        ) : (
-                          <img
-                            src={facility.photo}
-                            alt={`${displayName} - ${facility.name}`}
-                            onError={() => setImageErrors((prev) => ({ ...prev, [facility.id]: true }))}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
+                      {/* ================= FRONT FACE: REAL PHOTOGRAPH / ILLUSTRATION ================= */}
+                      <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-gray-200/90 flex flex-col justify-between shadow-xs">
                         
-                        {/* Category Tag & Icon */}
-                        <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 flex items-center gap-1.5">
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold ${facility.color} text-white shadow-md backdrop-blur-sm`}>
-                            <IconComponent className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                            <span className="truncate max-w-[85px] sm:max-w-none">{facility.category}</span>
-                          </span>
-                        </div>
+                        {/* Real Facility Photograph or Fallback SVG Illustration */}
+                        <div className="relative h-[130px] sm:h-[165px] w-full overflow-hidden bg-slate-900 flex items-center justify-center">
+                          {!facility.photo || imageErrors[facility.id] ? (
+                            <div className="w-full h-full bg-slate-50 flex items-center justify-center p-2 sm:p-3">
+                              <facility.Illustration className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+                            </div>
+                          ) : (
+                            <img
+                              src={facility.photo}
+                              alt={`${displayName} - ${facility.name}`}
+                              onError={() => setImageErrors((prev) => ({ ...prev, [facility.id]: true }))}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/25 pointer-events-none" />
+                          
+                          {/* Category Tag & Icon */}
+                          <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 flex items-center gap-1.5">
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold ${facility.color} text-white shadow-md backdrop-blur-sm`}>
+                              <IconComponent className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                              <span className="truncate max-w-[85px] sm:max-w-none">{facility.category}</span>
+                            </span>
+                          </div>
 
-                        {/* Capacity and Verification Tag */}
-                        <div className="absolute bottom-2 left-2 right-2 sm:bottom-2.5 sm:left-2.5 sm:right-2.5 flex items-center justify-between text-white text-[9px] sm:text-[10px] font-medium pointer-events-none">
-                          <span className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[8.5px] sm:text-[9.5px]">
-                            👥 {facility.capacity}
-                          </span>
-                          <span className="hidden xs:inline-block bg-emerald-500/90 px-1.5 py-0.5 rounded text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider shadow-sm">
-                            {!facility.photo || imageErrors[facility.id] ? 'Facility' : 'Verified'}
-                          </span>
-                        </div>
-                      </div>
+                          {/* Edit / Delete action overlay in Edit Mode */}
+                          {isLiveTemplate && isEditMode && (
+                            <div className="absolute top-2 right-2 flex items-center gap-1 z-30" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingFacility(facility._raw || facility);
+                                  setIsAddFacilityModalOpen(true);
+                                }}
+                                title="Edit Card"
+                                className="w-6 h-6 rounded-md bg-white/95 hover:bg-white text-slate-800 shadow-md flex items-center justify-center transition hover:scale-105 cursor-pointer"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (confirm(`Delete ${facility.name}?`)) {
+                                    templateCtx?.deleteFacilityCard(facility.id);
+                                  }
+                                }}
+                                title="Delete Card"
+                                className="w-6 h-6 rounded-md bg-rose-600/95 hover:bg-rose-700 text-white shadow-md flex items-center justify-center transition hover:scale-105 cursor-pointer"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
 
-                      {/* Front Card Narrative */}
-                      <div className="p-2.5 sm:p-3.5 flex flex-col justify-between flex-1">
-                        <div>
-                          <h3 className="font-bold text-gray-950 text-xs sm:text-[15px] group-hover:text-[#006FCC] transition-colors leading-tight truncate">
-                            {facility.name}
-                          </h3>
-                          <p className="text-[9.5px] sm:text-[11px] text-gray-500 font-medium mt-0.5 truncate">
-                            {facility.tagline}
-                          </p>
-                          <p className="text-[10px] sm:text-[11px] text-gray-600 mt-1 line-clamp-2 leading-relaxed">
-                            {facility.desc}
-                          </p>
-                        </div>
-
-                        {/* Interactive 3D Flip Hint Bar */}
-                        <div className="pt-1.5 sm:pt-2 border-t border-gray-100 flex items-center justify-between">
-                          <span className="text-[9px] sm:text-[10px] font-bold text-[#006FCC] flex items-center gap-1">
-                            <span>Flip specs</span>
-                            <span className="text-xs font-black">↷</span>
-                          </span>
-                          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center group-hover:bg-[#006FCC] group-hover:text-white transition-colors">
-                            <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[2.5]" />
+                          {/* Capacity and Verification Tag */}
+                          <div className="absolute bottom-2 left-2 right-2 sm:bottom-2.5 sm:left-2.5 sm:right-2.5 flex items-center justify-between text-white text-[9px] sm:text-[10px] font-medium pointer-events-none">
+                            <span className="bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[8.5px] sm:text-[9.5px]">
+                              👥 {facility.capacity}
+                            </span>
+                            <span className="hidden xs:inline-block bg-emerald-500/90 px-1.5 py-0.5 rounded text-[8.5px] sm:text-[9px] font-bold uppercase tracking-wider shadow-sm">
+                              {!facility.photo || imageErrors[facility.id] ? 'Facility' : 'Verified'}
+                            </span>
                           </div>
                         </div>
+
+                        {/* Front Card Narrative */}
+                        <div className="p-2.5 sm:p-3.5 flex flex-col justify-between flex-1">
+                          <div>
+                            <h3 className="font-bold text-gray-950 text-xs sm:text-[15px] group-hover:text-[#006FCC] transition-colors leading-tight truncate">
+                              {facility.name}
+                            </h3>
+                            <p className="text-[9.5px] sm:text-[11px] text-gray-500 font-medium mt-0.5 truncate">
+                              {facility.tagline}
+                            </p>
+                            <p className="text-[10px] sm:text-[11px] text-gray-600 mt-1 line-clamp-2 leading-relaxed">
+                              {facility.desc}
+                            </p>
+                          </div>
+
+                          {/* Interactive 3D Flip Hint Bar */}
+                          <div className="pt-1.5 sm:pt-2 border-t border-gray-100 flex items-center justify-between">
+                            <span className="text-[9px] sm:text-[10px] font-bold text-[#006FCC] flex items-center gap-1">
+                              <span>Flip specs</span>
+                              <span className="text-xs font-black">↷</span>
+                            </span>
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center group-hover:bg-[#006FCC] group-hover:text-white transition-colors">
+                              <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[2.5]" />
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* ================= BACK FACE: WHITE BACKGROUND & DEEP BLUE TEXT ================= */}
+                      <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl overflow-hidden bg-white text-[#002B49] p-2.5 sm:p-3.5 flex flex-col justify-between border-2 border-[#D6EDFF] shadow-xl">
+                        
+                        {/* Top Header + Scrollable Specs Body */}
+                        <div className="flex-1 min-h-0 flex flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-0.5">
+                          {/* Header with Lab Name & Icon */}
+                          <div className="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="w-7 h-7 rounded-lg bg-[#EDF5FA] border border-[#D6EDFF] flex items-center justify-center text-[#005689] shrink-0">
+                                <IconComponent className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-[#002B49] text-xs sm:text-[13px] leading-tight truncate">
+                                  {facility.name}
+                                </h4>
+                                <span className="text-[9px] text-[#005689] uppercase tracking-wider font-bold block truncate">
+                                  {facility.category}
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-[9px] font-bold text-[#005689] bg-[#EDF5FA] px-2 py-0.5 rounded-full border border-[#D6EDFF] shrink-0 ml-1">
+                              Specs
+                            </span>
+                          </div>
+
+                          {/* Full Detailed Paragraph */}
+                          <div className="bg-[#F8FAFD] rounded-lg p-2 my-2 border border-slate-100 shrink-0">
+                            <p className="text-[10.5px] text-[#002B49]/90 font-medium leading-relaxed whitespace-normal break-words">
+                              {facility.details}
+                            </p>
+                          </div>
+
+                          {/* Highlight Specs Lines */}
+                          <div className="space-y-1.5 pb-1">
+                            {facility.specs.map((sp: any, sIdx: number) => (
+                              <div
+                                key={sIdx}
+                                className="bg-[#F8FAFD] hover:bg-[#EDF5FA] rounded-lg px-2 py-1.5 border border-slate-100 flex items-start gap-1.5 transition-colors"
+                              >
+                                <div className="flex items-center gap-1 shrink-0 mt-0.5">
+                                  <span className="w-3.5 h-3.5 rounded-full bg-[#005689] text-white font-black text-[8px] flex items-center justify-center shadow-xs">
+                                    {sIdx + 1}
+                                  </span>
+                                  <CheckCircle2 className="w-3 h-3 text-[#006FCC]" />
+                                </div>
+
+                                <div className="min-w-0 flex-1 leading-tight text-[10px] whitespace-normal break-words">
+                                  <span className="font-bold uppercase tracking-wider text-[#005689] mr-1">
+                                    {sp.label}:
+                                  </span>
+                                  <span className="font-semibold text-[#002B49]">
+                                    {sp.val}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Back Footer with Timings and Full View CTA */}
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-1 shrink-0">
+                          <div className="text-[9.5px] text-[#002B49]/80 truncate">
+                            <span className="font-bold text-[#002B49]">🕒</span> {facility.timings}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedFacility(facility);
+                            }}
+                            className="button_primary bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-2.5 py-1 rounded-[10px] text-[10.5px] flex items-center gap-1 shadow-[0_3px_10px_rgba(0,111,204,0.3)] transition-all active:scale-95 shrink-0 cursor-pointer"
+                          >
+                            <span>Details</span>
+                            <ArrowRight className="w-2.5 h-2.5 stroke-[2.5]" />
+                          </button>
+                        </div>
+
                       </div>
 
                     </div>
-
-                    {/* ================= BACK FACE: WHITE BACKGROUND & DEEP BLUE TEXT ================= */}
-                    <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl overflow-hidden bg-white text-[#002B49] p-2.5 sm:p-3.5 flex flex-col justify-between border-2 border-[#D6EDFF] shadow-xl">
-                      
-                      {/* Top Header + Scrollable Specs Body (Data scrolls vertically, no visible scrollbar) */}
-                      <div className="flex-1 min-h-0 flex flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-0.5">
-                        {/* Header with Lab Name & Icon */}
-                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-[#EDF5FA] border border-[#D6EDFF] flex items-center justify-center text-[#005689] shrink-0">
-                              <IconComponent className="w-3.5 h-3.5" />
-                            </div>
-                            <div className="min-w-0">
-                              <h4 className="font-bold text-[#002B49] text-xs sm:text-[13px] leading-tight truncate">
-                                {facility.name}
-                              </h4>
-                              <span className="text-[9px] text-[#005689] uppercase tracking-wider font-bold block truncate">
-                                {facility.category}
-                              </span>
-                            </div>
-                          </div>
-                          <span className="text-[9px] font-bold text-[#005689] bg-[#EDF5FA] px-2 py-0.5 rounded-full border border-[#D6EDFF] shrink-0 ml-1">
-                            Specs
-                          </span>
-                        </div>
-
-                        {/* Full Detailed Paragraph - Fully wrapped, no truncation */}
-                        <div className="bg-[#F8FAFD] rounded-lg p-2 my-2 border border-slate-100 shrink-0">
-                          <p className="text-[10.5px] text-[#002B49]/90 font-medium leading-relaxed whitespace-normal break-words">
-                            {facility.details}
-                          </p>
-                        </div>
-
-                        {/* Highlight Specs Lines with Icons - Fully wrapped and readable */}
-                        <div className="space-y-1.5 pb-1">
-                          {facility.specs.map((sp: any, sIdx: number) => (
-                            <div
-                              key={sIdx}
-                              className="bg-[#F8FAFD] hover:bg-[#EDF5FA] rounded-lg px-2 py-1.5 border border-slate-100 flex items-start gap-1.5 transition-colors"
-                            >
-                              {/* Small Number Badge with Check Icon */}
-                              <div className="flex items-center gap-1 shrink-0 mt-0.5">
-                                <span className="w-3.5 h-3.5 rounded-full bg-[#005689] text-white font-black text-[8px] flex items-center justify-center shadow-xs">
-                                  {sIdx + 1}
-                                </span>
-                                <CheckCircle2 className="w-3 h-3 text-[#006FCC]" />
-                              </div>
-
-                              <div className="min-w-0 flex-1 leading-tight text-[10px] whitespace-normal break-words">
-                                <span className="font-bold uppercase tracking-wider text-[#005689] mr-1">
-                                  {sp.label}:
-                                </span>
-                                <span className="font-semibold text-[#002B49]">
-                                  {sp.val}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Back Footer with Timings and Full View CTA (Fixed at bottom) */}
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-1 shrink-0">
-                        <div className="text-[9.5px] text-[#002B49]/80 truncate">
-                          <span className="font-bold text-[#002B49]">🕒</span> {facility.timings}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedFacility(facility);
-                          }}
-                          className="button_primary bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-2.5 py-1 rounded-[10px] text-[10.5px] flex items-center gap-1 shadow-[0_3px_10px_rgba(0,111,204,0.3)] transition-all active:scale-95 shrink-0 cursor-pointer"
-                        >
-                          <span>Details</span>
-                          <ArrowRight className="w-2.5 h-2.5 stroke-[2.5]" />
-                        </button>
-                      </div>
-
-                    </div>
-
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
         </div>
       </section>
@@ -3203,60 +3414,133 @@ export default function SchoolProfileView({
             <div className="lg:col-span-7 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  4-Step Admission Roadmap
+                  {effectiveAdmissionSteps.length}-Step Admission Roadmap
                 </span>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    aria-label="Scroll steps left"
-                    onClick={() => scrollHorizontally(admissionsScrollRef, 'left')}
-                    className="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-[#EDF5FA] text-gray-700 hover:text-[#006FCC] flex items-center justify-center shadow-sm transition-all active:scale-95"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Scroll steps right"
-                    onClick={() => scrollHorizontally(admissionsScrollRef, 'right')}
-                    className="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-[#EDF5FA] text-gray-700 hover:text-[#006FCC] flex items-center justify-center shadow-sm transition-all active:scale-95"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  {isLiveTemplate && isEditMode && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingAdmission(null);
+                        setIsAddAdmissionModalOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Add Step</span>
+                    </button>
+                  )}
+                  {effectiveAdmissionSteps.length > 0 && (
+                    <>
+                      <button
+                        type="button"
+                        aria-label="Scroll steps left"
+                        onClick={() => scrollHorizontally(admissionsScrollRef, 'left')}
+                        className="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-[#EDF5FA] text-gray-700 hover:text-[#006FCC] flex items-center justify-center shadow-sm transition-all active:scale-95"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Scroll steps right"
+                        onClick={() => scrollHorizontally(admissionsScrollRef, 'right')}
+                        className="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-[#EDF5FA] text-gray-700 hover:text-[#006FCC] flex items-center justify-center shadow-sm transition-all active:scale-95"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <div
-                ref={admissionsScrollRef}
-                onScroll={(e) => handleContainerScroll(e, setAdmissionsActiveIndex)}
-                className="flex gap-5 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              >
-                {admissionSteps.map((step) => (
-                  <div
-                    key={step.step}
-                    className="w-[260px] sm:w-[290px] shrink-0 snap-start bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 relative group flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="text-3xl font-black text-blue-100 group-hover:text-[#006FCC] transition-colors">
-                        {step.step}
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-950 mt-2 mb-2">
-                        {step.title}
-                      </h3>
-                      <p className="text-xs text-gray-600 leading-relaxed">
-                        {step.desc}
-                      </p>
-                    </div>
-
-                    <div className="pt-4 mt-2 border-t border-gray-50 flex items-center gap-1.5 text-[11px] font-semibold text-[#006FCC]">
-                      <span>Step {step.step.replace(/\D/g, '')} of 4</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </div>
+              {effectiveAdmissionSteps.length === 0 ? (
+                <div className="py-12 px-6 text-center bg-white rounded-3xl border-2 border-dashed border-sky-200 shadow-sm">
+                  <div className="w-12 h-12 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center mx-auto mb-3 border border-[#D6EDFF]">
+                    <GraduationCap className="w-6 h-6" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">No Admission Steps Added Yet</h3>
+                  <p className="text-xs text-gray-600 mb-4 max-w-sm mx-auto">
+                    Clean starting slate with 0 admission cards. Click below to add your school&apos;s step-by-step admission roadmap.
+                  </p>
+                  {isEditMode ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingAdmission(null);
+                        setIsAddAdmissionModalOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>+ Add Admission Step</span>
+                    </button>
+                  ) : (
+                    <p className="text-xs text-gray-400">Switch to Edit Mode to add admission steps.</p>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div
+                    ref={admissionsScrollRef}
+                    onScroll={(e) => handleContainerScroll(e, setAdmissionsActiveIndex)}
+                    className="flex gap-5 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  >
+                    {effectiveAdmissionSteps.map((step: any, sIdx: number) => (
+                      <div
+                        key={step.id || step.step || sIdx}
+                        className="w-[260px] sm:w-[290px] shrink-0 snap-start bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 relative group flex flex-col justify-between"
+                      >
+                        {isLiveTemplate && isEditMode && (
+                          <div className="absolute top-4 right-4 flex items-center gap-1 z-20">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingAdmission(step);
+                                setIsAddAdmissionModalOpen(true);
+                              }}
+                              title="Edit Step"
+                              className="p-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (confirm(`Delete Step ${step.step || (sIdx + 1)}?`)) {
+                                  templateCtx?.deleteAdmissionCard(step.id);
+                                }
+                              }}
+                              title="Delete Step"
+                              className="p-1 rounded-md bg-rose-100 hover:bg-rose-200 text-rose-700 transition cursor-pointer"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                        <div>
+                          <div className="text-3xl font-black text-blue-100 group-hover:text-[#006FCC] transition-colors">
+                            {step.step || `0${sIdx + 1}`}
+                          </div>
+                          <h3 className="text-lg font-bold text-gray-950 mt-2 mb-2">
+                            {step.title}
+                          </h3>
+                          <p className="text-xs text-gray-600 leading-relaxed">
+                            {step.desc}
+                          </p>
+                        </div>
 
-              {/* Dynamic Scroll Dots for Admission Steps */}
-              {renderScrollDots(admissionSteps.length, admissionsActiveIndex, admissionsScrollRef)}
+                        <div className="pt-4 mt-2 border-t border-gray-50 flex items-center gap-1.5 text-[11px] font-semibold text-[#006FCC]">
+                          <span>Step {step.step ? step.step.replace(/\D/g, '') : (sIdx + 1)} of {effectiveAdmissionSteps.length}</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Dynamic Scroll Dots for Admission Steps */}
+                  {renderScrollDots(effectiveAdmissionSteps.length, admissionsActiveIndex, admissionsScrollRef)}
+                </>
+              )}
             </div>
 
           </div>
@@ -4201,56 +4485,99 @@ export default function SchoolProfileView({
               
               {/* Clean Contact Details Panel (Standard Info List, Not Fragmented Action Cards) */}
               <div className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-5">
-                <h3 className="text-lg font-bold text-gray-950 flex items-center gap-2">
-                  <span>Contact Information</span>
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-gray-950 flex items-center gap-2">
+                    <span>Contact Information</span>
+                  </h3>
+                  {isLiveTemplate && isEditMode && templateData?.showContactInfo === false && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                      <EyeOff className="w-3 h-3" />
+                      Hidden in Preview
+                    </span>
+                  )}
+                </div>
 
-                <div className="divide-y divide-gray-100">
-                  {/* Address */}
-                  <div className="py-3 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 mt-0.5">
-                      <MapPin className="w-4 h-4" />
+                {isLiveTemplate && !isEditMode && templateData?.showContactInfo === false ? (
+                  <div className="p-5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900">
+                    <div className="flex items-center gap-2 font-bold text-sm mb-1">
+                      <EyeOff className="w-4 h-4 text-amber-600" />
+                      <span>Direct Contact Details Set to Private</span>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Campus Address</div>
-                      <div className="text-sm font-medium text-gray-900 mt-0.5 leading-relaxed">{displayAddress}</div>
-                    </div>
+                    <p className="text-xs text-amber-800 leading-relaxed">
+                      The institution has chosen to keep direct telephone numbers and emails private in public preview. Please submit your inquiry through the message form below to reach the administration.
+                    </p>
                   </div>
-
-                  {/* Phone */}
-                  <div className="py-3 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 mt-0.5">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone Number</div>
-                      <div className="text-sm font-medium text-gray-900 mt-0.5 flex flex-wrap items-center gap-3">
-                        <a href={`tel:${displayPhone}`} className="hover:text-[#006FCC] transition-colors">{displayPhone}</a>
-                        <span className="text-gray-300">•</span>
-                        <a 
-                          href={`https://wa.me/919876543210?text=${encodeURIComponent(`Hello, I would like to inquire about admissions for ${displayName}.`)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-emerald-600 font-semibold text-xs hover:underline"
-                        >
-                          <MessageSquare className="w-3 h-3" /> WhatsApp
-                        </a>
+                ) : (
+                  <div className="divide-y divide-gray-100">
+                    {/* Address */}
+                    <div className="py-3 flex items-start gap-3.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 mt-0.5">
+                        <MapPin className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Campus Address</div>
+                        {isLiveTemplate && isEditMode ? (
+                          <EditableText
+                            value={templateData?.address || displayAddress}
+                            fieldKey="address"
+                            className="text-sm font-medium text-gray-900 mt-0.5 leading-relaxed"
+                          />
+                        ) : (
+                          <div className="text-sm font-medium text-gray-900 mt-0.5 leading-relaxed">{displayAddress}</div>
+                        )}
                       </div>
                     </div>
-                  </div>
 
-                  {/* Email */}
-                  <div className="py-3 flex items-start gap-3.5">
-                    <div className="w-9 h-9 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 mt-0.5">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email Inquiries</div>
-                      <div className="text-sm font-medium text-gray-900 mt-0.5">
-                        <a href={`mailto:${displayEmail}`} className="text-[#006FCC] hover:underline">{displayEmail}</a>
+                    {/* Phone */}
+                    <div className="py-3 flex items-start gap-3.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 mt-0.5">
+                        <Phone className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone Number</div>
+                        {isLiveTemplate && isEditMode ? (
+                          <EditableText
+                            value={templateData?.phone || displayPhone}
+                            fieldKey="phone"
+                            className="text-sm font-medium text-gray-900 mt-0.5"
+                          />
+                        ) : (
+                          <div className="text-sm font-medium text-gray-900 mt-0.5 flex flex-wrap items-center gap-3">
+                            <a href={`tel:${displayPhone}`} className="hover:text-[#006FCC] transition-colors">{displayPhone}</a>
+                            <span className="text-gray-300">•</span>
+                            <a 
+                              href={`https://wa.me/919876543210?text=${encodeURIComponent(`Hello, I would like to inquire about admissions for ${displayName}.`)}`}
+                              target="_blank" 
+                              rel="noreferrer" 
+                              className="inline-flex items-center gap-1 text-emerald-600 font-semibold text-xs hover:underline"
+                            >
+                              <MessageSquare className="w-3 h-3" /> WhatsApp
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
+
+                    {/* Email */}
+                    <div className="py-3 flex items-start gap-3.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 mt-0.5">
+                        <Mail className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email Inquiries</div>
+                        {isLiveTemplate && isEditMode ? (
+                          <EditableText
+                            value={templateData?.email || displayEmail}
+                            fieldKey="email"
+                            className="text-sm font-medium text-gray-900 mt-0.5"
+                          />
+                        ) : (
+                          <div className="text-sm font-medium text-gray-900 mt-0.5">
+                            <a href={`mailto:${displayEmail}`} className="text-[#006FCC] hover:underline">{displayEmail}</a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
                   {/* Official Website */}
                   <div className="py-3 flex items-start gap-3.5">
@@ -4286,7 +4613,8 @@ export default function SchoolProfileView({
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+            </div>
 
               {/* Standard Message Form */}
               <div className="bg-white rounded-2xl p-6 sm:p-7 border border-gray-200/90 shadow-sm">
@@ -5246,6 +5574,71 @@ export default function SchoolProfileView({
         </div>
       )}
 
+      {/* Dynamic Add/Edit Card Modals for Facilities and Admissions */}
+      {isLiveTemplate && (
+        <>
+          <AddCardModal
+            isOpen={isAddFacilityModalOpen}
+            onClose={() => {
+              setIsAddFacilityModalOpen(false);
+              setEditingFacility(null);
+            }}
+            cardType="facility"
+            initialData={editingFacility ? {
+              title: editingFacility.title || editingFacility.name || '',
+              desc: editingFacility.desc || '',
+              icon: editingFacility.icon || 'FlaskConical',
+              illustration: editingFacility.illustration,
+              badge: editingFacility.badge || editingFacility.category
+            } : undefined}
+            onSave={(card) => {
+              const facilityPayload = {
+                title: card.title,
+                desc: card.desc || card.criteria || 'Standard school facility',
+                icon: card.icon,
+                illustration: card.illustration,
+                badge: card.badge
+              };
+              if (editingFacility) {
+                templateCtx?.updateFacilityCard(editingFacility.id, facilityPayload);
+              } else {
+                templateCtx?.addFacilityCard(facilityPayload);
+              }
+            }}
+          />
+          <AddCardModal
+            isOpen={isAddAdmissionModalOpen}
+            onClose={() => {
+              setIsAddAdmissionModalOpen(false);
+              setEditingAdmission(null);
+            }}
+            cardType="admission"
+            initialData={editingAdmission ? {
+              title: editingAdmission.title || '',
+              criteria: editingAdmission.criteria || editingAdmission.desc || '',
+              fees: editingAdmission.fees,
+              icon: editingAdmission.icon || 'GraduationCap',
+              illustration: editingAdmission.illustration,
+              badge: editingAdmission.badge
+            } : undefined}
+            onSave={(card) => {
+              const admissionPayload = {
+                title: card.title,
+                criteria: card.criteria || card.desc || 'Standard admission criteria',
+                fees: card.fees,
+                icon: card.icon,
+                illustration: card.illustration,
+                badge: card.badge
+              };
+              if (editingAdmission) {
+                templateCtx?.updateAdmissionCard(editingAdmission.id, admissionPayload);
+              } else {
+                templateCtx?.addAdmissionCard(admissionPayload);
+              }
+            }}
+          />
+        </>
+      )}
 
     </div>
   );

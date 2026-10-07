@@ -1398,16 +1398,16 @@ export default function SchoolProfileView({
       {/* MOBILE LEFT MINI ICON DRAWER & EDGE PILL HANDLE           */}
       {/* ========================================================= */}
       
-      {/* 1. Backdrop (Tap outside to close/hide menu) */}
+      {/* 1. Backdrop (Tap outside to close/hide menu, elevates above TopBar and Navbar) */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs transition-opacity lg:hidden"
+          className="fixed inset-0 z-[750] bg-black/50 backdrop-blur-xs transition-opacity lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
           aria-label="Close menu backdrop"
         />
       )}
 
-      {/* 2. Floating Edge Pill Handle (Smooth Tap / Click to Open) */}
+      {/* 2. Floating Edge Pill Handle (Smooth Tap / Click to Open, always accessible) */}
       {!isMobileMenuOpen && (
         <button
           type="button"
@@ -1418,32 +1418,32 @@ export default function SchoolProfileView({
           onPointerDown={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
           aria-label="Open Mobile Menu"
-          className="fixed top-1/2 -translate-y-1/2 left-0 z-[60] lg:hidden bg-white border border-l-0 border-slate-200/90 text-slate-700 w-7 h-16 rounded-r-2xl shadow-[4px_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-95 hover:bg-slate-50 touch-manipulation select-none"
+          className="fixed top-1/2 -translate-y-1/2 left-0 z-[700] lg:hidden bg-white border border-l-0 border-slate-200/90 text-slate-700 w-7 h-16 rounded-r-2xl shadow-[4px_4px_14px_rgba(0,0,0,0.12)] flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-95 hover:bg-slate-50 touch-manipulation select-none"
         >
           <ChevronRight className="w-4 h-4 text-slate-600 stroke-[2.5]" />
         </button>
       )}
 
-      {/* 3. Left Mini Drawer Sheet (Width of icons, icon on top, small text under) */}
+      {/* 3. Left Mini Drawer Sheet (Elevated z-[850], 100dvh for exact mobile screen fit, safe area support) */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-[60] w-[74px] bg-white/95 backdrop-blur-md border-r border-slate-200/90 shadow-2xl flex flex-col items-center py-3 justify-between transition-transform duration-300 ease-out lg:hidden ${
+        className={`fixed top-0 bottom-0 left-0 z-[850] w-[74px] sm:w-[80px] h-[100dvh] max-h-[100dvh] bg-white/95 backdrop-blur-md border-r border-slate-200/90 shadow-2xl flex flex-col items-center pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))] justify-between transition-transform duration-300 ease-out lg:hidden select-none ${
           isMobileMenuOpen ? 'translate-x-0 pointer-events-auto' : '-translate-x-full pointer-events-none'
         }`}
       >
         {/* Top: Compact Close Button Header */}
-        <div className="w-full flex flex-col items-center py-1.5 border-b border-slate-100 shrink-0">
+        <div className="w-full flex flex-col items-center py-1 border-b border-slate-100 shrink-0">
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-label="Close Menu"
-            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 active:scale-90 text-slate-600 flex items-center justify-center transition-all cursor-pointer touch-manipulation"
           >
-            <X className="w-4 h-4 stroke-[2.2]" />
+            <X className="w-3.5 h-3.5 stroke-[2.5]" />
           </button>
         </div>
 
-        {/* Center: Mini Icons List (Icon on top, small label underneath, smooth touch scroll) */}
-        <div className="w-full flex-1 overflow-y-auto overscroll-contain py-1.5 px-1 flex flex-col gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* Center: Mini Icons List with min-h-0 flex-1, smooth inertia touch scroll & slim scrollbar */}
+        <div className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain py-1 px-1 flex flex-col gap-1 [scrollbar-width:thin] scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-400 touch-pan-y">
           {navTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
@@ -1451,14 +1451,17 @@ export default function SchoolProfileView({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => handleTabSwitch(tab.id)}
-                className={`w-full py-1.5 px-0.5 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer shrink-0 ${
+                onClick={() => {
+                  handleTabSwitch(tab.id);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full py-1.5 px-0.5 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer shrink-0 touch-manipulation active:scale-95 ${
                   isActive
-                    ? 'bg-[#005689] text-white shadow-sm ring-2 ring-[#FBBC04]/40'
+                    ? 'bg-[#005689] text-white shadow-sm ring-2 ring-[#FBBC04]/50 font-bold'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-600'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-600'}`} />
                 <span
                   className={`text-[8px] font-bold tracking-tight text-center leading-tight truncate w-full ${
                     isActive ? 'text-white' : 'text-slate-700'
@@ -1472,18 +1475,18 @@ export default function SchoolProfileView({
         </div>
 
         {/* Bottom: Mini Apply CTA */}
-        <div className="w-full pt-1.5 pb-1 border-t border-slate-100 flex flex-col items-center px-1 shrink-0">
+        <div className="w-full pt-1 pb-0.5 border-t border-slate-100 flex flex-col items-center px-1 shrink-0">
           <button
             type="button"
             onClick={() => {
               setIsApplyModalOpen(true);
               setIsMobileMenuOpen(false);
             }}
-            className="w-full py-2 px-0.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005499] text-white font-bold flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,111,204,0.35)] cursor-pointer active:scale-95 transition"
+            className="w-full py-1.5 px-0.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005499] active:scale-95 text-white font-bold flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,111,204,0.35)] cursor-pointer transition touch-manipulation"
             title="Apply Now"
           >
             <ArrowRight className="w-3.5 h-3.5 text-white stroke-[2.5]" />
-            <span className="text-[8px] font-black uppercase tracking-wider mt-0.5 leading-none text-white">Apply</span>
+            <span className="text-[7.5px] font-black uppercase tracking-wider mt-0.5 leading-none text-white">Apply</span>
           </button>
         </div>
 

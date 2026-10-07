@@ -489,6 +489,21 @@ const Navbar = () => {
     (item) => item?.enabled !== false
   );
 
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleDocumentClick = (e: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        if (closeTimer.current) clearTimeout(closeTimer.current);
+        setOpenDropdown(null);
+        setExpandedSubItem(null);
+      }
+    };
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, []);
+
   const handleMouseEnter = (label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     if (openDropdown !== label) {
@@ -498,10 +513,11 @@ const Navbar = () => {
   };
 
   const handleMouseLeave = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(() => {
       setOpenDropdown(null);
       setExpandedSubItem(null);
-    }, 150);
+    }, 200);
   };
 
   const handleToggle = (label: string) => {
@@ -517,6 +533,7 @@ const Navbar = () => {
   return (
     <>
       <header
+        ref={headerRef}
         className={`sticky top-0 w-full z-[400] transition-all duration-200 select-none ${
           isScrolled
             ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-[#D0D7DE]/90'
@@ -544,15 +561,16 @@ const Navbar = () => {
               return (
                 <div
                   key={item.label}
-                  className="h-full flex items-center shrink-0"
-                  onMouseEnter={() => handleMouseEnter(item.label)}
+                  className="flex items-center shrink-0"
                 >
                   {item.hasDropdown ? (
                     <button
                       type="button"
                       onClick={() => handleToggle(item.label)}
-                      className={`top-nav-link flex items-center gap-1.5 text-[15px] font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 py-2 ${
-                        isOpen ? 'is-open text-[#006FCC]' : 'text-[#023858]'
+                      onMouseEnter={() => handleMouseEnter(item.label)}
+                      onMouseLeave={handleMouseLeave}
+                      className={`top-nav-link flex items-center gap-1.5 text-[15px] font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 py-1.5 px-2 rounded-lg ${
+                        isOpen ? 'is-open text-[#006FCC] bg-[#EDF5FA]' : 'text-[#023858] hover:bg-slate-50'
                       }`}
                       style={{ color: isOpen ? '#006FCC' : '#023858' }}
                     >
@@ -569,7 +587,12 @@ const Navbar = () => {
                   ) : (
                     <Link
                       href={item.to || '/'}
-                      className="top-nav-link text-[15px] font-bold transition-colors whitespace-nowrap shrink-0 py-2"
+                      onMouseEnter={() => {
+                        if (closeTimer.current) clearTimeout(closeTimer.current);
+                        setOpenDropdown(null);
+                        setExpandedSubItem(null);
+                      }}
+                      className="top-nav-link text-[15px] font-bold transition-colors whitespace-nowrap shrink-0 py-1.5 px-2 rounded-lg hover:bg-slate-50"
                       style={{ color: '#023858' }}
                     >
                       <span style={{ color: '#023858' }}>{item.label}</span>

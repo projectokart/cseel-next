@@ -1,0 +1,534 @@
+export interface NavStage3Item {
+  id: string;
+  label: string;
+  to: string;
+  desc?: string;
+  badge?: string;
+  enabled?: boolean;
+  subItems?: {
+    id?: string;
+    label: string;
+    to: string;
+    badge?: string;
+  }[];
+}
+
+export interface NavStage2Column {
+  id: string;
+  categoryTitle: string;
+  to?: string;
+  enabled?: boolean;
+  items: NavStage3Item[];
+}
+
+export interface NavStage1Category {
+  id: string;
+  label: string;
+  to?: string;
+  enabled: boolean;
+  hasDropdown: boolean;
+  columns?: NavStage2Column[];
+  featuredPanel?: {
+    eyebrow: string;
+    title: string;
+    desc: string;
+    ctaText: string;
+    ctaHref: string;
+  };
+}
+
+export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
+  {
+    id: 'experiential-labs',
+    label: 'Experiential Labs',
+    to: '/subject/physics',
+    enabled: true,
+    hasDropdown: true,
+    columns: [
+      {
+        id: 'col-science-labs',
+        categoryTitle: 'Experiential Science Labs',
+        to: '/domain/science',
+        enabled: true,
+        items: [
+          {
+            id: 'item-physics',
+            label: 'Physics Lab',
+            to: '/subject/physics',
+            desc: 'Optics, mechanics, electromagnetic circuits, sound & modern physics practicals.',
+            subItems: [
+              { label: 'Mechanics, Pendulums & Dynamics', to: '/subject/physics' },
+              { label: 'Optics, Ray Benches & Prisms', to: '/subject/physics' },
+              { label: 'Electricity & Electromagnetic Circuits', to: '/subject/physics' },
+            ],
+          },
+          {
+            id: 'item-chemistry',
+            label: 'Chemistry Lab',
+            to: '/subject/chemistry',
+            desc: 'Volumetric titration benches, organic synthesis, reagents & salt analysis.',
+            subItems: [
+              { label: 'Volumetric Titration Benches', to: '/subject/chemistry' },
+              { label: 'Qualitative Salt Analysis', to: '/subject/chemistry' },
+              { label: 'Chemical Reagents & Glassware', to: '/materials' },
+            ],
+          },
+          {
+            id: 'item-biology',
+            label: 'Biology Lab',
+            to: '/subject/biology',
+            desc: 'High-precision microscopy, human anatomy models, cell biology & botany specimens.',
+            subItems: [
+              { label: 'Compound Microscopes & Slides', to: '/subject/biology' },
+              { label: 'Human Anatomy 3D Models', to: '/subject/biology' },
+              { label: 'Specimen Slides & Botany Kits', to: '/subject/biology' },
+            ],
+          },
+          {
+            id: 'item-astronomy',
+            label: 'Astronomy Lab',
+            to: '/domain/science',
+            desc: 'Telescopes, celestial mechanics, planetary orbits & space science models.',
+            subItems: [
+              { label: 'Refractor & Reflector Telescopes', to: '/domain/science' },
+              { label: 'Planetary Orbits & Scale Models', to: '/domain/science' },
+            ],
+          },
+          {
+            id: 'item-math-modeling',
+            label: 'Mathematics & Modeling Lab',
+            to: '/domain/science',
+            desc: 'Tactile geometry, conic sections, coordinate visualizers & practical proofs.',
+            subItems: [
+              { label: 'Tactile 3D Conics & Surfaces', to: '/domain/science' },
+              { label: 'Coordinate Geometry Visualizers', to: '/domain/science' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'col-turnkey-setups',
+        categoryTitle: 'Turnkey Setups & Tinkering',
+        to: '/composite-lab',
+        enabled: true,
+        items: [
+          {
+            id: 'item-atl',
+            label: 'Atal Tinkering Lab (ATL 2.0)',
+            to: '/steam-lab/atl',
+            desc: 'Complete NITI Aayog Package 1-4 setup with GeM compliance, 3D printers & robotics.',
+            badge: 'Grant ₹20L',
+            subItems: [
+              { label: 'ATL Material List & Equipment BOQ', to: '/steam-lab/atl', badge: 'Equipment List' },
+              { label: 'Package 1 & 2: Prototyping & 3D Printers', to: '/steam-lab/atl' },
+              { label: 'Package 3 & 4: Robotics, IoT & Power Tools', to: '/steam-lab/atl' },
+              { label: 'NITI Aayog & GeM Compliance Norms', to: '/schemes/atl-grants' },
+            ],
+          },
+          {
+            id: 'item-composite-lab',
+            label: 'CBSE Composite Science Lab',
+            to: '/composite-lab',
+            desc: 'Mandatory SARAS 600 sq ft & 8 sinks setup with 49 non-consumables & safety fixtures.',
+            badge: 'CBSE Norms',
+            subItems: [
+              { label: '49 Mandatory Non-Consumable List', to: '/composite-lab', badge: 'CBSE List' },
+              { label: '600 Sq Ft Layout & 8 Sinks Blueprint', to: '/composite-lab' },
+              { label: 'SARAS Lab Safety & First Aid Setup', to: '/safety' },
+            ],
+          },
+          {
+            id: 'item-robotics',
+            label: 'AI, IoT & Robotics Lab',
+            to: '/steam-lab/ai-robotics-lab',
+            desc: 'Workstations, microcontrollers, computer vision & sensor labs for students.',
+            subItems: [
+              { label: 'Microcontrollers & Sensor Workstations', to: '/steam-lab/ai-robotics-lab' },
+              { label: 'Computer Vision & Autonomous Robotics', to: '/steam-lab/ai-robotics-lab' },
+            ],
+          },
+          {
+            id: 'item-hands-on-kits',
+            label: 'Hands-on Practical Kits',
+            to: '/hands-on-experiments',
+            desc: 'Blended practicals with physical apparatus kits, data sheets & guided manuals.',
+            subItems: [
+              { label: 'Student DIY Science Practical Benches', to: '/hands-on-experiments' },
+              { label: 'Observation Workbooks & Manuals', to: '/hands-on-experiments' },
+            ],
+          },
+          {
+            id: 'item-projectokart',
+            label: 'Projectokart STEM Projects',
+            to: '/projects',
+            desc: 'Student-led maker projects with schematics, bill of materials & working builds.',
+            subItems: [
+              { label: 'Working Science Fair Prototypes', to: '/projects' },
+              { label: 'Innovation Schematics & BOM', to: '/projects' },
+            ],
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Turnkey Laboratory',
+      title: 'CBSE Composite Science Lab & ATL 2.0 Setup for Schools',
+      desc: 'Complete turnkey room blueprint, 8 sinks layout, 49 mandatory apparatus list, GeM registered equipment, and teacher onboarding.',
+      ctaText: 'Explore Lab Setups',
+      ctaHref: '/composite-lab',
+    },
+  },
+  {
+    id: 'why-cseel',
+    label: 'Why CSEEL',
+    to: '/why-cseel',
+    enabled: true,
+    hasDropdown: true,
+    columns: [
+      {
+        id: 'col-pedagogy',
+        categoryTitle: 'Experiential Pedagogy',
+        to: '/why-cseel',
+        enabled: true,
+        items: [
+          {
+            id: 'item-pedagogy-caps',
+            label: 'Capabilities & Pedagogy',
+            to: '/why-cseel',
+            desc: 'Experiential learning architecture & hands-on practical methodology aligned with NEP 2020.',
+          },
+          {
+            id: 'item-academic-efficacy',
+            label: 'Proven Academic Efficacy',
+            to: '/why-cseel',
+            desc: 'See how experiential practical rehearsals boost bench confidence and practical exam scores.',
+          },
+          {
+            id: 'item-lab-safety',
+            label: 'Lab Safety & Compliance',
+            to: '/safety',
+            desc: 'Safe trial-and-error exploration with standard emergency protocols and zero chemical risk.',
+          },
+          {
+            id: 'item-school-plans',
+            label: 'School Plans & Packages',
+            to: '/compare-plans',
+            desc: 'Institutional packages, syllabus bundles & turnkey setup options for every school.',
+          },
+        ],
+      },
+      {
+        id: 'col-who-for',
+        categoryTitle: 'Who It\'s For',
+        to: '/for-institutions',
+        enabled: true,
+        items: [
+          {
+            id: 'item-for-educators',
+            label: 'For School Educators',
+            to: '/for-educators',
+            desc: 'Hands-on lesson plans, teacher guides, practical rubrics & student assessment tools.',
+          },
+          {
+            id: 'item-for-students',
+            label: 'For K-12 Students',
+            to: '/for-students',
+            desc: 'Experiential practical clarity, tactile discovery & concept mastery at student pace.',
+          },
+          {
+            id: 'item-for-principals',
+            label: 'For School Principals',
+            to: '/for-institutions',
+            desc: 'Infrastructure audits, GeM procurement, SARAS compliance & faculty enablement.',
+          },
+          {
+            id: 'item-nep-framework',
+            label: 'NEP 2020 Practical Framework',
+            to: '/schemes/nep-2020-guidelines',
+            desc: 'Fully aligned to national experiential learning norms and skill education guidelines.',
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'School Case Study',
+      title: 'How Partner Schools Transformed Practical Exam Scores by 34%',
+      desc: 'See how hands-on experiential lab setups boosted student participation, safety compliance, and conceptual exam scores.',
+      ctaText: 'Read the Case Study',
+      ctaHref: '/why-cseel',
+    },
+  },
+  {
+    id: 'resources',
+    label: 'Resources',
+    to: '/resources',
+    enabled: true,
+    hasDropdown: true,
+    columns: [
+      {
+        id: 'col-schemes',
+        categoryTitle: 'Government Schemes & Policy',
+        to: '/schemes',
+        enabled: true,
+        items: [
+          {
+            id: 'item-schemes-hub',
+            label: 'Government Schemes Hub',
+            to: '/schemes',
+            desc: 'Central & State funding grants, GeM procurement blueprints & lab compliance.',
+            subItems: [
+              { label: 'PM SHRI Schools Lab Grant', to: '/schemes/pm-shri', badge: 'Govt Grant' },
+              { label: 'NITI Aayog ATL ₹20 Lakh Grant', to: '/schemes/atl-grants' },
+              { label: 'Samagra Shiksha Secondary Lab Norms', to: '/schemes/samagra-shiksha' },
+              { label: 'CBSE Skill Hub Initiative', to: '/schemes/cbse-skill-hub' },
+            ],
+          },
+          {
+            id: 'item-pm-shri',
+            label: 'PM SHRI Schools Scheme',
+            to: '/schemes/pm-shri',
+            desc: 'Funding for modern experiential composite science laboratories in model schools.',
+          },
+          {
+            id: 'item-samagra-shiksha',
+            label: 'Samagra Shiksha Abhiyan',
+            to: '/schemes/samagra-shiksha',
+            desc: 'Secondary school science lab infrastructure & apparatus annual allocation.',
+          },
+          {
+            id: 'item-atl-grants',
+            label: 'Atal Tinkering Lab (ATL Grants)',
+            to: '/schemes/atl-grants',
+            desc: 'NITI Aayog ₹20 Lakh package equipment, 3D printers & GeM registration.',
+          },
+          {
+            id: 'item-nep-guidelines',
+            label: 'NEP 2020 Practical Framework',
+            to: '/schemes/nep-2020-guidelines',
+            desc: 'National curriculum framework for experiential learning & practical-first education.',
+          },
+        ],
+      },
+      {
+        id: 'col-materials-knowledge',
+        categoryTitle: 'Materials, Manuals & Insights',
+        to: '/materials',
+        enabled: true,
+        items: [
+          {
+            id: 'item-material-cart',
+            label: 'Material Cart & Lab Supplies',
+            to: '/materials',
+            desc: 'Lab glassware, chemical reagents, biology specimens, DIY kits & cart checkout.',
+            subItems: [
+              { label: 'ATL Package 1-4 Material List', to: '/materials', badge: 'ATL Material' },
+              { label: 'CBSE Composite Apparatus List', to: '/materials' },
+              { label: 'Chemical Reagents & Glassware', to: '/materials' },
+              { label: 'Open Material Cart', to: '/cart', badge: 'Cart' },
+            ],
+          },
+          {
+            id: 'item-manuals',
+            label: 'Lab Manuals & Practical Guides',
+            to: '/hands-on-experiments',
+            desc: 'Step-by-step practical experiment procedures, safety SOPs & teacher guides.',
+            subItems: [
+              { label: 'Class 9-10 Composite Science Manual', to: '/hands-on-experiments' },
+              { label: 'Class 11-12 Physics Practical SOPs', to: '/hands-on-experiments' },
+              { label: 'Class 11-12 Chemistry Salt Analysis', to: '/hands-on-experiments' },
+              { label: 'Biology Microscopy & Specimen Guides', to: '/hands-on-experiments' },
+            ],
+          },
+          {
+            id: 'item-blog',
+            label: 'Academic Blog & Articles',
+            to: '/blog',
+            desc: 'Expert guides on experiential STEM pedagogy, lab safety, and CBSE practical exams.',
+            subItems: [
+              { label: 'Experiential STEM Pedagogy Research', to: '/blog' },
+              { label: 'GeM Portal Procurement Masterclass', to: '/blog' },
+              { label: '600 Sq Ft Lab Floorplan Compliance', to: '/blog' },
+            ],
+          },
+          {
+            id: 'item-teacher-cpd',
+            label: 'Teacher CPD & Safety Guidelines',
+            to: '/teacher-training',
+            desc: 'Faculty development masterclasses, emergency SOPs, and lab compliance training.',
+            subItems: [
+              { label: 'Lab In-charge Safety Standards', to: '/safety' },
+              { label: 'Faculty Experiential Masterclasses', to: '/teacher-training' },
+            ],
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Government Lab Grants',
+      title: 'Avail PM SHRI & ATL Grants for Your School Lab Setup',
+      desc: 'Download GeM procurement documentation, equipment BOQs, and compliance blueprints for government scheme approvals.',
+      ctaText: 'Explore Schemes & Resources',
+      ctaHref: '/resources',
+    },
+  },
+  {
+    id: 'media-gallery',
+    label: 'Media & Gallery',
+    to: '/media-archive',
+    enabled: true,
+    hasDropdown: true,
+    columns: [
+      {
+        id: 'col-visual-showcase',
+        categoryTitle: 'Visual Lab Showcase',
+        to: '/virtual-lab-tour',
+        enabled: true,
+        items: [
+          {
+            id: 'item-360-tour',
+            label: '360° Interactive Lab Tour',
+            to: '/virtual-lab-tour',
+            desc: 'Take an interactive 360-degree walkthrough inside our modern composite school laboratories.',
+          },
+          {
+            id: 'item-installations',
+            label: 'School Lab Installations',
+            to: '/media-archive',
+            desc: 'High-resolution photo gallery of real composite labs, ATL centers & furniture setups.',
+          },
+          {
+            id: 'item-videos',
+            label: 'Video Walkthroughs & Demos',
+            to: '/media-archive',
+            desc: 'Watch student practical videos, apparatus demonstrations & turnkey lab walkthroughs.',
+          },
+          {
+            id: 'item-news-press',
+            label: 'News & Media Press Updates',
+            to: '/media-archive',
+            desc: 'School lab inaugurations, national STEM conclaves & latest press coverage.',
+          },
+        ],
+      },
+      {
+        id: 'col-events',
+        categoryTitle: 'Events & Activities',
+        to: '/exhibitions',
+        enabled: true,
+        items: [
+          {
+            id: 'item-exhibitions',
+            label: 'Events & Exhibitions Gallery',
+            to: '/exhibitions',
+            desc: 'Photos and highlights from national science exhibitions, inter-school fairs & hackathons.',
+          },
+          {
+            id: 'item-training-glimpses',
+            label: 'Teacher Training Glimpses',
+            to: '/teacher-training',
+            desc: 'Moments from faculty development masterclasses, lab safety workshops & certifications.',
+          },
+          {
+            id: 'item-student-builds',
+            label: 'Student Innovation Builds',
+            to: '/projects',
+            desc: 'Working student prototypes, science fair models, and award-winning student projects.',
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Interactive Experience',
+      title: 'Take the 360° Experiential Lab Tour',
+      desc: 'Explore a turnkey 600 sq ft composite school laboratory equipped with mandatory apparatus and student benches.',
+      ctaText: 'Launch 360° Tour',
+      ctaHref: '/virtual-lab-tour',
+    },
+  },
+  {
+    id: 'about-network',
+    label: 'About & Network',
+    to: '/about',
+    enabled: true,
+    hasDropdown: true,
+    columns: [
+      {
+        id: 'col-edunetwork',
+        categoryTitle: 'Verified EduNetwork',
+        to: '/edu-network/organisation/school',
+        enabled: true,
+        items: [
+          {
+            id: 'item-edunetwork-dir',
+            label: 'EduNetwork Directory',
+            to: '/edu-network/organisation/school',
+            desc: 'India’s verified network of 500+ experiential STEM partner schools & lab hubs.',
+          },
+          {
+            id: 'item-faculty-dir',
+            label: 'Verified Faculty Directory',
+            to: '/edu-network/teachers',
+            desc: 'Connect with certified STEM teachers, ATL mentors, and lab demonstrators nationwide.',
+          },
+          {
+            id: 'item-teacher-cert',
+            label: 'Teacher Training & CPD',
+            to: '/teacher-training',
+            desc: 'Certified masterclasses in experiential science pedagogy and practical lab leadership.',
+          },
+          {
+            id: 'item-bootcamps',
+            label: 'Seminars & Student Bootcamps',
+            to: '/workshops',
+            desc: 'Hands-on student workshops, robotics bootcamps, and curriculum advisory seminars.',
+          },
+        ],
+      },
+      {
+        id: 'col-our-org',
+        categoryTitle: 'Our Organization',
+        to: '/about',
+        enabled: true,
+        items: [
+          {
+            id: 'item-about-cseel',
+            label: 'About CSEEL',
+            to: '/about',
+            desc: 'Our mission to bring experiential hands-on science to every learner across India.',
+          },
+          {
+            id: 'item-our-story',
+            label: 'Our Story & Journey',
+            to: '/our-story',
+            desc: 'How CSEEL grew from an educational pilot into a nationwide experiential learning movement.',
+          },
+          {
+            id: 'item-team',
+            label: 'Leadership & Advisory Team',
+            to: '/team',
+            desc: 'The passionate educators, scientists, and engineers leading CSEEL.',
+          },
+          {
+            id: 'item-careers',
+            label: 'Careers at CSEEL',
+            to: '/careers',
+            desc: 'Join our team as we empower students across India with hands-on practical science.',
+          },
+          {
+            id: 'item-contact-us',
+            label: 'Contact Us & Lab Advisory',
+            to: '/contact-us',
+            desc: 'Speak with our school consultants, lab setup specialists, or request a site inspection.',
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Partner With Us',
+      title: 'Setup a Modern Experiential Lab in Your School',
+      desc: 'Get turnkey guidance on CBSE affiliation, room layout, GeM procurement, and teacher certification.',
+      ctaText: 'Contact Lab Advisors',
+      ctaHref: '/contact-us',
+    },
+  },
+];

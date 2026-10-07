@@ -1,0 +1,212 @@
+[
+  {
+    "id": "stem-lab-3d-blueprint",
+    "title": "Next-Gen 3D STEM & ATL Lab Spatial Architecture",
+    "category": "Spatial & Lab Design",
+    "client": "Delhi Public School & Kendriya Vidyalaya",
+    "year": "2026",
+    "description": "Full architectural 3D spatial layout, acoustic wall murals, modular workstation ergonomics, and ceiling grid lighting for a 1,200 sq.ft. Atal Tinkering Lab.",
+    "coverImage": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1509062522246?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Blender 3D",
+      "AutoCAD",
+      "Figma",
+      "Adobe Photoshop"
+    ],
+    "deliverables": [
+      "3D Virtual Walkthrough",
+      "2D Floor Blueprint",
+      "Print-Ready Wall Mural Files (1200 DPI)",
+      "Lighting & Ergonomics Guide"
+    ],
+    "featured": true,
+    "accentColor": "from-blue-600 to-indigo-600"
+  },
+  {
+    "id": "stem-horizon-brand-identity",
+    "title": "STEM Horizon Academy Comprehensive Rebranding",
+    "category": "Brand & Visual Identity",
+    "client": "STEM Horizon Group",
+    "year": "2026",
+    "description": "Complete visual identity system including dynamic geometric logo symbol, custom typography guidelines, stationery suite, school vehicle wraps, and staff uniforms.",
+    "coverImage": "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Adobe Illustrator",
+      "Figma",
+      "Adobe InDesign"
+    ],
+    "deliverables": [
+      "Vector Logo Master Suite",
+      "120-Page Brand Guidelines PDF",
+      "Stationery & ID Card Mockups",
+      "Social Media Kit"
+    ],
+    "featured": true,
+    "accentColor": "from-amber-500 to-rose-500"
+  },
+  {
+    "id": "interactive-sim-uiux",
+    "title": "CSEEL Interactive Physics & Chemistry Virtual Lab UI/UX",
+    "category": "UI/UX & Product Design",
+    "client": "CSEEL EdTech Platform",
+    "year": "2026",
+    "description": "Web & tablet-responsive interface design for 50+ real-time interactive STEM simulations with tactile slider controls, live formula calculation graphs, and dark mode.",
+    "coverImage": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Figma",
+      "Design Tokens",
+      "Tailwind CSS",
+      "Lottie Animation"
+    ],
+    "deliverables": [
+      "Figma Component Design System",
+      "Interactive Prototype",
+      "Developer Handoff Tokens",
+      "Micro-Interactions Specs"
+    ],
+    "featured": true,
+    "accentColor": "from-cyan-500 to-blue-600"
+  },
+  {
+    "id": "bionic-robot-cad-model",
+    "title": "6-DOF Bionic Robotic Arm & Chassis 3D CAD Modeling",
+    "category": "3D CAD & Product Design",
+    "client": "CSEEL Hardware Robotics Lab",
+    "year": "2026",
+    "description": "Precision mechanical 3D CAD modeling for rapid prototyping, injection molding, and 3D print optimization of student-friendly robotics DIY kits.",
+    "coverImage": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "SolidWorks",
+      "Blender",
+      "Fusion 360",
+      "KeyShot"
+    ],
+    "deliverables": [
+      "STEP & STL 3D Print Files",
+      "Photorealistic Renders (8K)",
+      "Exploded Assembly Blueprint",
+      "Material Specs"
+    ],
+    "featured": true,
+    "accentColor": "from-emerald-500 to-teal-600"
+  },
+  {
+    "id": "annual-science-conclave-print",
+    "title": "National STEM Conclave 2026 Exhibition & Print Graphics",
+    "category": "Print & Exhibition Collaterals",
+    "client": "National Science Foundation",
+    "year": "2026",
+    "description": "Monumental stage backdrops, 3D expo booth stalls, holographic visitor badges, fold-out prospectus catalogs, and social impact annual reports.",
+    "coverImage": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Adobe InDesign",
+      "Adobe Illustrator",
+      "Photoshop"
+    ],
+    "deliverables": [
+      "40x20ft Stage Backdrop (CMYK)",
+      "Tri-Fold Prospectus",
+      "Exhibition Stall Mockups",
+      "Gold Foil Certificates"
+    ],
+    "featured": false,
+    "accentColor": "from-purple-600 to-pink-600"
+  },
+  {
+    "id": "quantum-physics-motion-reel",
+    "title": "3D Quantum Physics & Particle Motion Concept Animations",
+    "category": "Motion Graphics & 3D Animation",
+    "client": "Experiential STEM Network",
+    "year": "2026",
+    "description": "Cinematic 3D explainer motion graphics showcasing subatomic particle collisions, magnetic field lines, and space relativity for immersive learning screens.",
+    "coverImage": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Cinema 4D",
+      "After Effects",
+      "Octane Render",
+      "Premiere Pro"
+    ],
+    "deliverables": [
+      "4K 60FPS Rendered Videos",
+      "Lottie Web Animations",
+      "Interactive Interactive Loops",
+      "Audio Sound Design"
+    ],
+    "featured": false,
+    "accentColor": "from-violet-600 to-indigo-600"
+  },
+  {
+    "id": "space-astronomy-hub-mural",
+    "title": "Cosmic Odyssey: High-Resolution Wall Mural & Signage System",
+    "category": "Spatial & Lab Design",
+    "client": "St. Xavier's World School",
+    "year": "2026",
+    "description": "Seamless 45-foot vector interstellar illustration depicting solar system orbits, celestial nebulae, and historical space missions for an Astronomy Innovation Lab.",
+    "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Adobe Illustrator",
+      "Procreate",
+      "Photoshop"
+    ],
+    "deliverables": [
+      "Ultra-High DPI Vinyl Mural Vector",
+      "Backlit Acrylic Signage Designs",
+      "Directional Wayfinding Signs"
+    ],
+    "featured": false,
+    "accentColor": "from-sky-500 to-blue-700"
+  },
+  {
+    "id": "mobile-edtech-student-app",
+    "title": "Gen-Z Experiential Learning Mobile App UI/UX",
+    "category": "UI/UX & Product Design",
+    "client": "CSEEL Mobile Platform",
+    "year": "2026",
+    "description": "Gamified mobile application UX with streak badges, 3D interactive model viewers, quiz animations, and personalized teacher feedback channels.",
+    "coverImage": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&auto=format&fit=crop&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&auto=format&fit=crop&q=80"
+    ],
+    "tools": [
+      "Figma",
+      "Principle",
+      "Lottie"
+    ],
+    "deliverables": [
+      "iOS & Android UI Kit (65 Screens)",
+      "Micro-Animations",
+      "Design System UI Kit",
+      "Interactive Flow Prototype"
+    ],
+    "featured": false,
+    "accentColor": "from-orange-500 to-amber-600"
+  }
+]

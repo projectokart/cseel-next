@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Devender (Dev Sharma) — Physics Demonstration Video Lectures (6 Sessions)</title>
+  <meta name="description" content="Watch 6 live experiential physics demonstrations by Devender (Dev Sharma) Sir. Senior Physics Faculty, Composite Lab Architect &amp; Master Trainer." />
+  <meta property="og:image" content="https://resumes.cseel.org/images/dev-sharma.jpg" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
+  </style>
+</head>
+<body class="min-h-screen pb-20 md:pb-10">
+
+  <!-- ============================================================ -->
+  <!-- FLOATING LEFT-EDGE HANDLE (AVATAR + 3 BARS) -->
+  <!-- ============================================================ -->
+  <aside onclick="toggleDrawer()" class="no-print fixed left-0 top-1/2 -translate-y-1/2 z-40 bg-blue-700 hover:bg-blue-600 text-white pl-1.5 pr-2 py-2.5 rounded-r-xl shadow-xl cursor-pointer flex flex-col items-center gap-1 transition-transform hover:scale-105" title="Quick Navigation Menu">
+    <img src="/images/dev-sharma.jpg" alt="Avatar" class="w-6 h-6 rounded-full object-cover border-2 border-white" />
+    <div class="flex flex-col gap-0.5 pt-0.5">
+      <span class="w-3.5 h-0.5 bg-white rounded-full"></span>
+      <span class="w-3.5 h-0.5 bg-white rounded-full"></span>
+      <span class="w-3.5 h-0.5 bg-white rounded-full"></span>
+    </div>
+  </aside>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE-OUT NAVIGATION DRAWER -->
+  <!-- ============================================================ -->
+  <div id="drawer-backdrop" onclick="toggleDrawer()" class="no-print fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <nav id="nav-drawer" class="no-print fixed top-0 bottom-0 left-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl -translate-x-full transition-transform duration-300 flex flex-col border-r border-slate-200">
+    <div class="bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <img src="/images/dev-sharma.jpg" alt="Dev Sharma" class="w-11 h-11 rounded-full object-cover border-2 border-teal-400" />
+        <div>
+          <h4 class="font-bold text-sm text-white leading-tight">Devender (Dev Sharma)</h4>
+          <p class="text-[11px] text-teal-300 font-medium">Physics Faculty &amp; Master Trainer</p>
+        </div>
+      </div>
+      <button onclick="toggleDrawer()" class="text-slate-400 hover:text-white text-xl p-1">&times;</button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-3 space-y-1 text-xs">
+      <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-2 py-1">Quick Links</div>
+      <a href="DevSharma.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-blue-50 text-blue-700 font-bold hover:bg-blue-100 transition border border-blue-200">
+        <i class="fa-solid fa-file-lines text-blue-600 w-4 text-center"></i>
+        <span>Back to Full Resume ➔</span>
+      </a>
+      <a href="DevSharma-gallery.html" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-teal-50 text-teal-700 font-bold hover:bg-teal-100 transition border border-teal-200">
+        <i class="fa-solid fa-images text-teal-600 w-4 text-center"></i>
+        <span>Photo Showcase Gallery (8) ➔</span>
+      </a>
+    </div>
+
+    <div class="p-3 border-t border-slate-200 bg-slate-50 flex gap-2">
+      <a href="tel:+918683979659" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-center text-xs flex items-center justify-center gap-1.5">
+        <i class="fa-solid fa-phone"></i>
+        <span>Call</span>
+      </a>
+      <a href="https://wa.me/918683979659" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-center text-xs flex items-center justify-center gap-1.5">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span>WhatsApp</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Video Container -->
+  <main class="max-w-5xl mx-auto my-4 sm:my-6 px-4 space-y-6">
+    <div class="bg-gradient-to-r from-red-900 via-slate-900 to-blue-950 text-white p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="space-y-1.5 text-center sm:text-left">
+        <span class="bg-red-600 text-white text-[10px] font-extrabold px-3 py-0.5 rounded-full uppercase tracking-wider">
+          Experiential Demonstration Archives
+        </span>
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">
+          Physics Video Demonstrations (6 Sessions)
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-300">
+          Live apparatus proofs, ray optics refraction, electromagnetic induction &amp; NEP 2020 workshops.
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="DevSharma.html" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 whitespace-nowrap transition shadow-md">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Resume</span>
+        </a>
+        <a href="https://drive.google.com/drive/folders/1Z01tcUwrAxCDd_qG2ln4cIcykhX4mWra?usp=drive_link" target="_blank" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 whitespace-nowrap transition">
+          <i class="fa-brands fa-google-drive text-amber-400 text-base"></i>
+          <span>Drive Archive</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Video Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+      <!-- Video 1 -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col">
+        <div onclick="openVideoModal('https://drive.google.com/file/d/1XTERWis8nfHiAX3K3D1nqDdHqIb-rLpW/preview')" class="aspect-video bg-slate-900 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          <img src="/images/dev-sharma.jpg" alt="Optics Demonstration" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-300">
+          <div class="absolute w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-play ml-0.5"></i>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">14:20</span>
+        </div>
+        <div class="p-4 space-y-1.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full uppercase">Optics &amp; Light</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-600 transition mt-1.5 leading-snug">
+              Wave Optics &amp; Light Ray Reflection / Refraction
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-1">
+              3-Ray laser demonstration with acrylic slab, critical angle &amp; TIR live visual proof.
+            </p>
+          </div>
+          <button onclick="openVideoModal('https://drive.google.com/file/d/1XTERWis8nfHiAX3K3D1nqDdHqIb-rLpW/preview')" class="w-full mt-3 py-2 bg-slate-100 group-hover:bg-blue-600 text-slate-800 group-hover:text-white font-bold text-xs rounded-lg transition text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-play text-[10px]"></i>
+            <span>Watch Demonstration</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col">
+        <div onclick="openVideoModal('https://drive.google.com/file/d/1IUzcwpcoonTu_qR5tQz6Y0H-jdBBy5ev/preview')" class="aspect-video bg-slate-900 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          <img src="/images/devender-sharma.jpg" alt="Electromagnetism" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-300">
+          <div class="absolute w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-play ml-0.5"></i>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">8:45</span>
+        </div>
+        <div class="p-4 space-y-1.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full uppercase">Electromagnetism</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-600 transition mt-1.5 leading-snug">
+              Faraday's Law &amp; Eddy Currents Demonstration
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-1">
+              Neodymium free-fall velocity damping in copper/aluminum tubes with Lenz's Law proof.
+            </p>
+          </div>
+          <button onclick="openVideoModal('https://drive.google.com/file/d/1IUzcwpcoonTu_qR5tQz6Y0H-jdBBy5ev/preview')" class="w-full mt-3 py-2 bg-slate-100 group-hover:bg-blue-600 text-slate-800 group-hover:text-white font-bold text-xs rounded-lg transition text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-play text-[10px]"></i>
+            <span>Watch Demonstration</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col">
+        <div onclick="openVideoModal('https://drive.google.com/file/d/16hSUfsnaEfsB95U3vV0ffvwpPC8Wu140/preview')" class="aspect-video bg-slate-900 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          <img src="/images/dev-sharma-profile.jpg" alt="NEP 2020 Lab Setup" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-300">
+          <div class="absolute w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-play ml-0.5"></i>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">12:10</span>
+        </div>
+        <div class="p-4 space-y-1.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full uppercase">NEP 2020</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-600 transition mt-1.5 leading-snug">
+              NEP 2020 Hands-On Teacher Training
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-1">
+              Composite science lab installation and activity-based pedagogy facilitation.
+            </p>
+          </div>
+          <button onclick="openVideoModal('https://drive.google.com/file/d/16hSUfsnaEfsB95U3vV0ffvwpPC8Wu140/preview')" class="w-full mt-3 py-2 bg-slate-100 group-hover:bg-blue-600 text-slate-800 group-hover:text-white font-bold text-xs rounded-lg transition text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-play text-[10px]"></i>
+            <span>Watch Demonstration</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video 4 -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col">
+        <div onclick="openVideoModal('https://drive.google.com/file/d/1nqw4zreuwIERpn0795AJ8-kPcgzk0F4E/preview')" class="aspect-video bg-slate-900 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          <img src="/images/dev-sharma.jpg" alt="Mechanics Workshop" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-300">
+          <div class="absolute w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-play ml-0.5"></i>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">6:30</span>
+        </div>
+        <div class="p-4 space-y-1.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full uppercase">Mechanics</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-600 transition mt-1.5 leading-snug">
+              Mechanics, Inertia &amp; Laws of Motion
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-1">
+              Interactive school workshop demonstrating Newton's laws through hands-on models.
+            </p>
+          </div>
+          <button onclick="openVideoModal('https://drive.google.com/file/d/1nqw4zreuwIERpn0795AJ8-kPcgzk0F4E/preview')" class="w-full mt-3 py-2 bg-slate-100 group-hover:bg-blue-600 text-slate-800 group-hover:text-white font-bold text-xs rounded-lg transition text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-play text-[10px]"></i>
+            <span>Watch Demonstration</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video 5 -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col">
+        <div onclick="openVideoModal('https://drive.google.com/file/d/1cPj0kxe2L9YKrijAn0DAA6ZLbhEsM1J-/preview')" class="aspect-video bg-slate-900 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          <img src="/images/devender-sharma.jpg" alt="Class 12 Numerical" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-300">
+          <div class="absolute w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-play ml-0.5"></i>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">15:40</span>
+        </div>
+        <div class="p-4 space-y-1.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase">Class 12 Boards</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-600 transition mt-1.5 leading-snug">
+              Board Exam Numerical Problem Solving
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-1">
+              Shortcut techniques, dimensional analysis and derivation clarity for top scores.
+            </p>
+          </div>
+          <button onclick="openVideoModal('https://drive.google.com/file/d/1cPj0kxe2L9YKrijAn0DAA6ZLbhEsM1J-/preview')" class="w-full mt-3 py-2 bg-slate-100 group-hover:bg-blue-600 text-slate-800 group-hover:text-white font-bold text-xs rounded-lg transition text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-play text-[10px]"></i>
+            <span>Watch Demonstration</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video 6 -->
+      <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition duration-300 group flex flex-col">
+        <div onclick="openVideoModal('https://drive.google.com/file/d/1ozH4UGTPd7Jxrr5SZSHCRKWdrPEAyObd/preview')" class="aspect-video bg-slate-900 flex items-center justify-center relative cursor-pointer overflow-hidden">
+          <img src="/images/dev-sharma-profile.jpg" alt="Composite Science Lab Setup" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-300">
+          <div class="absolute w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+            <i class="fa-solid fa-play ml-0.5"></i>
+          </div>
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-2 py-0.5 rounded">10:15</span>
+        </div>
+        <div class="p-4 space-y-1.5 flex-1 flex flex-col justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase">Lab Architecture</span>
+            <h3 class="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-blue-600 transition mt-1.5 leading-snug">
+              Composite Science &amp; STEM Lab Walkthrough
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-1">
+              Complete layout setup combining Physics, Chemistry and Biology for K-12 partner schools.
+            </p>
+          </div>
+          <button onclick="openVideoModal('https://drive.google.com/file/d/1ozH4UGTPd7Jxrr5SZSHCRKWdrPEAyObd/preview')" class="w-full mt-3 py-2 bg-slate-100 group-hover:bg-blue-600 text-slate-800 group-hover:text-white font-bold text-xs rounded-lg transition text-center flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-play text-[10px]"></i>
+            <span>Watch Demonstration</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Video Modal Popup -->
+  <div id="video-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-3">
+    <div class="bg-slate-900 rounded-2xl overflow-hidden w-full max-w-3xl shadow-2xl border border-slate-700 relative">
+      <div class="flex items-center justify-between p-3 border-b border-slate-800 text-white">
+        <span class="text-xs font-bold flex items-center gap-2">
+          <i class="fa-solid fa-play text-red-500"></i>
+          <span>Live Video Lecture Demonstration</span>
+        </span>
+        <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-xl px-2">×</button>
+      </div>
+      <div class="aspect-video bg-black">
+        <iframe id="video-iframe" src="" class="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MOBILE 5-ITEM BOTTOM STICKY DOCK -->
+  <!-- ============================================================ -->
+  <footer class="no-print md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl flex items-center justify-around py-2 px-1">
+    <a href="tel:+918683979659" class="flex flex-col items-center gap-0.5 text-slate-700 hover:text-blue-600 font-bold text-[10px]">
+      <i class="fa-solid fa-phone text-sm text-emerald-600"></i>
+      <span>Call</span>
+    </a>
+    <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma%20Sir%2C%20I%20viewed%20your%20verified%20Physics%20Faculty%20profile%20on%20CSEEL." target="_blank" class="flex flex-col items-center gap-0.5 text-slate-700 hover:text-emerald-600 font-bold text-[10px]">
+      <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i>
+      <span>WhatsApp</span>
+    </a>
+    <a href="DevSharma.html" class="flex flex-col items-center gap-0.5 text-slate-700 hover:text-blue-600 font-bold text-[10px]">
+      <i class="fa-solid fa-file-lines text-sm text-blue-600"></i>
+      <span>Resume</span>
+    </a>
+    <a href="DevSharma-gallery.html" class="flex flex-col items-center gap-0.5 text-slate-700 hover:text-blue-600 font-bold text-[10px]">
+      <i class="fa-solid fa-images text-sm text-blue-600"></i>
+      <span>Gallery (8)</span>
+    </a>
+    <button onclick="toggleDrawer()" class="flex flex-col items-center gap-0.5 text-slate-700 hover:text-blue-600 font-bold text-[10px]">
+      <i class="fa-solid fa-bars text-sm text-slate-800"></i>
+      <span>Menu</span>
+    </button>
+  </footer>
+
+  <script>
+    function openVideoModal(url) {
+      document.getElementById('video-iframe').src = url;
+      document.getElementById('video-modal').classList.remove('hidden');
+    }
+    function closeVideoModal() {
+      document.getElementById('video-iframe').src = '';
+      document.getElementById('video-modal').classList.add('hidden');
+    }
+    function toggleDrawer() {
+      const drawer = document.getElementById('nav-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      const isOpen = drawer.classList.contains('translate-x-0');
+      if (isOpen) {
+        drawer.classList.remove('translate-x-0');
+        drawer.classList.add('-translate-x-full');
+        backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        drawer.classList.remove('-translate-x-full');
+        drawer.classList.add('translate-x-0');
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100', 'pointer-events-auto');
+      }
+    }
+  </script>
+</body>
+</html>

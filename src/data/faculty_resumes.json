@@ -1,0 +1,670 @@
+[
+  {
+    "id": "a50d7c18-96a5-482b-8da5-a3384d69e85c",
+    "facultyCode": "AA001",
+    "userId": null,
+    "name": "Devender (Dev Sharma)",
+    "slug": "DevSharma",
+    "subject": "Physics Faculty",
+    "category": "best-Teacherfaculty/physics faculty",
+    "title": "Senior Physics Faculty | Master Trainer & Composite Lab Architect",
+    "experience": "5+ Years Senior Secondary Experience",
+    "phone": "+91 8683979659",
+    "altPhone": "+91 9050778830",
+    "email": "ptdevkaushik101@gmail.com",
+    "location": "Palwal, Haryana",
+    "address": "Prakash Vihar Colony, Palwal, Palwal, Haryana - 121102",
+    "addressDetails": {
+      "state": "Haryana",
+      "source": "browser_gps",
+      "pincode": "121102",
+      "district": "Palwal",
+      "latitude": 28.1432,
+      "longitude": 77.3241,
+      "distanceKm": 0,
+      "verifiedAt": "2026-09-10T16:39:39.908Z",
+      "liveLatitude": 28.1432,
+      "localAddress": "Prakash Vihar Colony",
+      "liveLongitude": 77.3241,
+      "blockOrCluster": "Palwal",
+      "googleMapLocation": "https://maps.google.com/?q=28.1432,77.3241",
+      "isLocationVerified": true,
+      "verificationStatus": "verified_within_2km"
+    },
+    "isLocationVerified": true,
+    "isVerified": true,
+    "status": "verified",
+    "accessKey": "haMmbGM3ASNXC9wjhzdL",
+    "photoUrl": "/images/dev-sharma.jpg",
+    "videoLink": "",
+    "privacy": {
+      "showEmail": true,
+      "showPhone": true,
+      "showAddress": true,
+      "showAltPhone": true
+    },
+    "videos": [
+      {
+        "id": "vid-1",
+        "title": "Color Addition & Primary Light Spectrum Synthesis Demonstration",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/addition-of-colour.mp4",
+        "category": "Optics & Light",
+        "description": "Interactive hands-on physical demonstration of RGB color addition, showing how red, green, and blue light combine to produce white light and secondary complementary colors.",
+        "duration": "03:45",
+        "filename": "addition of colour.mp4"
+      },
+      {
+        "id": "vid-2",
+        "title": "Atmospheric Air Composition: Experimental Proof of 1/5th Oxygen (21%)",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/air-contain-oxygen-1-by-5-.mp4",
+        "category": "Thermodynamics & Gases",
+        "description": "Classic candle-in-water bell jar experiment demonstrating the 1/5th volume consumption of oxygen during combustion, proving air composition percentage.",
+        "duration": "04:15",
+        "filename": "air contain oxygen 1 by 5%.mp4"
+      },
+      {
+        "id": "vid-3",
+        "title": "Atmospheric Air Pressure & Vacuum Force Dynamics",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/air-pressure.mp4",
+        "category": "Fluid Mechanics",
+        "description": "Practical classroom demonstration of atmospheric air pressure differential, fluid displacement, and suction forces using experiential apparatus.",
+        "duration": "05:30",
+        "filename": "air pressure.mp4"
+      },
+      {
+        "id": "vid-4",
+        "title": "Bernoulli's Principle: Air Velocity & Pressure Differential Dynamics",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/air-wind.mp4",
+        "category": "Fluid Mechanics",
+        "description": "Hands-on physics demonstration of high-speed air flow creating low pressure zones (Bernoulli's effect) and generating aerodynamic lift.",
+        "duration": "06:10",
+        "filename": "air wind.mp4"
+      },
+      {
+        "id": "vid-5",
+        "title": "Interactive Physics Inquiry: Concept Probing & Student Doubt Resolution (Part 1)",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/asking-q-1.mp4",
+        "category": "Pedagogy & Classroom",
+        "description": "Master trainer classroom session engaging students with Socratic questioning, conceptual problem-solving, and experiential logic.",
+        "duration": "12:40",
+        "filename": "Asking Q-1.mp4"
+      },
+      {
+        "id": "vid-6",
+        "title": "Classroom Engagement & Real-Time Physics Problem Solving",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/asking-q.mp4",
+        "category": "Pedagogy & Classroom",
+        "description": "Dynamic student-teacher interaction highlighting active classroom participation, question framing, and concept reinforcement.",
+        "duration": "04:50",
+        "filename": "asking q.mp4"
+      },
+      {
+        "id": "vid-7",
+        "title": "Colored Shadows Formation & Multi-Source Light Ray Geometry (Part 1)",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/colour-of-shadow-1.mp4",
+        "category": "Optics & Light",
+        "description": "Demonstration of shadows cast by multiple colored light sources (Red, Green, Blue) producing cyan, magenta, and yellow shadow regions.",
+        "duration": "02:30",
+        "filename": "colour of shadow-1.mp4"
+      },
+      {
+        "id": "vid-8",
+        "title": "Multi-Color Shadow Synthesis & Complementary Spectrum Analysis",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/colour-shadow.mp4",
+        "category": "Optics & Light",
+        "description": "Detailed experimental analysis of complementary colored shadows and light intersection patterns using multi-beam illumination.",
+        "duration": "04:40",
+        "filename": "colour shadow.mp4"
+      },
+      {
+        "id": "vid-9",
+        "title": "Collaborative Science Seminar & Teacher Mentoring Discussion",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/discussion.mp4",
+        "category": "Faculty Training",
+        "description": "In-depth pedagogical discussion with school faculty on implementing NEP 2020 experiential learning and hands-on lab modules.",
+        "duration": "04:35",
+        "filename": "discussion.mp4"
+      },
+      {
+        "id": "vid-10",
+        "title": "Center of Gravity, Stable Equilibrium & Rotational Balance",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/equilibrium.mp4",
+        "category": "Mechanics",
+        "description": "Demonstration of mechanical equilibrium, torque balance, and center of mass stability using physical balance models.",
+        "duration": "03:20",
+        "filename": "Equilibrium.mp4"
+      },
+      {
+        "id": "vid-11",
+        "title": "Magdeburg Hemispheres: Atmospheric Pressure Force Demonstration",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/megiduburg-air-pressure.mp4",
+        "category": "Fluid Mechanics",
+        "description": "Classic Magdeburg hemisphere vacuum suction demonstration showing the immense force exerted by atmospheric pressure when air is evacuated.",
+        "duration": "03:55",
+        "filename": "megiduburg Air pressure.mp4"
+      },
+      {
+        "id": "vid-12",
+        "title": "Parallel Light Ray Beam Box & Optical Lens Collimation",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/paraller-ray-source.mp4",
+        "category": "Optics & Light",
+        "description": "Multi-beam ray box demonstration showing collimated parallel light rays passing through convex, concave lenses and prisms.",
+        "duration": "10:15",
+        "filename": "paraller ray source.mp4"
+      },
+      {
+        "id": "vid-13",
+        "title": "Rectilinear Propagation of Light Rays: Physical Verification (Part 1)",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/rectilinear-path-of-ligh.mp4",
+        "category": "Optics & Light",
+        "description": "Experimental verification that light travels in straight lines using pinhole apertures and laser beam paths through particulate medium.",
+        "duration": "09:25",
+        "filename": "rectilinear path of ligh.mp4"
+      },
+      {
+        "id": "vid-14",
+        "title": "Straight-Line Light Propagation & Shadow Projection Analysis (Part 2)",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/rectilinear-path-of-light.mp4",
+        "category": "Optics & Light",
+        "description": "Advanced demonstration of rectilinear light propagation, umbra and penumbra shadow boundaries, and beam collimation.",
+        "duration": "08:50",
+        "filename": "Rectilinear path of light.mp4"
+      },
+      {
+        "id": "vid-15",
+        "title": "Total Internal Reflection (TIR), Critical Angle & Snell's Law Refraction",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/refraction-of-tir.mp4",
+        "category": "Optics & Light",
+        "description": "Laser beam demonstration inside dense medium showing Snell's law refraction, critical angle measurement, and 100% Total Internal Reflection.",
+        "duration": "04:55",
+        "filename": "Refraction of TIR.mp4"
+      },
+      {
+        "id": "vid-16",
+        "title": "Student-Led Science Presentation & Experiential Model Explanation",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/student-explaning.mp4",
+        "category": "Student Innovation",
+        "description": "Student articulating scientific principles confidently after hands-on experiment demonstration, showcasing learning by doing impact.",
+        "duration": "07:15",
+        "filename": "student explaning.mp4"
+      },
+      {
+        "id": "vid-17",
+        "title": "Faculty Enablement & Master Teacher Training Workshop",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/teachers.mp4",
+        "category": "Faculty Training",
+        "description": "Senior physics master training session guiding school teachers on experiential pedagogy, lab safety, and NEP 2020 curriculum alignment.",
+        "duration": "08:10",
+        "filename": "Teachers.mp4"
+      },
+      {
+        "id": "vid-18",
+        "title": "Hands-On Science Lab Apparatus & Live Demonstration Rig",
+        "url": "https://ukazkxthavxphibdbspd.supabase.co/storage/v1/object/public/faculty-videos/vid-20260908-wa0018.mp4",
+        "category": "STEM Lab Architecture",
+        "description": "Interactive demonstration of custom physics apparatus and STEM lab installation kits designed for CBSE and state board curricula.",
+        "duration": "01:50",
+        "filename": "VID-20260908-WA0018.mp4"
+      }
+    ],
+    "galleryImages": [
+      {
+        "url": "/images/dev-sharma.jpg",
+        "title": "Devender (Dev Sharma) — Senior Physics Faculty & Master Trainer",
+        "category": "workshops",
+        "subtitle": "Verified Profile • M.Sc. Physics (1st Div)"
+      },
+      {
+        "url": "/images/devender-sharma.jpg",
+        "title": "Hands-on Physics Workshop at City Montessori School (CMS) Lucknow",
+        "category": "workshops",
+        "subtitle": "CMS Lucknow • 100+ Students"
+      },
+      {
+        "url": "/images/dev-sharma-profile.jpg",
+        "title": "Composite Science & STEM Lab Setup Demonstration",
+        "category": "lab",
+        "subtitle": "NEP 2020 Experiential Lab Architecture"
+      },
+      {
+        "url": "/images/dev-sharma.jpg",
+        "title": "Experiential Teacher Training Demonstration & Activity Stations",
+        "category": "workshops",
+        "subtitle": "Master Trainer Workshop"
+      },
+      {
+        "url": "/images/dev-sharma-profile.jpg",
+        "title": "D.A.V. & DPS Pan-India Classroom Physics Lab Session",
+        "category": "lab",
+        "subtitle": "Senior Secondary Lab"
+      },
+      {
+        "url": "/images/devender-sharma.jpg",
+        "title": "National & State Eligibility Certifications (HTET & CTET Qualified)",
+        "category": "certificates",
+        "subtitle": "HTET Maths, CTET I, CTET II Qualified"
+      },
+      {
+        "url": "/images/dev-sharma.jpg",
+        "title": "Ray Optics Activity Demonstration & Physical Apparatus",
+        "category": "lab",
+        "subtitle": "Experiential Pedagogy"
+      },
+      {
+        "url": "/images/dev-sharma-profile.jpg",
+        "title": "Student Interactive Science Exhibition & Model Presentation",
+        "category": "workshops",
+        "subtitle": "Experiential Pedagogy"
+      }
+    ],
+    "resumeData": {},
+    "sections": [
+      {
+        "id": "sec-hero",
+        "data": {
+          "bio": "Dedicated, result-driven Physics educator passionate about experiential, activity-driven teaching. Specialist in setting up Composite Science & STEM Labs and conducting pan-India student workshops aligned with NEP 2020.",
+          "name": "Devender (Dev Sharma)",
+          "slug": "DevSharma",
+          "email": "ptdevkaushik101@gmail.com",
+          "phone": "+91 8683979659",
+          "title": "Senior Physics Faculty | Master Trainer & Composite Lab Architect",
+          "address": "Prakash Vihar Colony, Palwal, Haryana - 121102",
+          "subject": "Physics Faculty",
+          "altPhone": "+91 9050778830",
+          "photoUrl": "/images/dev-sharma.jpg",
+          "addressDetails": {
+            "state": "Haryana",
+            "source": "browser_gps",
+            "pincode": "121102",
+            "district": "Palwal",
+            "latitude": 28.1432,
+            "longitude": 77.3241,
+            "distanceKm": 0,
+            "liveLatitude": 28.1432,
+            "localAddress": "Prakash Vihar Colony",
+            "liveLongitude": 77.3241,
+            "blockOrCluster": "Palwal",
+            "googleMapLocation": "https://maps.google.com/?q=28.1432,77.3241",
+            "isLocationVerified": true,
+            "verificationStatus": "verified_within_2km"
+          },
+          "experienceBadge": "5+ Years Senior Secondary Experience"
+        },
+        "type": "header_hero",
+        "title": "Hero Header & Contact"
+      },
+      {
+        "id": "sec-metrics",
+        "data": {
+          "metrics": [
+            {
+              "lbl": "1st Division Track Record",
+              "val": "100%"
+            },
+            {
+              "lbl": "Pan-India Workshops",
+              "val": "100+"
+            },
+            {
+              "lbl": "GATE, CTET & HTET Certified",
+              "val": "4x"
+            },
+            {
+              "lbl": "Master Lab Trainer",
+              "val": "NEP 2020"
+            }
+          ]
+        },
+        "type": "metrics_strip",
+        "title": "Impact Metrics Strip"
+      },
+      {
+        "id": "sec-objective",
+        "data": {
+          "content": "Dedicated and result-oriented Physics educator with strong subject expertise and a passion for experiential, hands-on teaching. Skilled in simplifying complex concepts through experiments, models, and activity-based learning aligned with the National Education Policy (NEP) 2020. Proven track record in Experimental, STEM and Composite Lab Development, Curriculum Development, and academic management. Experienced in conducting physics workshops and faculty training programs across reputed schools in India. Seeking to contribute energetic teaching, strong administrative coordination, and a deep commitment to building future-ready, lab-driven learning environments for students.",
+          "heading": "Career Objective"
+        },
+        "type": "career_objective",
+        "title": "Career Objective"
+      },
+      {
+        "id": "sec-advantage",
+        "data": {
+          "cards": [
+            {
+              "badge": "Traditional Rote Method",
+              "title": "10% - 20% Retention",
+              "points": [
+                "Passive listening and memorizing derivations without physical context.",
+                "Concepts like Electromagnetism & Optics feel abstract and intimidating.",
+                "High exam stress when facing twisted numerical questions."
+              ],
+              "badgeColor": "red"
+            },
+            {
+              "badge": "Dev Sharma's Experiential Method",
+              "title": "75% - 90% Retention",
+              "points": [
+                "Dual-Coding Theory: Audio + Visual + Hands-on experimentation.",
+                "Live Apparatus Proofs: Concepts verified with working models first.",
+                "Effortless Recall: Students recall live experiments naturally during exams."
+              ],
+              "badgeColor": "green"
+            }
+          ],
+          "headline": "Why Experiential Learning? (Audio-Visual + Hands-On = 90% Retention)",
+          "pillText": "Pedagogical Advantage",
+          "description": "Textbook lectures only produce 10–20% retention because abstract formulas fade quickly. When students experience Audio-Visual + Hands-On Physical Demonstrations, neural encoding deepens, making Board Exams and JEE/NEET problem-solving intuitive and permanent."
+        },
+        "type": "advantage_box",
+        "title": "Pedagogical Advantage"
+      },
+      {
+        "id": "sec-qualifications",
+        "data": {
+          "items": [
+            {
+              "year": "2022",
+              "board": "Kurukshetra University",
+              "degree": "B.Ed.",
+              "division": "1st",
+              "institute": "Kurukshetra University",
+              "percentage": "72%"
+            },
+            {
+              "year": "2020",
+              "board": "YMCA University of Sci. & Tech., Faridabad",
+              "degree": "M.Sc. (Physics)",
+              "division": "1st",
+              "institute": "YMCA University of Science & Technology",
+              "percentage": "8.09 CGPA"
+            },
+            {
+              "year": "2017",
+              "board": "Kurukshetra University",
+              "degree": "B.Sc.",
+              "division": "1st",
+              "institute": "Kurukshetra University",
+              "percentage": "77%"
+            },
+            {
+              "year": "2013",
+              "board": "HBSE",
+              "degree": "12th",
+              "division": "1st",
+              "institute": "Board of School Education Haryana (HBSE)",
+              "percentage": "88.4%"
+            },
+            {
+              "year": "2011",
+              "board": "HBSE",
+              "degree": "10th",
+              "division": "1st",
+              "institute": "Board of School Education Haryana (HBSE)",
+              "percentage": "87.6%"
+            }
+          ],
+          "heading": "Academic Qualifications"
+        },
+        "type": "qualifications_table",
+        "title": "Academic Qualifications"
+      },
+      {
+        "id": "sec-experience",
+        "data": {
+          "items": [
+            {
+              "role": "Physics Faculty & Master Trainer",
+              "tenure": "2025 - Present",
+              "details": [
+                "Leading curriculum delivery, faculty mentoring, and STEM lab installations across premier partner schools.",
+                "Conducted high-impact physics workshops at CMS Lucknow, DPS, DAV Schools, and Odisha Govt Schools.",
+                "Architected Composite Science Labs integrating Physics, Chemistry, and Biology."
+              ],
+              "institution": "Desco Education (Jigyasu)"
+            },
+            {
+              "role": "Senior Physics Faculty",
+              "tenure": "2024 - 2025",
+              "details": [
+                "Taught Senior Secondary batches with strong focus on experimental clarity and model-based teaching.",
+                "Set up interactive science activity corners and practical demonstration kits."
+              ],
+              "institution": "Priyadarshi Group of Colleges & Schools, Pune"
+            },
+            {
+              "role": "Senior Physics Faculty (Class 12)",
+              "tenure": "2023 - 2024",
+              "details": [
+                "Taught Class 12 Physics with expert numerical problem-solving and lab exam preparation.",
+                "Achieved exceptional board examination pass percentages and top scores."
+              ],
+              "institution": "D.A.V. Public School"
+            }
+          ],
+          "heading": "Professional Experience"
+        },
+        "type": "experience_timeline",
+        "title": "Professional Experience"
+      },
+      {
+        "id": "sec-certifications",
+        "data": {
+          "items": [
+            {
+              "name": "GATE (Physics) Qualified",
+              "year": "National Level",
+              "regNo": "Graduate Aptitude Test in Engineering • National Level (IIT / IISc)",
+              "score": "QUALIFIED"
+            },
+            {
+              "name": "CTET Level II (Math & Science)",
+              "year": "2021",
+              "regNo": "CBSE, Central Government",
+              "score": "QUALIFIED"
+            },
+            {
+              "name": "CTET Level I",
+              "year": "2021",
+              "regNo": "CBSE, Central Government",
+              "score": "QUALIFIED"
+            },
+            {
+              "name": "HTET (Mathematics)",
+              "year": "2022",
+              "regNo": "Board of School Education Haryana",
+              "score": "QUALIFIED"
+            }
+          ],
+          "heading": "National Certifications"
+        },
+        "type": "certifications_box",
+        "title": "Certifications & Accreditations"
+      },
+      {
+        "id": "sec-skills",
+        "data": {
+          "tags": [
+            "In-depth conceptual and applied knowledge of Physics, with strong experimental foundation",
+            "Hands-on, activity-based and experiential teaching methodology ('learning by doing')",
+            "Experimental Lab Development and STEM Lab Development for schools",
+            "Composite Lab design - integrated Physics, Chemistry, Biology & Math lab spaces",
+            "Curriculum Development and lesson planning aligned with NEP 2020",
+            "Conducting large-scale physics workshops and teacher-training programs across India",
+            "Faculty training, academic program management, and quality monitoring",
+            "Effective communication and ability to simplify complex topics for diverse learners",
+            "Time management, classroom coordination, and critical-thinking development",
+            "Strong administrative, planning and organizational skills"
+          ],
+          "heading": "Core Competencies & Skills"
+        },
+        "type": "skills_tags",
+        "title": "Core Skills & Strengths"
+      },
+      {
+        "id": "sec-expertise",
+        "data": {
+          "cards": [
+            {
+              "title": "Experimental & STEM Lab Development",
+              "points": [
+                "Designing, setting up and operationalizing Physics, Experimental and STEM labs in schools as per NEP 2020 norms.",
+                "Developing low-cost, activity-based experiment kits to encourage inquiry-based learning."
+              ]
+            },
+            {
+              "title": "Composite Lab Development",
+              "points": [
+                "Planning integrated/composite labs combining Physics, Chemistry, Biology and Mathematics for cross-disciplinary STEM learning.",
+                "Coordinating with school administration for lab infrastructure, equipment procurement, and safety standards."
+              ]
+            },
+            {
+              "title": "Curriculum Development (NEP 2020 Aligned)",
+              "points": [
+                "Designing competency-based curriculum and lesson plans in line with NEP 2020's focus on experiential and holistic learning.",
+                "Mapping experiments and activities to learning outcomes for Classes IX-XII Physics.",
+                "Creating teacher handbooks and training material to support consistent curriculum delivery."
+              ]
+            },
+            {
+              "title": "Experiential & Hands-On Teaching",
+              "points": [
+                "Implementing 'learning by doing' pedagogy through demonstrations, models, and student-led experiments.",
+                "Conducting hands-on physics workshops across reputed schools throughout India, e.g. City Montessori School (CMS) Lucknow, D.A.V. Public Schools, Delhi Public School (DPS), and Government Schools in Odisha."
+              ]
+            }
+          ],
+          "heading": "Areas of Expertise"
+        },
+        "type": "areas_of_expertise",
+        "title": "Areas of Expertise"
+      },
+      {
+        "id": "sec-achievements",
+        "data": {
+          "points": [
+            "Successfully led Experimental, STEM and Composite Lab Development projects across multiple partner schools.",
+            "Designed NEP 2020-aligned curriculum modules adopted across schools under Desco Education (Jigyasu).",
+            "Conducted hands-on physics workshops in reputed schools pan-India, impacting hundreds of students and teachers.",
+            "Recognized as a Master Trainer for delivering effective, experiment-based teacher training programs.",
+            "Maintained consistent academic excellence - 1st Division throughout academic career (10th to M.Sc.)."
+          ],
+          "heading": "Key Achievements"
+        },
+        "type": "key_achievements",
+        "title": "Key Milestones & Achievements"
+      },
+      {
+        "id": "sec-videos",
+        "data": {
+          "items": [
+            {
+              "id": "1XTERWis8nfHiAX3K3D1nqDdHqIb-rLpW",
+              "url": "https://drive.google.com/file/d/1XTERWis8nfHiAX3K3D1nqDdHqIb-rLpW/preview",
+              "title": "Wave Optics & Light Ray Reflection/Refraction Demonstration",
+              "category": "Optics",
+              "duration": "14:20"
+            },
+            {
+              "id": "1IUzcwpcoonTu_qR5tQz6Y0H-jdBBy5ev",
+              "url": "https://drive.google.com/file/d/1IUzcwpcoonTu_qR5tQz6Y0H-jdBBy5ev/preview",
+              "title": "Electromagnetism & Faraday's Law — Experiential Lab Setup",
+              "category": "Electromagnetism",
+              "duration": "8:45"
+            },
+            {
+              "id": "16hSUfsnaEfsB95U3vV0ffvwpPC8Wu140",
+              "url": "https://drive.google.com/file/d/16hSUfsnaEfsB95U3vV0ffvwpPC8Wu140/preview",
+              "title": "NEP 2020 Hands-On Teacher Training & Composite Science Lab",
+              "category": "NEP 2020",
+              "duration": "12:10"
+            },
+            {
+              "id": "1nqw4zreuwIERpn0795AJ8-kPcgzk0F4E",
+              "url": "https://drive.google.com/file/d/1nqw4zreuwIERpn0795AJ8-kPcgzk0F4E/preview",
+              "title": "Mechanics, Inertia & Laws of Motion Interactive Workshop",
+              "category": "Mechanics",
+              "duration": "6:30"
+            },
+            {
+              "id": "1cPj0kxe2L9YKrijAn0DAA6ZLbhEsM1J-",
+              "url": "https://drive.google.com/file/d/1cPj0kxe2L9YKrijAn0DAA6ZLbhEsM1J-/preview",
+              "title": "Class 12 Board Exam Numerical Problem Solving Session",
+              "category": "Class 12",
+              "duration": "15:40"
+            },
+            {
+              "id": "1ozH4UGTPd7Jxrr5SZSHCRKWdrPEAyObd",
+              "url": "https://drive.google.com/file/d/1ozH4UGTPd7Jxrr5SZSHCRKWdrPEAyObd/preview",
+              "title": "Composite Science & STEM Lab Setup Demonstration for Schools",
+              "category": "Composite Lab",
+              "duration": "10:15"
+            }
+          ]
+        },
+        "type": "demo_videos",
+        "title": "Demo Lecture Video Archives"
+      },
+      {
+        "id": "sec-gallery",
+        "data": {
+          "items": [
+            {
+              "url": "/images/dev-sharma.jpg",
+              "title": "Devender (Dev Sharma) — Senior Physics Faculty & Master Trainer",
+              "category": "workshops",
+              "subtitle": "Verified Profile • M.Sc. Physics (1st Div)"
+            },
+            {
+              "url": "/images/devender-sharma.jpg",
+              "title": "Hands-on Physics Workshop at City Montessori School (CMS) Lucknow",
+              "category": "workshops",
+              "subtitle": "CMS Lucknow • 100+ Students"
+            },
+            {
+              "url": "/images/dev-sharma-profile.jpg",
+              "title": "Composite Science & STEM Lab Setup Demonstration",
+              "category": "lab",
+              "subtitle": "NEP 2020 Experiential Lab Architecture"
+            },
+            {
+              "url": "/images/dev-sharma.jpg",
+              "title": "Experiential Teacher Training Demonstration & Activity Stations",
+              "category": "workshops",
+              "subtitle": "Master Trainer Workshop"
+            },
+            {
+              "url": "/images/dev-sharma-profile.jpg",
+              "title": "D.A.V. & DPS Pan-India Classroom Physics Lab Session",
+              "category": "lab",
+              "subtitle": "Senior Secondary Lab"
+            },
+            {
+              "url": "/images/devender-sharma.jpg",
+              "title": "National & State Eligibility Certifications (HTET & CTET Qualified)",
+              "category": "certificates",
+              "subtitle": "HTET Maths, CTET I, CTET II Qualified"
+            },
+            {
+              "url": "/images/dev-sharma.jpg",
+              "title": "Ray Optics Activity Demonstration & Physical Apparatus",
+              "category": "lab",
+              "subtitle": "Experiential Pedagogy"
+            },
+            {
+              "url": "/images/dev-sharma-profile.jpg",
+              "title": "Student Interactive Science Exhibition & Model Presentation",
+              "category": "workshops",
+              "subtitle": "Experiential Pedagogy"
+            }
+          ]
+        },
+        "type": "photo_gallery",
+        "title": "Workshop & Laboratory Photo Showcase"
+      }
+    ],
+    "updatedAt": "2026-09-18T05:03:38.667Z",
+    "createdAt": "2026-09-10T05:05:32.13829+00:00"
+  }
+]

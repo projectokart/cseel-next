@@ -1,0 +1,269 @@
+'use client';
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { AdminRole, AdminModuleId, AdminUser, AuditLogItem } from '../types';
+import { ADMIN_ROLE_CONFIGS, INITIAL_ADMIN_USERS, INITIAL_AUDIT_LOGS, canAccessModule } from '../data';
+
+interface AdminAuthContextType {
+  isAuthenticated: boolean;
+  currentAdmin: AdminUser;
+  currentRole: AdminRole;
+  activeModule: AdminModuleId;
+  adminUsers: AdminUser[];
+  auditLogs: AuditLogItem[];
+  login: (email: string, pass: string) => LoginResult;
+  logout: () => void;
+  quickDemoLogin: (role: AdminRole) => void;
+  switchRole: (role: AdminRole) => void;
+  setActiveModule: (mod: AdminModuleId) => void;
+  hasAccess: (mod: AdminModuleId) => boolean;
+  addAuditLog: (action: string, module: AdminModuleId, details: string) => void;
+  addNewAdminUser: (user: Omit<AdminUser, 'id' | 'lastLogin' | 'status'>) => void;
+  updateAdminStatus: (id: string, status: 'active' | 'inactive') => void;
+}
+
+const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
+
+export const DEPARTMENT_SUBDOMAIN_REDIRECTS: Record<string, string> = {
+  inventory_admin: '/admin',
+  hr_admin: '/admin',
+  school_admin: '/admin',
+  recruitment_admin: '/admin',
+  science_admin: '/admin',
+  projectokart_admin: '/admin',
+  programs_admin: '/admin',
+  events_admin: '/admin',
+  support_admin: '/admin',
+  content_admin: '/admin',
+  marketing_admin: '/admin',
+  rnd_admin: '/admin',
+  super_admin: '/admin',
+};
+
+export interface LoginResult {
+  success: boolean;
+  error?: string;
+  redirectUrl?: string;
+  role?: AdminRole;
+}
+
+export const AdminAuthProvider: React.FC<{ children: React.ReactNode; defaultModule?: AdminModuleId }> = ({ children, defaultModule }) => {
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>(INITIAL_ADMIN_USERS);
+  const [currentRole, setCurrentRole] = useState<AdminRole>('super_admin');
+  const [activeModule, setActiveModule] = useState<AdminModuleId>(defaultModule || 'overview');
+  const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>(INITIAL_AUDIT_LOGS);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      const savedAuth = localStorage.getItem('cseel_admin_auth');
+      return savedAuth === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Load session from storage if available
+  useEffect(() => {
+    try {
+      const savedRole = localStorage.getItem('cseel_admin_role') as AdminRole;
+      const savedAuth = localStorage.getItem('cseel_admin_auth');
+      if (savedRole && ADMIN_ROLE_CONFIGS[savedRole]) {
+        setCurrentRole(savedRole);
+      }
+      setIsAuthenticated(savedAuth === 'true');
+    } catch {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  const currentAdmin = adminUsers.find((u) => u.role === currentRole) || adminUsers[0];
+
+  const login = (email: string, pass: string): LoginResult => {
+    const clean = email.trim().toLowerCase().replace('@cseel.org', '');
+    const cleanPass = pass.trim();
+
+    // Map common aliases
+    const user = adminUsers.find((u) => {
+      const uEmail = u.email.toLowerCase();
+      const uRole = u.role.toLowerCase();
+      return (
+        uEmail === clean ||
+        uEmail.startsWith(clean) ||
+        uEmail === `${clean}@123` ||
+        uEmail === `${clean}@cseel.org` ||
+        uRole.includes(clean) ||
+        (clean === 'material' && u.role === 'inventory_admin') ||
+        (clean === 'materials' && u.role === 'inventory_admin') ||
+        (clean === 'school' && u.role === 'school_admin') ||
+        (clean === 'schools' && u.role === 'school_admin') ||
+        (clean === 'super' && u.role === 'super_admin') ||
+        (clean === 'admin' && u.role === 'super_admin')
+      );
+    });
+
+    if (!user) {
+      return { success: false, error: 'No administrator found with this username/email.' };
+    }
+
+    if (cleanPass !== 'Dev@12345' && user.password && user.password !== cleanPass) {
+      return { success: false, error: 'Incorrect administrator password. Please use Dev@12345.' };
+    }
+
+    // Success
+    setCurrentRole(user.role);
+    setIsAuthenticated(true);
+    try {
+      localStorage.setItem('cseel_admin_auth', 'true');
+      localStorage.setItem('cseel_admin_role', user.role);
+    } catch {}
+
+    const redirectUrl = DEPARTMENT_SUBDOMAIN_REDIRECTS[user.role] || '/admin';
+
+    addAuditLog('ADMIN_LOGIN_SUCCESS', 'overview', `Admin ${user.name} logged into ${user.role} workspace.`);
+    return { success: true, redirectUrl, role: user.role };
+  };
+
+  const quickDemoLogin = (role: AdminRole) => {
+    const user = adminUsers.find((u) => u.role === role) || adminUsers[0];
+    setCurrentRole(role);
+    setIsAuthenticated(true);
+    try {
+      localStorage.setItem('cseel_admin_auth', 'true');
+      localStorage.setItem('cseel_admin_role', role);
+    } catch {}
+
+    addAuditLog('DEMO_AUTH_ACCESS', 'overview', `Direct one-click access to ${role} workspace.`);
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    try {
+      localStorage.removeItem('cseel_admin_auth');
+      localStorage.removeItem('cseel_admin_role');
+    } catch {}
+    addAuditLog('ADMIN_LOGOUT', 'overview', `Admin ${currentAdmin.name} logged out.`);
+  };
+
+  const switchRole = (role: AdminRole) => {
+    setCurrentRole(role);
+    try {
+      localStorage.setItem('cseel_admin_role', role);
+    } catch {}
+    // If current active module is not allowed in new role, redirect to overview
+    if (!canAccessModule(role, activeModule)) {
+      setActiveModule('overview');
+    }
+  };
+
+  const hasAccess = (mod: AdminModuleId): boolean => {
+    return canAccessModule(currentRole, mod);
+  };
+
+  const addAuditLog = (action: string, module: AdminModuleId, details: string) => {
+    const newLog: AuditLogItem = {
+      id: `log-${Date.now()}`,
+      timestamp: 'Just now',
+      adminName: currentAdmin?.name || 'Administrator',
+      adminRole: currentRole,
+      action,
+      module,
+      details,
+      ipAddress: '127.0.0.1',
+    };
+    setAuditLogs((prev) => [newLog, ...prev]);
+
+    // Send persistent record to backend API
+    try {
+      fetch('/api/admin/audit-logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminName: currentAdmin?.name || 'Administrator',
+          adminEmail: currentAdmin?.email || 'admin@123',
+          adminRole: currentRole,
+          department: currentAdmin?.department || ADMIN_ROLE_CONFIGS[currentRole]?.department || 'Administration',
+          action,
+          actionCategory: action.startsWith('CREATE') ? 'CREATE' : action.startsWith('DELETE') ? 'DELETE' : action.startsWith('EXPORT') ? 'EXPORT' : action.startsWith('AUTH') || action.startsWith('LOGIN') ? 'AUTH' : 'UPDATE',
+          details,
+        }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const addNewAdminUser = (user: Omit<AdminUser, 'id' | 'lastLogin' | 'status'>) => {
+    const created: AdminUser = {
+      ...user,
+      id: `adm-${Date.now()}`,
+      lastLogin: 'Never',
+      status: 'active',
+    };
+    setAdminUsers((prev) => [...prev, created]);
+    addAuditLog('CREATED_ADMIN_USER', 'admin_management', `Added new admin ${user.name} (${user.role})`);
+  };
+
+  const updateAdminStatus = (id: string, status: 'active' | 'inactive') => {
+    setAdminUsers((prev) =>
+      prev.map((u) => (u.id === id ? { ...u, status } : u))
+    );
+    addAuditLog('UPDATED_ADMIN_STATUS', 'admin_management', `Changed status to ${status} for ID ${id}`);
+  };
+
+  return (
+    <AdminAuthContext.Provider
+      value={{
+        isAuthenticated,
+        currentAdmin,
+        currentRole,
+        activeModule,
+        adminUsers,
+        auditLogs,
+        login,
+        logout,
+        quickDemoLogin,
+        switchRole,
+        setActiveModule,
+        hasAccess,
+        addAuditLog,
+        addNewAdminUser,
+        updateAdminStatus,
+      }}
+    >
+      {children}
+    </AdminAuthContext.Provider>
+  );
+};
+
+export function useAdminAuth(): AdminAuthContextType {
+  const ctx = useContext(AdminAuthContext);
+  if (!ctx) {
+    let authed = false;
+    if (typeof window !== 'undefined') {
+      try {
+        authed = localStorage.getItem('cseel_admin_auth') === 'true';
+      } catch {}
+    }
+    return {
+      isAuthenticated: authed,
+      currentAdmin: INITIAL_ADMIN_USERS[0],
+      currentRole: 'super_admin',
+      activeModule: 'overview',
+      adminUsers: INITIAL_ADMIN_USERS,
+      auditLogs: INITIAL_AUDIT_LOGS,
+      login: () => ({ success: true, redirectUrl: '/admin' }),
+      logout: () => {
+        try {
+          localStorage.removeItem('cseel_admin_auth');
+          window.location.href = '/admin';
+        } catch {}
+      },
+      quickDemoLogin: () => {},
+      switchRole: () => {},
+      setActiveModule: () => {},
+      hasAccess: () => true,
+      addAuditLog: () => {},
+      addNewAdminUser: () => {},
+      updateAdminStatus: () => {},
+    };
+  }
+  return ctx;
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "slug": "robotics-innovation-hub",
+    "title": "Robotics & AI Innovation Hub",
+    "subtitle": "Hands-on maker workstations, microcontrollers and student robotic prototypes.",
+    "status": "working",
+    "customMessage": "We are currently working on this experiential science page. Detailed apparatus checklists and project blueprints will be live soon.",
+    "category": "Turnkey Labs",
+    "createdAt": "2026-10-04T10:05:57.000Z",
+    "updatedAt": "2026-10-04T10:05:57.002Z"
+  },
+  {
+    "slug": "astronomy-sky-observatory",
+    "title": "Astronomy & Celestial Space Lab",
+    "subtitle": "High-power telescopes, celestial mechanics and astrophysics models for schools.",
+    "status": "working",
+    "customMessage": "Our curriculum team is developing standard operating procedures and observation manuals for this module.",
+    "category": "Science Labs",
+    "createdAt": "2026-10-04T10:05:57.003Z",
+    "updatedAt": "2026-10-04T10:05:57.003Z"
+  }
+]

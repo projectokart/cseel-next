@@ -1,0 +1,1185 @@
+--- PAGE 1 ---
+1 
+ 
+ATL Equipment List – Batch of 60 Students 
+1. All ATL Schools are required to purchase equipment, as per the ‘ATL Equipment list’ 
+(http://aim.gov.in/guidelines-for-school.php). The suggested quantity is mentioned in the ATL 
+equipment list. Please note this lis t is not exhaustive, however it is mandatory for schools to 
+purchase all equipment mentioned in the list as per their requirement. 
+ 
+2. All ATL Schools and vendors are required to follow all guidelines and documents mentioned on 
+the AIM portal (http://aim.gov. in/guidelines-for-school.php). All the equipment considered 
+necessary have been classified into the following four packages as follows: 
+ 
+a. P1 - Electronics Development, Robotics, Internet of Things, and Sensors 
+b. P2 - Rapid Prototyping Tools 
+c. P3 - Mechanical, Electrical, and Measurement tools 
+d. P4 - Power Supply, Accessories and Safety equipment 
+ 
+Package 1: Electronics Development, Robotics, Internet of Things and Sensors 
+Category Name Specification Suggested 
+Quantity Type 
+Electronics 
+Development 
+Arduino Uno or 
+equivalent 
+ATmega328P - 8 bit AVR family 
+microcontroller, equivalent or 
+better. 
+30 Consumable 
+Operating Voltage: 5V 
+Digital I/O Pins: 14 (of which 6 
+provide PWM output) 
+PWM Digital I/O Pins : 6 
+  
+Accessories : Case shell 
+enclosure, compatible USB 
+cable (length - 6 inch or more) 
+Electronics 
+Development 
+Arduino Nano or 
+equivalent 
+ATmega328P - 8 bit AVR family 
+microcontroller, equivalent or 
+better. 
+10 Consumable 
+ 
+Operating Voltage: 5V 
+Digital I/O Pins : 14 (of which 6 
+provide PWM output) 
+Analog Input Pins : 8 
+  
+Accessories : Compatible USB 
+cable ( length -6 inch or more) 
+--- PAGE 2 ---
+2 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Electronics 
+Development 
+Arduino Mega 
+or equivalent 
+ATmega 2560P - 8 bit AVR 
+family microcontroller, 
+equivalent or better. 
+10 Consumable 
+Operating Voltage: 5V 
+Digital I/O Pins : 54 (of which 6 
+provide PWM output)  
+Analog Input Pins: 16 
+  
+Accessories: Case shell 
+enclosure, Compatible USB 
+cable ( length -6 inch or more) 
+Electronics 
+Development 
+Raspberry Pi 3 
+Model B+ 
+RASPBERRY PI 3 MODEL B+, 
+equivalent or better 
+5 Consumable 
+Accessories - MicroSD card - 
+32 GB, USB 3.0 cable (1 
+meter), HDMI to VGA - 1 
+meter, HDMI to VGA adapter, 
+Case shell enclosure 
+Electronics 
+Development 
+Breadboards & 
+Mini 
+Breadboard 
+Solderless 400 pin breadboard 30 
+Consumable Solderless 800 pin breadboard 20 
+Self-Adhesive Proto Shield 20 
+Electronics 
+Development 
+General Purpose 
+solderable 
+Board 
+FR2 A Grade Material (140 x 
+90 mm) 30 Consumable 
+FR2 A Grade Material (80 x 55 
+mm) 30 Consumable 
+Berg Strips 
+Female Berg Strip, 2.54mm 
+pitch, 40 pin single row, 
+breakable pin 
+30 Consumable 
+Male Berg Strip, 2.54mm 
+pitch, 40 pin single row, 
+breakable pin 
+30 Consumable 
+Electronics 
+Development 16x2 LCD display Dot matrix LCD display. 16 
+characters X 2 lines. I2C 20 Consumable 
+Electronics 
+Development USB Cables USB Cable Set (A to B, 12 inch 
+or more) 10 Consumable 
+Electronics 
+Development USB Cables USB Cable Set (Mini, 12 inches 
+or more) 10 Consumable 
+Electronics 
+Development Battery 
+9-12V 2000 to 2500 mAh 
+rechargeable battery with 2 
+chargers. Equivalent or better 
+10 Consumable 
+--- PAGE 3 ---
+3 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Electronics 
+Development Resistor Kit 
+One kit contains - 30 carbon 
+film resistors of 20 different 
+resistance values each 
+assorted, packaged together 
+and labelled. 
+20 Consumable Wattage: 0.125W to 1W 
+Values: 0Ω, 1.5Ω, 4.7Ω, 10Ω, 
+47Ω, 100Ω, 220Ω, 330Ω, 470Ω, 
+680Ω, 1kΩ, 2.2kΩ, 3.3kΩ, 
+4.7kΩ, 10kΩ, 22kΩ, 47kΩ, 
+100kΩ, 330kΩ, 1MΩ 
+Electronics 
+Development Capacitor Kit 
+One kit contains - 20 
+electrolytic capacitors of 10 
+different capacitance values 
+each. 
+20 Consumable Assorted kit packaged 
+together and labelled. 
+Values: 10pF, 22pF, 100pF, 
+1nF, 10nF, 100nF, 1µF, 10µF, 
+100µF, 1000µF 
+Electronics 
+Development 
+Linear Voltage 
+Regulator 7805, 7812,7809 30 Consumable 
+Electronics 
+Development 
+Water Pump 
+module 
+DC12V 3W Submersible Water 
+Pump 4 Consumable 
+Electronics 
+Development 
+Piezoelectric 
+Plate 
+Normal Copper based 4 cm 
+Diameter approx. 30 Consumable 
+Electronics 
+Development 
+8*8 LED Matrix 
+Module 
+Max7219 Dot LED Matrix 
+Module. MCU Control LED 
+Display Module 
+10 Consumable 
+Electronics 
+Development 
+Bluetooth 
+module 
+HC 05 Bluetooth module 15 Consumable Voltage Rating: 5 V 
+Electronics 
+Development 
+7 Segment Led 
+Display 
+LED 4-Digit Display Module 
+20 Consumable Voltage Rating: 2.4V to 5.5V 
+4-Pin interface: 
+Vcc, Gnd, Data, Clock 
+Electronics 
+Development GSM 
+Sim900 GPRS Transfer Board 
+Micro Sim Gsm Core TTL Port 
+Module for Arduino 
+4 Consumable 
+Electronics 
+Development GPS GY-NEO6MV2 new GPS 
+module 4 Consumable 
+Electronics 
+Development 
+Laser Diode 
+Emitter 
+650 nm 5mW Mini Laser Dot 
+Diode Module 10 Consumable 
+--- PAGE 4 ---
+4 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Electronics 
+Development LDR Module 5mm/12mm, Photosensitive 
+LDR Light Sensor Module 30 Consumable 
+Electronics 
+Development Keypad Universal 16 Key Switch 
+Keypad 10 Consumable 
+Electronics 
+Development JoyStick 2-axis joystick with push 
+button function 10 Consumable 
+Electronics 
+Development Active Buzzer Small 5 volt 40 Consumable 
+Big 5 volt 40 Consumable 
+Electronics 
+Development 
+Motor driver 
+Module L293D 10 Consumable 
+Electronics 
+Development 
+Sound Playback 
+Module 
+ISD1820 voice recording 
+module or equivalent 10 Consumable 
+Electronics 
+Development 
+DC Plastic Gear 
+motor with 
+wheel 
+12V, 150RPM, Side Shaft BO 
+(Battery operation) Motor 40 Consumable 
+Electronics 
+Development Node MCU ESP 8266 6 Consumable I2C, 1 wire, plug and play 
+Electronics 
+Development WeMos D1 R2 
+WeMos D1 R2 with WiFi ESP 
+8266 6 Consumable 
+Operating Voltage: 5V 
+Electronics 
+Development Vibrating Motor Weight: 10 Grams 20 Consumable Operating Voltage: 1.5 to 3V 
+Electronics 
+Development 
+Alligator 
+Connectors 
+Multi-Colour Alligator 
+Connectors - 12 inch 200 Consumable 
+Electronics 
+Development 
+Battery clips 
+with DC Jack 
+9-volt battery clips with DC 
+Jack 40 Consumable 
+Electronics 
+Development Hook-up Wires Red & Black set 100 Meters 
+each 4 Consumable 
+Electronics 
+Development Jumper Cable 
+Male-Male 1000 
+Consumable Male-Female 600 
+Female-Female 400 
+Electronics 
+Development RGB LEDs Regular 5mm 3-5 volt Range 400 Consumable 
+Electronics 
+Development LEDs (Red) Regular 5mm 3-5 volt Range 1000 Consumable 
+Electronics 
+Development LEDs (Green) Regular 5mm 3-5 volt Range 1000 Consumable 
+Electronics 
+Development LEDs (Blue) Regular 5mm 3-5 volt Range 1000 Consumable 
+Electronics 
+Development LEDs (Yellow) Regular 5mm 3-5 volt Range 1000 Consumable 
+Electronics 
+Development LEDs (White) Regular 5mm 3-5 volt Range 1000 Consumable 
+--- PAGE 5 ---
+5 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Electronics 
+Development 
+Timer IC - LM 
+555 
+LM 555 Timer IC. 30 Consumable Voltage range - 4.5V to 16V 
+Electronics 
+Development Atmega16u2 
+8 bit microcontroller Individual 
+IC (DIP).  
+10 Consumable Voltage range: 2.7V to 5.5V. 
+Operational Range: -40°C to 
++80°C 
+Electronics 
+Development 
+Diodes and 
+Transistors Kit 
+One Kit Contains - 25 Assorted 
+Basic Diodes of 4 different 
+types each. 
+3 Consumable 
+Types: NPN Transistor - 
+2N3904, BC547 PNP Transistor 
+- 2N3906, BC557 Silicon Diode 
+- 1N4148, Power Diode -
+1N4004/4001. 
+Equivalent or better. 
+Wattage: 1W, Current rating: 
+1A 
+Assorted kit packaged 
+together and labelled. 
+Electronics 
+Development 
+Button Switch 
+Set 
+One Kit Contains - 100 buttons 
+of different types. 
+3 Consumable Types: Push, toggle, rotary, 
+selector and slide switch. 
+Assorted kit packaged 
+together and labelled. 
+Electronics 
+Development 
+Capacitative 
+touch Module 
+MPR 121 with I2C. 
+20 Consumable Voltage Range: 
+2.5V to 3.6V DC. 
+Electronics 
+Development 
+Capacitative 
+Touch Switch 
+Module 
+Digital Capacitive touch switch 
+module -TTP223B 10 Consumable 
+Voltage Range: 2V to 5V DC. 
+Internet of 
+Things & 
+Sensors 
+IR Sensors, 
+Obstacle 
+avoider sensor 
+module 
+LM393 
+20 Consumable Detection distance: 
+2 - 30 cm 
+Detection angle: 30 - 40° 
+Internet of 
+Things & 
+Sensors 
+Triple Axis 
+Magnetometer 
+3-Axis Magneto resistive 
+Sensors 
+10 Consumable 
+I2C Digital Interface 
+Integrated 12-bit ADC 
+Range of -8 to +8 Gauss 
+160 Hz Maximum o/p rate 
+--- PAGE 6 ---
+6 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Internet of 
+Things & 
+Sensors 
+Humidity Sensor 
+Operating range: 
+10 Consumable 
+20 – 95 % RH 
+Temperature: 0 - 60 Celsius 
+Power supply: 
+1.5V AC (Max sine) 
+Operating frequency: 
+500Hz - 2kHz 
+Internet of 
+Things & 
+Sensors 
+MQ Series 
+MQ - 2 Smoke Detection 3 
+Consumable 
+MQ-3 Alcohol - Ethanol Sensor 3 
+MQ-4 Methane Natural Gas 
+Sensor 3 
+MQ-5 Methane Liquified Gas 
+Sensor 3 
+MQ-6 Liquified Petroleum Gas 
+Sensor 3 
+MQ-7 High Sensitivity CO 
+Carbon Monoxide Sensor 
+Detector 
+3 
+MQ-8 Hydrogen Gas Sensor 3 
+MQ-135 Air Quality Sensor 3 
+Internet of 
+Things & 
+Sensors 
+IR transmitter/ TSOP 1738 
+10 Consumable receiver Switching rate: 38 KHz 
+  Voltage Rating: 5V 
+Internet of 
+Things & 
+Sensors 
+Ultrasonic 
+Sensor Module 
+HC-SR-04 or 
+compatible 
+Working Voltage - DC 5V 
+40 Consumable 
+Working current - 15 mA 
+Working Frequency - 40 Hz 
+Range - 1 cm to 4 m 
+Effectual Angle - <15° 
+Measuring Angle - 30° 
+Resolution - 0.3 cm 
+Internet of 
+Things & 
+Sensors 
+Triple Axis 
+accelerometer- 
+3-axis sensing 
+10 Consumable 
+Small, low profile package 
+4 mm × 4 mm × 1.45 mm 
+LFCSP 
+Low Power: 350 μA (typical) 
+Single-supply operation: 1.8 V 
+to 3.6 V 
+Temperature stability 
+--- PAGE 7 ---
+7 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Internet of 
+Things & 
+Sensors 
+PIR Motion 
+Detector 
+Module 
+High digital pulse when 
+motion detected 
+20 Consumable Low digital pulse when idle 
+/no motion detected 
+Sensitivity range (up to 6 m) 
+Power supply: 5V – 12V 
+Internet of 
+Things & 
+Sensors 
+Pulse Rate Heart 
+Sensor 
+Pulse Rate Sensor Finger 
+Based (finger or earlobe) 
+Working voltage 3-5V 
+4 Consumable 
+Internet of 
+Things & 
+Sensors 
+Relay Module 
+5V 10A - 2 Channel Relay 
+Module. Compatible with 
+Arduino. 
+20 Consumable 
+Internet of 
+Things & 
+Sensors 
+Relay Module 
+5V 10A - 1 Channel Relay 
+Module. Compatible with 
+Arduino. 
+20 Consumable 
+Internet of 
+Things & 
+Sensors 
+Big Sound 
+microphone 
+module 
+Large Electret capsule sound 
+module 10 Consumable 
+Internet of 
+Things & 
+Sensors 
+Big Sound 
+microphone 
+module 
+Large Electret capsule sound 
+module 10 Consumable 
+Internet of 
+Things & 
+Sensors 
+Soil Moisture 
+Sensor module 
+FC-28 with LM293 comparator 
+6 Consumable Operating Voltage: 3.3V to 5V. 
+Internet of 
+Things & 
+Sensors 
+Touch Sensor 
+Capacitive Touch Sensor 
+Module. TTP22X series. 
+Voltage Range: 2.4V to 5.5V 
+6 Consumable 
+Internet of 
+Things & 
+Sensors 
+Metal Touch 
+Sensor Module 
+KY-036 or equivalent metal 
+touch sensor module 6 Consumable 
+Internet of 
+Things & 
+Sensors 
+Rain Drop 
+Sensor 
+Rain Sensitive, Rain Drop 
+Detection Sensor Module. 
+Voltage Range: 3.3V to 5.5V.  6 Consumable 
+Size: 5mm X 40mm or 
+equivalent. 
+Internet of 
+Things & 
+Sensors 
+Flex Sensor Flex Sensor. Size - 2.2 Inches 6 Consumable 
+Internet of 
+Things & 
+Sensors 
+Temperature 
+Sensor 
+LM35 Full range temperature 
+sensor. Voltage Range: 4V to 
+30V. Error: ±0.5°C 
+6 Consumable 
+Internet of 
+Things & 
+Sensors 
+Temperature 
+and humidity 
+sensor module 
+DHT 11 40 Consumable 
+Voltage Range: 3V to 5V 
+--- PAGE 8 ---
+8 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Internet of 
+Things & 
+Sensors 
+Force Pressure 
+Sensor 
+Force sensitive resistor with a 
+square, 1.75x1.5" sensing area 4 Consumable 
+Internet of 
+Things & 
+Sensors 
+Colour 
+Recognition 
+Sensor 
+TCS3200 Colour Recognition 
+Sensor 4 Consumable 
+Internet of 
+Things & 
+Sensors 
+Water Flow 
+Sensor 
+Arduino Compatible Water 
+flow sensor. 5V DC Input. 4 Consumable 
+Internet of 
+Things & 
+Sensors 
+Sound Sensor Sound Sensor Module, 
+Microphones module 10 Consumable 
+Internet of 
+Things & 
+Sensors 
+IR Sensors Array 
+module for Line 
+Following 
+8 IR Sensors Array module for 
+Line Following 10 Consumable 
+Operating Voltage: 5V 
+Internet of 
+Things & 
+Sensors 
+Power Bank 10000 mAh 5-volt Power Bank 5 Consumable 
+Internet of 
+Things & 
+Sensors 
+RFID Reader – 
+Tags 
+Current :13-26mA / DC 3.3V 
+10 Consumable 
+Idle Current :10-13mA  
+Sleep Current<80uA 
+Peak Current<30mA 
+Operating Frequency: 
+13.56MHz<30mA 
+Read range between 20 cm to 
+1 m 
+Internet of 
+Things & 
+Sensors 
+RF Modules Tx 
+& Rx 315 MHz 
+ASK 
+Frequency Range: 433.92/315 
+MHz 
+10 Consumable 
+Supply Voltage: 3 – 6 V 
+Output: 4 – 16 Dbm 
+Low power consumption 
+Easy application 
+Robotics 
+Stepper motor 
+with Driver 
+board 
+28BYJ-48 ULN2003 5V Stepper 
+Motor + ULN2003 Driver 
+Board 
+10 Consumable 
+Robotics DC motor 12V DC Gear 150 RPM 20 Consumable 
+--- PAGE 9 ---
+9 
+ 
+Category Name Specification Suggested 
+Quantity Type 
+Robotics Servo motors 
+Position Servo Angle based 
+Metal Gear 10 
+Consumable Small Servo Metal Gear 10 
+Continuous Metal Gear Servo 
+360 10 
+Small Servo Plastic Gear 40 
+Robotics 150 RPM BO 
+Motor 150 RPM BO Motor 10 Consumable 
+Robotics L298P Motor 
+Driver 
+L298P Motor Driver Shield or 
+relative Driver Shield 10 Consumable 
+Robotics Servo Motor 
+Tester CCPM 3 channel Servo Tester 4 Consumable 
+DIY Kit Robotics DIY Kit 
+Robotics DIY kit with 
+programmable intelligent 
+brain/brick. 
+3 Equipment 
+DIY Kit 
+Mechanical 
+(Modular) 
+Construction kit 
+Metal/plastic mechanical 
+construction kit compatible 
+with electronic equipment. 
+5 Equipment 
+STEM 
+Learning/App
+lication Kit 
+Drone Kit 
+Educational Purpose 
+1 
+Equipment 
+Aerospace Kit 1 
+Automobile Kit 1 
+Bio-Medical Kit 1 
+Agri-Tech Kit 1 
+Water/ 
+Sanitation Kit 1 
+Bio Tech Kit 1 
+Other Potential 
+STEM 
+Application Kit 
+1 
+ 
+For Package P1, it is important to note that the various kinds of electronic s/ robotics platforms are 
+likely to be on different platforms, and their sub -components are normally not inter -changeable. 
+Therefore, schools are advised to evaluate all platforms for robotics, IoT, and electronics 
+development, and pick any one/ more of th e available P1 educational platforms, and buy all 
+components on the same platform, so that the various components are compatible to each other. 
+ 
+ 
+ 
+ 
+ 
+--- PAGE 10 ---
+10 
+ 
+Package 2: Rapid Prototyping Tools 
+Category Name Description Suggested 
+Quantity Type 
+Rapid 
+Prototyping 
+Tools 
+3D Printer Kit and 
+tools 
+Printer Type:  
+FDM (Fused Deposition 
+Modelling),  
+Minimum Dimensions: 
+160mm *160mm *160mm 
+Build Size or 4 litre Build 
+Volume., 
+Nozzle: 0.3mm to 0.4mm 
+nozzle diameter, slicing 
+software should be free or 
+Open source, LCD Screen UI 
+that display print metrics, 
+Good  
+Heated Print bed.   
+Material Compatibility - PLA, 
+ABS, and derivatives of PLA, 
+Ninjaflex 
+Quality Anti-bacterial/fungal 
+Cover. 
+Repair Kit - with spare 
+springs, screws, keys, 
+tweezers, etc. 
+1 Equipment 
+Rapid 
+Prototyping 
+Tools 
+Dedicated 
+UPS/Power back up 
+Dedicated UPS/Power Back up 
+with 2-hour battery backup. 1 Equipment 
+Rapid 
+Prototyping 
+Tools 
+Filament for 3D 
+printer 
+Compatible 1000 Grams 
+Filament in 5 different colours 5 Consumable 
+Rapid 
+Prototyping 
+Tools 
+Filament Storage 
+Box 
+Compatible Filament storage 
+box 5 Consumable 
+Rapid 
+Prototyping 
+Tools 
+Set of Arts & Crafts 
+Accessories – e.g.- 
+stationary items 
+and basic 
+prototyping 
+material 
+Cardboard 5 
+Consumable 
+Foam core boards 5 
+20m spool of thick strings 
+various colour 5 
+Rubber band 100 
+Popsicle sticks 100 
+Wood glue – 500 ml 2 
+ 
+ 
+ 
+ 
+--- PAGE 11 ---
+11 
+ 
+Package 3: Mechanical, Electrical and Measurement tools 
+Category Name Description Suggested 
+Quantity Type 
+Mechanical 
+Tools Hacksaw Frame Size: 12 inches 1 Equipment 
+Mechanical 
+Tools Hacksaw blades  Size: 12 inches 10 Consumable 
+Mechanical 
+Tools Mini Hacksaw Frame Size: 6 inches 1 Equipment 
+Mechanical 
+Tools Mini Hacksaw blades  Size: 6 inches 10 Consumable 
+Mechanical 
+Tools Pliers: 4.5-inch size 
+External Straight  1 
+Equipment 
+Nose Circlip Plier 1 
+Long Nose Plier 1 
+Combination Mini Plier 1 
+Wire stripping pliers 1 
+Bent nose plier 1 
+Needle nose pliers 1 
+Mechanical 
+Tools Tweezer Set 
+6 Pc Non-Magnetic 
+Tweezer Set  
+Size - 6 inches 
+2 Equipment 
+Mechanical 
+Tools Ball Pein Hammer Ball Pein Hammer 
+Weight - 0.75kg  1 Equipment 
+Mechanical 
+Tools 
+Steel Shaft Claw 
+Hammer 
+Claw Hammer Steel Shaft 
+Weight - 0.75kg 1 Equipment 
+Mechanical 
+Tools C-Clamp Metal Clamp: 3-inch size 4 Equipment 
+Mechanical 
+Tools Allen Key Set 10 Piece Ring Imperial 
+Allen Hex key 1 Equipment 
+Mechanical 
+Tools Drill Machine Set 
+Drill Machine with 
+accessories 
+Hammer/Screw and 
+clockwise/anticlockwise 
+modes. 
+Power: 500W 
+Chuck capacity - 1 to 10 
+mm 
+Drill Bits - Masonry, 
+Metal, Wood 
+1 Equipment 
+Mechanical 
+Tools Drilling Workstation 
+Drill Press, Drill Holder 
+and Rotary Tool, 
+Compatible with Drilling 
+machine provided 
+1 Equipment 
+Mechanical 
+Tools Spanner Set 
+12-piece combination 
+Spanner Set 
+Range - 4 mm to 30 mm 
+1 Equipment 
+--- PAGE 12 ---
+12 
+ 
+Category Name Description Suggested 
+Quantity Type 
+Mechanical 
+Tools Vice Normal Table top vice 1 Equipment 
+Mechanical 
+Tools 
+Precision Screw 
+Driver Set 
+6 Piece Precision Screw 
+Driver Set 
+Types: PH0, PH1, Flat 
+head - 1.4mm, 2mm, 
+2.4mm, 3mm 
+2 Equipment 
+Mechanical 
+Tools Wrench Adjustable Universal 
+Wrench  2 Equipment 
+Mechanical 
+Tools Wire Strippers 
+Wire Stripper Cutter Plier 
+With Spring -26x6x20 cm 
+(LxWxH) 
+5 Equipment 
+Mechanical 
+Tools Screwdriver  40 pc Multi-purpose 
+screwdriver set 3 Equipment 
+Mechanical 
+Tools 
+Cordless Rotary 
+Multitool Set 
+Cordless Rotary multitool 
+with all cutting, grinding, 
+polishing, engraving and 
+drill bits.  
+Speed: Adjustable up to 
+30000 RPM 
+Battery Type: Li-ion 
+Voltage/current range : 8-
+10V, 0-2 A 
+1 Equipment 
+Mechanical 
+Tools Air Blower 
+500 W or more.  
+Variable speed blower 1 Equipment 
+Mechanical 
+Tools Drill Bit Set 
+High Quality 13 Pcs HSS 
+Drill Bits Set for Wood, 
+Iron, Aluminium, Plastic 
+etc. 
+1 Equipment 
+Mechanical 
+Tools File set 6 pc file set 
+Working length - 6 inch 1 Equipment 
+  Mini File set 6 pc mini file set 
+Working length - 3 inch 1  Equipment 
+Mechanical 
+Tools Flexible Cutting Mat 
+A3 Size with Marked 
+Pattern and Grids (18" X 
+12") 
+1 Equipment 
+Mechanical 
+Tools 
+Plastic Storage 
+Drawer/Organiser 
+Number of Drawers: 60 or 
+equivalent 
+Drawer size (l*w*d) (inch) 
+: 2*2*5 
+2 Equipment 
+Mechanical 
+Tools Pegboard 
+Peg board System to 
+mount tools on wall with 
+attachments. 
+Size: 3ft*2ft 
+2 Equipment 
+--- PAGE 13 ---
+13 
+ 
+Category Name Description Suggested 
+Quantity Type 
+Electric Tools Hot glue gun  
+Works with standard 0.5-
+inch glue sticks.  
+Temperature - 230 to 280 
+degree Celsius.  
+4 Equipment 
+Electric Tools  Digital Oscilloscope 
+Minimum Bandwidth:  
+50 Mhz. 
+Minimum number of 
+channels: 2 channels.  
+Sample Rate: 1Gsa/s 
+With inbuilt waveform 
+function generator. 
+1 Equipment 
+Electric Tools Soldering Kit 
+Variable Wattage of 
+Soldering Iron: 15-30 
+watts/230 volts 
+4 Equipment 
+Soldering Iron 
+Temperature Range: 
+280°C to 450°C 
+De-Soldering Pump, 
+Soldering Flux (Paste) 100 
+grams, 
+DE-soldering Copper Braid 
+(Solder Wick) - 
+1.5m*2mm 
+Compatible Soldering Tip 
+- Bevel, Chisel, Conical - 5 
+each per kit. 
+Soldering Wire: 20/22 
+AWG soldering Wire with 
+rosin core flux (100 
+Grams) 
+Electric Tools  Adapters DC power Adapter with 
+5V, 2A 10 Consumable 
+Electric Tools  Adapters DC power Adapter with 
+12V, 2A 10 Consumable 
+Electric Tools Electric Screw Driver 
+Set 
+Multipurpose Electric 
+screwdriver set. 
+Accessories - Compatible 
+bits 
+Mode - Wireless 
+Battery - Li-ion 3.6V or 
+equivalent with charging 
+dock 
+1 Equipment 
+Electric Tools Dual Temperature 
+Heat Gun 
+1800 W Dual 
+Temperature Heat Gun 1 Equipment 
+--- PAGE 14 ---
+14 
+ 
+Category Name Description Suggested 
+Quantity Type 
+Electric Tools Soldering Helping 
+hand 
+Specifications: 
+Adjustable crocodile 
+holding clamps/clip.  
+Soldering iron holder.  
+LED light. 
+Magnifying lens. 
+4 Equipment 
+Measurement 
+Tools 
+Return measuring 
+tape  
+Return measuring tape 
+5Mx19mm  2 Equipment 
+Measurement 
+Tools Stainless Steel Rule Stainless Steel 12” / 150 
+mm Rule 5 Equipment 
+Measurement 
+Tools 
+Digital Vernier 
+Calliper 
+150 mm / 6” Digital 
+Vernier Calliper 2 Equipment 
+Measurement 
+Tools Spirit Level 12” Spirit Level 1 Equipment 
+Measurement 
+Tools 
+Digital Pen electric 
+Tester Voltage tester 1 Equipment 
+Measurement 
+Tools Digital Multi Meter 
+Digital Multi Meter 
+Voltage Current 
+Resistance-7 functions + 
+19 ranges to cover DC 
+voltage 200mV to 1kV,  
+5 Equipment AC voltage 200 V - 750 V,  
+DC current 200 µA - 10 A 
+Resistance 200 -2 M Ohm 
+and Transistor & diode 
+test.  
+Biology Kit DIY Paper 
+Microscope 
+DIY Paper microscope. 
+Magnification range - 
+100x to 2000x 
+5 Consumable 
+Astronomy 
+Equipment Telescope 
+All glass optical 
+components 
+1 Equipment 
+Altazimuth mount 
+suitable for terrestrial and 
+astronomical use 
+minimum 700 mm focal 
+length 
+Textile 
+Equipment Sewing Kit 
+Semi-Automatic Sewing 
+machine 
+1 Equipment Straight stitch 
+Consumables - 2 set of 
+assorted needles and 10-
+colour spool set. 
+ 
+ 
+ 
+--- PAGE 15 ---
+15 
+ 
+Package 4: Power Supply & Accessories and Safety Equipment 
+Category Name Description Suggested 
+Quantity Type 
+Power Supply & 
+accessories Glue Sticks 11 mm x 200mm Hot 
+Melt Glue Stick 100 Consumable 
+Power Supply & 
+accessories 
+Nuts and Bolts 
+and screw 
+Specs - M4X12MM 
+M4X20MM M5X16MM 
+M5X25MM M6X20MM 
+40 Consumable 
+Power Supply & 
+accessories Cable Tie 
+Small Cable Tie Pack - 
+Pack of 100 10 Consumable 
+Medium Cable Tie Pack - 
+Pack of 100 10 Consumable 
+Big Cable Tie Pack - Pack 
+of 100 10 Consumable 
+Power Supply & 
+accessories Sand Paper 
+Grit Values - 80, 100, 
+120, 200, 300. 
+5 Nos of each 
+10 Consumable 
+Power Supply & 
+accessories 
+Power Strip 
+Adaptors 
+Standard Quality 
+Extension with 5Amp 
+safety fuse. 
+5 or more sockets in 
+each extension. 
+5-meter length of each 
+extension. 
+5 Consumable 
+Power Supply & 
+accessories Bulb Holders Regular Hanging Bulb 
+holder 10 Consumable 
+Power Supply & 
+accessories Electric Wires Twisted Red black pair 20 meters Consumable 
+Power Supply & 
+accessories 
+USB TO DC 
+jack cable 
+USB to DC jack cable for 
+Battery bank 10 Consumable 
+Safety equipment First-Aid Kit 
+Standard Medical First 
+Aid kit in portable 
+container. 
+2 Consumable 
+Safety equipment 
+Fire 
+extinguisher 
+(handy units) 
+Powder Type Fire 
+Extinguisher 2KG 2 Consumable 
+Safety equipment 
+Safety goggles 
+(with/ without 
+LED torch) 
+Polycarbonate Safety 
+goggles 
+Clear lens with no tint 
+30 Consumable 
+Safety equipment Safety Gloves 
+Pairs 
+Latex Coating Gloves 
+(Medium Size) 10 Consumable 
+Safety equipment Safety Mask 
+Filtering efficiency 
+ranging 80 percent 
+when tested against 
+0.3-micron sodium 
+chloride particle 
+20 Consumable 
+ 
+ 
+--- PAGE 16 ---
+16 
+ 
+Guideline for Vendors: 
+1. It is mandatory for all vendors to provide inst allation and equipment training to the Schools 
+(Principal/ ATL -in charge/ faculty members) on handling and usage of equipment, after the 
+delivery of the equipment, at no additional charge. 
+2. It is mandatory for all vendors to provide 2 years of comprehensive  warranty at no additional 
+charge (including for 3D printers). If the school requires repairing of an ATL equipment, then the 
+vendor should provide a replacement till the time the equipment is fully repaired). 
+3. Vendors should clearly indicate the timeline for delivery of packages, installation and training. The 
+delivery time should not be more than 1 month. 
+4. The vendors should maintain a supply chain of consumables and other items for 5 years. 
+5. The vendors should provide 3-year comprehensive AMC, wherever applicable, and clearly indicate 
+the terms and conditions of the same. 
+6. The vendors should indicate both itemized prices and package wise pricing and provide detailed 
+specification and brand name of all the equipment 
+7. The vendor should provide all required docum ents for verification by the school at the time of 
+purchase of equipment. Authorized signatory must sign the documents. 
+8. The vendors should have a mechanism for proper disposal of e-waste. 
+9. In case the vendors are third party vendors or channel partners, the y should ensure timely 
+availability of all equipment and associated services to the School, to avoid any delay or 
+inconvenience to the schools. 
+10. The Vendor must ensure the quality of the supplied item and requisite services are satisfactory 
+and up to mark. If the same is not found satisfactory for whatsoever reason, the supplier shall be 
+blacklisted and necessary administrative action shall be taken against them. 
+11. Schools can spend a maximum of Rs. 7,00,000/- (Rupees Seven Lakhs Only) on all the packages P1, 
+P2, P3, P4 . The total quotation for all the packages should not exceed the stipulated amount. 
+12. While you interact with the ATL schools, please make a note of the following guidelines: 
+ 
+a. Please remember ' NITI Aayog is not endorsing any equipment supplier / v endor, nor has 
+empanelled anyone'. 
+b. In case the vendors are conducting an event for the school, please note that such events 
+cannot be branded as 'Atal Tinkering Lab Orientation'. This is very misleading for the schools. 
+Any such events/ interactions that y ou conduct with ATL schools, should be treated as 
+independent event/ interaction, and not linked to NITI Aayog's event. 
+c. No vendor is allowed to use ATL/NITI branding, logo or names on their website, or at any of 
+their events. 
+d. In case the school has any query please direct them to write to atlhelp -niti@nic.in whereas 
+the vendors are advised not to communicate with the school on behalf of NITI Aayog, this is 
+misleading. 
+13. The vendors found involved any malpractice, misleading schoo ls, and cheating would be 
+blacklisted immediately. 
+14. All procurement shall be made through the GeM portal only. Schools are instructed to follow the 
+GeM procurement guidelines and procure material as per the lowest quote. 
+ 
+ 

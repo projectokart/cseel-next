@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Rounded White Squircle Tile for 100% visibility on both Light and Dark tabs -->
+  <rect x="16" y="16" width="480" height="480" rx="130" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="8" />
+
+  <!-- 4 Deep Navy Brackets (#0A4B69) -->
+  <!-- Cross cuts: 32px -->
+  <path d="M 238 48 L 160 48 A 112 112 0 0 0 48 160 L 48 238 L 120 238 L 120 188 A 68 68 0 0 1 188 120 L 238 120 Z" fill="#0A4B69" />
+  <path d="M 274 48 L 352 48 A 112 112 0 0 1 464 160 L 464 238 L 392 238 L 392 188 A 68 68 0 0 0 324 120 L 274 120 Z" fill="#0A4B69" />
+  <path d="M 48 274 L 48 352 A 112 112 0 0 0 160 464 L 238 464 L 238 392 L 188 392 A 68 68 0 0 1 120 324 L 120 274 Z" fill="#0A4B69" />
+  <path d="M 464 274 L 464 352 A 112 112 0 0 1 352 464 L 274 464 L 274 392 L 324 392 A 68 68 0 0 0 392 324 L 392 274 Z" fill="#0A4B69" />
+
+  <!-- Center Atom -->
+  <g transform="translate(256, 256)">
+    <ellipse cx="0" cy="0" rx="105" ry="46" transform="rotate(-15)" fill="none" stroke="#0A4B69" stroke-width="16" />
+    <ellipse cx="0" cy="0" rx="105" ry="46" transform="rotate(45)" fill="none" stroke="#0A4B69" stroke-width="16" />
+    <ellipse cx="0" cy="0" rx="105" ry="46" transform="rotate(105)" fill="none" stroke="#0A4B69" stroke-width="16" />
+    <!-- Golden Core -->
+    <circle cx="0" cy="0" r="42" fill="#F8A130" stroke="#FFFFFF" stroke-width="6" />
+  </g>
+</svg>

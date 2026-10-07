@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <rect width="1000" height="1000" fill="white" />
+
+  <!-- ── Four Google Quadrant Brackets ── -->
+  <!-- Top-Left: Google Blue -->
+  <path d="M 465 130 L 350 130 A 220 220 0 0 0 130 350 L 130 465 L 255 465 L 255 350 A 95 95 0 0 1 350 255 L 465 255 Z" fill="#4285F4" />
+
+  <!-- Top-Right: Google Red -->
+  <path d="M 535 130 L 650 130 A 220 220 0 0 1 870 350 L 870 465 L 745 465 L 745 350 A 95 95 0 0 0 650 255 L 535 255 Z" fill="#EA4335" />
+
+  <!-- Bottom-Left: Google Yellow -->
+  <path d="M 130 535 L 130 650 A 220 220 0 0 0 350 870 L 465 870 L 465 745 L 350 745 A 95 95 0 0 1 255 650 L 255 535 Z" fill="#FBBC05" />
+
+  <!-- Bottom-Right: Google Green -->
+  <path d="M 870 535 L 870 650 A 220 220 0 0 1 650 870 L 535 870 L 535 745 L 650 745 A 95 95 0 0 0 745 650 L 745 535 Z" fill="#34A853" />
+
+  <!-- ── Central Science Atom ── -->
+  <g id="atom-group" transform="translate(500, 500)">
+    <!-- Orbit 1 (tilted ~-15 deg) -->
+    <ellipse cx="0" cy="0" rx="160" ry="68" transform="rotate(-15)" fill="none" stroke="#4285F4" stroke-width="14" stroke-linecap="round" />
+    
+    <!-- Orbit 2 (tilted ~48 deg) -->
+    <ellipse cx="0" cy="0" rx="160" ry="68" transform="rotate(48)" fill="none" stroke="#EA4335" stroke-width="14" stroke-linecap="round" />
+
+    <!-- Orbit 3 (tilted ~112 deg) -->
+    <ellipse cx="0" cy="0" rx="160" ry="68" transform="rotate(112)" fill="none" stroke="#34A853" stroke-width="14" stroke-linecap="round" />
+
+    <!-- Electron Sphere Nodes -->
+    <!-- Node on Orbit 1 -->
+    <circle cx="-146" cy="-48" r="16" fill="#4285F4" />
+
+    <!-- Node on Orbit 2 -->
+    <circle cx="106" cy="-114" r="16" fill="#EA4335" />
+
+    <!-- Node on Orbit 3 (bottom-left) -->
+    <circle cx="-16" cy="144" r="16" fill="#34A853" />
+
+    <!-- Node on Orbit 3 (top-left) -->
+    <circle cx="-14" cy="-144" r="16" fill="#FBBC05" />
+
+    <!-- Central Solid Core Nucleus -->
+    <circle cx="0" cy="0" r="50" fill="#202124" />
+  </g>
+</svg>

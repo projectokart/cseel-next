@@ -1,0 +1,34 @@
+{
+  "domain:science": [
+    {
+      "id": "ver-1791003110455",
+      "versionNumber": 1,
+      "timestamp": "2026-10-03T04:51:50.455Z",
+      "author": "Super Admin",
+      "summary": "Updated science headline via Universal CMS API",
+      "pageKey": "domain:science",
+      "data": {
+        "eyebrow": "NEP 2020 Core Science Hub",
+        "title": "Interactive Virtual Science Labs",
+        "lead": "Live virtual reality simulations and hands-on lab experiments for physics, chemistry, biology and math.",
+        "heroImage": "/images/categories/chemistry.webp",
+        "pageKey": "domain:science"
+      }
+    },
+    {
+      "id": "ver-1791003160544",
+      "versionNumber": 2,
+      "timestamp": "2026-10-03T04:52:40.544Z",
+      "author": "Super Admin",
+      "summary": "Rolled back to Version #1",
+      "pageKey": "domain:science",
+      "data": {
+        "eyebrow": "NEP 2020 Core Science Hub",
+        "title": "Interactive Virtual Science Labs",
+        "lead": "Live virtual reality simulations and hands-on lab experiments for physics, chemistry, biology and math.",
+        "heroImage": "/images/categories/chemistry.webp",
+        "pageKey": "domain:science"
+      }
+    }
+  ]
+}

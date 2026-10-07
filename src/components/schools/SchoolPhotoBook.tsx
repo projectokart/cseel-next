@@ -396,21 +396,24 @@ export default function SchoolPhotoBook({
         {!isReady && (
           <div className="absolute inset-0 w-full h-full flex rounded-l-lg rounded-r-3xl overflow-hidden pointer-events-none">
             {/* Left Page (Desktop only: Elegant Cover Page) */}
-            <div className="hidden sm:flex w-1/2 h-full relative overflow-hidden bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-5 flex-col justify-between border-r border-[#FBBC04]/30">
+            <div className="hidden sm:flex w-1/2 h-full relative overflow-hidden bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-9 flex-col justify-between border-r border-[#FBBC04]/30">
               <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="px-2 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[9px] font-bold">
-                  PROSPECTUS
+              <div className="relative z-10 flex flex-col items-center justify-center gap-0.5 text-center">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[8.5px] font-extrabold tracking-widest uppercase">
+                  OFFICIAL PROSPECTUS
                 </span>
-                <span className="text-[9.5px] text-blue-200/80">2026-27</span>
+                <span className="text-[8px] text-blue-200/80 tracking-widest">SESSION 2026 – 2027</span>
               </div>
-              <div className="relative z-10 text-center my-auto space-y-2">
-                <h2 className="text-xl font-black font-serif text-white tracking-tight">{displayName}</h2>
-                <p className="text-[10.5px] text-blue-100/80 line-clamp-2">Nurturing curiosity, values & leadership through experiential practical learning.</p>
+              <div className="relative z-10 text-center my-auto space-y-1.5 px-2">
+                <div className="w-10 h-10 mx-auto rounded-xl bg-[#FBBC04]/20 border border-[#FBBC04]/60 p-1.5 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-[#FBBC04]" />
+                </div>
+                <h2 className="text-base sm:text-lg font-black font-serif text-white tracking-tight leading-tight">{displayName}</h2>
+                <p className="text-[9.5px] text-blue-100/90 line-clamp-2 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
               </div>
-              <div className="relative z-10 flex justify-between text-[9px] text-blue-200/80 border-t border-[#FBBC04]/20 pt-1">
-                <span>Excellence in Education</span>
-                <span className="text-[#FBBC04] font-bold">Turn Page →</span>
+              <div className="relative z-10 flex justify-between text-[8px] text-blue-200/80 border-t border-[#FBBC04]/20 pt-1.5 px-1 mb-1">
+                <span>• Rooted in Values •</span>
+                <span className="text-[#FBBC04] font-bold">Open Book →</span>
               </div>
             </div>
 
@@ -426,21 +429,24 @@ export default function SchoolPhotoBook({
               </div>
 
               {/* Mobile: Cover Page preview */}
-              <div className="sm:hidden w-full h-full relative bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-5 flex flex-col justify-between">
+              <div className="sm:hidden w-full h-full relative bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 pb-9 flex flex-col justify-between">
                 <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[9px] font-bold">
-                    PROSPECTUS
+                <div className="relative z-10 flex flex-col items-center justify-center gap-0.5 text-center">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[8.5px] font-extrabold tracking-widest uppercase">
+                    OFFICIAL PROSPECTUS
                   </span>
-                  <span className="text-[9.5px] text-blue-200/80">2026-27</span>
+                  <span className="text-[8px] text-blue-200/80 tracking-widest">SESSION 2026 – 2027</span>
                 </div>
-                <div className="relative z-10 text-center my-auto space-y-2">
-                  <h2 className="text-xl font-black font-serif text-white tracking-tight">{displayName}</h2>
-                  <p className="text-[10.5px] text-blue-100/80 line-clamp-2">Nurturing curiosity, values & leadership through experiential practical learning.</p>
+                <div className="relative z-10 text-center my-auto space-y-1.5 px-2">
+                  <div className="w-10 h-10 mx-auto rounded-xl bg-[#FBBC04]/20 border border-[#FBBC04]/60 p-1.5 flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-[#FBBC04]" />
+                  </div>
+                  <h2 className="text-base font-black font-serif text-white tracking-tight leading-tight">{displayName}</h2>
+                  <p className="text-[9.5px] text-blue-100/90 line-clamp-2 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
                 </div>
-                <div className="relative z-10 flex justify-between text-[9px] text-blue-200/80 border-t border-[#FBBC04]/20 pt-1">
-                  <span>Excellence in Education</span>
-                  <span className="text-[#FBBC04] font-bold">Turn Page →</span>
+                <div className="relative z-10 flex justify-between text-[8px] text-blue-200/80 border-t border-[#FBBC04]/20 pt-1.5 px-1 mb-1">
+                  <span>• Rooted in Values •</span>
+                  <span className="text-[#FBBC04] font-bold">Open Book →</span>
                 </div>
               </div>
             </div>
@@ -484,7 +490,7 @@ export default function SchoolPhotoBook({
       <div ref={templateRef} style={{ display: 'none' }}>
         {/* PAGE 0: ELEGANT DECORATED INSTITUTIONAL COVER PAGE */}
         <div
-          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-5 sm:p-7 flex flex-col justify-between shadow-2xl"
+          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-9 sm:pb-9 flex flex-col justify-between shadow-2xl"
           data-density="hard"
         >
           {/* Subtle Background Geometric Lattice & Gold Flare */}
@@ -500,32 +506,32 @@ export default function SchoolPhotoBook({
 
           {/* Double Gold Decorative Border with Corner Ornaments */}
           <div className="absolute inset-2 sm:inset-3 border-2 border-[#FBBC04]/40 rounded-xl sm:rounded-2xl pointer-events-none" />
-          <div className="absolute inset-3.5 sm:inset-5 border border-[#FBBC04]/20 rounded-lg sm:rounded-xl pointer-events-none" />
+          <div className="absolute inset-3 sm:inset-4.5 border border-[#FBBC04]/20 rounded-lg sm:rounded-xl pointer-events-none" />
           
           {/* Corner Floral / Filigree Accents */}
-          <div className="absolute top-3.5 left-3.5 text-[#FBBC04]/70 text-xs sm:text-sm font-serif select-none pointer-events-none">✦</div>
-          <div className="absolute top-3.5 right-3.5 text-[#FBBC04]/70 text-xs sm:text-sm font-serif select-none pointer-events-none">✦</div>
-          <div className="absolute bottom-3.5 left-3.5 text-[#FBBC04]/70 text-xs sm:text-sm font-serif select-none pointer-events-none">✦</div>
-          <div className="absolute bottom-3.5 right-3.5 text-[#FBBC04]/70 text-xs sm:text-sm font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute top-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute top-3 right-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute bottom-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute bottom-3 right-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
 
           {/* Spine Crease Shadow on Right */}
           <div className="hidden sm:block absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/50 via-black/20 to-transparent pointer-events-none z-20" />
 
-          {/* Top Banner: Academic Session & Crest Badge */}
-          <div className="relative z-10 flex items-center justify-between pt-1 px-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[9px] sm:text-[10px] font-bold tracking-widest uppercase">
+          {/* Top Banner: Centered & Clean (No horizontal collision) */}
+          <div className="relative z-10 flex flex-col items-center justify-center gap-0.5 pt-1 text-center shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[8.5px] sm:text-[9.5px] font-extrabold tracking-widest uppercase shadow-xs">
               <Sparkles className="w-2.5 h-2.5 fill-current" />
               <span>OFFICIAL PROSPECTUS</span>
             </span>
-            <span className="text-[9.5px] sm:text-[10.5px] font-semibold text-blue-200/80 tracking-wider">
-              SESSION 2026-27
+            <span className="text-[8px] sm:text-[9px] font-semibold text-blue-200/80 tracking-widest uppercase">
+              SESSION 2026 – 2027
             </span>
           </div>
 
           {/* Center Showcase: Decorated Emblem + School Name + Description Paragraph */}
-          <div className="relative z-10 text-center my-auto px-2 py-1 space-y-2.5 sm:space-y-3.5">
+          <div className="relative z-10 text-center my-auto px-2 py-0.5 space-y-1.5 sm:space-y-2">
             {/* Gold Leaf Illustrated Emblem */}
-            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto rounded-2xl bg-gradient-to-tr from-[#FBBC04]/20 via-[#FBBC04]/10 to-transparent border-2 border-[#FBBC04]/60 p-2 sm:p-2.5 flex items-center justify-center shadow-[0_0_20px_rgba(251,188,4,0.25)]">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl bg-gradient-to-tr from-[#FBBC04]/20 via-[#FBBC04]/10 to-transparent border-2 border-[#FBBC04]/60 p-1.5 sm:p-2 flex items-center justify-center shadow-[0_0_16px_rgba(251,188,4,0.25)]">
               <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
                 <path d="M24 16C20 12 10 12 6 15V36C10 33 20 33 24 37V16Z" fill="#FBBC04" />
                 <path d="M24 16C28 12 38 12 42 15V36C38 33 28 33 24 37V16Z" fill="#F2A900" />
@@ -537,44 +543,41 @@ export default function SchoolPhotoBook({
             </div>
 
             {/* Sub-tagline */}
-            <div className="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold tracking-[0.25em] uppercase text-[#FBBC04]">
-              <span className="w-4 h-[1px] bg-[#FBBC04]/60 inline-block" />
+            <div className="inline-flex items-center gap-1.5 text-[8px] sm:text-[9px] font-bold tracking-[0.22em] uppercase text-[#FBBC04]">
+              <span className="w-3 h-[1px] bg-[#FBBC04]/60 inline-block" />
               <span>CENTRE OF EXCELLENCE</span>
-              <span className="w-4 h-[1px] bg-[#FBBC04]/60 inline-block" />
+              <span className="w-3 h-[1px] bg-[#FBBC04]/60 inline-block" />
             </div>
 
             {/* School Name in High-Impact Serif Typography */}
-            <h2 className="text-lg xs:text-xl sm:text-2xl lg:text-[26px] font-black font-serif tracking-tight text-white leading-tight drop-shadow-md px-1">
+            <h2 className="text-base xs:text-lg sm:text-xl lg:text-[22px] font-black font-serif tracking-tight text-white leading-tight drop-shadow-md px-1 max-w-[90%] mx-auto">
               {displayName}
             </h2>
 
             {/* Decorated Ribbon Paragraph */}
-            <p className="text-[10px] sm:text-[11.5px] text-blue-100/90 leading-relaxed font-normal max-w-sm mx-auto line-clamp-3 sm:line-clamp-4">
+            <p className="text-[9.5px] sm:text-[10.5px] text-blue-100/90 leading-relaxed font-normal max-w-xs mx-auto line-clamp-3">
               Nurturing intellectual curiosity, ethical character, and innovative leadership through experiential learning, world-class laboratory infrastructure, and holistic sports coaching.
             </p>
 
             {/* 3 Quality Pillars Strip */}
-            <div className="pt-1 flex items-center justify-center gap-1.5 sm:gap-2 text-[8.5px] sm:text-[9.5px] text-blue-200/90 font-medium flex-wrap">
+            <div className="pt-0.5 flex items-center justify-center gap-1 sm:gap-1.5 text-[8px] sm:text-[8.5px] text-blue-200/90 font-medium flex-wrap">
               <span className="inline-flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
                 <ShieldCheck className="w-2.5 h-2.5 text-[#FBBC04]" /> CBSE Aligned
               </span>
               <span className="inline-flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
                 <Award className="w-2.5 h-2.5 text-[#FBBC04]" /> NEP 2020
               </span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
-                <BookOpen className="w-2.5 h-2.5 text-[#FBBC04]" /> STEM Practical
-              </span>
             </div>
           </div>
 
-          {/* Bottom Footer: Turn Page Call-to-action */}
-          <div className="relative z-10 flex items-center justify-between border-t border-[#FBBC04]/25 pt-2 px-1 text-white">
-            <span className="text-[9px] sm:text-[10px] text-blue-200/70 font-semibold tracking-wider uppercase">
+          {/* Bottom Footer: Turn Page Call-to-action (Compact with room above dots) */}
+          <div className="relative z-10 flex items-center justify-between border-t border-[#FBBC04]/25 pt-1.5 px-1 text-white shrink-0 mb-1">
+            <span className="text-[8px] sm:text-[9px] text-blue-200/70 font-semibold tracking-wider uppercase">
               • Rooted in Values •
             </span>
-            <span className="inline-flex items-center gap-1 text-[8.5px] sm:text-[9.5px] font-bold text-[#FBBC04] bg-[#FBBC04]/15 hover:bg-[#FBBC04]/25 px-2.5 py-0.5 rounded-full border border-[#FBBC04]/40 transition-colors shadow-xs">
+            <span className="inline-flex items-center gap-1 text-[8px] sm:text-[8.5px] font-bold text-[#FBBC04] bg-[#FBBC04]/15 hover:bg-[#FBBC04]/25 px-2 py-0.5 rounded-full border border-[#FBBC04]/40 transition-colors shadow-xs">
               <span>Open Book</span>
-              <ChevronRight className="w-2.5 h-2.5 stroke-[3]" />
+              <ChevronRight className="w-2 h-2 stroke-[3]" />
             </span>
           </div>
         </div>

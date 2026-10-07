@@ -462,7 +462,7 @@ export default function AiProfileTemplateGuide({
               </div>
               <div>
                 <h3 className="text-lg font-black text-gray-950">AI Content Prompt Generator</h3>
-                <p className="text-xs text-gray-500">Copy these tailored prompts directly into ChatGPT or Gemini to write your school content.</p>
+                <p className="text-xs text-gray-500">Copy these tailored prompts directly into your AI assistant to generate professional school content.</p>
               </div>
             </div>
 

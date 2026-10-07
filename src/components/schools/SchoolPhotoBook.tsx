@@ -396,8 +396,36 @@ export default function SchoolPhotoBook({
         {!isReady && (
           <div className="absolute inset-0 w-full h-full flex rounded-l-lg rounded-r-3xl overflow-hidden pointer-events-none">
             {/* Left Page (Desktop only: Elegant Cover Page) */}
-            <div className="hidden sm:flex w-1/2 h-full relative overflow-hidden bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-10 flex-col justify-between border-r border-[#FBBC04]/30">
-              <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
+            <div 
+              className="hidden sm:flex w-1/2 h-full relative overflow-hidden text-white p-3.5 sm:p-5 pb-10 flex-col justify-between border-r border-[#FBBC04]/30 shadow-2xl"
+              style={{
+                background: 'radial-gradient(ellipse 85% 70% at 50% 36%, #174878 0%, #0d2c50 50%, #06182c 100%)',
+              }}
+            >
+              {/* Authentic Luxury Linen Bookcloth Texture */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                style={{
+                  backgroundImage: `
+                    repeating-linear-gradient(0deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px),
+                    repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px)
+                  `,
+                  backgroundSize: '4px 4px'
+                }}
+              />
+              <div className="absolute -top-14 -left-14 w-52 h-52 rounded-full bg-sky-400/15 blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-[#FBBC04]/15 blur-3xl pointer-events-none" />
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(circle 170px at 50% 36%, rgba(251, 188, 4, 0.18) 0%, transparent 75%)',
+                }}
+              />
+
+              {/* Gold Borders */}
+              <div className="absolute inset-2 border-2 border-[#FBBC04]/55 rounded-xl pointer-events-none shadow-[inset_0_0_16px_rgba(251,188,4,0.12),0_0_12px_rgba(251,188,4,0.15)]" />
+              <div className="absolute inset-3 border border-[#FBBC04]/25 rounded-lg pointer-events-none" />
+
               {/* Realistic 3D Spine Crease Valley & Curvature on Left Page */}
               <div 
                 className="hidden sm:block absolute inset-y-0 right-0 w-16 pointer-events-none z-20"
@@ -419,14 +447,14 @@ export default function SchoolPhotoBook({
                 </span>
               </div>
               <div className="relative z-10 text-center my-auto space-y-2 px-2">
-                <div className="w-11 h-11 mx-auto rounded-xl bg-[#FBBC04]/20 border border-[#FBBC04]/60 p-2 flex items-center justify-center">
+                <div className="w-11 h-11 mx-auto rounded-xl bg-gradient-to-br from-[#FBBC04]/30 via-[#FBBC04]/15 to-[#0b2444] border-2 border-[#FBBC04]/75 p-2 flex items-center justify-center shadow-[0_0_20px_rgba(251,188,4,0.35)]">
                   <BookOpen className="w-5 h-5 text-[#FBBC04]" />
                 </div>
-                <h2 className="text-base sm:text-lg font-black font-serif text-white tracking-tight leading-snug">{displayName}</h2>
-                <p className="text-[9.5px] text-blue-100/90 line-clamp-3 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
-                <div className="flex items-center justify-center gap-1.5 text-[8px] text-blue-200/90">
-                  <span className="bg-white/10 px-2 py-0.5 rounded-full border border-white/10">CBSE Aligned</span>
-                  <span className="bg-white/10 px-2 py-0.5 rounded-full border border-white/10">NEP 2020 Aligned</span>
+                <h2 className="text-base sm:text-lg font-black font-serif text-white tracking-tight leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">{displayName}</h2>
+                <p className="text-[9.5px] text-blue-100/95 line-clamp-3 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
+                <div className="flex items-center justify-center gap-1.5 text-[8px] text-[#FFE694]">
+                  <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">CBSE Aligned</span>
+                  <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">NEP 2020 Aligned</span>
                 </div>
               </div>
               <div className="h-2 shrink-0 pointer-events-none" />
@@ -459,22 +487,44 @@ export default function SchoolPhotoBook({
               </div>
 
               {/* Mobile: Cover Page preview */}
-              <div className="sm:hidden w-full h-full relative bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 pb-10 flex flex-col justify-between">
-                <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
+              <div 
+                className="sm:hidden w-full h-full relative text-white p-3.5 pb-10 flex flex-col justify-between overflow-hidden shadow-2xl"
+                style={{
+                  background: 'radial-gradient(ellipse 85% 70% at 50% 36%, #174878 0%, #0d2c50 50%, #06182c 100%)',
+                }}
+              >
+                {/* Linen Weave Texture */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                  style={{
+                    backgroundImage: `
+                      repeating-linear-gradient(0deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px),
+                      repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px)
+                    `,
+                    backgroundSize: '4px 4px'
+                  }}
+                />
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: 'radial-gradient(circle 140px at 50% 36%, rgba(251, 188, 4, 0.18) 0%, transparent 75%)',
+                  }}
+                />
+                <div className="absolute inset-2 border-2 border-[#FBBC04]/55 rounded-xl pointer-events-none shadow-[inset_0_0_14px_rgba(251,188,4,0.12)]" />
                 <div className="relative z-10 flex items-center justify-center pt-1.5 text-center shrink-0">
                   <span className="text-[8px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
                     ✦ ACADEMIC SESSION 2026 – 2027 ✦
                   </span>
                 </div>
                 <div className="relative z-10 text-center my-auto space-y-2 px-2">
-                  <div className="w-11 h-11 mx-auto rounded-xl bg-[#FBBC04]/20 border border-[#FBBC04]/60 p-2 flex items-center justify-center">
+                  <div className="w-11 h-11 mx-auto rounded-xl bg-gradient-to-br from-[#FBBC04]/30 via-[#FBBC04]/15 to-[#0b2444] border-2 border-[#FBBC04]/75 p-2 flex items-center justify-center shadow-[0_0_18px_rgba(251,188,4,0.35)]">
                     <BookOpen className="w-5 h-5 text-[#FBBC04]" />
                   </div>
-                  <h2 className="text-base font-black font-serif text-white tracking-tight leading-snug">{displayName}</h2>
-                  <p className="text-[9.5px] text-blue-100/90 line-clamp-3 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
-                  <div className="flex items-center justify-center gap-1 text-[8px] text-blue-200/90">
-                    <span className="bg-white/10 px-2 py-0.5 rounded-full border border-white/10">CBSE Aligned</span>
-                    <span className="bg-white/10 px-2 py-0.5 rounded-full border border-white/10">NEP 2020 Aligned</span>
+                  <h2 className="text-base font-black font-serif text-white tracking-tight leading-snug drop-shadow-md">{displayName}</h2>
+                  <p className="text-[9.5px] text-blue-100/95 line-clamp-3 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
+                  <div className="flex items-center justify-center gap-1 text-[8px] text-[#FFE694]">
+                    <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">CBSE Aligned</span>
+                    <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">NEP 2020 Aligned</span>
                   </div>
                 </div>
                 <div className="h-2 shrink-0 pointer-events-none" />
@@ -520,23 +570,35 @@ export default function SchoolPhotoBook({
       <div ref={templateRef} style={{ display: 'none' }}>
         {/* PAGE 0: ELEGANT DECORATED INSTITUTIONAL COVER PAGE */}
         <div
-          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-10 sm:pb-10 flex flex-col justify-between shadow-2xl"
+          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer text-white p-3.5 sm:p-5 pb-10 sm:pb-10 flex flex-col justify-between shadow-2xl"
           data-density="hard"
+          style={{
+            background: 'radial-gradient(ellipse 85% 70% at 50% 36%, #174878 0%, #0d2c50 50%, #06182c 100%)',
+          }}
         >
-          {/* Subtle Background Geometric Lattice & Gold Flare */}
+          {/* Authentic Luxury Linen Bookcloth Texture */}
           <div
             className="absolute inset-0 pointer-events-none opacity-[0.06]"
             style={{
-              backgroundImage: 'radial-gradient(#FBBC04 1px, transparent 1px)',
-              backgroundSize: '16px 16px'
+              backgroundImage: `
+                repeating-linear-gradient(0deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px)
+              `,
+              backgroundSize: '4px 4px'
             }}
           />
-          <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[#FBBC04]/10 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-[#006FCC]/20 blur-3xl pointer-events-none" />
+          <div className="absolute -top-14 -left-14 w-52 h-52 rounded-full bg-sky-400/15 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-[#FBBC04]/15 blur-3xl pointer-events-none" />
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle 170px at 50% 36%, rgba(251, 188, 4, 0.18) 0%, transparent 75%)',
+            }}
+          />
 
           {/* Double Gold Decorative Border with Corner Ornaments */}
-          <div className="absolute inset-2 sm:inset-3 border-2 border-[#FBBC04]/40 rounded-xl sm:rounded-2xl pointer-events-none" />
-          <div className="absolute inset-3 sm:inset-4.5 border border-[#FBBC04]/20 rounded-lg sm:rounded-xl pointer-events-none" />
+          <div className="absolute inset-2 sm:inset-3 border-2 border-[#FBBC04]/55 rounded-xl sm:rounded-2xl pointer-events-none shadow-[inset_0_0_16px_rgba(251,188,4,0.12),0_0_12px_rgba(251,188,4,0.15)]" />
+          <div className="absolute inset-3 sm:inset-4.5 border border-[#FBBC04]/25 rounded-lg sm:rounded-xl pointer-events-none" />
           
           {/* Corner Floral / Filigree Accents */}
           <div className="absolute top-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>

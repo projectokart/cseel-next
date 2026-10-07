@@ -82,6 +82,7 @@ import {
 } from '@/components/illustrations/FacilityIllustrations';
 import Footer from '@/components/layout/Footer';
 import SchoolPhotoBook from '@/components/schools/SchoolPhotoBook';
+import AiProfileTemplateGuide, { AiSectionInstructionBadge } from '@/components/schools/AiProfileTemplateGuide';
 
 interface SchoolProfileViewProps {
   state: string;
@@ -122,6 +123,7 @@ interface SchoolProfileViewProps {
   lng: number;
   clusterSchools: any[];
   districtSchools: any[];
+  isTemplate?: boolean;
 }
 
 type TabType = 'home' | 'about' | 'facilities' | 'admissions' | 'reviews' | 'contact';
@@ -168,7 +170,11 @@ export default function SchoolProfileView({
   imageUrl,
   clusterSchools = [],
   districtSchools = [],
+  isTemplate = false,
 }: SchoolProfileViewProps) {
+  // AI Template Guidance toggle
+  const [showAiGuide, setShowAiGuide] = useState(true);
+
   // Modal states
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [isTourModalOpen, setIsTourModalOpen] = useState(false);
@@ -195,12 +201,12 @@ export default function SchoolProfileView({
   const [userLikesMap, setUserLikesMap] = useState<Record<number, boolean>>({});
 
   // 5-Point Questionnaire Ratings (Questions asked to Parents & Students)
-  const [ratingOverall, setRatingOverall] = useState(5); // Q1: Overall experience (स्कूल कैसा लगा?)
-  const [ratingAcademics, setRatingAcademics] = useState(5); // Q2: Padhai & faculty (यहाँ की पढ़ाई और टीचर्स कैसे हैं?)
-  const [ratingInfrastructure, setRatingInfrastructure] = useState(5); // Q3: Infrastructure & Labs (स्कूल का कैंपस और लैब्स?)
-  const [ratingSafety, setRatingSafety] = useState(5); // Q4: Safety & Discipline (बच्चों की सुरक्षा और माहौल?)
-  const [ratingSports, setRatingSports] = useState(5); // Q5: Sports & Activities (खेल-कूद और एक्टिविटीज़?)
-  const [ratingValue, setRatingValue] = useState(5); // Q6: Value for money & Fees (फीस और सुविधाओं का तालमेल?)
+  const [ratingOverall, setRatingOverall] = useState(5); // Q1: Overall experience & recommendation
+  const [ratingAcademics, setRatingAcademics] = useState(5); // Q2: Academics & faculty teaching quality
+  const [ratingInfrastructure, setRatingInfrastructure] = useState(5); // Q3: Infrastructure, campus & labs
+  const [ratingSafety, setRatingSafety] = useState(5); // Q4: Student safety & discipline
+  const [ratingSports, setRatingSports] = useState(5); // Q5: Sports & extracurricular activities
+  const [ratingValue, setRatingValue] = useState(5); // Q6: Value for money & fees
   const [reviewerClass, setReviewerClass] = useState('');
   // Image fallback state dictionary: maps image keys to boolean
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
@@ -558,20 +564,30 @@ export default function SchoolProfileView({
   const [applicantEmail, setApplicantEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Display texts matching the exact reference design
-  const displayName = (!schoolName || /^\d+$/.test(schoolName.trim()))
-    ? 'BrightFuture Public School'
-    : schoolName;
+  // Display texts matching the exact reference design or template mode
+  const displayName = isTemplate
+    ? 'Write Your School Name Here'
+    : ((!schoolName || /^\d+$/.test(schoolName.trim()))
+      ? 'BrightFuture Public School'
+      : schoolName);
   const displayEstablished = establishedYear || '1975';
   const displayStudents = totalStudents > 0 ? `${totalStudents.toLocaleString()}+` : '2,500+';
   const displayTeachers = totalTeachers > 0 ? `${totalTeachers}+` : '120+';
   const displayYears = establishedYear && !isNaN(parseInt(establishedYear))
     ? `${Math.max(10, 2026 - parseInt(establishedYear))}+`
     : '50+';
-  const displayPrincipal = principalName || 'Dr. Meera Sharma';
-  const displayAddress = rawAddress || '123 Green Valley Road, Bangalore - 560001';
-  const displayPhone = rawPhone || '+91 98765 43210';
-  const displayEmail = rawEmail || 'info@brightfuture.edu.in';
+  const displayPrincipal = isTemplate
+    ? 'Write Principal / Headmaster Name Here'
+    : (principalName || 'Dr. Meera Sharma');
+  const displayAddress = isTemplate
+    ? 'Plot No. 12, Knowledge Park / Main Road, Your City - PIN Code'
+    : (rawAddress || '123 Green Valley Road, Bangalore - 560001');
+  const displayPhone = isTemplate
+    ? '+91 98XXXXXXXX / Official School Helpline'
+    : (rawPhone || '+91 98765 43210');
+  const displayEmail = isTemplate
+    ? 'admissions@yourschoolname.edu.in'
+    : (rawEmail || 'info@brightfuture.edu.in');
 
   // Copy feedback state
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -1280,6 +1296,16 @@ export default function SchoolProfileView({
     <div className="min-h-screen bg-white font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
       
       {/* ========================================================= */}
+      {/* 0. AI MASTER TEMPLATE ASSISTANT (VISIBLE IN TEMPLATE MODE) */}
+      {/* ========================================================= */}
+      {isTemplate && (
+        <AiProfileTemplateGuide
+          showAiGuide={showAiGuide}
+          setShowAiGuide={setShowAiGuide}
+        />
+      )}
+
+      {/* ========================================================= */}
       {/* 1. TOP NAVBAR / HEADER                                    */}
       {/* ========================================================= */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
@@ -1510,6 +1536,9 @@ export default function SchoolProfileView({
           </button>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* AI Template Instruction: Section 1 (Hero & Identity) */}
+            <AiSectionInstructionBadge sectionKey="hero" isVisible={isTemplate && showAiGuide} />
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
               
               {/* Left Column (col-span-6): Typography & Action Buttons */}
@@ -1568,6 +1597,9 @@ export default function SchoolProfileView({
 
           {/* Floating Stats Ribbon - 5 Stats in a Row matching reference screenshot */}
           <div className="relative z-20 max-w-6xl mx-auto px-4 mt-8 sm:mt-10">
+            {/* AI Template Instruction: Section 2 (Quantitative Metrics) */}
+            <AiSectionInstructionBadge sectionKey="metrics" isVisible={isTemplate && showAiGuide} />
+
             <div className="bg-white rounded-2xl shadow-[0_12px_36px_rgba(0,35,70,0.08)] border border-slate-100 p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
               
               {/* Stat 1: Years */}
@@ -1643,6 +1675,8 @@ export default function SchoolProfileView({
         {/* ========================================================= */}
         <section id="about" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* AI Template Instruction: Section 3 (About Us, Heritage & Principal Desk) */}
+            <AiSectionInstructionBadge sectionKey="about" isVisible={isTemplate && showAiGuide} />
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
@@ -2029,6 +2063,8 @@ export default function SchoolProfileView({
       {activeTab === 'facilities' && (
         <section id="facilities" className="pt-10 sm:pt-16 pb-6 sm:pb-8 bg-[#F8FAFC] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* AI Template Instruction: Section 4 (STEM Labs & Infrastructure) */}
+          <AiSectionInstructionBadge sectionKey="labs" isVisible={isTemplate && showAiGuide} />
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
@@ -2227,6 +2263,8 @@ export default function SchoolProfileView({
         <>
         <section id="admissions" className="pt-6 sm:pt-10 pb-12 sm:pb-20 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* AI Template Instruction: Section 6 (Admissions Roadmap & Eligibility) */}
+          <AiSectionInstructionBadge sectionKey="admissions" isVisible={isTemplate && showAiGuide} />
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
@@ -2358,6 +2396,8 @@ export default function SchoolProfileView({
       {/* ========================================================= */}
       <section id="fees" className="py-12 sm:py-16 bg-[#F8FAFC] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* AI Template Instruction: Section 5 (Fee Structure & Policies) */}
+          <AiSectionInstructionBadge sectionKey="fees" isVisible={isTemplate && showAiGuide} />
           
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-10">
@@ -2712,6 +2752,8 @@ export default function SchoolProfileView({
       {activeTab === 'reviews' && (
         <section id="reviews" className="py-12 sm:py-20 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* AI Template Instruction: Section 8 (Verified Community Reviews) */}
+            <AiSectionInstructionBadge sectionKey="reviews" isVisible={isTemplate && showAiGuide} />
             
             {/* Header & Write Review Action */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-12">
@@ -2792,11 +2834,11 @@ export default function SchoolProfileView({
                   </div>
 
                   {[
-                    { label: 'यहाँ की पढ़ाई और टीचर्स (Academics & Teaching)', score: '4.9', pct: '98%', icon: '📚' },
-                    { label: 'कैंपस, लैब्स व इन्फ्रास्ट्रक्चर (Campus & Laboratories)', score: '4.8', pct: '96%', icon: '🔬' },
-                    { label: 'बच्चों की सुरक्षा व अनुशासन (Safety & Bus Transport)', score: '4.9', pct: '98%', icon: '🛡️' },
-                    { label: 'खेल-कूद व एक्टिविटीज़ (Sports & Extracurriculars)', score: '4.7', pct: '94%', icon: '⚽' },
-                    { label: 'फीस और सुविधाओं का तालमेल (Value for Money)', score: '4.7', pct: '94%', icon: '💰' },
+                    { label: 'Academics & Teaching Quality', score: '4.9', pct: '98%', icon: '📚' },
+                    { label: 'Campus, Labs & Infrastructure', score: '4.8', pct: '96%', icon: '🔬' },
+                    { label: 'Safety, Discipline & Bus Transport', score: '4.9', pct: '98%', icon: '🛡️' },
+                    { label: 'Sports, Extracurriculars & Arts', score: '4.7', pct: '94%', icon: '⚽' },
+                    { label: 'Value for Money & Fee Transparency', score: '4.7', pct: '94%', icon: '💰' },
                   ].map((m, i) => (
                     <div key={i} className="flex items-center gap-3 text-xs">
                       <span className="w-56 text-gray-700 font-semibold truncate flex items-center gap-1.5">
@@ -2857,7 +2899,7 @@ export default function SchoolProfileView({
                     Rate & Review {displayName}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-600 mt-1 mb-6 leading-relaxed">
-                    Aapka genuine feedback dusre parents aur students ko sahi faisla lene mein madad karta hai. Niche diye gaye questions ka 1 se 5 star mein answer dein:
+                    Your authentic feedback helps other parents and students make the best decision for their education. Please answer the 5-point evaluation questions below:
                   </p>
 
                   <form onSubmit={handleReviewSubmit} className="space-y-6">
@@ -2918,51 +2960,51 @@ export default function SchoolProfileView({
                       {[
                         {
                           id: 'overall',
-                          q: '1. कुल मिलाकर स्कूल कैसा लगा? (Overall School Rating)',
-                          desc: 'Overall experience, discipline and would you recommend this school?',
+                          q: '1. Overall School Experience & Recommendation',
+                          desc: 'Overall experience, discipline and whether you recommend this school to others',
                           value: ratingOverall,
                           setter: setRatingOverall,
-                          labels: ['खराब (Poor)', 'औसत से कम (Below Average)', 'ठीक-ठाक (Average)', 'अच्छा (Good)', 'उत्कृष्ट (Excellent / Highly Recommended)']
+                          labels: ['Poor', 'Below Average', 'Average', 'Good', 'Excellent / Highly Recommended']
                         },
                         {
                           id: 'academics',
-                          q: '2. यहाँ की पढ़ाई और टीचर्स कैसे हैं? (Academics & Teaching Quality)',
+                          q: '2. Academics & Faculty Teaching Quality',
                           desc: 'Teacher dedication, teaching quality, doubt solving & CBSE/board results',
                           value: ratingAcademics,
                           setter: setRatingAcademics,
-                          labels: ['कमज़ोर पढ़ाई (Weak)', 'सुधार चाहिए (Needs Work)', 'संतोषजनक (Satisfactory)', 'बहुत अच्छी पढ़ाई (Very Good)', 'शानदार शिक्षक व तैयारी (Outstanding)']
+                          labels: ['Needs Attention', 'Satisfactory', 'Good', 'Very Good', 'Outstanding & Dedicated']
                         },
                         {
                           id: 'infrastructure',
-                          q: '3. स्कूल का इन्फ्रास्ट्रक्चर, कैंपस और लैब्स? (Campus & Labs)',
+                          q: '3. Campus Infrastructure, Classrooms & Science Labs',
                           desc: 'Physics, Chemistry, Computer labs, library, smart digital classrooms & campus grounds',
                           value: ratingInfrastructure,
                           setter: setRatingInfrastructure,
-                          labels: ['सुविधाएं बहुत कम (Inadequate)', 'साधारण (Basic)', 'अच्छा कैंपस (Decent)', 'आधुनिक लैब्स (Modern & Equipped)', 'विश्वस्तरीय सुविधाएं (World-Class)']
+                          labels: ['Inadequate', 'Basic', 'Decent', 'Modern & Equipped', 'World-Class & Advanced']
                         },
                         {
                           id: 'safety',
-                          q: '4. बच्चों की सुरक्षा, माहौल और अनुशासन? (Safety & Discipline)',
+                          q: '4. Student Safety, Discipline & Transport Care',
                           desc: 'CCTV surveillance, student care, female conductors in buses & safe environment',
                           value: ratingSafety,
                           setter: setRatingSafety,
-                          labels: ['असुरक्षित (Concerns)', 'साधारण (Average)', 'सुरक्षित (Satisfactory)', 'सुरक्षित व अनुशासित (Safe)', '100% सुरक्षित व ध्यान रखने वाला (100% Secure)']
+                          labels: ['Safety Concerns', 'Average', 'Safe & Disciplined', 'Very Safe', '100% Secure & Attentive']
                         },
                         {
                           id: 'sports',
-                          q: '5. खेल-कूद और एक्टिविटीज़ कैसी हैं? (Sports & Extracurriculars)',
+                          q: '5. Sports Coaching & Extracurricular Activities',
                           desc: 'Playgrounds, sports coaching, cultural fests, debate, dance & arts',
                           value: ratingSports,
                           setter: setRatingSports,
-                          labels: ['खेल सुविधाएं नहीं (Minimal)', 'सीमित (Limited)', 'अच्छी एक्टिविटीज़ (Good)', 'सक्रिय खेल कोचिंग (Active)', 'शानदार खेल मैदान व कोच (Top-Tier)']
+                          labels: ['Minimal', 'Limited', 'Good Activities', 'Active & Regular', 'Top-Tier Sports Academy']
                         },
                         {
                           id: 'value',
-                          q: '6. फीस और सुविधाओं का तालमेल कैसा है? (Value for Money)',
-                          desc: 'Is the fee structure justified by the education and facilities provided?',
+                          q: '6. Fee Justification & Value for Money',
+                          desc: 'Is the fee structure justified by the education, practical facilities and care provided?',
                           value: ratingValue,
                           setter: setRatingValue,
-                          labels: ['फीस बहुत ज़्यादा (Overpriced)', 'महंगा (Expensive)', 'उचित (Reasonable)', 'अच्छी वैल्यू (Good Value)', 'पूरी तरह पैसा वसूल (Exceptional Value)']
+                          labels: ['High / Overpriced', 'Expensive', 'Reasonable', 'Good Value', 'Exceptional Value']
                         }
                       ].map((item) => (
                         <div key={item.id} className="p-4 bg-gray-50/80 rounded-2xl border border-gray-200/80 hover:border-blue-200 transition-colors">
@@ -3002,12 +3044,12 @@ export default function SchoolProfileView({
                     {/* Detailed Review Comments */}
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                        Your Detailed Review / अपना अनुभव विस्तार से लिखें *
+                        Your Detailed Review / Feedback *
                       </label>
                       <textarea
                         required
                         rows={4}
-                        placeholder="Padhai ka mahaul kaisa hai? Teachers kaise support karte hain? Campus aur bus ki safety kaisi hai? Dusre parents ya students ke liye aapka kya sujhav hai..."
+                        placeholder="Share your experience regarding teaching quality, faculty support, student safety, labs, sports facilities, and advice for prospective parents..."
                         value={reviewComment}
                         onChange={(e) => setReviewComment(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#006FCC] text-xs sm:text-sm leading-relaxed"
@@ -3151,31 +3193,31 @@ export default function SchoolProfileView({
                   {/* 5-Question Answers Breakdown Chips */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 my-3 p-3 bg-[#F8FAFD] rounded-xl border border-gray-100 text-xs">
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-500 font-medium">📚 पढ़ाई (Academics)</span>
+                      <span className="text-[10px] text-gray-500 font-medium">📚 Academics</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         {rev.metrics?.academics || rev.rating}.0 <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                       </span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-500 font-medium">🔬 लैब्स व कैंपस</span>
+                      <span className="text-[10px] text-gray-500 font-medium">🔬 Campus & Labs</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         {rev.metrics?.infrastructure || 4.8} <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                       </span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-500 font-medium">🛡️ सुरक्षा व अनुशासन</span>
+                      <span className="text-[10px] text-gray-500 font-medium">🛡️ Safety & Care</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         {rev.metrics?.safety || 5.0} <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                       </span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-500 font-medium">⚽ खेल-कूद</span>
+                      <span className="text-[10px] text-gray-500 font-medium">⚽ Sports & Arts</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         {rev.metrics?.sports || 4.7} <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                       </span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[10px] text-gray-500 font-medium">💰 फीस वैल्यू</span>
+                      <span className="text-[10px] text-gray-500 font-medium">💰 Value for Fee</span>
                       <span className="font-bold text-gray-900 flex items-center gap-1">
                         {rev.metrics?.value || 4.9} <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                       </span>
@@ -3260,6 +3302,8 @@ export default function SchoolProfileView({
       {activeTab === 'contact' && (
         <section id="contact-info" className="py-12 sm:py-16 bg-[#F8FAFC] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* AI Template Instruction: Section 9 (Contact & Interactive Map) */}
+          <AiSectionInstructionBadge sectionKey="contact" isVisible={isTemplate && showAiGuide} />
           
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">

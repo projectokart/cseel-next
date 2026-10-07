@@ -347,9 +347,10 @@ export default async function SchoolPage({ params }: PageProps) {
     }));
   }
 
-  // Format variables strictly from Supabase record
-  const udiseCode = schoolData?.udise_code || '';
-  const displaySchoolName = schoolData?.school_name || fallbackSchoolName;
+  // Format variables strictly from Supabase record or template mode
+  const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
+  const udiseCode = isTemplate ? '06170100101' : (schoolData?.udise_code || '');
+  const displaySchoolName = isTemplate ? 'Write Your School Name Here' : (schoolData?.school_name || fallbackSchoolName);
   const displayState = schoolData?.state_name || rawState;
   const displayDistrict = schoolData?.district_name || rawDistrict;
   const displayBlock = schoolData?.block_name || rawVillage || '';
@@ -590,6 +591,7 @@ export default async function SchoolPage({ params }: PageProps) {
         lng={lng}
         clusterSchools={clusterSchools}
         districtSchools={districtSchools}
+        isTemplate={isTemplate}
       />
     </>
   );

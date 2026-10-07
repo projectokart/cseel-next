@@ -72,6 +72,27 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact'>('grid');
+
+  // Persist viewMode in localStorage across page refreshes
+  useEffect(() => {
+    try {
+      const savedMode = localStorage.getItem('cseel_school_view_mode') as 'grid' | 'grid3' | 'compact' | null;
+      if (savedMode && (savedMode === 'grid' || savedMode === 'grid3' || savedMode === 'compact')) {
+        setViewMode(savedMode);
+      }
+    } catch {
+      // Ignore storage errors in SSR or restricted environments
+    }
+  }, []);
+
+  const handleViewModeChange = (mode: 'grid' | 'grid3' | 'compact') => {
+    setViewMode(mode);
+    try {
+      localStorage.setItem('cseel_school_view_mode', mode);
+    } catch {
+      // Ignore storage errors
+    }
+  };
   
   // Dynamic counts for filters
   const boardCounts = useMemo(() => {
@@ -1122,7 +1143,7 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
                 <div className="flex items-center bg-gray-100 p-0.5 sm:p-1 rounded-xl border border-gray-200/60">
                   {/* Standard Grid / Cards */}
                   <button
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => handleViewModeChange('grid')}
                     className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                       viewMode === 'grid'
                         ? 'bg-white text-blue-600 shadow-xs'
@@ -1137,7 +1158,7 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
 
                   {/* 3 Columns Grid (Desktop only) */}
                   <button
-                    onClick={() => setViewMode('grid3')}
+                    onClick={() => handleViewModeChange('grid3')}
                     className={`hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                       viewMode === 'grid3'
                         ? 'bg-white text-blue-600 shadow-xs'
@@ -1151,7 +1172,7 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
 
                   {/* Compact List (4-5 on mobile screen!) */}
                   <button
-                    onClick={() => setViewMode('compact')}
+                    onClick={() => handleViewModeChange('compact')}
                     className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
                       viewMode === 'compact'
                         ? 'bg-white text-blue-600 shadow-xs'
@@ -1175,6 +1196,16 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
                   <Filter size={14} className="sm:w-4 sm:h-4" />
                 </button>
                 
+                <Link
+                  href="/school-template"
+                  className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition"
+                  title="School Profile Master Template & AI Content Guide for School Administrators"
+                >
+                  <Sparkles size={14} className="text-amber-600 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">School Template</span>
+                  <span className="sm:hidden">Template</span>
+                </Link>
+
                 <Link
                   href="/school-finder"
                   className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs sm:text-sm font-bold flex items-center gap-1.5 transition"

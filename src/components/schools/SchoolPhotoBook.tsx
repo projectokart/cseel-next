@@ -410,10 +410,6 @@ export default function SchoolPhotoBook({
                 <h2 className="text-base sm:text-lg font-black font-serif text-white tracking-tight leading-tight">{displayName}</h2>
                 <p className="text-[9.5px] text-blue-100/90 line-clamp-2 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
               </div>
-              <div className="relative z-10 flex justify-between text-[8px] text-blue-200/80 border-t border-[#FBBC04]/20 pt-1.5 px-1 mb-1">
-                <span>• Rooted in Values •</span>
-                <span className="text-[#FBBC04] font-bold">Open Book →</span>
-              </div>
             </div>
 
             {/* Right Page (Desktop: Page 1 photo, Mobile: Cover Page) */}
@@ -441,10 +437,6 @@ export default function SchoolPhotoBook({
                   </div>
                   <h2 className="text-base font-black font-serif text-white tracking-tight leading-tight">{displayName}</h2>
                   <p className="text-[9.5px] text-blue-100/90 line-clamp-2 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
-                </div>
-                <div className="relative z-10 flex justify-between text-[8px] text-blue-200/80 border-t border-[#FBBC04]/20 pt-1.5 px-1 mb-1">
-                  <span>• Rooted in Values •</span>
-                  <span className="text-[#FBBC04] font-bold">Open Book →</span>
                 </div>
               </div>
             </div>
@@ -564,17 +556,6 @@ export default function SchoolPhotoBook({
                 <Award className="w-2.5 h-2.5 text-[#FBBC04]" /> NEP 2020
               </span>
             </div>
-          </div>
-
-          {/* Bottom Footer: Turn Page Call-to-action (Compact with room above dots) */}
-          <div className="relative z-10 flex items-center justify-between border-t border-[#FBBC04]/25 pt-1.5 px-1 text-white shrink-0 mb-1">
-            <span className="text-[8px] sm:text-[9px] text-blue-200/70 font-semibold tracking-wider uppercase">
-              • Rooted in Values •
-            </span>
-            <span className="inline-flex items-center gap-1 text-[8px] sm:text-[8.5px] font-bold text-[#FBBC04] bg-[#FBBC04]/15 hover:bg-[#FBBC04]/25 px-2 py-0.5 rounded-full border border-[#FBBC04]/40 transition-colors shadow-xs">
-              <span>Open Book</span>
-              <ChevronRight className="w-2 h-2 stroke-[3]" />
-            </span>
           </div>
         </div>
 

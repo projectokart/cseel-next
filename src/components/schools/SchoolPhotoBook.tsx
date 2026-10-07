@@ -378,13 +378,80 @@ export default function SchoolPhotoBook({
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. MAIN BOOK CONTAINER:
+      {/* 2. AUTHENTIC 3D BOOK CASING & MULTI-PAGE STACK EDGES (Deckle Edge / Paper Block) */}
+      {/* ========================================================================= */}
+      {/* Underlying Hardcover Backing Board Lip & Deep Elevation Table Shadow */}
+      <div 
+        className="absolute -inset-1 sm:-inset-1.5 rounded-l-xl rounded-r-[26px] bg-gradient-to-br from-[#0c192c] via-[#08121f] to-[#040810] shadow-[0_26px_55px_-10px_rgba(0,0,0,0.6),0_14px_28px_-6px_rgba(0,0,0,0.4)] pointer-events-none z-0 border border-slate-700/60"
+      />
+
+      {/* Multi-Page Stack on Right Edge (Visible stacked paper sheets / book block) */}
+      <div 
+        className="hidden sm:block absolute top-1.5 bottom-1.5 right-0 translate-x-[7px] w-[8px] pointer-events-none z-10 select-none rounded-r-[3px]"
+        style={{
+          background: 'repeating-linear-gradient(to bottom, #FAF7F0 0px, #FAF7F0 1.2px, #E6DECf 1.8px, #D2C6AF 2.8px, #C1B198 3.8px)',
+          boxShadow: `
+            inset 1px 0 1px rgba(255,255,255,0.7),
+            1px 0 0 #f5efe4,
+            2px 0 0 #e8dfcf,
+            3px 0 0 #ded2bd,
+            4px 0 0 #cbbfa9,
+            5px 0 0 #bbaa92,
+            6px 0 0 #1e293b,
+            9px 3px 8px rgba(0,0,0,0.4)
+          `
+        }}
+      />
+
+      {/* Multi-Page Stack along Bottom Edge */}
+      <div 
+        className="hidden sm:block absolute bottom-0 left-3 right-3 translate-y-[5px] h-[6px] pointer-events-none z-10 select-none rounded-b-[2px]"
+        style={{
+          background: 'repeating-linear-gradient(to right, #FAF7F0 0px, #FAF7F0 1.5px, #E6DECf 2.2px, #D2C6AF 3.2px, #C1B198 4.2px)',
+          boxShadow: `
+            inset 0 1px 1px rgba(255,255,255,0.7),
+            0 1px 0 #f5efe4,
+            0 2px 0 #e8dfcf,
+            0 3px 0 #ded2bd,
+            0 4px 0 #cbbfa9,
+            0 5px 0 #1e293b,
+            0 8px 14px rgba(0,0,0,0.45)
+          `
+        }}
+      />
+
+      {/* Multi-Page Stack on Left Edge (Desktop) */}
+      <div 
+        className="hidden sm:block absolute top-1.5 bottom-1.5 left-0 -translate-x-[4px] w-[5px] pointer-events-none z-10 select-none rounded-l-[3px]"
+        style={{
+          background: 'repeating-linear-gradient(to bottom, #FAF7F0 0px, #FAF7F0 1.2px, #E6DECf 1.8px, #D2C6AF 2.8px, #C1B198 3.8px)',
+          boxShadow: `
+            -1px 0 0 #e8dfcf,
+            -2px 0 0 #ded2bd,
+            -3px 0 0 #cbbfa9,
+            -4px 0 0 #1e293b,
+            -6px 2px 6px rgba(0,0,0,0.35)
+          `
+        }}
+      />
+
+      {/* Mobile Right Edge Multi-Page Stack */}
+      <div 
+        className="sm:hidden absolute top-1 bottom-1 right-0 translate-x-[4px] w-[5px] pointer-events-none z-10 select-none rounded-r-[2px]"
+        style={{
+          background: 'repeating-linear-gradient(to bottom, #FAF7F0 0px, #FAF7F0 1.2px, #E6DECf 1.8px, #D2C6AF 2.5px)',
+          boxShadow: '1px 0 0 #e8dfcf, 2px 0 0 #ded2bd, 3px 0 0 #1e293b, 5px 2px 5px rgba(0,0,0,0.3)'
+        }}
+      />
+
+      {/* ========================================================================= */}
+      {/* 3. MAIN BOOK CONTAINER:
              - 100% full bleed, zero black gaps
              - Left corners slightly rounded (rounded-l-lg), right corners round (rounded-r-3xl)
              - Thin left border
       */}
       {/* ========================================================================= */}
-      <div className="relative w-full h-full rounded-l-lg rounded-r-3xl border-l border-slate-300/80 shadow-2xl overflow-hidden bg-transparent">
+      <div className="relative w-full h-full rounded-l-lg rounded-r-3xl border-l border-slate-300/80 shadow-2xl overflow-hidden bg-transparent z-10">
         
         {/* Dynamic Host Mount for StPageFlip Engine */}
         <div
@@ -398,6 +465,9 @@ export default function SchoolPhotoBook({
             {/* Left Page (Desktop only: Elegant Cover Page) */}
             <div className="hidden sm:flex w-1/2 h-full relative overflow-hidden bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-10 flex-col justify-between border-r border-[#FBBC04]/30">
               <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
+              {/* Left page spine shadow */}
+              <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black/60 via-black/25 via-black/10 to-transparent pointer-events-none z-20" />
+              <div className="absolute inset-y-0 right-10 w-10 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent pointer-events-none z-20" />
               <div className="relative z-10 flex items-center justify-center pt-1.5 text-center shrink-0">
                 <span className="text-[8.5px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
                   ✦ ACADEMIC SESSION 2026 – 2027 ✦
@@ -422,6 +492,9 @@ export default function SchoolPhotoBook({
               {/* Desktop image: Page 1 photo */}
               <div className="hidden sm:block w-full h-full relative">
                 <img src={pagesData[1].image} alt={pagesData[1].title} className="w-full h-full object-cover" />
+                {/* Right page spine shadow */}
+                <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/55 via-black/25 via-black/10 to-transparent pointer-events-none z-20" />
+                <div className="absolute inset-y-0 left-10 w-10 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent pointer-events-none z-20" />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3 sm:p-4 pb-7 text-white z-20">
                   <h4 className="text-xs sm:text-sm font-black text-white">{pagesData[1].title}</h4>
                   <p className="text-[10px] sm:text-[11px] text-slate-200 mt-0.5 line-clamp-1">{pagesData[1].desc}</p>
@@ -452,6 +525,49 @@ export default function SchoolPhotoBook({
             </div>
           </div>
         )}
+
+        {/* ========================================================================= */}
+        {/* 3D CENTER SPINE GUTTER CREASE & REALISTIC PAGE CURL / ARCH LIGHTING */}
+        {/* ========================================================================= */}
+        <div className="hidden sm:block absolute inset-y-0 left-1/2 -translate-x-1/2 w-20 lg:w-28 pointer-events-none z-30 select-none">
+          {/* Deep Ambient Occlusion Spine Valley */}
+          <div
+            className="w-full h-full"
+            style={{
+              background: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.05) 18%, rgba(0,0,0,0.22) 34%, rgba(0,0,0,0.58) 46%, rgba(0,0,0,0.82) 49.5%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.82) 50.5%, rgba(0,0,0,0.58) 54%, rgba(0,0,0,0.22) 66%, rgba(0,0,0,0.05) 82%, transparent 100%)',
+              mixBlendMode: 'multiply',
+            }}
+          />
+
+          {/* Micro Center Binding Seam Line */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1.5px] bg-black/85 shadow-[0_0_2px_rgba(0,0,0,0.9)]" />
+
+          {/* Left Page Arch Specular Crest (Simulating 3D page curl lifting outward from spine) */}
+          <div
+            className="absolute inset-y-0 right-1/2 mr-3 sm:mr-5 w-8 sm:w-10 opacity-40 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to right, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)',
+              mixBlendMode: 'overlay',
+            }}
+          />
+
+          {/* Right Page Arch Specular Crest (Simulating 3D page curl lifting outward from spine) */}
+          <div
+            className="absolute inset-y-0 left-1/2 ml-3 sm:ml-5 w-8 sm:w-10 opacity-40 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to right, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)',
+              mixBlendMode: 'overlay',
+            }}
+          />
+
+          {/* Top & Bottom Spine Headband / Binding Fold Crease Notches */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-2 bg-gradient-to-b from-black/60 to-transparent rounded-b-full" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-2 bg-gradient-to-t from-black/60 to-transparent rounded-t-full" />
+        </div>
+
+        {/* Outer Corner Lift Shadows (Simulating physical pages resting with slight natural lift) */}
+        <div className="hidden sm:block absolute bottom-0 right-0 w-20 h-16 bg-gradient-to-tl from-black/20 via-transparent to-transparent pointer-events-none z-25" />
+        <div className="hidden sm:block absolute bottom-0 left-0 w-20 h-16 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none z-25" />
 
         {/* Floating Bottom Dots (ONLY DOTS, NO BACKGROUND) */}
         <div
@@ -514,8 +630,10 @@ export default function SchoolPhotoBook({
           <div className="absolute bottom-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
           <div className="absolute bottom-3 right-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
 
-          {/* Spine Crease Shadow on Right */}
-          <div className="hidden sm:block absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/50 via-black/20 to-transparent pointer-events-none z-20" />
+          {/* Realistic Page Curvature & Spine Crease on Right */}
+          <div className="hidden sm:block absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black/60 via-black/25 via-black/10 to-transparent pointer-events-none z-20" />
+          <div className="hidden sm:block absolute inset-y-0 right-10 w-10 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent pointer-events-none z-20" />
+          <div className="hidden sm:block absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-black/25 to-transparent pointer-events-none z-20" />
 
           {/* Top Banner: Elegant Session Tag */}
           <div className="relative z-10 flex items-center justify-center pt-1.5 sm:pt-2 text-center shrink-0">
@@ -591,10 +709,25 @@ export default function SchoolPhotoBook({
                 }}
               />
 
-              {/* Spine crease shadow near center */}
+              {/* Spine crease shadow & 3D page curvature near center */}
               <div className={`hidden sm:block absolute inset-y-0 ${
-                isLeft ? 'right-0 w-8 bg-gradient-to-l' : 'left-0 w-8 bg-gradient-to-r'
-              } from-black/40 via-black/15 to-transparent pointer-events-none z-20`} />
+                isLeft ? 'right-0 w-16 bg-gradient-to-l' : 'left-0 w-16 bg-gradient-to-r'
+              } from-black/55 via-black/25 via-black/10 to-transparent pointer-events-none z-20`} />
+
+              {/* Soft Page Arch Specular Highlight */}
+              <div className={`hidden sm:block absolute inset-y-0 ${
+                isLeft ? 'right-10' : 'left-10'
+              } w-10 bg-gradient-to-r from-transparent via-white/[0.08] to-transparent pointer-events-none z-20`} />
+
+              {/* Corner lift shadow simulating physical page curl */}
+              <div className={`hidden sm:block absolute bottom-0 ${
+                isLeft ? 'left-0 bg-gradient-to-tr' : 'right-0 bg-gradient-to-tl'
+              } w-16 h-16 from-black/25 to-transparent pointer-events-none z-20`} />
+
+              {/* Outer edge subtle rim highlight */}
+              {!isLeft && (
+                <div className="absolute inset-y-0 right-0 w-2 bg-gradient-to-l from-white/[0.12] to-transparent pointer-events-none z-20" />
+              )}
 
               {/* Bottom Caption Banner */}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3 sm:p-4 pb-7 sm:pb-8 pt-7 text-white z-20 flex flex-col justify-end pointer-events-none">
@@ -633,8 +766,10 @@ export default function SchoolPhotoBook({
             }}
           />
 
-          {/* Book Gutter Spine Crease Shadow (Darker near spiral seam, lightening across page) */}
-          <div className="hidden sm:block absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/20 via-black/8 to-transparent pointer-events-none z-20" />
+          {/* Book Gutter Spine Crease Shadow & Curvature */}
+          <div className="hidden sm:block absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black/30 via-black/12 via-black/5 to-transparent pointer-events-none z-20" />
+          <div className="hidden sm:block absolute inset-y-0 left-10 w-10 bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none z-20" />
+          <div className="hidden sm:block absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-black/15 to-transparent pointer-events-none z-20" />
 
           {/* Paper Punch Holes: only on mobile matching the left edge spiral */}
           <div className="sm:hidden flex absolute inset-y-0 left-1 w-2 flex-col justify-between py-2 pointer-events-none z-20">

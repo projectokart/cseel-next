@@ -398,8 +398,21 @@ export default function SchoolPhotoBook({
             {/* Left Page (Desktop only: Elegant Cover Page) */}
             <div className="hidden sm:flex w-1/2 h-full relative overflow-hidden bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-10 flex-col justify-between border-r border-[#FBBC04]/30">
               <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
-              {/* Subtle light gray spine seam on right */}
-              <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/20 via-black/5 to-transparent pointer-events-none z-20" />
+              {/* Realistic 3D Spine Crease Valley & Curvature on Left Page */}
+              <div 
+                className="hidden sm:block absolute inset-y-0 right-0 w-16 pointer-events-none z-20"
+                style={{
+                  background: 'linear-gradient(to left, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+                }}
+              />
+              <div className="hidden sm:block absolute inset-y-0 right-0 w-[1.5px] bg-black/85 pointer-events-none z-20" />
+              <div 
+                className="hidden sm:block absolute inset-y-0 right-10 sm:right-12 w-8 pointer-events-none z-20 opacity-35"
+                style={{
+                  background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)',
+                  mixBlendMode: 'overlay'
+                }}
+              />
               <div className="relative z-10 flex items-center justify-center pt-1.5 text-center shrink-0">
                 <span className="text-[8.5px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
                   ✦ ACADEMIC SESSION 2026 – 2027 ✦
@@ -424,8 +437,21 @@ export default function SchoolPhotoBook({
               {/* Desktop image: Page 1 photo */}
               <div className="hidden sm:block w-full h-full relative">
                 <img src={pagesData[1].image} alt={pagesData[1].title} className="w-full h-full object-cover" />
-                {/* Subtle light gray spine seam on left */}
-                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/20 via-black/5 to-transparent pointer-events-none z-20" />
+                {/* Realistic 3D Spine Crease Valley & Curvature on Right Page */}
+                <div 
+                  className="hidden sm:block absolute inset-y-0 left-0 w-16 pointer-events-none z-20"
+                  style={{
+                    background: 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+                  }}
+                />
+                <div className="hidden sm:block absolute inset-y-0 left-0 w-[1.5px] bg-black/85 pointer-events-none z-20" />
+                <div 
+                  className="hidden sm:block absolute inset-y-0 left-10 sm:left-12 w-8 pointer-events-none z-20 opacity-35"
+                  style={{
+                    background: 'linear-gradient(to right, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)',
+                    mixBlendMode: 'overlay'
+                  }}
+                />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3 sm:p-4 pb-7 text-white z-20">
                   <h4 className="text-xs sm:text-sm font-black text-white">{pagesData[1].title}</h4>
                   <p className="text-[10px] sm:text-[11px] text-slate-200 mt-0.5 line-clamp-1">{pagesData[1].desc}</p>
@@ -518,8 +544,21 @@ export default function SchoolPhotoBook({
           <div className="absolute bottom-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
           <div className="absolute bottom-3 right-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
 
-          {/* Subtle Soft Gray Spine Crease on Right */}
-          <div className="hidden sm:block absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/20 via-black/5 to-transparent pointer-events-none z-20" />
+          {/* Realistic 3D Spine Crease Valley & Curvature on Left Page */}
+          <div 
+            className="hidden sm:block absolute inset-y-0 right-0 w-16 pointer-events-none z-20"
+            style={{
+              background: 'linear-gradient(to left, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+            }}
+          />
+          <div className="hidden sm:block absolute inset-y-0 right-0 w-[1.5px] bg-black/85 pointer-events-none z-20" />
+          <div 
+            className="hidden sm:block absolute inset-y-0 right-10 sm:right-12 w-8 pointer-events-none z-20 opacity-35"
+            style={{
+              background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)',
+              mixBlendMode: 'overlay'
+            }}
+          />
 
           {/* Top Banner: Elegant Session Tag */}
           <div className="relative z-10 flex items-center justify-center pt-1.5 sm:pt-2 text-center shrink-0">
@@ -595,10 +634,31 @@ export default function SchoolPhotoBook({
                 }}
               />
 
-              {/* Subtle Soft Gray Spine Seam Shade (Light & Natural) */}
+              {/* Realistic 3D Spine Crease Valley & Curvature */}
+              <div 
+                className={`hidden sm:block absolute inset-y-0 ${
+                  isLeft ? 'right-0' : 'left-0'
+                } w-16 pointer-events-none z-20`}
+                style={{
+                  background: isLeft
+                    ? 'linear-gradient(to left, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+                    : 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+                }}
+              />
               <div className={`hidden sm:block absolute inset-y-0 ${
-                isLeft ? 'right-0 w-8 bg-gradient-to-l' : 'left-0 w-8 bg-gradient-to-r'
-              } from-black/20 via-black/5 to-transparent pointer-events-none z-20`} />
+                isLeft ? 'right-0' : 'left-0'
+              } w-[1.5px] bg-black/85 pointer-events-none z-20`} />
+              <div 
+                className={`hidden sm:block absolute inset-y-0 ${
+                  isLeft ? 'right-10 sm:right-12' : 'left-10 sm:left-12'
+                } w-8 pointer-events-none z-20 opacity-35`}
+                style={{
+                  background: isLeft
+                    ? 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)'
+                    : 'linear-gradient(to right, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)',
+                  mixBlendMode: 'overlay'
+                }}
+              />
 
               {/* Bottom Caption Banner */}
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent p-3 sm:p-4 pb-7 sm:pb-8 pt-7 text-white z-20 flex flex-col justify-end pointer-events-none">
@@ -637,8 +697,21 @@ export default function SchoolPhotoBook({
             }}
           />
 
-          {/* Subtle Soft Gray Spine Seam */}
-          <div className="hidden sm:block absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/10 via-black/3 to-transparent pointer-events-none z-20" />
+          {/* Realistic 3D Spine Crease Valley & Curvature on Thank You Page */}
+          <div 
+            className="hidden sm:block absolute inset-y-0 left-0 w-16 pointer-events-none z-20"
+            style={{
+              background: 'linear-gradient(to right, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.32) 12%, rgba(0,0,0,0.18) 28%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.02) 75%, transparent 100%)'
+            }}
+          />
+          <div className="hidden sm:block absolute inset-y-0 left-0 w-[1.5px] bg-black/60 pointer-events-none z-20" />
+          <div 
+            className="hidden sm:block absolute inset-y-0 left-10 sm:left-12 w-8 pointer-events-none z-20 opacity-25"
+            style={{
+              background: 'linear-gradient(to right, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)',
+              mixBlendMode: 'overlay'
+            }}
+          />
 
           {/* Paper Punch Holes: only on mobile matching the left edge spiral */}
           <div className="sm:hidden flex absolute inset-y-0 left-1 w-2 flex-col justify-between py-2 pointer-events-none z-20">

@@ -398,11 +398,10 @@ export default function SchoolPhotoBook({
             {/* Left Page (Desktop only: Elegant Cover Page) */}
             <div className="hidden sm:flex w-1/2 h-full relative overflow-hidden bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 sm:p-5 pb-9 flex-col justify-between border-r border-[#FBBC04]/30">
               <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
-              <div className="relative z-10 flex flex-col items-center justify-center gap-0.5 text-center">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[8.5px] font-extrabold tracking-widest uppercase">
-                  OFFICIAL PROSPECTUS
+              <div className="relative z-10 flex items-center justify-center pt-1 text-center shrink-0">
+                <span className="text-[8px] sm:text-[8.5px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
+                  ACADEMIC SESSION 2026 – 2027
                 </span>
-                <span className="text-[8px] text-blue-200/80 tracking-widest">SESSION 2026 – 2027</span>
               </div>
               <div className="relative z-10 text-center my-auto space-y-1.5 px-2">
                 <div className="w-10 h-10 mx-auto rounded-xl bg-[#FBBC04]/20 border border-[#FBBC04]/60 p-1.5 flex items-center justify-center">
@@ -431,11 +430,10 @@ export default function SchoolPhotoBook({
               {/* Mobile: Cover Page preview */}
               <div className="sm:hidden w-full h-full relative bg-gradient-to-br from-[#071F38] via-[#002B49] to-[#00182C] text-white p-3.5 pb-9 flex flex-col justify-between">
                 <div className="absolute inset-2 border-2 border-[#FBBC04]/40 rounded-xl pointer-events-none" />
-                <div className="relative z-10 flex flex-col items-center justify-center gap-0.5 text-center">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[8.5px] font-extrabold tracking-widest uppercase">
-                    OFFICIAL PROSPECTUS
+                <div className="relative z-10 flex items-center justify-center pt-1 text-center shrink-0">
+                  <span className="text-[8px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
+                    ACADEMIC SESSION 2026 – 2027
                   </span>
-                  <span className="text-[8px] text-blue-200/80 tracking-widest">SESSION 2026 – 2027</span>
                 </div>
                 <div className="relative z-10 text-center my-auto space-y-1.5 px-2">
                   <div className="w-10 h-10 mx-auto rounded-xl bg-[#FBBC04]/20 border border-[#FBBC04]/60 p-1.5 flex items-center justify-center">
@@ -517,14 +515,12 @@ export default function SchoolPhotoBook({
           {/* Spine Crease Shadow on Right */}
           <div className="hidden sm:block absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/50 via-black/20 to-transparent pointer-events-none z-20" />
 
-          {/* Top Banner: Centered & Clean (No horizontal collision) */}
-          <div className="relative z-10 flex flex-col items-center justify-center gap-0.5 pt-1 text-center shrink-0">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FBBC04]/15 border border-[#FBBC04]/40 text-[#FBBC04] text-[8.5px] sm:text-[9.5px] font-extrabold tracking-widest uppercase shadow-xs">
+          {/* Top Banner: Elegant Session Tag (Clean & uncluttered) */}
+          <div className="relative z-10 flex items-center justify-center pt-1 text-center shrink-0">
+            <span className="inline-flex items-center gap-1.5 text-[8.5px] sm:text-[9.5px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
               <Sparkles className="w-2.5 h-2.5 fill-current" />
-              <span>OFFICIAL PROSPECTUS</span>
-            </span>
-            <span className="text-[8px] sm:text-[9px] font-semibold text-blue-200/80 tracking-widest uppercase">
-              SESSION 2026 – 2027
+              <span>ACADEMIC SESSION 2026 – 2027</span>
+              <Sparkles className="w-2.5 h-2.5 fill-current" />
             </span>
           </div>
 

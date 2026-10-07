@@ -339,5 +339,13 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-06T14:54:38.185Z",
     "updatedBy": "Auto Init"
+  },
+  "school-template": {
+    "pageKey": "school-template",
+    "title": "School Template",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-07T02:45:39.688Z",
+    "updatedBy": "Auto Init"
   }
 }

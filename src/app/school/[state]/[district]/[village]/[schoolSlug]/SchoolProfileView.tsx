@@ -1342,10 +1342,16 @@ export default function SchoolProfileView({
               </svg>
             </div>
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-sm xs:text-base sm:text-2xl font-black tracking-tight text-gray-950 font-serif leading-tight truncate">
-                {displayName}
-              </span>
-              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 truncate">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm xs:text-base sm:text-2xl font-black tracking-tight text-gray-950 font-serif leading-tight truncate">
+                  {displayName}
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EDF5FA] border border-[#D6EDFF] text-[#005689] text-[10px] sm:text-xs font-bold tracking-wide shrink-0">
+                  <span className="text-[#006FCC] font-extrabold">UDISE:</span>
+                  <span className="font-mono">{displayUdise}</span>
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 truncate mt-0.5">
                 Public School • {district || 'Campus'}
               </span>
             </div>
@@ -2425,10 +2431,12 @@ export default function SchoolProfileView({
 
                     {/* ================= BACK FACE: WHITE BACKGROUND & DEEP BLUE TEXT ================= */}
                     <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl overflow-hidden bg-white text-[#002B49] p-2.5 sm:p-3.5 flex flex-col justify-between border-2 border-[#D6EDFF] shadow-xl">
-                      <div>
+                      
+                      {/* Top Header + Scrollable Specs Body (Data scrolls vertically, no visible scrollbar) */}
+                      <div className="flex-1 min-h-0 flex flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pr-0.5">
                         {/* Header with Lab Name & Icon */}
-                        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                          <div className="flex items-center gap-2">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
+                          <div className="flex items-center gap-2 min-w-0">
                             <div className="w-7 h-7 rounded-lg bg-[#EDF5FA] border border-[#D6EDFF] flex items-center justify-center text-[#005689] shrink-0">
                               <IconComponent className="w-3.5 h-3.5" />
                             </div>
@@ -2441,38 +2449,38 @@ export default function SchoolProfileView({
                               </span>
                             </div>
                           </div>
-                          <span className="text-[9px] font-bold text-[#005689] bg-[#EDF5FA] px-2 py-0.5 rounded-full border border-[#D6EDFF] shrink-0">
+                          <span className="text-[9px] font-bold text-[#005689] bg-[#EDF5FA] px-2 py-0.5 rounded-full border border-[#D6EDFF] shrink-0 ml-1">
                             Specs
                           </span>
                         </div>
 
-                        {/* Concise Small Summary Paragraph */}
-                        <div className="bg-[#F8FAFD] rounded-lg p-2 my-2 border border-slate-100">
-                          <p className="text-[10.5px] text-[#002B49]/80 font-medium leading-relaxed line-clamp-2">
+                        {/* Full Detailed Paragraph - Fully wrapped, no truncation */}
+                        <div className="bg-[#F8FAFD] rounded-lg p-2 my-2 border border-slate-100 shrink-0">
+                          <p className="text-[10.5px] text-[#002B49]/90 font-medium leading-relaxed whitespace-normal break-words">
                             {facility.details}
                           </p>
                         </div>
 
-                        {/* Numbered Highlight Lines with Icons */}
-                        <div className="space-y-1">
+                        {/* Highlight Specs Lines with Icons - Fully wrapped and readable */}
+                        <div className="space-y-1.5 pb-1">
                           {facility.specs.map((sp: any, sIdx: number) => (
                             <div
                               key={sIdx}
-                              className="bg-[#F8FAFD] hover:bg-[#EDF5FA] rounded-lg px-2 py-1 border border-slate-100 flex items-center gap-1.5 transition-colors"
+                              className="bg-[#F8FAFD] hover:bg-[#EDF5FA] rounded-lg px-2 py-1.5 border border-slate-100 flex items-start gap-1.5 transition-colors"
                             >
                               {/* Small Number Badge with Check Icon */}
-                              <div className="flex items-center gap-1 shrink-0">
+                              <div className="flex items-center gap-1 shrink-0 mt-0.5">
                                 <span className="w-3.5 h-3.5 rounded-full bg-[#005689] text-white font-black text-[8px] flex items-center justify-center shadow-xs">
                                   {sIdx + 1}
                                 </span>
                                 <CheckCircle2 className="w-3 h-3 text-[#006FCC]" />
                               </div>
 
-                              <div className="min-w-0 flex-1 flex items-baseline gap-1 truncate text-[10px]">
-                                <span className="font-bold uppercase tracking-wider text-[#005689] shrink-0">
+                              <div className="min-w-0 flex-1 leading-tight text-[10px] whitespace-normal break-words">
+                                <span className="font-bold uppercase tracking-wider text-[#005689] mr-1">
                                   {sp.label}:
                                 </span>
-                                <span className="font-bold text-[#002B49] truncate">
+                                <span className="font-semibold text-[#002B49]">
                                   {sp.val}
                                 </span>
                               </div>
@@ -2481,8 +2489,8 @@ export default function SchoolProfileView({
                         </div>
                       </div>
 
-                      {/* Back Footer with Timings and Full View CTA */}
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-1">
+                      {/* Back Footer with Timings and Full View CTA (Fixed at bottom) */}
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-1 shrink-0">
                         <div className="text-[9.5px] text-[#002B49]/80 truncate">
                           <span className="font-bold text-[#002B49]">🕒</span> {facility.timings}
                         </div>

@@ -89,6 +89,7 @@ import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolT
 import TemplateControlBar from '@/components/schools/template/TemplateControlBar';
 import EditableText from '@/components/schools/template/EditableText';
 import EditableImage from '@/components/schools/template/EditableImage';
+import VerifiedBadge from '@/components/schools/template/VerifiedBadge';
 import AddCardModal, { ICON_MAP, ILLUSTRATION_MAP } from '@/components/schools/template/AddCardModal';
 
 interface SchoolProfileViewProps {
@@ -624,7 +625,7 @@ export default function SchoolProfileView({
     ? `${templateData?.totalTeachers || 65}+`
     : (totalTeachers > 0 ? `${totalTeachers}+` : '120+');
   const displayYears = isLiveTemplate
-    ? `${Math.max(5, 2026 - parseInt(templateData?.establishedYear || '2008'))}+`
+    ? `${Math.max(1, 2026 - parseInt(templateData?.establishedYear || '2008'))}+`
     : (establishedYear && !isNaN(parseInt(establishedYear))
       ? `${Math.max(10, 2026 - parseInt(establishedYear))}+`
       : '50+');
@@ -677,24 +678,82 @@ export default function SchoolProfileView({
     : `BSEH/REC/${cleanUdiseDigits.slice(-5) || '84912'}`;
 
   const displaySchoolCode = cleanUdiseDigits.slice(-5) || '40412';
-  const displaySchoolType = schoolCategory || 'Senior Secondary (Class 1 to 12)';
+
+  const displayDistrict = isLiveTemplate
+    ? (templateData?.district || district || 'District')
+    : (district || 'Campus');
+  const displayState = isLiveTemplate
+    ? (templateData?.state || state || 'State')
+    : (state || 'State');
+  const displayBlock = isLiveTemplate
+    ? (templateData?.blockName || blockName || 'Block')
+    : (blockName || 'Block');
+  const displayVillage = isLiveTemplate
+    ? (templateData?.village || village || 'Locality')
+    : (village || 'Locality');
+  const displayPincode = isLiveTemplate
+    ? (templateData?.pincode || pincode || '123401')
+    : (pincode || '123401');
+
+  const displayClassFrom = isLiveTemplate
+    ? (templateData?.classFrom || classFrom || 'Class 1')
+    : (classFrom || 'Class 1');
+  const displayClassTo = isLiveTemplate
+    ? (templateData?.classTo || classTo || 'Class 12th')
+    : (classTo || 'Class 12th');
+  const displayClasses = `${displayClassFrom} to ${displayClassTo}`;
+
+  const displayTotalBoys = isLiveTemplate
+    ? (templateData?.totalBoys ?? totalBoys)
+    : totalBoys;
+  const displayTotalGirls = isLiveTemplate
+    ? (templateData?.totalGirls ?? totalGirls)
+    : totalGirls;
+  const displayTotalTeachers = isLiveTemplate
+    ? (templateData?.totalTeachers ?? totalTeachers)
+    : totalTeachers;
+  const fallbackMale = Math.round((totalTeachers || 20) * 0.35);
+  const fallbackFemale = Math.max(0, (totalTeachers || 20) - fallbackMale);
+  const displayMaleTeachers = isLiveTemplate
+    ? (templateData?.maleTeachers ?? fallbackMale)
+    : fallbackMale;
+  const displayFemaleTeachers = isLiveTemplate
+    ? (templateData?.femaleTeachers ?? fallbackFemale)
+    : fallbackFemale;
+  const displayClassrooms = isLiveTemplate
+    ? (templateData?.classroomsCount ?? classroomsCount ?? 11)
+    : (classroomsCount || 42);
+
+  const displaySTR = isLiveTemplate
+    ? `1:${Math.max(8, Math.min(45, Math.round((templateData?.totalStudents || 100) / (templateData?.totalTeachers || 10))))}`
+    : '1:20';
+
+  const displaySchoolType = isLiveTemplate
+    ? (templateData?.schoolCategory || templateData?.schoolType || 'Senior Secondary (Class 1 to 12)')
+    : (schoolCategory || 'Senior Secondary (Class 1 to 12)');
   
   // School Authority: Private vs Government
-  const isGovt = (management || '').toLowerCase().includes('govt') ||
-                 (management || '').toLowerCase().includes('department') ||
-                 (management || '').toLowerCase().includes('aided') ||
-                 (management || '').toLowerCase().includes('kendriya');
+  const mgmtVal = isLiveTemplate ? (templateData?.management || management || '') : (management || '');
+  const isGovt = mgmtVal.toLowerCase().includes('govt') ||
+                 mgmtVal.toLowerCase().includes('department') ||
+                 mgmtVal.toLowerCase().includes('aided') ||
+                 mgmtVal.toLowerCase().includes('kendriya');
   const displayManagementType = isGovt ? 'Government School' : 'Private Unaided';
-  const displayManagementLabel = management || (isGovt ? 'Dept. of School Education, Govt.' : 'Private Unaided (Recognized Trust)');
+  const displayManagementLabel = isLiveTemplate
+    ? (templateData?.management || (isGovt ? 'Dept. of School Education, Govt.' : 'Private Unaided (Recognized Trust)'))
+    : (management || (isGovt ? 'Dept. of School Education, Govt.' : 'Private Unaided (Recognized Trust)'));
 
   // Campus Format: Day School vs Boarding vs Day-Boarding
-  const isResidential = (schoolCategory || '').toLowerCase().includes('residential') ||
-                        (schoolCategory || '').toLowerCase().includes('boarding');
+  const isResidential = isLiveTemplate
+    ? Boolean(templateData?.isResidential)
+    : ((schoolCategory || '').toLowerCase().includes('residential') || (schoolCategory || '').toLowerCase().includes('boarding'));
   const displayBoardingType = isResidential ? 'Residential (Boarding)' : 'Day School';
   const displayBoardingSub = isResidential ? 'Full Hostel & Mess Available' : 'Day-cum-Day-Boarding';
 
   // Student Gender: Co-Educational vs Girls Only vs Boys Only
-  const displayGenderType = genderType || 'Co-Educational';
+  const displayGenderType = isLiveTemplate
+    ? (templateData?.genderType || 'Co-Educational')
+    : (genderType || 'Co-Educational');
   const displayGenderFormat = displayGenderType;
   const displayGenderTag = displayGenderType.toLowerCase().includes('girls')
     ? 'Girls Only School'
@@ -702,28 +761,25 @@ export default function SchoolProfileView({
     ? 'Boys Only School'
     : 'Co-Educational (Boys & Girls)';
 
-  // Multiple Boards Support (comma/slash separated or default)
-  const boardsList = board
-    ? board.split(/[,/|•]+/).map((b) => b.trim()).filter(Boolean)
-    : ['CBSE (Central Board)', 'State Board (BSEH)'];
+  // Multiple Boards Support
+  const rawBoardStr = isLiveTemplate ? (templateData?.board || displayBoard) : board;
+  const boardsList = rawBoardStr
+    ? rawBoardStr.split(/[,/|•]+/).map((b) => b.trim()).filter(Boolean)
+    : ['CBSE (Central Board)', 'State Board'];
 
-  // Multiple Mediums Support (comma/slash separated or default)
-  const mediumsList = medium
-    ? medium.split(/[,/|•]+/).map((m) => m.trim()).filter(Boolean)
+  // Multiple Mediums Support
+  const rawMediumStr = isLiveTemplate ? (templateData?.medium || medium) : medium;
+  const displayMedium = rawMediumStr || 'English Medium';
+  const mediumsList = rawMediumStr
+    ? rawMediumStr.split(/[,/|•]+/).map((m) => m.trim()).filter(Boolean)
     : ['English Medium', 'Hindi Medium'];
 
-  const cleanClassFrom = classFrom ? classFrom.replace(/^Class\s*/i, '').trim() : '';
-  const cleanClassTo = classTo ? classTo.replace(/^Class\s*/i, '').trim() : '';
-  const displayClasses = (cleanClassFrom && cleanClassTo)
-    ? `Class ${cleanClassFrom} to ${cleanClassTo}`
-    : 'Nursery to Class 12';
-  
-  const displayWebsiteUrl = website
-    ? (website.startsWith('http') ? website : `https://${website}`)
-    : 'https://brightfutureschool.edu.in';
+  const displayWebsiteUrl = isLiveTemplate
+    ? (templateData?.website || website || 'https://yourschoolname.edu.in')
+    : (website || 'https://brightfuture.edu.in');
   const displayWebsiteClean = displayWebsiteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
   
-  const emailDomain = displayEmail.includes('@') ? displayEmail.split('@')[1] : 'brightfuture.edu.in';
+  const emailDomain = displayEmail.includes('@') ? displayEmail.split('@')[1] : 'yourschoolname.edu.in';
   const displayAdminEmail = displayEmail || `info@${emailDomain}`;
   const displayAdmissionsEmail = `admissions@${emailDomain}`;
   const displayPrincipalEmail = `principal@${emailDomain}`;
@@ -1440,13 +1496,15 @@ export default function SchoolProfileView({
                     {displayName}
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#EDF5FA] border border-[#D6EDFF] text-[#005689] text-[10px] sm:text-xs font-bold tracking-wide shrink-0">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#EDF5FA] border border-[#D6EDFF] text-[#005689] text-[10px] sm:text-xs font-bold tracking-wide shrink-0">
                   <span className="text-[#006FCC] font-extrabold">UDISE:</span>
                   <span className="font-mono">{displayUdise}</span>
+                  <VerifiedBadge fieldKey="udiseCode" size="sm" />
                 </span>
               </div>
-              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 truncate mt-0.5">
-                Public School • {district || 'Campus'}
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-500 truncate mt-0.5 flex items-center gap-1.5">
+                <span>{displayManagementType} • {displayDistrict}, {displayState}</span>
+                <VerifiedBadge fieldKey="district" size="sm" />
               </span>
             </div>
           </button>
@@ -1757,7 +1815,10 @@ export default function SchoolProfileView({
                   <GraduationCap className="w-6 h-6 stroke-[2]" />
                 </div>
                 <div>
-                  <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight">{displayYears}</div>
+                  <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center gap-1">
+                    <span>{displayYears}</span>
+                    <VerifiedBadge fieldKey="establishedYear" size="sm" />
+                  </div>
                   <div className="text-xs font-semibold text-slate-500">Years of Excellence</div>
                 </div>
               </div>
@@ -1768,7 +1829,10 @@ export default function SchoolProfileView({
                   <Users className="w-6 h-6 stroke-[2]" />
                 </div>
                 <div>
-                  <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight">{displayStudents}</div>
+                  <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center gap-1">
+                    <span>{displayStudents}</span>
+                    <VerifiedBadge fieldKey="totalStudents" size="sm" />
+                  </div>
                   <div className="text-xs font-semibold text-slate-500">Students Enrolled</div>
                 </div>
               </div>
@@ -1779,7 +1843,10 @@ export default function SchoolProfileView({
                   <Building2 className="w-6 h-6 stroke-[2]" />
                 </div>
                 <div>
-                  <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight">{displayTeachers}</div>
+                  <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center gap-1">
+                    <span>{displayTeachers}</span>
+                    <VerifiedBadge fieldKey="totalTeachers" size="sm" />
+                  </div>
                   <div className="text-xs font-semibold text-slate-500">Expert Teachers</div>
                 </div>
               </div>
@@ -1893,7 +1960,10 @@ export default function SchoolProfileView({
                 </div>
                 <div className="min-w-0 w-full">
                   <div className="text-[10px] sm:text-xs text-gray-500 font-medium truncate">Established</div>
-                  <div className="text-xs sm:text-xl font-black text-gray-950 truncate">{displayEstablished}</div>
+                  <div className="text-xs sm:text-xl font-black text-gray-950 truncate flex items-center gap-1">
+                    <span>{displayEstablished}</span>
+                    <VerifiedBadge fieldKey="establishedYear" size="sm" />
+                  </div>
                 </div>
               </div>
 
@@ -1903,7 +1973,10 @@ export default function SchoolProfileView({
                 </div>
                 <div className="min-w-0 w-full">
                   <div className="text-[10px] sm:text-xs text-gray-500 font-medium truncate">Students</div>
-                  <div className="text-xs sm:text-xl font-black text-gray-950 truncate">{displayStudents}</div>
+                  <div className="text-xs sm:text-xl font-black text-gray-950 truncate flex items-center gap-1">
+                    <span>{displayStudents}</span>
+                    <VerifiedBadge fieldKey="totalStudents" size="sm" />
+                  </div>
                 </div>
               </div>
 
@@ -1913,7 +1986,10 @@ export default function SchoolProfileView({
                 </div>
                 <div className="min-w-0 w-full">
                   <div className="text-[10px] sm:text-xs text-gray-500 font-medium truncate">Faculty</div>
-                  <div className="text-xs sm:text-xl font-black text-gray-950 truncate">{displayTeachers}</div>
+                  <div className="text-xs sm:text-xl font-black text-gray-950 truncate flex items-center gap-1">
+                    <span>{displayTeachers}</span>
+                    <VerifiedBadge fieldKey="totalTeachers" size="sm" />
+                  </div>
                 </div>
               </div>
 
@@ -1978,31 +2054,46 @@ export default function SchoolProfileView({
                 {/* Board */}
                 <div className="flex items-center justify-between px-4 py-2.5 text-xs">
                   <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Board</span>
-                  <span className="font-bold text-slate-900">{boardsList.length > 0 ? boardsList.join(' / ') : board || 'HBSE'}</span>
+                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>{boardsList.length > 0 ? boardsList.join(' / ') : displayBoard}</span>
+                    <VerifiedBadge fieldKey="board" size="sm" />
+                  </span>
                 </div>
 
                 {/* UDISE Code */}
                 <div className="flex items-center justify-between px-4 py-2.5 text-xs">
                   <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">UDISE Code</span>
-                  <span className="font-mono font-bold text-slate-900">{displayUdise}</span>
+                  <span className="font-mono font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>{displayUdise}</span>
+                    <VerifiedBadge fieldKey="udiseCode" size="sm" />
+                  </span>
                 </div>
 
                 {/* School Type */}
                 <div className="flex items-center justify-between px-4 py-2.5 text-xs">
                   <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">School Type</span>
-                  <span className="font-bold text-slate-900">{displayBoardingType || 'Day School'}</span>
+                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>{displayManagementLabel}</span>
+                    <VerifiedBadge fieldKey="management" size="sm" />
+                  </span>
                 </div>
 
                 {/* Medium */}
                 <div className="flex items-center justify-between px-4 py-2.5 text-xs">
                   <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Medium</span>
-                  <span className="font-bold text-slate-900">{mediumsList.length > 0 ? mediumsList.join(' / ') : medium || 'Hindi'}</span>
+                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>{mediumsList.length > 0 ? mediumsList.join(' / ') : displayMedium}</span>
+                    <VerifiedBadge fieldKey="medium" size="sm" />
+                  </span>
                 </div>
 
                 {/* Classes */}
                 <div className="flex items-center justify-between px-4 py-2.5 text-xs">
                   <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Classes</span>
-                  <span className="font-bold text-slate-900">{displayClasses}</span>
+                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>{displayClasses}</span>
+                    <VerifiedBadge fieldKey="classFrom" size="sm" />
+                  </span>
                 </div>
 
               </div>
@@ -2044,8 +2135,11 @@ export default function SchoolProfileView({
                     <Building className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-950 text-base leading-snug">{displayPrincipal}</h3>
-                    <p className="text-xs text-gray-500 font-medium">Principal</p>
+                    <h3 className="font-bold text-gray-950 text-base leading-snug flex items-center gap-1.5">
+                      <span>{displayPrincipal}</span>
+                      <VerifiedBadge fieldKey="principalName" size="sm" />
+                    </h3>
+                    <p className="text-xs text-gray-500 font-medium">Principal / Head of Institution</p>
                   </div>
                 </div>
               </div>
@@ -2071,8 +2165,9 @@ export default function SchoolProfileView({
                   <div className="font-serif italic text-2xl sm:text-3xl text-[#005689] font-bold tracking-wide">
                     {displayPrincipal.replace(/^(Dr\.|Mrs\.|Mr\.|Shri|Ms\.)\s*/i, '')}
                   </div>
-                  <div className="text-xs text-gray-500 font-medium mt-1">
-                    {displayPrincipal}, Principal
+                  <div className="text-xs text-gray-500 font-medium mt-1 flex items-center gap-1.5">
+                    <span>{displayPrincipal}, Principal</span>
+                    <VerifiedBadge fieldKey="principalName" size="sm" />
                   </div>
                 </div>
               </div>
@@ -3095,12 +3190,17 @@ export default function SchoolProfileView({
             {/* Faculty Key Stat Highlights */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
               {[
-                { val: '65+', label: 'Certified Educators', desc: '100% CTET / B.Ed / M.Ed Qualified' },
-                { val: '1 : 20', label: 'Teacher-Student Ratio', desc: 'Individual Attention Assured' },
-                { val: '9.4 Yrs', label: 'Average Experience', desc: 'High Faculty Retention & Stability' },
-                { val: '40+ Hrs', label: 'Annual Training', desc: 'NEP 2020 Pedagogical Workshops' }
+                { val: displayTeachers, label: 'Certified Educators', desc: `${displayFemaleTeachers} Female, ${displayMaleTeachers} Male Faculty`, fieldKey: 'totalTeachers' },
+                { val: displaySTR, label: 'Teacher-Student Ratio', desc: 'Individual Attention Assured', fieldKey: 'str' },
+                { val: displayStudents, label: 'Enrolled Learners', desc: 'Active Student Community', fieldKey: 'totalStudents' },
+                { val: `${displayYears}`, label: 'Institutional Heritage', desc: `Established in ${displayEstablished}`, fieldKey: 'establishedYear' }
               ].map((stat, sIdx) => (
-                <div key={sIdx} className="bg-[#EDF5FA] rounded-2xl p-5 border border-[#D6EDFF] text-center">
+                <div key={sIdx} className="bg-[#EDF5FA] rounded-2xl p-5 border border-[#D6EDFF] text-center relative group">
+                  {stat.fieldKey && (
+                    <div className="absolute top-2 right-2">
+                      <VerifiedBadge fieldKey={stat.fieldKey} size="sm" />
+                    </div>
+                  )}
                   <div className="text-2xl sm:text-3xl font-black text-[#005689]">{stat.val}</div>
                   <div className="text-xs sm:text-sm font-bold text-gray-950 mt-1">{stat.label}</div>
                   <div className="text-[10px] sm:text-[11px] text-gray-600 mt-0.5">{stat.desc}</div>
@@ -3112,11 +3212,12 @@ export default function SchoolProfileView({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
-                  role: 'Principal & Director',
-                  name: 'Dr. Sunita K. Sharma',
-                  qual: 'Ph.D. in Physics, M.Ed (Gold Medalist)',
-                  exp: '24 Years in Academic Leadership',
-                  focus: 'Former CBSE Board Observer, passionate about experiential inquiry and holistic student character development.'
+                  role: 'Principal & Head of Institution',
+                  name: displayPrincipal,
+                  qual: 'Post-Graduate Academic Leader',
+                  exp: `Leading ${displayName}`,
+                  focus: `Spearheading academic administration, faculty development, and experiential learning excellence at ${displayName}.`,
+                  fieldKey: 'principalName'
                 },
                 {
                   role: 'Head of Senior Secondary (Science)',
@@ -3148,7 +3249,10 @@ export default function SchoolProfileView({
                     <span className="text-[10px] font-bold text-[#006FCC] uppercase tracking-wider block mb-1">
                       {prof.role}
                     </span>
-                    <h3 className="text-base font-black text-gray-950 mb-1">{prof.name}</h3>
+                    <h3 className="text-base font-black text-gray-950 mb-1 flex items-center gap-1.5 flex-wrap">
+                      <span>{prof.name}</span>
+                      {prof.fieldKey && <VerifiedBadge fieldKey={prof.fieldKey} size="sm" />}
+                    </h3>
                     <p className="text-[11px] font-semibold text-gray-600 mb-2">{prof.qual}</p>
                     <p className="text-xs text-gray-600 leading-relaxed mb-4">{prof.focus}</p>
                   </div>
@@ -4917,17 +5021,26 @@ export default function SchoolProfileView({
               
               <div className="flex items-start gap-2 text-xs text-blue-200/80">
                 <MapPin className="w-3.5 h-3.5 text-[#38BDF8] shrink-0 mt-0.5" />
-                <span>{displayAddress}</span>
+                <span className="flex items-center gap-1.5 flex-wrap">
+                  <span>{displayAddress}</span>
+                  <VerifiedBadge fieldKey="address" size="sm" />
+                </span>
               </div>
 
               <div className="flex items-center gap-2 text-xs text-blue-200/80">
                 <Phone className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
-                <span>{displayPhone}</span>
+                <span className="flex items-center gap-1.5 flex-wrap">
+                  <span>{displayPhone}</span>
+                  <VerifiedBadge fieldKey="phone" size="sm" />
+                </span>
               </div>
 
               <div className="flex items-center gap-2 text-xs text-blue-200/80">
                 <Mail className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
-                <span className="truncate">{displayEmail}</span>
+                <span className="flex items-center gap-1.5 flex-wrap truncate">
+                  <span className="truncate">{displayEmail}</span>
+                  <VerifiedBadge fieldKey="email" size="sm" />
+                </span>
               </div>
             </div>
 

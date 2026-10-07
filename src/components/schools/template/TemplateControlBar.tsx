@@ -35,6 +35,7 @@ export default function TemplateControlBar({ currentTab }: TemplateControlBarPro
     toggleTabVisibility,
     toggleContactVisibility,
     fetchUdise,
+    verifyAllUdiseFields,
     resetToDefault,
     publishToSupabase,
     isUdiseLoading,
@@ -195,6 +196,19 @@ export default function TemplateControlBar({ currentTab }: TemplateControlBarPro
             >
               {data.showContactInfo ? <Phone className="w-3.5 h-3.5" /> : <PhoneOff className="w-3.5 h-3.5" />}
               <span className="hidden xl:inline">{data.showContactInfo ? 'Contact: Shown' : 'Contact: Hidden'}</span>
+            </button>
+          )}
+
+          {/* 1-Click Verify All Fields Button */}
+          {isEditMode && (
+            <button
+              type="button"
+              onClick={verifyAllUdiseFields}
+              title="Click to mark all institutional data as Verified by School"
+              className="px-3 py-1.5 bg-emerald-700/90 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-sm transition-all active:scale-95 border border-emerald-400/50"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-200" />
+              <span className="hidden sm:inline">Verify All</span>
             </button>
           )}
 

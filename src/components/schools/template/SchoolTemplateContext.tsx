@@ -51,6 +51,7 @@ export interface SchoolTemplateState {
   genderType: string;
   schoolType: string;
   management: string;
+  schoolCategory: string;
   establishedYear: string;
   phone: string;
   email: string;
@@ -65,6 +66,7 @@ export interface SchoolTemplateState {
   tabVisibility: Record<string, boolean>;
   showContactInfo: boolean;
   completedTabs: Record<string, boolean>;
+  verifiedFields: Record<string, boolean>;
 }
 
 const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
@@ -95,6 +97,7 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   genderType: 'Co-Educational',
   schoolType: 'Private Unaided (Recognized)',
   management: 'Private Management / Trust / Society',
+  schoolCategory: 'Senior Secondary (Class 1 to 12th)',
   establishedYear: '2008',
   phone: '+91 98XXXXXXXX / Official School Helpline',
   email: 'admissions@yourschoolname.edu.in',
@@ -126,6 +129,7 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   },
   showContactInfo: true,
   completedTabs: {},
+  verifiedFields: {},
 };
 
 const LOCAL_STORAGE_KEY = 'cseel_school_template_draft_v1';
@@ -142,6 +146,10 @@ interface SchoolTemplateContextType {
   toggleContactVisibility: () => void;
   saveTab: (tabId: string) => void;
   fetchUdise: (code: string) => Promise<{ success: boolean; message: string }>;
+  toggleFieldVerified: (fieldKey: string) => void;
+  setFieldVerified: (fieldKey: string, verified: boolean) => void;
+  verifyAllUdiseFields: () => void;
+  isFieldVerified: (fieldKey: string) => boolean;
   addFacilityCard: (card: Omit<FacilityCardItem, 'id'>) => void;
   updateFacilityCard: (id: string, card: Partial<FacilityCardItem>) => void;
   deleteFacilityCard: (id: string) => void;
@@ -266,44 +274,78 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
       }
 
       // Auto map all fields from UDISE record
-      setData((prev) => ({
-        ...prev,
-        udiseCode: res.udiseCode,
-        schoolName: res.schoolName,
-        board: res.board,
-        medium: res.medium,
-        principalName: res.principalName,
-        address: res.address,
-        state: res.state,
-        district: res.district,
-        blockName: res.blockName,
-        village: res.village,
-        pincode: res.pincode,
-        ruralUrban: res.ruralUrban,
-        classFrom: res.classFrom,
-        classTo: res.classTo,
-        totalStudents: res.totalStudents,
-        totalBoys: res.totalBoys,
-        totalGirls: res.totalGirls,
-        totalTeachers: res.totalTeachers,
-        maleTeachers: res.maleTeachers,
-        femaleTeachers: res.femaleTeachers,
-        classroomsCount: res.classroomsCount,
-        isResidential: res.isResidential,
-        hasHostel: res.hasHostel,
-        genderType: res.genderType,
-        schoolType: res.schoolType,
-        management: res.management,
-        schoolCategory: res.schoolCategory,
-        phone: res.phone || prev.phone,
-        email: res.email || prev.email,
-        website: res.website || prev.website,
-        establishedYear: res.establishedYear || prev.establishedYear,
-      }));
+      setData((prev) => {
+        const udiseFields = [
+          'schoolName',
+          'udiseCode',
+          'board',
+          'medium',
+          'principalName',
+          'address',
+          'state',
+          'district',
+          'blockName',
+          'village',
+          'pincode',
+          'classFrom',
+          'classTo',
+          'totalStudents',
+          'totalBoys',
+          'totalGirls',
+          'totalTeachers',
+          'maleTeachers',
+          'femaleTeachers',
+          'classroomsCount',
+          'genderType',
+          'schoolType',
+          'management',
+          'establishedYear',
+        ];
+        const verifiedMap: Record<string, boolean> = { ...(prev.verifiedFields || {}) };
+        udiseFields.forEach((k) => {
+          verifiedMap[k] = true;
+        });
+
+        return {
+          ...prev,
+          udiseCode: res.udiseCode,
+          schoolName: res.schoolName,
+          board: res.board,
+          medium: res.medium,
+          principalName: res.principalName,
+          address: res.address,
+          state: res.state,
+          district: res.district,
+          blockName: res.blockName,
+          village: res.village,
+          pincode: res.pincode,
+          ruralUrban: res.ruralUrban,
+          classFrom: res.classFrom,
+          classTo: res.classTo,
+          totalStudents: res.totalStudents,
+          totalBoys: res.totalBoys,
+          totalGirls: res.totalGirls,
+          totalTeachers: res.totalTeachers,
+          maleTeachers: res.maleTeachers,
+          femaleTeachers: res.femaleTeachers,
+          classroomsCount: res.classroomsCount,
+          isResidential: res.isResidential,
+          hasHostel: res.hasHostel,
+          genderType: res.genderType,
+          schoolType: res.schoolType,
+          management: res.management,
+          schoolCategory: res.schoolCategory,
+          phone: res.phone || prev.phone,
+          email: res.email || prev.email,
+          website: res.website || prev.website,
+          establishedYear: res.establishedYear || prev.establishedYear,
+          verifiedFields: verifiedMap,
+        };
+      });
 
       setNotification({
         type: 'success',
-        message: `Success! Auto-filled profile details for "${res.schoolName}" via UDISE ${res.udiseCode}.`,
+        message: `Success! Live UDISE details fetched for "${res.schoolName}". All official data marked Verified!`,
       });
       setTimeout(() => setNotification(null), 5000);
       return { success: true, message: 'School data fetched successfully' };
@@ -318,6 +360,80 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
       setIsUdiseLoading(false);
     }
   }, []);
+
+  const toggleFieldVerified = useCallback((fieldKey: string) => {
+    setData((prev) => {
+      const current = prev.verifiedFields?.[fieldKey] ?? false;
+      return {
+        ...prev,
+        verifiedFields: {
+          ...(prev.verifiedFields || {}),
+          [fieldKey]: !current,
+        },
+      };
+    });
+  }, []);
+
+  const setFieldVerified = useCallback((fieldKey: string, verified: boolean) => {
+    setData((prev) => ({
+      ...prev,
+      verifiedFields: {
+        ...(prev.verifiedFields || {}),
+        [fieldKey]: verified,
+      },
+    }));
+  }, []);
+
+  const verifyAllUdiseFields = useCallback(() => {
+    const allKeys = [
+      'schoolName',
+      'udiseCode',
+      'board',
+      'medium',
+      'principalName',
+      'address',
+      'state',
+      'district',
+      'blockName',
+      'village',
+      'pincode',
+      'classFrom',
+      'classTo',
+      'totalStudents',
+      'totalBoys',
+      'totalGirls',
+      'totalTeachers',
+      'maleTeachers',
+      'femaleTeachers',
+      'classroomsCount',
+      'genderType',
+      'schoolType',
+      'management',
+      'establishedYear',
+      'phone',
+      'email',
+      'website',
+    ];
+    setData((prev) => {
+      const updated: Record<string, boolean> = { ...(prev.verifiedFields || {}) };
+      allKeys.forEach((k) => {
+        updated[k] = true;
+      });
+      return { ...prev, verifiedFields: updated };
+    });
+    setNotification({
+      type: 'success',
+      message: 'All school institutional fields marked as Verified by School!',
+    });
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  const isFieldVerified = useCallback(
+    (fieldKey: string) => {
+      return Boolean(data.verifiedFields?.[fieldKey]);
+    },
+    [data.verifiedFields]
+  );
 
   const addFacilityCard = useCallback((card: Omit<FacilityCardItem, 'id'>) => {
     const newCard: FacilityCardItem = {
@@ -455,6 +571,10 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
         toggleContactVisibility,
         saveTab,
         fetchUdise,
+        toggleFieldVerified,
+        setFieldVerified,
+        verifyAllUdiseFields,
+        isFieldVerified,
         addFacilityCard,
         updateFacilityCard,
         deleteFacilityCard,

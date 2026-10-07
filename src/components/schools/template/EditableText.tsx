@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useSchoolTemplate } from './SchoolTemplateContext';
-import { Edit2, Check, X } from 'lucide-react';
+import { Edit2, Check, X, CheckCircle2 } from 'lucide-react';
 
 interface EditableTextProps {
   value: string;
@@ -12,6 +12,7 @@ interface EditableTextProps {
   multiline?: boolean;
   rows?: number;
   tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  showVerificationBadge?: boolean;
 }
 
 export default function EditableText({
@@ -22,8 +23,10 @@ export default function EditableText({
   multiline = false,
   rows = 3,
   tag = 'span',
+  showVerificationBadge = true,
 }: EditableTextProps) {
-  const { isEditMode, updateField } = useSchoolTemplate();
+  const { isEditMode, updateField, isFieldVerified, toggleFieldVerified } = useSchoolTemplate();
+  const isVerified = isFieldVerified(fieldKey);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [tempValue, setTempValue] = useState<string>(value);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
@@ -60,7 +63,21 @@ export default function EditableText({
   // Preview Mode: render pure content without editing decorations
   if (!isEditMode) {
     const TagComponent = tag as any;
-    return <TagComponent className={className}>{value || placeholder}</TagComponent>;
+    return (
+      <TagComponent className={className}>
+        <span>{value || placeholder}</span>
+        {showVerificationBadge && isVerified && (
+          <span
+            title="Verified by School Administration (Official Record)"
+            className="inline-flex items-center gap-1 ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-300 shadow-xs align-middle"
+          >
+            <CheckCircle2 className="w-3 h-3 text-emerald-600 fill-emerald-100" />
+            <span className="hidden sm:inline">Verified by School</span>
+            <span className="sm:hidden">Verified</span>
+          </span>
+        )}
+      </TagComponent>
+    );
   }
 
   // Active Inline Editing state
@@ -110,7 +127,7 @@ export default function EditableText({
     );
   }
 
-  // In Edit Mode, not currently editing: show editable highlight with hover indicator
+  // In Edit Mode, not currently editing: show editable highlight with hover indicator & verification badge
   const TagComponent = tag as any;
   return (
     <TagComponent
@@ -126,6 +143,36 @@ export default function EditableText({
         <Edit2 className="w-2.5 h-2.5" />
         <span>Edit</span>
       </span>
+
+      {/* Field Verification Toggle */}
+      {showVerificationBadge && (
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleFieldVerified(fieldKey);
+          }}
+          className="ml-1.5 inline-block align-middle"
+        >
+          {isVerified ? (
+            <span
+              title="Verified by School (Click to toggle)"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-400 shadow-xs cursor-pointer select-none transition-all"
+            >
+              <CheckCircle2 className="w-3 h-3 text-emerald-600 fill-emerald-100" />
+              <span className="hidden sm:inline">Verified by School</span>
+              <span className="sm:hidden">Verified</span>
+            </span>
+          ) : (
+            <span
+              title="Click to mark this field Verified by School"
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-50 hover:bg-emerald-50 text-amber-800 hover:text-emerald-800 border border-amber-300 hover:border-emerald-300 transition-all cursor-pointer shadow-xs select-none"
+            >
+              <span className="w-2 h-2 rounded-full border border-amber-500 inline-block" />
+              <span>Verify?</span>
+            </span>
+          )}
+        </span>
+      )}
     </TagComponent>
   );
 }

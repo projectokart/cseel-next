@@ -397,64 +397,70 @@ export default function SchoolPhotoBook({
           <div className="absolute inset-0 w-full h-full flex rounded-l-lg rounded-r-3xl overflow-hidden pointer-events-none">
             {/* Left Page (Desktop only: Elegant Cover Page) */}
             <div 
-              className="hidden sm:flex w-1/2 h-full relative overflow-hidden text-white p-3.5 sm:p-5 pb-10 flex-col justify-between border-r border-[#FBBC04]/30 shadow-2xl"
+              className="hidden sm:flex w-1/2 h-full relative overflow-hidden text-[#002B49] p-3.5 sm:p-5 pb-10 flex-col justify-between border-r border-[#002B49]/20 shadow-2xl"
               style={{
-                background: 'radial-gradient(ellipse 85% 70% at 50% 36%, #174878 0%, #0d2c50 50%, #06182c 100%)',
+                background: 'radial-gradient(ellipse 90% 80% at 50% 36%, #FFFFFF 0%, #FAF8F5 55%, #F0ECE1 100%)',
               }}
             >
-              {/* Authentic Luxury Linen Bookcloth Texture */}
+              {/* Authentic Luxury Laid Paper / Vellum Texture */}
               <div
-                className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                className="absolute inset-0 pointer-events-none opacity-[0.035]"
                 style={{
                   backgroundImage: `
-                    repeating-linear-gradient(0deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px),
-                    repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px)
+                    repeating-linear-gradient(0deg, rgba(0,43,73,0.8) 0px, rgba(0,43,73,0.8) 1px, transparent 1px, transparent 4px),
+                    repeating-linear-gradient(90deg, rgba(0,43,73,0.8) 0px, rgba(0,43,73,0.8) 1px, transparent 1px, transparent 4px)
                   `,
                   backgroundSize: '4px 4px'
                 }}
               />
-              <div className="absolute -top-14 -left-14 w-52 h-52 rounded-full bg-sky-400/15 blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-[#FBBC04]/15 blur-3xl pointer-events-none" />
+              <div className="absolute -top-14 -left-14 w-52 h-52 rounded-full bg-[#002B49]/[0.03] blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-[#002B49]/[0.04] blur-3xl pointer-events-none" />
               <div 
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                  background: 'radial-gradient(circle 170px at 50% 36%, rgba(251, 188, 4, 0.18) 0%, transparent 75%)',
+                  background: 'radial-gradient(circle 170px at 50% 36%, rgba(0, 43, 73, 0.035) 0%, transparent 75%)',
                 }}
               />
 
-              {/* Gold Borders */}
-              <div className="absolute inset-2 border-2 border-[#FBBC04]/55 rounded-xl pointer-events-none shadow-[inset_0_0_16px_rgba(251,188,4,0.12),0_0_12px_rgba(251,188,4,0.15)]" />
-              <div className="absolute inset-3 border border-[#FBBC04]/25 rounded-lg pointer-events-none" />
+              {/* Deep Navy Borders */}
+              <div className="absolute inset-2 border-2 border-[#002B49]/35 rounded-xl pointer-events-none shadow-[inset_0_0_12px_rgba(0,43,73,0.04),0_0_8px_rgba(0,43,73,0.04)]" />
+              <div className="absolute inset-3 border border-[#002B49]/20 rounded-lg pointer-events-none" />
+
+              {/* Corner Filigree Accents */}
+              <div className="absolute top-2.5 left-2.5 text-[#002B49]/60 text-[11px] font-serif select-none pointer-events-none">✦</div>
+              <div className="absolute top-2.5 right-2.5 text-[#002B49]/60 text-[11px] font-serif select-none pointer-events-none">✦</div>
+              <div className="absolute bottom-2.5 left-2.5 text-[#002B49]/60 text-[11px] font-serif select-none pointer-events-none">✦</div>
+              <div className="absolute bottom-2.5 right-2.5 text-[#002B49]/60 text-[11px] font-serif select-none pointer-events-none">✦</div>
 
               {/* Realistic 3D Spine Crease Valley & Curvature on Left Page */}
               <div 
                 className="hidden sm:block absolute inset-y-0 right-0 w-16 pointer-events-none z-20"
                 style={{
-                  background: 'linear-gradient(to left, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+                  background: 'linear-gradient(to left, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.32) 12%, rgba(0,0,0,0.18) 28%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.02) 75%, transparent 100%)'
                 }}
               />
-              <div className="hidden sm:block absolute inset-y-0 right-0 w-[1.5px] bg-black/85 pointer-events-none z-20" />
+              <div className="hidden sm:block absolute inset-y-0 right-0 w-[1.5px] bg-black/60 pointer-events-none z-20" />
               <div 
-                className="hidden sm:block absolute inset-y-0 right-10 sm:right-12 w-8 pointer-events-none z-20 opacity-35"
+                className="hidden sm:block absolute inset-y-0 right-10 sm:right-12 w-8 pointer-events-none z-20 opacity-30"
                 style={{
-                  background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)',
+                  background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)',
                   mixBlendMode: 'overlay'
                 }}
               />
               <div className="relative z-10 flex items-center justify-center pt-1.5 text-center shrink-0">
-                <span className="text-[8.5px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
+                <span className="text-[8.5px] font-bold text-[#002B49] tracking-[0.25em] uppercase">
                   ✦ ACADEMIC SESSION 2026 – 2027 ✦
                 </span>
               </div>
               <div className="relative z-10 text-center my-auto space-y-2 px-2">
-                <div className="w-11 h-11 mx-auto rounded-xl bg-gradient-to-br from-[#FBBC04]/30 via-[#FBBC04]/15 to-[#0b2444] border-2 border-[#FBBC04]/75 p-2 flex items-center justify-center shadow-[0_0_20px_rgba(251,188,4,0.35)]">
-                  <BookOpen className="w-5 h-5 text-[#FBBC04]" />
+                <div className="w-11 h-11 mx-auto rounded-xl bg-[#002B49]/[0.07] border-2 border-[#002B49]/30 p-2 flex items-center justify-center shadow-[0_4px_14px_rgba(0,43,73,0.1)]">
+                  <BookOpen className="w-5 h-5 text-[#002B49]" />
                 </div>
-                <h2 className="text-base sm:text-lg font-black font-serif text-white tracking-tight leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">{displayName}</h2>
-                <p className="text-[9.5px] text-blue-100/95 line-clamp-3 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
-                <div className="flex items-center justify-center gap-1.5 text-[8px] text-[#FFE694]">
-                  <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">CBSE Aligned</span>
-                  <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">NEP 2020 Aligned</span>
+                <h2 className="text-base sm:text-lg font-black font-serif text-[#002B49] tracking-tight leading-snug drop-shadow-2xs">{displayName}</h2>
+                <p className="text-[9.5px] text-[#002B49]/80 line-clamp-3 max-w-xs mx-auto leading-relaxed">Nurturing curiosity, values & leadership through experiential practical learning.</p>
+                <div className="flex items-center justify-center gap-1.5 text-[8px] text-[#002B49]">
+                  <span className="bg-[#002B49]/[0.08] px-2 py-0.5 rounded-full border border-[#002B49]/20 font-medium">CBSE Aligned</span>
+                  <span className="bg-[#002B49]/[0.08] px-2 py-0.5 rounded-full border border-[#002B49]/20 font-medium">NEP 2020 Aligned</span>
                 </div>
               </div>
               <div className="h-2 shrink-0 pointer-events-none" />
@@ -488,18 +494,18 @@ export default function SchoolPhotoBook({
 
               {/* Mobile: Cover Page preview */}
               <div 
-                className="sm:hidden w-full h-full relative text-white p-3.5 pb-10 flex flex-col justify-between overflow-hidden shadow-2xl"
+                className="sm:hidden w-full h-full relative text-[#002B49] p-3.5 pb-10 flex flex-col justify-between overflow-hidden shadow-2xl"
                 style={{
-                  background: 'radial-gradient(ellipse 85% 70% at 50% 36%, #174878 0%, #0d2c50 50%, #06182c 100%)',
+                  background: 'radial-gradient(ellipse 90% 80% at 50% 36%, #FFFFFF 0%, #FAF8F5 55%, #F0ECE1 100%)',
                 }}
               >
-                {/* Linen Weave Texture */}
+                {/* Paper Texture */}
                 <div
-                  className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                  className="absolute inset-0 pointer-events-none opacity-[0.035]"
                   style={{
                     backgroundImage: `
-                      repeating-linear-gradient(0deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px),
-                      repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px)
+                      repeating-linear-gradient(0deg, rgba(0,43,73,0.8) 0px, rgba(0,43,73,0.8) 1px, transparent 1px, transparent 4px),
+                      repeating-linear-gradient(90deg, rgba(0,43,73,0.8) 0px, rgba(0,43,73,0.8) 1px, transparent 1px, transparent 4px)
                     `,
                     backgroundSize: '4px 4px'
                   }}
@@ -507,24 +513,24 @@ export default function SchoolPhotoBook({
                 <div 
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: 'radial-gradient(circle 140px at 50% 36%, rgba(251, 188, 4, 0.18) 0%, transparent 75%)',
+                    background: 'radial-gradient(circle 140px at 50% 36%, rgba(0, 43, 73, 0.035) 0%, transparent 75%)',
                   }}
                 />
-                <div className="absolute inset-2 border-2 border-[#FBBC04]/55 rounded-xl pointer-events-none shadow-[inset_0_0_14px_rgba(251,188,4,0.12)]" />
+                <div className="absolute inset-2 border-2 border-[#002B49]/35 rounded-xl pointer-events-none shadow-[inset_0_0_12px_rgba(0,43,73,0.04)]" />
                 <div className="relative z-10 flex items-center justify-center pt-1.5 text-center shrink-0">
-                  <span className="text-[8px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
+                  <span className="text-[8px] font-bold text-[#002B49] tracking-[0.25em] uppercase">
                     ✦ ACADEMIC SESSION 2026 – 2027 ✦
                   </span>
                 </div>
                 <div className="relative z-10 text-center my-auto space-y-2 px-2">
-                  <div className="w-11 h-11 mx-auto rounded-xl bg-gradient-to-br from-[#FBBC04]/30 via-[#FBBC04]/15 to-[#0b2444] border-2 border-[#FBBC04]/75 p-2 flex items-center justify-center shadow-[0_0_18px_rgba(251,188,4,0.35)]">
-                    <BookOpen className="w-5 h-5 text-[#FBBC04]" />
+                  <div className="w-11 h-11 mx-auto rounded-xl bg-[#002B49]/[0.07] border-2 border-[#002B49]/30 p-2 flex items-center justify-center shadow-[0_4px_14px_rgba(0,43,73,0.1)]">
+                    <BookOpen className="w-5 h-5 text-[#002B49]" />
                   </div>
-                  <h2 className="text-base font-black font-serif text-white tracking-tight leading-snug drop-shadow-md">{displayName}</h2>
-                  <p className="text-[9.5px] text-blue-100/95 line-clamp-3 max-w-xs mx-auto">Nurturing curiosity, values & leadership through experiential practical learning.</p>
-                  <div className="flex items-center justify-center gap-1 text-[8px] text-[#FFE694]">
-                    <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">CBSE Aligned</span>
-                    <span className="bg-[#FBBC04]/15 px-2 py-0.5 rounded-full border border-[#FBBC04]/35">NEP 2020 Aligned</span>
+                  <h2 className="text-base font-black font-serif text-[#002B49] tracking-tight leading-snug drop-shadow-2xs">{displayName}</h2>
+                  <p className="text-[9.5px] text-[#002B49]/80 line-clamp-3 max-w-xs mx-auto leading-relaxed">Nurturing curiosity, values & leadership through experiential practical learning.</p>
+                  <div className="flex items-center justify-center gap-1 text-[8px] text-[#002B49]">
+                    <span className="bg-[#002B49]/[0.08] px-2 py-0.5 rounded-full border border-[#002B49]/20 font-medium">CBSE Aligned</span>
+                    <span className="bg-[#002B49]/[0.08] px-2 py-0.5 rounded-full border border-[#002B49]/20 font-medium">NEP 2020 Aligned</span>
                   </div>
                 </div>
                 <div className="h-2 shrink-0 pointer-events-none" />
@@ -556,7 +562,7 @@ export default function SchoolPhotoBook({
                       : 'w-6 h-2 bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)] scale-105'
                     : isThankYou
                     ? 'w-2 h-2 bg-[#002B49]/40 hover:bg-[#002B49]/70 hover:scale-125'
-                    : 'w-2 h-2 bg-white/70 hover:bg-white hover:scale-125'
+                    : 'w-2 h-2 bg-white/80 ring-1 ring-black/25 hover:bg-white hover:scale-125'
                 }`}
               />
             );
@@ -570,110 +576,110 @@ export default function SchoolPhotoBook({
       <div ref={templateRef} style={{ display: 'none' }}>
         {/* PAGE 0: ELEGANT DECORATED INSTITUTIONAL COVER PAGE */}
         <div
-          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer text-white p-3.5 sm:p-5 pb-10 sm:pb-10 flex flex-col justify-between shadow-2xl"
+          className="pf-template-page relative w-full h-full overflow-hidden select-none cursor-pointer text-[#002B49] p-3.5 sm:p-5 pb-10 sm:pb-10 flex flex-col justify-between shadow-2xl"
           data-density="hard"
           style={{
-            background: 'radial-gradient(ellipse 85% 70% at 50% 36%, #174878 0%, #0d2c50 50%, #06182c 100%)',
+            background: 'radial-gradient(ellipse 90% 80% at 50% 36%, #FFFFFF 0%, #FAF8F5 55%, #F0ECE1 100%)',
           }}
         >
-          {/* Authentic Luxury Linen Bookcloth Texture */}
+          {/* Authentic Luxury Laid Paper / Vellum Texture */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-[0.06]"
+            className="absolute inset-0 pointer-events-none opacity-[0.035]"
             style={{
               backgroundImage: `
-                repeating-linear-gradient(0deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px),
-                repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 1px, transparent 1px, transparent 4px)
+                repeating-linear-gradient(0deg, rgba(0,43,73,0.8) 0px, rgba(0,43,73,0.8) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(90deg, rgba(0,43,73,0.8) 0px, rgba(0,43,73,0.8) 1px, transparent 1px, transparent 4px)
               `,
               backgroundSize: '4px 4px'
             }}
           />
-          <div className="absolute -top-14 -left-14 w-52 h-52 rounded-full bg-sky-400/15 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-[#FBBC04]/15 blur-3xl pointer-events-none" />
+          <div className="absolute -top-14 -left-14 w-52 h-52 rounded-full bg-[#002B49]/[0.03] blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-[#002B49]/[0.04] blur-3xl pointer-events-none" />
           <div 
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: 'radial-gradient(circle 170px at 50% 36%, rgba(251, 188, 4, 0.18) 0%, transparent 75%)',
+              background: 'radial-gradient(circle 170px at 50% 36%, rgba(0, 43, 73, 0.035) 0%, transparent 75%)',
             }}
           />
 
-          {/* Double Gold Decorative Border with Corner Ornaments */}
-          <div className="absolute inset-2 sm:inset-3 border-2 border-[#FBBC04]/55 rounded-xl sm:rounded-2xl pointer-events-none shadow-[inset_0_0_16px_rgba(251,188,4,0.12),0_0_12px_rgba(251,188,4,0.15)]" />
-          <div className="absolute inset-3 sm:inset-4.5 border border-[#FBBC04]/25 rounded-lg sm:rounded-xl pointer-events-none" />
+          {/* Double Navy Decorative Border with Corner Ornaments */}
+          <div className="absolute inset-2 sm:inset-3 border-2 border-[#002B49]/35 rounded-xl sm:rounded-2xl pointer-events-none shadow-[inset_0_0_12px_rgba(0,43,73,0.04),0_0_10px_rgba(0,43,73,0.04)]" />
+          <div className="absolute inset-3 sm:inset-4.5 border border-[#002B49]/20 rounded-lg sm:rounded-xl pointer-events-none" />
           
-          {/* Corner Floral / Filigree Accents */}
-          <div className="absolute top-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
-          <div className="absolute top-3 right-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
-          <div className="absolute bottom-3 left-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
-          <div className="absolute bottom-3 right-3 text-[#FBBC04]/70 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          {/* Corner Filigree Accents */}
+          <div className="absolute top-3 left-3 text-[#002B49]/60 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute top-3 right-3 text-[#002B49]/60 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute bottom-3 left-3 text-[#002B49]/60 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
+          <div className="absolute bottom-3 right-3 text-[#002B49]/60 text-[11px] sm:text-xs font-serif select-none pointer-events-none">✦</div>
 
           {/* Realistic 3D Spine Crease Valley & Curvature on Left Page */}
           <div 
             className="hidden sm:block absolute inset-y-0 right-0 w-16 pointer-events-none z-20"
             style={{
-              background: 'linear-gradient(to left, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.52) 12%, rgba(0,0,0,0.28) 28%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.03) 75%, transparent 100%)'
+              background: 'linear-gradient(to left, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.32) 12%, rgba(0,0,0,0.18) 28%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.02) 75%, transparent 100%)'
             }}
           />
-          <div className="hidden sm:block absolute inset-y-0 right-0 w-[1.5px] bg-black/85 pointer-events-none z-20" />
+          <div className="hidden sm:block absolute inset-y-0 right-0 w-[1.5px] bg-black/60 pointer-events-none z-20" />
           <div 
-            className="hidden sm:block absolute inset-y-0 right-10 sm:right-12 w-8 pointer-events-none z-20 opacity-35"
+            className="hidden sm:block absolute inset-y-0 right-10 sm:right-12 w-8 pointer-events-none z-20 opacity-30"
             style={{
-              background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%)',
+              background: 'linear-gradient(to left, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)',
               mixBlendMode: 'overlay'
             }}
           />
 
           {/* Top Banner: Elegant Session Tag */}
           <div className="relative z-10 flex items-center justify-center pt-1.5 sm:pt-2 text-center shrink-0">
-            <span className="inline-flex items-center gap-1.5 text-[8.5px] sm:text-[9.5px] font-bold text-[#FBBC04] tracking-[0.25em] uppercase">
-              <Sparkles className="w-2.5 h-2.5 fill-current" />
+            <span className="inline-flex items-center gap-1.5 text-[8.5px] sm:text-[9.5px] font-bold text-[#002B49] tracking-[0.25em] uppercase">
+              <Sparkles className="w-2.5 h-2.5 text-[#002B49] fill-[#002B49]" />
               <span>ACADEMIC SESSION 2026 – 2027</span>
-              <Sparkles className="w-2.5 h-2.5 fill-current" />
+              <Sparkles className="w-2.5 h-2.5 text-[#002B49] fill-[#002B49]" />
             </span>
           </div>
 
           {/* Center Showcase: Decorated Emblem + School Name + Description Paragraph */}
           <div className="relative z-10 text-center px-2 py-1 space-y-2 sm:space-y-2.5 my-auto">
-            {/* Gold Leaf Illustrated Emblem */}
-            <div className="w-11 h-11 sm:w-13 sm:h-13 mx-auto rounded-xl bg-gradient-to-tr from-[#FBBC04]/20 via-[#FBBC04]/10 to-transparent border-2 border-[#FBBC04]/60 p-2 flex items-center justify-center shadow-[0_0_18px_rgba(251,188,4,0.3)]">
-              <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-                <path d="M24 16C20 12 10 12 6 15V36C10 33 20 33 24 37V16Z" fill="#FBBC04" />
-                <path d="M24 16C28 12 38 12 42 15V36C38 33 28 33 24 37V16Z" fill="#F2A900" />
-                <circle cx="24" cy="11" r="4" fill="#FFE082" />
-                <path d="M24 4V8" stroke="#FFE082" strokeWidth="2" strokeLinecap="round" />
-                <path d="M18 6L20 9" stroke="#FFE082" strokeWidth="2" strokeLinecap="round" />
-                <path d="M30 6L28 9" stroke="#FFE082" strokeWidth="2" strokeLinecap="round" />
+            {/* Deep Navy Illustrated Emblem */}
+            <div className="w-11 h-11 sm:w-13 sm:h-13 mx-auto rounded-xl bg-[#002B49]/[0.08] border-2 border-[#002B49]/35 p-2 flex items-center justify-center shadow-[0_4px_14px_rgba(0,43,73,0.12)]">
+              <svg viewBox="0 0 48 48" fill="none" className="w-full h-full text-[#002B49]">
+                <path d="M24 16C20 12 10 12 6 15V36C10 33 20 33 24 37V16Z" fill="#002B49" />
+                <path d="M24 16C28 12 38 12 42 15V36C38 33 28 33 24 37V16Z" fill="#083B66" />
+                <circle cx="24" cy="11" r="4" fill="#002B49" />
+                <path d="M24 4V8" stroke="#002B49" strokeWidth="2" strokeLinecap="round" />
+                <path d="M18 6L20 9" stroke="#002B49" strokeWidth="2" strokeLinecap="round" />
+                <path d="M30 6L28 9" stroke="#002B49" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
 
             {/* Sub-tagline */}
-            <div className="inline-flex items-center gap-1.5 text-[8px] sm:text-[9px] font-bold tracking-[0.25em] uppercase text-[#FBBC04]">
-              <span className="w-3.5 h-[1px] bg-[#FBBC04]/60 inline-block" />
+            <div className="inline-flex items-center gap-1.5 text-[8px] sm:text-[9px] font-bold tracking-[0.25em] uppercase text-[#002B49]/80">
+              <span className="w-3.5 h-[1px] bg-[#002B49]/40 inline-block" />
               <span>CENTRE OF EXCELLENCE</span>
-              <span className="w-3.5 h-[1px] bg-[#FBBC04]/60 inline-block" />
+              <span className="w-3.5 h-[1px] bg-[#002B49]/40 inline-block" />
             </div>
 
             {/* School Name in High-Impact Serif Typography */}
-            <h2 className="text-base xs:text-lg sm:text-xl lg:text-[23px] font-black font-serif tracking-tight text-white leading-snug drop-shadow-md px-1 max-w-[92%] mx-auto">
+            <h2 className="text-base xs:text-lg sm:text-xl lg:text-[23px] font-black font-serif tracking-tight text-[#002B49] leading-snug px-1 max-w-[92%] mx-auto">
               {displayName}
             </h2>
 
-            {/* Decorated Ribbon Paragraph */}
-            <p className="text-[9.5px] sm:text-[11px] text-blue-100/90 leading-relaxed font-normal max-w-xs sm:max-w-sm mx-auto line-clamp-3">
+            {/* Description Paragraph */}
+            <p className="text-[9.5px] sm:text-[11px] text-[#002B49]/80 leading-relaxed font-normal max-w-xs sm:max-w-sm mx-auto line-clamp-3">
               Nurturing intellectual curiosity, ethical character, and innovative leadership through experiential learning, world-class laboratory infrastructure, and holistic sports coaching.
             </p>
 
-            {/* 2 Key Quality Badges (Cleanly centered & elevated) */}
-            <div className="pt-1 flex items-center justify-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] text-blue-200/90 font-medium">
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 shadow-2xs">
-                <ShieldCheck className="w-2.5 h-2.5 text-[#FBBC04]" /> CBSE Aligned
+            {/* 2 Key Quality Badges */}
+            <div className="pt-1 flex items-center justify-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] text-[#002B49] font-medium">
+              <span className="inline-flex items-center gap-1 bg-[#002B49]/[0.07] px-2.5 py-0.5 rounded-full border border-[#002B49]/20 shadow-2xs">
+                <ShieldCheck className="w-2.5 h-2.5 text-[#002B49]" /> CBSE Aligned
               </span>
-              <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10 shadow-2xs">
-                <Award className="w-2.5 h-2.5 text-[#FBBC04]" /> NEP 2020 Aligned
+              <span className="inline-flex items-center gap-1 bg-[#002B49]/[0.07] px-2.5 py-0.5 rounded-full border border-[#002B49]/20 shadow-2xs">
+                <Award className="w-2.5 h-2.5 text-[#002B49]" /> NEP 2020 Aligned
               </span>
             </div>
           </div>
 
-          {/* Bottom Clear Buffer: Prevents any overlap with bottom border or yellow navigation dots */}
+          {/* Bottom Clear Buffer: Prevents any overlap with bottom border or navigation dots */}
           <div className="h-2.5 sm:h-3 shrink-0 pointer-events-none" />
         </div>
 

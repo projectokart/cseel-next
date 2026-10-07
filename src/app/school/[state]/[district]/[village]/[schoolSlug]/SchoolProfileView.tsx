@@ -1430,20 +1430,20 @@ export default function SchoolProfileView({
           isMobileMenuOpen ? 'translate-x-0 pointer-events-auto' : '-translate-x-full pointer-events-none'
         }`}
       >
-        {/* Top: Close Button */}
-        <div className="w-full flex flex-col items-center pb-2 border-b border-slate-100">
+        {/* Top: Compact Close Button Header */}
+        <div className="w-full flex flex-col items-center py-1.5 border-b border-slate-100 shrink-0">
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-label="Close Menu"
-            className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5 stroke-[2.2]" />
+            <X className="w-4 h-4 stroke-[2.2]" />
           </button>
         </div>
 
-        {/* Center: Mini Icons List (Icon on top, small label underneath) */}
-        <div className="w-full flex-1 overflow-y-auto py-2 px-1 flex flex-col gap-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* Center: Mini Icons List (Icon on top, small label underneath, smooth touch scroll) */}
+        <div className="w-full flex-1 overflow-y-auto overscroll-contain py-1.5 px-1 flex flex-col gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {navTabs.map((tab) => {
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
@@ -1452,15 +1452,15 @@ export default function SchoolProfileView({
                 key={tab.id}
                 type="button"
                 onClick={() => handleTabSwitch(tab.id)}
-                className={`w-full py-2 px-0.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                className={`w-full py-1.5 px-0.5 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer shrink-0 ${
                   isActive
                     ? 'bg-[#005689] text-white shadow-sm ring-2 ring-[#FBBC04]/40'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-600'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-600'}`} />
                 <span
-                  className={`text-[8.5px] font-bold tracking-tight text-center leading-tight truncate w-full ${
+                  className={`text-[8px] font-bold tracking-tight text-center leading-tight truncate w-full ${
                     isActive ? 'text-white' : 'text-slate-700'
                   }`}
                 >
@@ -1472,18 +1472,18 @@ export default function SchoolProfileView({
         </div>
 
         {/* Bottom: Mini Apply CTA */}
-        <div className="w-full pt-2 border-t border-slate-100 flex flex-col items-center px-1">
+        <div className="w-full pt-1.5 pb-1 border-t border-slate-100 flex flex-col items-center px-1 shrink-0">
           <button
             type="button"
             onClick={() => {
               setIsApplyModalOpen(true);
               setIsMobileMenuOpen(false);
             }}
-            className="w-full py-2.5 px-0.5 rounded-[12px] bg-[#006FCC] hover:bg-[#005499] text-white font-bold flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,111,204,0.35)] cursor-pointer active:scale-95 transition"
+            className="w-full py-2 px-0.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005499] text-white font-bold flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,111,204,0.35)] cursor-pointer active:scale-95 transition"
             title="Apply Now"
           >
-            <ArrowRight className="w-4 h-4 text-white stroke-[2.5]" />
-            <span className="text-[8.5px] font-black uppercase tracking-wider mt-0.5 leading-none text-white">Apply</span>
+            <ArrowRight className="w-3.5 h-3.5 text-white stroke-[2.5]" />
+            <span className="text-[8px] font-black uppercase tracking-wider mt-0.5 leading-none text-white">Apply</span>
           </button>
         </div>
 

@@ -86,7 +86,6 @@ import {
 } from '@/components/illustrations/FacilityIllustrations';
 import Footer from '@/components/layout/Footer';
 import SchoolPhotoBook from '@/components/schools/SchoolPhotoBook';
-import AiProfileTemplateGuide, { AiSectionInstructionBadge } from '@/components/schools/AiProfileTemplateGuide';
 import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolTemplateContext';
 import TemplateControlBar from '@/components/schools/template/TemplateControlBar';
 import EditableText from '@/components/schools/template/EditableText';
@@ -199,9 +198,6 @@ export default function SchoolProfileView({
   districtSchools = [],
   isTemplate = false,
 }: SchoolProfileViewProps) {
-  // AI Template Guidance toggle
-  const [showAiGuide, setShowAiGuide] = useState(true);
-
   // Modal states
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [isTourModalOpen, setIsTourModalOpen] = useState(false);
@@ -1414,14 +1410,6 @@ export default function SchoolProfileView({
         />
       )}
 
-      {/* 0. AI MASTER TEMPLATE ASSISTANT (VISIBLE IN REGULAR TEMPLATE MODE) */}
-      {isTemplate && !isLiveTemplate && (
-        <AiProfileTemplateGuide
-          showAiGuide={showAiGuide}
-          setShowAiGuide={setShowAiGuide}
-        />
-      )}
-
       {/* ========================================================= */}
       {/* 1. TOP NAVBAR / HEADER                                    */}
       {/* ========================================================= */}
@@ -1704,9 +1692,6 @@ export default function SchoolProfileView({
               </div>
             )}
 
-            {/* AI Template Instruction: Section 1 (Hero & Identity) */}
-            <AiSectionInstructionBadge sectionKey="hero" isVisible={isTemplate && showAiGuide} />
-
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
               
               {/* Left Column (col-span-6): Typography & Action Buttons */}
@@ -1765,9 +1750,6 @@ export default function SchoolProfileView({
 
           {/* Floating Stats Ribbon - 5 Stats in a Row matching reference screenshot */}
           <div className="relative z-20 max-w-6xl mx-auto px-4 mt-8 sm:mt-10">
-            {/* AI Template Instruction: Section 2 (Quantitative Metrics) */}
-            <AiSectionInstructionBadge sectionKey="metrics" isVisible={isTemplate && showAiGuide} />
-
             <div className="bg-white rounded-2xl shadow-[0_12px_36px_rgba(0,35,70,0.08)] border border-slate-100 p-5 sm:p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
               
               {/* Stat 1: Years */}
@@ -1843,9 +1825,6 @@ export default function SchoolProfileView({
         {/* ========================================================= */}
         <section id="about" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* AI Template Instruction: Section 3 (About Us, Heritage & Principal Desk) */}
-            <AiSectionInstructionBadge sectionKey="about" isVisible={isTemplate && showAiGuide} />
-            
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               
               {/* Left Narrative Column */}
@@ -2230,10 +2209,6 @@ export default function SchoolProfileView({
       {activeTab === 'academics' && (
         <section id="academics" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* AI Template Instruction: Section 10 (Academics & Curriculum) */}
-            <AiSectionInstructionBadge sectionKey="academics" isVisible={isTemplate && showAiGuide} />
-
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -2470,9 +2445,6 @@ export default function SchoolProfileView({
       {activeTab === 'facilities' && (
         <section id="facilities" className="pt-10 sm:pt-16 pb-6 sm:pb-8 bg-[#F8FAFC] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* AI Template Instruction: Section 4 (STEM Labs & Infrastructure) */}
-          <AiSectionInstructionBadge sectionKey="labs" isVisible={isTemplate && showAiGuide} />
-          
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] mb-2">
@@ -2740,10 +2712,6 @@ export default function SchoolProfileView({
       {activeTab === 'extracurricular' && (
         <section id="extracurricular" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* AI Template Instruction */}
-            <AiSectionInstructionBadge sectionKey="extracurricular" isVisible={isTemplate && showAiGuide} />
-
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -2871,10 +2839,6 @@ export default function SchoolProfileView({
       {activeTab === 'awards' && (
         <section id="awards" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            {/* AI Template Instruction */}
-            <AiSectionInstructionBadge sectionKey="awards" isVisible={isTemplate && showAiGuide} />
-
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -3006,9 +2970,6 @@ export default function SchoolProfileView({
       {activeTab === 'events' && (
         <section id="events" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* AI Template Instruction */}
-            <AiSectionInstructionBadge sectionKey="events" isVisible={isTemplate && showAiGuide} />
-
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -3117,9 +3078,6 @@ export default function SchoolProfileView({
       {activeTab === 'faculty' && (
         <section id="faculty" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* AI Template Instruction */}
-            <AiSectionInstructionBadge sectionKey="faculty" isVisible={isTemplate && showAiGuide} />
-
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -3216,9 +3174,6 @@ export default function SchoolProfileView({
       {activeTab === 'gallery' && (
         <section id="gallery" className="py-12 sm:py-16 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* AI Template Instruction */}
-            <AiSectionInstructionBadge sectionKey="gallery" isVisible={isTemplate && showAiGuide} />
-
             {/* Header */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -3348,9 +3303,6 @@ export default function SchoolProfileView({
         <>
         <section id="admissions" className="pt-6 sm:pt-10 pb-12 sm:pb-20 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* AI Template Instruction: Section 6 (Admissions Roadmap & Eligibility) */}
-          <AiSectionInstructionBadge sectionKey="admissions" isVisible={isTemplate && showAiGuide} />
-          
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Info Column */}
@@ -3554,9 +3506,6 @@ export default function SchoolProfileView({
       {/* ========================================================= */}
       <section id="fees" className="py-12 sm:py-16 bg-[#F8FAFC] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* AI Template Instruction: Section 5 (Fee Structure & Policies) */}
-          <AiSectionInstructionBadge sectionKey="fees" isVisible={isTemplate && showAiGuide} />
-          
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-10">
             <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
@@ -3910,9 +3859,6 @@ export default function SchoolProfileView({
       {activeTab === 'reviews' && (
         <section id="reviews" className="py-12 sm:py-20 bg-white relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* AI Template Instruction: Section 8 (Verified Community Reviews) */}
-            <AiSectionInstructionBadge sectionKey="reviews" isVisible={isTemplate && showAiGuide} />
-            
             {/* Header & Write Review Action */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-12">
               <div>
@@ -4460,9 +4406,6 @@ export default function SchoolProfileView({
       {activeTab === 'contact' && (
         <section id="contact-info" className="py-12 sm:py-16 bg-[#F8FAFC] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* AI Template Instruction: Section 9 (Contact & Interactive Map) */}
-          <AiSectionInstructionBadge sectionKey="contact" isVisible={isTemplate && showAiGuide} />
-          
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
             <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] mb-2">

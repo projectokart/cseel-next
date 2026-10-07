@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
  *   2. design.cseel.org       → /design (Design & Creative Studio)
  *   3. resumes.cseel.org      → /best-Teacherfaculty/physics/[filename] & /users (Faculty Portal)
  *   4. schoolsearch.cseel.org  → /school-finder (School Directory & Interactive GIS Map)
+ *   5. schoolprofile.cseel.org → /school-template (Interactive School Profile WYSIWYG Form)
  *
  * All public departments use standard folder-based URLs on the main domain (cseel.org).
  */
@@ -138,6 +139,25 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
     return NextResponse.next();
+  }
+
+  // 5. Dedicated School Profile Subdomain: schoolprofile.cseel.org
+  if (currentHost === 'schoolprofile') {
+    if (pathname === '/' || pathname === '') {
+      url.pathname = '/school-template';
+      return NextResponse.rewrite(url);
+    }
+    // Allow API routes & auth to pass through
+    if (pathname.startsWith('/api/') || pathname.startsWith('/auth/')) {
+      return NextResponse.next();
+    }
+    // Pass through direct /school-template path
+    if (pathname === '/school-template' || pathname.startsWith('/school-template/')) {
+      return NextResponse.next();
+    }
+    // Default fallback rewrite to /school-template on schoolprofile subdomain
+    url.pathname = '/school-template';
+    return NextResponse.rewrite(url);
   }
 
   // 5. Dynamic /org/org-school-${school_id} routing

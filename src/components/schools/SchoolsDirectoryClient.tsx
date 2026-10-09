@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -13,12 +13,13 @@ import {
   Wifi, Bus, Bed, Utensils, Cross, Accessibility, Sun, Droplet, Palette, Music,
   Clapperboard, Medal, Leaf, Camera, UsersRound, Tent, ArrowUpDown, SlidersHorizontal,
   LayoutGrid, List, Columns3, Lock, ShieldAlert, ShieldCheck, LogIn, Key, AlertCircle,
-  RefreshCw, Loader2, Globe, ArrowRight
+  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SchoolsDirectoryResult } from '@/integrations/supabase/schoolsDirectoryDb';
 import { SchoolRecord } from '@/data/schoolFinderData';
 import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 import { renderFacilityIcon, renderCategoryHeaderIcon, renderBoardLogo, renderClassIcon, renderSchoolTypeIcon, renderSpecialCategoryIcon } from './FacilityIcons';
 
 const SchoolFinderMap = dynamic(() => import('@/components/school-finder/SchoolFinderMap'), {
@@ -123,6 +124,76 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   // Map state
   const [mapSelectedSchool, setMapSelectedSchool] = useState<SchoolRecord | null>(null);
   const [googleMapModalSchool, setGoogleMapModalSchool] = useState<SchoolRecord | null>(null);
+  const modalMapContainerRef = useRef<HTMLDivElement | null>(null);
+  const modalMapInstanceRef = useRef<any>(null);
+
+  // Initialize interactive Leaflet map inside preview modal (never blocked by X-Frame-Options)
+  useEffect(() => {
+    if (!googleMapModalSchool || !modalMapContainerRef.current) return;
+
+    const lat = Number(googleMapModalSchool.lat) || 28.4595;
+    const lng = Number(googleMapModalSchool.lng) || 77.0266;
+
+    let isMounted = true;
+
+    import('leaflet').then((leafletModule) => {
+      if (!isMounted || !modalMapContainerRef.current) return;
+      const L = (leafletModule as any).default || leafletModule;
+
+      if (modalMapInstanceRef.current) {
+        modalMapInstanceRef.current.remove();
+        modalMapInstanceRef.current = null;
+      }
+
+      const map = L.map(modalMapContainerRef.current, {
+        center: [lat, lng],
+        zoom: 15,
+        zoomControl: true,
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd',
+      }).addTo(map);
+
+      // Custom pulsing pin
+      const customPin = L.divIcon({
+        className: 'custom-school-map-pin',
+        html: `
+          <div style="position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;">
+            <div style="position: absolute; width: 38px; height: 38px; border-radius: 50%; background: rgba(0, 111, 204, 0.25); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+            <div style="position: absolute; width: 28px; height: 28px; border-radius: 50%; background: #005689; border: 2.5px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+          </div>
+        `,
+        iconSize: [38, 38],
+        iconAnchor: [19, 19],
+        popupAnchor: [0, -16],
+      });
+
+      const marker = L.marker([lat, lng], { icon: customPin }).addTo(map);
+      marker.bindPopup(`
+        <div style="font-family: system-ui, sans-serif; min-width: 180px; padding: 4px;">
+          <b style="color: #003c6e; font-size: 13px;">${googleMapModalSchool.school_name || googleMapModalSchool.name}</b>
+          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${googleMapModalSchool.village_ward || ''}, ${googleMapModalSchool.district_name || ''}</div>
+          <div style="font-size: 11px; color: #059669; font-weight: bold; margin-top: 4px;">★ Verified Campus</div>
+        </div>
+      `).openPopup();
+
+      modalMapInstanceRef.current = map;
+      setTimeout(() => map.invalidateSize(), 150);
+    }).catch((err) => console.warn('Modal map leaflet load error:', err));
+
+    return () => {
+      isMounted = false;
+      if (modalMapInstanceRef.current) {
+        modalMapInstanceRef.current.remove();
+        modalMapInstanceRef.current = null;
+      }
+    };
+  }, [googleMapModalSchool]);
+
   const [mapRadiusKm, setMapRadiusKm] = useState<number>(3);
   const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number }>({ lat: 28.1846, lng: 77.4105 }); // Default to detected live area (Palwal/Delhi NCR)
   const [mapFocus, setMapFocus] = useState<{ lat: number; lng: number; zoom?: number; timestamp: number } | null>(null);
@@ -278,6 +349,21 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     return counts;
   }, [initialData.schools]);
   
+  // Add School / Profile Button Handler
+  const handleAddSchoolClick = () => {
+    if (!user) {
+      const returnUrl = encodeURIComponent('/edu-network/organisation/school?edit=true&mode=new');
+      window.location.href = `/auth/login?returnUrl=${returnUrl}`;
+    } else {
+      const userSchoolToken = (user.user_metadata as any)?.school_token || (user as any)?.school_token;
+      if (userSchoolToken) {
+        window.location.href = `/edu-network/organisation/school?token=${userSchoolToken}&edit=true`;
+      } else {
+        window.location.href = `/edu-network/organisation/school?edit=true&mode=new`;
+      }
+    }
+  };
+
   // Hero Carousel state
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
 
@@ -1123,6 +1209,19 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               </div>
             </div>
           </div>
+
+          {/* Quick CTA: Add / Claim Your School Profile */}
+          <div className="mt-4 flex items-center justify-center gap-2 flex-wrap text-center">
+            <span className="text-xs text-white/85">Are you a school principal or administrator?</span>
+            <button
+              type="button"
+              onClick={handleAddSchoolClick}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-amber-300 hover:text-white text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+            >
+              <PlusCircle size={13} className="text-amber-300 stroke-[2.5]" />
+              <span>Add Your School Profile</span>
+            </button>
+          </div>
           </div>
         </div>
 
@@ -1714,8 +1813,19 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 </div>
               </div>
 
-              {/* Mobile Filter Toggle */}
+              {/* Actions: Add School Profile & Mobile Filter Toggle */}
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleAddSchoolClick}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#005689] hover:bg-[#003c6e] active:scale-95 text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap"
+                  title="List and customize your school on CSEEL"
+                >
+                  <PlusCircle size={13} className="stroke-[2.5]" />
+                  <span className="hidden xs:inline">Add Your Profile</span>
+                  <span className="xs:hidden">+ Add</span>
+                </button>
+
                 <button
                   onClick={() => setIsMobileFilterOpen(true)}
                   className="md:hidden h-8 px-2.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 flex items-center gap-1.5 text-xs font-semibold cursor-pointer transition"
@@ -2084,23 +2194,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               </button>
             </div>
 
-            {/* Modal Body: Google Maps Iframe */}
-            <div className="relative w-full h-[380px] sm:h-[480px] bg-slate-100">
-              <iframe
-                title="Google Maps Location"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                src={
-                  googleMapModalSchool.lat && googleMapModalSchool.lng && !isNaN(googleMapModalSchool.lat) && googleMapModalSchool.lat > 5
-                    ? `https://maps.google.com/maps?q=${googleMapModalSchool.lat},${googleMapModalSchool.lng}&hl=en&z=15&output=embed`
-                    : `https://maps.google.com/maps?q=${encodeURIComponent(
-                        `${googleMapModalSchool.school_name || googleMapModalSchool.name}, ${googleMapModalSchool.village_ward || ''}, ${googleMapModalSchool.district_name || ''}, ${googleMapModalSchool.state_name || ''}`
-                      )}&hl=en&z=14&output=embed`
-                }
-              />
+            {/* Modal Body: Interactive Leaflet Map (Guaranteed No Iframe Blocking) */}
+            <div className="relative w-full h-[380px] sm:h-[480px] bg-slate-100 overflow-hidden">
+              <div ref={modalMapContainerRef} className="w-full h-full min-h-[380px] sm:min-h-[480px] z-0" />
             </div>
 
             {/* Modal Footer: Action Buttons */}

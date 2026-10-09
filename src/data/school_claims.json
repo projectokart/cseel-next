@@ -1,0 +1,20 @@
+{
+  "claims": [
+    {
+      "id": "claim_1791552160958_qdjpz",
+      "udise_code": "06180101926",
+      "school_id": "06180101926",
+      "school_name": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+      "claimant_name": "Dr. Vikram Malhotra",
+      "claimant_email": "principal.vikram@test-school.edu.in",
+      "whatsapp_number": "+91 98765 43210",
+      "designation": "Principal / Head of School",
+      "note": "Authorized principal claiming profile to update fees and lab details for session 2026-27.",
+      "status": "pending",
+      "visual_edit_token": "csl_ai_magic_06180101926",
+      "visual_edit_url": "https://www.cseel.org/school-template?token=csl_ai_magic_06180101926&edit=true",
+      "created_at": "2026-10-09T13:22:40.958Z",
+      "user_id": null
+    }
+  ]
+}

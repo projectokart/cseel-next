@@ -118,8 +118,32 @@ async function sendAdminNotificationEmail(claim: SchoolClaimRecord) {
     console.log(`- School: ${claim.school_name} (${claim.udise_code})`);
     console.log(`- Claimant: ${claim.claimant_name} (${claim.claimant_email})`);
     console.log(`- WhatsApp: ${claim.whatsapp_number}`);
-    console.log(`- Visual Edit Link: ${claim.visual_edit_url}`);
   }
+
+  // Record email in dispatched emails store for instant admin verification
+  try {
+    const emailsFile = path.join(process.cwd(), 'src', 'data', 'dispatched_emails.json');
+    let emailStore: any[] = [];
+    if (fs.existsSync(emailsFile)) {
+      emailStore = JSON.parse(fs.readFileSync(emailsFile, 'utf8'));
+    }
+    emailStore.unshift({
+      id: `email_${Date.now()}`,
+      to: ADMIN_EMAIL,
+      subject: `🔔 New Claim Request: ${claim.school_name} (UDISE: ${claim.udise_code})`,
+      claimant_name: claim.claimant_name,
+      claimant_email: claim.claimant_email,
+      whatsapp_number: claim.whatsapp_number,
+      designation: claim.designation,
+      visual_edit_url: claim.visual_edit_url,
+      sent_at: new Date().toISOString(),
+      sent_via: host && user && pass ? 'SMTP' : 'Direct Dispatch Log',
+    });
+    fs.writeFileSync(emailsFile, JSON.stringify(emailStore, null, 2), 'utf8');
+  } catch (err) {
+    console.warn('Failed to record dispatched email:', err);
+  }
+
   return false;
 }
 
@@ -156,7 +180,7 @@ export async function POST(req: NextRequest) {
     const claimId = `claim_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const visualEditToken = `csl_ai_magic_${cleanUdise}`;
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const visualEditUrl = `${baseUrl}/edu-network/organisation/school?token=${visualEditToken}&edit=true`;
+    const visualEditUrl = `${baseUrl}/school-template?token=${visualEditToken}&edit=true`;
 
     const newClaim: SchoolClaimRecord = {
       id: claimId,
@@ -179,6 +203,37 @@ export async function POST(req: NextRequest) {
     const store = readClaimsStore();
     store.claims.unshift(newClaim);
     writeClaimsStore(store);
+
+    // 2. Register token in school_ai_sync_tokens.json so magic link immediately loads data
+    try {
+      const syncFile = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
+      if (fs.existsSync(syncFile)) {
+        const syncData = JSON.parse(fs.readFileSync(syncFile, 'utf8'));
+        if (!syncData.tokens) syncData.tokens = {};
+        if (!syncData.tokens[visualEditToken]) {
+          syncData.tokens[visualEditToken] = {
+            token: visualEditToken,
+            schoolId: cleanUdise,
+            schoolName: String(school_name || 'School Profile').trim(),
+            createdAt: Date.now(),
+            expiresAt: 0,
+            isPermanent: true,
+            lastUpdatedAt: Date.now(),
+            lastUpdatedSource: 'School Claim Submission',
+            profileData: {
+              udiseCode: cleanUdise,
+              schoolName: String(school_name || 'School Profile').trim(),
+              generalEmail: claimant_email,
+              phone: whatsapp_number,
+              admissionsOpen: false,
+            },
+          };
+          fs.writeFileSync(syncFile, JSON.stringify(syncData, null, 2), 'utf8');
+        }
+      }
+    } catch (e) {
+      console.warn('Could not register token in sync tokens file:', e);
+    }
 
     // 2. Try inserting into Supabase if table exists
     try {

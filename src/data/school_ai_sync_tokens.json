@@ -789,6 +789,29 @@
         "website": "https://www.heritagexperiential.org/",
         "admissionsOpen": false
       }
+    },
+    "csl_ai_magic_06180101926": {
+      "token": "csl_ai_magic_06180101926",
+      "schoolId": "06180101926",
+      "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+      "createdAt": 1791552160962,
+      "expiresAt": 0,
+      "isPermanent": true,
+      "lastUpdatedAt": 1791552199515,
+      "lastUpdatedSource": "AI Assistant",
+      "profileData": {
+        "udiseCode": "06180101926",
+        "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+        "generalEmail": "principal.vikram@test-school.edu.in",
+        "phone": "+91 98765 43210",
+        "admissionsOpen": false,
+        "contentOverrides": {},
+        "principalName": "Dr. Vikram Malhotra",
+        "address": "Sector 62, Gurugram, Haryana - 122011",
+        "district": "GURUGRAM",
+        "state": "HARYANA",
+        "pincode": "122011"
+      }
     }
   }
 }

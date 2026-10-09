@@ -27,6 +27,11 @@ function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
       const targetDigits = (udiseCode || '').replace(/\D/g, '');
       const cleanSlugNorm = cleanSlug.replace(/[^a-z0-9]/gi, '').toLowerCase();
 
+      // Check exact UDISE magic token first
+      if (targetDigits && tokens[`csl_ai_magic_${targetDigits}`]?.profileData) {
+        return tokens[`csl_ai_magic_${targetDigits}`].profileData;
+      }
+
       for (const tKey of Object.keys(tokens)) {
         const rec = tokens[tKey];
         const recSchoolId = (rec.schoolId || '').replace(/\D/g, '');

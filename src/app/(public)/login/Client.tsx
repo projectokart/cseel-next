@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -85,12 +85,14 @@ const Login = () => {
   const { signIn, signInWithGoogle, signUp, resetPassword, user, roles, rolesLoading } = useAuth();
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl') || '/';
   const { toast } = useToast();
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await signInWithGoogle('/schools');
+      const { error } = await signInWithGoogle(returnUrl !== '/' ? returnUrl : '/schools');
       if (error) {
         toast({
           title: "Google Sign In Failed",
@@ -109,13 +111,12 @@ const Login = () => {
     }
   };
 
-  // Redirect if already logged in — go to home page
-  // User can router to their dashboard from TopBar
+  // Redirect if already logged in — go to returnUrl or home page
   useEffect(() => {
     if (user && !rolesLoading) {
-      router.push("/");
+      router.push(returnUrl);
     }
-  }, [user, rolesLoading, router]);
+  }, [user, rolesLoading, router, returnUrl]);
 
   // Load organisations list when student/teacher reaches details step
   useEffect(() => {

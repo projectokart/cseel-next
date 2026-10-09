@@ -21,6 +21,8 @@ import { SchoolRecord } from '@/data/schoolFinderData';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import { renderFacilityIcon, renderCategoryHeaderIcon, renderBoardLogo, renderClassIcon, renderSchoolTypeIcon, renderSpecialCategoryIcon } from './FacilityIcons';
+import AddSchoolModal from './AddSchoolModal';
+import ClaimSchoolModal from './ClaimSchoolModal';
 
 const SchoolFinderMap = dynamic(() => import('@/components/school-finder/SchoolFinderMap'), {
   ssr: false,
@@ -349,19 +351,21 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     return counts;
   }, [initialData.schools]);
   
+  // Modal States for Add School & Claim School
+  const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
+  const [claimModalData, setClaimModalData] = useState<{
+    isOpen: boolean;
+    schoolName: string;
+    udiseCode: string;
+  }>({
+    isOpen: false,
+    schoolName: '',
+    udiseCode: '',
+  });
+  
   // Add School / Profile Button Handler
   const handleAddSchoolClick = () => {
-    if (!user) {
-      const returnUrl = encodeURIComponent('/edu-network/organisation/school?edit=true&mode=new');
-      window.location.href = `/auth/login?returnUrl=${returnUrl}`;
-    } else {
-      const userSchoolToken = (user.user_metadata as any)?.school_token || (user as any)?.school_token;
-      if (userSchoolToken) {
-        window.location.href = `/edu-network/organisation/school?token=${userSchoolToken}&edit=true`;
-      } else {
-        window.location.href = `/edu-network/organisation/school?edit=true&mode=new`;
-      }
-    }
+    setIsAddSchoolModalOpen(true);
   };
 
   // Hero Carousel state
@@ -725,6 +729,24 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <span className="truncate">Google Maps</span>
             </button>
             
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setClaimModalData({
+                  isOpen: true,
+                  schoolName: school.school_name || school.name || 'School Profile',
+                  udiseCode: school.udise_code || school.id || '',
+                });
+              }}
+              className="h-9 px-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold inline-flex items-center justify-center gap-1 shadow-2xs hover:shadow transition-all whitespace-nowrap min-w-0 cursor-pointer"
+              title="Claim this school profile to edit details & admissions"
+            >
+              <ShieldCheck size={13} className="text-amber-600 shrink-0" />
+              <span className="truncate">Claim</span>
+            </button>
+            
             <Link
               href={profileUrl}
               className="h-9 px-2.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold inline-flex items-center justify-center gap-1 shadow-xs hover:shadow-md transition-all whitespace-nowrap min-w-0"
@@ -899,6 +921,25 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <Heart size={14} className={isLiked ? "fill-rose-500" : ""} />
             </button>
           </div>
+          
+          {/* Claim School CTA */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setClaimModalData({
+                isOpen: true,
+                schoolName: school.school_name || school.name || 'School Profile',
+                udiseCode: school.udise_code || school.id || '',
+              });
+            }}
+            className="h-8 px-2.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
+            title="Claim this school profile"
+          >
+            <ShieldCheck size={13} className="text-amber-600" />
+            <span className="hidden sm:inline">Claim</span>
+          </button>
           
           {/* View Details CTA - Google Button Style */}
           <Link
@@ -2237,6 +2278,22 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           </div>
         </div>
       )}
+
+      {/* ── Add School Profile Modal ── */}
+      <AddSchoolModal
+
+        isOpen={isAddSchoolModalOpen}
+        onClose={() => setIsAddSchoolModalOpen(false)}
+      />
+
+      {/* ── Claim School Profile Modal ── */}
+      <ClaimSchoolModal
+        isOpen={claimModalData.isOpen}
+        onClose={() => setClaimModalData({ isOpen: false, schoolName: '', udiseCode: '' })}
+        schoolName={claimModalData.schoolName}
+        udiseCode={claimModalData.udiseCode}
+      />
     </div>
   );
 }
+

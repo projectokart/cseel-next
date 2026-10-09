@@ -1,6 +1,38 @@
 {
   "claims": [
     {
+      "id": "claim_1791556122419_92y90",
+      "udise_code": "06180101926",
+      "school_id": "06180101926",
+      "school_name": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+      "claimant_name": "Devender Kaushik",
+      "claimant_email": "ptdevkaushik104@gmail.com",
+      "whatsapp_number": "+91 98765 43210",
+      "designation": "Principal / Head of Institution",
+      "note": "Official school claim verified via Resend email delivery test.",
+      "status": "pending",
+      "visual_edit_token": "csl_ai_magic_06180101926",
+      "visual_edit_url": "https://www.cseel.org/school-template?token=csl_ai_magic_06180101926&edit=true",
+      "created_at": "2026-10-09T14:28:42.419Z",
+      "user_id": null
+    },
+    {
+      "id": "claim_1791555772737_mwt12",
+      "udise_code": "06180101926",
+      "school_id": "06180101926",
+      "school_name": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+      "claimant_name": "Devender Kaushik",
+      "claimant_email": "ptdevkaushik104@gmail.com",
+      "whatsapp_number": "+91 98765 43210",
+      "designation": "Principal / Head of Institution",
+      "note": "Official school claim verified via Resend email delivery test.",
+      "status": "pending",
+      "visual_edit_token": "csl_ai_magic_06180101926",
+      "visual_edit_url": "https://www.cseel.org/school-template?token=csl_ai_magic_06180101926&edit=true",
+      "created_at": "2026-10-09T14:22:52.737Z",
+      "user_id": null
+    },
+    {
       "id": "claim_1791552160958_qdjpz",
       "udise_code": "06180101926",
       "school_id": "06180101926",

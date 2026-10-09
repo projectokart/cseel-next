@@ -36,6 +36,7 @@ yarn-error.log*
 *service_account*.json
 gsc_*.json
 scripts/*.json
+scripts/*.js
 
 # vercel
 .vercel

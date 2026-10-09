@@ -83,7 +83,7 @@ export default function ClaimSchoolModal({
 
   const handleLoginRedirect = () => {
     const returnUrl = typeof window !== 'undefined' ? window.location.pathname : '/';
-    window.location.href = `/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+    window.location.href = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
   };
 
   const handleSubmitClaim = async (e: React.FormEvent) => {

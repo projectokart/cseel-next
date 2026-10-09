@@ -885,6 +885,18 @@ export function parseSchoolJsonToState(
       (nextState as any).campusVideoUrl = String(campusVid).trim();
     }
 
+    if (parsed.admissionsOpen !== undefined) {
+      nextState.admissionsOpen = Boolean(parsed.admissionsOpen);
+    } else if (parsed.admissions_open !== undefined) {
+      nextState.admissionsOpen = Boolean(parsed.admissions_open);
+    } else if (parsed.admission_open !== undefined) {
+      nextState.admissionsOpen = Boolean(parsed.admission_open);
+    } else if (tabAdmissions?.admissions_open !== undefined) {
+      nextState.admissionsOpen = Boolean(tabAdmissions.admissions_open);
+    } else if (tabAdmissions?.admissionsOpen !== undefined) {
+      nextState.admissionsOpen = Boolean(tabAdmissions.admissionsOpen);
+    }
+
 
     const admList =
       tabAdmissions?.admissions_guidelines ||
@@ -1130,6 +1142,7 @@ export function convertStateToStructuredJson(data: SchoolTemplateState): any {
     tab_5_admissions_fees: {
       tab_id: 'admissions',
       tab_title: 'Admissions & Fees',
+      admissions_open: data.admissionsOpen ?? false,
       fee_structure_table: data.feeTableData,
       admissions_guidelines: data.admissions,
       faq_items: (data.faqs || []).map((f) => ({

@@ -180,9 +180,11 @@ export interface SchoolTemplateState {
   imageOverrides?: Record<string, string>;
   iconOverrides?: Record<string, string>;
   boardResults?: SchoolBoardResultsState;
+  admissionsOpen?: boolean;
 }
 
 const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
+  admissionsOpen: false,
   udiseCode: '',
   schoolName: 'Write Your School Name Here',
   board: 'CBSE (Central Board of Secondary Education)',

@@ -786,7 +786,8 @@
         "village": "Sector 62",
         "phone": "0124-2855124",
         "email": "info@ggn.hxls.org",
-        "website": "https://www.heritagexperiential.org/"
+        "website": "https://www.heritagexperiential.org/",
+        "admissionsOpen": false
       }
     }
   }

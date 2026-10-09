@@ -207,6 +207,8 @@ import SchoolFaqSection from '@/components/schools/template/SchoolFaqSection';
 
 import AwardModal from '@/components/schools/template/AwardModal';
 import SchoolBoardResultsSection from '@/components/schools/template/SchoolBoardResultsSection';
+import ClaimSchoolModal from '@/components/schools/ClaimSchoolModal';
+import 'leaflet/dist/leaflet.css';
 
 
 
@@ -695,8 +697,8 @@ export default function SchoolProfileView({
     );
   };
 const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-
-  const [isTourModalOpen, setIsTourModalOpen] = useState(false);
+const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
+const [isTourModalOpen, setIsTourModalOpen] = useState(false);
 
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
@@ -980,6 +982,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   const templateData = templateCtx?.data || initialProfileData || null;
   const isLiveTemplate = (isTemplate && !!templateCtx) || Boolean(initialProfileData);
+  const isAdmissionsOpen = Boolean(templateData?.admissionsOpen);
 
 
   const isEditMode = (isTemplate && !!templateCtx) ? (templateCtx?.isEditMode ?? true) : false;
@@ -1887,48 +1890,48 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
 
 
-  // Load Leaflet dynamically via CDN scripts for instant campus map
-
+  // Load Leaflet dynamically with resilient fallback to Google Maps
   useEffect(() => {
-
     if (typeof window === 'undefined') return;
 
+    let isMounted = true;
 
+    // Fast auto-fallback: if interactive map doesn't initialize within 1500ms, seamlessly fallback to Google Maps Embed so the user is never stuck
+    const fallbackTimer = setTimeout(() => {
+      if (isMounted && !mapLoaded) {
+        console.info('Switching to Google Maps fallback for fast campus view');
+        setMapMode('google');
+        setMapLoaded(true);
+      }
+    }, 1500);
 
-    if (!document.getElementById('leaflet-css')) {
-
-      const link = document.createElement('link');
-
-      link.id = 'leaflet-css';
-
-      link.rel = 'stylesheet';
-
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-
-      document.head.appendChild(link);
-
-    }
-
-
-
-    if (!(window as any).L) {
-
-      const script = document.createElement('script');
-
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-
-      script.async = true;
-
-      script.onload = () => setMapLoaded(true);
-
-      document.body.appendChild(script);
-
-    } else {
-
+    if ((window as any).L) {
       setMapLoaded(true);
-
+      clearTimeout(fallbackTimer);
+      return;
     }
 
+    import('leaflet')
+      .then((leafletModule) => {
+        if (!isMounted) return;
+        clearTimeout(fallbackTimer);
+        const L = (leafletModule as any).default || leafletModule;
+        (window as any).L = L;
+        setMapLoaded(true);
+      })
+      .catch((err) => {
+        console.warn('Leaflet dynamic import error, falling back to Google Maps:', err);
+        if (isMounted) {
+          clearTimeout(fallbackTimer);
+          setMapMode('google');
+          setMapLoaded(true);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
 
@@ -3471,24 +3474,30 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
 
 
-          {/* Desktop Only Apply Button (Hidden on Mobile) */}
-
-          <div className="hidden lg:flex items-center shrink-0">
-
+          {/* Desktop Header Actions: Claim School & Apply */}
+          <div className="hidden lg:flex items-center gap-2.5 shrink-0">
             <button
-
-              onClick={() => setIsApplyModalOpen(true)}
-
-              className="button_primary inline-flex items-center justify-center gap-2 bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-6 py-2.5 rounded-[12px] text-sm shadow-[0_4px_14px_rgba(0,111,204,0.35)] hover:shadow-[0_6px_22px_rgba(0,111,204,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shrink-0 whitespace-nowrap cursor-pointer"
-
+              type="button"
+              onClick={() => setIsClaimModalOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-[12px] text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/90 shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap"
+              title="Official Representative? Claim this school profile."
             >
-
-              <span>Apply Now</span>
-
-              <ArrowRight className="w-4 h-4 text-white stroke-[2.5]" />
-
+              <ShieldCheck className="w-4 h-4 text-emerald-600 stroke-[2.2]" />
+              <span>Claim This School</span>
             </button>
 
+            <button
+              type="button"
+              onClick={() => setIsApplyModalOpen(true)}
+              className={`button_primary inline-flex items-center justify-center gap-2 font-bold px-5 py-2.5 rounded-[12px] text-sm shadow-[0_4px_14px_rgba(0,111,204,0.35)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shrink-0 whitespace-nowrap cursor-pointer ${
+                isAdmissionsOpen
+                  ? 'bg-[#006FCC] hover:bg-[#005499] text-white hover:shadow-[0_6px_22px_rgba(0,111,204,0.45)]'
+                  : 'bg-slate-700 hover:bg-slate-800 text-slate-200'
+              }`}
+            >
+              <span>{isAdmissionsOpen ? 'Apply Now' : 'Admissions Inactive'}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
           </div>
 
         </div>
@@ -3665,34 +3674,39 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
 
 
-        {/* Bottom: Mini Apply CTA */}
-
-        <div className="w-full pt-1 pb-0.5 border-t border-slate-100 flex flex-col items-center px-1 shrink-0">
-
+        {/* Bottom: Mini Claim & Apply CTA */}
+        <div className="w-full pt-1.5 pb-1 border-t border-slate-100 flex flex-col items-center px-1 gap-1.5 shrink-0">
           <button
-
             type="button"
-
             onClick={() => {
-
-              setIsApplyModalOpen(true);
-
+              setIsClaimModalOpen(true);
               setIsMobileMenuOpen(false);
-
             }}
-
-            className="w-full py-1.5 px-0.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005499] active:scale-95 text-white font-bold flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,111,204,0.35)] cursor-pointer transition touch-manipulation"
-
-            title="Apply Now"
-
+            className="w-full py-1 px-0.5 rounded-[9px] bg-emerald-50 border border-emerald-300 active:scale-95 text-emerald-800 font-bold flex flex-col items-center justify-center shadow-xs cursor-pointer transition touch-manipulation"
+            title="Claim This School"
           >
-
-            <ArrowRight className="w-3.5 h-3.5 text-white stroke-[2.5]" />
-
-            <span className="text-[7.5px] font-black uppercase tracking-wider mt-0.5 leading-none text-white">Apply</span>
-
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 stroke-[2.2]" />
+            <span className="text-[7.5px] font-black uppercase tracking-wider mt-0.5 leading-none">Claim</span>
           </button>
 
+          <button
+            type="button"
+            onClick={() => {
+              setIsApplyModalOpen(true);
+              setIsMobileMenuOpen(false);
+            }}
+            className={`w-full py-1.5 px-0.5 rounded-[10px] active:scale-95 font-bold flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,111,204,0.35)] cursor-pointer transition touch-manipulation ${
+              isAdmissionsOpen
+                ? 'bg-[#006FCC] hover:bg-[#005499] text-white'
+                : 'bg-slate-700 hover:bg-slate-800 text-slate-200'
+            }`}
+            title={isAdmissionsOpen ? 'Apply Now' : 'Admissions Inactive'}
+          >
+            <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span className="text-[7.5px] font-black uppercase tracking-wider mt-0.5 leading-none">
+              {isAdmissionsOpen ? 'Apply' : 'Inactive'}
+            </span>
+          </button>
         </div>
 
 
@@ -3763,80 +3777,70 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
 
 
-          {/* Curved Brand Accent on the Far Right Edge with ADMISSION OPEN & Slowly Blinking Bulb (Seamless Layered Arc) */}
-
+          {/* Curved Brand Accent on the Far Right Edge with ADMISSION OPEN or CLOSED */}
           <button
-
             type="button"
-
             onClick={() => setIsApplyModalOpen(true)}
-
-            title="Admissions Open - Click to Apply"
-
+            title={isAdmissionsOpen ? "Admissions Open - Click to Apply" : "Admissions Inactive / Closed"}
             className="absolute top-0 right-0 w-16 sm:w-28 lg:w-48 h-full overflow-hidden z-10 text-left group cursor-pointer focus:outline-none"
-
           >
+            {/* Layer 1: Warm Gold / Yellow Rim Accent (or Slate Rim if Closed) */}
+            <div
+              className={`absolute top-0 right-0 w-full h-full rounded-l-[45px] sm:rounded-l-[90px] lg:rounded-l-[140px] shadow-lg transition-colors ${
+                isAdmissionsOpen
+                  ? 'bg-gradient-to-b from-[#FBBC04] via-[#F2A900] to-[#E59800]'
+                  : 'bg-gradient-to-b from-slate-400 via-slate-500 to-slate-600'
+              }`}
+            />
 
-            {/* Layer 1: Warm Gold / Yellow Rim Accent (Flush Background Layer) */}
-
-            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-b from-[#FBBC04] via-[#F2A900] to-[#E59800] rounded-l-[45px] sm:rounded-l-[90px] lg:rounded-l-[140px] shadow-lg" />
-
-            
-
-            {/* Layer 2: Deep CSEEL Blue Main Body (Nested tightly with flush gold border, no white gap) */}
-
-            <div className="absolute top-0 right-0 w-[calc(100%-4px)] sm:w-[calc(100%-8px)] lg:w-[calc(100%-12px)] h-full bg-gradient-to-b from-[#005689] via-[#004b77] to-[#003c6e] rounded-l-[42px] sm:rounded-l-[85px] lg:rounded-l-[135px] shadow-2xl flex flex-col items-center justify-center py-6">
-
-              
-
+            {/* Layer 2: Deep CSEEL Blue Main Body (or Deep Slate if Closed) */}
+            <div
+              className={`absolute top-0 right-0 w-[calc(100%-4px)] sm:w-[calc(100%-8px)] lg:w-[calc(100%-12px)] h-full rounded-l-[42px] sm:rounded-l-[85px] lg:rounded-l-[135px] shadow-2xl flex flex-col items-center justify-center py-6 transition-colors ${
+                isAdmissionsOpen
+                  ? 'bg-gradient-to-b from-[#005689] via-[#004b77] to-[#003c6e]'
+                  : 'bg-gradient-to-b from-slate-800 via-slate-850 to-slate-900'
+              }`}
+            >
               {/* Subtle Decorative Geometric Rings */}
-
               <div className="absolute -right-6 top-10 w-20 h-20 sm:w-32 sm:h-32 rounded-full border-2 border-white/10 pointer-events-none" />
+              <div
+                className={`absolute -right-2 bottom-12 w-14 h-14 sm:w-20 sm:h-20 rounded-full border pointer-events-none ${
+                  isAdmissionsOpen ? 'border-[#FBBC04]/20' : 'border-slate-500/20'
+                }`}
+              />
 
-              <div className="absolute -right-2 bottom-12 w-14 h-14 sm:w-20 sm:h-20 rounded-full border border-[#FBBC04]/20 pointer-events-none" />
-
-
-
-              {/* Glowing Lightbulb (Blinks / Pulses Slowly) */}
-
+              {/* Icon / Status Indicator */}
               <div className="relative flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform">
-
-                <span className="absolute w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-amber-400/30 animate-ping opacity-70" style={{ animationDuration: '3s' }} />
-
-                <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-amber-400/20 flex items-center justify-center border border-amber-300/40 shadow-[0_0_12px_rgba(251,188,4,0.6)]">
-
-                  <Lightbulb
-
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 fill-amber-300 animate-pulse drop-shadow-[0_0_6px_rgba(251,188,4,0.9)]"
-
-                    style={{ animationDuration: '2.5s' }}
-
-                  />
-
-                </div>
-
+                {isAdmissionsOpen ? (
+                  <>
+                    <span className="absolute w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-amber-400/30 animate-ping opacity-70" style={{ animationDuration: '3s' }} />
+                    <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-amber-400/20 flex items-center justify-center border border-amber-300/40 shadow-[0_0_12px_rgba(251,188,4,0.6)]">
+                      <Lightbulb
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 fill-amber-300 animate-pulse drop-shadow-[0_0_6px_rgba(251,188,4,0.9)]"
+                        style={{ animationDuration: '2.5s' }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-slate-700/80 flex items-center justify-center border border-slate-500/40 shadow-inner">
+                    <Lock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />
+                  </div>
+                )}
               </div>
 
-
-
-              {/* Vertical Text: ADMISSION OPEN */}
-
+              {/* Vertical Text: ADMISSION OPEN / CLOSED */}
               <div className="flex flex-col items-center gap-2 [writing-mode:vertical-lr] rotate-180 select-none">
-
-                <span className="text-[9px] sm:text-xs font-black tracking-[0.24em] uppercase text-white drop-shadow-sm group-hover:text-amber-200 transition-colors">
-
-                  ADMISSION OPEN
-
+                <span
+                  className={`text-[9px] sm:text-xs font-black tracking-[0.24em] uppercase drop-shadow-sm transition-colors ${
+                    isAdmissionsOpen ? 'text-white group-hover:text-amber-200' : 'text-slate-300 group-hover:text-white'
+                  }`}
+                >
+                  {isAdmissionsOpen ? 'ADMISSION OPEN' : 'ADMISSION CLOSED'}
                 </span>
-
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FBBC04] animate-pulse" />
-
+                <span className={`w-1.5 h-1.5 rounded-full ${isAdmissionsOpen ? 'bg-[#FBBC04] animate-pulse' : 'bg-slate-400'}`} />
               </div>
-
-
 
             </div>
-
           </button>
 
 
@@ -8008,15 +8012,20 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                       <div ref={mapContainerRef} className="w-full h-full min-h-[380px] lg:min-h-[460px] z-0" />
 
                       {!mapLoaded && (
-
-                        <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center gap-2">
-
+                        <div className="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center gap-3 p-4 text-center">
                           <div className="w-8 h-8 rounded-full border-2 border-[#006FCC] border-t-transparent animate-spin" />
-
                           <span className="text-xs font-semibold text-gray-500">Loading interactive campus map...</span>
-
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMapMode('google');
+                              setMapLoaded(true);
+                            }}
+                            className="text-xs font-bold text-[#006FCC] hover:underline bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-xs"
+                          >
+                            Switch to Google Maps view
+                          </button>
                         </div>
-
                       )}
 
                     </>
@@ -8562,149 +8571,106 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                 </div>
 
                 <h3 className="text-2xl font-black text-gray-950">Apply for Admission</h3>
-
-                <p className="text-xs text-gray-500 mt-1 mb-6">
-
+                <p className="text-xs text-gray-500 mt-1 mb-4">
                   {displayName} • UDISE: {udiseCode || 'Verified'}
-
                 </p>
 
-
-
-                <form onSubmit={handleApplySubmit} className="space-y-4">
-
-                  <div>
-
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-
-                      Student / Parent Name *
-
-                    </label>
-
-                    <input
-
-                      type="text"
-
-                      required
-
-                      placeholder="e.g. Rahul Sharma"
-
-                      value={applicantName}
-
-                      onChange={(e) => setApplicantName(e.target.value)}
-
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-
-                    />
-
+                {!isAdmissionsOpen && (
+                  <div className="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+                    <Lock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs font-bold text-amber-900">Online Admissions Currently Inactive</div>
+                      <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                        Online application submissions for this school are presently inactive. You may contact the admissions office directly or revisit during the next enrollment window.
+                      </p>
+                    </div>
                   </div>
+                )}
 
-
+                <form onSubmit={isAdmissionsOpen ? handleApplySubmit : (e) => e.preventDefault()} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                      Student / Parent Name *
+                    </label>
+                    <input
+                      type="text"
+                      required={isAdmissionsOpen}
+                      disabled={!isAdmissionsOpen}
+                      placeholder="e.g. Rahul Sharma"
+                      value={applicantName}
+                      onChange={(e) => setApplicantName(e.target.value)}
+                      className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none ${
+                        !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
+                      }`}
+                    />
+                  </div>
 
                   <div className="grid grid-cols-2 gap-4">
-
                     <div>
-
                       <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-
                         Phone Number *
-
                       </label>
-
                       <input
-
                         type="tel"
-
-                        required
-
+                        required={isAdmissionsOpen}
+                        disabled={!isAdmissionsOpen}
                         placeholder="+91 98765 43210"
-
                         value={applicantPhone}
-
                         onChange={(e) => setApplicantPhone(e.target.value)}
-
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-
+                        className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none ${
+                          !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
+                        }`}
                       />
-
                     </div>
-
                     <div>
-
                       <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-
                         Applying for Class
-
                       </label>
-
                       <select
-
+                        disabled={!isAdmissionsOpen}
                         value={applicantClass}
-
                         onChange={(e) => setApplicantClass(e.target.value)}
-
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white"
-
+                        className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none ${
+                          !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
+                        }`}
                       >
-
                         <option>Nursery / KG</option>
-
                         <option>Class 1 - 5 (Primary)</option>
-
                         <option>Class 6 - 8 (Middle)</option>
-
                         <option>Class 9 - 10 (Secondary)</option>
-
                         <option>Class 11 - 12 (Senior Sec)</option>
-
                       </select>
-
                     </div>
-
                   </div>
-
-
 
                   <div>
-
                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-
                       Email Address
-
                     </label>
-
                     <input
-
                       type="email"
-
+                      disabled={!isAdmissionsOpen}
                       placeholder="parent@example.com"
-
                       value={applicantEmail}
-
                       onChange={(e) => setApplicantEmail(e.target.value)}
-
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-
+                      className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none ${
+                        !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
+                      }`}
                     />
-
                   </div>
 
-
-
                   <button
-
                     type="submit"
-
-                    className="w-full button_primary bg-[#006FCC] hover:bg-[#005499] text-white font-bold py-3.5 rounded-[12px] text-sm flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(0,111,204,0.35)] hover:shadow-btn-hi transition-all mt-6 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
-
+                    disabled={!isAdmissionsOpen}
+                    className={`w-full py-3.5 rounded-[12px] text-sm font-bold flex items-center justify-center gap-2 transition-all mt-6 ${
+                      isAdmissionsOpen
+                        ? 'button_primary bg-[#006FCC] hover:bg-[#005499] text-white shadow-[0_4px_14px_rgba(0,111,204,0.35)] hover:shadow-btn-hi hover:-translate-y-0.5 active:translate-y-0 cursor-pointer'
+                        : 'bg-gray-200 text-gray-500 cursor-not-allowed border border-gray-300'
+                    }`}
                   >
-
-                    <span>Submit Admission Inquiry</span>
-
+                    <span>{isAdmissionsOpen ? 'Submit Admission Inquiry' : 'Admissions Inactive / Form Disabled'}</span>
                     <Send className="w-4 h-4" />
-
                   </button>
-
                 </form>
 
               </div>
@@ -9799,7 +9765,13 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
       )}
 
-
+      {/* Claim This School Modal */}
+      <ClaimSchoolModal
+        isOpen={isClaimModalOpen}
+        onClose={() => setIsClaimModalOpen(false)}
+        schoolName={displayName}
+        udiseCode={displayUdise}
+      />
 
     </div>
 

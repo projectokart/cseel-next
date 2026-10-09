@@ -13,6 +13,7 @@ import {
 import { SCHOOLS_DATA, SchoolRecord } from '@/data/schoolFinderData';
 import SchoolProfileView from './SchoolProfileView';
 import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
+import { redirect } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 
@@ -328,6 +329,27 @@ export default async function SchoolPage({ params }: PageProps) {
 
   // Fetch school from Supabase
   const schoolData = await fetchSchoolRecord(rawState, rawDistrict, rawVillage, cleanSlug);
+
+  // If accessed via digits-only UDISE without school name, redirect to canonical named URL
+  const schoolNameParam = (resolvedParams as any).schoolName;
+  const isUdiseDigits = /^\d+$/.test(cleanSlug);
+  if (!schoolNameParam && isUdiseDigits) {
+    const udise = schoolData?.udise_code || cleanSlug;
+    const synced = getSyncedProfileData(udise, cleanSlug);
+    const targetName = synced?.schoolName || schoolData?.school_name || '';
+    if (targetName) {
+      const nameSlug = targetName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      if (nameSlug && nameSlug !== cleanSlug) {
+        const stateSlug = encodeURIComponent(rawState.toLowerCase().replace(/ /g, '-'));
+        const distSlug = encodeURIComponent(rawDistrict.toLowerCase().replace(/ /g, '-'));
+        const villSlug = encodeURIComponent(rawVillage.toLowerCase().replace(/ /g, '-'));
+        redirect(`/school/${stateSlug}/${distSlug}/${villSlug}/${cleanSlug}/${nameSlug}`);
+      }
+    }
+  }
 
   let clusterSchools: any[] = [];
   let districtSchools: any[] = [];

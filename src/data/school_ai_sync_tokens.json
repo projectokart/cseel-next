@@ -824,7 +824,7 @@
       "createdAt": 1791561665325,
       "expiresAt": 0,
       "isPermanent": true,
-      "lastUpdatedAt": 1791561665325,
+      "lastUpdatedAt": 1791562941530,
       "lastUpdatedSource": "Verified UDISE Claim Submission",
       "profileData": {
         "udiseCode": "10101010101",
@@ -842,7 +842,8 @@
         "totalStudents": 296,
         "totalTeachers": 6,
         "establishedYear": "1926"
-      }
+      },
+      "isApproved": true
     }
   }
 }

@@ -132,96 +132,96 @@ const PendingClaimsOverviewWidget: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-[#dadce0] shadow-[0_1px_2px_rgba(60,64,67,0.08)] overflow-hidden">
+    <div className="bg-white rounded-lg border border-[#dadce0] shadow-2xs overflow-hidden">
       {/* Header Row */}
-      <div className="px-3.5 py-2.5 bg-[#f8fafd] border-b border-[#dadce0] flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <div className="p-1 rounded-md bg-[#e8f0fe] text-[#1a73e8]">
-            <Building2 className="w-3.5 h-3.5" />
+      <div className="px-2.5 py-1.5 bg-[#f8fafd] border-b border-[#dadce0] flex flex-wrap items-center justify-between gap-1.5">
+        <div className="flex items-center gap-1.5">
+          <div className="p-0.5 rounded bg-[#e8f0fe] text-[#1a73e8]">
+            <Building2 className="w-3 h-3" />
           </div>
-          <span className="font-bold text-xs text-[#202124]">
+          <span className="font-bold text-[11px] text-[#202124]">
             School Profile Claims &amp; Add Requests
           </span>
           {pendingClaims.length > 0 ? (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
-              {pendingClaims.length} Pending Approval
+            <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+              {pendingClaims.length} Pending Review
             </span>
           ) : (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#e6f4ea] text-[#137333]">
+            <span className="px-1.5 py-0.2 rounded-full text-[9px] font-medium bg-[#e6f4ea] text-[#137333]">
               0 Pending
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={fetchClaims}
             className="p-1 text-[#5f6368] hover:text-[#202124] rounded hover:bg-black/5 transition-colors"
             title="Refresh claims"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button
             type="button"
             onClick={() => setActiveModule('schools_institutions')}
-            className="text-[11px] font-semibold text-[#1a73e8] hover:underline flex items-center gap-1 cursor-pointer"
+            className="text-[10px] font-semibold text-[#1a73e8] hover:underline flex items-center gap-0.5 cursor-pointer"
           >
-            <span>View All Claims</span>
-            <ArrowUpRight className="w-3 h-3" />
+            <span>View All</span>
+            <ArrowUpRight className="w-2.5 h-2.5" />
           </button>
         </div>
       </div>
 
       {feedbackMsg && (
-        <div className={`px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 ${
+        <div className={`px-2.5 py-1 text-[11px] font-medium flex items-center gap-1 ${
           feedbackMsg.type === 'success' ? 'bg-[#e6f4ea] text-[#137333]' : 'bg-[#fce8e6] text-[#c5221f]'
         }`}>
-          {feedbackMsg.type === 'success' ? <Check className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+          {feedbackMsg.type === 'success' ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
           <span>{feedbackMsg.text}</span>
         </div>
       )}
 
       {/* Content */}
       {loading ? (
-        <div className="p-4 text-center text-xs text-[#5f6368]">
-          <RefreshCw className="w-4 h-4 animate-spin inline-block mr-1 text-[#1a73e8]" />
-          Checking school claims...
+        <div className="p-3 text-center text-[11px] text-[#5f6368]">
+          <RefreshCw className="w-3.5 h-3.5 animate-spin inline-block mr-1 text-[#1a73e8]" />
+          Checking claims...
         </div>
       ) : pendingClaims.length === 0 ? (
-        <div className="p-3.5 text-center flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-xs text-[#5f6368]">
-            <CheckCircle2 className="w-4 h-4 text-[#137333]" />
-            <span>All submitted school profiles &amp; claims are verified. Total registered records: <strong>{claims.length}</strong>.</span>
+        <div className="p-2 px-3 text-center flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[11px]">
+          <div className="flex items-center gap-1.5 text-[#5f6368]">
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#137333]" />
+            <span>All submitted claims are verified ({claims.length} registered).</span>
           </div>
           <button
             type="button"
             onClick={() => setActiveModule('schools_institutions')}
-            className="px-3 py-1 rounded-md border border-[#dadce0] hover:bg-[#f8fafd] text-[11px] font-medium text-[#1a73e8]"
+            className="px-2 py-0.5 rounded border border-[#dadce0] hover:bg-[#f8fafd] text-[10px] font-medium text-[#1a73e8]"
           >
             Manage Records ({claims.length})
           </button>
         </div>
       ) : (
-        <div className="divide-y divide-[#dadce0]/70 overflow-x-auto">
+        <div className="divide-y divide-[#dadce0]/60 overflow-x-auto">
           {pendingClaims.map((claim) => (
-            <div key={claim.id || claim.claimId} className="p-3 hover:bg-[#f8fafd] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-              <div className="space-y-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h4 className="font-bold text-[#202124] text-xs truncate max-w-sm">
+            <div key={claim.id || claim.claimId} className="p-2 px-2.5 hover:bg-[#f8fafd] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px]">
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <h4 className="font-semibold text-[#202124] text-[11px] truncate max-w-sm">
                     {claim.schoolName}
                   </h4>
-                  <span className="px-1.5 py-0.2 bg-[#f1f3f4] text-[#5f6368] rounded text-[10px] font-mono font-medium">
+                  <span className="px-1 py-0 bg-[#f1f3f4] text-[#5f6368] rounded text-[9px] font-mono">
                     UDISE: {claim.udiseCode}
                   </span>
                   {claim.district && (
-                    <span className="text-[11px] text-[#5f6368]">
+                    <span className="text-[10px] text-[#5f6368]">
                       • {claim.district}, {claim.state}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#5f6368]">
+                <div className="flex flex-wrap items-center gap-2.5 text-[10px] text-[#5f6368]">
                   <span>Claimant: <strong className="text-[#202124]">{claim.claimantName}</strong> ({claim.claimantRole})</span>
                   <span>Phone: <a href={`tel:${claim.phone}`} className="text-[#1a73e8] hover:underline font-mono">{claim.phone}</a></span>
                   <span>Email: <a href={`mailto:${claim.email}`} className="text-[#1a73e8] hover:underline">{claim.email}</a></span>
@@ -230,22 +230,22 @@ const PendingClaimsOverviewWidget: React.FC = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+              <div className="flex items-center gap-1 shrink-0 self-end sm:self-center">
                 <a
                   href={`https://wa.me/91${claim.phone.replace(/[^0-9]/g, '').slice(-10)}?text=Hello%20${encodeURIComponent(claim.claimantName)},%20this%20is%20CSEEL%20Admin%20regarding%20your%20school%20profile%20claim%20for%20${encodeURIComponent(claim.schoolName)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-1.5 rounded-md text-[#137333] hover:bg-[#e6f4ea] transition-colors"
+                  className="p-1 rounded text-[#137333] hover:bg-[#e6f4ea] transition-colors"
                   title="WhatsApp Claimant"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" />
+                  <MessageSquare className="w-3 h-3" />
                 </a>
 
                 <button
                   type="button"
                   disabled={actionLoading === claim.claimId}
                   onClick={() => handleReject(claim.claimId)}
-                  className="px-2.5 py-1 rounded-md text-[#c5221f] hover:bg-[#fce8e6] text-[11px] font-semibold border border-transparent hover:border-[#fad2cf] transition-all cursor-pointer disabled:opacity-50"
+                  className="px-2 py-0.5 rounded text-[#c5221f] hover:bg-[#fce8e6] text-[10px] font-medium border border-transparent hover:border-[#fad2cf] transition-all cursor-pointer disabled:opacity-50"
                   title="Reject Claim"
                 >
                   Reject
@@ -255,13 +255,13 @@ const PendingClaimsOverviewWidget: React.FC = () => {
                   type="button"
                   disabled={actionLoading === claim.claimId}
                   onClick={() => handleApprove(claim.claimId)}
-                  className="px-3 py-1 rounded-md bg-[#137333] hover:bg-[#0d652d] text-white text-[11px] font-semibold shadow-2xs hover:shadow-xs transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                  title="Approve Claim & Send Verification Link"
+                  className="px-2.5 py-0.5 rounded bg-[#137333] hover:bg-[#0d652d] text-white text-[10px] font-medium shadow-2xs hover:shadow-xs transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                  title="Approve Claim"
                 >
                   {actionLoading === claim.claimId ? (
-                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    <RefreshCw className="w-2.5 h-2.5 animate-spin" />
                   ) : (
-                    <Check className="w-3 h-3" />
+                    <Check className="w-2.5 h-2.5" />
                   )}
                   <span>Approve</span>
                 </button>
@@ -495,7 +495,7 @@ const AdminPortalRoot: React.FC<{ initialModule?: AdminModuleId; children?: Reac
         />
 
         {/* MAIN CONTENT CANVAS */}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-5 bg-[#f8fafd]">
+        <main className="flex-1 overflow-y-auto p-2 sm:p-3 bg-[#f8fafd]">
           {children ? (
             children
           ) : activeModule === 'schools_institutions' || activeModule === 'school_claims' ? (

@@ -292,8 +292,8 @@ export const SCHOOLS_DATA: SchoolRecord[] = [
     affiliation_number: '530550',
     medium_of_instruction_1: 'English',
     medium: 'English',
-    annual_fee: 195000,
-    annual_fee_formatted: '₹1.95L/yr',
+    annual_fee: 455600,
+    annual_fee_formatted: '₹4.55L - ₹5.32L/yr',
     pm_shri: false,
     headmaster_principal_name: 'Dr. Mona Khanna',
     principalName: 'Dr. Mona Khanna',
@@ -316,7 +316,7 @@ export const SCHOOLS_DATA: SchoolRecord[] = [
     playground: 'Yes',
     rating: 0,
     reviews: 0,
-    image: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1200&auto=format&fit=crop&q=80',
+    image: 'https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png',
     facilities: ['Experiential STEM Labs', 'Interactive Smart Classrooms', 'Olympic Sports Complex', 'Design & Maker Studios', 'Atal Tinkering Lab']
   }
 ];

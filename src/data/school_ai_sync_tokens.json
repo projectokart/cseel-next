@@ -475,13 +475,13 @@
       "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
       "createdAt": 1791543267695,
       "expiresAt": 1794135267695,
-      "lastUpdatedAt": 1791543267695,
-      "lastUpdatedSource": "Official AI Web Sync",
+      "lastUpdatedAt": 1791544043469,
+      "lastUpdatedSource": "Official AI Web Sync from heritagexperiential.org",
       "profileData": {
         "udiseCode": "06180101926",
         "affiliationNumber": "530550",
         "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
-        "board": "CBSE (Affiliation No: 530550)",
+        "board": "CBSE (Central Board of Secondary Education)",
         "medium": "English Medium",
         "establishedYear": "2003",
         "campusArea": "11.3 Acres",
@@ -494,186 +494,613 @@
         "email": "info@ggn.hxls.org",
         "website": "https://www.heritagexperiential.org/",
         "address": "Sector 62, Gurugram, Haryana - 122011",
+        "village": "Sector 62",
+        "blockName": "Gurugram",
         "district": "GURUGRAM",
         "state": "HARYANA",
         "pincode": "122011",
+        "ruralUrban": "Urban",
         "totalStudents": 3750,
+        "totalBoys": 1950,
+        "totalGirls": 1800,
         "totalTeachers": 250,
+        "maleTeachers": 55,
+        "femaleTeachers": 195,
         "classroomsCount": 135,
         "workingSmartBoards": 120,
         "isResidential": false,
         "hasHostel": false,
-        "classFrom": "Nursery",
+        "classFrom": "Class Nursery",
         "classTo": "Class 12th",
         "logoImage": "https://heritagexperiential.org/wp-content/uploads/2026/03/logo-e1773328547243.png",
-        "heroImage": "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1200&auto=format&fit=crop&q=80",
-        "aboutText": "Heritage Xperiential Learning School (HXLS) Gurugram is consistently ranked among India's premier co-educational day schools, pioneering authentic experiential learning, project expeditions, and global academic excellence across an 11.3-acre green campus in Sector 62.",
-        "visionText": "To prepare thoughtful, compassionate, and forward-looking leaders equipped with experiential critical thinking and ethical citizenship.",
-        "missionText": "Cultivating authentic experiential curriculum, design thinking studios, and holistic sports culture where every learner thrives.",
+        "heroImage": "https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png",
+        "aboutText": "Heritage Xperiential Learning School (HXLS) Gurugram is a pioneer in progressive experiential education. Founded on dharmic principles and project-based inquiry, HXLS redefines mainstream education across an 11.3-acre green campus in Sector 62.",
+        "visionText": "To cultivate thoughtful, compassionate, and independent learners who find purpose and thrive in a dynamic, interconnected global ecosystem.",
+        "missionText": "Empowering learners through experiential project expeditions, maker-centred innovation, and holistic human values in partnership with educators and parents.",
         "contentOverrides": {
-          "hero_stat_val_1": "CBSE",
-          "hero_stat_lbl_1": "Affiliation: 530550",
+          "hero_stat_val_1": "100%",
+          "hero_stat_lbl_1": "Board Pass Rate",
           "hero_stat_val_2": "1:15",
           "hero_stat_lbl_2": "Student-Teacher Ratio",
-          "hero_stat_val_3": "135",
-          "hero_stat_lbl_3": "Classrooms & Studios",
-          "hero_stat_val_4": "Nursery-12th",
-          "hero_stat_lbl_4": "Senior Secondary",
-          "hero_stat_val_5": "Rank #1",
-          "hero_stat_lbl_5": "Experiential School in India",
-          "principal_message": "At Heritage Xperiential Learning School, education is a journey of self-discovery, real-world connection, and purposeful innovation."
+          "hero_stat_val_3": "135+",
+          "hero_stat_lbl_3": "Studios & Classrooms",
+          "hero_stat_val_4": "Rank #1",
+          "hero_stat_lbl_4": "Experiential School",
+          "hero_stat_val_5": "99%",
+          "hero_stat_lbl_5": "Parent Trust Rating",
+          "principal_message": "At Heritage Xperiential, learning is not about rote memorisation; it is about authentic discovery, design thinking, and developing the character to impact our world positively."
         },
         "socialLinks": {
           "facebook": "https://www.facebook.com/heritageschoolggn/",
           "instagram": "https://www.instagram.com/heritagexperiential/?hl=en",
-          "youtube": "https://www.youtube.com/channel/UC9DwRSuh1LYNg8b1McUQAUw",
-          "linkedin": "https://www.linkedin.com/company/heritage-xperiential-learning-school"
+          "linkedin": "https://www.linkedin.com/company/heritage-xperiential-learning-school",
+          "youtube": "https://www.youtube.com/channel/UC9DwRSuh1LYNg8b1McUQAUw"
         },
         "includedAcademicFeatures": [
-          "CBSE Curriculum integrated with Expeditionary Experiential Pedagogy",
-          "International Baccalaureate (IB) Diploma & Cambridge Pathways",
-          "Design Thinking & Atal Tinkering Innovation Studios",
-          "Individual Mentoring with Low Student-Teacher Ratio (1:15)",
-          "Olympic Standard Turf, Indoor Sports Arena & Performing Arts"
+          "CBSE Affiliated Curriculum with Experiential Project-Based Pedagogy",
+          "International Baccalaureate (IB) Diploma Programme & Cambridge Pathways",
+          "Maker-Centred Learning with Design Thinking Studios & Atal STEM Labs",
+          "Khoj Outdoor Wilderness Expedition Program for Experiential Growth",
+          "Continuous Formative Standards-Based Assessment with 1:15 STR"
+        ],
+        "streamsOffered": [
+          "Science (Physics, Chemistry, Mathematics, Biology, Computer Science)",
+          "Commerce (Accountancy, Business Studies, Economics, Applied Mathematics)",
+          "Humanities (History, Political Science, Psychology, Sociology, Legal Studies)"
         ],
         "flipbookSlides": [
           {
             "id": "slide-1",
-            "title": "11.3-Acre Green Experiential Quad",
-            "desc": "Sustainable, green campus with world-class interactive digital architecture in Sector 62.",
+            "title": "11.3-Acre Green Campus",
+            "desc": "Eco-friendly smart campus with state-of-the-art interactive digital infrastructure.",
             "mediaType": "image",
-            "image": "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1200&auto=format&fit=crop&q=80",
+            "image": "https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png",
             "videoUrl": "",
             "buttonText": "Explore Campus",
             "actionTab": "home"
           },
           {
             "id": "slide-2",
-            "title": "Design Thinking & STEM Studios",
-            "desc": "Real-world problem solving, robotics, and applied science expeditions.",
+            "title": "Maker-Centred Innovation Labs",
+            "desc": "Inter-disciplinary project-based learning with robotics, coding, and real expeditions.",
             "mediaType": "image",
-            "image": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&auto=format&fit=crop&q=80",
+            "image": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img1.jpg",
             "videoUrl": "",
             "buttonText": "View Facilities",
             "actionTab": "facilities"
           },
           {
             "id": "slide-3",
-            "title": "Olympic Sports & Athletics Arena",
-            "desc": "State-of-the-art basketball courts, swimming complex, football turf, and gymnastics.",
+            "title": "Kala Parv & Performing Arts",
+            "desc": "Dedicated studios for visual arts, music, theatre, and annual cultural celebrations.",
             "mediaType": "image",
-            "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=1200&auto=format&fit=crop&q=80",
+            "image": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/kala_parv_banner_2x1_v2.jpg",
             "videoUrl": "",
             "buttonText": "Admissions Open",
             "actionTab": "admissions"
           }
         ],
-        "facilities": [
+        "galleryItems": [
           {
-            "id": "fac-0",
-            "title": "Smart Classes",
-            "desc": "",
-            "badge": "Academic",
-            "icon": "https://img.icons8.com/?size=128&id=13203&format=png",
-            "points": []
+            "id": "gal-1",
+            "title": "Sector 62 Campus Quad",
+            "category": "Campus",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png"
           },
           {
-            "id": "fac-1",
-            "title": "Library",
-            "desc": "",
-            "badge": "Academic",
-            "icon": "https://img.icons8.com/?size=128&id=12300&format=png",
-            "points": []
+            "id": "gal-2",
+            "title": "Maker & Tinkering Studio",
+            "category": "Labs",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img1.jpg"
           },
           {
-            "id": "fac-2",
-            "title": "Physics Lab",
-            "desc": "",
-            "badge": "Lab Facility",
-            "icon": "https://img.icons8.com/?size=128&id=71261&format=png",
-            "points": []
+            "id": "gal-3",
+            "title": "Electric Moped Student Project",
+            "category": "Labs",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/emoped_banner_v3.jpg"
           },
           {
-            "id": "fac-3",
-            "title": "Chemistry Lab",
-            "desc": "",
-            "badge": "Lab Facility",
-            "icon": "https://img.icons8.com/?size=128&id=13884&format=png",
-            "points": []
+            "id": "gal-4",
+            "title": "Kala Parv Arts Festival",
+            "category": "Events",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/kala_parv_banner_2x1_v2.jpg"
           },
           {
-            "id": "fac-4",
-            "title": "Biology Lab",
-            "desc": "",
-            "badge": "Lab Facility",
-            "icon": "https://img.icons8.com/?size=128&id=13917&format=png",
-            "points": []
+            "id": "gal-5",
+            "title": "World Scholars Cup Champions",
+            "category": "Events",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/uploads/2026/09/World_Scholars-Cup_2-1024x576.jpeg"
           },
           {
-            "id": "fac-5",
-            "title": "Robotics Lab",
-            "desc": "",
-            "badge": "Lab Facility",
-            "icon": "https://img.icons8.com/?size=128&id=JB5lRIhzKC0y&format=png",
-            "points": []
+            "id": "gal-6",
+            "title": "Sports & Athletic Grounds",
+            "category": "Sports",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/uploads/2018/11/facilty.jpg"
           },
           {
-            "id": "fac-6",
-            "title": "Computer Lab",
-            "desc": "",
-            "badge": "Lab Facility",
-            "icon": "https://img.icons8.com/?size=128&id=20420&format=png",
-            "points": []
+            "id": "gal-7",
+            "title": "Khoj Outdoor Expedition",
+            "category": "Events",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img3.jpg"
           },
           {
-            "id": "fac-7",
-            "title": "Playground / Outdoor Sports",
-            "desc": "",
-            "badge": "Sports & Fitness",
-            "icon": "https://img.icons8.com/?size=128&id=12012&format=png",
-            "points": []
-          },
-          {
-            "id": "fac-8",
-            "title": "CCTV Surveillance",
-            "desc": "",
-            "badge": "Safety & Security",
-            "icon": "https://img.icons8.com/?size=128&id=15881&format=png",
-            "points": []
-          },
-          {
-            "id": "fac-9",
-            "title": "Medical Room / Clinic",
-            "desc": "",
-            "badge": "Safety & Security",
-            "icon": "https://img.icons8.com/?size=12461&format=png",
-            "points": []
-          },
-          {
-            "id": "fac-10",
-            "title": "Art & Craft Studio",
-            "desc": "",
-            "badge": "Extracurricular",
-            "icon": "https://img.icons8.com/?size=128&id=24151&format=png",
-            "points": []
-          },
-          {
-            "id": "fac-11",
-            "title": "Music Room",
-            "desc": "",
-            "badge": "Extracurricular",
-            "icon": "https://img.icons8.com/?size=3220&format=png",
-            "points": []
-          },
-          {
-            "id": "fac-12",
-            "title": "Wi-Fi Campus",
-            "desc": "",
-            "badge": "Infrastructure & Boarding",
-            "icon": "https://img.icons8.com/?size=13348&format=png",
-            "points": []
+            "id": "gal-8",
+            "title": "Experiential Classrooms",
+            "category": "Campus",
+            "type": "image",
+            "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img2.jpg"
           }
-        ]
+        ],
+        "feeTableData": {
+          "columns": [
+            "Class Level",
+            "Admission Fee (One-Time)",
+            "Quarterly Composite Fee",
+            "Annual Est. Tuition",
+            "Optional Meals (Qtr)"
+          ],
+          "rows": [
+            [
+              "Nursery to Class 3",
+              "₹2,30,000",
+              "₹1,27,000",
+              "₹5,08,000",
+              "₹10,740"
+            ],
+            [
+              "Class 4 to 7",
+              "₹2,30,000",
+              "₹1,13,900",
+              "₹4,55,600",
+              "₹13,140"
+            ],
+            [
+              "Class 8",
+              "₹2,30,000",
+              "₹1,15,600",
+              "₹4,62,400",
+              "₹13,140"
+            ],
+            [
+              "Class 9 & 10",
+              "₹2,30,000",
+              "₹1,24,700",
+              "₹4,98,800",
+              "₹13,140"
+            ],
+            [
+              "Class 11 & 12",
+              "₹2,30,000",
+              "₹1,33,000",
+              "₹5,32,000",
+              "₹13,140"
+            ]
+          ]
+        },
+        "admissions": [
+          {
+            "id": "adm-1",
+            "title": "Early Years & Nursery Admissions",
+            "criteria": "Points-based selection following Directorate guidelines with parental interaction and dialogue.",
+            "badge": "Session 2026-27 Open",
+            "icon": "Baby",
+            "points": [
+              "Online registration on official portal",
+              "Birth Certificate verification",
+              "Parent dialogue & child observation"
+            ]
+          },
+          {
+            "id": "adm-2",
+            "title": "Middle & Senior Lateral Admissions",
+            "criteria": "Holistic assessment in English, Math & Science followed by student & parent dialogue.",
+            "badge": "Subject to Vacancies",
+            "icon": "GraduationCap",
+            "points": [
+              "Previous 2 years academic transcripts",
+              "Transfer Certificate (TC)",
+              "Experiential aptitude assessment"
+            ]
+          }
+        ],
+        "faqs": [
+          {
+            "id": "faq-1",
+            "q": "What makes Heritage Xperiential Learning School unique?",
+            "a": "HXLS pioneers expeditionary, project-based learning with a human framework, replacing rote memorisation with real-world multidisciplinary projects, design thinking, and authentic student agency.",
+            "category": "General"
+          },
+          {
+            "id": "faq-2",
+            "q": "Which academic boards and curriculums are offered at HXLS?",
+            "a": "HXLS is affiliated with CBSE (Affiliation No: 530550) for classes Nursery through 12th, and also offers Cambridge Early Years and International Baccalaureate (IB) Diploma programmes in senior school.",
+            "category": "Academics"
+          },
+          {
+            "id": "faq-3",
+            "q": "Does HXLS provide air-conditioned GPS-monitored bus transport?",
+            "a": "Yes, the school operates a comprehensive fleet of air-conditioned buses equipped with GPS tracking, CCTV surveillance, female attendants, and speed governors covering Gurugram and South Delhi.",
+            "category": "Facilities"
+          },
+          {
+            "id": "faq-4",
+            "q": "What are the dining and meal facilities at the campus?",
+            "a": "The campus features a state-of-the-art kitchen preparing wholesome, nutritious breakfast and lunch supervised by expert nutritionists under stringent hygiene standards.",
+            "category": "Facilities"
+          },
+          {
+            "id": "faq-5",
+            "q": "How can parents apply for admission to HXLS Sector 62?",
+            "a": "Parents can register online via heritagexperiential.org during the admission window. Registered parents are invited for campus tours, curriculum presentations, and interaction rounds.",
+            "category": "Admissions"
+          }
+        ],
+        "generalPhone": "01242855124",
+        "generalEmail": "info@ggn.hxls.org",
+        "admissionsPhone": "01242855124",
+        "admissionsEmail": "admissions@ggn.hxls.org",
+        "principalPhone": "01242855124",
+        "principalEmail": "principal@ggn.hxls.org",
+        "careersPhone": "01242855124",
+        "careersEmail": "careers@ggn.hxls.org",
+        "masterJson": {
+          "$schema_version": "3.0",
+          "schema_info": {
+            "description": "CSEEL Interactive School Profile Master Blueprint (Heritage Xperiential Learning School)",
+            "source": "https://www.heritagexperiential.org/",
+            "extracted_at": "2026-10-09T11:07:23.450Z"
+          },
+          "section_1_basic_info": {
+            "section_name": "Basic Institutional Identity",
+            "school_name": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+            "udise_code": "06180101926",
+            "board": "CBSE (Central Board of Secondary Education)",
+            "medium": "English Medium",
+            "established_year": "2003",
+            "campus_area": "11.3 Acres",
+            "school_type": "Private Unaided (Recognized)",
+            "management": "Heritage Educational Society",
+            "school_category": "Senior Secondary (Class Nursery to 12th)",
+            "gender_type": "Co-Educational",
+            "affiliation_number": "530550",
+            "branding": {
+              "logo_image_url": "https://heritagexperiential.org/wp-content/uploads/2026/03/logo-e1773328547243.png",
+              "hero_banner_image": "https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png"
+            }
+          },
+          "section_2_hero_prestige_metrics": {
+            "section_name": "Hero Floating Attraction Metrics",
+            "metric_1_board_results": {
+              "value": "100%",
+              "label": "Board Pass Rate"
+            },
+            "metric_2_student_teacher_ratio": {
+              "value": "1:15",
+              "label": "Student-Teacher Ratio"
+            },
+            "metric_3_labs_studios": {
+              "value": "135+",
+              "label": "Studios & Classrooms"
+            },
+            "metric_4_awards": {
+              "value": "Rank #1",
+              "label": "Experiential School"
+            },
+            "metric_5_parent_trust": {
+              "value": "99%",
+              "label": "Parent Trust Rating"
+            }
+          },
+          "section_3_photobook_slides": {
+            "section_name": "3D PhotoBook Carousel Showcase",
+            "slides": [
+              {
+                "slide_id": "slide-1",
+                "title": "11.3-Acre Green Campus",
+                "desc": "Eco-friendly smart campus with state-of-the-art interactive digital infrastructure.",
+                "media_type": "image",
+                "image_url": "https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png",
+                "video_url": "",
+                "button_text": "Explore Campus",
+                "action_tab": "home"
+              },
+              {
+                "slide_id": "slide-2",
+                "title": "Maker-Centred Innovation Labs",
+                "desc": "Inter-disciplinary project-based learning with robotics, coding, and real expeditions.",
+                "media_type": "image",
+                "image_url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img1.jpg",
+                "video_url": "",
+                "button_text": "View Facilities",
+                "action_tab": "facilities"
+              },
+              {
+                "slide_id": "slide-3",
+                "title": "Kala Parv & Performing Arts",
+                "desc": "Dedicated studios for visual arts, music, theatre, and annual cultural celebrations.",
+                "media_type": "image",
+                "image_url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/kala_parv_banner_2x1_v2.jpg",
+                "video_url": "",
+                "button_text": "Admissions Open",
+                "action_tab": "admissions"
+              }
+            ]
+          },
+          "section_4_statistics": {
+            "section_name": "Physical Campus Statistics",
+            "total_students": 3750,
+            "total_boys": 1950,
+            "total_girls": 1800,
+            "total_teachers": 250,
+            "male_teachers": 55,
+            "female_teachers": 195,
+            "classrooms_count": 135,
+            "working_smart_boards": 120,
+            "is_residential": false,
+            "has_hostel": false
+          },
+          "section_5_about_and_vision": {
+            "section_name": "About School, Vision & Mission",
+            "about_text": "Heritage Xperiential Learning School (HXLS) Gurugram is a pioneer in progressive experiential education. Founded on dharmic principles and project-based inquiry, HXLS redefines mainstream education across an 11.3-acre green campus in Sector 62.",
+            "vision_text": "To cultivate thoughtful, compassionate, and independent learners who find purpose and thrive in a dynamic, interconnected global ecosystem.",
+            "mission_text": "Empowering learners through experiential project expeditions, maker-centred innovation, and holistic human values in partnership with educators and parents."
+          },
+          "section_6_principal_desk": {
+            "section_name": "Principal's Desk & Leadership Message",
+            "principal_name": "Dr. Mona Khanna",
+            "principal_designation": "Principal & Head of School",
+            "principal_message": "At Heritage Xperiential, learning is not about rote memorisation; it is about authentic discovery, design thinking, and developing the character to impact our world positively.",
+            "principal_image_url": "https://www.heritagexperiential.org/wp-content/uploads/2025/11/cropped-HXLS-Icon-192x192.png"
+          },
+          "section_7_academics": {
+            "section_name": "Curriculum, Streams & Special Programs",
+            "class_range": {
+              "class_from": "Class Nursery",
+              "class_to": "Class 12th"
+            },
+            "curriculum_features": [
+              "CBSE Affiliated Curriculum with Experiential Project-Based Pedagogy",
+              "International Baccalaureate (IB) Diploma Programme & Cambridge Pathways",
+              "Maker-Centred Learning with Design Thinking Studios & Atal STEM Labs",
+              "Khoj Outdoor Wilderness Expedition Program for Experiential Growth",
+              "Continuous Formative Standards-Based Assessment with 1:15 STR"
+            ],
+            "streams_offered": [
+              "Science (Physics, Chemistry, Mathematics, Biology, Computer Science)",
+              "Commerce (Accountancy, Business Studies, Economics, Applied Mathematics)",
+              "Humanities (History, Political Science, Psychology, Sociology, Legal Studies)"
+            ]
+          },
+          "section_8_facilities": {
+            "section_name": "Facilities & Infrastructure",
+            "selected_facility_names": [
+              "Smart Classes",
+              "Library",
+              "Physics Lab",
+              "Chemistry Lab",
+              "Biology Lab",
+              "Robotics Lab",
+              "Computer Lab",
+              "Playground / Outdoor Sports",
+              "CCTV Surveillance",
+              "Medical Room / Clinic",
+              "Art & Craft Studio",
+              "Music Room",
+              "Wi-Fi Campus"
+            ]
+          },
+          "section_9_campus_gallery": {
+            "section_name": "Campus Photo & Video Gallery",
+            "gallery_items": [
+              {
+                "id": "gal-1",
+                "title": "Sector 62 Campus Quad",
+                "category": "Campus",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/uploads/2026/06/HXLS62-Campus.png"
+              },
+              {
+                "id": "gal-2",
+                "title": "Maker & Tinkering Studio",
+                "category": "Labs",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img1.jpg"
+              },
+              {
+                "id": "gal-3",
+                "title": "Electric Moped Student Project",
+                "category": "Labs",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/emoped_banner_v3.jpg"
+              },
+              {
+                "id": "gal-4",
+                "title": "Kala Parv Arts Festival",
+                "category": "Events",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/kala_parv_banner_2x1_v2.jpg"
+              },
+              {
+                "id": "gal-5",
+                "title": "World Scholars Cup Champions",
+                "category": "Events",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/uploads/2026/09/World_Scholars-Cup_2-1024x576.jpeg"
+              },
+              {
+                "id": "gal-6",
+                "title": "Sports & Athletic Grounds",
+                "category": "Sports",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/uploads/2018/11/facilty.jpg"
+              },
+              {
+                "id": "gal-7",
+                "title": "Khoj Outdoor Expedition",
+                "category": "Events",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img3.jpg"
+              },
+              {
+                "id": "gal-8",
+                "title": "Experiential Classrooms",
+                "category": "Campus",
+                "type": "image",
+                "url": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/best_pras_img2.jpg"
+              }
+            ]
+          },
+          "section_10_fee_structure": {
+            "section_name": "Transparent Fee Structure Table",
+            "fee_table": {
+              "columns": [
+                "Class Level",
+                "Admission Fee (One-Time)",
+                "Quarterly Composite Fee",
+                "Annual Est. Tuition",
+                "Optional Meals (Qtr)"
+              ],
+              "rows": [
+                [
+                  "Nursery to Class 3",
+                  "₹2,30,000",
+                  "₹1,27,000",
+                  "₹5,08,000",
+                  "₹10,740"
+                ],
+                [
+                  "Class 4 to 7",
+                  "₹2,30,000",
+                  "₹1,13,900",
+                  "₹4,55,600",
+                  "₹13,140"
+                ],
+                [
+                  "Class 8",
+                  "₹2,30,000",
+                  "₹1,15,600",
+                  "₹4,62,400",
+                  "₹13,140"
+                ],
+                [
+                  "Class 9 & 10",
+                  "₹2,30,000",
+                  "₹1,24,700",
+                  "₹4,98,800",
+                  "₹13,140"
+                ],
+                [
+                  "Class 11 & 12",
+                  "₹2,30,000",
+                  "₹1,33,000",
+                  "₹5,32,000",
+                  "₹13,140"
+                ]
+              ]
+            }
+          },
+          "section_11_admissions_guidelines": {
+            "section_name": "Admissions Guidelines & Criteria",
+            "session": "2026-27",
+            "admission_status": "Admissions Open",
+            "admissions_cards": [
+              {
+                "id": "adm-1",
+                "title": "Early Years & Nursery Admissions",
+                "criteria": "Points-based selection following Directorate guidelines with parental interaction and dialogue.",
+                "badge": "Session 2026-27 Open",
+                "icon": "Baby",
+                "points": [
+                  "Online registration on official portal",
+                  "Birth Certificate verification",
+                  "Parent dialogue & child observation"
+                ]
+              },
+              {
+                "id": "adm-2",
+                "title": "Middle & Senior Lateral Admissions",
+                "criteria": "Holistic assessment in English, Math & Science followed by student & parent dialogue.",
+                "badge": "Subject to Vacancies",
+                "icon": "GraduationCap",
+                "points": [
+                  "Previous 2 years academic transcripts",
+                  "Transfer Certificate (TC)",
+                  "Experiential aptitude assessment"
+                ]
+              }
+            ]
+          },
+          "section_12_faqs": {
+            "section_name": "Frequently Asked Questions (FAQs)",
+            "faq_items": [
+              {
+                "id": "faq-1",
+                "question": "What makes Heritage Xperiential Learning School unique?",
+                "answer": "HXLS pioneers expeditionary, project-based learning with a human framework, replacing rote memorisation with real-world multidisciplinary projects, design thinking, and authentic student agency.",
+                "category": "General"
+              },
+              {
+                "id": "faq-2",
+                "question": "Which academic boards and curriculums are offered at HXLS?",
+                "answer": "HXLS is affiliated with CBSE (Affiliation No: 530550) for classes Nursery through 12th, and also offers Cambridge Early Years and International Baccalaureate (IB) Diploma programmes in senior school.",
+                "category": "Academics"
+              },
+              {
+                "id": "faq-3",
+                "question": "Does HXLS provide air-conditioned GPS-monitored bus transport?",
+                "answer": "Yes, the school operates a comprehensive fleet of air-conditioned buses equipped with GPS tracking, CCTV surveillance, female attendants, and speed governors covering Gurugram and South Delhi.",
+                "category": "Facilities"
+              },
+              {
+                "id": "faq-4",
+                "question": "What are the dining and meal facilities at the campus?",
+                "answer": "The campus features a state-of-the-art kitchen preparing wholesome, nutritious breakfast and lunch supervised by expert nutritionists under stringent hygiene standards.",
+                "category": "Facilities"
+              },
+              {
+                "id": "faq-5",
+                "question": "How can parents apply for admission to HXLS Sector 62?",
+                "answer": "Parents can register online via heritagexperiential.org during the admission window. Registered parents are invited for campus tours, curriculum presentations, and interaction rounds.",
+                "category": "Admissions"
+              }
+            ]
+          },
+          "section_13_contact_details": {
+            "section_name": "Official Contact Channels & Location",
+            "address": "Sector 62, Gurugram, Haryana - 122011",
+            "village_or_locality": "Sector 62",
+            "block_name": "Gurugram",
+            "district": "GURUGRAM",
+            "state": "HARYANA",
+            "pincode": "122011",
+            "rural_urban": "Urban",
+            "phone": "01242855124",
+            "email": "info@ggn.hxls.org",
+            "website": "https://www.heritagexperiential.org/",
+            "visiting_hours": "Monday to Saturday: 8:00 AM - 3:30 PM",
+            "general_inquiry_phone": "01242855124",
+            "general_inquiry_email": "info@ggn.hxls.org",
+            "admissions_inquiry_phone": "01242855124",
+            "admissions_inquiry_email": "admissions@ggn.hxls.org",
+            "principal_office_phone": "01242855124",
+            "principal_office_email": "principal@ggn.hxls.org",
+            "careers_inquiry_phone": "01242855124",
+            "careers_inquiry_email": "careers@ggn.hxls.org",
+            "social_links": {
+              "facebook": "https://www.facebook.com/heritageschoolggn/",
+              "instagram": "https://www.instagram.com/heritagexperiential/?hl=en",
+              "linkedin": "https://www.linkedin.com/company/heritage-xperiential-learning-school",
+              "youtube": "https://www.youtube.com/channel/UC9DwRSuh1LYNg8b1McUQAUw"
+            }
+          }
+        }
       }
     }
   }

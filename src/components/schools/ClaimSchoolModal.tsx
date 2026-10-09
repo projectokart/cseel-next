@@ -224,60 +224,37 @@ export default function ClaimSchoolModal({
 
           {/* Condition 2: Success Confirmation */}
           {successData && (
-            <div className="text-center py-4">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <div className="text-center py-4 space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h4 className="text-xl font-black text-slate-900 mb-1">Claim Request Dispatched!</h4>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto mb-5 leading-relaxed">
-                Thank you, <strong>{claimantName}</strong>. Your claim for <strong>{schoolName}</strong> (UDISE: {udiseCode}) has been registered and admin email notification sent.
-              </p>
-
-              {/* Visual Edit URL Card */}
-              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-left mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    Your Visual Editing Access Link
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-950 bg-white px-2.5 py-1 rounded-lg border border-emerald-300 shadow-2xs cursor-pointer"
-                  >
-                    {copiedLink ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        Copy Link
-                      </>
-                    )}
-                  </button>
-                </div>
-                <div className="p-2.5 bg-white rounded-xl border border-emerald-200 text-xs font-mono text-slate-700 break-all select-all">
-                  {successData.visual_edit_url}
-                </div>
-                <p className="text-[11px] text-emerald-800 mt-2">
-                  💡 You can open this link directly to visually edit photos, contact information, fees, and results on your institution profile.
+              <div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full mb-2">
+                  Status: Pending Official Verification
+                </span>
+                <h4 className="text-xl font-black text-slate-900 mb-1">Claim Request Submitted</h4>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
+                  Thank you, <strong>{claimantName}</strong>. Your claim for <strong>{schoolName}</strong> (UDISE: {udiseCode}) has been registered and sent for administrative review.
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a
-                  href={successData.visual_edit_url}
-                  className="px-6 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  Open Visual Editor Now
-                </a>
+              {/* Review Info Notice */}
+              <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-left space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#003c6e]">
+                  <ShieldCheck className="w-4 h-4 text-[#005689]" />
+                  Institutional Authorization Review
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  To protect schools and prevent unauthorized modifications, editing access is granted only after administrative credentials verification.
+                  Our team will contact you at <strong>{claimantEmail}</strong> / WhatsApp <strong>{whatsappNumber}</strong>.
+                </p>
+              </div>
+
+              <div className="pt-2 flex justify-center">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-all cursor-pointer"
+                  className="px-8 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-all cursor-pointer shadow-md"
                 >
                   Close
                 </button>

@@ -78,13 +78,14 @@ async function sendAdminNotificationEmail(claim: SchoolClaimRecord) {
         </div>
       </div>
 
-      <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-        <h4 style="margin: 0 0 8px; color: #065f46;">Generated Visual Editing Access Link:</h4>
-        <p style="margin: 0 0 12px; font-size: 13px; color: #047857;">Clicking this link allows authorized visual editing of this school's public page:</p>
-        <a href="${claim.visual_edit_url}" style="display: inline-block; background: #059669; color: #ffffff; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; font-size: 13px;" target="_blank">
-          Open Visual Editor for ${claim.school_name} &rarr;
-        </a>
-        <p style="margin: 8px 0 0; font-size: 11px; color: #6b7280; word-break: break-all;">${claim.visual_edit_url}</p>
+      <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+        <h4 style="margin: 0 0 8px; color: #92400e;">⚠️ Status: PENDING OFFICIAL VERIFICATION</h4>
+        <p style="margin: 0 0 8px; font-size: 13px; color: #78350f;">
+          This school profile claim has been submitted and is strictly waiting for administrative verification. No visual editing magic link has been issued to the claimant.
+        </p>
+        <p style="margin: 0; font-size: 12px; color: #6b7280;">
+          To verify, cross-check the institutional identity of <strong>${claim.claimant_name}</strong> (${claim.claimant_email}, Phone: ${claim.whatsapp_number}) via the CSEEL Admin Console.
+        </p>
       </div>
 
       <div style="border-top: 1px solid #e2e8f0; padding-top: 14px; font-size: 11px; color: #64748b; text-align: center;">
@@ -357,9 +358,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '🎉 School profile claim submitted successfully! Verification details have been sent to administration.',
-      claim: newClaim,
-      visual_edit_url: visualEditUrl,
+      message: 'School profile claim submitted successfully! Your request is pending administrative verification.',
+      claim_id: newClaim.id,
+      status: 'pending',
     });
   } catch (err: any) {
     console.error('Error submitting school claim:', err);

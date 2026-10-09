@@ -10,11 +10,6 @@ import {
   Briefcase,
   FileText,
   CheckCircle2,
-  ExternalLink,
-  Copy,
-  Check,
-  Sparkles,
-  ArrowRight,
   ShieldCheck,
   ShieldAlert,
   MapPin,
@@ -23,8 +18,12 @@ import {
   Loader2,
   AlertCircle,
   HelpCircle,
-  CheckCheck
+  CheckCheck,
+  Clock,
+  Shield,
+  LogIn
 } from 'lucide-react';
+import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
 
 interface AddSchoolModalProps {
   isOpen: boolean;
@@ -39,6 +38,10 @@ export default function AddSchoolModal({
   initialSchoolName = '',
   initialUdise = '',
 }: AddSchoolModalProps) {
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
   // UDISE Verification State
   const [udiseCode, setUdiseCode] = useState(initialUdise);
   const [isVerifyingUdise, setIsVerifyingUdise] = useState(false);
@@ -65,13 +68,41 @@ export default function AddSchoolModal({
   // Submission State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successData, setSuccessData] = useState<{
-    magicUrl: string;
-    token: string;
-    schoolName: string;
-    udise: string;
-  } | null>(null);
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [isSubmittedSuccess, setIsSubmittedSuccess] = useState(false);
+
+  // Check login state on modal open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let isMounted = true;
+    setIsAuthLoading(true);
+    setErrorMsg(null);
+    setIsSubmittedSuccess(false);
+
+    schoolSearchSupabase.auth
+      .getUser()
+      .then(({ data: { user }, error }) => {
+        if (!isMounted) return;
+        setIsAuthLoading(false);
+        if (user && !error) {
+          setCurrentUser(user);
+          if (user.email) setClaimantEmail(user.email);
+          const metaName = user.user_metadata?.full_name || user.user_metadata?.name || '';
+          if (metaName) setClaimantName(metaName);
+          const metaPhone = user.user_metadata?.phone || user.phone || '';
+          if (metaPhone) setWhatsappNumber(metaPhone);
+        } else {
+          setCurrentUser(null);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setIsAuthLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen]);
 
   // Auto-verify if initialUdise provided
   useEffect(() => {
@@ -82,6 +113,11 @@ export default function AddSchoolModal({
   }, [isOpen, initialUdise]);
 
   if (!isOpen) return null;
+
+  const handleLoginRedirect = () => {
+    const returnUrl = typeof window !== 'undefined' ? window.location.pathname : '/schools';
+    window.location.href = `/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+  };
 
   // Verify UDISE function
   const handleVerifyUdise = async (codeToVerify?: string) => {
@@ -129,7 +165,7 @@ export default function AddSchoolModal({
       if (d.board) setBoard(d.board);
       if (d.nature) setSchoolType(d.nature);
 
-      // Suggest representative details if available and currently empty
+      // Suggest representative details if currently empty
       if (!claimantName && d.headMasterName) {
         setClaimantName(d.headMasterName);
       }
@@ -176,7 +212,13 @@ export default function AddSchoolModal({
     e.preventDefault();
     setErrorMsg(null);
 
-    // Strict validation: UDISE must be verified
+    // Strict validation 1: User must be logged in
+    if (!currentUser) {
+      setErrorMsg('Login required: Please sign in before submitting a claim.');
+      return;
+    }
+
+    // Strict validation 2: UDISE must be verified
     if (!udiseVerified || !verifiedUdiseData) {
       setErrorMsg('Mandatory: Please enter and verify your official 11-digit UDISE code first.');
       return;
@@ -229,35 +271,21 @@ export default function AddSchoolModal({
           designation: designation.trim(),
           note: `[Verified UDISE Profile] Board: ${board}, Format: ${schoolType}, Location: ${district}, ${stateName} (${pincode}). Note: ${note.trim()}`,
           verified_udise_data: verifiedUdiseData,
+          user_id: currentUser?.id,
         }),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to submit school profile.');
+        throw new Error(data.error || 'Failed to submit school profile claim.');
       }
 
-      const generatedToken = data.claim?.visual_edit_token || `csl_ai_magic_${cleanUdise}`;
-      const directEditUrl = `/school-template?token=${generatedToken}&edit=true`;
-
-      setSuccessData({
-        magicUrl: data.visual_edit_url || directEditUrl,
-        token: generatedToken,
-        schoolName: schoolName.trim(),
-        udise: cleanUdise,
-      });
+      setIsSubmittedSuccess(true);
     } catch (err: any) {
       setErrorMsg(err.message || 'Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleCopyLink = () => {
-    if (!successData?.magicUrl) return;
-    navigator.clipboard.writeText(successData.magicUrl);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
   };
 
   return (
@@ -274,12 +302,12 @@ export default function AddSchoolModal({
             </div>
             <div>
               <h3 className="text-lg sm:text-xl font-black text-white leading-tight">
-                {successData ? 'School Profile Verified & Created!' : 'Add Your School Profile'}
+                {isSubmittedSuccess ? 'Claim Submitted for Verification' : 'Add / Claim Your School Profile'}
               </h3>
               <p className="text-xs text-blue-100 font-medium">
-                {successData
-                  ? 'Your unique magic edit link has been generated.'
-                  : 'UDISE-verified registration & direct live visual editor'}
+                {isSubmittedSuccess
+                  ? 'Request under official administrative review'
+                  : 'Official UDISE-verified institutional profile registration'}
               </p>
             </div>
           </div>
@@ -294,72 +322,122 @@ export default function AddSchoolModal({
 
         {/* Content Body */}
         <div className="p-6">
-          {successData ? (
-            /* Success Screen */
-            <div className="text-center py-4 space-y-5">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
-                <CheckCircle2 className="w-9 h-9" />
-              </div>
-              <div>
-                <h4 className="text-2xl font-black text-slate-900 mb-1">
-                  School Profile Added Successfully!
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  Congratulations <strong>{claimantName}</strong>! <strong>{successData.schoolName}</strong> (UDISE: {successData.udise}) has been verified and registered. Official notification dispatched.
-                </p>
-              </div>
+          {/* ── CASE 1: AUTH LOADING ── */}
+          {isAuthLoading && (
+            <div className="py-14 flex flex-col items-center justify-center gap-3">
+              <div className="w-8 h-8 rounded-full border-3 border-[#005689] border-t-transparent animate-spin" />
+              <p className="text-xs text-slate-500 font-semibold">Verifying your account authorization...</p>
+            </div>
+          )}
 
-              {/* Magic Link Card */}
-              <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-left space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
-                    Your Visual Editing Magic Link
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800 hover:text-emerald-950 bg-white px-3 py-1 rounded-lg border border-emerald-300 shadow-2xs cursor-pointer"
-                  >
-                    {copiedLink ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        Copy Link
-                      </>
-                    )}
-                  </button>
+          {/* ── CASE 2: USER NOT LOGGED IN (STRICT AUTH GATE) ── */}
+          {!isAuthLoading && !currentUser && (
+            <div className="text-center py-6 px-3">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mx-auto mb-4 shadow-sm">
+                <Lock className="w-8 h-8" />
+              </div>
+              <h4 className="text-xl font-black text-slate-900 mb-2">
+                Login Required to Register or Claim School
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mb-6 leading-relaxed">
+                To protect educational institutions and prevent fraudulent profile modifications, you must be signed in with a verified account before claiming or registering a school.
+              </p>
+
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left mb-6 text-xs text-slate-600 space-y-2 max-w-md mx-auto">
+                <div className="font-bold text-slate-800 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                  Why is verification required?
                 </div>
-                <p className="text-xs text-slate-600 font-mono bg-white p-2.5 rounded-xl border border-emerald-200 break-all select-all">
-                  {successData.magicUrl}
-                </p>
+                <p>• Only authorized school heads, principals, and owners can claim profiles.</p>
+                <p>• School identity details are verified with official Ministry of Education UDISE+ database.</p>
+                <p>• Administrative review is conducted prior to granting profile editing access.</p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <a
-                  href={`/school-template?token=${successData.token}&edit=true`}
-                  className="flex-1 py-3.5 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  type="button"
+                  onClick={handleLoginRedirect}
+                  className="px-6 py-3 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>Open Visual Editor Now</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
+                  <LogIn className="w-4 h-4" />
+                  Sign In with Google / Email
+                </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer"
+                  className="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── CASE 3: SUBMITTED SUCCESS (UNDER REVIEW NOTICE) ── */}
+          {!isAuthLoading && currentUser && isSubmittedSuccess && (
+            <div className="text-center py-5 space-y-5">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+                <Clock className="w-9 h-9" />
+              </div>
+              <div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full mb-2">
+                  <Clock className="w-3.5 h-3.5" />
+                  Status: Pending Official Verification
+                </span>
+                <h4 className="text-2xl font-black text-slate-900 mb-1">
+                  Claim Request Submitted for Review
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                  Thank you, <strong>{claimantName}</strong>! Your claim request for <strong>{schoolName}</strong> (UDISE: {udiseCode}) has been received and submitted for administrative review.
+                </p>
+              </div>
+
+              {/* Security Verification Notice Box */}
+              <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-left space-y-2 max-w-lg mx-auto">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#003c6e]">
+                  <ShieldCheck className="w-4 h-4 text-[#005689]" />
+                  Official Institutional Security Protocol
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  To protect schools and prevent unauthorized access, <strong>profile editing rights are not granted automatically</strong>.
+                  Our administrative verification team will cross-check your institution authorization and contact you at:
+                </p>
+                <div className="p-3 bg-white rounded-xl border border-blue-200/80 text-xs font-medium text-slate-700 space-y-1">
+                  <p>• <strong>Email:</strong> {claimantEmail}</p>
+                  <p>• <strong>WhatsApp:</strong> {whatsappNumber}</p>
+                </div>
+                <p className="text-[11px] text-slate-500 pt-1">
+                  Once verified and approved, school profile management access will be automatically activated on your account.
+                </p>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-8 py-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition cursor-pointer shadow-md"
                 >
                   Close
                 </button>
               </div>
             </div>
-          ) : (
-            /* Input Form */
+          )}
+
+          {/* ── CASE 4: LOGGED IN -> INPUT FORM ── */}
+          {!isAuthLoading && currentUser && !isSubmittedSuccess && (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Account Identity Bar */}
+              <div className="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <User className="w-3.5 h-3.5 text-slate-500" />
+                  Signed in as: <strong className="text-slate-800">{currentUser.email}</strong>
+                </span>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  Authenticated
+                </span>
+              </div>
+
               {errorMsg && (
                 <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
@@ -685,28 +763,28 @@ export default function AddSchoolModal({
                   {!udiseVerified ? (
                     <>
                       <Lock className="w-4 h-4 text-slate-400" />
-                      <span>Verify 11-Digit UDISE to Register</span>
+                      <span>Verify 11-Digit UDISE to Submit Claim</span>
                     </>
                   ) : isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Registering School & Generating Link...</span>
+                      <span>Submitting Claim for Verification...</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4 text-amber-300" />
-                      <span>Register & Open Visual Live Editor</span>
+                      <ShieldCheck className="w-4 h-4 text-amber-300" />
+                      <span>Submit Claim for Administrative Verification</span>
                     </>
                   )}
                 </button>
 
-                <a
-                  href="/school-template?edit=true&mode=new"
+                <button
+                  type="button"
+                  onClick={onClose}
                   className="w-full sm:w-auto px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs text-center transition cursor-pointer"
-                  title="Directly launch the blank WYSIWYG editor without registering first"
                 >
-                  Direct Blank Editor &rarr;
-                </a>
+                  Cancel
+                </button>
               </div>
             </form>
           )}

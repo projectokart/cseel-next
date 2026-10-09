@@ -291,6 +291,10 @@ interface SchoolProfileViewProps {
 
   isTemplate?: boolean;
 
+  initialProfileData?: any;
+
+  flipbookSlides?: any[];
+
 }
 
 
@@ -404,6 +408,8 @@ export default function SchoolProfileView({
   districtSchools = [],
 
   isTemplate = false,
+  initialProfileData,
+  flipbookSlides,
 
 }: SchoolProfileViewProps) {
 
@@ -942,11 +948,11 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   const templateCtx = useOptionalSchoolTemplate();
 
-  const isLiveTemplate = isTemplate && !!templateCtx;
+  const templateData = templateCtx?.data || initialProfileData || null;
+  const isLiveTemplate = (isTemplate && !!templateCtx) || Boolean(initialProfileData);
+
 
-  const templateData = templateCtx?.data;
-
-  const isEditMode = isLiveTemplate ? (templateCtx?.isEditMode ?? true) : false;
+  const isEditMode = (isTemplate && !!templateCtx) ? (templateCtx?.isEditMode ?? true) : false;
 
 
 
@@ -3263,7 +3269,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
               onClick={() => handleTabSwitch('home')}
 
-              className="w-11 h-11 sm:w-12 sm:h-12 relative rounded-xl overflow-hidden border border-slate-200 bg-white shadow-xs flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
+              className="min-w-[44px] max-w-[140px] sm:max-w-[170px] h-11 sm:h-12 px-1 relative rounded-xl overflow-hidden bg-white/95 border border-slate-200/80 shadow-xs flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition-transform"
 
               title="Go to Home"
 
@@ -3985,6 +3991,8 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                     primaryImage={imageUrl}
 
                     logoUrl={actualSchoolLogo}
+
+                    slides={templateData?.flipbookSlides || flipbookSlides}
 
                     onApplyClick={() => setIsApplyModalOpen(true)}
 

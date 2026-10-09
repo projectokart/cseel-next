@@ -33,6 +33,7 @@ interface SchoolPhotoBookProps {
   board?: string;
   primaryImage?: string;
   logoUrl?: string;
+  slides?: FlipbookSlideItem[];
   onApplyClick?: () => void;
   onTabSwitch?: (tabId: string) => void;
 }
@@ -208,6 +209,7 @@ export default function SchoolPhotoBook({
   board,
   primaryImage,
   logoUrl,
+  slides,
   onApplyClick,
   onTabSwitch
 }: SchoolPhotoBookProps) {
@@ -220,9 +222,38 @@ export default function SchoolPhotoBook({
 
   const effectiveLogo = logoUrl || templateCtx?.data?.logoImage || templateCtx?.data?.imageOverrides?.['school_logo'] || primaryImage || '';
 
-  const slidesToUse: FlipbookSlideItem[] = (templateCtx?.data?.flipbookSlides && templateCtx.data.flipbookSlides.length > 0)
-    ? templateCtx.data.flipbookSlides
-    : DEFAULT_SLIDES;
+  const fallbackSchoolSlides: FlipbookSlideItem[] = [
+    {
+      id: 'fb-0',
+      image: primaryImage || '/images/schools/edunova-hero-students.jpg',
+      title: `${displayName.slice(0, 24)} Campus Quad`,
+      desc: 'Inspiring architecture with lush green surroundings and modern classrooms.',
+      buttonText: 'Explore Campus',
+      actionTab: 'about'
+    },
+    {
+      id: 'fb-1',
+      image: primaryImage || '/images/schools/edunova-hero-students.jpg',
+      title: 'Advanced Science Practical Labs',
+      desc: 'Hands-on chemistry, physics and biology labs with individual workstations.',
+      buttonText: 'View Labs',
+      actionTab: 'facilities'
+    },
+    {
+      id: 'fb-2',
+      image: primaryImage || '/images/schools/edunova-hero-students.jpg',
+      title: 'Interactive Smart Classrooms',
+      desc: 'Digital multimedia boards, audio-visual learning & dedicated teacher guidance.',
+      buttonText: 'Academics & Pedagogy',
+      actionTab: 'academics'
+    }
+  ];
+
+  const slidesToUse: FlipbookSlideItem[] = (slides && slides.length > 0)
+    ? slides
+    : ((templateCtx?.data?.flipbookSlides && templateCtx.data.flipbookSlides.length > 0)
+      ? templateCtx.data.flipbookSlides
+      : fallbackSchoolSlides);
 
   const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -1113,11 +1144,15 @@ export default function SchoolPhotoBook({
                 </span>
               </div>
               <div className="relative z-10 text-center my-auto space-y-2 px-2">
-                <div className="w-11 h-11 mx-auto rounded-xl bg-white border-2 border-[#002B49]/30 overflow-hidden flex items-center justify-center shadow-[0_4px_14px_rgba(0,43,73,0.1)]">
+                <div className="max-w-[150px] max-h-[55px] sm:max-w-[180px] sm:max-h-[65px] min-h-[44px] mx-auto flex items-center justify-center bg-transparent">
                   {effectiveLogo ? (
-                    <img src={effectiveLogo} alt={displayName} className="w-full h-full object-cover" />
+                    <img
+                      src={effectiveLogo}
+                      alt={displayName}
+                      className="max-w-full max-h-[55px] sm:max-h-[65px] w-auto h-auto object-contain drop-shadow-xs"
+                    />
                   ) : (
-                    <div className="w-full h-full bg-[#002B49] text-white font-serif font-black text-base flex items-center justify-center">
+                    <div className="w-11 h-11 rounded-xl bg-[#002B49] text-white font-serif font-black text-base flex items-center justify-center">
                       {displayName ? displayName.charAt(0).toUpperCase() : 'S'}
                     </div>
                   )}
@@ -1236,11 +1271,15 @@ export default function SchoolPhotoBook({
                   </span>
                 </div>
                 <div className="relative z-10 text-center my-auto space-y-2 px-2">
-                  <div className="w-11 h-11 mx-auto rounded-xl bg-white border-2 border-[#002B49]/30 overflow-hidden flex items-center justify-center shadow-[0_4px_14px_rgba(0,43,73,0.1)]">
+                  <div className="max-w-[140px] max-h-[50px] min-h-[40px] mx-auto flex items-center justify-center bg-transparent">
                     {effectiveLogo ? (
-                      <img src={effectiveLogo} alt={displayName} className="w-full h-full object-cover" />
+                      <img
+                        src={effectiveLogo}
+                        alt={displayName}
+                        className="max-w-full max-h-[50px] w-auto h-auto object-contain drop-shadow-xs"
+                      />
                     ) : (
-                      <div className="w-full h-full bg-[#002B49] text-white font-serif font-black text-base flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-[#002B49] text-white font-serif font-black text-sm flex items-center justify-center">
                         {displayName ? displayName.charAt(0).toUpperCase() : 'S'}
                       </div>
                     )}
@@ -1396,15 +1435,15 @@ export default function SchoolPhotoBook({
           {/* Center Showcase: Decorated Emblem + School Name + Description Paragraph */}
           <div className="relative z-10 text-center px-2 py-1 space-y-2 sm:space-y-2.5 my-auto">
             {/* School Emblem / Actual Logo */}
-            <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-xl bg-white border-2 border-[#002B49]/35 overflow-hidden flex items-center justify-center shadow-[0_4px_14px_rgba(0,43,73,0.12)] relative shrink-0">
+            <div className="max-w-[160px] max-h-[60px] sm:max-w-[200px] sm:max-h-[75px] min-h-[48px] mx-auto flex items-center justify-center bg-transparent relative shrink-0">
               {effectiveLogo ? (
                 <img
                   src={effectiveLogo}
                   alt={displayName}
-                  className="w-full h-full object-cover"
+                  className="max-w-full max-h-[60px] sm:max-h-[75px] w-auto h-auto object-contain drop-shadow-xs"
                 />
               ) : (
-                <div className="w-full h-full bg-[#002B49] text-white font-serif font-black text-lg flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-[#002B49] text-white font-serif font-black text-lg flex items-center justify-center">
                   {displayName ? displayName.charAt(0).toUpperCase() : 'S'}
                 </div>
               )}

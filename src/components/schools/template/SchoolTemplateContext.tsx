@@ -338,18 +338,65 @@ interface SchoolTemplateContextType {
 
 const SchoolTemplateContext = createContext<SchoolTemplateContextType | null>(null);
 
-export function SchoolTemplateProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<SchoolTemplateState>(DEFAULT_TEMPLATE_DATA);
-  const [isEditMode, setIsEditMode] = useState<boolean>(true);
+export function SchoolTemplateProvider({
+  children,
+  initialData,
+  initialEditMode = true,
+}: {
+  children: React.ReactNode;
+  initialData?: Partial<SchoolTemplateState>;
+  initialEditMode?: boolean;
+}) {
+  const [data, setData] = useState<SchoolTemplateState>(() => ({
+    ...DEFAULT_TEMPLATE_DATA,
+    ...(initialData || {}),
+  }));
+  const [isEditMode, setIsEditMode] = useState<boolean>(initialEditMode);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [isUdiseLoading, setIsUdiseLoading] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
 
-  // Load draft from localStorage upon client mount
+  // Load draft from initialData, URL token, or localStorage upon client mount
   useEffect(() => {
     try {
+      if (initialData && Object.keys(initialData).length > 0) {
+        setData((prev) => ({ ...prev, ...initialData }));
+        setIsHydrated(true);
+        return;
+      }
+
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const urlToken = params.get('token');
+        const urlUdise = params.get('udise');
+
+        if (urlToken || urlUdise) {
+          const fetchToken = urlToken || `csl_ai_magic_${urlUdise}`;
+          fetch(`/api/school-ai-sync?token=${encodeURIComponent(fetchToken)}`)
+            .then((r) => r.json())
+            .then((res) => {
+              if (res && res.profileData) {
+                const parsed = parseSchoolJsonToState(res.profileData.masterJson || res.profileData, DEFAULT_TEMPLATE_DATA);
+                if (parsed.success && parsed.state) {
+                  setData(parsed.state);
+                  try {
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed.state));
+                  } catch (_) {}
+                  setNotification({
+                    type: 'success',
+                    message: `✨ Loaded official verified data for "${parsed.state.schoolName}" via Magic Link!`,
+                  });
+                }
+              }
+            })
+            .catch((err) => console.warn('Failed to auto-sync from token:', err));
+          setIsHydrated(true);
+          return;
+        }
+      }
+
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);

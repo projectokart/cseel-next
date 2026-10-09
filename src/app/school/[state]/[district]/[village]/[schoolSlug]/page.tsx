@@ -12,6 +12,37 @@ import {
 } from '@/integrations/supabase/schoolSearchClient';
 import { SCHOOLS_DATA, SchoolRecord } from '@/data/schoolFinderData';
 import SchoolProfileView from './SchoolProfileView';
+import fs from 'fs';
+import path from 'path';
+
+// Helper to retrieve official AI synced profile data from sync store
+function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
+  try {
+    const tokensFile = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
+    if (fs.existsSync(tokensFile)) {
+      const store = JSON.parse(fs.readFileSync(tokensFile, 'utf8'));
+      const tokens = store.tokens || {};
+      const targetDigits = (udiseCode || '').replace(/\D/g, '');
+      const cleanSlugNorm = cleanSlug.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
+      for (const tKey of Object.keys(tokens)) {
+        const rec = tokens[tKey];
+        const recSchoolId = (rec.schoolId || '').replace(/\D/g, '');
+        const recUdise = (rec.profileData?.udiseCode || '').replace(/\D/g, '');
+
+        if (
+          (targetDigits && targetDigits.length >= 6 && (recSchoolId === targetDigits || recUdise === targetDigits)) ||
+          (cleanSlugNorm && tKey.toLowerCase().includes(cleanSlugNorm))
+        ) {
+          return rec.profileData || null;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Error reading sync token store in page.tsx:', err);
+  }
+  return null;
+}
 
 interface PageProps {
   params: Promise<{
@@ -350,6 +381,7 @@ export default async function SchoolPage({ params }: PageProps) {
   // Format variables strictly from Supabase record or template mode
   const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
   const udiseCode = isTemplate ? '06170100101' : (schoolData?.udise_code || '');
+  const syncedProfileData = getSyncedProfileData(udiseCode, cleanSlug);
   const displaySchoolName = isTemplate ? 'Write Your School Name Here' : (schoolData?.school_name || fallbackSchoolName);
   const displayState = schoolData?.state_name || rawState;
   const displayDistrict = schoolData?.district_name || rawDistrict;
@@ -588,13 +620,15 @@ export default async function SchoolPage({ params }: PageProps) {
         rawEmail={rawEmail}
         website={website}
         rawAddress={rawAddress}
-        imageUrl={schoolData?.image_url || ''}
-        affiliationNumber={schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
+        imageUrl={syncedProfileData?.heroImage || schoolData?.image_url || ''}
+        affiliationNumber={syncedProfileData?.affiliationNumber || schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
         lat={lat}
         lng={lng}
         clusterSchools={clusterSchools}
         districtSchools={districtSchools}
         isTemplate={isTemplate}
+        initialProfileData={syncedProfileData}
+        flipbookSlides={syncedProfileData?.flipbookSlides}
       />
     </>
   );

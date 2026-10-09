@@ -65,6 +65,7 @@ export const BLANK_AI_SCHOOL_SCHEMA = {
     management: 'Delhi Public School Society', // Max 45 chars
     school_category: 'Senior Secondary (Class 1 to 12th)', // Max 45 chars
     gender_type: 'Co-Educational', // 'Co-Educational' | 'Boys' | 'Girls'
+    affiliation_number: '831374', // Max 25 chars
     branding: {
       logo_image_url: '/images/schools/hero-school-1.png',
       hero_banner_image: '/images/schools/hero-school-1.png',
@@ -347,6 +348,12 @@ export const BLANK_AI_SCHOOL_SCHEMA = {
     principal_office_email: 'principal@dpsrewari.edu.in',
     careers_inquiry_phone: '+91 1274 250103',
     careers_inquiry_email: 'careers@dpsrewari.edu.in',
+    social_links: {
+      facebook: 'https://facebook.com/dpsrewariofficial',
+      instagram: 'https://instagram.com/dpsrewari',
+      linkedin: 'https://linkedin.com/school/dpsrewari',
+      youtube: 'https://youtube.com/@dpsrewariofficial',
+    },
   },
 };
 
@@ -490,6 +497,9 @@ export function parseSchoolJsonToState(
 
       if (basicInfo.gender_type !== undefined) nextState.genderType = limitLength(basicInfo.gender_type, 25);
       else if (parsed.genderType !== undefined) nextState.genderType = limitLength(parsed.genderType, 25);
+
+      const aff = basicInfo.affiliation_number ?? basicInfo.affiliationNumber ?? parsed.affiliation_number ?? parsed.affiliationNumber ?? parsed.affiliation_no;
+      if (aff !== undefined) nextState.affiliationNumber = limitLength(aff, 30);
     }
 
     // Hero Prestige Metrics (Attraction metrics for parents & students)
@@ -859,6 +869,18 @@ export function parseSchoolJsonToState(
       if (cPhone !== undefined) nextState.careersPhone = limitLength(cPhone, 30);
       const cEmail = tabContact.careers_inquiry_email ?? tabContact.careersEmail ?? parsed.careersEmail;
       if (cEmail !== undefined) nextState.careersEmail = limitLength(cEmail, 50);
+
+      // Social Links (Facebook, Instagram, LinkedIn, YouTube)
+      const soc = tabContact.social_links ?? tabContact.socialLinks ?? parsed.social_links ?? parsed.socialLinks;
+      if (soc && typeof soc === 'object') {
+        nextState.socialLinks = {
+          facebook: soc.facebook ? limitLength(soc.facebook, 150) : undefined,
+          instagram: soc.instagram ? limitLength(soc.instagram, 150) : undefined,
+          linkedin: soc.linkedin ? limitLength(soc.linkedin, 150) : undefined,
+          youtube: soc.youtube ? limitLength(soc.youtube, 150) : undefined,
+          twitter: soc.twitter ? limitLength(soc.twitter, 150) : undefined,
+        };
+      }
     }
 
     const summary: ImportSummary = {
@@ -926,6 +948,7 @@ export function convertStateToStructuredJson(data: SchoolTemplateState): any {
         management: data.management,
         school_category: data.schoolCategory,
         gender_type: data.genderType,
+        affiliation_number: data.affiliationNumber,
       },
       branding: {
         logo_image_url: data.logoImage,
@@ -1005,6 +1028,7 @@ export function convertStateToStructuredJson(data: SchoolTemplateState): any {
       phone: data.phone,
       email: data.email,
       website: data.website,
+      social_links: data.socialLinks || {},
     },
   };
 }

@@ -108,10 +108,10 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
   const rawLng = Number(row.longitude);
   const hasCoords = !isNaN(rawLat) && !isNaN(rawLng) && rawLat > 5 && rawLat < 38 && rawLng > 65 && rawLng < 98;
   
-  const lat = hasCoords ? rawLat : (searchCenter?.lat || 28.1833);
-  const lng = hasCoords ? rawLng : (searchCenter?.lng || 76.6167);
+  const lat = hasCoords ? rawLat : 0;
+  const lng = hasCoords ? rawLng : 0;
 
-  const totalStudents = Number(row.total_students) || 500;
+  const totalStudents = Number(row.total_students) || 0;
   const fee = totalStudents > 500 ? 45000 : 25000;
 
   const board10 = cleanBoardName(row.board_10th) || 'CBSE';
@@ -123,8 +123,8 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
   const cleanMgmt = cleanManagementDesc(row.management_desc);
   const cleanArea = cleanRuralUrban(row.rural_urban);
 
-  let dist = 0;
-  if (searchCenter && hasCoords) {
+  let dist: number | undefined = undefined;
+  if (searchCenter && hasCoords && searchCenter.lat && searchCenter.lng) {
     dist = calculateHaversineKm(searchCenter.lat, searchCenter.lng, lat, lng);
   }
 
@@ -132,6 +132,32 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
   const cleanPhone = String(row.phone || '').replace(/\.0$/, '');
   const cleanEst = String(row.established_year || '2000').replace(/\.0$/, '');
   const schoolId = String(row.school_id || row.id || '1000');
+
+  const classFrom = row.class_from ? String(row.class_from).replace(/\.0$/, '').trim() : '';
+  const classTo = row.class_to ? String(row.class_to).replace(/\.0$/, '').trim() : '';
+  let formattedClasses = '';
+  if (classFrom && classTo) {
+    if (classFrom === '1' && classTo === '10') formattedClasses = 'Class 1st - 10th';
+    else if (classFrom === '1' && classTo === '12') formattedClasses = 'Class 1st - 12th';
+    else if (classFrom.toLowerCase().includes('nursery') || classFrom.toLowerCase().includes('pre')) formattedClasses = `${classFrom} - ${classTo}th`;
+    else formattedClasses = `Class ${classFrom} - ${classTo}th`;
+  } else if (cleanCategory.includes('Secondary') && !cleanCategory.includes('Senior')) {
+    formattedClasses = 'Class 1st - 10th';
+  } else if (cleanCategory.includes('Senior Secondary') || cleanCategory.includes('H.Sec')) {
+    formattedClasses = 'Class 1st - 12th';
+  } else if (cleanCategory.includes('Primary')) {
+    formattedClasses = 'Class 1st - 5th';
+  } else {
+    formattedClasses = 'Primary to Secondary';
+  }
+
+  const rawRating = Number(row.rating);
+  const rating = !isNaN(rawRating) && rawRating > 0 ? rawRating : 0;
+  const rawReviews = Number(row.reviews_count || row.reviews);
+  const reviews = !isNaN(rawReviews) && rawReviews > 0 ? rawReviews : 0;
+
+  const affNum = row.affiliation_number || row.affiliation_no || '';
+  const schoolImg = row.image_url || row.banner_url || row.logo_url || getSchoolImageById(schoolId);
 
   return {
     id: schoolId,
@@ -143,8 +169,8 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     status: (row.school_status || 'Operational') as any,
     year_desc: '2026-27',
     established_year: cleanEst,
-    state_name: row.state_name || 'Haryana',
-    state: row.state_name || 'Haryana',
+    state_name: row.state_name || 'Karnataka',
+    state: row.state_name || 'Karnataka',
     district_name: row.district_name || 'District',
     city: row.district_name || 'City',
     block_name: row.block_name || '',
@@ -162,19 +188,24 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     management_type: cleanMgmt,
     management_desc_state: cleanMgmt.includes('Government') ? 'Government' : 'Private',
     management: cleanMgmt.includes('Government') ? 'Government' : 'Private',
-    class_from: row.class_from ? String(row.class_from).replace(/\.0$/, '') : '1',
-    class_to: row.class_to ? String(row.class_to).replace(/\.0$/, '') : '12',
+    class_from: classFrom || '1',
+    class_to: classTo || '10',
+    classes: formattedClasses,
     school_type: cleanGender as any,
     gender: (cleanGender === 'Boys' ? 'Boys' : cleanGender === 'Girls' ? 'Girls' : 'Co-ed') as any,
     board_secondary_10th: board10,
     board_higher_secondary_12th: board12,
-    board: board12 || board10 || 'CBSE',
+    board: board10 || board12 || 'CBSE',
+    affiliation: affNum ? `Affiliation: ${affNum}` : (row.affiliation || `${board10} Affiliated`),
+    affiliation_no: affNum,
+    affiliation_number: affNum,
     medium_of_instruction_1: primaryMed,
     medium: primaryMed || 'English',
     annual_fee: fee,
     annual_fee_formatted: '₹' + Math.round(fee / 1000) + 'k/yr',
     pm_shri: false,
     headmaster_principal_name: row.principal_name || 'Principal In-Charge',
+    principalName: row.principal_name || 'Principal In-Charge',
     phone: cleanPhone,
     email: row.email || '',
     website: row.website || '',
@@ -186,7 +217,7 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     female_teachers: Number(row.female_teachers) || 15,
     total_building_blocks: 2,
     classrooms_total: Number(row.total_classrooms) || 15,
-    student_teacher_ratio: row.total_teachers ? (Math.round(totalStudents / Math.max(Number(row.total_teachers), 1)) + ':1') : '20:1',
+    student_teacher_ratio: row.total_teachers ? (Math.round(totalStudents / Math.max(Number(row.total_teachers), 1)) + ':1') : '18:1',
     tinkering_lab_atl: row.atal_stem_lab?.toLowerCase() === 'yes' ? 'Yes' : 'No',
     ict_lab: row.computer_ict_lab?.toLowerCase() === 'yes' ? 'Yes' : 'No',
     residential_school: row.residential_school || 'Day School',
@@ -197,9 +228,9 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     electricity: 'Yes',
     solar_panel: 'No',
     ramps_accessible: 'Yes',
-    rating: 4.8,
-    reviews: 95,
-    image: getSchoolImageById(schoolId),
+    rating: rating,
+    reviews: reviews,
+    image: schoolImg,
     facilities: [
       row.atal_stem_lab?.toLowerCase() === 'yes' ? 'Atal Tinkering Lab' : 'Science Labs',
       row.computer_ict_lab?.toLowerCase() === 'yes' ? 'Computer Lab' : 'Smart Classrooms',

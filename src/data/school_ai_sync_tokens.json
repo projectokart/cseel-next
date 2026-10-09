@@ -327,16 +327,16 @@
         "udiseCode": "29331008313",
         "schoolName": "SRI VIDYARANYA INTERNATIONAL SCHOOL",
         "contentOverrides": {
-          "hero_stat_val_1": "100%",
-          "hero_stat_lbl_1": "CBSE Pass Rate",
+          "hero_stat_val_1": "CBSE",
+          "hero_stat_lbl_1": "Affiliation: 831374",
           "hero_stat_val_2": "1:18",
           "hero_stat_lbl_2": "Student-Teacher Ratio",
-          "hero_stat_val_3": "10+",
-          "hero_stat_lbl_3": "Modern Labs & Studios",
-          "hero_stat_val_4": "25+",
-          "hero_stat_lbl_4": "Awards & Honors",
-          "hero_stat_val_5": "98%",
-          "hero_stat_lbl_5": "Parent Trust Rating",
+          "hero_stat_val_3": "18",
+          "hero_stat_lbl_3": "Classrooms & Labs",
+          "hero_stat_val_4": "1st - 10th",
+          "hero_stat_lbl_4": "Secondary Level",
+          "hero_stat_val_5": "Verified",
+          "hero_stat_lbl_5": "UDISE Reg. School",
           "principal_message": "At Sri Vidyaranya International School, we are committed to holistic child-centric learning, moral foundation, and experiential education."
         },
         "board": "CBSE (Affiliation No: 831374)",
@@ -365,9 +365,25 @@
         "address": "BYPASS STATION ROAD, HOSALLI CROSS, YADGIR",
         "district": "YADGIR",
         "state": "KARNATAKA",
-        "pincode": "585202"
+        "pincode": "585202",
+        "affiliationNumber": "831374",
+        "classFrom": "Class 1st",
+        "classTo": "Class 10th",
+        "socialLinks": {
+          "facebook": "https://facebook.com/sviscbse",
+          "instagram": "https://instagram.com/sviscbse",
+          "youtube": "https://youtube.com/@sviscbse",
+          "linkedin": "https://linkedin.com/school/sviscbse"
+        },
+        "includedAcademicFeatures": [
+          "CBSE Affiliation No. 831374 - Secondary Curriculum Aligned with NEP 2020",
+          "Co-Educational Experiential Learning from Class 1 to Class 10th",
+          "Individual Attention with 1:18 Student-Teacher Ratio",
+          "Interactive Smart Classrooms & Computer ICT Lab",
+          "Atal STEM & Experiential Science Education"
+        ]
       },
-      "lastUpdatedAt": 1791539374266,
+      "lastUpdatedAt": 1791541601279,
       "lastUpdatedSource": "AI Assistant"
     },
     "csl_ai_magic_svis_yadgir": {
@@ -376,22 +392,22 @@
       "schoolName": "SRI VIDYARANYA INTERNATIONAL SCHOOL",
       "createdAt": 1791539374266,
       "expiresAt": 1794131374266,
-      "lastUpdatedAt": 1791539374266,
+      "lastUpdatedAt": 1791541601279,
       "lastUpdatedSource": "AI Assistant",
       "profileData": {
         "udiseCode": "29331008313",
         "schoolName": "SRI VIDYARANYA INTERNATIONAL SCHOOL",
         "contentOverrides": {
-          "hero_stat_val_1": "100%",
-          "hero_stat_lbl_1": "CBSE Pass Rate",
+          "hero_stat_val_1": "CBSE",
+          "hero_stat_lbl_1": "Affiliation: 831374",
           "hero_stat_val_2": "1:18",
           "hero_stat_lbl_2": "Student-Teacher Ratio",
-          "hero_stat_val_3": "10+",
-          "hero_stat_lbl_3": "Modern Labs & Studios",
-          "hero_stat_val_4": "25+",
-          "hero_stat_lbl_4": "Awards & Honors",
-          "hero_stat_val_5": "98%",
-          "hero_stat_lbl_5": "Parent Trust Rating",
+          "hero_stat_val_3": "18",
+          "hero_stat_lbl_3": "Classrooms & Labs",
+          "hero_stat_val_4": "1st - 10th",
+          "hero_stat_lbl_4": "Secondary Level",
+          "hero_stat_val_5": "Verified",
+          "hero_stat_lbl_5": "UDISE Reg. School",
           "principal_message": "At Sri Vidyaranya International School, we are committed to holistic child-centric learning, moral foundation, and experiential education."
         },
         "board": "CBSE (Affiliation No: 831374)",
@@ -420,7 +436,23 @@
         "address": "BYPASS STATION ROAD, HOSALLI CROSS, YADGIR",
         "district": "YADGIR",
         "state": "KARNATAKA",
-        "pincode": "585202"
+        "pincode": "585202",
+        "affiliationNumber": "831374",
+        "classFrom": "Class 1st",
+        "classTo": "Class 10th",
+        "socialLinks": {
+          "facebook": "https://facebook.com/sviscbse",
+          "instagram": "https://instagram.com/sviscbse",
+          "youtube": "https://youtube.com/@sviscbse",
+          "linkedin": "https://linkedin.com/school/sviscbse"
+        },
+        "includedAcademicFeatures": [
+          "CBSE Affiliation No. 831374 - Secondary Curriculum Aligned with NEP 2020",
+          "Co-Educational Experiential Learning from Class 1 to Class 10th",
+          "Individual Attention with 1:18 Student-Teacher Ratio",
+          "Interactive Smart Classrooms & Computer ICT Lab",
+          "Atal STEM & Experiential Science Education"
+        ]
       }
     },
     "csl_admin_master_magic_key": {

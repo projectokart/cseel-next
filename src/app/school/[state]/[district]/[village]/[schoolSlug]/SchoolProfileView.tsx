@@ -279,6 +279,8 @@ interface SchoolProfileViewProps {
 
   imageUrl?: string;
 
+  affiliationNumber?: string;
+
   lat: number;
 
   lng: number;
@@ -394,6 +396,8 @@ export default function SchoolProfileView({
   lng = 76.6215,
 
   imageUrl,
+
+  affiliationNumber,
 
   clusterSchools = [],
 
@@ -1497,21 +1501,21 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   const displayEstablished = isLiveTemplate
 
-    ? (templateData?.establishedYear || '2008')
+    ? (templateData?.establishedYear || establishedYear || '2023')
 
-    : (establishedYear || '1975');
+    : (establishedYear || '2023');
 
   const displayStudents = isLiveTemplate
 
-    ? `${(templateData?.totalStudents || 1250).toLocaleString()}+`
+    ? `${(templateData?.totalStudents ?? (totalStudents > 0 ? totalStudents : 450)).toLocaleString()}`
 
-    : (totalStudents > 0 ? `${totalStudents.toLocaleString()}+` : '2,500+');
+    : (totalStudents > 0 ? `${totalStudents.toLocaleString()}` : '450');
 
   const displayTeachers = isLiveTemplate
 
-    ? `${templateData?.totalTeachers || 65}+`
+    ? `${templateData?.totalTeachers ?? (totalTeachers > 0 ? totalTeachers : 25)}`
 
-    : (totalTeachers > 0 ? `${totalTeachers}+` : '120+');
+    : (totalTeachers > 0 ? `${totalTeachers}` : '25');
 
   const displayYears = isLiveTemplate
 
@@ -1620,7 +1624,8 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   const cleanUdiseDigits = displayUdise.replace(/\D/g, '');
 
-  const displayAffiliationNo = displayBoard.toUpperCase().includes('CBSE')
+  const realAffiliationNo = templateData?.affiliationNumber || (templateData as any)?.affiliation_number || affiliationNumber || '';
+  const displayAffiliationNo = realAffiliationNo ? realAffiliationNo : displayBoard.toUpperCase().includes('CBSE')
 
     ? `CBSE/AFF/${cleanUdiseDigits.slice(-6) || '530492'}`
 
@@ -4017,7 +4022,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center flex-wrap gap-1.5">
                     <EditableText
                       contentKey="hero_stat_val_1"
-                      value="100%"
+                      value={templateData?.contentOverrides?.['hero_stat_val_1'] || 'CBSE'}
                       maxLength={10}
                       showVerificationBadge={false}
                       className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight"
@@ -4025,7 +4030,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   </div>
                   <EditableText
                     contentKey="hero_stat_lbl_1"
-                    value="Board Pass Rate"
+                    value={templateData?.contentOverrides?.['hero_stat_lbl_1'] || (displayAffiliationNo ? `Affiliation: ${displayAffiliationNo}` : 'CBSE Curriculum')}
                     maxLength={25}
                     className="text-xs font-semibold text-slate-500 block truncate"
                     showVerificationBadge={false}
@@ -4042,7 +4047,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center flex-wrap gap-1.5">
                     <EditableText
                       contentKey="hero_stat_val_2"
-                      value="1:15"
+                      value={templateData?.contentOverrides?.['hero_stat_val_2'] || (totalStudents > 0 && totalTeachers > 0 ? `1:${Math.round(totalStudents / Math.max(totalTeachers, 1))}` : '1:18')}
                       maxLength={10}
                       showVerificationBadge={false}
                       className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight"
@@ -4067,7 +4072,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center flex-wrap gap-1.5">
                     <EditableText
                       contentKey="hero_stat_val_3"
-                      value="25+"
+                      value={templateData?.contentOverrides?.['hero_stat_val_3'] || (classroomsCount > 0 ? `${classroomsCount}` : '18')}
                       maxLength={10}
                       showVerificationBadge={false}
                       className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight"
@@ -4075,7 +4080,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   </div>
                   <EditableText
                     contentKey="hero_stat_lbl_3"
-                    value="Hi-Tech Labs & Studios"
+                    value={templateData?.contentOverrides?.['hero_stat_lbl_3'] || 'Classrooms & Labs'}
                     maxLength={25}
                     className="text-xs font-semibold text-slate-500 block truncate"
                     showVerificationBadge={false}
@@ -4092,7 +4097,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center flex-wrap gap-1.5">
                     <EditableText
                       contentKey="hero_stat_val_4"
-                      value="50+"
+                      value={templateData?.contentOverrides?.['hero_stat_val_4'] || (classFrom && classTo ? `${classFrom} - ${classTo}th` : '1st - 10th')}
                       maxLength={10}
                       showVerificationBadge={false}
                       className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight"
@@ -4100,7 +4105,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   </div>
                   <EditableText
                     contentKey="hero_stat_lbl_4"
-                    value="Awards & Honors"
+                    value={templateData?.contentOverrides?.['hero_stat_lbl_4'] || (schoolCategory || 'Secondary Level')}
                     maxLength={25}
                     className="text-xs font-semibold text-slate-500 block truncate"
                     showVerificationBadge={false}
@@ -4117,7 +4122,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <div className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight flex items-center flex-wrap gap-1.5">
                     <EditableText
                       contentKey="hero_stat_val_5"
-                      value="99%"
+                      value={templateData?.contentOverrides?.['hero_stat_val_5'] || 'Verified'}
                       maxLength={10}
                       showVerificationBadge={false}
                       className="text-xl sm:text-2xl font-black text-[#002B49] leading-tight"
@@ -4125,7 +4130,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   </div>
                   <EditableText
                     contentKey="hero_stat_lbl_5"
-                    value="Parent Trust Rating"
+                    value={templateData?.contentOverrides?.['hero_stat_lbl_5'] || 'UDISE Reg. School'}
                     maxLength={25}
                     className="text-xs font-semibold text-slate-500 block truncate"
                     showVerificationBadge={false}
@@ -4397,14 +4402,14 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <div className="text-xs sm:text-xl font-black text-gray-950 truncate flex items-center gap-1">
                     {isLiveTemplate && isEditMode ? (
                       <EditableText
-                        value={templateData?.campusArea || '12 Acres'}
+                        value={templateData?.campusArea || (classroomsCount > 0 ? `${classroomsCount} Classrooms` : 'Spacious Campus')}
                         fieldKey="campusArea"
                         maxLength={18}
                         showVerificationBadge={false}
                         className="text-xs sm:text-xl font-black text-gray-950 leading-tight"
                       />
                     ) : (
-                      <span>{templateData?.campusArea || '12 Acres'}</span>
+                      <span>{templateData?.campusArea || (classroomsCount > 0 ? `${classroomsCount} Classrooms` : 'Spacious Campus')}</span>
                     )}
                   </div>
                 </div>
@@ -4541,6 +4546,17 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   </span>
 
                 </div>
+
+                {/* Affiliation Number */}
+                {displayAffiliationNo && (
+                  <div className="flex items-center justify-between px-4 py-2.5 text-xs">
+                    <span className="font-bold text-slate-500 uppercase tracking-wider text-[10px]">Affiliation No.</span>
+                    <span className="font-mono font-bold text-slate-900 flex items-center gap-1.5">
+                      <span>{displayAffiliationNo}</span>
+                      <VerifiedBadge fieldKey="affiliationNumber" size="sm" />
+                    </span>
+                  </div>
+                )}
 
 
 
@@ -5385,11 +5401,11 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
                   <>
 
-                    <input type="text" className="w-24 sm:w-32 px-3 py-2 text-sm font-bold border border-blue-200 rounded-xl text-center focus:outline-none focus:border-blue-500 focus:bg-blue-50 transition-colors" defaultValue="Nursery" />
+                    <input type="text" className="w-24 sm:w-32 px-3 py-2 text-sm font-bold border border-blue-200 rounded-xl text-center focus:outline-none focus:border-blue-500 focus:bg-blue-50 transition-colors" defaultValue={displayClassFrom} />
 
                     <span className="text-gray-400 font-medium">to</span>
 
-                    <input type="text" className="w-24 sm:w-32 px-3 py-2 text-sm font-bold border border-blue-200 rounded-xl text-center focus:outline-none focus:border-blue-500 focus:bg-blue-50 transition-colors" defaultValue="Class 12" />
+                    <input type="text" className="w-24 sm:w-32 px-3 py-2 text-sm font-bold border border-blue-200 rounded-xl text-center focus:outline-none focus:border-blue-500 focus:bg-blue-50 transition-colors" defaultValue={displayClassTo} />
 
                   </>
 
@@ -5397,11 +5413,11 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
                   <>
 
-                    <span className="bg-blue-50 text-[#005689] font-bold px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">Nursery</span>
+                    <span className="bg-blue-50 text-[#005689] font-bold px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">{displayClassFrom.toLowerCase().startsWith('class') ? displayClassFrom : `Class ${displayClassFrom}`}</span>
 
                     <span className="text-gray-400 font-medium text-sm uppercase tracking-widest">to</span>
 
-                    <span className="bg-blue-50 text-[#005689] font-bold px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">Class 12</span>
+                    <span className="bg-blue-50 text-[#005689] font-bold px-5 py-2.5 rounded-xl border border-blue-100 shadow-sm">{displayClassTo.toLowerCase().startsWith('class') ? displayClassTo : `Class ${displayClassTo}`}</span>
 
                   </>
 
@@ -8115,24 +8131,34 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
               <div className="flex items-center gap-2 pt-2">
 
-                {[Facebook, Instagram, Youtube, Linkedin].map((SocialIcon, idx) => (
-
-                  <span
-
-                    key={idx}
-
-                    aria-label="Social Link (Not Configured)"
-
-                    title="Social handle not linked"
-
-                    className="w-9 h-9 rounded-[10px] bg-blue-950/60 flex items-center justify-center text-blue-300/40 border border-blue-900/40 opacity-40 cursor-not-allowed select-none pointer-events-none"
-
-                  >
-
-                    <SocialIcon className="w-4 h-4" />
-
-                  </span>
-
+                {[
+                  { icon: Facebook, name: 'Facebook', url: templateData?.socialLinks?.facebook || (templateData as any)?.social_links?.facebook },
+                  { icon: Instagram, name: 'Instagram', url: templateData?.socialLinks?.instagram || (templateData as any)?.social_links?.instagram },
+                  { icon: Youtube, name: 'YouTube', url: templateData?.socialLinks?.youtube || (templateData as any)?.social_links?.youtube },
+                  { icon: Linkedin, name: 'LinkedIn', url: templateData?.socialLinks?.linkedin || (templateData as any)?.social_links?.linkedin },
+                ].map((item, idx) => (
+                  item.url ? (
+                    <a
+                      key={idx}
+                      href={item.url.startsWith('http') ? item.url : `https://${item.url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${item.name} Official Page`}
+                      title={`${item.name} Official Page`}
+                      className="w-9 h-9 rounded-[10px] bg-blue-900/60 hover:bg-blue-600 flex items-center justify-center text-blue-200 hover:text-white border border-blue-700/60 transition shadow-sm cursor-pointer"
+                    >
+                      <item.icon className="w-4 h-4" />
+                    </a>
+                  ) : (
+                    <span
+                      key={idx}
+                      aria-label={`${item.name} (Not Configured)`}
+                      title={`${item.name} handle not linked`}
+                      className="w-9 h-9 rounded-[10px] bg-blue-950/60 flex items-center justify-center text-blue-300/40 border border-blue-900/40 opacity-40 cursor-not-allowed select-none pointer-events-none"
+                    >
+                      <item.icon className="w-4 h-4" />
+                    </span>
+                  )
                 ))}
 
               </div>

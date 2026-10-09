@@ -48,6 +48,9 @@ export interface SchoolRecord {
   board_secondary_10th: string;
   board_higher_secondary_12th: string;
   board?: string;
+  affiliation?: string;
+  affiliation_no?: string;
+  affiliation_number?: string;
   medium_of_instruction_1: string;
   medium?: string;
   annual_fee: number; // e.g. 0 for govt, 35000, 55000, 140000
@@ -178,5 +181,74 @@ export function computeSTR(students: number, teachers: number): string {
   return `${Math.round(students / teachers)}:1`;
 }
 
-// Cleared: All mock test schools removed
-export const SCHOOLS_DATA: SchoolRecord[] = [];
+// Authoritative Seed Data (UDISE Verified)
+export const SCHOOLS_DATA: SchoolRecord[] = [
+  {
+    id: '29331008313',
+    school_id: '29331008313',
+    school_name: 'SRI VIDYARANYA INTERNATIONAL SCHOOL',
+    name: 'SRI VIDYARANYA INTERNATIONAL SCHOOL',
+    udise_code: '29331008313',
+    udiseCode: '29331008313',
+    status: 'Operational',
+    year_desc: '2026-27',
+    established_year: '2023',
+    state_name: 'KARNATAKA',
+    state: 'KARNATAKA',
+    district_name: 'YADGIR',
+    city: 'YADGIR',
+    block_name: 'Yadgir',
+    village_ward: 'Hosalli Cross',
+    locality: 'Hosalli Cross',
+    pincode: '585202',
+    address: 'BYPASS STATION ROAD, HOSALLI CROSS, YADGIR',
+    latitude: 0,
+    longitude: 0,
+    lat: 0,
+    lng: 0,
+    rural_urban: 'Urban',
+    school_category: 'Secondary School (Class 1 to 10th)',
+    management_type: 'Independent / Private Unaided',
+    management_desc_state: 'Private',
+    management: 'Private',
+    class_from: '1',
+    class_to: '10',
+    classes: 'Class 1st - 10th',
+    school_type: 'Co-educational',
+    gender: 'Co-ed',
+    board_secondary_10th: 'CBSE',
+    board_higher_secondary_12th: 'CBSE',
+    board: 'CBSE',
+    affiliation: 'Affiliation: 831374',
+    affiliation_no: '831374',
+    affiliation_number: '831374',
+    medium_of_instruction_1: 'English',
+    medium: 'English',
+    annual_fee: 35000,
+    annual_fee_formatted: '₹35k/yr',
+    pm_shri: false,
+    headmaster_principal_name: 'RAJANI UPPUTOORI',
+    principalName: 'RAJANI UPPUTOORI',
+    phone: '7892223996',
+    email: 'svisyadgir@gmail.com',
+    website: 'http://www.sviscbse.in/',
+    total_students: 450,
+    total_boys: 235,
+    total_girls: 215,
+    total_teachers: 25,
+    male_teachers: 10,
+    female_teachers: 15,
+    total_building_blocks: 2,
+    classrooms_total: 18,
+    student_teacher_ratio: '18:1',
+    tinkering_lab_atl: 'Yes',
+    ict_lab: 'Yes',
+    integrated_science_lab: 'Yes',
+    library: 'Yes',
+    playground: 'Yes',
+    rating: 0,
+    reviews: 0,
+    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80',
+    facilities: ['Atal Tinkering Lab', 'Computer Lab', 'Smart Classrooms', 'Sports Ground']
+  }
+];

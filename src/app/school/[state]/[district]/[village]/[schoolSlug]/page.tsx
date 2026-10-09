@@ -447,14 +447,16 @@ export default async function SchoolPage({ params }: PageProps) {
           name: 'Center for Scientific Exploration and Experiential Learning (CSEEL)',
           url: 'https://www.cseel.org',
         },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: '4.8',
-          bestRating: '5',
-          worstRating: '1',
-          ratingCount: '38',
-          reviewCount: '19',
-        },
+        ...(Number(schoolData?.rating) > 0 ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: String(schoolData.rating),
+            bestRating: '5',
+            worstRating: '1',
+            ratingCount: String(schoolData.reviews_count || schoolData.reviews || 1),
+            reviewCount: String(schoolData.reviews_count || schoolData.reviews || 1),
+          }
+        } : {}),
       },
       {
         '@type': 'BreadcrumbList',
@@ -587,6 +589,7 @@ export default async function SchoolPage({ params }: PageProps) {
         website={website}
         rawAddress={rawAddress}
         imageUrl={schoolData?.image_url || ''}
+        affiliationNumber={schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
         lat={lat}
         lng={lng}
         clusterSchools={clusterSchools}

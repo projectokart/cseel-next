@@ -140,6 +140,14 @@ export interface SchoolTemplateState {
   showContactInfo: boolean;
   completedTabs: Record<string, boolean>;
   verifiedFields: Record<string, boolean>;
+  affiliationNumber?: string;
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+    youtube?: string;
+    twitter?: string;
+  };
   contentOverrides?: Record<string, string>;
   imageOverrides?: Record<string, string>;
   iconOverrides?: Record<string, string>;

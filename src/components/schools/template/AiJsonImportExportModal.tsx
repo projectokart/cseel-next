@@ -26,7 +26,7 @@ import {
   ExternalLink,
   Loader2
 } from 'lucide-react';
-import { useSchoolTemplate } from './SchoolTemplateContext';
+import { useOptionalSchoolTemplate } from './SchoolTemplateContext';
 import {
   generateAiPromptForSchool,
   BLANK_AI_SCHOOL_SCHEMA,
@@ -40,7 +40,10 @@ interface AiJsonImportExportModalProps {
 }
 
 export default function AiJsonImportExportModal({ isOpen, onClose }: AiJsonImportExportModalProps) {
-  const { data, importSchoolDataFromJson, exportSchoolDataAsJson } = useSchoolTemplate();
+  const ctx = useOptionalSchoolTemplate();
+  if (!isOpen || !ctx) return null;
+  const { data, importSchoolDataFromJson, exportSchoolDataAsJson } = ctx;
+
 
   const [activeTab, setActiveTab] = useState<'import' | 'live-sync' | 'prompt' | 'export'>('import');
   const [jsonInput, setJsonInput] = useState<string>('');

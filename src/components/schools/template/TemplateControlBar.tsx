@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useSchoolTemplate } from './SchoolTemplateContext';
+import { useOptionalSchoolTemplate } from './SchoolTemplateContext';
 import {
   Edit3,
   Eye,
@@ -29,6 +29,9 @@ interface TemplateControlBarProps {
 }
 
 export default function TemplateControlBar({ currentTab }: TemplateControlBarProps) {
+  const ctx = useOptionalSchoolTemplate();
+  if (!ctx) return null;
+
   const {
     data,
     isEditMode,
@@ -44,7 +47,7 @@ export default function TemplateControlBar({ currentTab }: TemplateControlBarPro
     publishToSupabase,
     isUdiseLoading,
     notification
-  } = useSchoolTemplate();
+  } = ctx;
 
   const [udiseInput, setUdiseInput] = useState<string>(data.udiseCode || '');
   const [isPublishing, setIsPublishing] = useState<boolean>(false);

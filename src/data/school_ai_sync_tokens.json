@@ -475,7 +475,7 @@
       "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
       "createdAt": 1791543267695,
       "expiresAt": 1794135267695,
-      "lastUpdatedAt": 1791545457354,
+      "lastUpdatedAt": 1791546419977,
       "lastUpdatedSource": "Gemini",
       "profileData": {
         "udiseCode": "06180101926",
@@ -491,7 +491,7 @@
           "hero_stat_lbl_4": "Experiential School",
           "hero_stat_val_5": "99%",
           "hero_stat_lbl_5": "Parent Trust Rating",
-          "principal_message": "At Heritage Xperiential, learning is not about rote memorisation; it is about authentic discovery, design thinking, and developing the character to impact our world positively."
+          "principal_message": "At Heritage Xperiential, learning is not about rote memorisation; it is about authentic discovery and developing positive character."
         },
         "board": "CBSE (Central Board of Secondary Education)",
         "medium": "English Medium",
@@ -512,9 +512,9 @@
         "workingSmartBoards": 120,
         "isResidential": false,
         "hasHostel": false,
-        "aboutText": "Heritage Xperiential Learning School (HXLS) Gurugram is a pioneer in progressive experiential education. Founded on dharmic principles and project-based inquiry, HXLS redefines mainstream education across an 11.3-acre green campus in Sector 62.",
-        "visionText": "To cultivate thoughtful, compassionate, and independent learners who find purpose and thrive in a dynamic, interconnected global ecosystem.",
-        "missionText": "Empowering learners through experiential project expeditions, maker-centred innovation, and holistic human values in partnership with educators and parents.",
+        "aboutText": "Heritage Xperiential Learning School (HXLS) Gurugram is a pioneer in progressive experiential education across an 11.3-acre green campus in Sector 62.",
+        "visionText": "To cultivate thoughtful, compassionate, and independent learners who thrive in a dynamic, interconnected global ecosystem.",
+        "missionText": "Empowering learners through experiential project expeditions, maker-centred innovation, and holistic human values.",
         "principalName": "Dr. Mona Khanna",
         "flipbookSlides": [
           {
@@ -546,6 +546,26 @@
             "videoUrl": "",
             "buttonText": "Admissions Open",
             "actionTab": "admissions"
+          },
+          {
+            "id": "slide-4",
+            "title": "Sports Arena & Athletic Grounds",
+            "desc": "Olympic-standard turf, indoor sports complex, swimming pool, and athletic tracks.",
+            "mediaType": "image",
+            "image": "https://www.heritagexperiential.org/wp-content/uploads/2018/11/facilty.jpg",
+            "videoUrl": "",
+            "buttonText": "View Sports",
+            "actionTab": "facilities"
+          },
+          {
+            "id": "slide-5",
+            "title": "E-Moped Student Innovation",
+            "desc": "Design thinking in action: award-winning electric mobility prototype built by students.",
+            "mediaType": "image",
+            "image": "https://www.heritagexperiential.org/wp-content/themes/heritage/images/emoped_banner_v3.jpg",
+            "videoUrl": "",
+            "buttonText": "Student Projects",
+            "actionTab": "academics"
           }
         ],
         "classFrom": "Class Nursery",
@@ -701,7 +721,7 @@
           },
           {
             "id": "gal-6",
-            "title": "Sports & Athletic Grounds",
+            "title": "Sports Arena & Athletic Grounds",
             "category": "Sports",
             "type": "image",
             "url": "https://www.heritagexperiential.org/wp-content/uploads/2018/11/facilty.jpg"
@@ -771,13 +791,13 @@
           {
             "id": "adm-1",
             "title": "Early Years & Nursery Admissions",
-            "criteria": "Points-based selection following Directorate guidelines with parental interaction and dialogue.",
+            "criteria": "Points-based selection following Directorate guidelines with parental interaction.",
             "badge": "Session 2026-27 Open",
             "icon": "Baby",
             "points": [
               "Online registration on official por",
               "Birth Certificate verification",
-              "Parent dialogue & child observation"
+              "Parent dialogue round"
             ]
           },
           {
@@ -796,33 +816,39 @@
         "faqs": [
           {
             "id": "faq-1",
-            "q": "What makes Heritage Xperiential Learning School unique?",
-            "a": "HXLS pioneers expeditionary, project-based learning with a human framework, replacing rote memorisation with real-world multidisciplinary projects, design thinking, and authentic student agency.",
-            "category": "General"
-          },
-          {
-            "id": "faq-2",
-            "q": "Which academic boards and curriculums are offered at HXLS?",
-            "a": "HXLS is affiliated with CBSE (Affiliation No: 530550) for classes Nursery through 12th, and also offers Cambridge Early Years and International Baccalaureate (IB) Diploma programmes in senior school.",
+            "q": "How is experiential project-based learning at Heritage Xperiential School different from conventional CBSE schools?",
+            "a": "Unlike conventional rote-memorisation CBSE schools, Heritage Xperiential Learning School (HXLS) integrates CBSE curricula with interdisciplinary project-based expeditions, design thinking studios, maker-centred learning, and fieldwork where students develop deep critical thinking and real-world problem-solving skills.",
             "category": "Academics"
           },
           {
+            "id": "faq-2",
+            "q": "What is the fee structure for Heritage Xperiential Learning School (Sector 62 Gurugram) for session 2026-27?",
+            "a": "For the Sector 62 CBSE campus, the one-time admission fee is ₹2,30,000 along with refundable caution deposit. Quarterly composite fees range from ₹1,13,900 to ₹1,33,000 across Classes Nursery to 12th, resulting in an estimated annual tuition fee of ₹4.55 Lakhs to ₹5.32 Lakhs, with optional meals and GPS-monitored bus transport.",
+            "category": "Fees"
+          },
+          {
             "id": "faq-3",
-            "q": "Does HXLS provide air-conditioned GPS-monitored bus transport?",
-            "a": "Yes, the school operates a comprehensive fleet of air-conditioned buses equipped with GPS tracking, CCTV surveillance, female attendants, and speed governors covering Gurugram and South Delhi.",
-            "category": "Facilities"
+            "q": "What is the admission procedure and age eligibility for Nursery & Early Years at Heritage School Gurugram?",
+            "a": "Nursery and Early Years admissions open annually through online registration on the official portal heritagexperiential.org as per Directorate of Education age criteria (minimum 3+ or 4+ years under NEP 2020). The process includes points-based criteria evaluation followed by interactive parent dialogues and campus walkthroughs.",
+            "category": "Admissions"
           },
           {
             "id": "faq-4",
-            "q": "What are the dining and meal facilities at the campus?",
-            "a": "The campus features a state-of-the-art kitchen preparing wholesome, nutritious breakfast and lunch supervised by expert nutritionists under stringent hygiene standards.",
-            "category": "Facilities"
+            "q": "Which academic boards and international programmes are offered at HXLS Sector 62?",
+            "a": "Heritage Xperiential Learning School is affiliated with CBSE (Affiliation No: 530550, School Code: 40537) for Classes Nursery to 12th. Senior students also have access to the International Baccalaureate (IB) Diploma Programme and Cambridge international pathways with rigorous college guidance.",
+            "category": "Academics"
           },
           {
             "id": "faq-5",
-            "q": "How can parents apply for admission to HXLS Sector 62?",
-            "a": "Parents can register online via heritagexperiential.org during the admission window. Registered parents are invited for campus tours, curriculum presentations, and interaction rounds.",
-            "category": "Admissions"
+            "q": "Does Heritage Xperiential School provide GPS-monitored AC bus transport across Gurugram and Delhi NCR?",
+            "a": "Yes, HXLS operates an extensive fleet of air-conditioned buses equipped with real-time GPS tracking, dual CCTV cameras, speed governors, and trained female attendants covering major sectors across Gurugram, Golf Course Extension, Dwarka Expressway, and South Delhi.",
+            "category": "Facilities"
+          },
+          {
+            "id": "faq-6",
+            "q": "What sports facilities, science laboratories, and infrastructure exist on the 11.3-acre Sector 62 campus?",
+            "a": "The 11.3-acre green campus offers 135+ interactive studios, Atal Tinkering STEM labs, robotics and science laboratories, full-size football grounds, indoor sports complex, swimming pool, basketball arenas, climbing walls, and dedicated visual and performing arts centres.",
+            "category": "Facilities"
           }
         ],
         "address": "Sector 62, Gurugram, Haryana - 122011",

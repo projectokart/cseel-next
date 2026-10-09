@@ -213,41 +213,45 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const fallbackSchoolName = cleanSlug.replace(/[-_]/g, ' ');
 
   const dbSchool = await fetchSchoolRecord(state, district, village, cleanSlug);
-
-  const displayName = dbSchool?.school_name || fallbackSchoolName;
-  const displayVillage = dbSchool?.village_name || village;
-  const displayDistrict = dbSchool?.district_name || district;
-  const displayState = dbSchool?.state_name || state;
   const udise = dbSchool?.udise_code || '';
-  const pincode = dbSchool?.pincode ? String(dbSchool.pincode).replace(/\.0$/, '') : '';
-  const board = (dbSchool?.board_12th || dbSchool?.board_10th || 'State Board / CBSE').replace(/^\d+-/, '');
-  const medium = (dbSchool?.primary_medium || 'English').replace(/^\d+-/, '');
+  const synced = getSyncedProfileData(udise, cleanSlug);
+
+  const displayName = synced?.schoolName || dbSchool?.school_name || fallbackSchoolName;
+  const displayVillage = synced?.village || dbSchool?.village_name || village;
+  const displayDistrict = synced?.district || dbSchool?.district_name || district;
+  const displayState = synced?.state || dbSchool?.state_name || state;
+  const pincode = (synced?.pincode || dbSchool?.pincode ? String(synced?.pincode || dbSchool.pincode).replace(/\.0$/, '') : '');
+  const board = (synced?.board || dbSchool?.board_12th || dbSchool?.board_10th || 'CBSE').replace(/^\d+-/, '');
 
   const canonicalUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
   
-  // Concise, High-CTR Google Search Title (Under 60 characters)
-  const metaTitle = `${displayName}, ${displayVillage} (${displayDistrict}) - Admissions & UDISE`;
+  // High-CTR, High Search-Intent Google Title (Fees, Admissions, Location & UDISE)
+  const metaTitle = `${displayName}, ${displayVillage} (${displayDistrict}) - Fees, Admissions, UDISE & Info | CSEEL`;
   
-  // Short, Area-Specific, Actionable Google Search Description (140-155 characters)
-  const metaDesc = `${displayName} in ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (${pincode})` : ''}. UDISE: ${udise || 'Verified'}. Check admissions, ${board} board, reviews & contact.`;
+  // Rich, Objective Google Snippet Description (No superlative claims)
+  const metaDesc = `${displayName} in ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (${pincode})` : ''}. UDISE: ${udise || 'Verified'}. Affiliated with ${board}. Check fee structure, admission guidelines, curriculum, facilities & verified contact details.`;
   
-  const metaImage = dbSchool?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg';
+  const metaImage = synced?.heroImage || synced?.logoImage || dbSchool?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg';
 
+  // Parents' High-Intent Google Search Query Keywords
   const keywordsList = [
     displayName,
+    `${displayName} fees`,
+    `${displayName} fee structure 2026-27`,
+    `${displayName} admission 2026-27`,
+    `${displayName} nursery admission`,
     `${displayName} ${displayVillage}`,
     `${displayName} ${displayDistrict}`,
-    `${displayName} ${displayState}`,
-    pincode ? `${displayName} ${pincode}` : '',
-    pincode ? `schools in ${pincode}` : '',
-    udise ? `UDISE ${udise}` : '',
-    `${displayName} admission 2025`,
+    `${displayName} ${displayVillage} ${displayDistrict}`,
     `${displayName} contact number`,
-    `${displayName} ${board} board`,
+    `${displayName} cbse affiliation`,
+    `${displayName} curriculum`,
     `${displayName} reviews`,
-    `best schools in ${displayVillage}`,
-    `top schools in ${displayDistrict}`,
-    `schools in ${displayVillage} ${displayDistrict}`,
+    `schools in ${displayVillage}`,
+    `schools in ${displayDistrict}`,
+    `experiential learning schools in ${displayDistrict}`,
+    udise ? `UDISE ${udise}` : '',
+    pincode ? `schools in ${pincode}` : '',
     `CSEEL School Directory`
   ].filter(Boolean);
 
@@ -272,7 +276,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: metaTitle,
       description: metaDesc,
-      type: 'profile',
+      type: 'website',
       url: canonicalUrl,
       siteName: 'CSEEL School Directory',
       locale: 'en_IN',
@@ -422,6 +426,73 @@ export default async function SchoolPage({ params }: PageProps) {
     : `${displayVillage}, ${displayBlock ? `${displayBlock}, ` : ''}${displayDistrict}, ${displayState}${pincode ? ` - ${pincode}` : ''}`;
 
   const pageUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
+
+  // Dynamic social profiles for Google Knowledge Graph
+  const socialSameAs: string[] = [];
+  if (syncedProfileData?.socialLinks) {
+    const s = syncedProfileData.socialLinks;
+    if (s.facebook) socialSameAs.push(s.facebook);
+    if (s.instagram) socialSameAs.push(s.instagram);
+    if (s.linkedin) socialSameAs.push(s.linkedin);
+    if (s.youtube) socialSameAs.push(s.youtube);
+    if (s.twitter) socialSameAs.push(s.twitter);
+  }
+
+  // Dynamic FAQs for Google Search FAQPage Rich Snippet
+  const dynamicFaqList: Array<{ '@type': string; name: string; acceptedAnswer: { '@type': string; text: string } }> = [];
+  if (Array.isArray(syncedProfileData?.faqs) && syncedProfileData.faqs.length > 0) {
+    syncedProfileData.faqs.forEach((f: any) => {
+      const q = f.q || f.question;
+      const a = f.a || f.answer;
+      if (q && a) {
+        dynamicFaqList.push({
+          '@type': 'Question',
+          name: q,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: a,
+          },
+        });
+      }
+    });
+  }
+
+  if (dynamicFaqList.length === 0) {
+    dynamicFaqList.push(
+      {
+        '@type': 'Question',
+        name: `What is the address and UDISE code of ${displaySchoolName} in ${displayVillage}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `${displaySchoolName} is located at ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (PIN: ${pincode})` : ''}. Its official UDISE Code is ${udiseCode || 'Verified'}.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `Which board curriculum and medium is followed at ${displaySchoolName}, ${displayDistrict}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `${displaySchoolName} is affiliated with ${board} and offers instruction in ${medium} medium from Class ${classFrom} to Class ${classTo}.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `What is the fee structure and admission procedure for ${displaySchoolName}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Parents can check the verified fee schedules, admission eligibility criteria, and required documents directly on this official profile.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `How can parents contact ${displaySchoolName} in ${displayVillage}, ${displayDistrict}?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `Parents can view verified phone numbers, official email, Google Maps directions, and visiting hours on this profile.`,
+        },
+      }
+    );
+  }
   
   // Area-Specific Multi-Entity Schema.org Graph for Google Rich Snippets
   const jsonLd = {
@@ -439,7 +510,11 @@ export default async function SchoolPage({ params }: PageProps) {
         ],
         description: `Official institutional profile for ${displaySchoolName} located in ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (${pincode})` : ''}. Operating under UDISE Code ${udiseCode || 'Verified'}, offering ${board} curriculum in ${medium} medium from Class ${classFrom} to ${classTo}.`,
         identifier: udiseCode || undefined,
-        image: schoolData?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg',
+        image: syncedProfileData?.heroImage || schoolData?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg',
+        logo: syncedProfileData?.logoImage || undefined,
+        telephone: syncedProfileData?.generalPhone || syncedProfileData?.phone || rawPhone || undefined,
+        email: syncedProfileData?.generalEmail || syncedProfileData?.email || rawEmail || undefined,
+        sameAs: socialSameAs.length > 0 ? socialSameAs : undefined,
         url: website || pageUrl,
         foundingDate: establishedYear || undefined,
         numberOfEmployees: totalTeachers > 0 ? {
@@ -529,40 +604,7 @@ export default async function SchoolPage({ params }: PageProps) {
       {
         '@type': 'FAQPage',
         '@id': `${pageUrl}#faq`,
-        mainEntity: [
-          {
-            '@type': 'Question',
-            name: `What is the address and UDISE code of ${displaySchoolName} in ${displayVillage}?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `${displaySchoolName} is located at ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (PIN: ${pincode})` : ''}. Its official UDISE Code is ${udiseCode || 'Available on CSEEL Directory'}.`,
-            },
-          },
-          {
-            '@type': 'Question',
-            name: `Which board curriculum and medium is followed at ${displaySchoolName}, ${displayDistrict}?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `${displaySchoolName} is affiliated with ${board} and offers instruction in ${medium} medium from Class ${classFrom} to Class ${classTo}.`,
-            },
-          },
-          {
-            '@type': 'Question',
-            name: `What is the student strength and faculty count at ${displaySchoolName}?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `${displaySchoolName} has approximately ${totalStudents > 0 ? `${totalStudents} enrolled students` : 'active students'} and ${totalTeachers > 0 ? `${totalTeachers} qualified faculty members` : 'qualified teaching staff'}.`,
-            },
-          },
-          {
-            '@type': 'Question',
-            name: `How can parents contact ${displaySchoolName} in ${displayVillage}, ${displayDistrict}?`,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: `Parents can view verified contact details, Google Maps directions to ${displayVillage}, and admissions information directly on this official CSEEL Directory profile.`,
-            },
-          },
-        ],
+        mainEntity: dynamicFaqList,
       },
       {
         '@type': 'WebPage',

@@ -3233,7 +3233,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
       {/* ========================================================= */}
 
-      {isLiveTemplate && (
+      {Boolean(isTemplate && templateCtx) && (
 
         <TemplateControlBar
 

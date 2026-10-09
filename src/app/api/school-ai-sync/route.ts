@@ -16,12 +16,15 @@ const UDISE_HEADERS = {
   'Accept': 'application/json, text/plain, */*',
 };
 
+export const ADMIN_MASTER_MAGIC_TOKEN = 'csl_admin_master_magic_key';
+
 interface SyncTokenRecord {
   token: string;
   schoolId: string;
   schoolName: string;
   createdAt: number;
   expiresAt: number;
+  isPermanent?: boolean;
   lastUpdatedAt?: number;
   lastUpdatedSource?: string;
   profileData?: any;
@@ -32,16 +35,36 @@ interface SyncStore {
 }
 
 function readSyncStore(): SyncStore {
+  let store: SyncStore = { tokens: {} };
   try {
-    if (!fs.existsSync(DATA_FILE_PATH)) {
-      return { tokens: {} };
+    if (fs.existsSync(DATA_FILE_PATH)) {
+      const raw = fs.readFileSync(DATA_FILE_PATH, 'utf-8');
+      store = JSON.parse(raw);
     }
-    const raw = fs.readFileSync(DATA_FILE_PATH, 'utf-8');
-    return JSON.parse(raw);
   } catch (err) {
     console.warn('Error reading school_ai_sync_tokens.json:', err);
-    return { tokens: {} };
   }
+
+  if (!store.tokens) store.tokens = {};
+
+  // Ensure Common Master Admin Magic Link is ALWAYS valid and permanent
+  if (!store.tokens[ADMIN_MASTER_MAGIC_TOKEN]) {
+    store.tokens[ADMIN_MASTER_MAGIC_TOKEN] = {
+      token: ADMIN_MASTER_MAGIC_TOKEN,
+      schoolId: 'all_schools',
+      schoolName: 'CSEEL Admin Master Universal Portal',
+      createdAt: 1791522000000,
+      expiresAt: 0,
+      isPermanent: true,
+      lastUpdatedAt: Date.now(),
+      lastUpdatedSource: 'System Master Key',
+    };
+  } else {
+    store.tokens[ADMIN_MASTER_MAGIC_TOKEN].isPermanent = true;
+    store.tokens[ADMIN_MASTER_MAGIC_TOKEN].expiresAt = 0;
+  }
+
+  return store;
 }
 
 function writeSyncStore(store: SyncStore) {
@@ -325,11 +348,12 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Check 7-day expiration
+  // Check expiration (Admin Master Key or isPermanent never expires)
+  const isPermanent = Boolean(record.isPermanent || record.expiresAt === 0 || token === ADMIN_MASTER_MAGIC_TOKEN);
   const now = Date.now();
-  const isExpired = now > record.expiresAt;
-  const remainingMs = record.expiresAt - now;
-  const remainingDays = Math.max(0, Math.ceil(remainingMs / (24 * 60 * 60 * 1000)));
+  const isExpired = !isPermanent && now > record.expiresAt;
+  const remainingMs = isPermanent ? Infinity : record.expiresAt - now;
+  const remainingDays = isPermanent ? 'Permanent (Never Expires)' : `${Math.max(0, Math.ceil(remainingMs / (24 * 60 * 60 * 1000)))} days left`;
 
   if (isExpired) {
     return NextResponse.json(
@@ -357,7 +381,7 @@ export async function GET(req: NextRequest) {
   if (!wantsRawJson) {
     const origin = req.nextUrl.origin;
     const fullSyncUrl = `${origin}/api/school-ai-sync?token=${token}`;
-    const expiresFormatted = new Date(record.expiresAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    const expiresFormatted = isPermanent ? 'Permanent / Never Expires' : new Date(record.expiresAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
     const prettyBlueprint = JSON.stringify(BLANK_AI_SCHOOL_SCHEMA, null, 2);
 
     const html = `<!DOCTYPE html>
@@ -378,8 +402,8 @@ export async function GET(req: NextRequest) {
           <p class="text-xs text-slate-400">Target School: <strong class="text-indigo-400">${record.schoolName}</strong></p>
         </div>
       </div>
-      <span class="px-3 py-1 rounded-full text-xs font-bold ${isExpired ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
-        ${isExpired ? 'Expired' : `● Active (${remainingDays} days left)`}
+      <span class="px-3 py-1 rounded-full text-xs font-bold ${isPermanent ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : (isExpired ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30')}">
+        ${isPermanent ? '● Master Admin Link (Always Valid)' : (isExpired ? 'Expired' : `● Active (${remainingDays})`)}
       </span>
     </div>
 
@@ -419,7 +443,7 @@ export async function GET(req: NextRequest) {
     </div>
 
     <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-      <span>Auto-expires weekly for security</span>
+      <span>${isPermanent ? '⚡ Master Admin Key: Valid indefinitely for all schools' : 'Auto-expires weekly for security'}</span>
       <a href="/schools" class="text-indigo-400 hover:underline font-bold">Open Schools Directory →</a>
     </div>
   </div>
@@ -490,9 +514,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Check 7-day expiration
+  // Check expiration (Admin Master Key or isPermanent never expires)
+  const isPermanent = Boolean(record.isPermanent || record.expiresAt === 0 || token === ADMIN_MASTER_MAGIC_TOKEN);
   const now = Date.now();
-  if (now > record.expiresAt) {
+  if (!isPermanent && now > record.expiresAt) {
     return NextResponse.json(
       {
         error: 'This AI Sync link has expired (7-day validity limit). Please generate a fresh link from the School Dashboard.',

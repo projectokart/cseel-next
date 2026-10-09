@@ -422,6 +422,20 @@
         "state": "KARNATAKA",
         "pincode": "585202"
       }
+    },
+    "csl_admin_master_magic_key": {
+      "token": "csl_admin_master_magic_key",
+      "schoolId": "all_schools",
+      "schoolName": "CSEEL Admin Master Universal Portal",
+      "createdAt": 1791522000000,
+      "expiresAt": 0,
+      "isPermanent": true,
+      "lastUpdatedAt": 1791539689725,
+      "lastUpdatedSource": "System Master Key",
+      "profileData": {
+        "role": "Super Admin Universal Key",
+        "description": "Permanent master webhook key valid indefinitely across all schools and institutions."
+      }
     }
   }
 }

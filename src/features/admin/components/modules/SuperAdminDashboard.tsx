@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShieldAlert, Users, Building2, Briefcase, GraduationCap,
   Sparkles, Beaker, Wrench, Package, Calendar, FileText,
   Activity, ArrowUpRight, CheckCircle2, RefreshCw, Layers,
-  Lock, Globe, Database, ExternalLink
+  Lock, Globe, Database, ExternalLink, Copy, Check
 } from 'lucide-react';
 import { useAdminAuth } from '../../contexts/AdminAuthContext';
 import { ADMIN_ROLE_CONFIGS } from '../../data';
@@ -13,6 +13,7 @@ import { AdminRole } from '../../types';
 
 export const SuperAdminDashboard: React.FC = () => {
   const { currentRole, switchRole, setActiveModule, auditLogs, adminUsers } = useAdminAuth();
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const STAT_CARDS = [
     { label: 'Google Indexable Pages', val: '332', desc: '100% Live in Sitemap.xml', icon: Globe, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
@@ -177,6 +178,63 @@ export const SuperAdminDashboard: React.FC = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* ── MASTER MAGIC LINK (AI LIVE SYNC COMMON WEBHOOK) ── */}
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-purple-950 text-white rounded-3xl p-5 border border-indigo-700/50 shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="space-y-1 max-w-xl">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 font-bold text-sm">⚡</span>
+            <h3 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
+              <span>Admin Common Master Magic Link</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Permanent • Never Expires
+              </span>
+            </h3>
+          </div>
+          <p className="text-xs text-indigo-200/80 leading-relaxed">
+            Universal webhook link for AI agents (ChatGPT, Gemini, Python scripts). Valid indefinitely for creating, updating & syncing all schools.
+          </p>
+          <div className="pt-1">
+            <code className="text-[11px] font-mono text-amber-300 bg-black/40 px-2.5 py-1 rounded-lg border border-indigo-900 select-all block sm:inline-block break-all">
+              https://cseel.org/api/school-ai-sync?token=csl_admin_master_magic_key
+            </code>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText('https://cseel.org/api/school-ai-sync?token=csl_admin_master_magic_key');
+              setCopiedLink(true);
+              setTimeout(() => setCopiedLink(false), 2500);
+            }}
+            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition"
+          >
+            {copiedLink ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-300" />
+                <span className="text-emerald-300">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5" />
+                <span>Copy Magic Link</span>
+              </>
+            )}
+          </button>
+
+          <a
+            href="/api/school-ai-sync?token=csl_admin_master_magic_key"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 sm:flex-none px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center justify-center gap-1.5 border border-white/20 transition"
+          >
+            <span>Open AI Portal</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </div>
 
       {/* ── DEPARTMENTAL MODULES FAST-SWITCH GRID ── */}

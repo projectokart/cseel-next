@@ -5,7 +5,7 @@ import {
   X, User, Lock, Palette, Camera, Check,
   Shield, Eye, EyeOff, Sparkles, Moon, Sun,
   Smartphone, Mail, Save, KeyRound, Image as ImageIcon,
-  Construction
+  Construction, Copy, ExternalLink, CheckCircle2
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { AdminRole } from '../types';
@@ -35,7 +35,9 @@ const THEME_OPTIONS = [
 export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({ isOpen, onClose }) => {
   const { currentAdmin, currentRole, addAuditLog } = useAdminAuth();
   
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'theme' | 'maintenance'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'theme' | 'maintenance' | 'magic-link'>('profile');
+  const [copiedProd, setCopiedProd] = useState(false);
+  const [copiedLocal, setCopiedLocal] = useState(false);
   
   // Profile State
   const [name, setName] = useState(currentAdmin?.name || 'Administrator');
@@ -191,6 +193,19 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({ isOpen, 
           >
             <Construction className="w-4 h-4 text-amber-500" />
             <span>Under Construction Mode</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('magic-link')}
+            className={`pb-3 px-2 flex items-center gap-2 border-b-2 transition-all ${
+              activeTab === 'magic-link'
+                ? 'border-purple-600 text-purple-600 dark:text-purple-400 font-black'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-indigo-500" />
+            <span>⚡ Master Magic Link</span>
           </button>
         </div>
 
@@ -447,6 +462,121 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({ isOpen, 
           {activeTab === 'maintenance' && (
             <div className="space-y-4">
               <MaintenanceControlPanel />
+            </div>
+          )}
+
+          {/* TAB 5: MASTER MAGIC LINK (AI LIVE SYNC WEBHOOK) */}
+          {activeTab === 'magic-link' && (
+            <div className="space-y-5">
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 border border-indigo-700/40 text-white shadow-xl space-y-4">
+                <div className="flex items-start justify-between gap-3 border-b border-indigo-800/40 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 font-bold text-lg">
+                      ⚡
+                    </div>
+                    <div>
+                      <h4 className="font-black text-sm text-white flex items-center gap-2">
+                        <span>Admin Master Magic Link (AI Live Sync)</span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                          Permanent • Never Expires
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-slate-300">
+                        Common universal webhook key for ChatGPT, Gemini, Python & Admin Automation.
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href="/api/school-ai-sync?token=csl_admin_master_magic_key"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-md transition shrink-0"
+                  >
+                    <span>Open AI Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+
+                {/* Production Webhook URL Box */}
+                <div className="p-3.5 rounded-xl bg-slate-950/80 border border-indigo-900/60 space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-indigo-300 uppercase tracking-wider text-[10px]">
+                      Production Master Magic URL (https://cseel.org):
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText('https://cseel.org/api/school-ai-sync?token=csl_admin_master_magic_key');
+                        setCopiedProd(true);
+                        setTimeout(() => setCopiedProd(false), 2500);
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-400 hover:text-white px-2 py-0.5 rounded-lg bg-indigo-900/40 hover:bg-indigo-800 transition"
+                    >
+                      {copiedProd ? (
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy URL</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <code className="block font-mono text-[11px] text-amber-300 bg-black/40 p-2 rounded-lg break-all select-all border border-indigo-950">
+                    https://cseel.org/api/school-ai-sync?token=csl_admin_master_magic_key
+                  </code>
+                </div>
+
+                {/* Localhost Webhook URL Box */}
+                <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">
+                      Local Development URL (localhost:3000):
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText('http://localhost:3000/api/school-ai-sync?token=csl_admin_master_magic_key');
+                        setCopiedLocal(true);
+                        setTimeout(() => setCopiedLocal(false), 2500);
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-400 hover:text-white px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 transition"
+                    >
+                      {copiedLocal ? (
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy URL</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <code className="block font-mono text-[11px] text-emerald-300 bg-black/40 p-2 rounded-lg break-all select-all border border-slate-900">
+                    http://localhost:3000/api/school-ai-sync?token=csl_admin_master_magic_key
+                  </code>
+                </div>
+
+                {/* Highlights / Features */}
+                <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-800/40 space-y-1.5 text-[11px] text-slate-300">
+                  <p className="font-bold text-indigo-300 text-xs flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>How Admin Uses This Permanent Magic Link:</span>
+                  </p>
+                  <ul className="list-disc pl-4 space-y-1 text-slate-300">
+                    <li><strong className="text-white">Always Valid:</strong> Yeh link expire nahi hoga (Permanent 24x7 Active).</li>
+                    <li><strong className="text-white">Universal:</strong> Is ek common link se kisi bhi school ka data add, update ya live sync kiya ja sakta hai.</li>
+                    <li><strong className="text-white">AI Agent Ready:</strong> ChatGPT ya Gemini ko yeh link dekar kisi bhi school ki complete details (6 tabs) directly database me push karwa sakte hain.</li>
+                    <li><strong className="text-white">Govt UDISE Verification:</strong> 11-digit UDISE code ke sath official government database se auto-verify hokar Supabase me save ho jata hai.</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
 

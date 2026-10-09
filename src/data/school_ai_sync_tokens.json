@@ -468,6 +468,213 @@
         "role": "Super Admin Universal Key",
         "description": "Permanent master webhook key valid indefinitely across all schools and institutions."
       }
+    },
+    "csl_ai_magic_hxls_gurugram": {
+      "token": "csl_ai_magic_hxls_gurugram",
+      "schoolId": "06180101926",
+      "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+      "createdAt": 1791543267695,
+      "expiresAt": 1794135267695,
+      "lastUpdatedAt": 1791543267695,
+      "lastUpdatedSource": "Official AI Web Sync",
+      "profileData": {
+        "udiseCode": "06180101926",
+        "affiliationNumber": "530550",
+        "schoolName": "HERITAGE XPERIENTIAL LEARNING SCHOOL",
+        "board": "CBSE (Affiliation No: 530550)",
+        "medium": "English Medium",
+        "establishedYear": "2003",
+        "campusArea": "11.3 Acres",
+        "schoolType": "Private Unaided (Recognized)",
+        "management": "Heritage Educational Society",
+        "schoolCategory": "Senior Secondary (Class Nursery to 12th)",
+        "genderType": "Co-Educational",
+        "principalName": "Dr. Mona Khanna",
+        "phone": "01242855124",
+        "email": "info@ggn.hxls.org",
+        "website": "https://www.heritagexperiential.org/",
+        "address": "Sector 62, Gurugram, Haryana - 122011",
+        "district": "GURUGRAM",
+        "state": "HARYANA",
+        "pincode": "122011",
+        "totalStudents": 3750,
+        "totalTeachers": 250,
+        "classroomsCount": 135,
+        "workingSmartBoards": 120,
+        "isResidential": false,
+        "hasHostel": false,
+        "classFrom": "Nursery",
+        "classTo": "Class 12th",
+        "logoImage": "https://heritagexperiential.org/wp-content/uploads/2026/03/logo-e1773328547243.png",
+        "heroImage": "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1200&auto=format&fit=crop&q=80",
+        "aboutText": "Heritage Xperiential Learning School (HXLS) Gurugram is consistently ranked among India's premier co-educational day schools, pioneering authentic experiential learning, project expeditions, and global academic excellence across an 11.3-acre green campus in Sector 62.",
+        "visionText": "To prepare thoughtful, compassionate, and forward-looking leaders equipped with experiential critical thinking and ethical citizenship.",
+        "missionText": "Cultivating authentic experiential curriculum, design thinking studios, and holistic sports culture where every learner thrives.",
+        "contentOverrides": {
+          "hero_stat_val_1": "CBSE",
+          "hero_stat_lbl_1": "Affiliation: 530550",
+          "hero_stat_val_2": "1:15",
+          "hero_stat_lbl_2": "Student-Teacher Ratio",
+          "hero_stat_val_3": "135",
+          "hero_stat_lbl_3": "Classrooms & Studios",
+          "hero_stat_val_4": "Nursery-12th",
+          "hero_stat_lbl_4": "Senior Secondary",
+          "hero_stat_val_5": "Rank #1",
+          "hero_stat_lbl_5": "Experiential School in India",
+          "principal_message": "At Heritage Xperiential Learning School, education is a journey of self-discovery, real-world connection, and purposeful innovation."
+        },
+        "socialLinks": {
+          "facebook": "https://www.facebook.com/heritageschoolggn/",
+          "instagram": "https://www.instagram.com/heritagexperiential/?hl=en",
+          "youtube": "https://www.youtube.com/channel/UC9DwRSuh1LYNg8b1McUQAUw",
+          "linkedin": "https://www.linkedin.com/company/heritage-xperiential-learning-school"
+        },
+        "includedAcademicFeatures": [
+          "CBSE Curriculum integrated with Expeditionary Experiential Pedagogy",
+          "International Baccalaureate (IB) Diploma & Cambridge Pathways",
+          "Design Thinking & Atal Tinkering Innovation Studios",
+          "Individual Mentoring with Low Student-Teacher Ratio (1:15)",
+          "Olympic Standard Turf, Indoor Sports Arena & Performing Arts"
+        ],
+        "flipbookSlides": [
+          {
+            "id": "slide-1",
+            "title": "11.3-Acre Green Experiential Quad",
+            "desc": "Sustainable, green campus with world-class interactive digital architecture in Sector 62.",
+            "mediaType": "image",
+            "image": "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=1200&auto=format&fit=crop&q=80",
+            "videoUrl": "",
+            "buttonText": "Explore Campus",
+            "actionTab": "home"
+          },
+          {
+            "id": "slide-2",
+            "title": "Design Thinking & STEM Studios",
+            "desc": "Real-world problem solving, robotics, and applied science expeditions.",
+            "mediaType": "image",
+            "image": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&auto=format&fit=crop&q=80",
+            "videoUrl": "",
+            "buttonText": "View Facilities",
+            "actionTab": "facilities"
+          },
+          {
+            "id": "slide-3",
+            "title": "Olympic Sports & Athletics Arena",
+            "desc": "State-of-the-art basketball courts, swimming complex, football turf, and gymnastics.",
+            "mediaType": "image",
+            "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=1200&auto=format&fit=crop&q=80",
+            "videoUrl": "",
+            "buttonText": "Admissions Open",
+            "actionTab": "admissions"
+          }
+        ],
+        "facilities": [
+          {
+            "id": "fac-0",
+            "title": "Smart Classes",
+            "desc": "",
+            "badge": "Academic",
+            "icon": "https://img.icons8.com/?size=128&id=13203&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-1",
+            "title": "Library",
+            "desc": "",
+            "badge": "Academic",
+            "icon": "https://img.icons8.com/?size=128&id=12300&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-2",
+            "title": "Physics Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=71261&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-3",
+            "title": "Chemistry Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=13884&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-4",
+            "title": "Biology Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=13917&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-5",
+            "title": "Robotics Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=JB5lRIhzKC0y&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-6",
+            "title": "Computer Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=20420&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-7",
+            "title": "Playground / Outdoor Sports",
+            "desc": "",
+            "badge": "Sports & Fitness",
+            "icon": "https://img.icons8.com/?size=128&id=12012&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-8",
+            "title": "CCTV Surveillance",
+            "desc": "",
+            "badge": "Safety & Security",
+            "icon": "https://img.icons8.com/?size=128&id=15881&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-9",
+            "title": "Medical Room / Clinic",
+            "desc": "",
+            "badge": "Safety & Security",
+            "icon": "https://img.icons8.com/?size=12461&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-10",
+            "title": "Art & Craft Studio",
+            "desc": "",
+            "badge": "Extracurricular",
+            "icon": "https://img.icons8.com/?size=128&id=24151&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-11",
+            "title": "Music Room",
+            "desc": "",
+            "badge": "Extracurricular",
+            "icon": "https://img.icons8.com/?size=3220&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-12",
+            "title": "Wi-Fi Campus",
+            "desc": "",
+            "badge": "Infrastructure & Boarding",
+            "icon": "https://img.icons8.com/?size=13348&format=png",
+            "points": []
+          }
+        ]
+      }
     }
   }
 }

@@ -202,8 +202,63 @@ export interface OrgReviewItem {
   verifiedReviewer: boolean;
 }
 
+const DEFAULT_FALLBACK_ORGS: OrganizationItem[] = [
+  {
+    id: "06180101926",
+    slug: "heritage-xperiential-learning-school-gurugram",
+    name: "Heritage Xperiential Learning School",
+    type: "School",
+    affiliation: "CBSE",
+    city: "Gurugram",
+    state: "Haryana",
+    pincode: "122001",
+    address: "Sector 62, Gurugram, Haryana",
+    email: "contact@heritage.cseel.org",
+    phone: "+91 98765 43210",
+    website: "https://www.heritagexperiential.org",
+    verified: true,
+    rating: 4.9,
+    reviews: 120,
+    stemLabsCount: 8,
+    studentStrength: 2500,
+    logo: "https://images.unsplash.com/photo-1580582932707?w=200&auto=format&fit=crop",
+    bannerImage: "https://images.unsplash.com/photo-1509062522246?w=800&auto=format&fit=crop",
+    description: "Heritage Xperiential Learning School is a premier institution focused on experiential STEM learning and NEP 2020 pedagogical integration.",
+    openJobsCount: 4,
+    established: 2003,
+    facilities: ["Atal STEM Lab", "Robotics Lab", "Smart Classrooms", "Science Discovery Lab"]
+  },
+  {
+    id: "07010100101",
+    slug: "delhi-public-school-rk-puram-delhi",
+    name: "Delhi Public School, R.K. Puram",
+    type: "School",
+    affiliation: "CBSE",
+    city: "Delhi",
+    state: "Delhi",
+    pincode: "110022",
+    address: "Sector XII, R.K. Puram, New Delhi",
+    email: "principal@dpsrkp.net",
+    phone: "+91 11 4911 5555",
+    website: "https://dpsrkp.net",
+    verified: true,
+    rating: 4.8,
+    reviews: 210,
+    stemLabsCount: 12,
+    studentStrength: 3500,
+    logo: "https://images.unsplash.com/photo-1580582932707?w=200&auto=format&fit=crop",
+    bannerImage: "https://images.unsplash.com/photo-1509062522246?w=800&auto=format&fit=crop",
+    description: "Delhi Public School R.K. Puram is one of India's most prestigious day-cum-boarding schools offering advanced science laboratories and experiential learning.",
+    openJobsCount: 5,
+    established: 1972,
+    facilities: ["Atal Tinkering Lab", "Physics Research Lab", "Chemistry Discovery Lab", "AI & Robotics Lab"]
+  }
+];
+
 // ─── 11,947 REAL SCHOOLS ACROSS ALL INDIAN CITIES & STATES ─────────────────
-export const ALL_ORGANIZATIONS: OrganizationItem[] = (rawSchoolsData as unknown as OrganizationItem[]);
+export const ALL_ORGANIZATIONS: OrganizationItem[] = (Array.isArray(rawSchoolsData) && rawSchoolsData.length > 0)
+  ? (rawSchoolsData as unknown as OrganizationItem[])
+  : DEFAULT_FALLBACK_ORGS;
 
 export const ALL_CITIES = [
   { city: "Bhubaneswar", state: "Odisha", pin: "751024" },
@@ -250,6 +305,8 @@ for (let i = 1; i <= 50; i++) {
   const isSeeking = i % 2 === 1 || i % 3 === 0; // ~34 out of 50 are active
   const remainingHours = isSeeking ? Math.max(4, 72 - ((i * 5) % 68)) : 0;
 
+  const currentOrg = ALL_ORGANIZATIONS[i % (ALL_ORGANIZATIONS.length || 1)] || DEFAULT_FALLBACK_ORGS[0];
+
   ALL_TEACHERS.push({
     id: `teacher-${i}`,
     name,
@@ -258,7 +315,8 @@ for (let i = 1; i <= 50; i++) {
     subject: subj,
     qualification: i % 3 === 0 ? "Ph.D. in " + subj + ", B.Ed, CSIR-NET" : "M.Sc. " + subj + ", B.Ed (Gold Medalist)",
     experienceYears: 4 + (i % 18),
-    currentInstitute: ALL_ORGANIZATIONS[i % ALL_ORGANIZATIONS.length].name,
+    currentInstitute: currentOrg.name,
+
     city: c.city,
     state: c.state,
     pincode: pinNum.toString(),
@@ -301,7 +359,7 @@ export const ALL_STUDENTS: StudentItem[] = [];
 for (let i = 1; i <= 50; i++) {
   const name = `${STUDENT_NAMES[(i - 1) % STUDENT_NAMES.length]} ${i > 15 ? i : ""}`;
   const c = ALL_CITIES[(i * 5) % ALL_CITIES.length];
-  const org = ALL_ORGANIZATIONS[(i * 2) % ALL_ORGANIZATIONS.length];
+  const org = ALL_ORGANIZATIONS[(i * 2) % (ALL_ORGANIZATIONS.length || 1)] || DEFAULT_FALLBACK_ORGS[0];
   const proj = STUDENT_PROJECTS[(i - 1) % STUDENT_PROJECTS.length];
   const pinNum = parseInt(c.pin) + (i % 10);
   const studentSlug = `${slugify(name)}-${slugify(c.city)}`;
@@ -562,7 +620,7 @@ export function getStudentSlug(student: StudentItem): string {
 }
 
 for (let i = 1; i <= 40; i++) {
-  const org = ALL_ORGANIZATIONS[(i * 2) % ALL_ORGANIZATIONS.length];
+  const org = ALL_ORGANIZATIONS[(i * 2) % (ALL_ORGANIZATIONS.length || 1)] || DEFAULT_FALLBACK_ORGS[0];
   const t = JOB_TEMPLATES[(i - 1) % JOB_TEMPLATES.length];
   const generatedSlug = `${slugify(t.title)}-${slugify(org.name)}-${slugify(org.city)}-${org.pincode}`;
 

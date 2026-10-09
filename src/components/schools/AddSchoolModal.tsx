@@ -23,13 +23,15 @@ import {
   Shield,
   LogIn
 } from 'lucide-react';
-import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AddSchoolModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialSchoolName?: string;
   initialUdise?: string;
+  currentUser?: any;
 }
 
 export default function AddSchoolModal({
@@ -37,10 +39,15 @@ export default function AddSchoolModal({
   onClose,
   initialSchoolName = '',
   initialUdise = '',
+  currentUser: currentUserProp,
 }: AddSchoolModalProps) {
-  // Authentication State
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  // Authentication State from AuthContext and Supabase Client
+  const { user: authContextUser, loading: authContextLoading } = useAuth();
+  const [sessionUser, setSessionUser] = useState<any>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
+
+  const currentUser = currentUserProp || authContextUser || sessionUser;
+  const isAuthLoading = authContextLoading && isSessionLoading && !currentUser;
 
   // UDISE Verification State
   const [udiseCode, setUdiseCode] = useState(initialUdise);
@@ -70,39 +77,45 @@ export default function AddSchoolModal({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmittedSuccess, setIsSubmittedSuccess] = useState(false);
 
-  // Check login state on modal open
+  // Verify and sync user session from primary Supabase auth
   useEffect(() => {
     if (!isOpen) return;
 
     let isMounted = true;
-    setIsAuthLoading(true);
     setErrorMsg(null);
     setIsSubmittedSuccess(false);
 
-    schoolSearchSupabase.auth
-      .getUser()
-      .then(({ data: { user }, error }) => {
-        if (!isMounted) return;
-        setIsAuthLoading(false);
-        if (user && !error) {
-          setCurrentUser(user);
-          if (user.email) setClaimantEmail(user.email);
-          const metaName = user.user_metadata?.full_name || user.user_metadata?.name || '';
-          if (metaName) setClaimantName(metaName);
-          const metaPhone = user.user_metadata?.phone || user.phone || '';
-          if (metaPhone) setWhatsappNumber(metaPhone);
-        } else {
-          setCurrentUser(null);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsAuthLoading(false);
-      });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted) return;
+      setIsSessionLoading(false);
+      const active = session?.user || currentUserProp || authContextUser;
+      if (active) {
+        setSessionUser(active);
+        if (active.email) setClaimantEmail((prev) => prev || active.email || '');
+        const metaName = active.user_metadata?.full_name || active.user_metadata?.name || '';
+        if (metaName) setClaimantName((prev) => prev || metaName);
+        const metaPhone = active.user_metadata?.phone || active.phone || '';
+        if (metaPhone) setWhatsappNumber((prev) => prev || metaPhone);
+      }
+    }).catch(() => {
+      if (isMounted) setIsSessionLoading(false);
+    });
 
     return () => {
       isMounted = false;
     };
-  }, [isOpen]);
+  }, [isOpen, currentUserProp, authContextUser]);
+
+  // If user becomes available via authContext, fill details
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.email && !claimantEmail) setClaimantEmail(currentUser.email);
+      const metaName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
+      if (metaName && !claimantName) setClaimantName(metaName);
+      const metaPhone = currentUser.user_metadata?.phone || currentUser.phone || '';
+      if (metaPhone && !whatsappNumber) setWhatsappNumber(metaPhone);
+    }
+  }, [currentUser]);
 
   // Auto-verify if initialUdise provided
   useEffect(() => {

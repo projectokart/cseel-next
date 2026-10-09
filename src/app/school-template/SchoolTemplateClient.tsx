@@ -3,29 +3,34 @@
 import React, { useState, useEffect } from 'react';
 import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
 import SchoolProfileView from '@/app/school/[state]/[district]/[village]/[schoolSlug]/SchoolProfileView';
-import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Lock, LogIn, ShieldCheck, Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SchoolTemplateClient() {
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const { user: authContextUser, loading: authContextLoading } = useAuth();
+  const [sessionUser, setSessionUser] = useState<any>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
+
+  const currentUser = authContextUser || sessionUser;
+  const isAuthLoading = authContextLoading && isSessionLoading && !currentUser;
 
   useEffect(() => {
     let isMounted = true;
-    schoolSearchSupabase.auth
-      .getUser()
-      .then(({ data: { user }, error }) => {
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
         if (!isMounted) return;
-        setIsAuthLoading(false);
-        if (user && !error) {
-          setCurrentUser(user);
+        setIsSessionLoading(false);
+        if (session?.user && !error) {
+          setSessionUser(session.user);
         } else {
-          setCurrentUser(null);
+          setSessionUser(null);
         }
       })
       .catch(() => {
-        if (isMounted) setIsAuthLoading(false);
+        if (isMounted) setIsSessionLoading(false);
       });
 
     return () => {

@@ -17,13 +17,15 @@ import {
   Copy,
   Check
 } from 'lucide-react';
-import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ClaimSchoolModalProps {
   isOpen: boolean;
   onClose: () => void;
   schoolName: string;
   udiseCode: string;
+  currentUser?: any;
 }
 
 export default function ClaimSchoolModal({
@@ -31,9 +33,14 @@ export default function ClaimSchoolModal({
   onClose,
   schoolName,
   udiseCode,
+  currentUser: currentUserProp,
 }: ClaimSchoolModalProps) {
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const { user: authContextUser, loading: authContextLoading } = useAuth();
+  const [sessionUser, setSessionUser] = useState<any>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
+
+  const currentUser = currentUserProp || authContextUser || sessionUser;
+  const isAuthLoading = authContextLoading && isSessionLoading && !currentUser;
 
   // Form State
   const [claimantName, setClaimantName] = useState('');
@@ -53,31 +60,39 @@ export default function ClaimSchoolModal({
     if (!isOpen) return;
 
     let isMounted = true;
-    setIsAuthLoading(true);
     setErrorMsg(null);
     setSuccessData(null);
 
-    schoolSearchSupabase.auth.getUser().then(({ data: { user }, error }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (!isMounted) return;
-      setIsAuthLoading(false);
-      if (user && !error) {
-        setCurrentUser(user);
-        setClaimantEmail(user.email || '');
-        const metaName = user.user_metadata?.full_name || user.user_metadata?.name || '';
-        if (metaName) setClaimantName(metaName);
-        const metaPhone = user.user_metadata?.phone || user.phone || '';
-        if (metaPhone) setWhatsappNumber(metaPhone);
-      } else {
-        setCurrentUser(null);
+      setIsSessionLoading(false);
+      const active = session?.user || currentUserProp || authContextUser;
+      if (active) {
+        setSessionUser(active);
+        if (active.email) setClaimantEmail((prev) => prev || active.email || '');
+        const metaName = active.user_metadata?.full_name || active.user_metadata?.name || '';
+        if (metaName) setClaimantName((prev) => prev || metaName);
+        const metaPhone = active.user_metadata?.phone || active.phone || '';
+        if (metaPhone) setWhatsappNumber((prev) => prev || metaPhone);
       }
     }).catch(() => {
-      if (isMounted) setIsAuthLoading(false);
+      if (isMounted) setIsSessionLoading(false);
     });
 
     return () => {
       isMounted = false;
     };
-  }, [isOpen]);
+  }, [isOpen, currentUserProp, authContextUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.email && !claimantEmail) setClaimantEmail(currentUser.email);
+      const metaName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
+      if (metaName && !claimantName) setClaimantName(metaName);
+      const metaPhone = currentUser.user_metadata?.phone || currentUser.phone || '';
+      if (metaPhone && !whatsappNumber) setWhatsappNumber(metaPhone);
+    }
+  }, [currentUser]);
 
   if (!isOpen) return null;
 

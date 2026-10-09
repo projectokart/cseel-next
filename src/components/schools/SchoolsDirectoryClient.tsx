@@ -2281,9 +2281,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
       {/* ── Add School Profile Modal ── */}
       <AddSchoolModal
-
         isOpen={isAddSchoolModalOpen}
         onClose={() => setIsAddSchoolModalOpen(false)}
+        currentUser={user}
       />
 
       {/* ── Claim School Profile Modal ── */}
@@ -2292,6 +2292,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         onClose={() => setClaimModalData({ isOpen: false, schoolName: '', udiseCode: '' })}
         schoolName={claimModalData.schoolName}
         udiseCode={claimModalData.udiseCode}
+        currentUser={user}
       />
     </div>
   );

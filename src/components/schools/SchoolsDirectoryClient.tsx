@@ -579,14 +579,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 <span className="text-xs text-gray-500 ml-1">({school.reviews})</span>
               ) : null}
             </div>
-          ) : (
-            <div className="flex items-center gap-1.5 mb-2">
-              <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1">
-                <CheckCircle2 size={11} className="text-emerald-600" />
-                Verified Institution
-              </span>
-            </div>
-          )}
+          ) : null}
           
           {/* Address & Meta */}
           <div className="text-[13px] text-gray-600 flex items-start justify-between gap-1.5 mb-3 leading-snug">
@@ -626,8 +619,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <span className="font-medium truncate">{school.medium || school.medium_of_instruction_1 || 'English Medium'}</span>
             </div>
             <div className="flex items-center gap-1.5 min-w-0">
-              <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
-              <span className="font-medium truncate text-emerald-700">Verified Institution</span>
+              <GraduationCap size={13} className="text-emerald-600 shrink-0" />
+              <span className="font-medium truncate">{school.school_type || school.gender || 'Co-ed Day'}</span>
             </div>
           </div>
 
@@ -685,24 +678,21 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               onError={(e) => { e.currentTarget.src = HERO_IMAGES[0]; }}
             />
             {/* Bottom Overlay: Compact Dark Blurred Rectangular Tags */}
-            <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between gap-1 pointer-events-none">
-              {school.rating && Number(school.rating) > 0 ? (
-                <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 shadow-sm leading-none">
-                  <Star size={9} className="fill-amber-400 text-amber-400" />
-                  <span>{school.rating}</span>
-                </div>
-              ) : (
-                <div className="bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-1.5 py-0.5 rounded text-[9px] font-bold flex items-center gap-0.5 shadow-sm leading-none">
-                  <CheckCircle2 size={9} className="text-emerald-400" />
-                  <span>Verified</span>
-                </div>
-              )}
-              {school.distance !== undefined && school.distance > 0 && (
-                <div className="bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-1.5 py-0.5 rounded text-[9.5px] sm:text-[10px] font-bold shadow-sm whitespace-nowrap leading-none">
-                  <span>{school.distance < 1 ? `${Math.round(school.distance * 1000)} m` : `${Number(school.distance.toFixed(1))} km`}</span>
-                </div>
-              )}
-            </div>
+            {(school.rating && Number(school.rating) > 0) || (school.distance !== undefined && school.distance > 0) ? (
+              <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between gap-1 pointer-events-none">
+                {school.rating && Number(school.rating) > 0 ? (
+                  <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 shadow-sm leading-none">
+                    <Star size={9} className="fill-amber-400 text-amber-400" />
+                    <span>{school.rating}</span>
+                  </div>
+                ) : <span />}
+                {school.distance !== undefined && school.distance > 0 && (
+                  <div className="bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-1.5 py-0.5 rounded text-[9.5px] sm:text-[10px] font-bold shadow-sm whitespace-nowrap leading-none">
+                    <span>{school.distance < 1 ? `${Math.round(school.distance * 1000)} m` : `${Number(school.distance.toFixed(1))} km`}</span>
+                  </div>
+                )}
+              </div>
+            ) : null}
           </div>
 
           {/* Info Details */}
@@ -866,12 +856,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <Star size={11} className="fill-amber-400 text-amber-400" />
               <span>{school.rating}</span>
             </div>
-          ) : (
-            <div className="absolute top-2.5 left-2.5 bg-emerald-700/85 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs">
-              <CheckCircle2 size={11} className="text-emerald-300" />
-              <span>Verified</span>
-            </div>
-          )}
+          ) : null}
 
           {/* Action buttons */}
           <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">

@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "startDate": "2026-10-09T07:30:00.000Z",
   "expiresAt": "2026-10-10T07:30:00.000Z",
   "durationLabel": "1 Day",

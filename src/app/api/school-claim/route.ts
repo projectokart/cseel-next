@@ -93,6 +93,85 @@ async function sendAdminNotificationEmail(claim: SchoolClaimRecord) {
     </div>
   `;
 
+  const resendKey = process.env.RESEND_API_KEY;
+  const preferredFrom = process.env.RESEND_FROM_EMAIL || 'CSEEL Schools <updates@schools.cseel.org>';
+
+  // 1. Try Resend API (fastest, most reliable)
+  if (resendKey) {
+    try {
+      let activeFrom = preferredFrom;
+      let res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: activeFrom,
+          to: [ADMIN_EMAIL],
+          subject: `🔔 New Claim Request: ${claim.school_name} (UDISE: ${claim.udise_code})`,
+          html: htmlContent,
+        }),
+      });
+
+      // If custom domain is pending verification (403), fallback automatically to onboarding sender
+      if (!res.ok && res.status === 403) {
+        console.warn(`[Claim Notification] Preferred sender ${activeFrom} pending DNS verification. Falling back to default sender...`);
+        activeFrom = 'CSEEL Partner <onboarding@resend.dev>';
+        res = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${resendKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: activeFrom,
+            to: [ADMIN_EMAIL],
+            subject: `🔔 New Claim Request: ${claim.school_name} (UDISE: ${claim.udise_code})`,
+            html: htmlContent,
+          }),
+        });
+      }
+
+      if (res.ok) {
+        const resData = await res.json();
+        console.log(`[Claim Notification] Email sent via Resend (${activeFrom}) to ${ADMIN_EMAIL}, id:`, resData.id);
+        
+        // Record in dispatched store
+        try {
+          const emailsFile = path.join(process.cwd(), 'src', 'data', 'dispatched_emails.json');
+          let emailStore: any[] = [];
+          if (fs.existsSync(emailsFile)) {
+            emailStore = JSON.parse(fs.readFileSync(emailsFile, 'utf8'));
+          }
+          emailStore.unshift({
+            id: resData.id || `resend_${Date.now()}`,
+            to: ADMIN_EMAIL,
+            subject: `🔔 New Claim Request: ${claim.school_name} (UDISE: ${claim.udise_code})`,
+            claimant_name: claim.claimant_name,
+            claimant_email: claim.claimant_email,
+            whatsapp_number: claim.whatsapp_number,
+            designation: claim.designation,
+            visual_edit_url: claim.visual_edit_url,
+            sent_at: new Date().toISOString(),
+            sent_via: 'Resend API',
+          });
+          fs.writeFileSync(emailsFile, JSON.stringify(emailStore, null, 2), 'utf8');
+        } catch (e) {
+          console.warn('Failed to record Resend email:', e);
+        }
+
+        return true;
+      } else {
+        const errData = await res.text();
+        console.warn('[Claim Notification] Resend API error:', errData);
+      }
+    } catch (err) {
+      console.warn('[Claim Notification] Resend fetch exception:', err);
+    }
+  }
+
+  // 2. Fallback to SMTP
   if (host && user && pass) {
     try {
       const transporter = nodemailer.createTransport({
@@ -108,13 +187,13 @@ async function sendAdminNotificationEmail(claim: SchoolClaimRecord) {
         subject: `🔔 New Claim Request: ${claim.school_name} (UDISE: ${claim.udise_code})`,
         html: htmlContent,
       });
-      console.log(`[Claim Notification] Email sent successfully to ${ADMIN_EMAIL}`);
+      console.log(`[Claim Notification] Email sent successfully via SMTP to ${ADMIN_EMAIL}`);
       return true;
     } catch (err) {
       console.warn('[Claim Notification] Failed to send SMTP email:', err);
     }
   } else {
-    console.log(`[Claim Notification] SMTP credentials not set. Simulated notification logged for ${ADMIN_EMAIL}:`);
+    console.log(`[Claim Notification] SMTP/Resend credentials not set. Simulated notification logged for ${ADMIN_EMAIL}:`);
     console.log(`- School: ${claim.school_name} (${claim.udise_code})`);
     console.log(`- Claimant: ${claim.claimant_name} (${claim.claimant_email})`);
     console.log(`- WhatsApp: ${claim.whatsapp_number}`);

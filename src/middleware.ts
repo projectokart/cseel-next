@@ -209,7 +209,17 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // 5. Dynamic /org/org-school-${school_id} routing
+  // 6. Dedicated Schools Directory & Admission Subdomain: schools.cseel.org
+  if (currentHost === 'schools') {
+    if (pathname === '/' || pathname === '') {
+      url.pathname = '/schools';
+      return NextResponse.rewrite(url);
+    }
+    // Pass through direct /schools or profile paths
+    return NextResponse.next();
+  }
+
+  // 7. Dynamic /org/org-school-${school_id} routing
   if (pathname.startsWith('/org/org-school-')) {
     const orgId = pathname.replace('/org/', '');
     url.pathname = `/edu-network/org/${orgId}`;

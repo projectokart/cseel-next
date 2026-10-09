@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Building2,
@@ -16,8 +16,14 @@ import {
   Sparkles,
   ArrowRight,
   ShieldCheck,
+  ShieldAlert,
   MapPin,
-  BookOpen
+  Lock,
+  Search,
+  Loader2,
+  AlertCircle,
+  HelpCircle,
+  CheckCheck
 } from 'lucide-react';
 
 interface AddSchoolModalProps {
@@ -33,20 +39,30 @@ export default function AddSchoolModal({
   initialSchoolName = '',
   initialUdise = '',
 }: AddSchoolModalProps) {
-  // Form State
-  const [schoolName, setSchoolName] = useState(initialSchoolName);
+  // UDISE Verification State
   const [udiseCode, setUdiseCode] = useState(initialUdise);
+  const [isVerifyingUdise, setIsVerifyingUdise] = useState(false);
+  const [udiseVerified, setUdiseVerified] = useState(false);
+  const [udiseError, setUdiseError] = useState<string | null>(null);
+  const [verifiedUdiseData, setVerifiedUdiseData] = useState<any | null>(null);
+
+  // Official Auto-filled & Locked Fields
+  const [schoolName, setSchoolName] = useState(initialSchoolName);
+  const [stateName, setStateName] = useState('');
+  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
+  const [pincode, setPincode] = useState('');
   const [board, setBoard] = useState('CBSE');
   const [schoolType, setSchoolType] = useState('Day School');
-  const [city, setCity] = useState('');
-  const [stateName, setStateName] = useState('Haryana');
+
+  // Authorized Representative State (Editable)
   const [claimantName, setClaimantName] = useState('');
   const [claimantEmail, setClaimantEmail] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [designation, setDesignation] = useState('Principal / Head of Institution');
   const [note, setNote] = useState('');
 
-  // Status
+  // Submission State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successData, setSuccessData] = useState<{
@@ -57,20 +73,123 @@ export default function AddSchoolModal({
   } | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
+  // Auto-verify if initialUdise provided
+  useEffect(() => {
+    if (isOpen && initialUdise && initialUdise.replace(/\D/g, '').length === 11) {
+      setUdiseCode(initialUdise.replace(/\D/g, ''));
+      handleVerifyUdise(initialUdise.replace(/\D/g, ''));
+    }
+  }, [isOpen, initialUdise]);
+
   if (!isOpen) return null;
 
+  // Verify UDISE function
+  const handleVerifyUdise = async (codeToVerify?: string) => {
+    const target = (codeToVerify || udiseCode).replace(/\D/g, '').trim();
+    setUdiseError(null);
+    setErrorMsg(null);
+
+    if (!target || target.length !== 11) {
+      setUdiseError('UDISE code must be exactly 11 digits (e.g. 06180101926).');
+      setUdiseVerified(false);
+      setVerifiedUdiseData(null);
+      return;
+    }
+
+    setIsVerifyingUdise(true);
+    try {
+      const res = await fetch(`/api/udise/lookup?code=${target}`);
+      const json = await res.json();
+
+      if (!res.ok || !json.success || !json.data?.schoolName) {
+        setUdiseVerified(false);
+        setVerifiedUdiseData(null);
+        setSchoolName('');
+        setStateName('');
+        setDistrict('');
+        setCity('');
+        setPincode('');
+        setUdiseError(
+          json.error || `No official records found for UDISE Code: ${target}. Please check the 11-digit code.`
+        );
+        return;
+      }
+
+      const d = json.data;
+      setVerifiedUdiseData(d);
+      setUdiseVerified(true);
+      setUdiseError(null);
+
+      // Auto-fill locked official attributes
+      setSchoolName(d.schoolName?.trim() || '');
+      setStateName(d.state?.trim() || '');
+      setDistrict(d.district?.trim() || '');
+      setCity(d.village?.trim() || d.block?.trim() || d.district?.trim() || '');
+      setPincode(d.pincode ? String(d.pincode).trim() : '');
+      if (d.board) setBoard(d.board);
+      if (d.nature) setSchoolType(d.nature);
+
+      // Suggest representative details if available and currently empty
+      if (!claimantName && d.headMasterName) {
+        setClaimantName(d.headMasterName);
+      }
+      if (!claimantEmail && d.contactEmail) {
+        setClaimantEmail(d.contactEmail);
+      }
+      if (!whatsappNumber && d.contactPhone) {
+        setWhatsappNumber(d.contactPhone);
+      }
+    } catch (err: any) {
+      setUdiseVerified(false);
+      setVerifiedUdiseData(null);
+      setUdiseError('Failed to query official UDISE database. Please check your connection.');
+    } finally {
+      setIsVerifyingUdise(false);
+    }
+  };
+
+  // UDISE Code change handler
+  const handleUdiseChange = (val: string) => {
+    const cleanDigits = val.replace(/\D/g, '').slice(0, 11);
+    setUdiseCode(cleanDigits);
+
+    // Reset verification if user modifies code
+    if (udiseVerified || udiseError) {
+      setUdiseVerified(false);
+      setUdiseError(null);
+      setVerifiedUdiseData(null);
+      setSchoolName('');
+      setStateName('');
+      setDistrict('');
+      setCity('');
+      setPincode('');
+    }
+
+    // Auto-verify if full 11 digits typed
+    if (cleanDigits.length === 11) {
+      handleVerifyUdise(cleanDigits);
+    }
+  };
+
+  // Form submission handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
 
-    if (!schoolName.trim()) {
-      setErrorMsg('Please enter your School Name.');
+    // Strict validation: UDISE must be verified
+    if (!udiseVerified || !verifiedUdiseData) {
+      setErrorMsg('Mandatory: Please enter and verify your official 11-digit UDISE code first.');
       return;
     }
 
     const cleanUdise = udiseCode.replace(/\D/g, '').trim();
-    if (!cleanUdise || cleanUdise.length !== 11) {
-      setErrorMsg('Please enter a valid 11-digit UDISE code.');
+    if (cleanUdise.length !== 11) {
+      setErrorMsg('UDISE code must be exactly 11 digits.');
+      return;
+    }
+
+    if (!schoolName.trim()) {
+      setErrorMsg('Official School Name could not be retrieved from UDISE. Please verify again.');
       return;
     }
 
@@ -98,11 +217,18 @@ export default function AddSchoolModal({
         body: JSON.stringify({
           school_name: schoolName.trim(),
           udise_code: cleanUdise,
+          state: stateName,
+          district: district,
+          city: city,
+          pincode: pincode,
+          board: board,
+          school_type: schoolType,
           claimant_name: claimantName.trim(),
           claimant_email: claimantEmail.trim().toLowerCase(),
           whatsapp_number: cleanPhone,
           designation: designation.trim(),
-          note: `[Add School Profile] Board: ${board}, Format: ${schoolType}, Location: ${city}, ${stateName}. Note: ${note.trim()}`,
+          note: `[Verified UDISE Profile] Board: ${board}, Format: ${schoolType}, Location: ${district}, ${stateName} (${pincode}). Note: ${note.trim()}`,
+          verified_udise_data: verifiedUdiseData,
         }),
       });
 
@@ -148,12 +274,12 @@ export default function AddSchoolModal({
             </div>
             <div>
               <h3 className="text-lg sm:text-xl font-black text-white leading-tight">
-                {successData ? 'School Profile Created!' : 'Add Your School Profile'}
+                {successData ? 'School Profile Verified & Created!' : 'Add Your School Profile'}
               </h3>
               <p className="text-xs text-blue-100 font-medium">
                 {successData
                   ? 'Your unique magic edit link has been generated.'
-                  : 'Register your school, enable experiential labs & visually edit profile'}
+                  : 'UDISE-verified registration & direct live visual editor'}
               </p>
             </div>
           </div>
@@ -179,7 +305,7 @@ export default function AddSchoolModal({
                   School Profile Added Successfully!
                 </h4>
                 <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  Congratulations <strong>{claimantName}</strong>! <strong>{successData.schoolName}</strong> (UDISE: {successData.udise}) has been registered. An official notification has been dispatched to administration.
+                  Congratulations <strong>{claimantName}</strong>! <strong>{successData.schoolName}</strong> (UDISE: {successData.udise}) has been verified and registered. Official notification dispatched.
                 </p>
               </div>
 
@@ -235,103 +361,240 @@ export default function AddSchoolModal({
             /* Input Form */
             <form onSubmit={handleSubmit} className="space-y-4">
               {errorMsg && (
-                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
-                  {errorMsg}
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                  <span>{errorMsg}</span>
                 </div>
               )}
 
-              {/* Section 1: School Identity */}
-              <div className="space-y-3 pb-3 border-b border-slate-100">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-[#005689]" />
-                  School Identity
-                </h4>
+              {/* ── STEP 1: UDISE CODE VERIFICATION (MANDATORY) ── */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50/80 via-indigo-50/40 to-slate-50 border-2 border-[#005689]/20 space-y-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-black uppercase tracking-wider text-[#003c6e] flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-[#005689]" />
+                    Official UDISE+ Code (11 Digits) <span className="text-rose-500">*</span>
+                  </label>
+                  {udiseVerified && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/90 border border-emerald-300 px-2.5 py-0.5 rounded-full animate-in fade-in">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      Verified Record
+                    </span>
+                  )}
+                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      School Name <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Heritage Xperiential Learning School"
-                      value={schoolName}
-                      onChange={(e) => setSchoolName(e.target.value)}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      UDISE Code (11 Digits) <span className="text-rose-500">*</span>
-                    </label>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <div className="relative flex-1">
                     <input
                       type="text"
                       maxLength={11}
                       required
                       placeholder="e.g. 06180101926"
                       value={udiseCode}
-                      onChange={(e) => setUdiseCode(e.target.value.replace(/\D/g, ''))}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
+                      onChange={(e) => handleUdiseChange(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689] bg-white font-bold text-slate-800"
                     />
+                    {udiseCode.length > 0 && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-400">
+                        {udiseCode.length}/11
+                      </span>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleVerifyUdise()}
+                    disabled={isVerifyingUdise || udiseCode.length !== 11}
+                    className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer shadow-xs ${
+                      udiseCode.length === 11 && !isVerifyingUdise
+                        ? 'bg-[#005689] hover:bg-[#003c6e] text-white'
+                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {isVerifyingUdise ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Verifying...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Search className="w-4 h-4" />
+                        <span>Check & Verify UDISE</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Status Messages */}
+                {udiseError && (
+                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <span>{udiseError}</span>
+                  </div>
+                )}
+
+                {udiseVerified && verifiedUdiseData && (
+                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2 shadow-2xs">
+                    <CheckCheck className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold">
+                        {verifiedUdiseData.schoolName}
+                      </p>
+                      <p className="text-[11px] text-emerald-700 font-medium">
+                        District: {verifiedUdiseData.district || 'N/A'} • State: {verifiedUdiseData.state || 'N/A'} • Pincode: {verifiedUdiseData.pincode || 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {!udiseVerified && !udiseError && (
+                  <p className="text-[11px] text-slate-500 flex items-center gap-1">
+                    <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    Bina 11-digit UDISE verify kiye submission enable nahi hoga. School name, state, district & pincode UDISE se auto-fill hokar permanently lock rahenge.
+                  </p>
+                )}
+              </div>
+
+              {/* ── STEP 2: SCHOOL IDENTITY (AUTOFILLED & LOCKED) ── */}
+              <div className="space-y-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#005689]" />
+                    Official School Identity (Locked)
+                  </h4>
+                  <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
+                    <Lock className="w-3 h-3 text-slate-400" /> Always Locked from UDISE
+                  </span>
+                </div>
+
+                {/* School Name (Always Locked) */}
+                <div>
+                  <label className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
+                    <span>Official School Name</span>
+                    {schoolName && (
+                      <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                        <Lock className="w-3 h-3" /> Locked
+                      </span>
+                    )}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      readOnly
+                      required
+                      placeholder={udiseVerified ? '' : 'Auto-fills from verified UDISE code...'}
+                      value={schoolName}
+                      className="w-full pl-3.5 pr-8 py-2.5 rounded-xl border border-slate-200 text-xs font-bold bg-slate-100 text-slate-800 cursor-not-allowed select-none"
+                    />
+                    <Lock className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* State, District, City & Pincode Grid (All Locked) */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                      State (Locked)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="State..."
+                        value={stateName}
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-100 text-slate-700 cursor-not-allowed select-none"
+                      />
+                      <Lock className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                      District (Locked)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="District..."
+                        value={district}
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-100 text-slate-700 cursor-not-allowed select-none"
+                      />
+                      <Lock className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                      City / Area (Locked)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="City/Area..."
+                        value={city}
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl border border-slate-200 text-xs font-medium bg-slate-100 text-slate-700 cursor-not-allowed select-none"
+                      />
+                      <Lock className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                      Pincode (Locked)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        readOnly
+                        placeholder="Pincode..."
+                        value={pincode}
+                        className="w-full pl-2.5 pr-6 py-2 rounded-xl border border-slate-200 text-xs font-mono font-medium bg-slate-100 text-slate-700 cursor-not-allowed select-none"
+                      />
+                      <Lock className="w-3 h-3 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Board Affiliation & School Format (Locked) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Board Affiliation
+                      Board Affiliation (from UDISE)
                     </label>
-                    <select
-                      value={board}
-                      onChange={(e) => setBoard(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
-                    >
-                      <option value="CBSE">CBSE</option>
-                      <option value="ICSE">ICSE / ISC</option>
-                      <option value="IB">IB (International Baccalaureate)</option>
-                      <option value="Cambridge">Cambridge / IGCSE</option>
-                      <option value="State Board">State Board</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        readOnly
+                        value={board}
+                        className="w-full pl-3 pr-7 py-2 rounded-xl border border-slate-200 text-xs bg-slate-100 text-slate-700 font-semibold cursor-not-allowed"
+                      />
+                      <Lock className="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
-                      School Format
+                      School Format (from UDISE)
                     </label>
-                    <select
-                      value={schoolType}
-                      onChange={(e) => setSchoolType(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
-                    >
-                      <option value="Day School">Day School</option>
-                      <option value="Day Boarding">Day Boarding</option>
-                      <option value="Boarding / Residential">Boarding / Residential</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      City / District
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Gurugram"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        readOnly
+                        value={schoolType}
+                        className="w-full pl-3 pr-7 py-2 rounded-xl border border-slate-200 text-xs bg-slate-100 text-slate-700 font-semibold cursor-not-allowed"
+                      />
+                      <Lock className="w-3 h-3 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Section 2: Authority & Verification Details */}
+              {/* ── STEP 3: AUTHORIZED REPRESENTATIVE DETAILS (EDITABLE) ── */}
               <div className="space-y-3 pb-3 border-b border-slate-100">
                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 text-[#005689]" />
-                  Authorized Representative Details
+                  Authorized Representative Details (Claimant)
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -407,15 +670,28 @@ export default function AddSchoolModal({
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* ── STEP 4: SUBMIT & ACTION BUTTONS ── */}
               <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full sm:w-auto flex-1 py-3 px-6 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
+                  disabled={!udiseVerified || isSubmitting}
+                  className={`w-full sm:w-auto flex-1 py-3 px-6 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all flex items-center justify-center gap-2 ${
+                    udiseVerified && !isSubmitting
+                      ? 'bg-[#005689] hover:bg-[#003c6e] text-white cursor-pointer hover:shadow-lg'
+                      : 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed shadow-none'
+                  }`}
+                  title={!udiseVerified ? 'Please verify 11-digit UDISE code first' : ''}
                 >
-                  {isSubmitting ? (
-                    <span>Registering School & Generating Link...</span>
+                  {!udiseVerified ? (
+                    <>
+                      <Lock className="w-4 h-4 text-slate-400" />
+                      <span>Verify 11-Digit UDISE to Register</span>
+                    </>
+                  ) : isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Registering School & Generating Link...</span>
+                    </>
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4 text-amber-300" />

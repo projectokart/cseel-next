@@ -220,7 +220,7 @@ export default function SchoolPhotoBook({
   const templateCtx = useOptionalSchoolTemplate();
   const isEditMode = templateCtx?.isEditMode ?? false;
 
-  const effectiveLogo = logoUrl || templateCtx?.data?.logoImage || templateCtx?.data?.imageOverrides?.['school_logo'] || primaryImage || '';
+  const effectiveLogo = logoUrl || templateCtx?.data?.logoImage || templateCtx?.data?.imageOverrides?.['school_logo'] || '';
 
   const fallbackSchoolSlides: FlipbookSlideItem[] = [
     {
@@ -316,6 +316,7 @@ export default function SchoolPhotoBook({
   const [currentPage, setCurrentPage] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [showFlipHint, setShowFlipHint] = useState<boolean>(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const bookMountRef = useRef<HTMLDivElement>(null);
@@ -1075,7 +1076,19 @@ export default function SchoolPhotoBook({
              - Thin left border
       */}
       {/* ========================================================================= */}
-      <div className="relative w-full h-full rounded-l-lg rounded-r-3xl border-l border-slate-300/80 shadow-2xl overflow-hidden bg-transparent">
+      <div
+        className="relative w-full h-full rounded-l-lg rounded-r-3xl border-l border-slate-300/80 shadow-2xl overflow-hidden bg-transparent cursor-pointer"
+        onDoubleClick={(e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          if (clickX < rect.width * 0.45 && currentPage > 0) {
+            handleFlipPrev();
+          } else {
+            handleFlipNext();
+          }
+          setShowFlipHint(false);
+        }}
+      >
         
         {/* Dynamic Host Mount for StPageFlip Engine */}
         <div
@@ -1298,7 +1311,7 @@ export default function SchoolPhotoBook({
         )}
 
         {/* Navigation Arrow: Previous Page (ONLY in Edit Mode) */}
-        {isEditMode && currentPage > 0 && (
+        {currentPage > 0 && (
           <button
             type="button"
             onClick={(e) => {
@@ -1315,7 +1328,7 @@ export default function SchoolPhotoBook({
         )}
 
         {/* Navigation Arrow: Next Page (ONLY in Edit Mode) */}
-        {isEditMode && currentPage < totalPages - 1 && (
+        {currentPage < totalPages - 1 && (
           <button
             type="button"
             onClick={(e) => {
@@ -1362,6 +1375,22 @@ export default function SchoolPhotoBook({
             );
           })}
         </div>
+
+        {/* First-time Interaction Hint Pill (auto-hides on flip/click) */}
+        {showFlipHint && (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowFlipHint(false);
+            }}
+            className="absolute bottom-9 left-1/2 -translate-x-1/2 z-50 bg-[#002B49]/95 hover:bg-[#002B49] text-white text-[11px] sm:text-xs font-semibold px-4 py-2 rounded-full shadow-2xl border border-white/25 flex items-center gap-2 transition-all duration-300 animate-bounce cursor-pointer select-none whitespace-nowrap"
+            title="Click to dismiss"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+            <span>Double-click or click arrow / swipe to flip page 📖</span>
+            <span className="text-white/60 hover:text-white text-xs ml-1">✕</span>
+          </div>
+        )}
       </div>
 
       {/* ========================================================================= */}
@@ -1435,12 +1464,12 @@ export default function SchoolPhotoBook({
           {/* Center Showcase: Decorated Emblem + School Name + Description Paragraph */}
           <div className="relative z-10 text-center px-2 py-1 space-y-2 sm:space-y-2.5 my-auto">
             {/* School Emblem / Actual Logo */}
-            <div className="max-w-[160px] max-h-[60px] sm:max-w-[200px] sm:max-h-[75px] min-h-[48px] mx-auto flex items-center justify-center bg-transparent relative shrink-0">
+            <div className="max-w-[200px] max-h-[75px] sm:max-w-[250px] sm:max-h-[90px] min-h-[48px] mx-auto flex items-center justify-center bg-transparent border-none shadow-none relative shrink-0">
               {effectiveLogo ? (
                 <img
                   src={effectiveLogo}
                   alt={displayName}
-                  className="max-w-full max-h-[60px] sm:max-h-[75px] w-auto h-auto object-contain drop-shadow-xs"
+                  className="max-w-full max-h-[75px] sm:max-h-[90px] w-auto h-auto object-contain bg-transparent border-none shadow-none drop-shadow-xs"
                 />
               ) : (
                 <div className="w-12 h-12 rounded-xl bg-[#002B49] text-white font-serif font-black text-lg flex items-center justify-center">

@@ -640,11 +640,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Parse incoming data using standard parser
-  const parsed = parseSchoolJsonToState(body, {
-    udiseCode: cleanUdise,
-    schoolName: body.tab_1_home?.school_basic_info?.school_name || body.school_name || record.schoolName,
-  } as any);
+  // Parse incoming data using standard parser (preserving existing fields on update)
+  const baseState = (action === 'update' && record.profileData)
+    ? { ...record.profileData, udiseCode: cleanUdise, schoolName: body.tab_1_home?.school_basic_info?.school_name || body.school_name || record.schoolName }
+    : { udiseCode: cleanUdise, schoolName: body.tab_1_home?.school_basic_info?.school_name || body.school_name || record.schoolName };
+
+  const parsed = parseSchoolJsonToState(body, baseState as any);
 
   if (!parsed.success || !parsed.state) {
     return NextResponse.json(

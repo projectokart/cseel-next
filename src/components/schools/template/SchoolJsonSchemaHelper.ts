@@ -546,12 +546,31 @@ export function parseSchoolJsonToState(
       parsed.section_4_about_vision?.branding ||
       parsed.branding ||
       tabHome;
-    if (branding && typeof branding === 'object') {
-      if (branding.logo_image_url !== undefined) nextState.logoImage = String(branding.logo_image_url || '').trim();
-      else if (parsed.logoImage !== undefined) nextState.logoImage = String(parsed.logoImage || '').trim();
+    const logoCandidate =
+      branding?.logo_image_url ||
+      branding?.logo_image ||
+      branding?.logo_url ||
+      branding?.logo ||
+      parsed.logoImage ||
+      parsed.logo_image ||
+      parsed.logo_url ||
+      parsed.logo;
+    if (logoCandidate) {
+      nextState.logoImage = String(logoCandidate).trim();
+      nextState.imageOverrides = {
+        ...(nextState.imageOverrides || {}),
+        school_logo: String(logoCandidate).trim(),
+      };
+    }
 
-      if (branding.hero_banner_image !== undefined) nextState.heroImage = String(branding.hero_banner_image || '').trim();
-      else if (parsed.heroImage !== undefined) nextState.heroImage = String(parsed.heroImage || '').trim();
+    const heroCandidate =
+      branding?.hero_banner_image ||
+      branding?.hero_image ||
+      parsed.heroImage ||
+      parsed.hero_image ||
+      parsed.hero_banner_image;
+    if (heroCandidate) {
+      nextState.heroImage = String(heroCandidate).trim();
     }
 
     const imgOverrides = parsed.imageOverrides || parsed.image_overrides;

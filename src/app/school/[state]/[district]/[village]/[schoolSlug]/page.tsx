@@ -664,6 +664,7 @@ export default async function SchoolPage({ params }: PageProps) {
         website={website}
         rawAddress={rawAddress}
         imageUrl={syncedProfileData?.heroImage || schoolData?.image_url || ''}
+        logoUrl={syncedProfileData?.logoImage || syncedProfileData?.imageOverrides?.['school_logo'] || ''}
         affiliationNumber={syncedProfileData?.affiliationNumber || schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
         lat={lat}
         lng={lng}

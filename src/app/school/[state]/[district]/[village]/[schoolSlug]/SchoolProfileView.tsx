@@ -280,6 +280,8 @@ interface SchoolProfileViewProps {
 
   imageUrl?: string;
 
+  logoUrl?: string;
+
   affiliationNumber?: string;
 
   lat: number;
@@ -325,8 +327,7 @@ const navTabs: { id: TabType; label: string; shortLabel: string; icon: React.Com
 
   { id: 'home', label: 'Home', shortLabel: 'Home', icon: Home },
 
-  { id: 'academics', label: 'Academics', shortLabel: 'Academics', icon: BookOpen },
-  { id: 'results', label: 'Board Results', shortLabel: 'Results', icon: Award },
+  { id: 'academics', label: 'Academic & Results', shortLabel: 'Academic & Results', icon: BookOpen },
 
   { id: 'facilities', label: 'Facilities', shortLabel: 'Facilities', icon: Layers },
 
@@ -403,6 +404,8 @@ export default function SchoolProfileView({
   lng = 76.6215,
 
   imageUrl,
+
+  logoUrl,
 
   affiliationNumber,
 
@@ -5418,23 +5421,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
         );
       })()}
 
-      {/* Official Board Examination Results Section (Home Overview) */}
-      <section id="home-board-results" className="pt-6 sm:pt-10 pb-12 sm:pb-16 bg-[#F8FAFC] border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SchoolBoardResultsSection
-            boardResults={templateData?.boardResults || initialProfileData?.boardResults}
-            classTo={displayClassTo}
-            boardName={board}
-            schoolName={displayName}
-            isEditMode={isEditMode}
-            onSaveResults={(newResults) => {
-              if (templateCtx?.updateBoardResults) {
-                templateCtx.updateBoardResults(newResults);
-              }
-            }}
-          />
-        </div>
-      </section>
+
 
       {/* School Frequently Asked Questions (FAQ) Section */}
       <SchoolFaqSection id="home-faq" />
@@ -5761,25 +5748,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
       {/* ─── TAB 5: FACILITIES ─── */}
 
-      {/* ─── TAB: BOARD EXAMINATION RESULTS ─── */}
-      {activeTab === 'results' && (
-        <section id="results-tab" className="pt-10 sm:pt-16 pb-16 bg-[#F8FAFC]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <SchoolBoardResultsSection
-              boardResults={templateData?.boardResults || initialProfileData?.boardResults}
-              classTo={displayClassTo}
-              boardName={board}
-              schoolName={displayName}
-              isEditMode={isEditMode}
-              onSaveResults={(newResults) => {
-                if (templateCtx?.updateBoardResults) {
-                  templateCtx.updateBoardResults(newResults);
-                }
-              }}
-            />
-          </div>
-        </section>
-      )}
+
 
       {activeTab === 'facilities' && (
 

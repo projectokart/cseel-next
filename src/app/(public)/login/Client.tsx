@@ -82,7 +82,7 @@ const Login = () => {
   const [pincodeOk, setPincodeOk]             = useState(false);
   const [organisations, setOrganisations]     = useState<{ id: string; org_name: string; district: string; state: string }[]>([]);
   const [orgSearch, setOrgSearch]             = useState("");
-  const { signIn, signInWithGoogle, signUp, resetPassword, user, roles, rolesLoading } = useAuth();
+  const { signIn, signInWithGoogle, signUp, signOut, resetPassword, user, roles, rolesLoading } = useAuth();
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -111,12 +111,16 @@ const Login = () => {
     }
   };
 
-  // Redirect if already logged in — go to returnUrl or home page
+  // Redirect if already logged in — go to returnUrl or schools
   useEffect(() => {
-    if (user && !rolesLoading) {
-      router.push(returnUrl);
+    if (user) {
+      const dest = returnUrl && returnUrl !== '/login' ? returnUrl : '/schools';
+      const timer = setTimeout(() => {
+        window.location.href = dest;
+      }, 400);
+      return () => clearTimeout(timer);
     }
-  }, [user, rolesLoading, router, returnUrl]);
+  }, [user, returnUrl]);
 
   // Load organisations list when student/teacher reaches details step
   useEffect(() => {
@@ -250,8 +254,50 @@ const Login = () => {
             </div>
           )}
 
+          {/* ── ALREADY LOGGED IN ───────────────────────────────────────── */}
+          {user && (
+            <div className="text-center py-6 space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-8 h-8" />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold tracking-widest uppercase text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
+                  Currently Signed In
+                </span>
+                <h2 className="text-2xl font-black text-slate-900 mt-2.5">
+                  {user.user_metadata?.full_name || 'Welcome Back!'}
+                </h2>
+                <p className="text-xs text-slate-600 mt-1 font-mono">{user.email}</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 text-xs text-[#005689] space-y-1">
+                <p className="font-semibold">You are already authenticated with your CSEEL account.</p>
+                <p className="text-[11px] text-slate-500">Redirecting to your destination...</p>
+              </div>
+
+              <div className="flex flex-col gap-2.5 pt-2">
+                <Button
+                  onClick={() => {
+                    const dest = returnUrl && returnUrl !== '/login' ? returnUrl : '/schools';
+                    window.location.href = dest;
+                  }}
+                  className="w-full font-bold bg-[#005689] hover:bg-[#003c6e] text-white py-3 rounded-xl shadow-md cursor-pointer"
+                >
+                  Continue to {returnUrl.includes('schools') ? 'Schools Directory' : 'Platform'} &rarr;
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => signOut()}
+                  className="w-full text-rose-600 hover:text-rose-700 hover:bg-rose-50 border-rose-200 py-2.5 rounded-xl cursor-pointer"
+                >
+                  Sign Out / Switch Account
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* ── LOGIN ────────────────────────────────────────────────────── */}
-          {!forgotMode && !isSignup && (
+          {!user && !forgotMode && !isSignup && (
             <div>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 mb-1">Welcome back</h2>
               <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">Sign in to your CSEEL account</p>

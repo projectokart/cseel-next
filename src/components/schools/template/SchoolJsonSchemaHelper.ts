@@ -554,6 +554,15 @@ export function parseSchoolJsonToState(
       else if (parsed.heroImage !== undefined) nextState.heroImage = String(parsed.heroImage || '').trim();
     }
 
+    const imgOverrides = parsed.imageOverrides || parsed.image_overrides;
+    if (imgOverrides && typeof imgOverrides === 'object') {
+      nextState.imageOverrides = {
+        ...(nextState.imageOverrides || {}),
+        ...imgOverrides,
+      };
+    }
+
+
     // Physical Statistics (Section 4)
     const stats =
       tabHome?.statistics ||
@@ -625,7 +634,8 @@ export function parseSchoolJsonToState(
       parsed.sections?.section_3_photobook_slides?.slides ||
       parsed.section_3_photobook_slides ||
       parsed.section_5_photobook_slides?.slides ||
-      parsed.flipbookSlides;
+      parsed.flipbookSlides ||
+      parsed.flipbook_slides;
     if (Array.isArray(slidesList) && slidesList.length > 0) {
       nextState.flipbookSlides = slidesList.slice(0, 10).map((s: any, idx: number) => ({
         id: s.id || s.slide_id || `fb-${idx}`,
@@ -663,6 +673,75 @@ export function parseSchoolJsonToState(
         nextState.includedAcademicFeatures = featList.map((f: any) => limitLength(f, 80));
       }
     }
+
+    // ==========================================
+    // SECTION: BOARD EXAMINATION RESULTS
+    // ==========================================
+    const boardResultsObj =
+      parsed.section_board_results ||
+      parsed.board_results ||
+      parsed.boardResults ||
+      tabAcademics?.board_results ||
+      parsed.sections?.section_board_results;
+
+    if (boardResultsObj && typeof boardResultsObj === 'object') {
+      const c10Raw = boardResultsObj.class10Results || boardResultsObj.class_10_results || [];
+      const c12Raw = boardResultsObj.class12Results || boardResultsObj.class_12_results || [];
+
+      const clean10 = Array.isArray(c10Raw)
+        ? c10Raw.slice(0, 2).map((r: any) => {
+            const total = Number(r.totalStudents ?? r.total_students ?? 0);
+            const passed = Number(r.passedStudents ?? r.passed_students ?? 0);
+            const passPct = total > 0 ? parseFloat(((passed / total) * 100).toFixed(1)) : (Number(r.passPercentage ?? r.pass_percentage ?? 0) || 0);
+            return {
+              year: limitLength(r.year || '2024-25', 15),
+              totalStudents: total,
+              passedStudents: Math.min(passed, total),
+              passPercentage: passPct,
+              maxScorePercent: Math.min(100, Math.max(0, parseFloat(Number(r.maxScorePercent ?? r.max_score_percent ?? 0).toFixed(1)))),
+              above90PercentCount: Math.min(total, Math.max(0, Number(r.above90PercentCount ?? r.above_90_percent_count ?? r.above90Count ?? 0))),
+            };
+          })
+        : [];
+
+      const clean12 = Array.isArray(c12Raw)
+        ? c12Raw.slice(0, 2).map((r: any) => {
+            const total = Number(r.totalStudents ?? r.total_students ?? 0);
+            const passed = Number(r.passedStudents ?? r.passed_students ?? 0);
+            const passPct = total > 0 ? parseFloat(((passed / total) * 100).toFixed(1)) : (Number(r.passPercentage ?? r.pass_percentage ?? 0) || 0);
+            const streamsRaw = Array.isArray(r.streams) ? r.streams : [];
+            const cleanStreams = streamsRaw.map((s: any) => {
+              const sTotal = Number(s.totalStudents ?? s.total_students ?? 0);
+              const sPassed = Number(s.passedStudents ?? s.passed_students ?? 0);
+              const sPassPct = sTotal > 0 ? parseFloat(((sPassed / sTotal) * 100).toFixed(1)) : (Number(s.passPercentage ?? s.pass_percentage ?? 0) || 0);
+              return {
+                streamName: limitLength(s.streamName || s.stream_name || 'Science', 30),
+                totalStudents: sTotal,
+                passedStudents: Math.min(sPassed, sTotal),
+                passPercentage: sPassPct,
+                maxScorePercent: Math.min(100, Math.max(0, parseFloat(Number(s.maxScorePercent ?? s.max_score_percent ?? 0).toFixed(1)))),
+                above90PercentCount: Math.min(sTotal, Math.max(0, Number(s.above90PercentCount ?? s.above_90_percent_count ?? s.above90Count ?? 0))),
+              };
+            });
+
+            return {
+              year: limitLength(r.year || '2024-25', 15),
+              totalStudents: total,
+              passedStudents: Math.min(passed, total),
+              passPercentage: passPct,
+              maxScorePercent: Math.min(100, Math.max(0, parseFloat(Number(r.maxScorePercent ?? r.max_score_percent ?? 0).toFixed(1)))),
+              above90PercentCount: Math.min(total, Math.max(0, Number(r.above90PercentCount ?? r.above_90_percent_count ?? r.above90Count ?? 0))),
+              streams: cleanStreams,
+            };
+          })
+        : [];
+
+      nextState.boardResults = {
+        class10Results: clean10,
+        class12Results: clean12,
+      };
+    }
+
 
     // ==========================================
     // SECTION 8 / TAB 3: FACILITIES
@@ -728,7 +807,7 @@ export function parseSchoolJsonToState(
       parsed.sections?.section_9_campus_gallery ||
       parsed.gallery ||
       parsed.section_11_gallery;
-    const galList = tabGallery?.gallery_items || tabGallery?.media || parsed.galleryItems;
+    const galList = tabGallery?.gallery_items || tabGallery?.media || parsed.galleryItems || parsed.gallery_items;
     if (Array.isArray(galList) && galList.length > 0) {
       nextState.galleryItems = galList.map((g: any, idx: number) => ({
         id: g.id || `gal-${idx}`,
@@ -756,7 +835,8 @@ export function parseSchoolJsonToState(
       parsed.section_10_fee_structure ||
       tabAdmissions?.fee_structure ||
       parsed.section_7_academics?.fee_structure ||
-      parsed.feeTableData;
+      parsed.feeTableData ||
+      parsed.fee_table;
     if (feeObj && Array.isArray(feeObj.columns) && Array.isArray(feeObj.rows)) {
       nextState.feeTableData = {
         columns: feeObj.columns.map((c: any) => limitLength(c, 30)),
@@ -765,6 +845,27 @@ export function parseSchoolJsonToState(
         ),
       };
     }
+
+    const extraFeeObj = parsed.extraChargesTable || parsed.extra_charges_table;
+    if (extraFeeObj && Array.isArray(extraFeeObj.columns) && Array.isArray(extraFeeObj.rows)) {
+      (nextState as any).extraChargesTable = {
+        columns: extraFeeObj.columns.map((c: any) => limitLength(c, 30)),
+        rows: extraFeeObj.rows.map((row: any) =>
+          Array.isArray(row) ? row.map((cell: any) => limitLength(cell, 25)) : []
+        ),
+      };
+    }
+
+    const feeLink = parsed.officialFeeUrl || parsed.official_fee_url;
+    if (feeLink) {
+      (nextState as any).officialFeeUrl = String(feeLink).trim();
+    }
+
+    const campusVid = parsed.campusVideoUrl || parsed.campus_video_url;
+    if (campusVid) {
+      (nextState as any).campusVideoUrl = String(campusVid).trim();
+    }
+
 
     const admList =
       tabAdmissions?.admissions_guidelines ||
@@ -992,6 +1093,10 @@ export function convertStateToStructuredJson(data: SchoolTemplateState): any {
         class_to: data.classTo,
       },
       curriculum_features: data.includedAcademicFeatures,
+      board_results: data.boardResults || {
+        class10Results: [],
+        class12Results: [],
+      },
     },
     tab_3_facilities: {
       tab_id: 'facilities',

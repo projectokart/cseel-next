@@ -80,6 +80,34 @@ export interface SchoolFaqItem {
   category?: string;
 }
 
+export interface BoardExamYearResult {
+  year: string; // e.g. "2024-25", "2023-24" (strictly max 2 years)
+  totalStudents: number; // Total appeared
+  passedStudents: number; // Passed students
+  passPercentage?: number; // Auto-calculated: ((passedStudents / totalStudents) * 100)
+  maxScorePercent: number; // Highest % scored, e.g. 98.6
+  above90PercentCount: number; // Count of students who scored 90% and above
+}
+
+export interface StreamExamResult {
+  streamName: string; // Predefined: 'Science' | 'Commerce' | 'Humanities / Arts'
+  totalStudents: number;
+  passedStudents: number;
+  passPercentage?: number; // Auto-calculated
+  maxScorePercent: number;
+  above90PercentCount: number;
+}
+
+export interface Class12BoardExamYearResult extends BoardExamYearResult {
+  streams?: StreamExamResult[];
+}
+
+export interface SchoolBoardResultsState {
+  class10Results: BoardExamYearResult[]; // Max 2 years
+  class12Results: Class12BoardExamYearResult[]; // Max 2 years
+}
+
+
 export interface SchoolTemplateState {
   udiseCode: string;
   schoolName: string;
@@ -151,6 +179,7 @@ export interface SchoolTemplateState {
   contentOverrides?: Record<string, string>;
   imageOverrides?: Record<string, string>;
   iconOverrides?: Record<string, string>;
+  boardResults?: SchoolBoardResultsState;
 }
 
 const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
@@ -280,6 +309,54 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   contentOverrides: {},
   imageOverrides: {},
   iconOverrides: {},
+  boardResults: {
+    class10Results: [
+      {
+        year: '2024-25',
+        totalStudents: 165,
+        passedStudents: 165,
+        passPercentage: 100,
+        maxScorePercent: 99.2,
+        above90PercentCount: 88,
+      },
+      {
+        year: '2023-24',
+        totalStudents: 158,
+        passedStudents: 158,
+        passPercentage: 100,
+        maxScorePercent: 98.8,
+        above90PercentCount: 76,
+      },
+    ],
+    class12Results: [
+      {
+        year: '2024-25',
+        totalStudents: 142,
+        passedStudents: 142,
+        passPercentage: 100,
+        maxScorePercent: 99.4,
+        above90PercentCount: 79,
+        streams: [
+          { streamName: 'Science', totalStudents: 62, passedStudents: 62, passPercentage: 100, maxScorePercent: 99.4, above90PercentCount: 42 },
+          { streamName: 'Commerce', totalStudents: 48, passedStudents: 48, passPercentage: 100, maxScorePercent: 98.6, above90PercentCount: 24 },
+          { streamName: 'Humanities / Arts', totalStudents: 32, passedStudents: 32, passPercentage: 100, maxScorePercent: 98.8, above90PercentCount: 13 },
+        ],
+      },
+      {
+        year: '2023-24',
+        totalStudents: 135,
+        passedStudents: 135,
+        passPercentage: 100,
+        maxScorePercent: 99.0,
+        above90PercentCount: 68,
+        streams: [
+          { streamName: 'Science', totalStudents: 58, passedStudents: 58, passPercentage: 100, maxScorePercent: 99.0, above90PercentCount: 35 },
+          { streamName: 'Commerce', totalStudents: 46, passedStudents: 46, passPercentage: 100, maxScorePercent: 98.2, above90PercentCount: 21 },
+          { streamName: 'Humanities / Arts', totalStudents: 31, passedStudents: 31, passPercentage: 100, maxScorePercent: 97.6, above90PercentCount: 12 },
+        ],
+      },
+    ],
+  },
 };
 
 const LOCAL_STORAGE_KEY = 'cseel_school_template_draft_v1';
@@ -292,6 +369,7 @@ interface SchoolTemplateContextType {
   lastSavedAt: string | null;
   updateField: <K extends keyof SchoolTemplateState>(key: K, value: SchoolTemplateState[K]) => void;
   updateMultipleFields: (updates: Partial<SchoolTemplateState>) => void;
+  updateBoardResults: (results: SchoolBoardResultsState) => void;
   updateContentOverride: (key: string, value: string) => void;
   updateImageOverride: (key: string, url: string) => void;
   updateIconOverride: (key: string, iconName: string) => void;
@@ -764,6 +842,27 @@ export function SchoolTemplateProvider({
     }));
   }, []);
 
+  const updateBoardResults = useCallback((results: SchoolBoardResultsState) => {
+    setData((prev) => ({
+      ...prev,
+      boardResults: {
+        class10Results: (results.class10Results || []).slice(0, 2).map((r) => ({
+          ...r,
+          passPercentage: r.totalStudents > 0 ? parseFloat(((r.passedStudents / r.totalStudents) * 100).toFixed(1)) : 0,
+        })),
+        class12Results: (results.class12Results || []).slice(0, 2).map((r) => ({
+          ...r,
+          passPercentage: r.totalStudents > 0 ? parseFloat(((r.passedStudents / r.totalStudents) * 100).toFixed(1)) : 0,
+          streams: (r.streams || []).map((s) => ({
+            ...s,
+            passPercentage: s.totalStudents > 0 ? parseFloat(((s.passedStudents / s.totalStudents) * 100).toFixed(1)) : 0,
+          })),
+        })),
+      },
+    }));
+  }, []);
+
+
   const updateIncludedFeatures = useCallback((features: string[]) => {
     setData((prev) => ({
       ...prev,
@@ -1012,6 +1111,7 @@ export function SchoolTemplateProvider({
         deleteAdmissionCard,
         updateFlipbookSlides,
         updateFeeTableData,
+        updateBoardResults,
         updateIncludedFeatures,
         addGalleryItem,
         deleteGalleryItem,
@@ -1042,10 +1142,35 @@ export function SchoolTemplateProvider({
 export function useSchoolTemplate() {
   const ctx = useContext(SchoolTemplateContext);
   if (!ctx) {
-    throw new Error('useSchoolTemplate must be used within a SchoolTemplateProvider');
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('useSchoolTemplate used outside SchoolTemplateProvider; returning safe fallback.');
+    }
+    return {
+      data: DEFAULT_TEMPLATE_DATA,
+      setData: () => {},
+      isEditMode: false,
+      setIsEditMode: () => {},
+      isSaving: false,
+      lastSavedAt: null,
+      saveTab: async () => false,
+      toggleTabVisibility: () => {},
+      toggleContactVisibility: () => {},
+      updateField: () => {},
+      updateNestedField: () => {},
+      fetchUdise: async () => false,
+      verifyAllUdiseFields: async () => false,
+      updateBoardResults: () => {},
+      resetToDefault: () => {},
+      publishToSupabase: async () => false,
+      importSchoolDataFromJson: () => ({ success: false, importedKeys: [], skippedKeys: [], message: 'No template context' }),
+      exportSchoolDataAsJson: () => JSON.stringify(DEFAULT_TEMPLATE_DATA),
+      isUdiseLoading: false,
+      notification: null
+    };
   }
   return ctx;
 }
+
 
 export function useOptionalSchoolTemplate() {
   return useContext(SchoolTemplateContext);

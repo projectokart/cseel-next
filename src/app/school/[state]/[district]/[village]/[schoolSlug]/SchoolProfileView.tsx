@@ -206,6 +206,7 @@ import GalleryModal from '@/components/schools/template/GalleryModal';
 import SchoolFaqSection from '@/components/schools/template/SchoolFaqSection';
 
 import AwardModal from '@/components/schools/template/AwardModal';
+import SchoolBoardResultsSection from '@/components/schools/template/SchoolBoardResultsSection';
 
 
 
@@ -306,6 +307,7 @@ type TabType =
   | 'about'
 
   | 'academics'
+  | 'results'
 
   | 'facilities'
 
@@ -324,6 +326,7 @@ const navTabs: { id: TabType; label: string; shortLabel: string; icon: React.Com
   { id: 'home', label: 'Home', shortLabel: 'Home', icon: Home },
 
   { id: 'academics', label: 'Academics', shortLabel: 'Academics', icon: BookOpen },
+  { id: 'results', label: 'Board Results', shortLabel: 'Results', icon: Award },
 
   { id: 'facilities', label: 'Facilities', shortLabel: 'Facilities', icon: Layers },
 
@@ -419,36 +422,60 @@ export default function SchoolProfileView({
   const [admissionPhone, setAdmissionPhone] = useState(rawPhone || '');
   const [admissionEmail, setAdmissionEmail] = useState(rawEmail || '');
 
-  const [feesTable, setFeesTable] = useState({
-    columns: ['Class', 'Admission Fee', 'Tuition Fee (Monthly)', 'Dev / Building Fee (Monthly)', 'Activity Fee (Monthly)', 'Total Annual (Est.)'],
-    rows: [
-      ['Pre (Nursery)', '', '', '', '', ''],
-      ['LKG', '', '', '', '', ''],
-      ['UKG', '', '', '', '', ''],
-      ['Class 1', '', '', '', '', ''],
-      ['Class 2', '', '', '', '', ''],
-      ['Class 3', '', '', '', '', ''],
-      ['Class 4', '', '', '', '', ''],
-      ['Class 5', '', '', '', '', ''],
-      ['Class 6', '', '', '', '', ''],
-      ['Class 7', '', '', '', '', ''],
-      ['Class 8', '', '', '', '', ''],
-      ['Class 9', '', '', '', '', ''],
-      ['Class 10', '', '', '', '', ''],
-      ['Class 11', '', '', '', '', ''],
-      ['Class 12', '', '', '', '', ''],
-    ]
+  const [feesTable, setFeesTable] = useState(() => {
+    const custom = initialProfileData?.feeTableData;
+    if (custom && custom.rows && custom.rows.length > 0) {
+      return custom;
+    }
+    return {
+      columns: ['Class', 'Admission Fee', 'Tuition Fee (Monthly)', 'Dev / Building Fee (Monthly)', 'Activity Fee (Monthly)', 'Total Annual (Est.)'],
+      rows: [
+        ['Pre (Nursery)', '', '', '', '', ''],
+        ['LKG', '', '', '', '', ''],
+        ['UKG', '', '', '', '', ''],
+        ['Class 1', '', '', '', '', ''],
+        ['Class 2', '', '', '', '', ''],
+        ['Class 3', '', '', '', '', ''],
+        ['Class 4', '', '', '', '', ''],
+        ['Class 5', '', '', '', '', ''],
+        ['Class 6', '', '', '', '', ''],
+        ['Class 7', '', '', '', '', ''],
+        ['Class 8', '', '', '', '', ''],
+        ['Class 9', '', '', '', '', ''],
+        ['Class 10', '', '', '', '', ''],
+        ['Class 11', '', '', '', '', ''],
+        ['Class 12', '', '', '', '', ''],
+      ]
+    };
   });
 
-  const [extraChargesTable, setExtraChargesTable] = useState({
-    columns: ['Charge Type', 'Amount (Monthly)', 'Notes / Applicable To', 'Total Annual'],
-    rows: [
-      ['Transport / Bus Fee', '3500', 'Opt-in users', ''],
-      ['Hostel / Boarding', '10000', 'Boarders only', ''],
-      ['Meal Plan (Day Scholars)', '1800', 'Optional', ''],
-      ['Uniform & Books Kit', '', 'Annual one-time ₹8,000+', '']
-    ]
+  const [extraChargesTable, setExtraChargesTable] = useState(() => {
+    const customExtra = initialProfileData?.extraChargesTable;
+    if (customExtra && customExtra.rows && customExtra.rows.length > 0) {
+      return customExtra;
+    }
+    return {
+      columns: ['Charge Type', 'Amount (Monthly)', 'Notes / Applicable To', 'Total Annual'],
+      rows: [
+        ['Transport / Bus Fee', '3500', 'Opt-in users', ''],
+        ['Hostel / Boarding', '10000', 'Boarders only', ''],
+        ['Meal Plan (Day Scholars)', '1800', 'Optional', ''],
+        ['Uniform & Books Kit', '', 'Annual one-time ₹8,000+', '']
+      ]
+    };
   });
+
+  // Sync feesTable from initialProfileData or templateData
+  useEffect(() => {
+    const customFees = initialProfileData?.feeTableData;
+    if (customFees && customFees.rows && customFees.rows.length > 0) {
+      setFeesTable(customFees);
+    }
+    const customExtra = initialProfileData?.extraChargesTable;
+    if (customExtra && customExtra.rows && customExtra.rows.length > 0) {
+      setExtraChargesTable(customExtra);
+    }
+  }, [initialProfileData?.feeTableData, initialProfileData?.extraChargesTable]);
 
   const renderDynamicTable = (
     title: string, 
@@ -5310,6 +5337,99 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
         </div>
       </section>
 
+      {/* Official Campus Video Tour Section */}
+      {(() => {
+        const videoUrl = templateData?.campusVideoUrl || initialProfileData?.campusVideoUrl || templateData?.galleryItems?.find((i: any) => i.type === 'video')?.url || initialProfileData?.galleryItems?.find((i: any) => i.type === 'video')?.url;
+        if (!videoUrl) return null;
+
+        let embedUrl: string | null = null;
+        if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+          if (videoUrl.includes('watch?v=')) {
+            const vId = videoUrl.split('watch?v=')[1]?.split('&')[0];
+            embedUrl = `https://www.youtube.com/embed/${vId}`;
+          } else if (videoUrl.includes('youtu.be/')) {
+            const vId = videoUrl.split('youtu.be/')[1]?.split('?')[0];
+            embedUrl = `https://www.youtube.com/embed/${vId}`;
+          } else if (videoUrl.includes('/embed/')) {
+            embedUrl = videoUrl;
+          }
+        }
+
+        return (
+          <section id="campus-video-tour" className="py-12 sm:py-16 bg-white border-t border-gray-100">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+                <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
+                  <Youtube className="w-4 h-4 text-red-600" />
+                  <span>OFFICIAL CAMPUS WALKTHROUGH &amp; VIDEO TOUR</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+                  Experience Campus Life &amp; Facilities at <span className="text-[#005689]">{displayName}</span>
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600 mt-2.5 leading-relaxed">
+                  Take an interactive visual tour of our experiential laboratories, athletic fields, learning pavilions, and vibrant school community.
+                </p>
+              </div>
+
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-900 aspect-video max-w-4xl mx-auto">
+                {embedUrl ? (
+                  <iframe
+                    src={embedUrl}
+                    title={`${displayName} Official Campus Tour`}
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={videoUrl}
+                    controls
+                    className="w-full h-full object-cover"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm text-gray-500">
+                <span className="inline-flex items-center gap-1.5 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  Official Institution Verified Footage
+                </span>
+                <span className="text-gray-300">•</span>
+                <a
+                  href={videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[#006FCC] hover:underline font-bold"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Watch on Source Channel
+                </a>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* Official Board Examination Results Section (Home Overview) */}
+      <section id="home-board-results" className="pt-6 sm:pt-10 pb-12 sm:pb-16 bg-[#F8FAFC] border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SchoolBoardResultsSection
+            boardResults={templateData?.boardResults || initialProfileData?.boardResults}
+            classTo={displayClassTo}
+            boardName={board}
+            schoolName={displayName}
+            isEditMode={isEditMode}
+            onSaveResults={(newResults) => {
+              if (templateCtx?.updateBoardResults) {
+                templateCtx.updateBoardResults(newResults);
+              }
+            }}
+          />
+        </div>
+      </section>
+
       {/* School Frequently Asked Questions (FAQ) Section */}
       <SchoolFaqSection id="home-faq" />
         </>
@@ -5610,24 +5730,18 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
 
             {/* Official Board Examination Records Section */}
-            <div className="bg-[#EDF5FA] rounded-[32px] p-8 sm:p-12 border border-[#D6EDFF] text-center max-w-4xl mx-auto my-6 shadow-sm">
-              <div className="w-16 h-16 rounded-2xl bg-white text-[#005689] flex items-center justify-center mx-auto shadow-xs border border-blue-100 mb-4">
-                <Award className="w-8 h-8 text-amber-500" />
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-100/70 text-[#005689] text-xs font-bold uppercase tracking-wider mb-3">
-                <span>Official Academic Records</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-[#002B49] tracking-tight">
-                Board Examination Results & Merit Honors
-              </h3>
-              <p className="text-sm text-gray-600 mt-2.5 max-w-xl mx-auto leading-relaxed">
-                Official Class 10th and 12th board merit results, subject pass percentages, and academic honors for {displayName} are submitted and verified during institutional accreditation cycles.
-              </p>
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-blue-200 text-xs font-semibold text-slate-700 shadow-2xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Official Records Awaiting Direct Upload by School Administration</span>
-              </div>
-            </div>
+            <SchoolBoardResultsSection
+              boardResults={templateData?.boardResults || initialProfileData?.boardResults}
+              classTo={displayClassTo}
+              boardName={board}
+              schoolName={displayName}
+              isEditMode={isEditMode}
+              onSaveResults={(newResults) => {
+                if (templateCtx?.updateBoardResults) {
+                  templateCtx.updateBoardResults(newResults);
+                }
+              }}
+            />
 
           </div>
 
@@ -5640,6 +5754,26 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
             {/* ========================================================= */}
 
       {/* ─── TAB 5: FACILITIES ─── */}
+
+      {/* ─── TAB: BOARD EXAMINATION RESULTS ─── */}
+      {activeTab === 'results' && (
+        <section id="results-tab" className="pt-10 sm:pt-16 pb-16 bg-[#F8FAFC]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <SchoolBoardResultsSection
+              boardResults={templateData?.boardResults || initialProfileData?.boardResults}
+              classTo={displayClassTo}
+              boardName={board}
+              schoolName={displayName}
+              isEditMode={isEditMode}
+              onSaveResults={(newResults) => {
+                if (templateCtx?.updateBoardResults) {
+                  templateCtx.updateBoardResults(newResults);
+                }
+              }}
+            />
+          </div>
+        </section>
+      )}
 
       {activeTab === 'facilities' && (
 
@@ -6270,6 +6404,31 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
           <div className="flex flex-col gap-12 w-full">
             {/* Top: Dynamic Tables (Full Width) */}
             <div className="w-full overflow-hidden">
+              {/* Official School Fee Link & Verification Banner */}
+              {(templateData?.officialFeeUrl || initialProfileData?.officialFeeUrl) && (
+                <div className="bg-[#EDF5FA] border border-[#D6EDFF] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-white text-[#005689] flex items-center justify-center shrink-0 border border-blue-100 shadow-2xs">
+                      <FileText className="w-5 h-5 text-[#005689]" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-[#002B49]">Official Institutional Fee Schedule Verified</h4>
+                      <p className="text-xs text-slate-600">
+                        Academic Sessions Composite Tuition, Joining & Annual Schedules
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={templateData?.officialFeeUrl || initialProfileData?.officialFeeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold transition-all shrink-0 shadow-xs"
+                  >
+                    <span>View Official Fee Schedule</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
               {renderDynamicTable('Admission & Tuition Fees', feesTable, setFeesTable)}
               {renderDynamicTable('Extra / Other Charges', extraChargesTable, setExtraChargesTable)}
             </div>

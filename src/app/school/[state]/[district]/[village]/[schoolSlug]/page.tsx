@@ -12,6 +12,7 @@ import {
 } from '@/integrations/supabase/schoolSearchClient';
 import { SCHOOLS_DATA, SchoolRecord } from '@/data/schoolFinderData';
 import SchoolProfileView from './SchoolProfileView';
+import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
 import fs from 'fs';
 import path from 'path';
 

@@ -4292,6 +4292,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <EditableImage
 
                     imageKey="about_campus_photo"
+                    src={templateData?.imageOverrides?.about_campus_photo || initialProfileData?.imageOverrides?.about_campus_photo || imageUrl}
 
                     defaultSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600' fill='%23002B49'%3E%3Crect width='800' height='600' fill='%230D4979'/%3E%3Crect y='480' width='800' height='120' fill='%2309375C'/%3E%3Cg fill='%23196296' opacity='0.7'%3E%3Crect x='100' y='220' width='220' height='260' rx='8'/%3E%3Crect x='360' y='160' width='340' height='320' rx='8'/%3E%3Cpolygon points='400,160 530,70 660,160' fill='%232279B5'/%3E%3Crect x='490' y='180' width='80' height='100' rx='4' fill='%23EDF5FA' opacity='0.8'/%3E%3C/g%3E%3Cg fill='%23EDF5FA' opacity='0.85'%3E%3Ccircle cx='530' cy='230' r='18' fill='%23005689'/%3E%3Crect x='140' y='260' width='40' height='50' rx='4'/%3E%3Crect x='200' y='260' width='40' height='50' rx='4'/%3E%3Crect x='260' y='260' width='40' height='50' rx='4'/%3E%3Crect x='140' y='340' width='40' height='50' rx='4'/%3E%3Crect x='200' y='340' width='40' height='50' rx='4'/%3E%3Crect x='260' y='340' width='40' height='50' rx='4'/%3E%3Crect x='410' y='320' width='50' height='60' rx='4'/%3E%3Crect x='490' y='320' width='50' height='60' rx='4'/%3E%3Crect x='570' y='320' width='50' height='60' rx='4'/%3E%3Crect x='650' y='320' width='35' height='60' rx='4'/%3E%3C/g%3E%3Ctext x='400' y='535' font-family='system-ui, sans-serif' font-size='22' font-weight='bold' fill='%23FFFFFF' text-anchor='middle'%3EOfficial Campus Infrastructure%3C/text%3E%3Ctext x='400' y='565' font-family='system-ui, sans-serif' font-size='14' fill='%2393C5FD' text-anchor='middle'%3EMedia to be Uploaded by School Administration%3C/text%3E%3C/svg%3E"
 
@@ -4328,6 +4329,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <EditableImage
 
                     imageKey="about_lab_photo"
+                    src={templateData?.imageOverrides?.about_lab_photo || initialProfileData?.imageOverrides?.about_lab_photo}
 
                     defaultSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 450' fill='%23005689'%3E%3Crect width='600' height='450' fill='%23EDF5FA'/%3E%3Cg fill='%23006FCC' opacity='0.85'%3E%3Cpath d='M280 140v80l-60 100c-8 13 1 30 17 30h126c16 0 25-17 17-30l-60-100v-80h10c6 0 10-4 10-10s-4-10-10-10h-60c-6 0-10 4-10 10s4 10 10 10h10z'/%3E%3Ccircle cx='290' cy='290' r='12' fill='%2338BDF8'/%3E%3Ccircle cx='320' cy='310' r='8' fill='%2338BDF8'/%3E%3Ccircle cx='280' cy='320' r='6' fill='%2338BDF8'/%3E%3C/g%3E%3Ctext x='300' y='390' font-family='system-ui, sans-serif' font-size='18' font-weight='bold' fill='%23002B49' text-anchor='middle'%3EExperiential Learning Lab%3C/text%3E%3Ctext x='300' y='415' font-family='system-ui, sans-serif' font-size='13' fill='%2364748B' text-anchor='middle'%3ELaboratory Media to be Uploaded%3C/text%3E%3C/svg%3E"
 
@@ -4821,6 +4823,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <EditableImage
 
                     imageKey="principal_photo"
+                    src={templateData?.imageOverrides?.principal_photo || initialProfileData?.imageOverrides?.principal_photo}
 
                     defaultSrc="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 250' fill='%23f1f5f9'%3E%3Crect width='200' height='250' fill='%23f8fafc'/%3E%3Ccircle cx='100' cy='85' r='38' fill='%23cbd5e1'/%3E%3Cpath d='M35 210c0-42 29-65 65-65s65 23 65 65z' fill='%23cbd5e1'/%3E%3Ctext x='100' y='235' font-family='sans-serif' font-size='11' font-weight='600' fill='%2394a3b8' text-anchor='middle'%3EPrincipal Desk%3C/text%3E%3C/svg%3E"
 
@@ -5057,6 +5060,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <EditableImage
 
                     imageKey="vision_image"
+                    src={templateData?.imageOverrides?.vision_image || initialProfileData?.imageOverrides?.vision_image}
 
                     defaultSrc="/images/illustrations/vision-telescope.jpg"
 
@@ -5151,6 +5155,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <EditableImage
 
                     imageKey="mission_image"
+                    src={templateData?.imageOverrides?.mission_image || initialProfileData?.imageOverrides?.mission_image}
 
                     defaultSrc="/images/illustrations/mission-target.png"
 
@@ -5245,6 +5250,7 @@ const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
                   <EditableImage
 
                     imageKey="values_image"
+                    src={templateData?.imageOverrides?.values_image || initialProfileData?.imageOverrides?.values_image}
 
                     defaultSrc="/images/illustrations/values-community.jpg"
 

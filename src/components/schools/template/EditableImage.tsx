@@ -7,6 +7,7 @@ import { Camera, Upload, Image as ImageIcon, Link as LinkIcon, X, Check, RotateC
 interface EditableImageProps {
   imageKey: string;
   defaultSrc: string;
+  src?: string;
   alt: string;
   className?: string;
   containerClassName?: string;
@@ -97,15 +98,16 @@ export function compressImageUnder50KB(file: File): Promise<{ dataUrl: string; s
 export default function EditableImage({
   imageKey,
   defaultSrc,
+  src,
   alt,
   className = 'w-full h-full object-cover',
   containerClassName = 'relative w-full h-full',
 }: EditableImageProps) {
   const ctx = useOptionalSchoolTemplate();
   const isEditMode = ctx?.isEditMode ?? false;
-  const getImage = ctx?.getImage || ((_k: string, fb: string) => fb);
+  const contextOverride = ctx?.data?.imageOverrides?.[imageKey];
   const updateImageOverride = ctx?.updateImageOverride || (() => {});
-  const effectiveSrc = getImage(imageKey, defaultSrc);
+  const effectiveSrc = contextOverride || src || (ctx?.getImage ? ctx.getImage(imageKey, defaultSrc) : defaultSrc);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'upload' | 'presets' | 'url'>('presets');

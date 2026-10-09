@@ -64,7 +64,7 @@ const FeedPage = () => {
                 <p className="text-sm text-muted-foreground mt-0.5">Posts, projects & events from the CSEEL community</p>
               </div>
               {user && (
-                <Button onClick={() => setCreateOpen(true)} className="gap-2 rounded-full shadow-sm">
+                <Button onClick={() => setCreateOpen(true)} className="gap-2 shadow-sm">
                   <PenLine className="h-4 w-4" /> Post
                 </Button>
               )}
@@ -128,7 +128,7 @@ const FeedPage = () => {
                 ))}
                 {hasMore && (
                   <div className="flex justify-center pt-2">
-                    <Button variant="outline" onClick={() => fetchPosts(false)} disabled={loadingMore} className="rounded-full">
+                    <Button variant="outline" onClick={() => fetchPosts(false)} disabled={loadingMore}>
                       {loadingMore ? <><Loader2 className="h-4 w-4 animate-spin mr-1" /> Loading…</> : "Load more"}
                     </Button>
                   </div>

@@ -432,43 +432,44 @@ function HeroSlider() {
   );
 }
 
-// ReadMore text component matching cseel.org with clean typography
+// ReadMore text component matching Google Search Console typography
 function HeroText() {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="max-w-2xl mx-auto my-4 sm:my-6 px-3 text-center">
       <div
-        className="text-slate-600 font-medium leading-relaxed text-xs sm:text-sm md:text-base transition-all duration-300"
+        className="text-[#3C4043] font-normal leading-[1.6] text-[16px] sm:text-[17px] transition-all duration-300"
         style={{
+          fontFamily: "var(--font-roboto), Roboto, Arial, sans-serif",
           textAlign: "center",
           display: expanded ? "block" : "-webkit-box",
-          WebkitLineClamp: expanded ? "unset" : 2,
+          WebkitLineClamp: expanded ? "unset" : 3,
           WebkitBoxOrient: "vertical" as any,
           overflow: expanded ? "visible" : "hidden",
         }}
       >
-        At CSEEL, we share the vision of the National Education Policy (<strong className="text-slate-900 font-bold">NEP</strong>) 2020
-        to transform Indian education from <strong className="text-slate-900 font-bold">rote memorization</strong> to{" "}
-        <strong className="text-slate-900 font-bold">experiential, inquiry-based, competency-focused</strong>, and{" "}
-        <strong className="text-slate-900 font-bold">hands-on</strong> learning.
+        At CSEEL, we share the vision of the National Education Policy (<strong className="text-[#3C4043] font-medium">NEP</strong>) 2020
+        to transform Indian education from <strong className="text-[#3C4043] font-medium">rote memorization</strong> to{" "}
+        <strong className="text-[#3C4043] font-medium">experiential, inquiry-based, competency-focused</strong>, and{" "}
+        <strong className="text-[#3C4043] font-medium">hands-on</strong> learning.
         <br /><br />
         At CSEEL, we believe the best way to learn science is by doing it.
-        Students learn science most effectively when they <strong className="text-slate-900 font-bold">observe</strong>,{" "}
-        <strong className="text-slate-900 font-bold">experiment</strong>, <strong className="text-slate-900 font-bold">analyse</strong>, <strong className="text-slate-900 font-bold">build</strong>, and{" "}
-        <strong className="text-slate-900 font-bold">solve real-world problems</strong>, rather than only reading from textbooks.
-        Through <strong className="text-slate-900 font-bold">experiential learning</strong> and <strong className="text-slate-900 font-bold">hands on learning</strong>, students
+        Students learn science most effectively when they <strong className="text-[#3C4043] font-medium">observe</strong>,{" "}
+        <strong className="text-[#3C4043] font-medium">experiment</strong>, <strong className="text-[#3C4043] font-medium">analyse</strong>, <strong className="text-[#3C4043] font-medium">build</strong>, and{" "}
+        <strong className="text-[#3C4043] font-medium">solve real-world problems</strong>, rather than only reading from textbooks.
+        Through <strong className="text-[#3C4043] font-medium">experiential learning</strong> and <strong className="text-[#3C4043] font-medium">hands on learning</strong>, students
         discover how things work and why they work, building strong conceptual understanding
         and a deep connection with the world around them.
         <br /><br />
-        This approach strongly aligns with <strong className="text-slate-900 font-bold">NEP 2020's</strong> emphasis on{" "}
-        <strong className="text-slate-900 font-bold">learning by doing</strong>, <strong className="text-slate-900 font-bold">learner-centred pedagogy</strong>,{" "}
-        <strong className="text-slate-900 font-bold">development of scientific temper</strong>, and{" "}
-        <strong className="text-slate-900 font-bold">real-life application of knowledge</strong>, ensuring that learning is meaningful,
+        This approach strongly aligns with <strong className="text-[#3C4043] font-medium">NEP 2020's</strong> emphasis on{" "}
+        <strong className="text-[#3C4043] font-medium">learning by doing</strong>, <strong className="text-[#3C4043] font-medium">learner-centred pedagogy</strong>,{" "}
+        <strong className="text-[#3C4043] font-medium">development of scientific temper</strong>, and{" "}
+        <strong className="text-[#3C4043] font-medium">real-life application of knowledge</strong>, ensuring that learning is meaningful,
         engaging, and future-ready.
       </div>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-[#006fcc] hover:text-[#003c6e] font-bold text-xs sm:text-sm mt-2.5 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
+        className="text-[#1A73E8] hover:text-[#1765CC] font-medium text-[14px] mt-2.5 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
       >
         <span>{expanded ? "Read Less ↑" : "Read More ↓"}</span>
       </button>
@@ -582,7 +583,7 @@ const Index = () => {
         isRollingBack={isRollingBack}
       />
 
-      {/* ─── Hero Section with Brand Palette (#003c6e & #006fcc) ─── */}
+      {/* ─── Hero Section with Google Search Console Clean Aesthetic ─── */}
       <SectionVisualWrapper
         sectionId="hero_section"
         sectionName="Hero Headline & Primary CTAs"
@@ -591,22 +592,27 @@ const Index = () => {
         onToggleVisibility={() => toggleSection('hero_section')}
         onOpenEdit={() => handleOpenEditSection('hero_section')}
       >
-        <section id="cseel-hero-section" aria-label="Welcome to CSEEL" className="cseel-hero-section hero-gradient pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 overflow-hidden">
+        <section id="cseel-hero-section" aria-label="Welcome to CSEEL" className="cseel-hero-section bg-white pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 border-b border-[#E2E8F0] overflow-hidden">
           <div className="cseel-hero-container container mx-auto px-4 text-center">
             
-            {/* Single-Line Dominant Brand Title (Geometric Sans-Serif Matching Logo Typography) */}
+            {/* Single-Line Dominant Brand Title (Original CSEEL Brand Blue & Bold Typography) */}
             <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
               <h1
-                className="text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight whitespace-nowrap text-center"
-                style={{ fontFamily: "var(--font-montserrat), 'Montserrat', 'Poppins', sans-serif" }}
+                className="cseel-brand-hero-h1 text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#005689] leading-tight whitespace-nowrap text-center"
+                style={{
+                  fontFamily: "var(--font-montserrat), 'Montserrat', 'Poppins', sans-serif",
+                  color: "#005689",
+                  fontWeight: 900,
+                }}
               >
-                <span>{heroConfig?.title ? (heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'Welcome to ' : heroConfig.title + ' ') : 'Welcome to '}</span>
+                <span style={{ color: "#005689", fontWeight: 900 }}>{heroConfig?.title ? (heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'Welcome to ' : heroConfig.title + ' ') : 'Welcome to '}</span>
                 <span
-                  className="text-primary font-bold tracking-wide inline-block"
+                  className="font-bold tracking-wide inline-block"
                   style={{
                     fontFamily: "var(--font-fredoka), 'Fredoka', 'Varela Round', 'Nunito', sans-serif",
                     fontWeight: 700,
                     letterSpacing: "0.06em",
+                    color: "#005689",
                   }}
                 >
                   {heroConfig?.title && heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'CSEEL' : ''}
@@ -614,7 +620,7 @@ const Index = () => {
               </h1>
               <p
                 className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-primary tracking-tight max-w-xl mx-auto"
-                style={{ fontFamily: "var(--font-poppins), 'Poppins', 'Montserrat', sans-serif" }}
+                style={{ fontFamily: "var(--font-roboto), Roboto, 'Google Sans', Arial, sans-serif" }}
               >
                 {heroConfig?.subtitle || 'Center for Scientific Exploration and Experiential Learning'}
               </p>
@@ -655,16 +661,16 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
-      {/* ─── Special Offers Section ─── */}
+      {/* ─── Ad/Offer Slot #1: slot_after_hero ─── */}
       <SectionVisualWrapper
         sectionId="special_offers"
-        sectionName="Special Offers & Events Cards"
+        sectionName="Special Offers & Events Cards (slot_after_hero)"
         isEditMode={isEditMode}
         enabled={isSectionEnabled('special_offers')}
         onToggleVisibility={() => toggleSection('special_offers')}
         onOpenEdit={() => handleOpenEditSection('special_offers')}
       >
-        <OffersSection />
+        <OffersSection slotId="slot_after_hero" />
       </SectionVisualWrapper>
       {/* ─── Stats ─── */}
       <section id="cseel-research-backed-stats-section" aria-label="Why Hands-On Science Works" className="cseel-stats-section py-16 bg-slate-50/70 border-y border-slate-200/80">
@@ -688,6 +694,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ─── Ad/Offer Slot #2: slot_after_stats ─── */}
+      <OffersSection slotId="slot_after_stats" />
+
       {/* ─── Trusted Schools Marquee Strip (logo + name together) ─── */}
       <SectionVisualWrapper
         sectionId="partner_schools"
@@ -697,7 +706,7 @@ const Index = () => {
         onToggleVisibility={() => toggleSection('partner_schools')}
         onOpenEdit={() => handleOpenEditSection('partner_schools')}
       >
-        <section id="cseel-partner-schools-network-section" aria-labelledby="trust-h" className="cseel-partner-schools-section bg-white py-14 border-b border-[#E2E8F0]">
+        <section id="cseel-partner-schools-network-section" aria-labelledby="trust-h" className="cseel-partner-schools-section bg-white py-14 border-b border-[#E2E8F0] overflow-hidden w-full max-w-full">
           <div className="max-w-[1280px] mx-auto px-6 lg:px-10 text-center mb-10">
             <p id="trust-h" className="font-semibold text-[#64748B] text-[14px]">
               {partnerConfig?.subtitle || partnerConfig?.title || "Trusted by 250+ schools & institutions across Delhi NCR and India"}
@@ -705,7 +714,7 @@ const Index = () => {
           </div>
 
           {/* Single unified marquee: logo + name card together */}
-          <div className="school-marquee" role="list" aria-label="Partner schools">
+          <div className="school-marquee w-full max-w-full overflow-hidden" role="list" aria-label="Partner schools">
             <div className="school-marquee__track">
               {[...partnerSchoolsList, ...partnerSchoolsList].map((school, i) => (
                 <div
@@ -745,6 +754,9 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
+      {/* ─── Ad/Offer Slot #3: slot_after_partners ─── */}
+      <OffersSection slotId="slot_after_partners" />
+
       {/* ─── Key Metrics ─── */}
       <SectionVisualWrapper
         sectionId="impact_metrics"
@@ -754,7 +766,11 @@ const Index = () => {
         onToggleVisibility={() => toggleSection('impact_metrics')}
         onOpenEdit={() => handleOpenEditSection('impact_metrics')}
       >
-        <section className="py-16 hero-gradient" ref={metricsReveal.ref as any}>
+        <section
+          className="py-16 bg-slate-50/70 border-b border-slate-200/80"
+          style={{ backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
+          ref={metricsReveal.ref as any}
+        >
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
               <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
@@ -764,7 +780,7 @@ const Index = () => {
                 {metricsConfig?.title || "CSEEL by the Numbers"}
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               {(metricsConfig?.items || [
                 { value: "20,000+", label: "Active Learners" },
                 { value: "1000+", label: "Concept Based Experiments" },
@@ -788,6 +804,9 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
+      {/* ─── Ad/Offer Slot #4: slot_after_metrics ─── */}
+      <OffersSection slotId="slot_after_metrics" />
+
       {/* ─── Feature Rows ─── */}
       <SectionVisualWrapper
         sectionId="why_cseel_features"
@@ -797,7 +816,7 @@ const Index = () => {
         onToggleVisibility={() => toggleSection('why_cseel_features')}
         onOpenEdit={() => handleOpenEditSection('why_cseel_features')}
       >
-        <section id="cseel-lms-integration-section" aria-label="LMS Integration and Support" className="cseel-lms-section py-20 bg-background">
+        <section id="cseel-lms-integration-section" aria-label="LMS Integration and Support" className="cseel-lms-section py-20 bg-white border-b border-slate-200/80">
           <div className="container mx-auto px-4 max-w-[1240px]">
             <div className="text-center mb-12">
               <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
@@ -808,10 +827,10 @@ const Index = () => {
               </h2>
             </div>
             
-            {/* Stacking Cards Wrapper with Sticky Scroll Flow */}
+            {/* Feature Cards Wrapper — Sticky Stacking Effect */}
             <div className="achievement_list-wrapper flex flex-col gap-8 pb-12 relative">
               
-              {/* Feature 1: Soft Blue Background - Sticky Card 1 */}
+              {/* Feature 1: Soft Blue Background */}
               <div 
                 className="card-soft-blue rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 sticky"
                 style={{ top: '100px', zIndex: 10, marginBottom: '2.5rem' }}
@@ -850,7 +869,7 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Feature 2: Soft Peach/Rose Background - Sticky Card 2 */}
+              {/* Feature 2: Soft Peach/Rose Background */}
               <div 
                 className="card-soft-red rounded-3xl overflow-hidden shadow-[0_-6px_28px_rgba(0,0,0,0.07),0_12px_32px_rgba(0,0,0,0.08)] hover:shadow-xl transition-all duration-300 sticky"
                 style={{ top: '124px', zIndex: 20, marginBottom: '2.5rem' }}
@@ -889,7 +908,7 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Feature 3: Soft Teal/Emerald Background - Sticky Card 3 */}
+              {/* Feature 3: Soft Teal/Emerald Background */}
               <div 
                 className="card-soft-green rounded-3xl overflow-hidden shadow-[0_-6px_28px_rgba(0,0,0,0.07),0_12px_32px_rgba(0,0,0,0.08)] hover:shadow-xl transition-all duration-300 sticky"
                 style={{ top: '148px', zIndex: 30, marginBottom: '1rem' }}
@@ -934,6 +953,9 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
+      {/* ─── Ad/Offer Slot #5: slot_after_outcomes ─── */}
+      <OffersSection slotId="slot_after_outcomes" />
+
       {/* ─── Subjects & Disciplines — 3 Domain Cards ─── */}
       <SectionVisualWrapper
         sectionId="subjects_catalog"
@@ -943,7 +965,11 @@ const Index = () => {
         onToggleVisibility={() => toggleSection('subjects_catalog')}
         onOpenEdit={() => handleOpenEditSection('subjects_catalog')}
       >
-        <section id="cseel-disciplines-catalog-section" className="py-16 hero-gradient overflow-hidden">
+        <section
+          id="cseel-disciplines-catalog-section"
+          className="py-16 bg-slate-50/70 border-b border-slate-200/80 overflow-hidden"
+          style={{ backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
+        >
           <div className="container mx-auto px-4">
 
             {/* Header */}
@@ -1013,6 +1039,9 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
+      {/* ─── Ad/Offer Slot #6: slot_after_catalog ─── */}
+      <OffersSection slotId="slot_after_catalog" />
+
       {/* ─── Testimonial ─── */}
       <SectionVisualWrapper
         sectionId="testimonials"
@@ -1024,6 +1053,9 @@ const Index = () => {
       >
         <TestimonialSection />
       </SectionVisualWrapper>
+
+      {/* ─── Ad/Offer Slot #7: slot_after_testimonials ─── */}
+      <OffersSection slotId="slot_after_testimonials" />
 
       {/* ─── Awards ─── */}
       <SectionVisualWrapper
@@ -1048,6 +1080,9 @@ const Index = () => {
       >
         <EasySection />
       </SectionVisualWrapper>
+
+      {/* ─── Ad/Offer Slot #8: slot_before_footer ─── */}
+      <OffersSection slotId="slot_before_footer" />
 
       {/* ─── Final CTA ─── */}
       <SectionVisualWrapper
@@ -1151,24 +1186,24 @@ const FALLBACK_TESTIMONIALS = [
 ];
 
 function TestimonialSection() {
-  const [items, setItems] = useState<any[]>(FALLBACK_TESTIMONIALS);
+  const [items] = useState<any[]>([...FALLBACK_TESTIMONIALS, ...FALLBACK_TESTIMONIALS]);
   const { ref, visible } = useScrollReveal();
-
-  // Testimonials load instantly from curated data
 
   return (
     <section
-      id="cseel-teacher-testimonials-section" aria-label="Teacher Testimonials Across India" className="cseel-testimonials-section py-20 overflow-hidden bg-[#F8FAFD] dark:bg-[#121212] border-t border-border"
+      id="cseel-teacher-testimonials-section"
+      aria-label="Teacher Testimonials Across India"
+      className="cseel-testimonials-section py-20 overflow-hidden bg-white border-b border-slate-200/80 w-full max-w-full"
       ref={ref as any}
     >
       <div
-        className="container mx-auto px-6 max-w-7xl"
+        className="container mx-auto px-4 max-w-[1280px] overflow-hidden"
         style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(40px)", transition: "all 0.7s ease" }}
       >
         {/* Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-14 gap-8">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-6">
           <div>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight mb-4">
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground tracking-tight leading-tight">
               Trusted by Teachers<br/>
               <span className="text-muted-foreground">across the nation.</span>
             </h2>
@@ -1176,23 +1211,24 @@ function TestimonialSection() {
           {/* Arrows */}
           <div className="flex gap-3 shrink-0">
             <button
-              className="testimonial-swiper-prev w-12 h-12 rounded-full bg-white dark:bg-[#1E1F20] border border-border flex items-center justify-center cursor-pointer transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
+              className="testimonial-swiper-prev w-10 h-10 rounded-full bg-white dark:bg-[#1E1F20] border border-border flex items-center justify-center cursor-pointer transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
             </button>
             <button
-              className="testimonial-swiper-next w-12 h-12 rounded-full bg-white dark:bg-[#1E1F20] border border-border flex items-center justify-center cursor-pointer transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
+              className="testimonial-swiper-next w-10 h-10 rounded-full bg-white dark:bg-[#1E1F20] border border-border flex items-center justify-center cursor-pointer transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
             </button>
           </div>
         </div>
 
-        {/* Swiper Testimonials Carousel */}
+        {/* Swiper Testimonials Carousel — 4 cards in a row on desktop, strictly contained */}
         <Swiper
+          key="testimonial-swiper-4col"
           modules={[Autoplay, Pagination, Navigation]}
-          spaceBetween={24}
-          slidesPerView={1.1}
+          spaceBetween={20}
+          slidesPerView={1}
           speed={600}
           loop={true}
           autoplay={{
@@ -1211,10 +1247,11 @@ function TestimonialSection() {
             bulletActiveClass: '!bg-primary !w-6',
           }}
           breakpoints={{
-            640: { slidesPerView: 1.8, spaceBetween: 24 },
-            1024: { slidesPerView: 2.8, spaceBetween: 28 },
+            560: { slidesPerView: 2, spaceBetween: 16 },
+            860: { slidesPerView: 3, spaceBetween: 20 },
+            1100: { slidesPerView: 4, spaceBetween: 20 },
           }}
-          className="w-full !overflow-visible"
+          className="w-full max-w-full overflow-hidden py-2"
         >
           {items.map((t, i) => {
             const THEMES = [
@@ -1231,15 +1268,14 @@ function TestimonialSection() {
             const avatarColor = t.avatarColor || theme.color;
             const starColor = t.starColor || "#FBBC04";
             const iconColor = t.iconColor || theme.color;
-            const initials = t.initials || t.name?.slice(0,2).toUpperCase();
             return (
-              <SwiperSlide key={t.id||i} className="h-auto">
+              <SwiperSlide key={`${t.id || 't'}-${i}`} className="!h-auto">
                 <div
                   style={{
                     background: cardBg,
-                    borderRadius: 24,
+                    borderRadius: 20,
                     border: `1px solid ${cardBorder}`,
-                    padding: "32px",
+                    padding: "22px",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -1247,7 +1283,7 @@ function TestimonialSection() {
                     cursor: "default",
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 28px rgba(0,0,0,0.10)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
                     (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
                   }}
                   onMouseLeave={e => {
@@ -1256,8 +1292,8 @@ function TestimonialSection() {
                   }}
                 >
                   {/* Avatar + name */}
-                  <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:24 }}>
-                    <div style={{ width:52, height:52, borderRadius:"50%", background:avatarBg, display:"flex", alignItems:"center", justifyContent:"center", color:avatarColor, fontWeight:700, fontSize:15, flexShrink:0, overflow:"hidden", border:"2px solid white", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
+                    <div style={{ width:44, height:44, borderRadius:"50%", background:avatarBg, display:"flex", alignItems:"center", justifyContent:"center", color:avatarColor, fontWeight:700, fontSize:14, flexShrink:0, overflow:"hidden", border:"2px solid white", boxShadow:"0 2px 6px rgba(0,0,0,0.08)" }}>
                       <img
                         src={t.photo_url || "/images/teachers/verified-teacher-avatar-placeholder.webp"}
                         alt={t.name}
@@ -1271,21 +1307,21 @@ function TestimonialSection() {
                         }}
                       />
                     </div>
-                    <div>
-                      <p style={{ fontWeight:500, color:"#202124", fontSize:15, lineHeight:1.3 }}>{t.name}</p>
-                      <p style={{ fontSize:13, color:"#5F6368", marginTop:2 }}>{t.institution || t.role}</p>
+                    <div className="min-w-0">
+                      <p className="truncate" style={{ fontWeight:500, color:"#202124", fontSize:14, lineHeight:1.3 }}>{t.name}</p>
+                      <p className="truncate" style={{ fontSize:12, color:"#5F6368", marginTop:2 }}>{t.institution || t.role}</p>
                     </div>
                   </div>
 
                   {/* Quote */}
-                  <p style={{ color:"#3C4043", fontSize:16, lineHeight:1.7, flex:1 }}>
+                  <p style={{ color:"#3C4043", fontSize:14, lineHeight:1.6, flex:1 }}>
                     "{t.quote}"
                   </p>
 
                   {/* Footer */}
-                  <div style={{ marginTop:24, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                    <div style={{ color:starColor, fontSize:16, letterSpacing:2 }}>★★★★★</div>
-                    <svg style={{ width:22, height:22, color:iconColor, fill:iconColor }} viewBox="0 0 24 24">
+                  <div style={{ marginTop:18, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                    <div style={{ color:starColor, fontSize:14, letterSpacing:1.5 }}>★★★★★</div>
+                    <svg style={{ width:18, height:18, color:iconColor, fill:iconColor }} viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                   </div>
@@ -1296,7 +1332,7 @@ function TestimonialSection() {
         </Swiper>
 
         {/* Swiper Pagination Dots */}
-        <div className="testimonial-swiper-pagination !flex !justify-center !items-center !gap-1.5 !mt-10" />
+        <div className="testimonial-swiper-pagination !flex !justify-center !items-center !gap-1.5 !mt-8" />
       </div>
     </section>
   );
@@ -1313,7 +1349,11 @@ function AwardsSection() {
     "/images/awards/experiential-learning-impact-award.avif",
   ];
   return (
-    <section className="py-16 hero-gradient" ref={ref as any}>
+    <section
+      className="py-16 bg-slate-50/70 border-b border-slate-200/80"
+      style={{ backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
+      ref={ref as any}
+    >
       <div className="container mx-auto px-4">
         <div
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"

@@ -28,7 +28,7 @@ export interface SchoolsDirectoryResult {
 }
 
 const SCHOOLS_CACHE = new Map<string, { data: SchoolsDirectoryResult; timestamp: number }>();
-const CACHE_TTL_MS = 15 * 60 * 1000;
+const CACHE_TTL_MS = 2000; // 2 seconds for fresh updates
 
 export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promise<SchoolsDirectoryResult> {
   const cacheKey = JSON.stringify({
@@ -202,13 +202,11 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
     let totalCount = count || (rows ? rows.length : 0);
     let schools: SchoolRecord[] = (rows || []).map((row: any) => mapSupabaseToSchoolRecord(row));
 
-    // Ultimate fallback: If the DB is completely empty or returns 0 records even after relaxation
+    // When DB has no records, keep empty list rather than injecting dummy mock schools
     if (schools.length === 0) {
-      const { SCHOOLS_DATA } = await import('@/data/schoolFinderData');
-      schools = SCHOOLS_DATA.slice(0, 5);
-      totalCount = schools.length;
-      fallbackNotice = 'Showing top verified sample schools.';
-      isFallback = true;
+      totalCount = 0;
+      fallbackNotice = '';
+      isFallback = false;
     }
 
     const totalPages = Math.ceil(totalCount / limit) || 1;

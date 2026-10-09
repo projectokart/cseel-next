@@ -437,8 +437,8 @@ const Simulations = () => {
                 <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Experimental Library</h1>
                 <p className="text-primary-foreground/80 mb-6 text-sm">Turn every concept into a hands-on experience.</p>
                 <div className="flex items-center gap-3">
-                  <Link href="/compare-plans" className="px-6 py-2 bg-background text-primary font-semibold rounded-full text-sm inline-block">View Plans</Link>
-                  <Link href="/demo" className="px-6 py-2 bg-transparent border border-primary-foreground text-primary-foreground font-semibold rounded-full text-sm inline-block hover:bg-primary-foreground/10 transition-colors">View Demo</Link>
+                  <Link href="/compare-plans" className="button_secondary px-6 py-2.5 font-bold rounded-[12px] text-sm inline-block shadow-sm">View Plans</Link>
+                  <Link href="/demo" className="btn-outline px-6 py-2.5 border-white text-white font-bold rounded-[12px] text-sm inline-block hover:bg-white/10 transition-colors">View Demo</Link>
                 </div>
               </ScrollReveal>
             </div>

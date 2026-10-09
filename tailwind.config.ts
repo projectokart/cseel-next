@@ -13,6 +13,12 @@ export default {
       },
     },
     extend: {
+      fontSize: {
+        xs: ['0.8125rem', { lineHeight: '1.25rem' }],   // 13px (up from 12px)
+        sm: ['0.9375rem', { lineHeight: '1.375rem' }],  // 15px (up from 14px)
+        base: ['1rem', { lineHeight: '1.6rem' }],       // 16px
+        lg: ['1.125rem', { lineHeight: '1.75rem' }],    // 18px
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

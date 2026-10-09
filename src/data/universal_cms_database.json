@@ -355,5 +355,53 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-07T04:31:58.899Z",
     "updatedBy": "Auto Init"
+  },
+  "login": {
+    "pageKey": "login",
+    "title": "Login",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-08T06:08:42.778Z",
+    "updatedBy": "Auto Init"
+  },
+  "onboarding": {
+    "pageKey": "onboarding",
+    "title": "Onboarding",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-08T06:19:27.039Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials": {
+    "pageKey": "materials",
+    "title": "Materials",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-08T18:20:31.260Z",
+    "updatedBy": "Auto Init"
+  },
+  "compare-plans": {
+    "pageKey": "compare-plans",
+    "title": "Compare Plans",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-09T06:55:54.686Z",
+    "updatedBy": "Auto Init"
+  },
+  "under-construction": {
+    "pageKey": "under-construction",
+    "title": "Under Construction",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-09T07:41:32.964Z",
+    "updatedBy": "Auto Init"
+  },
+  "virtual-lab": {
+    "pageKey": "virtual-lab",
+    "title": "Virtual Lab",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-09T08:20:00.501Z",
+    "updatedBy": "Auto Init"
   }
 }

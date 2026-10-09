@@ -3,7 +3,8 @@ import { parseSchoolsSeoQuery } from '@/lib/schoolsSeoParser';
 import { fetchSchoolsForDirectory } from '@/integrations/supabase/schoolsDirectoryDb';
 import SchoolsDirectoryClient from '@/components/schools/SchoolsDirectoryClient';
 
-export const revalidate = 3600; // ISR revalidate every 1 hour
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({
   params,

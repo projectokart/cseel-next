@@ -553,7 +553,7 @@ export default function AboutClient() {
                   </div>
                   <button 
                     type="submit" 
-                    className="w-full py-3 bg-[#005689] hover:bg-[#0D4979] text-white font-bold rounded-btn text-sm shadow-btn transition-colors mt-2"
+                    className="button_primary w-full py-3.5 text-white font-bold rounded-[12px] text-sm shadow-sm hover:shadow-md transition-all mt-2"
                   >
                     Schedule Demo
                   </button>

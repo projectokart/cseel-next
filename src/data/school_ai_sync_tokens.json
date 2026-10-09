@@ -1,0 +1,321 @@
+{
+  "tokens": {
+    "csl_ai_magic_test_portal": {
+      "token": "csl_ai_magic_test_portal",
+      "schoolId": "06170505907",
+      "schoolName": "DELHI PUBLIC SCHOOL",
+      "createdAt": 1791522000000,
+      "expiresAt": 1792126800000,
+      "lastUpdatedAt": 1791524910004,
+      "lastUpdatedSource": "AI Assistant",
+      "profileData": {
+        "udiseCode": "06170505907",
+        "schoolName": "DELHI PUBLIC SCHOOL",
+        "contentOverrides": {
+          "hero_stat_val_1": "100%",
+          "hero_stat_lbl_1": "Board Pass Rate",
+          "hero_stat_val_2": "1:15",
+          "hero_stat_lbl_2": "Student-Teacher Ratio",
+          "hero_stat_val_3": "25+",
+          "hero_stat_lbl_3": "Hi-Tech Labs & Studios",
+          "hero_stat_val_4": "40+",
+          "hero_stat_lbl_4": "Awards & Honors",
+          "hero_stat_val_5": "99%",
+          "hero_stat_lbl_5": "Parent Trust Rating",
+          "principal_message": "At DPS Rewari, every student is encouraged to discover their innate curiosity and transform knowledge into meaningful real-world leadership."
+        },
+        "board": "CBSE (Central Board of Secondary Education)",
+        "medium": "English Medium",
+        "establishedYear": "2013",
+        "campusArea": "14 Acres",
+        "schoolType": "Private Unaided (Recognized)",
+        "management": "Delhi Public School Society",
+        "schoolCategory": "Senior Secondary (Class 1 to 12th)",
+        "genderType": "Co-Educational",
+        "logoImage": "/images/schools/hero-school-1.png",
+        "heroImage": "/images/schools/hero-school-1.png",
+        "totalStudents": 1450,
+        "totalTeachers": 85,
+        "classroomsCount": 55,
+        "workingSmartBoards": 45,
+        "isResidential": false,
+        "hasHostel": false,
+        "aboutText": "Delhi Public School Rewari is a premier CBSE-affiliated institution dedicated to academic brilliance, moral integrity, and experiential STEAM learning across a sprawling 14-acre green campus.",
+        "visionText": "Fostering globally conscious, innovative leaders equipped with scientific temperament and moral values.",
+        "missionText": "Delivering holistic NEP 2020 education blending high academic standards with sports, coding, and arts.",
+        "principalName": "Dr. Sunita Sharma",
+        "flipbookSlides": [
+          {
+            "id": "slide-1",
+            "title": "Modern 14-Acre Academic Quad",
+            "desc": "Eco-friendly smart campus with state-of-the-art interactive digital infrastructure.",
+            "mediaType": "image",
+            "image": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80",
+            "videoUrl": "",
+            "buttonText": "Explore Campus",
+            "actionTab": "home"
+          },
+          {
+            "id": "slide-2",
+            "title": "Atal Tinkering & Robotics Lab",
+            "desc": "Hands-on experiential learning in AI, IoT sensors, robotics, and applied science.",
+            "mediaType": "image",
+            "image": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80",
+            "videoUrl": "",
+            "buttonText": "View Labs",
+            "actionTab": "facilities"
+          },
+          {
+            "id": "slide-3",
+            "title": "Sports Complex & Athletics Ground",
+            "desc": "Olympic-standard turf, cricket academy, basketball arena, and yoga pavilion.",
+            "mediaType": "image",
+            "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=80",
+            "videoUrl": "",
+            "buttonText": "Admissions Open",
+            "actionTab": "admissions"
+          }
+        ],
+        "classFrom": "Class 1st",
+        "classTo": "Class 12th",
+        "includedAcademicFeatures": [
+          "CBSE Affiliated Curriculum with NEP 2020 Experiential STEM Pedagogy",
+          "Advanced Science, Commerce, and Humanities Streams for Senior Secondary",
+          "Dedicated Olympiad, NTSE, and JEE/NEET/CUET Foundation Masterclasses",
+          "Interactive Smart Boards & 3D Virtual Lab Modules in all Classrooms",
+          "Continuous Remedial Mentoring with 1:15 Student-Teacher Ratio"
+        ],
+        "facilities": [
+          {
+            "id": "fac-0",
+            "title": "Smart Classes",
+            "desc": "",
+            "badge": "Academic",
+            "icon": "https://img.icons8.com/?size=128&id=13203&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-1",
+            "title": "Library",
+            "desc": "",
+            "badge": "Academic",
+            "icon": "https://img.icons8.com/?size=128&id=12300&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-2",
+            "title": "Physics Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=71261&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-3",
+            "title": "Chemistry Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=13884&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-4",
+            "title": "Biology Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=13917&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-5",
+            "title": "Robotics Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=JB5lRIhzKC0y&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-6",
+            "title": "Computer Lab",
+            "desc": "",
+            "badge": "Lab Facility",
+            "icon": "https://img.icons8.com/?size=128&id=20420&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-7",
+            "title": "Playground / Outdoor Sports",
+            "desc": "",
+            "badge": "Sports & Fitness",
+            "icon": "https://img.icons8.com/?size=128&id=12012&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-8",
+            "title": "CCTV Surveillance",
+            "desc": "",
+            "badge": "Safety & Security",
+            "icon": "https://img.icons8.com/?size=128&id=15881&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-9",
+            "title": "Medical Room / Clinic",
+            "desc": "",
+            "badge": "Safety & Security",
+            "icon": "https://img.icons8.com/?size=128&id=12461&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-10",
+            "title": "Art & Craft Studio",
+            "desc": "",
+            "badge": "Extracurricular",
+            "icon": "https://img.icons8.com/?size=128&id=24151&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-11",
+            "title": "Music Room",
+            "desc": "",
+            "badge": "Extracurricular",
+            "icon": "https://img.icons8.com/?size=128&id=3220&format=png",
+            "points": []
+          },
+          {
+            "id": "fac-12",
+            "title": "Wi-Fi Campus",
+            "desc": "",
+            "badge": "Infrastructure & Boarding",
+            "icon": "https://img.icons8.com/?size=128&id=13348&format=png",
+            "points": []
+          }
+        ],
+        "galleryItems": [
+          {
+            "id": "gal-1",
+            "title": "Central Academic Campus",
+            "category": "Campus",
+            "type": "image",
+            "url": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80"
+          },
+          {
+            "id": "gal-2",
+            "title": "Robotics & STEM Tinkering Lab",
+            "category": "Labs",
+            "type": "image",
+            "url": "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80"
+          },
+          {
+            "id": "gal-3",
+            "title": "Annual Athletic Meet",
+            "category": "Sports",
+            "type": "image",
+            "url": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=1200&q=80"
+          }
+        ],
+        "feeTableData": {
+          "columns": [
+            "Class Level",
+            "Quarterly Tuition",
+            "Annual Fee",
+            "Lab & Dev Fee",
+            "Total Annual (Est.)"
+          ],
+          "rows": [
+            [
+              "Primary (Class 1 to 5)",
+              "₹12,500",
+              "₹5,000",
+              "₹3,500",
+              "₹58,500"
+            ],
+            [
+              "Middle (Class 6 to 8)",
+              "₹15,000",
+              "₹6,000",
+              "₹4,000",
+              "₹70,000"
+            ],
+            [
+              "Secondary (Class 9 & 10)",
+              "₹18,000",
+              "₹7,500",
+              "₹5,000",
+              "₹84,500"
+            ],
+            [
+              "Senior Secondary (11 & 12",
+              "₹21,000",
+              "₹9,000",
+              "₹6,500",
+              "₹99,500"
+            ]
+          ]
+        },
+        "admissions": [
+          {
+            "id": "adm-1",
+            "title": "Primary Wing Fresh Admissions",
+            "criteria": "Age 6+ as of March 31st per NEP 2020. Informal interaction with child and parents.",
+            "badge": "Session 2026-27 Open",
+            "icon": "Baby",
+            "points": [
+              "Birth Certificate verification",
+              "Immunization record",
+              "Aadhaar Card of student & parents"
+            ]
+          },
+          {
+            "id": "adm-2",
+            "title": "Middle & Senior Lateral Admissions",
+            "criteria": "Aptitude assessment in English, Mathematics and Science followed by counseling.",
+            "badge": "Merit Scholarships",
+            "icon": "GraduationCap",
+            "points": [
+              "Previous academic transcripts",
+              "Transfer Certificate (TC)",
+              "Character Certificate"
+            ]
+          }
+        ],
+        "faqs": [
+          {
+            "id": "faq-1",
+            "q": "What is the admission procedure for the school?",
+            "a": "Parents can fill the online application or visit the campus admission desk. Shortlisted applicants undergo a friendly interaction followed by document submission.",
+            "category": "Admissions"
+          },
+          {
+            "id": "faq-2",
+            "q": "Does the school provide transport facilities?",
+            "a": "Yes, modern GPS-tracked, CCTV-monitored buses with female attendants ply across all major city routes.",
+            "category": "Facilities"
+          },
+          {
+            "id": "faq-3",
+            "q": "Can fees be paid in quarterly installments?",
+            "a": "Yes, tuition and activity fees can be paid in four convenient quarterly installments through net banking, debit/credit cards, or at the school counter.",
+            "category": "Fees"
+          },
+          {
+            "id": "faq-4",
+            "q": "What sports coaching facilities are available on campus?",
+            "a": "The school features dedicated football, basketball, cricket nets, lawn tennis, badminton, and yoga sessions coached by certified NIS trainers.",
+            "category": "Sports"
+          }
+        ],
+        "address": "DELHI PUBLIC SCHOOL REWARI VILL JAUNAWAS PO DUNGERWAS TEH REWARI DISTT REWARI STATE HARYANA",
+        "village": "Jonawas",
+        "blockName": "Rewari",
+        "district": "REWARI",
+        "state": "HARYANA",
+        "pincode": "123401",
+        "ruralUrban": "Rural",
+        "phone": "+91 1274 250100",
+        "email": "info@dpsrewari.edu.in",
+        "website": "https://www.dpsrewari.edu.in"
+      }
+    }
+  }
+}

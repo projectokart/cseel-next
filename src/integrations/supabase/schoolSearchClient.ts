@@ -177,7 +177,7 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     headmaster_principal_name: row.principal_name || 'Principal In-Charge',
     phone: cleanPhone,
     email: row.email || '',
-    website: row.website || ('https://schoolsearch.cseel.org/org/org-school-' + schoolId),
+    website: row.website || '',
     total_students: totalStudents,
     total_boys: Number(row.total_boys) || Math.round(totalStudents * 0.52),
     total_girls: Number(row.total_girls) || Math.round(totalStudents * 0.48),

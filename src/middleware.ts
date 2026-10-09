@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import maintenanceConfig from '@/features/maintenance/data/maintenance_config.json';
 
 /**
  * CSEEL.org — Edge Router
@@ -67,6 +68,56 @@ export function middleware(request: NextRequest) {
   if (process.env.NODE_ENV === 'production' && (currentHost === '' || currentHost === 'www')) {
     if (pathname === '/admin' || pathname.startsWith('/admin/')) {
       return NextResponse.redirect('https://admin.cseel.org', 308);
+    }
+  }
+
+  // 1.5. Maintenance Mode: Redirect entire cseel.org to /under-construction when active
+  if (currentHost === '' || currentHost === 'www') {
+    const isBypass =
+      request.cookies.get('cseel_admin_bypass')?.value === 'true' ||
+      Boolean(request.cookies.get('cseel_admin_auth')?.value) ||
+      url.searchParams.get('bypass') === 'true' ||
+      url.searchParams.get('bypass_maintenance') === '1' ||
+      url.searchParams.get('edit') === 'true' ||
+      url.searchParams.get('editMode') === 'true';
+
+    const isAllowedPath =
+      pathname === '/under-construction' ||
+      pathname.startsWith('/under-construction/') ||
+      pathname === '/admin' ||
+      pathname.startsWith('/admin/') ||
+      pathname === '/faculty-admin' ||
+      pathname.startsWith('/faculty-admin/') ||
+      pathname.startsWith('/api/') ||
+      pathname.startsWith('/auth/');
+
+    if (!isBypass && !isAllowedPath) {
+      const cookieMaint = request.cookies.get('cseel_maintenance_active')?.value;
+      let isMaintActive = false;
+
+      if (cookieMaint === '1') {
+        isMaintActive = true;
+      } else if (cookieMaint === '0') {
+        isMaintActive = false;
+      } else {
+        try {
+          if (maintenanceConfig.enabled) {
+            if (!maintenanceConfig.expiresAt) {
+              isMaintActive = true;
+            } else {
+              const expTime = new Date(maintenanceConfig.expiresAt).getTime();
+              if (!isNaN(expTime) && expTime > Date.now()) {
+                isMaintActive = true;
+              }
+            }
+          }
+        } catch {}
+      }
+
+      if (isMaintActive) {
+        url.pathname = '/under-construction';
+        return NextResponse.redirect(url);
+      }
     }
   }
 

@@ -16,7 +16,9 @@ import {
   Layers,
   Activity,
   FlaskConical,
+  Megaphone,
   Menu,
+  Palette,
   X
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
@@ -177,6 +179,36 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             <div className={`px-3 py-1.5 text-[11px] font-bold text-[#5f6368] uppercase tracking-wider ${collapsed ? 'lg:hidden' : 'block'}`}>
               Website Visual CMS
             </div>
+            {/* 📢 Offers, Banners & Ad Slots Controller */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveModule('marketing_growth');
+                if (typeof window !== 'undefined') {
+                  if (window.location.pathname !== '/admin') {
+                    window.location.href = '/admin';
+                  }
+                  if (window.innerWidth < 1024) onCloseMobile();
+                }
+              }}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                collapsed ? 'lg:justify-center lg:px-2' : ''
+              } ${
+                activeModule === 'marketing_growth'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
+                  : 'text-[#444746] hover:bg-[#f1f3f4]'
+              }`}
+              title="Offers, Custom HTML Banners & Page Ad Slots"
+            >
+              <div className="flex items-center gap-3.5">
+                <Megaphone className="w-5 h-5 text-[#ea3829] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block'}>Offers &amp; Ad Banners</span>
+              </div>
+              <span className={`text-[10px] bg-rose-100 text-rose-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
+                Swiper
+              </span>
+            </button>
+
             {/* 🌐 3-Stage Navigation & Custom Pages CMS */}
             <button
               type="button"
@@ -204,6 +236,36 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               </div>
               <span className={`text-[10px] bg-sky-100 text-sky-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
                 3-Stage
+              </span>
+            </button>
+
+            {/* 🎨 Global CSS & Styling (Theme Controller) */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveModule('global_styling');
+                if (typeof window !== 'undefined') {
+                  if (window.location.pathname !== '/admin') {
+                    window.location.href = '/admin';
+                  }
+                  if (window.innerWidth < 1024) onCloseMobile();
+                }
+              }}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                collapsed ? 'lg:justify-center lg:px-2' : ''
+              } ${
+                activeModule === 'global_styling'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
+                  : 'text-[#444746] hover:bg-[#f1f3f4]'
+              }`}
+              title="Global CSS Styling, Button Shapes & Theme Sheet"
+            >
+              <div className="flex items-center gap-3.5">
+                <Palette className="w-5 h-5 text-[#006FCC] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block'}>Global CSS Styling</span>
+              </div>
+              <span className={`text-[10px] bg-purple-100 text-purple-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
+                Theme
               </span>
             </button>
 

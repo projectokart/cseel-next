@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Settings, 
@@ -13,7 +13,8 @@ import {
   Moon,
   Sun,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  Construction
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import CseelLogoEmblem from '@/components/shared/CseelLogoEmblem';
@@ -34,6 +35,18 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [appsOpen, setAppsOpen] = useState(false);
+  const [maintenanceActive, setMaintenanceActive] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch('/api/maintenance', { cache: 'no-store' })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data) {
+          setMaintenanceActive(Boolean(json.data.isActive));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <header className="h-16 bg-white border-b border-[#dadce0] px-3 sm:px-5 flex items-center justify-between sticky top-0 z-30 font-sans select-none w-full shrink-0">
@@ -133,6 +146,26 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <Sparkles className="w-3.5 h-3.5 text-blue-200" />
           <span>Live Visual Editor</span>
         </a>
+
+        {/* Quick Maintenance Status Pill */}
+        {maintenanceActive !== null && (
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('maintenance-panel');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs cursor-pointer ${
+              maintenanceActive
+                ? 'bg-amber-100 text-amber-900 border border-amber-300 animate-pulse'
+                : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+            }`}
+            title="Click to view/manage Under Construction Mode"
+          >
+            <Construction className="w-3.5 h-3.5" />
+            <span>{maintenanceActive ? 'Maint: ON' : 'Site: LIVE'}</span>
+          </button>
+        )}
 
         {/* Support */}
         <button

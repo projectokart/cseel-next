@@ -177,7 +177,7 @@ const ContactUs = () => {
                       disabled={loading}
                       whileHover={{ scale: loading ? 1 : 1.02 }}
                       whileTap={{ scale: loading ? 1 : 0.98 }}
-                      className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary-hover transition-colors disabled:opacity-60"
+                      className="button_primary w-full py-3.5 rounded-[12px] text-white font-bold text-base shadow-sm hover:shadow-md transition-all disabled:opacity-60"
                     >
                       {loading ? "Sending..." : "Submit"}
                     </motion.button>

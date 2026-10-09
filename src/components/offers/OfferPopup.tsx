@@ -33,58 +33,45 @@ const DEFAULT_POPUP: PromoItem = {
   accent_color: "#0284c7",
 };
 
+import { useMarketingCampaigns } from "@/features/marketing/useMarketingCampaigns";
+
 const OfferPopup = () => {
   const { isSectionEnabled } = useHomepageCms();
+  const { promotions, hydrated } = useMarketingCampaigns();
   const [item, setItem] = useState<PromoItem | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const hasLoaded = useRef(false);
 
   useEffect(() => {
-    if (hasLoaded.current) return;
-    hasLoaded.current = true;
+    if (!hydrated) return;
 
-    try {
-      if (typeof window !== 'undefined') {
-        const closed = localStorage.getItem(STORAGE_KEY);
-        if (closed) {
-          const hoursAgo = (Date.now() - Number(closed)) / 3600000;
-          if (hoursAgo < 12) return; // Re-show after 12 hours for visitors
-        }
-      }
-    } catch {}
+    const activePopup = promotions.find(
+      (p) => p.is_active && (p.slot_id === 'slot_popup_modal' || p.type === 'popup')
+    );
 
-    const loadPromo = async () => {
-      try {
-        const { data } = await (supabase as any)
-          .from("promotions")
-          .select("id,title,content,cta_text,cta_link,accent_color,image_url")
-          .eq("type", "popup")
-          .eq("is_active", true)
-          .order("sort_order")
-          .limit(1)
-          .single();
+    if (!activePopup) {
+      setIsOpen(false);
+      setItem(null);
+      return;
+    }
 
-        if (data && data.title) {
-          setItem({
-            ...DEFAULT_POPUP,
-            ...data,
-          });
-        } else {
-          setItem(DEFAULT_POPUP);
-        }
-      } catch {
-        setItem(DEFAULT_POPUP);
-      } finally {
-        // Show smoothly after 1.8 seconds delay
-        setTimeout(() => {
-          setIsOpen(true);
-        }, 1800);
-      }
-    };
+    setItem({
+      ...DEFAULT_POPUP,
+      id: activePopup.id,
+      title: activePopup.title || DEFAULT_POPUP.title,
+      content: activePopup.content || DEFAULT_POPUP.content,
+      cta_text: activePopup.cta_text || DEFAULT_POPUP.cta_text,
+      cta_link: activePopup.cta_link || DEFAULT_POPUP.cta_link,
+      badge_text: activePopup.badge_text || DEFAULT_POPUP.badge_text,
+      accent_color: activePopup.accent_color || DEFAULT_POPUP.accent_color,
+    });
 
-    loadPromo();
-  }, []);
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 900);
+
+    return () => clearTimeout(timer);
+  }, [promotions, hydrated]);
 
   const close = () => {
     setIsOpen(false);

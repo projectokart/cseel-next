@@ -292,7 +292,7 @@ const Materials = () => {
                 <span className="flex items-center gap-1"><RefreshCw className="h-3.5 w-3.5"/>Easy Returns</span>
               </div>
             </div>
-            <button onClick={()=>setCartOpen(true)} className="relative flex items-center gap-2 px-6 py-3 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-white/90 transition-colors">
+            <button onClick={()=>setCartOpen(true)} className="relative flex items-center gap-2 px-6 py-3 bg-white text-[#006FCC] font-bold rounded-[12px] shadow-lg hover:bg-white/95 transition-all">
               <ShoppingCart className="h-5 w-5"/>Cart
               {cartCount>0 && <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] font-black flex items-center justify-center">{cartCount}</span>}
             </button>
@@ -610,10 +610,10 @@ const Materials = () => {
                       <span className="text-sm font-bold text-gray-700">Total ({cartCount} items)</span>
                       <span className="text-xl font-black text-gray-900">{fmt(cartTotal)}</span>
                     </div>
-                    <button onClick={exportCart} className="w-full py-2 border border-gray-200 bg-white text-gray-600 text-xs font-medium rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center gap-1.5">
+                    <button onClick={exportCart} className="w-full py-2.5 border border-gray-200 bg-white text-gray-700 text-xs font-bold rounded-[12px] hover:bg-gray-100 transition-colors flex items-center justify-center gap-1.5">
                       <Download className="h-3.5 w-3.5"/> Export as CSV
                     </button>
-                    <button onClick={()=>setOrderOpen(true)} className="w-full py-3 bg-primary text-white font-black rounded-full hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 text-sm">
+                    <button onClick={()=>setOrderOpen(true)} className="button_primary w-full py-3.5 text-white font-bold rounded-[12px] shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 text-sm">
                       <Package className="h-4 w-4"/> Place Order <ArrowRight className="h-4 w-4"/>
                     </button>
                   </div>
@@ -662,8 +662,8 @@ const Materials = () => {
                     </div>
                   ))}
                   <div className="flex gap-2 pt-1">
-                    <button type="button" onClick={()=>setOrderOpen(false)} className="flex-1 py-2.5 border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50">Cancel</button>
-                    <button type="submit" disabled={ordering} className="flex-1 py-2.5 bg-primary text-white rounded-full text-sm font-black hover:bg-primary/90 disabled:opacity-60">
+                    <button type="button" onClick={()=>setOrderOpen(false)} className="flex-1 py-2.5 border border-gray-200 rounded-[12px] text-sm font-semibold hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="submit" disabled={ordering} className="button_primary flex-1 py-2.5 text-white rounded-[12px] text-sm font-bold shadow-sm disabled:opacity-60 transition-all">
                       {ordering?"Placing...":"Confirm Order"}
                     </button>
                   </div>

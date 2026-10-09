@@ -25,6 +25,7 @@ export type AdminModuleId =
   | 'research_rnd'
   | 'content_homepage'
   | 'navigation_cms'
+  | 'global_styling'
   | 'admin_management'
   | 'audit_logs';
 

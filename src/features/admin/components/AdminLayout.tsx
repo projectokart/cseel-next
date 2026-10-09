@@ -22,12 +22,17 @@ import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import AdminLoginScreen from './AdminLoginScreen';
 import MaterialCircularLoader from '@/components/shared/MaterialCircularLoader';
+import { MaintenanceControlPanel } from '@/features/maintenance/components/MaintenanceControlPanel';
 
 const AdminCanvasContent: React.FC = () => {
-  const { currentAdmin } = useAdminAuth();
+  const { setActiveModule } = useAdminAuth();
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto w-full">
+      {/* ── TOP MAINTENANCE MODE & CONSTRUCTION CONTROLLER ── */}
+      <div id="maintenance-panel">
+        <MaintenanceControlPanel />
+      </div>
       {/* ── TOP HEADER ROW ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#dadce0]/60">
         <div>
@@ -48,10 +53,11 @@ const AdminCanvasContent: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="px-5 py-2.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white text-xs sm:text-sm font-medium shadow-xs hover:shadow-md transition-all flex items-center gap-2"
+            onClick={() => setActiveModule('marketing_growth')}
+            className="px-5 py-2.5 rounded-full bg-[#ea3829] hover:bg-[#c82d20] text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>New Action</span>
+            <span>Manage Offers &amp; Ad Banners</span>
           </button>
         </div>
       </div>
@@ -134,22 +140,31 @@ const AdminCanvasContent: React.FC = () => {
           <div>
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#dadce0]/60">
               <div>
-                <h3 className="font-bold text-sm text-[#202124]">Activity &amp; Operational Flow</h3>
-                <p className="text-[11px] text-[#5f6368]">Last 30 days telemetry</p>
+                <h3 className="font-bold text-sm text-[#202124]">Advertisement, Offers &amp; Custom HTML Banner Studio</h3>
+                <p className="text-[11px] text-[#5f6368]">Control all 10 page ad slots, Swiper carousels, card order swap &amp; custom HTML templates</p>
               </div>
               <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#e6f4ea] text-[#137333] border border-[#ceead6]">
                 ● Live Connected
               </span>
             </div>
 
-            <div className="py-10 text-center text-[#5f6368] space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-[#f8fafd] border border-[#dadce0] flex items-center justify-center mx-auto text-[#1a73e8]">
+            <div className="py-8 text-center text-[#5f6368] space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-[#ea3829]">
                 <Layers className="w-6 h-6" />
               </div>
-              <p className="text-sm font-semibold text-[#202124]">Central Workspace Canvas</p>
-              <p className="text-xs text-[#5f6368] max-w-sm mx-auto">
-                Aap batayein ki is main section ke andar kaunsa data, chart, ya management table add karna hai.
+              <p className="text-base font-bold text-[#202124]">Manage Homepage Offers, Swiper Slots &amp; HTML Banners</p>
+              <p className="text-xs text-[#5f6368] max-w-md mx-auto">
+                Yahan se aap page ke kisi bhi slot (`slot_after_hero`, `slot_after_outcomes`, Popup, etc.) mein custom HTML banner ya Adobe offer card laga sakte ho, swap kar sakte ho aur Swiper control kar sakte ho.
               </p>
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveModule('marketing_growth')}
+                  className="px-6 py-2.5 rounded-xl bg-[#0063eb] hover:bg-[#0051c4] text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
+                >
+                  Open Offers &amp; Ad Banners Controller →
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -189,6 +204,8 @@ const AdminCanvasContent: React.FC = () => {
 
 import ExperimentsAdminModule from '../experiments/ExperimentsAdminModule';
 import NavigationCmsControlModule from './modules/NavigationCmsControlModule';
+import MarketingAdminModule from './modules/MarketingAdminModule';
+import GlobalStylingAdminModule from './modules/GlobalStylingAdminModule';
 import { AdminModuleId } from '../types';
 
 const AdminPortalRoot: React.FC<{ initialModule?: AdminModuleId; children?: React.ReactNode }> = ({ children }) => {
@@ -225,8 +242,12 @@ const AdminPortalRoot: React.FC<{ initialModule?: AdminModuleId; children?: Reac
             children
           ) : activeModule === 'experiments_studio' ? (
             <ExperimentsAdminModule />
+          ) : activeModule === 'marketing_growth' ? (
+            <MarketingAdminModule />
           ) : activeModule === 'navigation_cms' ? (
             <NavigationCmsControlModule />
+          ) : activeModule === 'global_styling' ? (
+            <GlobalStylingAdminModule />
           ) : (
             <AdminCanvasContent />
           )}

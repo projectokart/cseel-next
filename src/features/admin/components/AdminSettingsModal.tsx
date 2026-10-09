@@ -1,13 +1,15 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import {
   X, User, Lock, Palette, Camera, Check,
   Shield, Eye, EyeOff, Sparkles, Moon, Sun,
-  Smartphone, Mail, Save, KeyRound, Image as ImageIcon
+  Smartphone, Mail, Save, KeyRound, Image as ImageIcon,
+  Construction
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 import { AdminRole } from '../types';
+import { MaintenanceControlPanel } from '@/features/maintenance/components/MaintenanceControlPanel';
 
 interface AdminSettingsModalProps {
   isOpen: boolean;
@@ -33,7 +35,7 @@ const THEME_OPTIONS = [
 export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({ isOpen, onClose }) => {
   const { currentAdmin, currentRole, addAuditLog } = useAdminAuth();
   
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'theme'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'theme' | 'maintenance'>('profile');
   
   // Profile State
   const [name, setName] = useState(currentAdmin?.name || 'Administrator');
@@ -176,6 +178,19 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({ isOpen, 
           >
             <Palette className="w-4 h-4" />
             <span>Theme & Style</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('maintenance')}
+            className={`pb-3 px-2 flex items-center gap-2 border-b-2 transition-all ${
+              activeTab === 'maintenance'
+                ? 'border-purple-600 text-purple-600 dark:text-purple-400 font-black'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Construction className="w-4 h-4 text-amber-500" />
+            <span>Under Construction Mode</span>
           </button>
         </div>
 
@@ -425,6 +440,13 @@ export const AdminSettingsModal: React.FC<AdminSettingsModalProps> = ({ isOpen, 
                   <span>Theme preference applied and saved!</span>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 4: UNDER CONSTRUCTION & MAINTENANCE CONTROLLER */}
+          {activeTab === 'maintenance' && (
+            <div className="space-y-4">
+              <MaintenanceControlPanel />
             </div>
           )}
 

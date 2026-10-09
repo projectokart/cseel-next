@@ -5,19 +5,19 @@
 @layer base {
   :root {
     /* 1. Google Material Surfaces & Typography (Light Mode) */
-    --background: 216 60% 98.4%;      /* #F8FAFD - Google Workspace Canvas */
-    --foreground: 225 6% 13%;          /* #202124 - Google Primary Text */
+    --background: 0 0% 100%;           /* #FFFFFF - Pure White Google Canvas */
+    --foreground: 206 6% 25%;          /* #3C4043 - Google Search Console Primary Text */
 
     --card: 0 0% 100%;                 /* #FFFFFF - Google Card Surface */
-    --card-foreground: 225 6% 13%;     /* #202124 */
+    --card-foreground: 206 6% 25%;     /* #3C4043 */
 
     --popover: 0 0% 100%;              /* #FFFFFF */
-    --popover-foreground: 225 6% 13%;  /* #202124 */
+    --popover-foreground: 206 6% 25%;  /* #3C4043 */
 
-    --muted: 200 10% 95%;              /* #F1F3F4 - Google Search / Hover Fill */
+    --muted: 0 0% 98%;                 /* #FAFAFA - Google Search Console Section Fill */
     --muted-foreground: 213 5% 39%;    /* #5F6368 - Google Secondary Text */
 
-    --border: 219 9% 87%;              /* #DADCE0 - Google 1px Border */
+    --border: 0 0% 88%;                /* rgba(0,0,0,0.12) / #E0E0E0 - Google 1px Border */
     --input: 219 9% 87%;               /* #DADCE0 */
     --ring: 214 82% 51%;               /* #1A73E8 - Google Blue Focus */
 
@@ -28,26 +28,26 @@
     --primary-hover: 202 100% 21%;     /* #00436B - Darker hover */
 
     --secondary: 200 10% 95%;          /* #F1F3F4 */
-    --secondary-foreground: 225 6% 13%;/* #202124 */
+    --secondary-foreground: 206 6% 25%;/* #3C4043 */
 
-    --accent: 202 60% 94%;
-    --accent-foreground: 202 100% 26.9%;
+    --accent: 214 90% 95%;
+    --accent-foreground: 214 82% 51%;
 
     --destructive: 4 80% 56%;          /* #EA4335 - Google Red */
     --destructive-foreground: 0 0% 100%;
 
-    --brand-blue: 202 100% 26.9%;      /* #005689 */
+    --brand-blue: 214 82% 51%;         /* #1A73E8 */
     --brand-red: 4 80% 56%;            /* #EA4335 */
     --brand-gold: 44 98% 50%;          /* #FBBC04 */
     --brand-green: 136 53% 43%;        /* #34A853 */
-    --brand-navy: 202 100% 26.9%;
+    --brand-navy: 206 6% 25%;          /* #3C4043 */
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
 
-    --topbar-bg: 202 100% 26.9%;       /* #005689 */
+    --topbar-bg: 214 82% 51%;          /* #1A73E8 */
     --topbar-foreground: 0 0% 100%;    /* #FFFFFF */
 
-    --hero-gradient-start: 216 60% 98.4%;
+    --hero-gradient-start: 0 0% 100%;
     --hero-gradient-end: 0 0% 100%;
 
     /* Domain card overlays — all derived from brand primary #005689 */
@@ -87,6 +87,20 @@
     --sidebar-accent-foreground: 225 6% 13%;
     --sidebar-border: 219 9% 87%;
     --sidebar-ring: 214 82% 51%;
+
+    /* 4. Global Dynamic Styling & Button Variations (Admin Controlled) */
+    --brand-primary: #006FCC;
+    --brand-primary-hover: #005499;
+    --brand-secondary-bg: #EDF5FA;
+    --brand-secondary-text: #006FCC;
+    --brand-secondary-border: #D6EDFF;
+    --btn-radius: 12px;
+    --btn-shadow: 0 4px 14px rgba(0, 111, 204, 0.35);
+    --card-radius: 16px;
+    --google-blue: #1A73E8;
+    --google-blue-hover: #1557B0;
+    --google-pill-radius: 9999px;
+    --google-shadow: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
 
     --achievement-bg: 200 10% 95%;
   }
@@ -170,6 +184,7 @@
   }
 
   html {
+    font-size: 16px;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -179,30 +194,43 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: var(--font-poppins), var(--font-inter), 'Poppins', 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    letter-spacing: -0.011em;
+    background-color: #ffffff;
+    color: #3C4043;
+    font-family: var(--font-roboto), Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.00625em;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
     overflow-x: clip;
     max-width: 100vw;
     width: 100%;
   }
 
   /* ═══════════════════════════════════════════════════════════
-     UNIVERSAL HEADING SYSTEM (Controlled purely via globals.css)
+     UNIVERSAL HEADING SYSTEM (Google Search Console Typography)
      ═══════════════════════════════════════════════════════════ */
   h1, h2, h3, h4, h5, h6,
   .h1, .h2, .h3, .h4, .h5, .h6,
-  .hero-h1, .hero-h2, .hero-h3,
-  h1.text-gray-900, h2.text-gray-900, h3.text-gray-900, h4.text-gray-900, h5.text-gray-900, h6.text-gray-900,
-  h1.text-slate-900, h2.text-slate-900, h3.text-slate-900, h4.text-slate-900, h5.text-slate-900, h6.text-slate-900,
-  h1.text-gray-800, h2.text-gray-800, h3.text-gray-800, h4.text-gray-800, h5.text-gray-800, h6.text-gray-800,
-  h1.text-slate-800, h2.text-slate-800, h3.text-slate-800, h4.text-slate-800, h5.text-slate-800, h6.text-slate-800,
-  h1.text-foreground, h2.text-foreground, h3.text-foreground, h4.text-foreground, h5.text-foreground, h6.text-foreground,
-  h1.text-black, h2.text-black, h3.text-black, h4.text-black, h5.text-black, h6.text-black {
-    font-family: 'Silka', 'Inter', var(--font-montserrat), var(--font-poppins), sans-serif;
-    letter-spacing: -0.022em;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  .hero-h1, .hero-h2, .hero-h3 {
+    font-family: 'Google Sans Display', 'Google Sans', var(--font-roboto), Roboto, Arial, sans-serif;
+    letter-spacing: -0.01em;
+    color: #3C4043;
+  }
+
+  h1, .h1 { font-weight: 800; }
+  h2, .h2 { font-weight: 700; }
+  h3, .h3 { font-weight: 700; }
+  h4, .h4 { font-weight: 600; }
+  h5, .h5 { font-weight: 600; }
+  h6, .h6 { font-weight: 600; }
+
+  /* Preserve Original Brand Blue & Bold Typography Exclusively for "Welcome to CSEEL" Hero Title */
+  h1.cseel-brand-hero-h1,
+  h1.cseel-brand-hero-h1 span {
     color: #005689 !important;
+    font-weight: 800 !important;
   }
 
   /* Interactive Heading Hovers */
@@ -211,24 +239,26 @@
   .group:hover h2:not(.text-white),
   .group:hover h3:not(.text-white),
   .group:hover h4:not(.text-white) {
-    color: #00436B !important;
+    color: #1A73E8 !important;
   }
 
-  /* Navbar Mega Menu Titles: Deep Navy (#023858 / rgb(2,56,88)) by default, Sky/Heading Blue (#006FCC) on hover */
+  /* Navbar Mega Menu Titles: Google Charcoal (#3C4043) by default, Google Blue (#1A73E8) on hover */
   .nav-menu-item-title {
-    color: #023858 !important;
+    color: #3C4043 !important;
+    font-weight: 500 !important;
     transition: color 0.18s ease-in-out;
   }
   .group:hover .nav-menu-item-title,
   a:hover .nav-menu-item-title,
   .nav-menu-item-title:hover {
-    color: #006FCC !important;
+    color: #1A73E8 !important;
   }
 
-  /* Top Navigation Bar Item Links: #023858 (Deep Navy) by default, #006FCC (Sky Blue) on hover/open */
+  /* Top Navigation Bar Item Links: #3C4043 by default, #1A73E8 on hover/open */
   .top-nav-link,
   .top-nav-link span {
-    color: #023858 !important;
+    color: #3C4043 !important;
+    font-weight: 500;
     transition: color 0.18s ease-in-out;
   }
   .top-nav-link:hover,
@@ -237,7 +267,7 @@
   .top-nav-link.is-open,
   .top-nav-link.is-open span,
   .top-nav-link.is-open svg {
-    color: #006FCC !important;
+    color: #1A73E8 !important;
   }
 
   /* Preserve Pure White Headings in Dark / Blue Hero Banners */
@@ -256,16 +286,16 @@
     color: #ffffff !important;
   }
 
-  /* Domain cards — keep headings dark navy on normal + hover state (frosted light card design) */
+  /* Domain cards — keep headings dark charcoal on normal + hover state */
   .domain-card h1, .domain-card h2, .domain-card h3, .domain-card h4, .domain-card h5, .domain-card h6,
   .domain-card:hover h1, .domain-card:hover h2, .domain-card:hover h3, .domain-card:hover h4, .domain-card:hover h5, .domain-card:hover h6,
   a.domain-card:hover h1, a.domain-card:hover h2, a.domain-card:hover h3, a.domain-card:hover h4,
   .domain-card.group:hover h1, .domain-card.group:hover h2, .domain-card.group:hover h3, .domain-card.group:hover h4 {
-    color: #005689 !important;
+    color: #3C4043 !important;
   }
 
   /* ═══════════════════════════════════════════════════════════
-     BOLD & EMPHASIZED TEXT (Synced to Brand Heading Color #005689)
+     BOLD & EMPHASIZED TEXT (Clean Google Charcoal #3C4043, no forced blue)
      ═══════════════════════════════════════════════════════════ */
   strong, b,
   .prose strong, .prose b,
@@ -274,8 +304,8 @@
   p strong, p b,
   span strong, span b,
   li strong, li b {
-    color: #005689 !important;
-    font-weight: 700;
+    color: #3C4043;
+    font-weight: 500;
   }
 
   /* Preserve White text on dark/blue backgrounds */
@@ -292,9 +322,30 @@
   }
 
   button, input, optgroup, select, textarea {
-    font-family: inherit;
+    font-family: var(--font-roboto), Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     BASE CONTENT TYPOGRAPHY — Exact Google Search Console Scale
+     ═══════════════════════════════════════════════════════════ */
+  p, li, label, td, th, blockquote {
+    font-family: var(--font-roboto), Roboto, Arial, sans-serif;
+    font-size: 1rem; /* 16px (.ITFqUd) */
+    line-height: 1.5rem; /* 24px */
+    letter-spacing: 0.00625em;
+    font-weight: 400;
+    color: #3C4043;
+  }
+
+  /* Google Search Console Heading Scale (.R3QfZd, .w5qowf, .UKleLb) */
+  h1 { font-size: clamp(2rem, 3.8vw, 3.5rem); font-weight: 400; line-height: 1.15; letter-spacing: 0; }
+  h2 { font-size: clamp(1.375rem, 2.5vw, 1.75rem); font-weight: 400; line-height: 1.28; letter-spacing: 0; }
+  h3 { font-size: clamp(1.125rem, 2vw, 1.5rem); font-weight: 400; line-height: 1.33; letter-spacing: 0; }
+  h4 { font-size: 1.125rem; font-weight: 500; line-height: 1.4; }
+  h5 { font-size: 1rem; font-weight: 500; line-height: 1.5; }
+  h6 { font-size: 0.9375rem; font-weight: 500; line-height: 1.5; }
 }
+
 
 @layer components {
   /* ═══════════════════════════════════════════════════════════
@@ -368,42 +419,101 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     4. BUTTONS & ACTIONS (Labster Reference Match)
+     4. BUTTONS & ACTIONS (Dynamic Admin Theme + CSEEL & Google Variations)
      ═══════════════════════════════════════════════════════════ */
-  .btn-google-primary, .btn-primary, .button_primary, .button-primary, a.button_primary, button.button_primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-[12px] text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    background-color: #006FCC !important;
+  .btn-sm {
+    @apply h-9 px-3.5 py-1.5 text-xs;
+    border-radius: calc(var(--btn-radius, 12px) * 0.85);
+  }
+  .btn-md {
+    @apply h-11 px-5 py-2.5 text-sm md:text-[15px];
+    border-radius: var(--btn-radius, 12px);
+  }
+  .btn-lg {
+    @apply h-12 px-8 py-3.5 text-base;
+    border-radius: var(--btn-radius, 12px);
+  }
+
+  /* ── 🌟 VARIATION 1: CSEEL MODERN SIGNATURE BUTTON (12px rounded, bold, glow shadow) ── */
+  .btn-cseel, .button_cseel {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
+    border-radius: 12px !important;
+    background-color: var(--brand-primary, #006FCC) !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(0, 111, 204, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 111, 204, 0.35) !important;
     border: none;
     line-height: 1.3;
   }
-  .btn-google-primary:hover, .btn-primary:hover, .button_primary:hover, .button-primary:hover, a.button_primary:hover, button.button_primary:hover {
-    background-color: #005499 !important;
+  .btn-cseel:hover, .button_cseel:hover {
+    background-color: var(--brand-primary-hover, #005499) !important;
+    box-shadow: 0 6px 22px rgba(0, 111, 204, 0.45) !important;
+    transform: translateY(-1px);
+    color: #ffffff !important;
+  }
+
+  /* ── 🌟 VARIATION 2: GOOGLE MATERIAL BUTTON (Google Places / Search card style rounded-lg #1A73E8) ── */
+  .btn-google, .button_google {
+    @apply inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer;
+    border-radius: 8px !important;
+    background-color: var(--google-blue, #1A73E8) !important;
+    color: #ffffff !important;
+    font-family: var(--font-google-sans), Google Sans, Roboto, sans-serif !important;
+    letter-spacing: 0.2px;
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3) !important;
+    border: none;
+    line-height: 1.3;
+  }
+  .btn-google:hover, .button_google:hover {
+    background-color: var(--google-blue-hover, #1557B0) !important;
+    box-shadow: 0 1px 3px 1px rgba(60, 64, 67, 0.25) !important;
+    transform: translateY(-0.5px);
+    color: #ffffff !important;
+  }
+
+  /* ── 🌟 DYNAMIC PRIMARY BUTTON (Adapts to Admin Choice: CSEEL vs Google style) ── */
+  .btn-google-primary, .btn-primary, .button_primary, .button-primary, a.button_primary, button.button_primary, a.btn-primary, button.btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
+    border-radius: var(--btn-radius, 12px);
+    background-color: var(--brand-primary, #006FCC) !important;
+    color: #ffffff !important;
+    box-shadow: var(--btn-shadow, 0 4px 14px rgba(0, 111, 204, 0.35));
+    border: none;
+    line-height: 1.3;
+  }
+  .btn-google-primary:hover, .btn-primary:hover, .button_primary:hover, .button-primary:hover, a.button_primary:hover, button.button_primary:hover, a.btn-primary:hover, button.btn-primary:hover {
+    background-color: var(--brand-primary-hover, #005499) !important;
     box-shadow: 0 6px 22px rgba(0, 111, 204, 0.45);
     transform: translateY(-1px);
     color: #ffffff !important;
   }
-  .btn-google-tonal, .btn-tonal, .btn-google-secondary, .btn-secondary, .button_secondary, .button-secondary, a.button_secondary, button.button_secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-[12px] text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    background-color: #EDF5FA !important;
-    color: #006FCC !important;
-    border: 1px solid #D6EDFF;
+
+  .btn-google-tonal, .btn-tonal, .btn-google-secondary, .btn-secondary, .button_secondary, .button-secondary, a.button_secondary, button.button_secondary, a.btn-secondary, button.btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
+    border-radius: var(--btn-radius, 12px);
+    background-color: var(--brand-secondary-bg, #EDF5FA) !important;
+    color: var(--brand-secondary-text, #006FCC) !important;
+    border: 1px solid var(--brand-secondary-border, #D6EDFF) !important;
     line-height: 1.3;
   }
-  .btn-google-tonal:hover, .btn-tonal:hover, .btn-google-secondary:hover, .btn-secondary:hover, .button_secondary:hover, .button-secondary:hover, a.button_secondary:hover, button.button_secondary:hover {
-    background-color: #D6EDFF !important;
-    color: #005499 !important;
+  .btn-google-tonal:hover, .btn-tonal:hover, .btn-google-secondary:hover, .btn-secondary:hover, .button_secondary:hover, .button-secondary:hover, a.button_secondary:hover, button.button_secondary:hover, a.btn-secondary:hover, button.btn-secondary:hover {
+    background-color: var(--brand-secondary-border, #D6EDFF) !important;
+    color: var(--brand-primary-hover, #005499) !important;
     transform: translateY(-1px);
   }
-  .btn-google-outline, .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-[12px] text-sm font-bold bg-white hover:bg-[#EDF5FA] border-2 border-[#006FCC] text-[#006FCC] active:scale-[0.98] transition-all cursor-pointer;
+  .btn-google-outline, .btn-outline, .button_outline, .button-outline, a.button_outline, button.button_outline, a.btn-outline, button.btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-white active:scale-[0.98] transition-all cursor-pointer;
+    border-radius: var(--btn-radius, 12px);
+    border: 2px solid var(--brand-primary, #006FCC);
+    color: var(--brand-primary, #006FCC);
+  }
+  .btn-google-outline:hover, .btn-outline:hover, .button_outline:hover, a.button_outline:hover, button.button_outline:hover {
+    background-color: var(--brand-secondary-bg, #EDF5FA);
   }
   .btn-google-danger, .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#EA4335] hover:bg-[#D93025] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] text-sm font-semibold bg-[#EA4335] hover:bg-[#D93025] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
   }
   .btn-google-success, .btn-success {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#34A853] hover:bg-[#2D9247] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] text-sm font-semibold bg-[#34A853] hover:bg-[#2D9247] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
   }
   .btn-google-icon, .btn-icon {
     @apply inline-flex items-center justify-center w-9 h-9 rounded-xl text-[#5F6368] dark:text-[#9AA0A6] hover:text-[#202124] dark:hover:text-[#E8EAED] hover:bg-[#F1F3F4] dark:hover:bg-[#282A2C] transition-all cursor-pointer;
@@ -982,14 +1092,14 @@
   }
 }
 .eyebrow {
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #005689;
 }
 .hero-eyebrow {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1035,7 +1145,7 @@
   box-shadow: 0 0 0 2px #D5E9F0; 
 }
 .tl-year { 
-  font-size: 13px; 
+  font-size: 14px; 
   font-weight: 800; 
   letter-spacing: 0.06em; 
   color: #D71F27; 
@@ -1129,7 +1239,7 @@
   justify-content: space-between;
   align-items: center;
   list-style: none;
-  font-size: 16px;
+  font-size: 17px;
   user-select: none;
 }
 .faq summary::-webkit-details-marker {
@@ -1144,8 +1254,8 @@
 .faq .answer {
   margin-top: 14px;
   color: #334155;
-  font-size: 14.5px;
-  line-height: 1.65;
+  font-size: 15.5px;
+  line-height: 1.7;
 }
 
 .chat-bubble {

@@ -31,7 +31,7 @@ const LayoutContent = ({ children }: LayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full max-w-[100vw] [overflow-x:clip]">
       {/* On non-home pages, Universal Admin Bar handles in-place live editing */}
       {!isHomePage && <UniversalAdminBar />}
 
@@ -39,7 +39,7 @@ const LayoutContent = ({ children }: LayoutProps) => {
       <OfferPopup />
       <Navbar />
       <DisabledRouteGuard>
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 min-w-0 w-full [overflow-x:clip]">{children}</main>
       </DisabledRouteGuard>
       <Footer />
     </div>

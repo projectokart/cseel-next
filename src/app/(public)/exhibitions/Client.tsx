@@ -41,7 +41,7 @@ const Exhibitions = () => (
             ))}
           </div>
           <div className="text-center mt-10">
-            <Link href="/contact-us" className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-colors">
+            <Link href="/contact-us" className="button_primary inline-flex items-center gap-2 px-8 py-3.5 text-white font-bold rounded-[12px] shadow-sm hover:shadow-md transition-all">
               Book a School Visit <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

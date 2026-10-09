@@ -57,7 +57,7 @@ const ForInstitutions = () => (
           <h2 className="text-2xl font-bold text-foreground mb-4">Trusted by 25+ Schools Across India</h2>
           <p className="text-muted-foreground mb-6">Join a growing network of forward-thinking institutions transforming science education.</p>
           <Link href="/contact-us">
-            <Button className="rounded-full px-8">Start a Conversation →</Button>
+            <Button size="lg" className="px-8">Start a Conversation →</Button>
           </Link>
         </div>
       </section>

@@ -1,35 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Montserrat, Poppins, Fredoka } from "next/font/google";
 import Providers from "./providers";
+import ThemeHeadScript from "@/features/theme-system/ThemeHeadScript";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-montserrat",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
-});
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-fredoka",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.cseel.org"),
@@ -157,6 +129,15 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `:root { --font-roboto: 'Roboto', sans-serif; --font-inter: 'Inter', sans-serif; --font-montserrat: 'Montserrat', sans-serif; --font-poppins: 'Poppins', sans-serif; --font-fredoka: 'Fredoka', sans-serif; }`,
+          }}
+        />
 
         {/* Structured Data: Unified @graph (EducationalOrganization, WebSite, FAQPage) */}
         <script
@@ -391,8 +372,9 @@ export default function RootLayout({
             }),
           }}
         />
+        <ThemeHeadScript />
       </head>
-      <body className={`${inter.variable} ${montserrat.variable} ${poppins.variable} ${fredoka.variable} font-sans antialiased text-slate-900 bg-white min-h-screen selection:bg-sky-100 selection:text-sky-900`} suppressHydrationWarning>
+      <body className="font-sans antialiased text-[#3C4043] bg-white min-h-screen selection:bg-[#E8F0FE] selection:text-[#1967D2]" suppressHydrationWarning>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2.5 focus:bg-sky-900 focus:text-white focus:rounded-md focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 font-medium text-sm transition-all"

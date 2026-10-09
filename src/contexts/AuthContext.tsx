@@ -34,10 +34,14 @@ interface AuthContextType {
   isTeacher: boolean;
   isStudent: boolean;
   isOrganisation: boolean;
+  isVerified: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithGoogle: (redirectTo?: string) => Promise<{ data?: any; error: any }>;
   signUp: (email: string, password: string, role: AppRole, opts?: SignUpOptions) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
+  verifyUser: (identifier: string) => void;
+  unverifyUser: (identifier: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -151,6 +155,70 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error };
   };
 
+  // ── Verification tracking ────────────────────────────────────────────────
+  const [verifiedList, setVerifiedList] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const raw = localStorage.getItem('cseel_admin_verified_users');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const verifyUser = (identifier: string) => {
+    if (!identifier) return;
+    const clean = identifier.trim().toLowerCase();
+    const updated = Array.from(new Set([...verifiedList, clean]));
+    setVerifiedList(updated);
+    try {
+      localStorage.setItem('cseel_admin_verified_users', JSON.stringify(updated));
+    } catch {}
+  };
+
+  const unverifyUser = (identifier: string) => {
+    if (!identifier) return;
+    const clean = identifier.trim().toLowerCase();
+    const updated = verifiedList.filter(id => id !== clean);
+    setVerifiedList(updated);
+    try {
+      localStorage.setItem('cseel_admin_verified_users', JSON.stringify(updated));
+    } catch {}
+  };
+
+  const isVerified = Boolean(
+    user && (
+      roles.includes('moderator') ||
+      (typeof window !== 'undefined' && localStorage.getItem('cseel_admin_auth') === 'true') ||
+      user.user_metadata?.is_verified === true ||
+      user.app_metadata?.is_verified === true ||
+      verifiedList.includes(user.id.toLowerCase()) ||
+      (user.email && verifiedList.includes(user.email.toLowerCase()))
+    )
+  );
+
+  const signInWithGoogle = async (redirectTo?: string) => {
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+      const targetNext = redirectTo ? (redirectTo.startsWith('http') ? redirectTo : redirectTo) : '/schools';
+      const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(targetNext)}`;
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: callbackUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+      return { data, error };
+    } catch (err: any) {
+      return { data: null, error: err };
+    }
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null); setSession(null); setRoles([]); setRolesLoading(true);
@@ -169,7 +237,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isTeacher:      roles.includes("teacher"),
       isStudent:      roles.includes("student"),
       isOrganisation: roles.includes("organisation"),
-      signIn, signUp, signOut, resetPassword,
+      isVerified,
+      signIn, signInWithGoogle, signUp, signOut, resetPassword,
+      verifyUser, unverifyUser,
     }}>
       {children}
     </AuthContext.Provider>

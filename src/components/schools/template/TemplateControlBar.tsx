@@ -16,8 +16,12 @@ import {
   PhoneOff,
   Search,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Shield,
+  X,
+  Check
 } from 'lucide-react';
+import AiJsonImportExportModal from './AiJsonImportExportModal';
 
 interface TemplateControlBarProps {
   currentTab: string;
@@ -44,6 +48,22 @@ export default function TemplateControlBar({ currentTab }: TemplateControlBarPro
 
   const [udiseInput, setUdiseInput] = useState<string>(data.udiseCode || '');
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState<boolean>(false);
+  const [isJsonModalOpen, setIsJsonModalOpen] = useState<boolean>(false);
+
+  const TABS_LIST = [
+    { id: 'home', label: 'Home Page' },
+    { id: 'academics', label: 'Academics' },
+    { id: 'facilities', label: 'Facilities' },
+    { id: 'extracurricular', label: 'Extracurricular & Sports' },
+    { id: 'awards', label: 'Awards & Honors' },
+    { id: 'events', label: 'Events & Life' },
+    { id: 'faculty', label: 'Faculty & Mentors' },
+    { id: 'gallery', label: 'Campus Gallery' },
+    { id: 'admissions', label: 'Admissions & Fees' },
+    { id: 'reviews', label: 'Reviews & Ratings' },
+    { id: 'contact', label: 'Contact Us Page' },
+  ];
 
   const isCurrentTabPublic = data.tabVisibility[currentTab] !== false;
   const isUdiseReady = udiseInput.trim().replace(/\D/g, '').length === 11;
@@ -165,38 +185,124 @@ export default function TemplateControlBar({ currentTab }: TemplateControlBarPro
 
         {/* Right: Tab Controls & Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Tab Visibility Switch (Public vs Private) */}
+          {/* 1-Click AI JSON Import / Export Button */}
           {isEditMode && (
             <button
               type="button"
-              onClick={() => toggleTabVisibility(currentTab)}
-              title={isCurrentTabPublic ? 'Make this tab private' : 'Make this tab public'}
-              className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
-                isCurrentTabPublic
-                  ? 'bg-slate-800 border-slate-700 text-emerald-400 hover:bg-slate-750'
-                  : 'bg-rose-950/60 border-rose-800 text-rose-300 hover:bg-rose-900/60'
-              }`}
+              onClick={() => setIsJsonModalOpen(true)}
+              title="Upload JSON to create school profile in 1-Click, or copy AI prompt"
+              className="px-3 py-1.5 rounded-xl border border-indigo-500/40 bg-gradient-to-r from-indigo-600/90 to-purple-600/90 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-md shadow-indigo-900/30 transition-all hover:scale-105 active:scale-95"
             >
-              {isCurrentTabPublic ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-              <span className="hidden lg:inline">{isCurrentTabPublic ? 'Tab: Public' : 'Tab: Private'}</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>AI JSON Auto-Fill</span>
             </button>
           )}
 
-          {/* Contact Info Visibility Switch */}
+          {/* Unified Privacy & Visibility Settings Button */}
           {isEditMode && (
-            <button
-              type="button"
-              onClick={toggleContactVisibility}
-              title={data.showContactInfo ? 'Hide contact information' : 'Show contact information'}
-              className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all ${
-                data.showContactInfo
-                  ? 'bg-slate-800 border-slate-700 text-sky-400 hover:bg-slate-750'
-                  : 'bg-amber-950/60 border-amber-800 text-amber-300 hover:bg-amber-900/60'
-              }`}
-            >
-              {data.showContactInfo ? <Phone className="w-3.5 h-3.5" /> : <PhoneOff className="w-3.5 h-3.5" />}
-              <span className="hidden xl:inline">{data.showContactInfo ? 'Contact: Shown' : 'Contact: Hidden'}</span>
-            </button>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsPrivacyModalOpen(!isPrivacyModalOpen)}
+                title="Manage Public / Private Privacy for all Tabs and Contact Details"
+                className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs ${
+                  isPrivacyModalOpen
+                    ? 'bg-[#006FCC] border-[#006FCC] text-white shadow-md'
+                    : 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 hover:text-white'
+                }`}
+              >
+                <Shield className="w-3.5 h-3.5 text-amber-400" />
+                <span>Privacy Settings</span>
+              </button>
+
+              {/* Privacy Settings Dropdown Modal / Popover */}
+              {isPrivacyModalOpen && (
+                <div
+                  className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-4 z-[700] text-white animate-in fade-in zoom-in-95 duration-150"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-amber-400" />
+                      <div>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-white">Privacy & Visibility</h4>
+                        <p className="text-[10px] text-slate-400">Toggle public visibility for tabs & contact info</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsPrivacyModalOpen(false)}
+                      className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Contact Info Master Toggle */}
+                  <div className="py-3 border-b border-slate-800 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-sky-400" />
+                        <span>Public Contact Details</span>
+                      </div>
+                      <p className="text-[10px] text-slate-400">Show phone numbers & emails to parents</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={data.showContactInfo}
+                        onChange={toggleContactVisibility}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500" />
+                    </label>
+                  </div>
+
+                  {/* Tabs Visibility List */}
+                  <div className="py-2.5">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
+                      <span>Website Tabs ({TABS_LIST.length})</span>
+                      <span className="text-[10px] text-slate-500">Public if checked</span>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
+                      {TABS_LIST.map((tab) => {
+                        const isTabPublic = data.tabVisibility[tab.id] !== false;
+                        return (
+                          <div
+                            key={tab.id}
+                            onClick={() => toggleTabVisibility(tab.id)}
+                            className="flex items-center justify-between p-2 rounded-xl bg-slate-800/60 hover:bg-slate-800 cursor-pointer border border-slate-700/50 transition-all select-none"
+                          >
+                            <span className="text-xs font-medium text-slate-200">{tab.label}</span>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-[10px] font-bold ${isTabPublic ? 'text-emerald-400' : 'text-slate-400'}`}>
+                                {isTabPublic ? 'Public' : 'Private'}
+                              </span>
+                              <input
+                                type="checkbox"
+                                checked={isTabPublic}
+                                onChange={() => {}}
+                                className="w-4 h-4 text-emerald-600 bg-slate-900 border-slate-600 rounded focus:ring-emerald-500 pointer-events-none cursor-pointer"
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setIsPrivacyModalOpen(false)}
+                      className="px-3 py-1.5 bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold rounded-xl transition"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
 
           {/* 1-Click Verify All Fields Button */}
@@ -248,6 +354,12 @@ export default function TemplateControlBar({ currentTab }: TemplateControlBarPro
           </button>
         </div>
       </div>
+
+      {/* 1-Click AI JSON Import / Export Modal */}
+      <AiJsonImportExportModal
+        isOpen={isJsonModalOpen}
+        onClose={() => setIsJsonModalOpen(false)}
+      />
     </div>
   );
 }

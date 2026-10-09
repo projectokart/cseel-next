@@ -117,14 +117,14 @@ const ChannelDetailPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   {isOwner ? (
-                    <Button onClick={() => setCreateOpen(true)} className="gap-1.5 rounded-full" size="sm">
+                    <Button onClick={() => setCreateOpen(true)} className="gap-1.5" size="sm">
                       <PenLine className="h-3.5 w-3.5" /> Post to Channel
                     </Button>
                   ) : (
                     <Button
                       onClick={handleSubscribe}
                       variant={subscribed ? "outline" : "default"}
-                      className="gap-1.5 rounded-full"
+                      className="gap-1.5"
                       size="sm"
                     >
                       {subscribed ? <><BellOff className="h-3.5 w-3.5" /> Unsubscribe</> : <><Bell className="h-3.5 w-3.5" /> Subscribe</>}

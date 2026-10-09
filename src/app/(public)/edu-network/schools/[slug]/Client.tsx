@@ -471,7 +471,7 @@ export default function DirectoryClient({
               <div className="flex items-center gap-2 flex-wrap">
                 {/* 📍 Find School Near You (Interactive Map Button) */}
                 <a
-                  href="https://schoolsearch.cseel.org"
+                  href="/schools?view=map"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#e8f0fe] hover:bg-[#d2e3fc] text-[#1a73e8] border border-[#1a73e8]/30 rounded-full text-xs font-bold transition-all shadow-xs hover:shadow-sm group"
@@ -698,7 +698,7 @@ export default function DirectoryClient({
                   Use our live GPS map to search schools within 5km radius.
                 </p>
                 <a
-                  href="https://schoolsearch.cseel.org"
+                  href="/schools?view=map"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-center w-full py-1.5 bg-[#1a73e8] hover:bg-[#1557b0] text-white rounded-lg text-[11px] font-bold shadow-xs transition"

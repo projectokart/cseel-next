@@ -89,13 +89,13 @@ const ChannelsPage = () => {
               <p className="text-sm text-muted-foreground mt-0.5">Subscribe to creators & organisations</p>
             </div>
             {user && !myChannel && (
-              <Button onClick={() => setCreateOpen(true)} className="gap-2 rounded-full">
+              <Button onClick={() => setCreateOpen(true)} className="gap-2">
                 <Plus className="h-4 w-4" /> Create Channel
               </Button>
             )}
             {myChannel && (
               <Link href={`/channels/${myChannel.id}`}>
-                <Button variant="outline" className="gap-2 rounded-full">
+                <Button variant="outline" className="gap-2">
                   <Rss className="h-4 w-4" /> My Channel
                 </Button>
               </Link>
@@ -162,7 +162,7 @@ const ChannelsPage = () => {
                         {!isOwner && (
                           <button
                             onClick={e => handleSubscribe(e, ch)}
-                            className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-all ${
+                            className={`text-xs font-semibold px-3 py-1.5 rounded-[10px] transition-all ${
                               subbed
                                 ? "bg-muted text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                                 : "bg-primary text-primary-foreground hover:bg-primary/90"

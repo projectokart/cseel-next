@@ -44,7 +44,7 @@ export class SupabaseSchoolService {
       villageTownCity: row.village_name || row.district_name || 'City',
       email: row.email || `contact@school${sid}.cseel.org`,
       phone: row.phone || '+91 1274 250001',
-      website: row.website || `https://schoolsearch.cseel.org/org/org-school-${sid}`,
+      website: row.website || '',
       verified: true,
       rating: 4.8,
       reviews: 95,

@@ -457,6 +457,7 @@ const Navbar = () => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [expandedSubItem, setExpandedSubItem] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Mobile multi-open state: prevents abrupt jumps and preserves scroll position
@@ -491,41 +492,60 @@ const Navbar = () => {
 
   const headerRef = useRef<HTMLElement | null>(null);
 
-  // Close dropdown on outside click
+  const clearTimers = () => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current);
+      openTimer.current = null;
+    }
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+
+  // 3. Clicking anywhere outside the menu automatically closes it
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
-        if (closeTimer.current) clearTimeout(closeTimer.current);
+        clearTimers();
         setOpenDropdown(null);
         setExpandedSubItem(null);
       }
     };
-    document.addEventListener('click', handleDocumentClick);
-    return () => document.removeEventListener('click', handleDocumentClick);
+    document.addEventListener('mousedown', handleDocumentClick);
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentClick);
+      clearTimers();
+    };
   }, []);
 
+  // 1. Hovering over menu text requires a 300ms delay before opening (prevents accidental flicker)
   const handleMouseEnter = (label: string) => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    if (openDropdown !== label) {
-      setExpandedSubItem(null);
-    }
-    setOpenDropdown(label);
+    clearTimers();
+    openTimer.current = setTimeout(() => {
+      setOpenDropdown((prev) => {
+        if (prev !== label) setExpandedSubItem(null);
+        return label;
+      });
+    }, 300);
   };
 
+  // 4. Leaving the menu area waits 380ms before closing (prevents accidental closure if mouse slips out)
   const handleMouseLeave = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
+    clearTimers();
     closeTimer.current = setTimeout(() => {
       setOpenDropdown(null);
       setExpandedSubItem(null);
-    }, 200);
+    }, 380);
   };
 
+  // 2. Clicking the menu button toggles the menu open/closed instantly
   const handleToggle = (label: string) => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    if (openDropdown !== label) {
-      setExpandedSubItem(null);
-    }
-    setOpenDropdown(openDropdown === label ? null : label);
+    clearTimers();
+    setOpenDropdown((prev) => {
+      if (prev !== label) setExpandedSubItem(null);
+      return prev === label ? null : label;
+    });
   };
 
   const activeItem = visibleNavItems.find((item) => item.label === openDropdown);
@@ -534,15 +554,15 @@ const Navbar = () => {
     <>
       <header
         ref={headerRef}
-        className={`sticky top-0 w-full z-[400] transition-all duration-200 select-none ${
+        className={`sticky top-0 w-full z-[400] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-[#D0D7DE]/90'
-            : 'bg-white border-b border-[#E8E9E9]'
+            ? 'shadow-[0_4px_5px_0_rgba(0,0,0,0.14),0_1px_10px_0_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.2)]'
+            : ''
         }`}
         onMouseLeave={handleMouseLeave}
       >
-        {/* ── Main Navbar Bar (76px Height like Labster) ── */}
-        <div className="max-w-[1440px] w-full mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-[76px]">
+        {/* ── Main Navbar Bar (64px Height matching Google Search Console) ── */}
+        <div className="max-w-[1440px] w-full mx-auto flex items-center justify-between px-4 sm:px-6 h-16">
 
           {/* Brand Logo */}
           <Link href="/" className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-3 xl:mr-5">
@@ -569,33 +589,29 @@ const Navbar = () => {
                       onClick={() => handleToggle(item.label)}
                       onMouseEnter={() => handleMouseEnter(item.label)}
                       onMouseLeave={handleMouseLeave}
-                      className={`top-nav-link flex items-center gap-1.5 text-[15px] font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 py-1.5 px-2 rounded-lg ${
-                        isOpen ? 'is-open text-[#006FCC] bg-[#EDF5FA]' : 'text-[#023858] hover:bg-slate-50'
+                      className={`top-nav-link flex items-center gap-1.5 text-[15px] font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 py-1.5 px-2.5 rounded-md ${
+                        isOpen ? 'is-open text-[#1A73E8] bg-[#E8F0FE]' : 'text-[#3C4043] hover:bg-[#F1F3F4]'
                       }`}
-                      style={{ color: isOpen ? '#006FCC' : '#023858' }}
+                      style={{ color: isOpen ? '#1A73E8' : '#3C4043' }}
                     >
-                      <span className="whitespace-nowrap" style={{ color: isOpen ? '#006FCC' : '#023858' }}>
+                      <span className="whitespace-nowrap" style={{ color: isOpen ? '#1A73E8' : '#3C4043' }}>
                         {item.label}
                       </span>
                       <ChevronDown
                         className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
                           isOpen ? 'rotate-180' : ''
                         }`}
-                        style={{ color: isOpen ? '#006FCC' : '#023858' }}
+                        style={{ color: isOpen ? '#1A73E8' : '#5F6368' }}
                       />
                     </button>
                   ) : (
                     <Link
                       href={item.to || '/'}
-                      onMouseEnter={() => {
-                        if (closeTimer.current) clearTimeout(closeTimer.current);
-                        setOpenDropdown(null);
-                        setExpandedSubItem(null);
-                      }}
-                      className="top-nav-link text-[15px] font-bold transition-colors whitespace-nowrap shrink-0 py-1.5 px-2 rounded-lg hover:bg-slate-50"
-                      style={{ color: '#023858' }}
+                      onMouseEnter={handleMouseLeave}
+                      className="top-nav-link text-[15px] font-medium transition-colors whitespace-nowrap shrink-0 py-1.5 px-2.5 rounded-md hover:bg-[#F1F3F4]"
+                      style={{ color: '#3C4043' }}
                     >
-                      <span style={{ color: '#023858' }}>{item.label}</span>
+                      <span style={{ color: '#3C4043' }}>{item.label}</span>
                     </Link>
                   )}
                 </div>
@@ -603,16 +619,14 @@ const Navbar = () => {
             })}
           </nav>
 
-          {/* Far Right Action Buttons (Properly Spaced & Never Cut Off) */}
+          {/* Far Right Action Buttons (Rounded 12px Style) */}
           <div className="hidden lg:flex items-center gap-2.5 xl:gap-3 shrink-0 flex-nowrap ml-3 xl:ml-5">
-            <a
-              href="https://schoolsearch.cseel.org"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/schools?view=map"
               className="inline-flex items-center justify-center gap-1.5 px-4 h-10 text-sm font-bold text-[#006FCC] hover:bg-[#EDF5FA] rounded-[12px] transition-all border border-[#006FCC]/30 whitespace-nowrap shrink-0"
             >
               <span>📍 Find School</span>
-            </a>
+            </Link>
 
             <Link
               href="/contact-us"
@@ -637,9 +651,7 @@ const Navbar = () => {
         {activeItem && activeItem.columns && (
           <div
             className="hidden lg:block absolute top-full left-0 w-full bg-white border-b border-[#E8E9E9] shadow-[0_20px_40px_-10px_rgba(0,28,51,0.08)] z-[450] animate-in fade-in duration-150"
-            onMouseEnter={() => {
-              if (closeTimer.current) clearTimeout(closeTimer.current);
-            }}
+            onMouseEnter={clearTimers}
             onMouseLeave={handleMouseLeave}
           >
             <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-9">

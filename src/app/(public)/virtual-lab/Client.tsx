@@ -881,7 +881,7 @@ export default function VirtualLab3DClient() {
                   setNarrationLang(nextLang);
                   speakNarration(nextLang === 'hi' ? selectedConcept.audioHi : selectedConcept.audioEn, nextLang);
                 }}
-                className="flex-1 py-1.5 px-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition"
+                className="flex-1 py-1.5 px-2 rounded-[12px] bg-[#006FCC] hover:bg-[#005499] text-white font-semibold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition"
               >
                 <Languages size={12} />
                 <span>{narrationLang === 'en' ? 'Switch to Hindi Audio' : 'Switch to English'}</span>

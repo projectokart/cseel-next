@@ -79,7 +79,7 @@ const Demo = () => {
                   <p className="text-lg text-slate-600 mb-8 leading-relaxed">
                     Don't just take our word for it—watch how Cseel transforms science education through interactive hands-on live experiments and practical labs.
                   </p>
-                  <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center gap-2">
+                  <button className="button_primary px-8 py-4 text-white rounded-[12px] font-bold text-sm shadow-md flex items-center gap-2 transition-all">
                     Request Full Access <ChevronRight size={18} />
                   </button>
                 </div>
@@ -226,8 +226,8 @@ const Demo = () => {
                 <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Ready for a Live Deep-Dive?</h2>
                 <p className="text-slate-400 mb-10 max-w-xl mx-auto">Get a personalized demo with our experts to discuss your specific curriculum needs.</p>
                 <div className="flex flex-wrap justify-center gap-4">
-                    <button className="px-10 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20">Book 1-on-1 Session</button>
-                    <button className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white/10 transition-all">Download Catalog</button>
+                    <button className="button_primary px-8 py-3.5 text-white rounded-[12px] font-bold text-sm shadow-md transition-all">Book 1-on-1 Session</button>
+                    <button className="btn-outline px-8 py-3.5 bg-transparent border-white/20 text-white rounded-[12px] font-bold text-sm hover:bg-white/10 hover:border-white transition-all">Download Catalog</button>
                 </div>
             </div>
             <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>

@@ -58,8 +58,13 @@ import {
   Info,
   Download,
 } from 'lucide-react';
-import SchoolFinderMap from '@/components/school-finder/SchoolFinderMap';
+import dynamic from 'next/dynamic';
 import SchoolDetailModal from '@/components/school-finder/SchoolDetailModal';
+
+const SchoolFinderMap = dynamic(
+  () => import('@/components/school-finder/SchoolFinderMap'),
+  { ssr: false }
+);
 import {
   POPULAR_CITIES,
   SchoolRecord,

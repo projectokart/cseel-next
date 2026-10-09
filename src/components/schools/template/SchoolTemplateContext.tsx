@@ -3,11 +3,18 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchSchoolByUdise, UdiseSchoolData } from '@/lib/services/udiseService';
 import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
+import {
+  BLANK_AI_SCHOOL_SCHEMA,
+  parseSchoolJsonToState,
+  convertStateToStructuredJson,
+  ImportSummary,
+} from './SchoolJsonSchemaHelper';
 
 export interface FacilityCardItem {
   id: string;
   title: string;
   desc: string;
+  points?: string[];
   icon: string;
   illustration?: string;
   badge?: string;
@@ -17,10 +24,60 @@ export interface AdmissionCardItem {
   id: string;
   title: string;
   criteria: string;
+  points?: string[];
   fees?: string;
   icon: string;
   illustration?: string;
   badge?: string;
+}
+
+export interface FlipbookSlideItem {
+  id: string;
+  image: string;
+  mediaType?: 'image' | 'video';
+  videoUrl?: string;
+  title: string;
+  desc: string;
+  buttonText?: string;
+  actionTab?: string;
+}
+
+
+export interface FeeTableState {
+  columns: string[];
+  rows: string[][];
+}
+
+export interface GalleryMediaItem {
+  id: string;
+  type: 'image' | 'video';
+  url: string;
+  title: string;
+  category?: string;
+}
+
+export interface FacultyMemberItem {
+  id: string;
+  name: string;
+  subject: string;
+  qualification: string;
+  bio: string;
+  image: string;
+}
+
+export interface AwardItem {
+  id: string;
+  title: string;
+  desc: string;
+  image: string;
+  year?: string;
+}
+
+export interface SchoolFaqItem {
+  id: string;
+  q: string;
+  a: string;
+  category?: string;
 }
 
 export interface SchoolTemplateState {
@@ -38,14 +95,14 @@ export interface SchoolTemplateState {
   ruralUrban: string;
   classFrom: string;
   classTo: string;
-  totalStudents: number;
-  totalBoys: number;
-  totalGirls: number;
-  totalTeachers: number;
-  maleTeachers: number;
-  femaleTeachers: number;
-  classroomsCount: number;
-  workingSmartBoards: number;
+  totalStudents: number | string;
+  totalBoys: number | string;
+  totalGirls: number | string;
+  totalTeachers: number | string;
+  maleTeachers: number | string;
+  femaleTeachers: number | string;
+  classroomsCount: number | string;
+  workingSmartBoards: number | string;
   isResidential: boolean;
   hasHostel: boolean;
   genderType: string;
@@ -53,9 +110,18 @@ export interface SchoolTemplateState {
   management: string;
   schoolCategory: string;
   establishedYear: string;
+  campusArea?: string;
   phone: string;
   email: string;
   website: string;
+  generalPhone?: string;
+  generalEmail?: string;
+  admissionsPhone?: string;
+  admissionsEmail?: string;
+  principalPhone?: string;
+  principalEmail?: string;
+  careersPhone?: string;
+  careersEmail?: string;
   heroImage: string;
   logoImage: string;
   aboutText: string;
@@ -63,10 +129,20 @@ export interface SchoolTemplateState {
   missionText: string;
   facilities: FacilityCardItem[];
   admissions: AdmissionCardItem[];
+  flipbookSlides: FlipbookSlideItem[];
+  feeTableData: FeeTableState;
+  includedAcademicFeatures: string[];
+  galleryItems: GalleryMediaItem[];
+  facultyCards: FacultyMemberItem[];
+  awardCards: AwardItem[];
+  faqs?: SchoolFaqItem[];
   tabVisibility: Record<string, boolean>;
   showContactInfo: boolean;
   completedTabs: Record<string, boolean>;
   verifiedFields: Record<string, boolean>;
+  contentOverrides?: Record<string, string>;
+  imageOverrides?: Record<string, string>;
+  iconOverrides?: Record<string, string>;
 }
 
 const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
@@ -99,9 +175,18 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   management: 'Private Management / Trust / Society',
   schoolCategory: 'Senior Secondary (Class 1 to 12th)',
   establishedYear: '2008',
-  phone: '+91 98XXXXXXXX / Official School Helpline',
-  email: 'admissions@yourschoolname.edu.in',
-  website: 'https://www.yourschoolname.edu.in',
+  campusArea: '12 Acres',
+  phone: '',
+  email: '',
+  website: '',
+  generalPhone: '',
+  generalEmail: '',
+  admissionsPhone: '',
+  admissionsEmail: '',
+  principalPhone: '',
+  principalEmail: '',
+  careersPhone: '',
+  careersEmail: '',
   heroImage: '/images/schools/hero-school-1.png',
   logoImage: '',
   aboutText:
@@ -113,14 +198,68 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   // Initial template starts empty as requested by user
   facilities: [],
   admissions: [],
+  flipbookSlides: [
+    {
+      id: 'fb-0',
+      image: '/images/schools/edunova-hero-students.jpg',
+      title: 'Main Academic Campus & Life',
+      desc: 'Inspiring architecture with lush green surroundings and modern classrooms.',
+      buttonText: 'Explore Campus',
+      actionTab: 'about'
+    },
+    {
+      id: 'fb-1',
+      image: '/images/schools/hero-school-1.png',
+      title: 'Advanced Science Practical Labs',
+      desc: 'Hands-on chemistry, physics and biology labs with individual workstations.',
+      buttonText: 'View Labs',
+      actionTab: 'facilities'
+    },
+    {
+      id: 'fb-2',
+      image: '/images/schools/hero-school-2.jpg',
+      title: 'Interactive Smart Classrooms',
+      desc: 'Digital multimedia boards, audio-visual learning & dedicated teacher guidance.',
+      buttonText: 'Academics & Pedagogy',
+      actionTab: 'academics'
+    },
+    {
+      id: 'fb-3',
+      image: '/images/schools/hero-school-3.jpg',
+      title: 'Sports Complex & Athletic Grounds',
+      desc: 'Dedicated football pitch, basketball court, athletics track and trained sports coaches.',
+      buttonText: 'Sports Academies',
+      actionTab: 'extracurricular'
+    },
+    {
+      id: 'fb-4',
+      image: '/images/schools/hero-school-4.png',
+      title: 'Central Library & Reading Halls',
+      desc: 'Over 10,000 curriculum and reference books, quiet study pods & digital archives.',
+      buttonText: 'Admissions & Inquiries',
+      actionTab: 'admissions'
+    }
+  ],
+  feeTableData: {
+    columns: ['Class / Wing', 'Tuition Fee (Qtr)', 'Dev Fee (Annual)', 'Lab / Sports Fee', 'Total Annual (Est.)'],
+    rows: []
+  },
+  includedAcademicFeatures: [
+    'Smart Interactive 4K Classroom Digital Panels & Animation Modules',
+    'Complete Hands-on STEM, Science & Robotics Laboratory Consumables',
+    'Full Access to Central Library, E-Books & Kindle Digital Reading Corner',
+    'Professional Sports Coaching (Cricket, Football, Basketball, Table Tennis)',
+    'Annual Health & Dental Checkups, 24/7 First Aid & Infirmary Services',
+    'Inter-School Competition Mentorship, CBSE Olympiad & NTSE Preparations'
+  ],
+  galleryItems: [],
+  facultyCards: [],
+  awardCards: [],
   tabVisibility: {
     home: true,
     about: true,
     academics: true,
     facilities: true,
-    extracurricular: true,
-    awards: true,
-    events: true,
     faculty: true,
     gallery: true,
     admissions: true,
@@ -130,6 +269,9 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   showContactInfo: true,
   completedTabs: {},
   verifiedFields: {},
+  contentOverrides: {},
+  imageOverrides: {},
+  iconOverrides: {},
 };
 
 const LOCAL_STORAGE_KEY = 'cseel_school_template_draft_v1';
@@ -142,6 +284,12 @@ interface SchoolTemplateContextType {
   lastSavedAt: string | null;
   updateField: <K extends keyof SchoolTemplateState>(key: K, value: SchoolTemplateState[K]) => void;
   updateMultipleFields: (updates: Partial<SchoolTemplateState>) => void;
+  updateContentOverride: (key: string, value: string) => void;
+  updateImageOverride: (key: string, url: string) => void;
+  updateIconOverride: (key: string, iconName: string) => void;
+  getContent: (key: string, fallback?: string) => string;
+  getImage: (key: string, fallback?: string) => string;
+  getIcon: (key: string, fallback?: string) => string;
   toggleTabVisibility: (tabId: string) => void;
   toggleContactVisibility: () => void;
   saveTab: (tabId: string) => void;
@@ -156,8 +304,25 @@ interface SchoolTemplateContextType {
   addAdmissionCard: (card: Omit<AdmissionCardItem, 'id'>) => void;
   updateAdmissionCard: (id: string, card: Partial<AdmissionCardItem>) => void;
   deleteAdmissionCard: (id: string) => void;
+  updateFlipbookSlides: (slides: FlipbookSlideItem[]) => void;
+  updateFeeTableData: (table: FeeTableState) => void;
+  updateIncludedFeatures: (features: string[]) => void;
+  addGalleryItem: (item: Omit<GalleryMediaItem, 'id'>) => void;
+  deleteGalleryItem: (id: string) => void;
+  addFacultyCard: (card: Omit<FacultyMemberItem, 'id'>) => void;
+  updateFacultyCard: (id: string, card: Partial<FacultyMemberItem>) => void;
+  deleteFacultyCard: (id: string) => void;
+  addAwardCard: (card: Omit<AwardItem, 'id'>) => void;
+  updateAwardCard: (id: string, card: Partial<AwardItem>) => void;
+  deleteAwardCard: (id: string) => void;
+  addFaq?: (faq: Omit<SchoolFaqItem, 'id'>) => void;
+  updateFaq?: (id: string, faq: Partial<SchoolFaqItem>) => void;
+  deleteFaq?: (id: string) => void;
   resetToDefault: () => void;
   publishToSupabase: () => Promise<{ success: boolean; message: string; recordId?: string }>;
+  importSchoolDataFromJson: (rawJson: any) => { success: boolean; message: string; summary?: ImportSummary };
+  exportSchoolDataAsJson: () => string;
+  getBlankAiSchemaJson: () => any;
   isUdiseLoading: boolean;
   notification: { type: 'success' | 'error' | 'info'; message: string } | null;
   setNotification: (notif: { type: 'success' | 'error' | 'info'; message: string } | null) => void;
@@ -223,6 +388,48 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
   const updateMultipleFields = useCallback((updates: Partial<SchoolTemplateState>) => {
     setData((prev) => ({ ...prev, ...updates }));
   }, []);
+
+  const updateContentOverride = useCallback((key: string, value: string) => {
+    setData((prev) => ({
+      ...prev,
+      contentOverrides: {
+        ...(prev.contentOverrides || {}),
+        [key]: value
+      }
+    }));
+  }, []);
+
+  const updateImageOverride = useCallback((key: string, url: string) => {
+    setData((prev) => ({
+      ...prev,
+      imageOverrides: {
+        ...(prev.imageOverrides || {}),
+        [key]: url
+      }
+    }));
+  }, []);
+
+  const updateIconOverride = useCallback((key: string, iconName: string) => {
+    setData((prev) => ({
+      ...prev,
+      iconOverrides: {
+        ...(prev.iconOverrides || {}),
+        [key]: iconName
+      }
+    }));
+  }, []);
+
+  const getContent = useCallback((key: string, fallback: string = '') => {
+    return data.contentOverrides?.[key] ?? fallback;
+  }, [data.contentOverrides]);
+
+  const getImage = useCallback((key: string, fallback: string = '') => {
+    return data.imageOverrides?.[key] ?? fallback;
+  }, [data.imageOverrides]);
+
+  const getIcon = useCallback((key: string, fallback: string = '') => {
+    return data.iconOverrides?.[key] ?? fallback;
+  }, [data.iconOverrides]);
 
   const toggleTabVisibility = useCallback((tabId: string) => {
     setData((prev) => ({
@@ -485,6 +692,123 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
     }));
   }, []);
 
+  const updateFlipbookSlides = useCallback((slides: FlipbookSlideItem[]) => {
+    setData((prev) => ({
+      ...prev,
+      flipbookSlides: slides.slice(0, 10),
+    }));
+  }, []);
+
+  const updateFeeTableData = useCallback((feeTable: FeeTableState) => {
+    setData((prev) => ({
+      ...prev,
+      feeTableData: {
+        columns: feeTable.columns.slice(0, 5),
+        rows: feeTable.rows.slice(0, 20),
+      },
+    }));
+  }, []);
+
+  const updateIncludedFeatures = useCallback((features: string[]) => {
+    setData((prev) => ({
+      ...prev,
+      includedAcademicFeatures: features.slice(0, 10),
+    }));
+  }, []);
+
+  const addGalleryItem = useCallback((item: Omit<GalleryMediaItem, 'id'>) => {
+    const newItem: GalleryMediaItem = {
+      ...item,
+      id: `gal-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    };
+    setData((prev) => ({
+      ...prev,
+      galleryItems: [...(prev.galleryItems || []), newItem],
+    }));
+  }, []);
+
+  const deleteGalleryItem = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      galleryItems: (prev.galleryItems || []).filter((g) => g.id !== id),
+    }));
+  }, []);
+
+  const addFacultyCard = useCallback((card: Omit<FacultyMemberItem, 'id'>) => {
+    const newCard: FacultyMemberItem = {
+      ...card,
+      id: `facm-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    };
+    setData((prev) => ({
+      ...prev,
+      facultyCards: [...(prev.facultyCards || []), newCard],
+    }));
+  }, []);
+
+  const updateFacultyCard = useCallback((id: string, card: Partial<FacultyMemberItem>) => {
+    setData((prev) => ({
+      ...prev,
+      facultyCards: (prev.facultyCards || []).map((f) => (f.id === id ? { ...f, ...card } : f)),
+    }));
+  }, []);
+
+  const deleteFacultyCard = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      facultyCards: (prev.facultyCards || []).filter((f) => f.id !== id),
+    }));
+  }, []);
+
+  const addAwardCard = useCallback((card: Omit<AwardItem, 'id'>) => {
+    const newCard: AwardItem = {
+      ...card,
+      id: `awd-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    };
+    setData((prev) => ({
+      ...prev,
+      awardCards: [...(prev.awardCards || []), newCard],
+    }));
+  }, []);
+
+  const updateAwardCard = useCallback((id: string, card: Partial<AwardItem>) => {
+    setData((prev) => ({
+      ...prev,
+      awardCards: (prev.awardCards || []).map((a) => (a.id === id ? { ...a, ...card } : a)),
+    }));
+  }, []);
+
+  const deleteAwardCard = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      awardCards: (prev.awardCards || []).filter((a) => a.id !== id),
+    }));
+  }, []);
+
+  const addFaq = useCallback((faq: Omit<SchoolFaqItem, 'id'>) => {
+    const newFaq: SchoolFaqItem = {
+      ...faq,
+      id: `faq-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    };
+    setData((prev) => ({
+      ...prev,
+      faqs: [...(prev.faqs || []), newFaq],
+    }));
+  }, []);
+
+  const updateFaq = useCallback((id: string, card: Partial<SchoolFaqItem>) => {
+    setData((prev) => ({
+      ...prev,
+      faqs: (prev.faqs || []).map((f) => (f.id === id ? { ...f, ...card } : f)),
+    }));
+  }, []);
+
+  const deleteFaq = useCallback((id: string) => {
+    setData((prev) => ({
+      ...prev,
+      faqs: (prev.faqs || []).filter((f) => f.id !== id),
+    }));
+  }, []);
+
   const resetToDefault = useCallback(() => {
     if (typeof window !== 'undefined' && window.confirm('Are you sure you want to reset this template? All unsaved custom edits will be reverted.')) {
       setData(DEFAULT_TEMPLATE_DATA);
@@ -501,6 +825,16 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
 
   const publishToSupabase = useCallback(async () => {
     try {
+      const cleanUdise = (data.udiseCode || '').trim().replace(/\D/g, '');
+      if (cleanUdise.length !== 11) {
+        setNotification({
+          type: 'error',
+          message: '❌ Strict Rule: 11-digit official UDISE Code is mandatory to publish. Government UDISE+ record hona zaroori hai.',
+        });
+        setTimeout(() => setNotification(null), 6000);
+        return { success: false, message: 'UDISE code must be 11 digits' };
+      }
+
       const slug = (data.schoolName || 'school')
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -557,6 +891,40 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
     }
   }, [data]);
 
+  const importSchoolDataFromJson = useCallback((rawJson: any) => {
+    const res = parseSchoolJsonToState(rawJson, data);
+    if (!res.success || !res.state) {
+      setNotification({
+        type: 'error',
+        message: `Import Failed: ${res.error || 'Invalid JSON format'}`,
+      });
+      setTimeout(() => setNotification(null), 6000);
+      return { success: false, message: res.error || 'Import failed' };
+    }
+
+    setData(res.state);
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(res.state));
+    } catch (_) {}
+
+    setLastSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    setNotification({
+      type: 'success',
+      message: `🎉 School Profile for "${res.summary?.schoolName || 'School'}" imported successfully in 1-Click!`,
+    });
+    setTimeout(() => setNotification(null), 6000);
+    return { success: true, message: 'Import successful', summary: res.summary };
+  }, [data]);
+
+  const exportSchoolDataAsJson = useCallback(() => {
+    const structured = convertStateToStructuredJson(data);
+    return JSON.stringify(structured, null, 2);
+  }, [data]);
+
+  const getBlankAiSchemaJson = useCallback(() => {
+    return BLANK_AI_SCHOOL_SCHEMA;
+  }, []);
+
   return (
     <SchoolTemplateContext.Provider
       value={{
@@ -567,6 +935,12 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
         lastSavedAt,
         updateField,
         updateMultipleFields,
+        updateContentOverride,
+        updateImageOverride,
+        updateIconOverride,
+        getContent,
+        getImage,
+        getIcon,
         toggleTabVisibility,
         toggleContactVisibility,
         saveTab,
@@ -581,8 +955,25 @@ export function SchoolTemplateProvider({ children }: { children: React.ReactNode
         addAdmissionCard,
         updateAdmissionCard,
         deleteAdmissionCard,
+        updateFlipbookSlides,
+        updateFeeTableData,
+        updateIncludedFeatures,
+        addGalleryItem,
+        deleteGalleryItem,
+        addFacultyCard,
+        updateFacultyCard,
+        deleteFacultyCard,
+        addAwardCard,
+        updateAwardCard,
+        deleteAwardCard,
+        addFaq,
+        updateFaq,
+        deleteFaq,
         resetToDefault,
         publishToSupabase,
+        importSchoolDataFromJson,
+        exportSchoolDataAsJson,
+        getBlankAiSchemaJson,
         isUdiseLoading,
         notification,
         setNotification,

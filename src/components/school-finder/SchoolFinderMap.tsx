@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { SchoolRecord } from '@/data/schoolFinderData';
 import { SchoolMapPoint } from '@/integrations/supabase/schoolSearchClient';
 import {
@@ -9,7 +11,6 @@ import {
   Crosshair,
   Loader2,
   Maximize2,
-  Layers,
   MapPin,
   Sparkles,
 } from 'lucide-react';
@@ -48,27 +49,30 @@ export default function SchoolFinderMap({
   onViewModeChange,
 }: SchoolFinderMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const canvasRendererRef = useRef<any>(null);
-  const dotsLayerGroupRef = useRef<any>(null);
-  const selectedMarkerRef = useRef<any>(null);
-  const circleRef = useRef<any>(null);
-  const centerMarkerRef = useRef<any>(null);
-  const userGpsMarkerRef = useRef<any>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const canvasRendererRef = useRef<L.Canvas | null>(null);
+  const dotsLayerGroupRef = useRef<L.LayerGroup | null>(null);
+  const selectedMarkerRef = useRef<L.Marker | null>(null);
+  const circleRef = useRef<L.Circle | null>(null);
+  const centerMarkerRef = useRef<L.Marker | null>(null);
+  const userGpsMarkerRef = useRef<L.Marker | null>(null);
+  const userCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
   const longPressTimerRef = useRef<any>(null);
-  
+
   const onSelectSchoolRef = useRef(onSelectSchool);
   onSelectSchoolRef.current = onSelectSchool;
   const onOpenDetailsRef = useRef(onOpenDetails);
   onOpenDetailsRef.current = onOpenDetails;
   const onDeselectSchoolRef = useRef(onDeselectSchool);
   onDeselectSchoolRef.current = onDeselectSchool;
-  
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [currentZoom, setCurrentZoom] = useState<number>(12);
-  const [internalViewMode, setInternalViewMode] = useState<'auto' | 'pins' | 'dots'>('auto');
+  const onLocationChangeRef = useRef(onLocationChange);
+  onLocationChangeRef.current = onLocationChange;
+  const onLocateMeRef = useRef(onLocateMe);
+  onLocateMeRef.current = onLocateMe;
 
-  const viewMode = controlledViewMode ?? internalViewMode;
+  const [mapReady, setMapReady] = useState(false);
+  const [internalLocating, setInternalLocating] = useState(false);
+  const [currentZoom, setCurrentZoom] = useState<number>(13);
 
   // Auto fit map bounds to the radius circle & schools
   const fitToCurrentRadius = useCallback(() => {
@@ -76,7 +80,7 @@ export default function SchoolFinderMap({
     try {
       const bounds = circleRef.current.getBounds();
       mapInstanceRef.current.fitBounds(bounds, {
-        padding: [45, 45],
+        padding: [35, 35],
         maxZoom: 15,
         animate: true,
         duration: 0.5,
@@ -86,47 +90,19 @@ export default function SchoolFinderMap({
     }
   }, []);
 
-  // Load Leaflet dynamically via CDN scripts
+  // Initialize Map Instance directly
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link');
-      link.id = 'leaflet-css';
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-    }
-
-    if (!(window as any).L) {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.async = true;
-      script.onload = () => {
-        setMapLoaded(true);
-      };
-      document.body.appendChild(script);
-    } else {
-      setMapLoaded(true);
-    }
-  }, []);
-
-  // Initialize Map & Long-Press Handlers
-  useEffect(() => {
-    if (!mapLoaded || !mapContainerRef.current || mapInstanceRef.current) return;
-
-    const L = (window as any).L;
-    if (!L) return;
+    if (!mapContainerRef.current || mapInstanceRef.current) return;
 
     const initialZoom = radiusKm <= 3 ? 14 : radiusKm <= 7 ? 13 : radiusKm <= 15 ? 12 : 11;
     setCurrentZoom(initialZoom);
 
-    // Create high-speed Canvas renderer instance for map
+    // Create high-speed Canvas renderer
     const canvasRenderer = L.canvas({ padding: 0.5, tolerance: 8 });
     canvasRendererRef.current = canvasRenderer;
 
     const map = L.map(mapContainerRef.current, {
-      center: [searchCenter.lat, searchCenter.lng],
+      center: [searchCenter.lat || 28.6139, searchCenter.lng || 77.2090],
       zoom: initialZoom,
       zoomControl: false,
       closePopupOnClick: false,
@@ -134,29 +110,47 @@ export default function SchoolFinderMap({
       renderer: canvasRenderer,
     });
 
-    // High quality OSM tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    // Clean, Free OpenStreetMap & ESRI World Street Map Tile Layer (No API key, No watermark)
+    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19,
-    }).addTo(map);
+    });
+
+    tileLayer.on('tileerror', () => {
+      // Fallback to ESRI World Street Map if OSM has network throttle
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri',
+        maxZoom: 19,
+      }).addTo(map);
+    });
+
+    tileLayer.addTo(map);
 
     map.on('zoomend', () => {
       setCurrentZoom(map.getZoom());
     });
 
-    // ─── 600ms LONG PRESS / HOLD ON MAP (MOBILE TOUCH & DESKTOP MOUSE) ───
-    const handleLongPressTrigger = (latlng: any) => {
+    // Click anywhere on map or Long press / Context menu to relocate Search Pin
+    const handleLocationSelect = (latlng: L.LatLng) => {
       if (onLocationChange && latlng?.lat && latlng?.lng) {
         onLocationChange(latlng.lat, latlng.lng);
       }
     };
 
-    // 1. ContextMenu / Long Tap Event
-    map.on('contextmenu', (e: any) => {
-      if (e.latlng) handleLongPressTrigger(e.latlng);
+    map.on('click', (e: L.LeafletMouseEvent) => {
+      if (e.originalEvent && e.originalEvent.target) {
+        const target = e.originalEvent.target as HTMLElement;
+        if (target.closest('.leaflet-popup') || target.closest('.leaflet-control') || target.closest('button')) {
+          return;
+        }
+      }
+      if (e.latlng) handleLocationSelect(e.latlng);
     });
 
-    // 2. Custom 600ms Touch Hold for Mobile
+    map.on('contextmenu', (e: L.LeafletMouseEvent) => {
+      if (e.latlng) handleLocationSelect(e.latlng);
+    });
+
     map.on('touchstart', (e: any) => {
       if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
       if (e.originalEvent && e.originalEvent.target) {
@@ -167,7 +161,7 @@ export default function SchoolFinderMap({
       }
       if (e.latlng) {
         longPressTimerRef.current = setTimeout(() => {
-          handleLongPressTrigger(e.latlng);
+          handleLocationSelect(e.latlng);
         }, 600);
       }
     });
@@ -182,58 +176,23 @@ export default function SchoolFinderMap({
     map.on('touchend touchmove touchcancel movestart zoomstart dragstart', clearPressTimer);
 
     mapInstanceRef.current = map;
+    setMapReady(true);
+
+    // Multi-stage invalidateSize to guarantee tiles render when container expands
+    const timers = [
+      setTimeout(() => map.invalidateSize(), 80),
+      setTimeout(() => map.invalidateSize(), 300),
+      setTimeout(() => map.invalidateSize(), 800),
+    ];
 
     return () => {
+      timers.forEach(clearTimeout);
       clearPressTimer();
       map.remove();
       mapInstanceRef.current = null;
+      setMapReady(false);
     };
-  }, [mapLoaded]);
-
-  // ─── CONTINUOUS LIVE GPS BLUE DOT ───
-  useEffect(() => {
-    if (!mapLoaded || !mapInstanceRef.current) return;
-    const L = (window as any).L;
-    if (!L || typeof window === 'undefined' || !navigator.geolocation) return;
-
-    const gpsIcon = L.divIcon({
-      className: 'live-gps-marker',
-      html: `
-        <div class="relative w-8 h-8 flex items-center justify-center pointer-events-none">
-          <div class="absolute inset-0 rounded-full bg-[#1a73e8]/30 live-gps-radar-ring"></div>
-          <div class="absolute inset-1 rounded-full bg-[#1a73e8]/20 animate-ping"></div>
-          <div class="w-4 h-4 rounded-full bg-[#1a73e8] border-2 border-white shadow-[0_2px_8px_rgba(26,115,232,0.8)] z-10"></div>
-        </div>
-      `,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
-
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        if (!userGpsMarkerRef.current && mapInstanceRef.current) {
-          userGpsMarkerRef.current = L.marker([latitude, longitude], {
-            icon: gpsIcon,
-            zIndexOffset: 1200,
-            interactive: false,
-          }).addTo(mapInstanceRef.current);
-        } else if (userGpsMarkerRef.current) {
-          userGpsMarkerRef.current.setLatLng([latitude, longitude]);
-        }
-      },
-      (err) => console.warn('Live GPS watch notice:', err),
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 20000 }
-    );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-      if (userGpsMarkerRef.current) {
-        userGpsMarkerRef.current.remove();
-        userGpsMarkerRef.current = null;
-      }
-    };
-  }, [mapLoaded]);
+  }, []);
 
   // ResizeObserver to invalidate map size automatically
   useEffect(() => {
@@ -243,17 +202,134 @@ export default function SchoolFinderMap({
     });
     resizeObserver.observe(mapContainerRef.current);
     return () => resizeObserver.disconnect();
-  }, [mapLoaded]);
+  }, [mapReady]);
 
-  // Smooth flyTo when mapFocus changes (preserves user zoom and positions pin in upper half on mobile)
-  useEffect(() => {
-    if (!mapInstanceRef.current || !mapLoaded || !mapFocus) return;
-    const L = (window as any).L;
-    if (!L) return;
+  const hasAutoCenteredGPS = useRef(false);
 
+  // Helper to ensure the blue dot marker is created and persistently updated on the map
+  const ensureUserMarker = useCallback((lat: number, lng: number) => {
+    if (!mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
-    const currentZoom = map.getZoom();
-    const targetZoom = typeof mapFocus.zoom === 'number' ? mapFocus.zoom : currentZoom;
+    userCoordsRef.current = { lat, lng };
+
+    const gpsIcon = L.divIcon({
+      className: 'live-gps-marker',
+      html: `
+        <div class="relative w-8 h-8 flex items-center justify-center pointer-events-none">
+          <div class="absolute inset-0 rounded-full bg-[#1a73e8]/30 live-gps-radar-ring"></div>
+          <div class="absolute inset-1 rounded-full bg-[#1a73e8]/25 animate-ping" style="animation-duration: 2.2s;"></div>
+          <div class="w-4 h-4 rounded-full bg-[#1a73e8] border-2 border-white shadow-[0_2px_8px_rgba(26,115,232,0.9)] z-10"></div>
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
+
+    if (!userGpsMarkerRef.current) {
+      userGpsMarkerRef.current = L.marker([lat, lng], {
+        icon: gpsIcon,
+        zIndexOffset: 1600,
+        interactive: false,
+      }).addTo(map);
+    } else {
+      userGpsMarkerRef.current.setLatLng([lat, lng]);
+      if (!map.hasLayer(userGpsMarkerRef.current)) {
+        userGpsMarkerRef.current.addTo(map);
+      }
+    }
+  }, []);
+
+  // Instant Locate Handler: Snaps map and blue dot directly on 1st click
+  const handleLocateMe = useCallback(() => {
+    if (!mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+
+    // 1. If we already have known user coordinates, snap to them immediately in 0ms!
+    if (userCoordsRef.current) {
+      const { lat, lng } = userCoordsRef.current;
+      ensureUserMarker(lat, lng);
+      onLocationChangeRef.current?.(lat, lng);
+      map.flyTo([lat, lng], 15, { duration: 0.35 });
+    }
+
+    // 2. Query fresh GPS position with highest accuracy
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      setInternalLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setInternalLocating(false);
+          const { latitude, longitude } = pos.coords;
+          ensureUserMarker(latitude, longitude);
+          onLocationChangeRef.current?.(latitude, longitude);
+          map.flyTo([latitude, longitude], 15, { duration: 0.45 });
+        },
+        (err) => {
+          setInternalLocating(false);
+          console.warn('GPS location error:', err);
+          onLocateMeRef.current?.();
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      );
+    } else {
+      onLocateMeRef.current?.();
+    }
+  }, [ensureUserMarker]);
+
+  // GPS Blue Dot & Immediate Auto-Center Red Pin (Never resets on parent renders)
+  useEffect(() => {
+    if (!mapReady || !mapInstanceRef.current || typeof window === 'undefined' || !navigator.geolocation) return;
+
+    let isCancelled = false;
+
+    // Rapid initial GPS resolution
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (isCancelled) return;
+        const { latitude, longitude } = pos.coords;
+        ensureUserMarker(latitude, longitude);
+
+        if (!hasAutoCenteredGPS.current) {
+          hasAutoCenteredGPS.current = true;
+          onLocationChangeRef.current?.(latitude, longitude);
+        }
+      },
+      (err) => console.warn('Initial GPS notice:', err),
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+    );
+
+    // Continuous watch for movement
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        if (isCancelled) return;
+        const { latitude, longitude } = pos.coords;
+        ensureUserMarker(latitude, longitude);
+
+        if (!hasAutoCenteredGPS.current) {
+          hasAutoCenteredGPS.current = true;
+          onLocationChangeRef.current?.(latitude, longitude);
+          mapInstanceRef.current?.flyTo([latitude, longitude], 14, { duration: 0.4 });
+        }
+      },
+      (err) => console.warn('GPS watch notice:', err),
+      { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 }
+    );
+
+    return () => {
+      isCancelled = true;
+      navigator.geolocation.clearWatch(watchId);
+      if (userGpsMarkerRef.current) {
+        userGpsMarkerRef.current.remove();
+        userGpsMarkerRef.current = null;
+      }
+    };
+  }, [mapReady, ensureUserMarker]);
+
+  // Smooth flyTo when mapFocus changes
+  useEffect(() => {
+    if (!mapInstanceRef.current || !mapReady || !mapFocus) return;
+    const map = mapInstanceRef.current;
+    const curZoom = map.getZoom();
+    const targetZoom = typeof mapFocus.zoom === 'number' ? mapFocus.zoom : curZoom;
 
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     const offsetY = isMobile ? Math.round(window.innerHeight * 0.14) : 0;
@@ -264,103 +340,90 @@ export default function SchoolFinderMap({
       const offsetPoint = L.point(targetPoint.x - offsetX, targetPoint.y + offsetY);
       const offsetLatLng = map.unproject(offsetPoint, targetZoom);
 
-      map.flyTo(
-        offsetLatLng,
-        targetZoom,
-        {
-          duration: 0.5,
-          easeLinearity: 0.25,
-        }
-      );
-    } catch (e) {
+      map.flyTo(offsetLatLng, targetZoom, {
+        duration: 0.5,
+        easeLinearity: 0.25,
+      });
+    } catch {
       map.flyTo([mapFocus.lat, mapFocus.lng], targetZoom, { duration: 0.5 });
     }
-  }, [mapFocus, mapLoaded]);
+  }, [mapFocus, mapReady]);
 
-  // Search Center Google Maps Style Red SVG Drop Pin + Draggable + Dynamic Radius Circle
+  // Search Center Red SVG Pin + Draggable + Radius Circle
   useEffect(() => {
-    if (!mapInstanceRef.current || !mapLoaded) return;
-    const L = (window as any).L;
-    if (!L) return;
-
+    if (!mapInstanceRef.current || !mapReady) return;
     const map = mapInstanceRef.current;
 
-    // 1. Center Google Maps Red SVG Drop Pin (Draggable)
-    if (centerMarkerRef.current) {
-      map.removeLayer(centerMarkerRef.current);
+    if (!centerMarkerRef.current) {
+      const redDropPinHtml = `
+        <div class="google-red-drop-pin" style="position: relative; width: 34px; height: 42px; display: flex; flex-direction: column; align-items: center; cursor: grab; user-select: none;">
+          <svg width="34" height="42" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.38));">
+            <path d="M12 0C5.373 0 0 5.373 0 12C0 21 12 32 12 32C12 32 24 21 24 12C24 5.373 18.627 0 12 0Z" fill="#EA4335"/>
+            <circle cx="12" cy="11.5" r="4.5" fill="#FFFFFF"/>
+            <circle cx="12" cy="11.5" r="2.8" fill="#B31412"/>
+          </svg>
+          <div style="position: absolute; bottom: -4px; width: 14px; height: 5px; background: rgba(0,0,0,0.25); border-radius: 50%; filter: blur(1px);"></div>
+        </div>
+      `;
+
+      const centerIcon = L.divIcon({
+        className: 'custom-google-red-pin',
+        html: redDropPinHtml,
+        iconSize: [34, 42],
+        iconAnchor: [17, 42],
+        tooltipAnchor: [0, -42],
+      });
+
+      const marker = L.marker([searchCenter.lat, searchCenter.lng], {
+        icon: centerIcon,
+        draggable: true,
+        zIndexOffset: 2000,
+      }).addTo(map);
+
+      marker.bindTooltip(
+        '<div class="font-sans text-xs font-bold text-slate-800">📍 Drag Pin or Hold on Map to Move</div>',
+        { direction: 'top', offset: [0, -42] }
+      );
+
+      marker.on('dragend', (e: any) => {
+        const newPos = e.target.getLatLng();
+        if (newPos) {
+          onLocationChangeRef.current?.(newPos.lat, newPos.lng);
+        }
+      });
+
+      centerMarkerRef.current = marker;
+    } else {
+      centerMarkerRef.current.setLatLng([searchCenter.lat, searchCenter.lng]);
     }
 
-    const redDropPinHtml = `
-      <div class="google-red-drop-pin" style="position: relative; width: 34px; height: 42px; display: flex; flex-direction: column; align-items: center; cursor: grab; user-select: none;">
-        <svg width="34" height="42" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 10px rgba(0,0,0,0.38));">
-          <path d="M12 0C5.373 0 0 5.373 0 12C0 21 12 32 12 32C12 32 24 21 24 12C24 5.373 18.627 0 12 0Z" fill="#EA4335"/>
-          <circle cx="12" cy="11.5" r="4.5" fill="#FFFFFF"/>
-          <circle cx="12" cy="11.5" r="2.8" fill="#B31412"/>
-        </svg>
-        <div style="position: absolute; bottom: -4px; width: 14px; height: 5px; background: rgba(0,0,0,0.25); border-radius: 50%; filter: blur(1px);"></div>
-      </div>
-    `;
-
-    const centerIcon = L.divIcon({
-      className: 'custom-google-red-pin',
-      html: redDropPinHtml,
-      iconSize: [34, 42],
-      iconAnchor: [17, 42],
-      tooltipAnchor: [0, -42],
-    });
-
-    const marker = L.marker([searchCenter.lat, searchCenter.lng], {
-      icon: centerIcon,
-      draggable: true,
-      zIndexOffset: 2000,
-    }).addTo(map);
-
-    marker.bindTooltip(
-      '<div class="font-sans text-xs font-bold text-slate-800">📍 Drag Pin or Hold on Map to Move</div>',
-      { direction: 'top', offset: [0, -42] }
-    );
-
-    marker.on('dragend', (e: any) => {
-      const newPos = e.target.getLatLng();
-      if (newPos && onLocationChange) {
-        onLocationChange(newPos.lat, newPos.lng);
-      }
-    });
-
-    centerMarkerRef.current = marker;
-
-    // 2. Dynamic Radius Circle
-    if (circleRef.current) {
-      map.removeLayer(circleRef.current);
+    // Dynamic Radius Circle
+    if (!circleRef.current) {
+      const circle = L.circle([searchCenter.lat, searchCenter.lng], {
+        radius: radiusKm * 1000,
+        color: '#ea4335',
+        weight: 1.8,
+        dashArray: '6, 6',
+        fillColor: '#ea4335',
+        fillOpacity: 0.05,
+      }).addTo(map);
+      circleRef.current = circle;
+    } else {
+      circleRef.current.setLatLng([searchCenter.lat, searchCenter.lng]);
+      circleRef.current.setRadius(radiusKm * 1000);
     }
+  }, [searchCenter.lat, searchCenter.lng, radiusKm, mapReady]);
 
-    const circle = L.circle([searchCenter.lat, searchCenter.lng], {
-      radius: radiusKm * 1000,
-      color: '#ea4335',
-      weight: 1.8,
-      dashArray: '6, 6',
-      fillColor: '#ea4335',
-      fillOpacity: 0.05,
-    }).addTo(map);
-
-    circleRef.current = circle;
-  }, [searchCenter, radiusKm, mapLoaded, onLocationChange]);
-
-  // ─── HIGH-SPEED HTML5 CANVAS RENDERING FOR FILTERED SCHOOLS (0 LAG, 0 DOM NODES, 60 FPS) ───
+  // High Speed Canvas School Markers
   useEffect(() => {
-    if (!mapInstanceRef.current || !mapLoaded) return;
-    const L = (window as any).L;
-    if (!L) return;
-
+    if (!mapInstanceRef.current || !mapReady) return;
     const map = mapInstanceRef.current;
 
-    // Remove existing canvas layer group
     if (dotsLayerGroupRef.current) {
       map.removeLayer(dotsLayerGroupRef.current);
       dotsLayerGroupRef.current = null;
     }
 
-    // Get the active dataset: Filtered schools (or fallback to mapPoints)
     const validSchools = schools.filter(
       (s) => s.lat && s.lng && !isNaN(s.lat) && !isNaN(s.lng) && s.lat > 5
     );
@@ -372,15 +435,15 @@ export default function SchoolFinderMap({
       const isGovt = (school.management_desc_state || school.management) === 'Government';
       const isSelected = selectedSchool?.id === school.id;
       const dotColor = isSelected ? '#ea4335' : isGovt ? '#059669' : '#1a73e8';
-      const dotRadius = isSelected ? 6.5 : 4.5;
+      const dotRadius = isSelected ? 7 : 5;
 
       const circleMarker = L.circleMarker([school.lat, school.lng], {
         renderer: canvasRenderer,
         radius: dotRadius,
         color: '#ffffff',
-        weight: 1.5,
+        weight: 1.8,
         fillColor: dotColor,
-        fillOpacity: 0.9,
+        fillOpacity: 0.95,
       });
 
       circleMarker.bindTooltip(
@@ -400,9 +463,9 @@ export default function SchoolFinderMap({
 
     layerGroup.addTo(map);
     dotsLayerGroupRef.current = layerGroup;
-  }, [schools, selectedSchool, mapLoaded]);
+  }, [schools, selectedSchool, mapReady]);
 
-  // ─── PROMINENT ANIMATED PIN & COMPACT HORIZONTAL POPUP FOR SELECTED SCHOOL ───
+  // Selected School Popup
   useEffect(() => {
     (window as any).__cseelOpenSchoolDetails = (id: string) => {
       const found = schools.find((s) => String(s.id) === String(id) || String(s.school_id) === String(id));
@@ -418,13 +481,9 @@ export default function SchoolFinderMap({
   }, [schools, selectedSchool]);
 
   useEffect(() => {
-    if (!mapInstanceRef.current || !mapLoaded) return;
-    const L = (window as any).L;
-    if (!L) return;
-
+    if (!mapInstanceRef.current || !mapReady) return;
     const map = mapInstanceRef.current;
 
-    // Remove previous selected pin
     if (selectedMarkerRef.current) {
       map.removeLayer(selectedMarkerRef.current);
       selectedMarkerRef.current = null;
@@ -483,13 +542,11 @@ export default function SchoolFinderMap({
     const schoolImage = selectedSchool.image || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=400&q=80';
     const fallbackImage = 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=400&q=80';
 
-    // Compact Horizontal Popup Card with Image on LEFT side
     const popupContent = document.createElement('div');
     popupContent.className = 'school-compact-popup-card';
     popupContent.innerHTML = `
       <div style="width: 285px; max-width: 85vw; font-family: Inter, system-ui, -apple-system, sans-serif; color: #0f172a; padding: 0; margin: 0; overflow: hidden; background: #ffffff;">
         <div style="display: flex; gap: 8px; padding: 8px 8px 6px 8px; align-items: stretch;">
-          <!-- Left Column: Thumbnail Image with Distance Badge -->
           <div style="position: relative; width: 84px; min-width: 84px; height: 96px; border-radius: 8px; overflow: hidden; background: #f1f5f9; shrink-0;">
             <img 
               src="${schoolImage}" 
@@ -503,7 +560,6 @@ export default function SchoolFinderMap({
             </span>
           </div>
 
-          <!-- Right Column: School Identity & Key Academic Data -->
           <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 1px 0;">
             <div>
               <h4 style="font-weight: 700; font-size: 12px; line-height: 1.25; margin: 0 0 2px 0; color: #0f172a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
@@ -530,7 +586,6 @@ export default function SchoolFinderMap({
           </div>
         </div>
 
-        <!-- Bottom Action Buttons: Direction & 100% Working Profile Details -->
         <div style="display: flex; gap: 5px; padding: 0 8px 8px 8px;">
           <a 
             href="https://www.google.com/maps/dir/?api=1&destination=${selectedSchool.lat},${selectedSchool.lng}" 
@@ -612,13 +667,10 @@ export default function SchoolFinderMap({
       onDeselectSchool?.();
     });
 
-    // Automatically open popup for selected school
     marker.openPopup();
-
     selectedMarkerRef.current = marker;
-  }, [selectedSchool, mapLoaded, onDeselectSchool]);
+  }, [selectedSchool, mapReady, onDeselectSchool]);
 
-  // Handle zoom controls
   const handleZoomIn = () => {
     if (mapInstanceRef.current) mapInstanceRef.current.zoomIn();
   };
@@ -628,12 +680,12 @@ export default function SchoolFinderMap({
   };
 
   return (
-    <div className="relative w-full h-full min-h-full overflow-hidden bg-slate-100 flex flex-col select-none">
+    <div className="relative w-full h-full min-h-[550px] overflow-hidden bg-slate-100 flex flex-col select-none rounded-3xl">
       {/* Map Container */}
-      <div ref={mapContainerRef} className="w-full h-full min-h-full z-0 flex-1" />
+      <div ref={mapContainerRef} className="w-full h-full min-h-[550px] z-0 flex-1" />
 
       {/* Floating Map Zoom & GPS Controls */}
-      <div className="absolute bottom-52 sm:bottom-6 right-3 sm:right-4 z-10 flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
+      <div className="absolute bottom-6 right-4 z-10 flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
         <button
           onClick={handleZoomIn}
           className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100"
@@ -659,18 +711,35 @@ export default function SchoolFinderMap({
           <Maximize2 size={15} />
         </button>
         <button
-          onClick={onLocateMe}
-          disabled={isLocating}
-          className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#1a73e8] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100"
+          onClick={handleLocateMe}
+          disabled={isLocating || internalLocating}
+          className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#1a73e8] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
           title="Locate Current Position"
           aria-label="My Location"
         >
-          {isLocating ? <Loader2 size={16} className="animate-spin text-[#1a73e8]" /> : <Crosshair size={16} />}
+          {(isLocating || internalLocating) ? <Loader2 size={16} className="animate-spin text-[#1a73e8]" /> : <Crosshair size={16} />}
         </button>
       </div>
 
       {/* Custom Popup & Marker Styles */}
       <style>{`
+        @keyframes liveGpsRadarPulse {
+          0% {
+            transform: scale(0.85);
+            opacity: 0.85;
+          }
+          70% {
+            transform: scale(2.2);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(2.4);
+            opacity: 0;
+          }
+        }
+        .live-gps-radar-ring {
+          animation: liveGpsRadarPulse 2s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+        }
         .custom-school-compact-popup .leaflet-popup-content-wrapper {
           padding: 0 !important;
           border-radius: 14px !important;

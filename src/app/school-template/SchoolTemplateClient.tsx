@@ -13,6 +13,10 @@ export default function SchoolTemplateClient() {
   const [sessionUser, setSessionUser] = useState<any>(null);
   const [isSessionLoading, setIsSessionLoading] = useState(true);
 
+  // Dynamic school state loaded from token or UDISE
+  const [resolvedSchool, setResolvedSchool] = useState<any>(null);
+  const [isResolvingSchool, setIsResolvingSchool] = useState(false);
+
   const currentUser = authContextUser || sessionUser;
   const isAuthLoading = authContextLoading && isSessionLoading && !currentUser;
 
@@ -36,6 +40,89 @@ export default function SchoolTemplateClient() {
     return () => {
       isMounted = false;
     };
+  }, []);
+
+  // Fetch verified school details if token or UDISE is present in URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const udise = params.get('udise');
+    const extractedUdise = (udise || (token ? (token.match(/\d{11}/)?.[0] || '') : '')).replace(/\D/g, '');
+
+    if (extractedUdise && extractedUdise.length === 11) {
+      setIsResolvingSchool(true);
+
+      const fetchers = [
+        fetch(`/api/udise/lookup?code=${extractedUdise}`).then((r) => r.json()).catch(() => null),
+      ];
+
+      if (token) {
+        fetchers.push(
+          fetch(`/api/school-ai-sync?token=${encodeURIComponent(token)}`).then((r) => r.json()).catch(() => null)
+        );
+      }
+
+      Promise.all(fetchers).then(([lookupData, syncData]) => {
+        let name = '';
+        let state = '';
+        let dist = '';
+        let pin = '';
+        let addr = '';
+        let board = 'CBSE (Central Board of Secondary Education)';
+        let phone = '';
+        let email = '';
+        let totalStudents = 350;
+        let totalTeachers = 18;
+        let classFrom = 'Class 1st';
+        let classTo = 'Class 12th';
+
+        if (lookupData?.success && lookupData.school) {
+          const s = lookupData.school;
+          name = s.schoolName || '';
+          state = s.state || '';
+          dist = s.district || '';
+          pin = s.pincode || '';
+          addr = s.address || (dist ? `${dist}, ${state} - ${pin}` : '');
+          board = s.board || board;
+          classFrom = s.classFrom || classFrom;
+          classTo = s.classTo || classTo;
+        }
+
+        if (syncData?.profileData) {
+          const p = syncData.profileData;
+          if (p.schoolName) name = p.schoolName;
+          if (p.state) state = p.state;
+          if (p.district) dist = p.district;
+          if (p.pincode) pin = p.pincode;
+          if (p.phone) phone = p.phone;
+          if (p.generalEmail) email = p.generalEmail;
+          if (p.board) board = p.board;
+          if (p.totalStudents) totalStudents = Number(p.totalStudents) || totalStudents;
+          if (p.totalTeachers) totalTeachers = Number(p.totalTeachers) || totalTeachers;
+        }
+
+        if (name) {
+          setResolvedSchool({
+            schoolName: name,
+            udiseCode: extractedUdise,
+            state: state || 'State Name',
+            district: dist || 'District Name',
+            pincode: pin || '123401',
+            address: addr || (dist ? `${dist}, ${state} - ${pin}` : ''),
+            board,
+            phone,
+            email,
+            totalStudents,
+            totalTeachers,
+            classFrom,
+            classTo,
+          });
+        }
+      }).finally(() => {
+        setIsResolvingSchool(false);
+      });
+    }
   }, []);
 
   // While verifying session
@@ -107,44 +194,74 @@ export default function SchoolTemplateClient() {
     );
   }
 
-  // User is Authenticated -> Render Template Profile
+  // Resolving school data
+  if (isResolvingSchool) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-[#005689]" />
+          <p className="text-xs font-semibold text-slate-700">
+            Auto-loading verified institutional data...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // User is Authenticated -> Render Template Profile with dynamically resolved or default props
+  const schoolProps = resolvedSchool || {
+    schoolName: 'Write Your School Name Here',
+    udiseCode: '',
+    state: 'State Name',
+    district: 'District Name',
+    pincode: '123401',
+    address: 'Plot No. 12, Institutional Area, Your City - PIN Code',
+    board: 'CBSE (Central Board of Secondary Education)',
+    phone: '',
+    email: '',
+    totalStudents: 1250,
+    totalTeachers: 65,
+    classFrom: 'Class Nursery',
+    classTo: 'Class 12th',
+  };
+
   return (
-    <SchoolTemplateProvider>
+    <SchoolTemplateProvider initialData={resolvedSchool || undefined}>
       <SchoolProfileView
         isTemplate={true}
-        schoolName="Write Your School Name Here"
+        schoolName={schoolProps.schoolName}
         schoolSlug="school-template"
-        state="State Name (e.g. Haryana)"
-        district="District Name (e.g. Rewari)"
-        blockName="Zone / Block Name"
-        village="Locality / Sector / Village"
-        pincode="123401"
-        udiseCode="06170100101"
-        board="CBSE (Central Board of Secondary Education)"
+        state={schoolProps.state}
+        district={schoolProps.district}
+        blockName={schoolProps.district}
+        village={schoolProps.district}
+        pincode={schoolProps.pincode}
+        udiseCode={schoolProps.udiseCode}
+        board={schoolProps.board}
         medium="English & Hindi Medium"
-        management="Private Unaided / Government / Aided"
+        management="Private Unaided / Recognized Institution"
         establishedYear="2008"
         schoolCategory="Senior Secondary (Class Nursery to 12th)"
-        classFrom="Nursery"
-        classTo="12th"
+        classFrom={schoolProps.classFrom}
+        classTo={schoolProps.classTo}
         genderType="Co-Educational"
         ruralUrban="Urban"
-        totalStudents={1480}
-        totalBoys={780}
-        totalGirls={700}
-        totalTeachers={72}
-        maleTeachers={24}
-        femaleTeachers={48}
-        classroomsCount={52}
-        workingSmartBoards={28}
+        totalStudents={schoolProps.totalStudents}
+        totalBoys={Math.round(schoolProps.totalStudents * 0.52)}
+        totalGirls={Math.round(schoolProps.totalStudents * 0.48)}
+        totalTeachers={schoolProps.totalTeachers}
+        maleTeachers={Math.round(schoolProps.totalTeachers * 0.35)}
+        femaleTeachers={Math.round(schoolProps.totalTeachers * 0.65)}
+        classroomsCount={Math.max(10, Math.round(schoolProps.totalStudents / 35))}
+        workingSmartBoards={Math.max(5, Math.round(schoolProps.totalStudents / 50))}
         computerIctLab="Yes"
         atalStemLab="Yes"
         playgroundAvailable="Yes"
-        principalName="Write Principal / Headmaster Name Here"
-        rawPhone="+91 98XXXXXXXX / Official School Helpline"
-        rawEmail="admissions@yourschoolname.edu.in"
-        website="https://www.yourschoolname.edu.in"
-        rawAddress="Plot No. 12, Knowledge Park / Institutional Area, Your City - PIN Code"
+        principalName="Principal / Head of Institution"
+        rawPhone={schoolProps.phone}
+        rawEmail={schoolProps.email}
+        website=""
+        rawAddress={schoolProps.address}
         imageUrl="/images/schools/hero-school-1.png"
         lat={28.1885}
         lng={76.6215}

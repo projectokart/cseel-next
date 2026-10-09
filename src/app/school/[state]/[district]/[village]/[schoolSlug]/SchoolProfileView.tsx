@@ -3476,15 +3476,17 @@ const [isTourModalOpen, setIsTourModalOpen] = useState(false);
 
           {/* Desktop Header Actions: Claim School & Apply */}
           <div className="hidden lg:flex items-center gap-2.5 shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsClaimModalOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-[12px] text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/90 shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap"
-              title="Official Representative? Claim this school profile."
-            >
-              <ShieldCheck className="w-4 h-4 text-emerald-600 stroke-[2.2]" />
-              <span>Claim This School</span>
-            </button>
+            {!isTemplate && !isEditMode && (
+              <button
+                type="button"
+                onClick={() => setIsClaimModalOpen(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-[12px] text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300/90 shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap"
+                title="Official Representative? Claim this school profile."
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-600 stroke-[2.2]" />
+                <span>Claim This School</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -3676,18 +3678,20 @@ const [isTourModalOpen, setIsTourModalOpen] = useState(false);
 
         {/* Bottom: Mini Claim & Apply CTA */}
         <div className="w-full pt-1.5 pb-1 border-t border-slate-100 flex flex-col items-center px-1 gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              setIsClaimModalOpen(true);
-              setIsMobileMenuOpen(false);
-            }}
-            className="w-full py-1 px-0.5 rounded-[9px] bg-emerald-50 border border-emerald-300 active:scale-95 text-emerald-800 font-bold flex flex-col items-center justify-center shadow-xs cursor-pointer transition touch-manipulation"
-            title="Claim This School"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 stroke-[2.2]" />
-            <span className="text-[7.5px] font-black uppercase tracking-wider mt-0.5 leading-none">Claim</span>
-          </button>
+          {!isTemplate && !isEditMode && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsClaimModalOpen(true);
+                setIsMobileMenuOpen(false);
+              }}
+              className="w-full py-1 px-0.5 rounded-[9px] bg-emerald-50 border border-emerald-300 active:scale-95 text-emerald-800 font-bold flex flex-col items-center justify-center shadow-xs cursor-pointer transition touch-manipulation"
+              title="Claim This School"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 stroke-[2.2]" />
+              <span className="text-[7.5px] font-black uppercase tracking-wider mt-0.5 leading-none">Claim</span>
+            </button>
+          )}
 
           <button
             type="button"

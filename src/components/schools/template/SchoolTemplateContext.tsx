@@ -454,9 +454,11 @@ export function SchoolTemplateProvider({
 
         if (urlToken || urlUdise) {
           const fetchToken = urlToken || `csl_ai_magic_${urlUdise}`;
+          const extractedUdise = (urlUdise || (urlToken ? (urlToken.match(/\d{11}/)?.[0] || '') : '')).replace(/\D/g, '');
+
           fetch(`/api/school-ai-sync?token=${encodeURIComponent(fetchToken)}`)
             .then((r) => r.json())
-            .then((res) => {
+            .then(async (res) => {
               if (res && res.profileData) {
                 const parsed = parseSchoolJsonToState(res.profileData.masterJson || res.profileData, DEFAULT_TEMPLATE_DATA);
                 if (parsed.success && parsed.state) {
@@ -468,10 +470,65 @@ export function SchoolTemplateProvider({
                     type: 'success',
                     message: `✨ Loaded official verified data for "${parsed.state.schoolName}" via Magic Link!`,
                   });
+                  return;
                 }
               }
+
+              // Multi-layer fallback: If profileData not ready, query direct Government UDISE lookup
+              if (extractedUdise && extractedUdise.length === 11) {
+                try {
+                  const uRes = await fetch(`/api/udise/lookup?code=${extractedUdise}`);
+                  const uData = await uRes.json();
+                  if (uData.success && uData.school) {
+                    const sch = uData.school;
+                    setData((prev) => {
+                      const updated = {
+                        ...prev,
+                        udiseCode: extractedUdise,
+                        schoolName: sch.schoolName || prev.schoolName,
+                        state: sch.state || prev.state,
+                        district: sch.district || prev.district,
+                        pincode: sch.pincode || prev.pincode,
+                        address: sch.address || `${sch.district}, ${sch.state} - ${sch.pincode}`,
+                        classFrom: sch.classFrom || prev.classFrom,
+                        classTo: sch.classTo || prev.classTo,
+                      };
+                      try {
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+                      } catch (_) {}
+                      return updated;
+                    });
+                    setNotification({
+                      type: 'success',
+                      message: `✨ Loaded verified institutional data for "${sch.schoolName}" (UDISE: ${extractedUdise})!`,
+                    });
+                  }
+                } catch {}
+              }
             })
-            .catch((err) => console.warn('Failed to auto-sync from token:', err));
+            .catch(async (err) => {
+              console.warn('Failed to auto-sync from token, attempting direct UDISE lookup:', err);
+              if (extractedUdise && extractedUdise.length === 11) {
+                try {
+                  const uRes = await fetch(`/api/udise/lookup?code=${extractedUdise}`);
+                  const uData = await uRes.json();
+                  if (uData.success && uData.school) {
+                    const sch = uData.school;
+                    setData((prev) => ({
+                      ...prev,
+                      udiseCode: extractedUdise,
+                      schoolName: sch.schoolName || prev.schoolName,
+                      state: sch.state || prev.state,
+                      district: sch.district || prev.district,
+                      pincode: sch.pincode || prev.pincode,
+                      address: sch.address || `${sch.district}, ${sch.state} - ${sch.pincode}`,
+                      classFrom: sch.classFrom || prev.classFrom,
+                      classTo: sch.classTo || prev.classTo,
+                    }));
+                  }
+                } catch {}
+              }
+            });
           setIsHydrated(true);
           return;
         }

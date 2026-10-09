@@ -71,8 +71,9 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // 1.5. Maintenance Mode: Redirect entire cseel.org to /under-construction when active
-  if (currentHost === '' || currentHost === 'www') {
+  // 1.5. Maintenance Mode: Redirect entire cseel.org to /under-construction when active (Production only, skip localhost)
+  const isLocalhost = hostname.includes('localhost') || hostname.includes('127.0.0.1');
+  if (!isLocalhost && (currentHost === '' || currentHost === 'www')) {
     const isBypass =
       request.cookies.get('cseel_admin_bypass')?.value === 'true' ||
       Boolean(request.cookies.get('cseel_admin_auth')?.value) ||

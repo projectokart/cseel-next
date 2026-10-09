@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import Client from './Client';
 import { getMaintenanceStatus } from '@/features/maintenance/maintenanceService';
 
@@ -49,12 +49,15 @@ export default function Page({
 
   if (!isBypassQuery) {
     try {
+      const host = headers().get('host') || '';
+      const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+
       const cookieStore = cookies();
       const hasBypassCookie = 
         cookieStore.get('cseel_admin_bypass')?.value === 'true' ||
         Boolean(cookieStore.get('cseel_admin_auth')?.value);
 
-      if (!hasBypassCookie) {
+      if (!hasBypassCookie && !isLocalhost) {
         const maintenance = getMaintenanceStatus();
         if (maintenance.isActive) {
           redirect('/under-construction');

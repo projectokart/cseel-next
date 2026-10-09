@@ -17,6 +17,7 @@ export type AdminModuleId =
   | 'marketing_growth'
   | 'hr_careers'
   | 'schools_institutions'
+  | 'school_claims'
   | 'teaching_recruitment'
   | 'science_simulations'
   | 'projectokart_inventions'

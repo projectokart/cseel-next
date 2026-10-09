@@ -49,9 +49,9 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   }, []);
 
   return (
-    <header className="h-16 bg-white border-b border-[#dadce0] px-3 sm:px-5 flex items-center justify-between sticky top-0 z-30 font-sans select-none w-full shrink-0">
-      {/* ── TOP-LEFT: HAMBURGER ICON (VERY FAR LEFT) + BRAND LOGO & TITLE ── */}
-      <div className="flex items-center gap-2 sm:gap-4 min-w-[200px] sm:min-w-[240px]">
+    <header className="h-12 bg-white border-b border-[#dadce0] px-3 sm:px-4 flex items-center justify-between sticky top-0 z-30 font-sans select-none w-full shrink-0">
+      {/* ── TOP-LEFT: HAMBURGER ICON + BRAND LOGO & TITLE ── */}
+      <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-[180px] sm:min-w-[210px]">
         {/* Hamburger Menu Toggle Button */}
         <button
           type="button"
@@ -62,61 +62,60 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
               onToggleSidebarCollapse();
             }
           }}
-          className="p-2.5 rounded-full text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] active:bg-[#e8eaed] transition-colors cursor-pointer"
+          className="p-1.5 rounded-full text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] active:bg-[#e8eaed] transition-colors cursor-pointer"
           title="Main Menu"
           aria-label="Toggle Navigation"
         >
-          <Menu className="w-5 h-5 text-[#5f6368]" />
+          <Menu className="w-4 h-4 text-[#5f6368]" />
         </button>
 
         {/* Brand Logo & Name */}
-        <div className="flex items-center gap-2.5 cursor-pointer">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center relative shrink-0">
-            <CseelLogoEmblem size={38} animated={false} />
+        <div className="flex items-center gap-2 cursor-pointer">
+          <div className="w-7 h-7 flex items-center justify-center relative shrink-0">
+            <CseelLogoEmblem size={26} animated={false} />
           </div>
 
-          <div className="leading-none">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-sm sm:text-[18px] text-[#202124] tracking-tight">CSEEL</span>
-              <span className="text-xs sm:text-[15px] text-[#5f6368] font-normal">Admin</span>
+          <div className="leading-tight">
+            <div className="flex items-center gap-1">
+              <span className="font-bold text-sm text-[#202124] tracking-tight">CSEEL</span>
+              <span className="text-xs text-[#5f6368] font-normal">Admin</span>
             </div>
-            <p className="text-[9px] sm:text-[10px] text-[#5f6368] font-medium tracking-wide mt-0.5 uppercase hidden xs:block">Enterprise Workspace</p>
           </div>
         </div>
       </div>
 
       {/* ── TOP-CENTER: ROUNDED SEARCH PILL BAR ── */}
-      <div className="flex-1 max-w-xl lg:max-w-2xl mx-3 sm:mx-6 hidden md:block">
+      <div className="flex-1 max-w-md lg:max-w-xl mx-2 sm:mx-4 hidden md:block">
         <div 
           className={`relative w-full rounded-full transition-all duration-200 flex items-center ${
             searchFocused 
               ? 'bg-white shadow-[0_1px_3px_0_rgba(60,64,67,0.3),0_4px_8px_3px_rgba(60,64,67,0.15)] ring-0' 
-              : 'bg-[#f1f3f4] hover:bg-[#e8eaed] hover:shadow-xs'
+              : 'bg-[#f1f3f4] hover:bg-[#e8eaed] hover:shadow-2xs'
           }`}
         >
-          <div className="pl-4 pr-2 text-[#5f6368]">
-            <Search className="w-5 h-5" />
+          <div className="pl-3.5 pr-2 text-[#5f6368]">
+            <Search className="w-4 h-4" />
           </div>
 
           <input
             type="text"
-            placeholder="Search across modules, users, settings, and experiments..."
+            placeholder="Search modules, claims, schools, settings..."
             value={searchVal}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
             onChange={(e) => setSearchVal(e.target.value)}
-            className="w-full py-2.5 text-xs sm:text-sm bg-transparent text-[#202124] placeholder:text-[#5f6368] focus:outline-none font-normal"
+            className="w-full py-1.5 text-xs bg-transparent text-[#202124] placeholder:text-[#5f6368] focus:outline-none font-normal"
           />
 
           {searchVal ? (
             <button
               onClick={() => setSearchVal('')}
-              className="p-1.5 mr-2 text-[#5f6368] hover:text-[#202124] rounded-full hover:bg-black/5"
+              className="p-1 mr-2 text-[#5f6368] hover:text-[#202124] rounded-full hover:bg-black/5"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <div className="mr-4 px-2 py-0.5 rounded-md bg-[#e8eaed] text-[11px] font-mono text-[#5f6368] font-medium hidden lg:block">
+            <div className="mr-3 px-1.5 py-0.2 rounded bg-[#e8eaed] text-[10px] font-mono text-[#5f6368] font-medium hidden lg:block">
               ⌘K
             </div>
           )}
@@ -124,15 +123,15 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
       </div>
 
       {/* ── TOP-RIGHT: UTILITIES & AVATAR ── */}
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center gap-1">
         {/* Mobile Search Icon */}
         <button
           type="button"
           onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-          className="md:hidden p-2 rounded-full text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
+          className="md:hidden p-1.5 rounded-full text-[#5f6368] hover:text-[#202124] hover:bg-[#f1f3f4] transition-colors"
           title="Search"
         >
-          <Search className="w-5 h-5" />
+          <Search className="w-4 h-4" />
         </button>
 
         {/* Live Visual Editor Button */}
@@ -140,11 +139,11 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           href="/?edit=true"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-xs shadow-xs hover:shadow-md transition-all active:scale-98"
+          className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-medium text-xs shadow-2xs hover:shadow-xs transition-all"
           title="Open Live Public Website in Visual Edit Mode"
         >
-          <Sparkles className="w-3.5 h-3.5 text-blue-200" />
-          <span>Live Visual Editor</span>
+          <Sparkles className="w-3 h-3 text-blue-200" />
+          <span>Visual Editor</span>
         </a>
 
         {/* Quick Maintenance Status Pill */}

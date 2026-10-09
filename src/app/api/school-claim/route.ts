@@ -396,3 +396,105 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { claim_id, status, review_note } = body;
+
+    if (!claim_id || !['approved', 'rejected', 'pending'].includes(status)) {
+      return NextResponse.json(
+        { success: false, error: 'claim_id and valid status (approved/rejected/pending) are required.' },
+        { status: 400 }
+      );
+    }
+
+    const store = readClaimsStore();
+    const claimIndex = store.claims.findIndex((c) => c.id === claim_id);
+
+    if (claimIndex === -1) {
+      return NextResponse.json(
+        { success: false, error: 'Claim record not found.' },
+        { status: 404 }
+      );
+    }
+
+    const claim = store.claims[claimIndex];
+    claim.status = status;
+    claim.updated_at = new Date().toISOString();
+    if (review_note) {
+      claim.note = `${claim.note || ''}\n[Admin Review]: ${review_note}`.trim();
+    }
+
+    // Save updated claim
+    store.claims[claimIndex] = claim;
+    writeClaimsStore(store);
+
+    // If approved, ensure token is permanently active in sync tokens
+    if (status === 'approved') {
+      try {
+        const syncFile = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
+        if (fs.existsSync(syncFile)) {
+          const syncData = JSON.parse(fs.readFileSync(syncFile, 'utf8'));
+          if (!syncData.tokens) syncData.tokens = {};
+          if (syncData.tokens[claim.visual_edit_token]) {
+            syncData.tokens[claim.visual_edit_token].isPermanent = true;
+            syncData.tokens[claim.visual_edit_token].isApproved = true;
+            syncData.tokens[claim.visual_edit_token].lastUpdatedAt = Date.now();
+            fs.writeFileSync(syncFile, JSON.stringify(syncData, null, 2), 'utf8');
+          }
+        }
+      } catch (e) {
+        console.warn('Could not update token approval status:', e);
+      }
+
+      // Send approval notification email to claimant via Resend
+      const resendKey = process.env.RESEND_API_KEY;
+      if (resendKey && claim.claimant_email) {
+        try {
+          const activeFrom = process.env.RESEND_FROM_EMAIL || 'CSEEL Schools <updates@schools.cseel.org>';
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${resendKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              from: activeFrom,
+              to: [claim.claimant_email],
+              subject: `✅ Approved: School Profile Verification for ${claim.school_name}`,
+              html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                  <h2 style="color: #065f46; margin-top: 0;">🎉 Congratulations! Your Claim Has Been Approved</h2>
+                  <p>Dear ${claim.claimant_name},</p>
+                  <p>Your institutional verification for <strong>${claim.school_name}</strong> (UDISE: ${claim.udise_code}) has been reviewed and verified by CSEEL administration.</p>
+                  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 20px 0;">
+                    <p style="margin: 0 0 10px; font-weight: bold; color: #166534;">Your Official Visual Editing Link:</p>
+                    <a href="${claim.visual_edit_url}" style="display: inline-block; background: #16a34a; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                      Open Visual Profile Editor &rarr;
+                    </a>
+                  </div>
+                  <p style="font-size: 12px; color: #64748b;">CSEEL Institutional Governance Team</p>
+                </div>
+              `,
+            }),
+          });
+        } catch (e) {
+          console.warn('Failed to send claimant approval email:', e);
+        }
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Claim for ${claim.school_name} marked as ${status}.`,
+      claim,
+    });
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
+  }
+}
+

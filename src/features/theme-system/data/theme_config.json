@@ -1,6 +1,6 @@
 {
-  "buttonVariant": "cseel",
-  "buttonRadius": "12px",
+  "buttonVariant": "custom",
+  "buttonRadius": "6px",
   "primaryColor": "#006FCC",
   "primaryHoverColor": "#005499",
   "secondaryBgColor": "#EDF5FA",
@@ -10,6 +10,6 @@
   "cardRadius": "16px",
   "buttonShadow": "glow",
   "customCssOverrides": "",
-  "updatedAt": "2026-10-09T01:31:21.050Z",
+  "updatedAt": "2026-10-09T16:18:24.888Z",
   "updatedBy": "system"
 }

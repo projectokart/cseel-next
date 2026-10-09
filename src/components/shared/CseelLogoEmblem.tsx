@@ -21,7 +21,7 @@ export default function CseelLogoEmblem({
       style={{ width: dimension, height: dimension }}
     >
       <img
-        src="/images/cseel-emblem.svg?v=20261003-gold"
+        src="/cseel-logo.png"
         alt="CSEEL Emblem"
         className={`w-full h-full object-contain ${
           animated ? 'animate-pulse hover:rotate-6 transition-transform duration-300' : ''

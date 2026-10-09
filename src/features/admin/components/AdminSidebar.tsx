@@ -1,25 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Plus,
   ChevronDown,
-  ChevronRight,
   LogOut,
-  FolderKanban,
-  FileText,
-  Users,
-  Settings,
-  HelpCircle,
   Sparkles,
-  Layers,
-  Activity,
   FlaskConical,
   Megaphone,
   Menu,
   Palette,
-  X
+  Building2,
+  CheckCircle2,
+  Clock,
+  ExternalLink,
+  ShieldAlert
 } from 'lucide-react';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 
@@ -36,282 +32,291 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   mobileOpen,
   onCloseMobile
 }) => {
-  const { currentRole, logout, currentAdmin, activeModule, setActiveModule } = useAdminAuth();
+  const { logout, currentAdmin, activeModule, setActiveModule } = useAdminAuth();
   const [analyticsOpen, setAnalyticsOpen] = useState(true);
-  const [managementOpen, setManagementOpen] = useState(true);
+  const [schoolsOpen, setSchoolsOpen] = useState(true);
+  const [cmsOpen, setCmsOpen] = useState(true);
+  const [pendingClaimsCount, setPendingClaimsCount] = useState<number>(0);
+
+  // Poll or fetch pending claims count
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const res = await fetch('/api/school-claim', { cache: 'no-store' });
+        const data = await res.json();
+        if (data.success && Array.isArray(data.claims)) {
+          const pending = data.claims.filter((c: any) => c.status === 'pending').length;
+          setPendingClaimsCount(pending);
+        }
+      } catch {}
+    };
+
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleNav = (module: any, path?: string) => {
+    setActiveModule(module);
+    if (typeof window !== 'undefined') {
+      if (path && window.location.pathname !== path) {
+        window.location.href = path;
+      }
+      if (window.innerWidth < 1024) onCloseMobile();
+    }
+  };
 
   return (
     <>
       {/* Mobile Backdrop */}
       {mobileOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-2xs lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-2xs lg:hidden transition-opacity"
           onClick={onCloseMobile}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar Container (Docked Underneath Top Header) */}
+      {/* Sidebar Container */}
       <aside
-        className={`fixed top-16 bottom-0 left-0 z-50 bg-[#f8fafd] border-r border-[#dadce0] flex flex-col justify-between transition-all duration-300 ease-in-out lg:static lg:top-0 ${
-          mobileOpen ? 'translate-x-0 shadow-2xl w-64' : '-translate-x-full lg:translate-x-0'
-        } ${collapsed ? 'lg:w-[72px]' : 'lg:w-64'} font-sans select-none shrink-0 h-full overflow-hidden`}
+        className={`fixed top-12 bottom-0 left-0 z-50 bg-[#f8fafd] border-r border-[#dadce0] flex flex-col justify-between transition-all duration-200 ease-in-out lg:static lg:top-0 ${
+          mobileOpen ? 'translate-x-0 shadow-xl w-60' : '-translate-x-full lg:translate-x-0'
+        } ${collapsed ? 'lg:w-[60px]' : 'lg:w-60'} font-sans select-none shrink-0 h-full overflow-hidden text-[#202124]`}
       >
-        {/* ── TOP SECTION (COMPOSE BUTTON & NAVIGATION) ── */}
-        <div className="p-3 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
-          {/* "+ Create New" Pill Button */}
-          <div className="pt-2 pb-1">
+        {/* ── TOP SECTION & NAVIGATION ── */}
+        <div className="p-2 space-y-3 overflow-y-auto flex-1 custom-scrollbar">
+          {/* Compact "+ Create Experiment" Pill Button */}
+          <div className="pt-1 pb-1">
             <button
               type="button"
-              onClick={() => {
-                setActiveModule('experiments_studio');
-                if (typeof window !== 'undefined') {
-                  if (window.location.pathname !== '/admin/experiments') {
-                    window.location.href = '/admin/experiments';
-                  }
-                  if (window.innerWidth < 1024) onCloseMobile();
-                }
-              }}
-              className={`w-full flex items-center gap-3 bg-[#c2e7ff] hover:bg-[#b3d7ff] text-[#001d35] transition-all duration-200 rounded-2xl shadow-xs hover:shadow-md active:scale-98 ${
-                collapsed ? 'lg:justify-center p-3.5' : 'px-5 py-3.5'
+              onClick={() => handleNav('experiments_studio', '/admin/experiments')}
+              className={`w-full flex items-center gap-2 bg-[#c2e7ff] hover:bg-[#b3d7ff] text-[#001d35] transition-all rounded-full shadow-2xs hover:shadow-xs active:scale-98 ${
+                collapsed ? 'lg:justify-center p-2.5' : 'px-3.5 py-2'
               }`}
               title="Create New Experiment"
             >
-              <Plus className="w-5 h-5 text-[#001d35] shrink-0" />
-              <span className={`font-semibold text-sm tracking-tight ${collapsed ? 'lg:hidden' : 'block'}`}>
-                Create Experiment
+              <Plus className="w-4 h-4 text-[#001d35] shrink-0" />
+              <span className={`font-semibold text-xs tracking-tight ${collapsed ? 'lg:hidden' : 'block'}`}>
+                New Experiment
               </span>
             </button>
           </div>
 
-          {/* Navigation Category 1: DASHBOARDS */}
-          <div className="space-y-1">
+          {/* Section: MAIN OVERVIEW */}
+          <div className="space-y-0.5">
             <button
               type="button"
-              onClick={() => setAnalyticsOpen(!analyticsOpen)}
-              className={`w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-bold text-[#5f6368] uppercase tracking-wider hover:text-[#202124] transition-colors ${
-                collapsed ? 'lg:hidden' : 'flex'
+              onClick={() => handleNav('overview', '/admin')}
+              className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                collapsed ? 'lg:justify-center lg:px-2' : ''
+              } ${
+                activeModule === 'overview'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                  : 'text-[#444746] hover:bg-[#eceef0]'
               }`}
             >
-              <span>Analytics &amp; Views</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${analyticsOpen ? '' : '-rotate-90'}`} />
+              <LayoutDashboard className="w-4 h-4 shrink-0 text-[#1a73e8]" />
+              <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Overview</span>
             </button>
-
-            {analyticsOpen && (
-              <div className="space-y-1">
-                {/* Overview */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveModule('overview');
-                    if (typeof window !== 'undefined') {
-                      if (window.location.pathname !== '/admin') {
-                        window.location.href = '/admin';
-                      }
-                      if (window.innerWidth < 1024) onCloseMobile();
-                    }
-                  }}
-                  className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    collapsed ? 'lg:justify-center lg:px-2' : ''
-                  } ${
-                    activeModule === 'overview'
-                      ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
-                      : 'text-[#444746] hover:bg-[#f1f3f4]'
-                  }`}
-                >
-                  <LayoutDashboard className="w-5 h-5 shrink-0" />
-                  <span className={collapsed ? 'lg:hidden' : 'block'}>Overview</span>
-                </button>
-              </div>
-            )}
           </div>
 
-          {/* Navigation Category 2: ACADEMIC & EXPERIMENTS */}
-          <div className="space-y-1 pt-2">
-            <button
-              type="button"
-              onClick={() => setManagementOpen(!managementOpen)}
-              className={`w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-bold text-[#5f6368] uppercase tracking-wider hover:text-[#202124] transition-colors ${
-                collapsed ? 'lg:hidden' : 'flex'
-              }`}
-            >
-              <span>Academic Curriculum</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${managementOpen ? '' : '-rotate-90'}`} />
-            </button>
-
-            {managementOpen && (
-              <div className="space-y-1">
-                {/* 🧪 Experiments Studio Link */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveModule('experiments_studio');
-                    if (typeof window !== 'undefined') {
-                      if (window.location.pathname !== '/admin/experiments') {
-                        window.location.href = '/admin/experiments';
-                      }
-                      if (window.innerWidth < 1024) onCloseMobile();
-                    }
-                  }}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    collapsed ? 'lg:justify-center lg:px-2' : ''
-                  } ${
-                    activeModule === 'experiments_studio'
-                      ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
-                      : 'text-[#444746] hover:bg-[#f1f3f4]'
-                  }`}
-                  title="Experiment Management & Single Page Studio"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <FlaskConical className="w-5 h-5 text-[#005689] shrink-0" />
-                    <span className={collapsed ? 'lg:hidden' : 'block'}>Experiments</span>
-                  </div>
-                  <span className={`text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
-                    Active
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Category 3: LIVE WEBSITE CMS */}
-          <div className="space-y-1 pt-2">
-            <div className={`px-3 py-1.5 text-[11px] font-bold text-[#5f6368] uppercase tracking-wider ${collapsed ? 'lg:hidden' : 'block'}`}>
-              Website Visual CMS
+          {/* Section: SCHOOLS & PROFILE CLAIMS (HIGH PRIORITY) */}
+          <div className="space-y-0.5 pt-1">
+            <div className={`px-2.5 py-1 text-[10px] font-bold text-[#5f6368] uppercase tracking-wider flex items-center justify-between ${
+              collapsed ? 'lg:hidden' : 'flex'
+            }`}>
+              <span>School Directory &amp; Claims</span>
+              {pendingClaimsCount > 0 && (
+                <span className="bg-amber-100 text-amber-800 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full border border-amber-300">
+                  {pendingClaimsCount} new
+                </span>
+              )}
             </div>
-            {/* 📢 Offers, Banners & Ad Slots Controller */}
+
+            {/* School Claims & Approvals Link */}
             <button
               type="button"
-              onClick={() => {
-                setActiveModule('marketing_growth');
-                if (typeof window !== 'undefined') {
-                  if (window.location.pathname !== '/admin') {
-                    window.location.href = '/admin';
-                  }
-                  if (window.innerWidth < 1024) onCloseMobile();
-                }
-              }}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+              onClick={() => handleNav('schools_institutions')}
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                collapsed ? 'lg:justify-center lg:px-2' : ''
+              } ${
+                activeModule === 'schools_institutions' || activeModule === 'school_claims'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                  : 'text-[#444746] hover:bg-[#eceef0]'
+              }`}
+              title="Review, Approve, or Reject School Profile Claims & Add Requests"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Building2 className="w-4 h-4 text-[#1a73e8] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Profile Claims</span>
+              </div>
+              {pendingClaimsCount > 0 ? (
+                <span className={`text-[10px] bg-amber-500 text-white font-bold px-1.5 py-0.2 rounded-full shadow-2xs shrink-0 ${collapsed ? 'lg:hidden' : 'block'}`}>
+                  {pendingClaimsCount}
+                </span>
+              ) : (
+                <span className={`text-[9px] text-[#5f6368] font-normal ${collapsed ? 'lg:hidden' : 'block'}`}>
+                  Synced
+                </span>
+              )}
+            </button>
+
+            {/* Public Directory Link */}
+            <a
+              href="/schools"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all text-[#444746] hover:bg-[#eceef0] ${
+                collapsed ? 'lg:justify-center lg:px-2' : ''
+              }`}
+              title="Open Public School Directory"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <ExternalLink className="w-4 h-4 text-[#5f6368] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Public Directory</span>
+              </div>
+              <span className={`text-[9px] text-[#5f6368] ${collapsed ? 'lg:hidden' : 'block'}`}>↗</span>
+            </a>
+          </div>
+
+          {/* Section: ACADEMIC CURRICULUM */}
+          <div className="space-y-0.5 pt-1">
+            <div className={`px-2.5 py-1 text-[10px] font-bold text-[#5f6368] uppercase tracking-wider ${collapsed ? 'lg:hidden' : 'block'}`}>
+              Academic Labs
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleNav('experiments_studio', '/admin/experiments')}
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                collapsed ? 'lg:justify-center lg:px-2' : ''
+              } ${
+                activeModule === 'experiments_studio'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                  : 'text-[#444746] hover:bg-[#eceef0]'
+              }`}
+              title="Experiment Management & Virtual Labs"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                <FlaskConical className="w-4 h-4 text-[#005689] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Experiments</span>
+              </div>
+              <span className={`text-[9px] bg-emerald-100 text-emerald-800 font-semibold px-1 py-0.2 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
+                24
+              </span>
+            </button>
+          </div>
+
+          {/* Section: WEBSITE VISUAL CMS */}
+          <div className="space-y-0.5 pt-1">
+            <div className={`px-2.5 py-1 text-[10px] font-bold text-[#5f6368] uppercase tracking-wider ${collapsed ? 'lg:hidden' : 'block'}`}>
+              Visual CMS
+            </div>
+
+            {/* Offers & Banners */}
+            <button
+              type="button"
+              onClick={() => handleNav('marketing_growth')}
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 collapsed ? 'lg:justify-center lg:px-2' : ''
               } ${
                 activeModule === 'marketing_growth'
-                  ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
-                  : 'text-[#444746] hover:bg-[#f1f3f4]'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                  : 'text-[#444746] hover:bg-[#eceef0]'
               }`}
               title="Offers, Custom HTML Banners & Page Ad Slots"
             >
-              <div className="flex items-center gap-3.5">
-                <Megaphone className="w-5 h-5 text-[#ea3829] shrink-0" />
-                <span className={collapsed ? 'lg:hidden' : 'block'}>Offers &amp; Ad Banners</span>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Megaphone className="w-4 h-4 text-[#ea3829] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Offers &amp; Ads</span>
               </div>
-              <span className={`text-[10px] bg-rose-100 text-rose-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
-                Swiper
+              <span className={`text-[9px] bg-rose-100 text-rose-800 font-semibold px-1 py-0.2 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
+                Slots
               </span>
             </button>
 
-            {/* 🌐 3-Stage Navigation & Custom Pages CMS */}
+            {/* Navigation & Pages CMS */}
             <button
               type="button"
-              onClick={() => {
-                setActiveModule('navigation_cms');
-                if (typeof window !== 'undefined') {
-                  if (window.location.pathname !== '/admin') {
-                    window.location.href = '/admin';
-                  }
-                  if (window.innerWidth < 1024) onCloseMobile();
-                }
-              }}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+              onClick={() => handleNav('navigation_cms')}
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 collapsed ? 'lg:justify-center lg:px-2' : ''
               } ${
                 activeModule === 'navigation_cms'
-                  ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
-                  : 'text-[#444746] hover:bg-[#f1f3f4]'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                  : 'text-[#444746] hover:bg-[#eceef0]'
               }`}
-              title="3-Stage Navigation Tree & Custom Page Studio"
+              title="Navigation Trees & Custom Pages"
             >
-              <div className="flex items-center gap-3.5">
-                <Menu className="w-5 h-5 text-[#005689] shrink-0" />
-                <span className={collapsed ? 'lg:hidden' : 'block'}>Navigation &amp; Pages</span>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Menu className="w-4 h-4 text-[#005689] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Navigation &amp; Pages</span>
               </div>
-              <span className={`text-[10px] bg-sky-100 text-sky-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
-                3-Stage
-              </span>
             </button>
 
-            {/* 🎨 Global CSS & Styling (Theme Controller) */}
+            {/* Global Theme & CSS Styling */}
             <button
               type="button"
-              onClick={() => {
-                setActiveModule('global_styling');
-                if (typeof window !== 'undefined') {
-                  if (window.location.pathname !== '/admin') {
-                    window.location.href = '/admin';
-                  }
-                  if (window.innerWidth < 1024) onCloseMobile();
-                }
-              }}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+              onClick={() => handleNav('global_styling')}
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 collapsed ? 'lg:justify-center lg:px-2' : ''
               } ${
                 activeModule === 'global_styling'
-                  ? 'bg-[#c2e7ff] text-[#001d35] font-bold shadow-2xs'
-                  : 'text-[#444746] hover:bg-[#f1f3f4]'
+                  ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                  : 'text-[#444746] hover:bg-[#eceef0]'
               }`}
-              title="Global CSS Styling, Button Shapes & Theme Sheet"
+              title="Theme Sheet, Colors & Typography"
             >
-              <div className="flex items-center gap-3.5">
-                <Palette className="w-5 h-5 text-[#006FCC] shrink-0" />
-                <span className={collapsed ? 'lg:hidden' : 'block'}>Global CSS Styling</span>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Palette className="w-4 h-4 text-[#7b1fa2] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Theme &amp; Styles</span>
               </div>
-              <span className={`text-[10px] bg-purple-100 text-purple-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
-                Theme
-              </span>
             </button>
 
+            {/* Visual Page Editor link */}
             <a
               href="/?edit=true"
               target="_blank"
               rel="noopener noreferrer"
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-full text-sm font-medium transition-all text-[#444746] hover:bg-[#e8f0fe] hover:text-[#005689] ${
+              className={`w-full flex items-center justify-between px-3 py-1.5 rounded-full text-xs font-medium transition-all text-[#444746] hover:bg-[#e8f0fe] hover:text-[#005689] ${
                 collapsed ? 'lg:justify-center lg:px-2' : ''
               }`}
               title="Open Live Website Visual Editor"
             >
-              <div className="flex items-center gap-3.5">
-                <Sparkles className="w-5 h-5 text-[#005689] shrink-0" />
-                <span className={collapsed ? 'lg:hidden' : 'block'}>Visual Page Editor</span>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Sparkles className="w-4 h-4 text-[#005689] shrink-0" />
+                <span className={collapsed ? 'lg:hidden' : 'block truncate'}>Visual Editor</span>
               </div>
-              <span className={`text-[10px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
+              <span className={`text-[9px] bg-blue-100 text-blue-800 font-semibold px-1 py-0.2 rounded-full ${collapsed ? 'lg:hidden' : 'block'}`}>
                 Live ↗
               </span>
             </a>
           </div>
         </div>
 
-        {/* ── BOTTOM ACCOUNT & STATUS ── */}
-        <div className="p-3 border-t border-[#dadce0] bg-[#f8fafd] shrink-0">
-          <div className={`flex items-center justify-between p-2 rounded-2xl bg-white border border-[#dadce0] shadow-2xs ${
+        {/* ── BOTTOM ACCOUNT & SIGN OUT ── */}
+        <div className="p-2 border-t border-[#dadce0] bg-[#f8fafd] shrink-0">
+          <div className={`flex items-center justify-between p-1.5 rounded-xl bg-white border border-[#dadce0] shadow-2xs ${
             collapsed ? 'lg:justify-center' : ''
           }`}>
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-[#1a73e8] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="w-7 h-7 rounded-full bg-[#1a73e8] text-white flex items-center justify-center font-bold text-[11px] shrink-0">
                 SA
               </div>
-              <div className={`leading-tight truncate ${collapsed ? 'lg:hidden' : 'block'}`}>
-                <p className="text-xs font-semibold text-[#202124] truncate">{currentAdmin?.name || 'Super Admin'}</p>
-                <p className="text-[11px] text-[#5f6368] font-normal truncate">{currentAdmin?.email || 'admin@cseel.org'}</p>
+              <div className={`leading-none truncate ${collapsed ? 'lg:hidden' : 'block'}`}>
+                <p className="text-[11px] font-semibold text-[#202124] truncate">{currentAdmin?.name || 'Super Admin'}</p>
+                <p className="text-[10px] text-[#5f6368] truncate mt-0.5">{currentAdmin?.email || 'admin@cseel.org'}</p>
               </div>
             </div>
 
             <button
               onClick={logout}
-              className={`p-2 text-[#5f6368] hover:text-[#d93025] hover:bg-[#fce8e6] rounded-xl transition-colors ${
+              className={`p-1.5 text-[#5f6368] hover:text-[#d93025] hover:bg-[#fce8e6] rounded-lg transition-colors cursor-pointer ${
                 collapsed ? 'lg:hidden' : 'block'
               }`}
               title="Sign out"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

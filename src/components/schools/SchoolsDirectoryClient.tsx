@@ -1597,9 +1597,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         </div>
 
         {/* Action Buttons: Uniform M3 Pill & Icon Buttons */}
-        <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 pt-2 sm:pt-0 border-t border-gray-100 sm:border-0 sm:pl-2">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-end gap-1 sm:gap-1.5 shrink-0 pt-2 sm:pt-0 border-t border-gray-100 sm:border-0 sm:pl-2 min-w-0">
           {/* Secondary Actions group */}
-          <div className="flex items-center gap-1 sm:gap-1.5">
+          <div className="flex items-center gap-1">
             {/* Website Icon Button */}
             {hasWebsite ? (
               <a
@@ -1607,18 +1607,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="h-9 w-9 flex items-center justify-center rounded-full text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
+                className="h-8 w-8 flex items-center justify-center rounded-full text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
                 title="Visit Official School Website"
               >
-                <Globe size={14} />
+                <Globe size={13} />
               </a>
             ) : (
               <button
                 disabled
-                className="h-9 w-9 flex items-center justify-center rounded-full text-gray-400 bg-gray-50 border border-gray-200 opacity-40 cursor-not-allowed select-none pointer-events-none shrink-0"
+                className="h-8 w-8 flex items-center justify-center rounded-full text-gray-400 bg-gray-50 border border-gray-200 opacity-40 cursor-not-allowed select-none pointer-events-none shrink-0"
                 title="Website Not Available"
               >
-                <Globe size={14} />
+                <Globe size={13} />
               </button>
             )}
 
@@ -1626,35 +1626,35 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-9 w-9 flex items-center justify-center rounded-full text-[#444746] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
+              className="h-8 w-8 flex items-center justify-center rounded-full text-[#444746] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
               title="Open location on Google Maps"
             >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
                 <path fill="#EA4335" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                 <circle cx="12" cy="9" r="2.8" fill="#FFFFFF"/>
               </svg>
             </button>
 
-            {/* Compare Button */}
+            {/* Compare Button — ArrowLeftRight Icon */}
             <button
               type="button"
               onClick={(e) => handleToggleCompare(school, e)}
-              className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
+              className={`h-8 w-8 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
                 isCompared ? 'bg-[#c2e7ff] text-[#001d35] border-transparent' : 'text-[#444746] hover:text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border-[#c4c7c5]'
               }`}
               title="Compare School"
             >
-              <Scale size={14} />
+              <ArrowLeftRight size={13} />
             </button>
 
             {/* Share Button */}
             <button
               type="button"
               onClick={(e) => handleShareSchool(school, e)}
-              className="h-9 w-9 flex items-center justify-center rounded-full text-xs text-[#444746] hover:text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] relative cursor-pointer"
+              className="h-8 w-8 flex items-center justify-center rounded-full text-xs text-[#444746] hover:text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] relative cursor-pointer shrink-0"
               title="Share Profile"
             >
-              <Share2 size={14} />
+              <Share2 size={13} />
               {copiedToastId === school.id && (
                 <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30">
                   Copied!
@@ -1666,13 +1666,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => handleToggleLike(school.id, e, school.udise_code || school.school_id)}
-              className={`h-9 px-3 flex items-center gap-1 rounded-full text-xs font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
+              className={`h-8 px-2 flex items-center gap-1 rounded-full text-xs font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer border shrink-0 ${
                 isLiked ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-[#444746] hover:text-rose-500 hover:bg-rose-50 border-[#c4c7c5]'
               }`}
               title={isLiked ? "Liked" : "Like School"}
             >
-              <Heart size={14} className={isLiked ? "fill-rose-500" : ""} />
-              {cardLikesCount > 0 && <span className="text-[11px] font-bold">{cardLikesCount}</span>}
+              <Heart size={13} className={isLiked ? "fill-rose-500" : ""} />
+              {cardLikesCount > 0 && <span className="text-[10px] font-bold">{cardLikesCount}</span>}
             </button>
           </div>
           
@@ -1688,17 +1688,17 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 udiseCode: school.udise_code || school.id || '',
               });
             }}
-            className="h-9 px-3.5 rounded-full bg-[#c2e7ff] hover:bg-[#b1defc] text-[#001d35] text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
+            className="h-8 px-2.5 rounded-full bg-[#c2e7ff] hover:bg-[#b1defc] text-[#001d35] text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
             title="Claim this school profile"
           >
             <ShieldCheck size={13} className="text-[#001d35]" />
-            <span className="hidden sm:inline">Claim</span>
+            <span className="hidden sm:inline text-[11px]">Claim</span>
           </button>
           
-          {/* View Details CTA — Official M3 Filled Pill */}
+          {/* View Details CTA — Official M3 Filled Pill (Guaranteed no overflow) */}
           <Link
             href={profileUrl}
-            className="h-9 px-4 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs sm:text-[13px] font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-[0_1px_2px_rgba(60,64,67,0.3)]"
+            className="h-8 px-3.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-xs whitespace-nowrap"
           >
             <span>View Details</span>
           </Link>

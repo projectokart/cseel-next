@@ -701,8 +701,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Chemistry Lab"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
+    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "2 KMnO4 + 8 H2SO4 + 10 FeSO4(NH4)2SO4 -> K2SO4 + 2 MnSO4 + 5 Fe2(SO4)3 + 10 (NH4)2SO4 + 8 H2O",
     "obsCols": [
@@ -4495,8 +4495,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Parallax"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
+    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "1/f = 1/v - 1/u => f = (u · v) / (u + v) = 15.0 cm (Focal Length)",
     "obsCols": [
@@ -4852,8 +4852,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Current Electricity"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/meter-bridge-resistance-combination.jpg",
+    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.jpg",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "X = R · (100 - l) / l; Rs = R1 + R2 = 5.0 Ω (Series Verification)",
     "obsCols": [
@@ -5188,8 +5188,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
+    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "g = 4 · π² · (L / T²) = 4 · (3.1416)² · (0.80 / 3.22) = 9.80 m/s²",
     "obsCols": [

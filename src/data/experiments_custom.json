@@ -48,7 +48,7 @@
     ],
     "outcome": "The V-I graph is a straight line passing through the origin. The constant slope (ΔV/ΔI) verifies Ohm's Law and yields the resistance of the unknown conductor.",
     "createdAt": "2026-10-12T11:57:56.649Z",
-    "updatedAt": "2026-10-12T12:53:22.778Z",
+    "updatedAt": "2026-10-12T13:06:37.468Z",
     "formula": "R = V / I = 5.00 Ω (Constant slope of V-I graph)",
     "obsCols": [
       "Trial",
@@ -407,7 +407,7 @@
     ],
     "outcome": "The i-D graph forms a smooth parabola with a distinct minimum. The refractive index of crown glass is determined to be approximately 1.51 ± 0.02 using the prism formula.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "μ = sin((A + Dm)/2) / sin(A/2) = sin((60° + 39.5°)/2) / sin(30°) = 1.524",
     "obsCols": [
       "Angle of Incidence (i)",
@@ -702,8 +702,8 @@
       "Parallax"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
+    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
     "materials": [
       "Optical Bench (2 meters long with graduated scale) × 1",
       "Biconvex Lens mounted on upright holder × 1",
@@ -729,7 +729,7 @@
     ],
     "outcome": "The focal length of the convex lens is determined to be 15.0 cm ± 0.2 cm using the lens formula 1/f = 1/v - 1/u and confirmed via the 1/u vs 1/v graph.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "1/f = 1/v - 1/u => f = (u · v) / (u + v) = 15.0 cm (Focal Length)",
     "obsCols": [
       "Object Distance u (cm)",
@@ -1010,8 +1010,8 @@
       "Current Electricity"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/meter-bridge-resistance-combination.jpg",
+    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.jpg",
     "materials": [
       "Meter Bridge Board with 1m Manganin wire × 1",
       "Leclanché Cell or regulated 2V DC power supply × 1",
@@ -1038,7 +1038,7 @@
     ],
     "outcome": "Experimental equivalent resistances for series (Rs = R1 + R2) and parallel (1/Rp = 1/R1 + 1/R2) match theoretical values within an experimental error of < 1.5%.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "X = R · (100 - l) / l; Rs = R1 + R2 = 5.0 Ω (Series Verification)",
     "obsCols": [
       "Resistance in Box R (Ω)",
@@ -1340,8 +1340,8 @@
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
+    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
     "materials": [
       "Heavy Metallic Bob with small hook (brass) × 1",
       "Fine unspun cotton thread (approx 1.5 m) × 1",
@@ -1367,7 +1367,7 @@
     ],
     "outcome": "The L-T² graph is a linear straight line passing through the origin. The acceleration due to gravity g is calculated as 9.78 m/s² ± 0.05 m/s².",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "g = 4 · π² · (L / T²) = 4 · (3.1416)² · (0.80 / 3.22) = 9.80 m/s²",
     "obsCols": [
       "Length of Pendulum L (m)",
@@ -1688,7 +1688,7 @@
     ],
     "outcome": "The product of total absolute pressure P and air column volume V remains constant within 1.2% variance. The P versus 1/V graph is a straight line through the origin.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "P · V = k (Constant at room temperature T = 298 K)",
     "obsCols": [
       "Atmospheric H (cm Hg)",
@@ -1981,7 +1981,7 @@
     ],
     "outcome": "Computed least count of Vernier Caliper is 0.01 cm and Screw Gauge is 0.001 cm (10 μm). Volume of cylinder and wire cross-sectional area are measured to 4 significant figures.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Total Reading = MSR + (VSR × LC) - Zero Error; LC(Vernier)=0.01 cm, LC(Screw)=0.001 cm",
     "obsCols": [
       "Instrument & Object",
@@ -2291,7 +2291,7 @@
     ],
     "outcome": "First and second resonance air column lengths yield sound velocity v = 2f(l2 - l1) = 343.4 m/s at 22°C, matching theoretical acoustic speed within 0.8% error.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "v = 2 · f · (l2 - l1) = 2 · 512 Hz · (0.495 m - 0.160 m) = 343.04 m/s (at 20°C)",
     "obsCols": [
       "Tuning Fork Frequency f (Hz)",
@@ -2598,7 +2598,7 @@
     ],
     "outcome": "Internal resistance r = R(l1 - l2)/l2 of the primary Leclanché cell is measured accurately as 1.45 Ω ± 0.05 Ω without drawing active current during open-circuit null balance.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "r = R · (l1 - l2) / l2 = 5.0 · (760.0 - 580.0) / 580.0 = 1.55 Ω",
     "obsCols": [
       "Shunt Resistance R (Ω)",
@@ -2929,7 +2929,7 @@
     ],
     "outcome": "Induced voltage is directly proportional to the rate of change of magnetic flux (dΦ/dt) and number of turns (N). Deflection reverses when magnet polarity or direction is reversed, verifying Lenz's Law.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "ε = -N · (dΦ / dt) (Induced EMF proportional to rate of magnetic flux change)",
     "obsCols": [
       "Magnet Velocity / Condition",
@@ -3241,7 +3241,7 @@
     ],
     "outcome": "Equivalence point reached when solution turns faintly pink lasting 30 seconds. Concordant burette readings determine the exact concentration of HCl as 0.098 M.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "M(HCl) · V(HCl) = M(NaOH) · V(NaOH) => M(HCl) = (0.100 M × 19.60 mL) / 20.00 mL = 0.0980 M",
     "obsCols": [
       "Burette Trial",
@@ -3570,8 +3570,8 @@
       "CBSE Chemistry Lab"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
+    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
     "materials": [
       "Standard 0.05 M Mohr's Salt Solution × 250 mL",
       "Potassium Permanganate (KMnO4) Solution (~0.02 M) × 250 mL",
@@ -3598,7 +3598,7 @@
     ],
     "outcome": "KMnO4 acts as its own self-indicator (Mn7+ reduced to colorless Mn2+). Concordant endpoint reached when excess drop produces a persistent faint pink color, yielding KMnO4 molarity of 0.020 M.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "2 KMnO4 + 8 H2SO4 + 10 FeSO4(NH4)2SO4 -> K2SO4 + 2 MnSO4 + 5 Fe2(SO4)3 + 10 (NH4)2SO4 + 8 H2O",
     "obsCols": [
       "Burette Trial",
@@ -3934,7 +3934,7 @@
     ],
     "outcome": "Anion confirmed as Sulfate (SO4²⁻) via white BaSO4 precipitate insoluble in conc. HCl. Cation confirmed as Lead (Pb²⁺) via golden yellow PbI2 spangles test.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Pb(NO3)2 + 2 KI -> PbI2↓ (Golden Yellow Spangles) + 2 KNO3; BaCl2 + SO4²⁻ -> BaSO4↓ (White ppt)",
     "obsCols": [
       "Test Performed",
@@ -4252,7 +4252,7 @@
     ],
     "outcome": "Successfully weighed exactly 3.151 g of oxalic acid crystals and prepared 250.0 mL of standard 0.100 M primary solution for analytical titrations.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Mass of Oxalic Acid required for 250 mL 0.1 M: w = (M · M_w · V) / 1000 = (0.100 × 126.06 × 250) / 1000 = 3.1515 g",
     "obsCols": [
       "Weighing Step",
@@ -4566,7 +4566,7 @@
     ],
     "outcome": "Constructed the standard color-coded pH scale (1 to 14). Identified lemon juice as pH 2.2 (strongly acidic), distilled water as pH 7.0 (neutral), and NaOH as pH 13.5 (strongly basic).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "pH = -log10[H⁺]; pOH = -log10[OH⁻]; pH + pOH = 14.00 (at 25°C)",
     "obsCols": [
       "Test Solution Sample",
@@ -4863,7 +4863,7 @@
     ],
     "outcome": "Reaction rate (1/t) increases linearly with sodium thiosulfate concentration. The rate versus concentration plot is a straight line, confirming first-order kinetics with respect to thiosulfate.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Na2S2O3 + 2 HCl -> 2 NaCl + SO2↑ + S↓ (Colloidal Sulfur turbidity) + H2O; Rate ∝ 1/t",
     "obsCols": [
       "Flask No.",
@@ -5197,7 +5197,7 @@
     ],
     "outcome": "Distinct color bands separated on Whatman paper strip: olive green (Chlorophyll b), blue green (Chlorophyll a), yellow (Xanthophyll), and orange-yellow (Carotene) with distinct Rf values.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Rf = (Distance traveled by pigment solute) / (Distance traveled by solvent front)",
     "obsCols": [
       "Pigment Band Identity",
@@ -5513,7 +5513,7 @@
     ],
     "outcome": "Stable wine-red Ferric Hydroxide sol and translucent starch sol prepared. Red laser beam exhibits clear brilliant Tyndall cone through both sols while remaining invisible in true aqueous NaCl solution.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "FeCl3 + 3 H2O (Boiling) -> Fe(OH)3 (Hydrated Ferric Hydroxide Sol - Positive Charge) + 3 HCl",
     "obsCols": [
       "Optical / Physical Test",
@@ -5823,7 +5823,7 @@
     ],
     "outcome": "Aldehyde confirmed via Tollens' test yielding a shiny reflective silver mirror on glass walls; Carboxylic acid confirmed via vigorous effervescence of CO2 gas with sodium bicarbonate.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "R-CHO + 2 [Ag(NH3)2]⁺ + 3 OH⁻ -> R-COO⁻ + 2 Ag↓ (Brilliant Silver Mirror) + 4 NH3 + 2 H2O",
     "obsCols": [
       "Functional Group Test",
@@ -6127,7 +6127,7 @@
     ],
     "outcome": "Temperature rise of 6.7°C measured. Heat released yields enthalpy of neutralization ΔH = -56.8 kJ/mol, matching theoretical standard thermodynamic value (-57.1 kJ/mol) within 0.7% error.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "ΔH_neut = - (m · c + W) · ΔT / n = - (200 g × 4.184 J/g°C + 40 J/°C) × 6.5 °C / 0.100 mol = -57.0 kJ/mol",
     "obsCols": [
       "Calorimetric Parameter",
@@ -6463,7 +6463,7 @@
     ],
     "outcome": "Clear rectangular epidermal plant cells observed with distinct cell walls, prominent darkly-stained peripheral nuclei, and large central vacuoles.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Cell Dimension = Field of View Diameter / Cell Count = 1500 μm / 6 = 250 μm length",
     "obsCols": [
       "Magnification Objective",
@@ -6779,7 +6779,7 @@
     ],
     "outcome": "Distinct mitotic stages clearly observed: condensed chromosome threads (Prophase), equatorial plate alignment (Metaphase), sister chromatid poleward separation (Anaphase), and nuclear reorganization (Telophase).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.783Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Mitotic Index (%) = (Number of cells in mitosis / Total number of cells observed) × 100 = (38 / 250) × 100 = 15.2%",
     "obsCols": [
       "Mitotic Phase Observed",
@@ -7088,7 +7088,7 @@
     ],
     "outcome": "Liquid level in the potato cavity rises significantly above the initial pin mark due to water entering from the petri dish (hypotonic) into the sucrose solution (hypertonic) across selectively permeable potato membranes.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Water Potential Gradient: Ψ_w(Hypotonic outer water = 0) > Ψ_w(Hypertonic cavity sucrose = -1.2 MPa) => Net Endo-osmosis",
     "obsCols": [
       "Time Interval (Hours)",
@@ -7382,7 +7382,7 @@
     ],
     "outcome": "Bubble travel velocity is fastest under bright light and breeze (0.85 cm/min) and slowest in humid shade (0.15 cm/min), demonstrating stomatal transpiration dynamics.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "Transpiration Rate R = (π · r² · d) / t = (3.1416 × 0.5² mm² × 60 mm) / 10 min = 4.71 mm³/min",
     "obsCols": [
       "Environmental Condition Tested",
@@ -7681,7 +7681,7 @@
     ],
     "outcome": "Water level in the bent delivery tube rises by 6.2 cm. KOH absorbs exhaled CO2, creating a partial vacuum inside the flask that draws water upward from the beaker.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "C6H12O6 + 6 O2 -> 6 CO2↑ + 6 H2O + 38 ATP; 2 KOH + CO2 -> K2CO3 + H2O (Vacuum creation)",
     "obsCols": [
       "Time Interval (Hours)",
@@ -7997,7 +7997,7 @@
     ],
     "outcome": "Only green chlorophyll-bearing regions exposed to light turn blue-black with iodine; white and light-blocked areas remain pale yellow/brown, proving light and chlorophyll are essential.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.476Z",
     "formula": "6 CO2 + 12 H2O + Light -> C6H12O6 + 6 O2 + 6 H2O; Amylose + I2/KI -> Polyiodide Inclusion Complex (Blue-Black)",
     "obsCols": [
       "Leaf Area Sample",
@@ -8294,7 +8294,7 @@
     ],
     "outcome": "Visible white fibrous threads of aggregated genomic DNA precipitated at the ice-cold alcohol interface and successfully spooled onto a clean glass rod.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Yield of Genomic DNA = Spooled Mass / Tissue Fresh Weight = 1.25 mg DNA / 20.0 g Banana = 0.0625 mg DNA / g fresh tissue",
     "obsCols": [
       "Isolation Protocol Step",
@@ -8596,7 +8596,7 @@
     ],
     "outcome": "High magnification examination reveals non-nucleated biconcave RBCs, multi-lobed pinkish-purple Neutrophils (~65%), large-nucleus Lymphocytes (~25%), and kidney-shaped Monocytes.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Differential Leukocyte Count (DLC %): Neutrophils 60-70%, Lymphocytes 20-30%, Monocytes 2-8%, Eosinophils 1-4%, Basophils 0.5-1%",
     "obsCols": [
       "Leukocyte (WBC) Type",
@@ -8902,7 +8902,7 @@
     ],
     "outcome": "Blue-black iodine response gradually lightens through violet and red-brown to reach the achromic point (colorless) at 6.5 minutes at body temperature (37°C), proving complete enzyme breakdown to maltose.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Starch (Amylose/Amylopectin) + Salivary α-Amylase (Ptyalin) -> Maltose + Maltotriose + Dextrins; Achromic Point reached",
     "obsCols": [
       "Time Interval (Minutes)",
@@ -9224,7 +9224,7 @@
     ],
     "outcome": "Dorsiventral leaves exhibit significantly higher stomatal frequency on the lower surface (abaxial, ~185 stomata/mm²) than the upper surface (adaxial, ~20 stomata/mm²), minimizing transpirational water loss.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Stomatal Index (I) = [S / (E + S)] × 100 = [28 / (112 + 28)] × 100 = 20.0%; Density = Stomata Count / Field Area",
     "obsCols": [
       "Leaf Epidermal Surface",
@@ -9501,7 +9501,7 @@
     ],
     "outcome": "Area of the square on the hypotenuse (c²) exactly equals the combined sum of the areas of squares constructed on the base (a²) and perpendicular (b²) through geometric congruence.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
     "obsCols": [
       "Right Triangle Trial",
@@ -9793,7 +9793,7 @@
     ],
     "outcome": "As the number of circular sectors increases, the rearranged shape approaches a rectangle of base length π·r (half circumference) and height r. Area = base × height = π·r × r = π·r².",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Area of Circle = lim (n -> ∞) [n × Sector Area] = Base × Height = (π · r) × r = π · r² = 3.1416 × 7.0² = 153.94 cm²",
     "obsCols": [
       "Sector Partitions (n)",
@@ -10073,7 +10073,7 @@
     ],
     "outcome": "Empirically verified that Volume of Cone : Volume of Sphere : Volume of Cylinder = 1 : 2 : 3. Sand from one cone and one sphere exactly fills the circumscribed cylinder without spill.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "V(Cone) : V(Sphere) : V(Cylinder) = (1/3 · πr²h) : (4/3 · πr³) : (πr²h) = 1 : 2 : 3 (for h = 2r)",
     "obsCols": [
       "Geometric Solid Body",
@@ -10339,7 +10339,7 @@
     ],
     "outcome": "For any chosen arc AB, angle ∠AOB at center measured 80° while inscribed angle ∠APB at circumference measured exactly 40°. Verified ∠AOB = 2 · ∠APB across all arc lengths.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Central Angle = 2 × Inscribed Angle (∠AOB = 2 · ∠APB for any point P on alternating arc)",
     "obsCols": [
       "Circle Trial",
@@ -10618,7 +10618,7 @@
     ],
     "outcome": "Tangents PT1 and PT2 from point P measure exactly 12.0 cm each. Triangle OPT1 is congruent to Triangle OPT2 by RHS criterion, proving PT1 = PT2.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "PT1 = PT2 = √(OP² - r²) = √(13.0² - 5.0²) = √(169 - 25) = √144 = 12.0 cm (Tangents from external point are equal)",
     "obsCols": [
       "Construction Trial",
@@ -10889,7 +10889,7 @@
     ],
     "outcome": "Measured segments AD = 4.0 cm, DB = 6.0 cm (ratio = 0.667) and AE = 4.8 cm, EC = 7.2 cm (ratio = 0.667). Ratios AD/DB = AE/EC verified across scalene, isosceles, and right triangles.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "AD / DB = AE / EC (If DE ∥ BC in ΔABC, then DE divides AB and AC in the same ratio)",
     "obsCols": [
       "Triangle Configuration",
@@ -11176,7 +11176,7 @@
     ],
     "outcome": "Two identical staircases of n = 6 steps (1+2+3+4+5+6 = 21 tiles each) fit together to form a rectangle of dimensions n × (n+1) = 6 × 7 = 42 tiles. Hence S_n = 42 / 2 = 21.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Sn = 1 + 2 + 3 + ... + n = n · (n + 1) / 2 = 10 · 11 / 2 = 55 (Area of Staircase Shape)",
     "obsCols": [
       "Number of Terms (n)",
@@ -11453,7 +11453,7 @@
     ],
     "outcome": "An assembled cube of side (a + b) decomposes into exactly 8 geometric solid pieces: 1 cube of a³, 3 cuboids of a²b, 3 cuboids of ab², and 1 cube of b³, verifying the identity.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "(a + b)³ = a³ + 3a²b + 3ab² + b³ (Volume of Large Cube = Sum of Volumes of 8 Dissected Sub-Blocks)",
     "obsCols": [
       "Component Block Identity",
@@ -11765,7 +11765,7 @@
     ],
     "outcome": "Measured elevation angle θ = 35° at distance d = 15.0 m with eye height h1 = 1.45 m. Computed height H = h1 + d · tan(35°) = 1.45 + 15.0 · (0.700) = 11.95 m (true height = 12.0 m).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "Height H = h_eye + d · tan(θ) = 1.50 m + 10.0 m × tan(38.0°) = 1.50 m + 10.0 m × 0.7813 = 1.50 m + 7.81 m = 9.31 meters",
     "obsCols": [
       "Target Object Measured",
@@ -12086,7 +12086,7 @@
     ],
     "outcome": "Steel balls accumulating in bottom bins form a smooth symmetric bell-shaped Gaussian curve, empirically proving the convergence of binomial distribution B(n, 0.5) to normal distribution N(μ, σ²).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T12:53:22.784Z",
+    "updatedAt": "2026-10-12T13:06:37.477Z",
     "formula": "P(X = k) = (n choose k) · p^k · (1-p)^(n-k); lim (n -> ∞) Binomial(n, 0.5) = Normal Distribution N(μ = np, σ² = np(1-p))",
     "obsCols": [
       "Bin Number (Left to Right)",

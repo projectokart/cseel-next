@@ -914,9 +914,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Object needle must always remain beyond the principal focus (u > f).",
       "Account for index correction for precise distances."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/focal-length-convex-lens-uv-method.jpg"
     ],
     "tags": [
       "Optics",
@@ -1239,9 +1239,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Clean connecting terminals and tighten screws with pliers.",
       "Use shunt across galvanometer during initial rough balance."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/meter-bridge-resistance-combination.jpg"
     ],
     "tags": [
       "Wheatstone Bridge",
@@ -1543,9 +1543,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Ensure the suspension point is rigid and does not yield during oscillations.",
       "Air currents must be prevented by shutting nearby fans and windows."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg"
     ],
     "tags": [
       "Simple Pendulum",
@@ -3724,9 +3724,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Mohr's salt solution must be freshly prepared to avoid aerial oxidation of Fe2+ to Fe3+.",
       "Keep endpoint strictly to faint pink; dark purple indicates over-titration error."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg"
     ],
     "tags": [
       "Redox Titration",

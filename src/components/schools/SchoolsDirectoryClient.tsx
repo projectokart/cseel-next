@@ -1590,18 +1590,20 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
             />
-            {/* Top-Left Rating Tag: Guaranteed fit, never overlaps */}
-            {school.rating && Number(school.rating) > 0 && (
-              <div className="absolute top-1 left-1 bg-black/75 backdrop-blur-xs border border-white/10 text-white px-1.5 py-0.5 rounded text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs leading-none pointer-events-none z-10">
-                <Star size={9} className="fill-amber-400 text-amber-400" />
-                <span>{school.rating}</span>
-              </div>
-            )}
-
-            {/* Bottom-Left Distance Tag: Guaranteed fit, never overlaps */}
-            {school.distance !== undefined && school.distance > 0 && (
-              <div className="absolute bottom-1 left-1 bg-black/75 backdrop-blur-xs border border-white/10 text-emerald-300 px-1.5 py-0.5 rounded text-[9px] font-bold shadow-xs whitespace-nowrap leading-none pointer-events-none z-10">
-                <span>{school.distance < 1 ? `${Math.round(school.distance * 1000)}m` : `${Number(school.distance.toFixed(1))} km`}</span>
+            {/* Bottom Row: Rating and Distance side-by-side with minimal padding & margin */}
+            {((school.rating && Number(school.rating) > 0) || (school.distance !== undefined && school.distance > 0)) && (
+              <div className="absolute bottom-1 inset-x-1 flex items-center justify-between gap-0.5 pointer-events-none z-10">
+                {school.rating && Number(school.rating) > 0 ? (
+                  <div className="bg-black/80 backdrop-blur-xs text-white px-1 py-0.5 rounded text-[8.5px] font-bold flex items-center gap-0.5 leading-none shrink-0 shadow-xs border border-white/10">
+                    <Star size={7.5} className="fill-amber-400 text-amber-400 shrink-0" />
+                    <span>{school.rating}</span>
+                  </div>
+                ) : <span />}
+                {school.distance !== undefined && school.distance > 0 && (
+                  <div className="bg-black/80 backdrop-blur-xs text-emerald-300 px-1 py-0.5 rounded text-[8px] font-bold leading-none shrink-0 shadow-xs border border-white/10 whitespace-nowrap">
+                    <span>{school.distance < 1 ? `${Math.round(school.distance * 1000)}m` : `${Number(school.distance.toFixed(1))}km`}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>

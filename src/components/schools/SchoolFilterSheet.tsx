@@ -952,11 +952,8 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
           onClick={onClose}
         />
 
-        {/* Standard Mobile Bottom Sheet */}
-        <div className="fixed inset-x-0 bottom-0 h-[92vh] max-h-[92vh] bg-white rounded-t-3xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300">
-          {/* Drag Handle */}
-          <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-2.5 mb-1 shrink-0" />
-
+        {/* Mobile Left Drawer Sheet */}
+        <div className="fixed inset-y-0 left-0 w-[88vw] max-w-[360px] h-full bg-white shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-left duration-300 z-10">
           {/* Sticky Header */}
           <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between shrink-0 bg-white">
             <div className="flex items-center gap-2">

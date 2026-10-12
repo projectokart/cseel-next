@@ -52,21 +52,40 @@ export default function AddSchoolModal({
   const [localAddress, setLocalAddress] = useState('');
   const [contactNumber, setContactNumber] = useState('');
   const [contactEmail, setContactEmail] = useState('');
-  const [principalName, setPrincipalName] = useState('');
   const [note, setNote] = useState('');
 
-  // Submission State
+  // Submission & Duplicate State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isSubmittedSuccess, setIsSubmittedSuccess] = useState(false);
+  const [existingClaim, setExistingClaim] = useState<any>(null);
+  const [isCheckingExisting, setIsCheckingExisting] = useState(false);
 
-  // Sync user session
+  // Sync user session and check if this user already requested
   useEffect(() => {
     if (!isOpen) return;
 
     let isMounted = true;
     setErrorMsg(null);
     setIsSubmittedSuccess(false);
+
+    const checkUserExistingRequest = async (userEmail: string, userId: string) => {
+      try {
+        setIsCheckingExisting(true);
+        const res = await fetch(`/api/school-claim?email=${encodeURIComponent(userEmail)}&user_id=${encodeURIComponent(userId)}`);
+        const json = await res.json();
+        if (json.success && Array.isArray(json.claims) && json.claims.length > 0) {
+          const prior = json.claims.find((c: any) => c.status === 'pending' || c.status === 'approved');
+          if (prior && isMounted) {
+            setExistingClaim(prior);
+          }
+        }
+      } catch (err) {
+        console.warn('Error checking existing claims:', err);
+      } finally {
+        if (isMounted) setIsCheckingExisting(false);
+      }
+    };
 
     supabase.auth
       .getSession()
@@ -76,9 +95,11 @@ export default function AddSchoolModal({
         const active = session?.user || currentUserProp || authContextUser;
         if (active) {
           setSessionUser(active);
-          if (active.email) setContactEmail((prev) => prev || active.email || '');
-          const metaName = active.user_metadata?.full_name || active.user_metadata?.name || '';
-          if (metaName) setPrincipalName((prev) => prev || metaName);
+          const email = active.email || '';
+          if (email) {
+            setContactEmail(email);
+            checkUserExistingRequest(email, active.id);
+          }
           const metaPhone = active.user_metadata?.phone || active.phone || '';
           if (metaPhone) setContactNumber((prev) => prev || metaPhone);
         }
@@ -93,12 +114,8 @@ export default function AddSchoolModal({
   }, [isOpen, currentUserProp, authContextUser]);
 
   useEffect(() => {
-    if (currentUser) {
-      if (currentUser.email && !contactEmail) setContactEmail(currentUser.email);
-      const metaName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
-      if (metaName && !principalName) setPrincipalName(metaName);
-      const metaPhone = currentUser.user_metadata?.phone || currentUser.phone || '';
-      if (metaPhone && !contactNumber) setContactNumber(metaPhone);
+    if (currentUser && currentUser.email) {
+      setContactEmail(currentUser.email);
     }
   }, [currentUser]);
 
@@ -152,6 +169,8 @@ export default function AddSchoolModal({
       return;
     }
 
+    const finalEmail = (currentUser?.email || contactEmail).trim().toLowerCase();
+
     setIsSubmitting(true);
     try {
       const res = await fetch('/api/school-claim', {
@@ -162,11 +181,11 @@ export default function AddSchoolModal({
           state: stateName.trim(),
           district: district.trim(),
           city: localAddress.trim(),
-          claimant_name: principalName.trim() || 'Principal / School Representative',
-          claimant_email: contactEmail.trim().toLowerCase(),
+          claimant_name: 'School Representative / Management',
+          claimant_email: finalEmail,
           whatsapp_number: cleanPhone,
           designation: 'Principal / Management',
-          note: `Local Address: ${localAddress.trim()}. Additional Info: ${note.trim()}`,
+          note: `Local Address: ${localAddress.trim()}.${note.trim() ? ` Additional Info: ${note.trim()}` : ''}`,
           request_type: 'add_school',
           user_id: currentUser?.id,
         }),
@@ -174,7 +193,13 @@ export default function AddSchoolModal({
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to submit school registration request.');
+        if (data.error === 'ALREADY_REQUESTED' || res.status === 409) {
+          if (data.existing_claim) {
+            setExistingClaim(data.existing_claim);
+          }
+          throw new Error(data.message || 'You have already submitted a school registration request. Only one request is allowed per account.');
+        }
+        throw new Error(data.error || data.message || 'Failed to submit school registration request.');
       }
 
       setIsSubmittedSuccess(true);
@@ -186,9 +211,9 @@ export default function AddSchoolModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200 overflow-y-auto">
       <div
-        className="relative w-full max-w-xl max-h-[92vh] overflow-y-auto bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col"
+        className="relative w-full max-w-xl max-h-[90vh] my-auto overflow-y-auto bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -305,8 +330,61 @@ export default function AddSchoolModal({
             </div>
           )}
 
-          {/* ── CASE 4: LOGGED IN -> CLEAN 6-FIELD INPUT FORM ── */}
-          {!isAuthLoading && currentUser && !isSubmittedSuccess && (
+          {/* ── CASE 2.5: ALREADY REQUESTED (ONE SCHOOL REQUEST PER USER) ── */}
+          {!isAuthLoading && currentUser && existingClaim && !isSubmittedSuccess && (
+            <div className="text-center py-6 px-3 space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+                <AlertCircle className="w-9 h-9" />
+              </div>
+              <div>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full mb-2">
+                  <Clock className="w-3.5 h-3.5" />
+                  Request Already Pending
+                </span>
+                <h4 className="text-2xl font-black text-slate-900 mb-1">
+                  Already Requested!
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                  Aapke account (<strong>{currentUser.email}</strong>) se pehle se ek school registration request submit ho chuki hai.
+                </p>
+              </div>
+
+              {/* Existing Request Card */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 max-w-md mx-auto">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500">Requested School:</span>
+                  <span className="text-xs font-bold text-slate-900">{existingClaim.school_name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500">Status:</span>
+                  <span className="text-[11px] font-bold uppercase px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300">
+                    {existingClaim.status}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                  <span>Policy Rule:</span>
+                  <span>1 request per user account</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Ek se jyada requests allowed nahi hain. Admin verification complete hote hi magic link aapke mail par send kar di jayegi.
+              </p>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-8 py-2.5 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-sm transition cursor-pointer shadow-md"
+                >
+                  Understood &amp; Close
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── CASE 4: LOGGED IN & NO PRIOR REQUEST -> CLEAN INPUT FORM ── */}
+          {!isAuthLoading && currentUser && !existingClaim && !isSubmittedSuccess && (
             <form onSubmit={handleSubmit} className="space-y-3.5">
               {/* Account Identity Bar */}
               <div className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs text-slate-600">
@@ -314,8 +392,9 @@ export default function AddSchoolModal({
                   <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                   Logged in as: <strong className="text-slate-800 truncate">{currentUser.email}</strong>
                 </span>
-                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 shrink-0">
-                  Verified
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 shrink-0 flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5" />
+                  Locked Email
                 </span>
               </div>
 
@@ -393,7 +472,7 @@ export default function AddSchoolModal({
                 </div>
               </div>
 
-              {/* 4. Contact & Email */}
+              {/* 4. Contact & Locked Email */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -414,43 +493,25 @@ export default function AddSchoolModal({
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Official Email <span className="text-rose-500">*</span>
+                    Official Email <span className="text-emerald-600 font-semibold">(Locked from Login)</span>
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="email"
-                      required
-                      placeholder="e.g. info@school.edu.in"
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689] text-slate-800"
+                      readOnly
+                      disabled
+                      value={currentUser?.email || contactEmail}
+                      className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-600 text-xs sm:text-sm cursor-not-allowed font-medium select-none"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* 5. Principal / Representative Name (Optional) */}
+              {/* 5. Note / Additional Info (Optional) */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Principal / Representative Name <span className="text-slate-400 font-normal">(Optional)</span>
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    placeholder="e.g. Dr. Rajesh Sharma"
-                    value={principalName}
-                    onChange={(e) => setPrincipalName(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689] text-slate-800"
-                  />
-                </div>
-              </div>
-
-              {/* 6. Note */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Note / Special Instructions <span className="text-slate-400 font-normal">(Optional)</span>
+                  Note / Additional Details <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <textarea
                   rows={2}

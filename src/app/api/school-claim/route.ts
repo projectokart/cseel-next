@@ -328,11 +328,36 @@ export async function POST(req: NextRequest) {
 
     // Note: UDISE government verification is now inactive as requested (UDISE data is not guaranteed)
 
-    const sanitizedName = sanitizeInput(claimant_name);
+    const sanitizedName = sanitizeInput(claimant_name || 'School Representative');
     const sanitizedEmail = sanitizeInput(claimant_email).toLowerCase();
     const sanitizedPhone = sanitizeInput(whatsapp_number).replace(/[^\d+ -]/g, '');
     const sanitizedDesignation = sanitizeInput(designation || 'School Representative');
     const sanitizedNote = sanitizeInput(note);
+
+    // ── STRICT DUPLICATE REQUEST CHECK (ONE SCHOOL ADD REQUEST PER USER) ──
+    const existingStore = readClaimsStore();
+    const duplicateClaim = existingStore.claims.find((c) => {
+      const matchUser = user_id && String(c.user_id) === String(user_id);
+      const matchEmail = c.claimant_email && c.claimant_email.toLowerCase() === sanitizedEmail;
+      return (matchUser || matchEmail) && (c.status === 'pending' || c.status === 'approved');
+    });
+
+    if (duplicateClaim) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'ALREADY_REQUESTED',
+          message: `A school registration request (${duplicateClaim.school_name}) has already been submitted from this account. Each user can submit one request at a time.`,
+          existing_claim: {
+            id: duplicateClaim.id,
+            school_name: duplicateClaim.school_name,
+            status: duplicateClaim.status,
+            created_at: duplicateClaim.created_at,
+          },
+        },
+        { status: 409 }
+      );
+    }
     const resolvedSchoolName = sanitizeInput(
       school_name || verified_udise_data?.schoolName || 'School Profile'
     );
@@ -477,10 +502,21 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const udise = searchParams.get('udise');
+    const queryUserId = searchParams.get('user_id');
+    const queryEmail = searchParams.get('email');
     const callerIsAdmin = isAdminRequest(req);
 
     const store = readClaimsStore();
     let results = [...store.claims];
+
+    // Filter by user_id or email for checking existing submissions
+    if (queryUserId || queryEmail) {
+      results = results.filter((c) => {
+        const matchUser = queryUserId && String(c.user_id) === String(queryUserId);
+        const matchEmail = queryEmail && c.claimant_email && c.claimant_email.toLowerCase() === queryEmail.toLowerCase();
+        return matchUser || matchEmail;
+      });
+    }
 
     // Also merge any claims stored in Supabase school_profiles if querying by udise
     if (udise) {

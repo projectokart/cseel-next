@@ -1252,6 +1252,56 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
 
 
+  // Helper to format classes in clean numeric format (e.g. '1st - 12th', 'Nursery - 12th')
+  const formatCompactClasses = (classesVal?: string): string => {
+    const raw = (classesVal || '').trim();
+    if (!raw) return '1st - 12th';
+    const lower = raw.toLowerCase();
+
+    // Already standard numeric like "1st - 12th", "1 - 10th", "1st - 10th", "Nursery - 12th"
+    if (/^\d+(?:st|nd|rd|th)?\s*[-–]\s*\d+(?:st|nd|rd|th)?$/i.test(raw)) {
+      return raw.replace(/[-–]/, ' - ');
+    }
+    if (/^(?:nursery|play|kg|pre-nursery|pre-school|prep)\s*[-–]\s*\d+(?:st|nd|rd|th)?$/i.test(raw)) {
+      return raw.replace(/[-–]/, ' - ');
+    }
+
+    // Pre-school / Nursery start
+    if (lower.includes('pre') || lower.includes('nurs') || lower.includes('kg') || lower.includes('play')) {
+      if (lower.includes('12') || lower.includes('senior') || lower.includes('sr.')) return 'Nursery - 12th';
+      if (lower.includes('10') || lower.includes('sec')) return 'Nursery - 10th';
+      if (lower.includes('8') || lower.includes('middle')) return 'Nursery - 8th';
+      if (lower.includes('5') || lower.includes('primary')) return 'Nursery - 5th';
+      return 'Nursery - 12th';
+    }
+
+    // Primary (1st) start
+    if (lower.includes('primary') || lower.includes('class 1') || lower.includes('1st')) {
+      if (lower.includes('senior') || lower.includes('12') || lower.includes('sr.')) return '1st - 12th';
+      if (lower.includes('second') || lower.includes('10')) return '1st - 10th';
+      if (lower.includes('middle') || lower.includes('8')) return '1st - 8th';
+      if (lower.includes('5')) return '1st - 5th';
+      return '1st - 10th';
+    }
+
+    // Middle (6th) start
+    if (lower.includes('middle') || lower.includes('class 6') || lower.includes('6th')) {
+      if (lower.includes('senior') || lower.includes('12')) return '6th - 12th';
+      return '6th - 10th';
+    }
+
+    // Extract numbers if contains e.g. "Class 1st to 10th"
+    const numbers = raw.match(/\d+/g);
+    if (numbers && numbers.length >= 2) {
+      return `${numbers[0]}th - ${numbers[1]}th`;
+    }
+    if (numbers && numbers.length === 1) {
+      return `Up to ${numbers[0]}th`;
+    }
+
+    return '1st - 12th';
+  };
+
   // Helper to render school title with perfectly baseline-aligned verified badge (no word drop/bend)
   const renderSchoolTitleWithVerified = (name: string, isVerified: boolean = true) => {
     const clean = getCleanSchoolName(name);
@@ -1296,11 +1346,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           
           {/* Top Single Row Toolbar with Informative Hover Tooltips */}
           <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between pointer-events-none">
-            {/* Admissions Status Pill on Left */}
-            <div className="bg-emerald-600/95 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[10.5px] font-bold shadow-xs flex items-center gap-1 pointer-events-auto">
-              <CheckCircle2 size={11} /> 
-              <span>Admissions Open</span>
-            </div>
+            {/* Rating Pill on Left */}
+            {school.rating && Number(school.rating) > 0 ? (
+              <div className="bg-black/75 backdrop-blur-md text-white px-2 py-0.5 rounded-[8px] text-[11px] font-bold shadow-xs flex items-center gap-1 pointer-events-auto">
+                <Star size={11} className="fill-amber-400 text-amber-400" />
+                <span>{school.rating}</span>
+              </div>
+            ) : <div />}
 
             {/* Action Buttons in a Single Crisp Glass Strip on Right */}
             <div className="flex items-center gap-1 bg-black/45 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-xs pointer-events-auto">
@@ -1339,7 +1391,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   }`}
                   aria-label="Compare School"
                 >
-                  <ArrowLeftRight size={13} />
+                  <Scale size={13} />
                 </button>
                 <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
                   {isCompared ? 'Remove from Comparison' : 'Compare School'}
@@ -1448,9 +1500,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </div>
 
             {/* 2. Classes / Grade Range */}
-            <div className="flex items-center gap-1.5 min-w-0" title={`Classes: ${school.classes || 'Class 1st - 10th'}`}>
+            <div className="flex items-center gap-1.5 min-w-0" title={`Classes: ${formatCompactClasses(school.classes || (school as any).class_range)}`}>
               <GraduationCap size={13} className="text-purple-600 shrink-0" />
-              <span className="font-medium text-slate-700 truncate">{school.classes || 'Class 1st - 10th'}</span>
+              <span className="font-semibold text-slate-800 truncate">{formatCompactClasses(school.classes || (school as any).class_range)}</span>
             </div>
 
             {/* 3. Medium of Instruction (Languages icon, NOT building) */}
@@ -1538,22 +1590,20 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
             />
-            {/* Bottom Overlay: Compact Dark Blurred Rectangular Tags */}
-            {(school.rating && Number(school.rating) > 0) || (school.distance !== undefined && school.distance > 0) ? (
-              <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between gap-1 pointer-events-none">
-                {school.rating && Number(school.rating) > 0 ? (
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 shadow-sm leading-none">
-                    <Star size={9} className="fill-amber-400 text-amber-400" />
-                    <span>{school.rating}</span>
-                  </div>
-                ) : <span />}
-                {school.distance !== undefined && school.distance > 0 && (
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-1.5 py-0.5 rounded text-[9.5px] sm:text-[10px] font-bold shadow-sm whitespace-nowrap leading-none">
-                    <span>{school.distance < 1 ? `${Math.round(school.distance * 1000)} m` : `${Number(school.distance.toFixed(1))} km`}</span>
-                  </div>
-                )}
+            {/* Top-Left Rating Tag: Guaranteed fit, never overlaps */}
+            {school.rating && Number(school.rating) > 0 && (
+              <div className="absolute top-1 left-1 bg-black/75 backdrop-blur-xs border border-white/10 text-white px-1.5 py-0.5 rounded text-[9.5px] font-bold flex items-center gap-0.5 shadow-xs leading-none pointer-events-none z-10">
+                <Star size={9} className="fill-amber-400 text-amber-400" />
+                <span>{school.rating}</span>
               </div>
-            ) : null}
+            )}
+
+            {/* Bottom-Left Distance Tag: Guaranteed fit, never overlaps */}
+            {school.distance !== undefined && school.distance > 0 && (
+              <div className="absolute bottom-1 left-1 bg-black/75 backdrop-blur-xs border border-white/10 text-emerald-300 px-1.5 py-0.5 rounded text-[9px] font-bold shadow-xs whitespace-nowrap leading-none pointer-events-none z-10">
+                <span>{school.distance < 1 ? `${Math.round(school.distance * 1000)}m` : `${Number(school.distance.toFixed(1))} km`}</span>
+              </div>
+            )}
           </div>
 
           {/* Info Details */}
@@ -1578,14 +1628,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <span className="break-words">{locationStr}</span>
             </div>
 
-            {/* Quick Info Tags */}
+            {/* Quick Info Tags — Compact Numbers (e.g. 1st - 12th) & No Admissions Open */}
             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
               <span className="text-[10px] sm:text-xs text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px] font-semibold">
-                {school.classes || 'Class 1st - 10th'}
-              </span>
-              <span className="text-[10px] sm:text-xs text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-2 py-0.5 rounded-[8px] font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#137333] animate-pulse" />
-                <span>Admissions Open</span>
+                {formatCompactClasses(school.classes || (school as any).class_range)}
               </span>
               {school.facilities?.includes('Experiential Science Lab') && (
                 <span className="text-[10px] sm:text-xs text-[#0b57d0] bg-[#e8f0fe] border border-[#c2e7ff] px-2 py-0.5 rounded-[8px] font-medium hidden lg:inline-flex items-center gap-1">
@@ -1635,7 +1681,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               </svg>
             </button>
 
-            {/* Compare Button — ArrowLeftRight Icon */}
+            {/* Compare Button — Scale (Balance Measure) Icon */}
             <button
               type="button"
               onClick={(e) => handleToggleCompare(school, e)}
@@ -1644,7 +1690,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               }`}
               title="Compare School"
             >
-              <ArrowLeftRight size={13} />
+              <Scale size={14} />
             </button>
 
             {/* Share Button */}
@@ -1862,7 +1908,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               }`}
               title="Compare"
             >
-              <ArrowLeftRight size={12} />
+              <Scale size={12} />
             </button>
             <button
               type="button"
@@ -1875,11 +1921,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <Heart size={12} className={isLiked ? "fill-white text-white" : ""} />
               {cardLikesCount > 0 && <span className="text-[10px] font-bold">{cardLikesCount}</span>}
             </button>
-          </div>
-
-          {/* Admission Pill */}
-          <div className="absolute bottom-2 left-2.5 bg-emerald-600/95 text-white px-2 py-0.5 rounded-[8px] text-[10px] font-bold flex items-center gap-1 shadow-sm">
-            <CheckCircle2 size={10} /> Admissions Open
           </div>
         </div>
 
@@ -1902,8 +1943,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <span className="text-[10px] font-semibold text-[#0b57d0] bg-[#e8f0fe] px-2 py-0.5 rounded-[8px] border border-[#c2e7ff]">
                 {boardName}
               </span>
-              <span className="text-[10px] text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px]">
-                {school.classes || 'Nursery - 12th'}
+              <span className="text-[10px] font-semibold text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px]">
+                {formatCompactClasses(school.classes || (school as any).class_range)}
               </span>
             </div>
           </div>

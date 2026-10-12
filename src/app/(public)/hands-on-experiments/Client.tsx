@@ -28,7 +28,7 @@ import {
 } from "@/components/google-ui";
 const disciplines = ["All", "Chemistry", "Biology", "Physics", "Engineering", "Technology", "Mathematics"];
 const ALL_DISCIPLINES = ["Chemistry", "Biology", "Physics", "Engineering", "Technology", "Mathematics"];
-const ALL_LEVELS = ["Higher Education", "High School"];
+const ALL_LEVELS = ["All", "Higher Education", "High School"];
 const SORT_OPTIONS = [
   { label: "Most Popular", value: "popularity" },
   { label: "Newest First", value: "newest" },
@@ -127,7 +127,7 @@ const Simulations = () => {
   const [page, setPage] = useState(1);
 
   const [activeDisciplines, setActiveDisciplines] = useState<string[]>([]);
-  const [activeLevel, setActiveLevel] = useState("Higher Education");
+  const [activeLevel, setActiveLevel] = useState("All");
   const [activeSort, setActiveSort] = useState("popularity");
 
   const router = useRouter();
@@ -139,7 +139,7 @@ const Simulations = () => {
 
   const [sheetMode, setSheetMode] = useState<"filter" | "sort" | null>(null);
   const [tempDisciplines, setTempDisciplines] = useState<string[]>([]);
-  const [tempLevel, setTempLevel] = useState("Higher Education");
+  const [tempLevel, setTempLevel] = useState("All");
   const [tempSort, setTempSort] = useState("popularity");
 
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -147,15 +147,16 @@ const Simulations = () => {
   const dragCurrentY = useRef<number>(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [dbExperiments, setDbExperiments] = useState<any[]>([]);
+  const [dbExperiments, setDbExperiments] = useState<any[]>(ALL_EXPERIMENTS);
   const [activeDrawerExp, setActiveDrawerExp] = useState<any | null>(null);
 
   useEffect(() => {
     async function loadFromSupabase() {
       try {
         const { data, error } = await supabase.from('experiments').select('*');
-        if (!error && data) {
+        if (!error && data && data.length > 0) {
           setDbExperiments(data.map((e: any) => ({
+            ...e,
             id: e.id,
             slug: e.slug || e.id,
             title: e.title,
@@ -166,11 +167,13 @@ const Simulations = () => {
             created_at: e.created_at || '2026-01-01',
             popularity: e.views || e.popularity || 80,
           })));
-        } else {
-          setDbExperiments([]);
+        } else if (ALL_EXPERIMENTS.length > 0) {
+          setDbExperiments(ALL_EXPERIMENTS);
         }
       } catch (err) {
-        setDbExperiments([]);
+        if (ALL_EXPERIMENTS.length > 0) {
+          setDbExperiments(ALL_EXPERIMENTS);
+        }
       }
     }
     loadFromSupabase();
@@ -227,7 +230,11 @@ const Simulations = () => {
   const tempFiltered = useMemo(() => {
     return allExperiments.filter((sim) => {
       const matchSearch = sim.title.toLowerCase().includes(search.toLowerCase());
-      const matchLevel = (sim.class || "Higher Education") === tempLevel;
+      const matchLevel =
+        !tempLevel ||
+        tempLevel === "All" ||
+        (tempLevel === "Higher Education" && (sim.class?.toLowerCase().includes("higher") || sim.class?.toLowerCase().includes("11") || sim.class?.toLowerCase().includes("12") || !sim.class)) ||
+        (tempLevel === "High School" && (sim.class?.toLowerCase().includes("high") || sim.class?.toLowerCase().includes("school") || sim.class?.toLowerCase().includes("9") || sim.class?.toLowerCase().includes("10")));
       const matchDiscipline = tempDisciplines.length === 0 || tempDisciplines.includes(sim.subject);
       return matchSearch && matchLevel && matchDiscipline;
     });
@@ -235,11 +242,14 @@ const Simulations = () => {
 
   const availableDisciplines = useMemo(() => {
     return ALL_DISCIPLINES.filter((d) =>
-      allExperiments.some((sim) =>
-        (sim.class || "Higher Education") === tempLevel &&
-        sim.subject === d &&
-        sim.title.toLowerCase().includes(search.toLowerCase())
-      )
+      allExperiments.some((sim) => {
+        const matchLevel =
+          !tempLevel ||
+          tempLevel === "All" ||
+          (tempLevel === "Higher Education" && (sim.class?.toLowerCase().includes("higher") || sim.class?.toLowerCase().includes("11") || sim.class?.toLowerCase().includes("12") || !sim.class)) ||
+          (tempLevel === "High School" && (sim.class?.toLowerCase().includes("high") || sim.class?.toLowerCase().includes("school") || sim.class?.toLowerCase().includes("9") || sim.class?.toLowerCase().includes("10")));
+        return matchLevel && sim.subject === d && sim.title.toLowerCase().includes(search.toLowerCase());
+      })
     );
   }, [tempLevel, allExperiments, search]);
 
@@ -296,7 +306,7 @@ const Simulations = () => {
     dragCurrentY.current = 0;
   };
 
-  const activeFilterCount = activeDisciplines.length + (activeLevel !== "Higher Education" ? 1 : 0);
+  const activeFilterCount = activeDisciplines.length + (activeLevel !== "All" ? 1 : 0);
   const isSortActive = activeSort !== "popularity";
 
   const SheetBody = () => (
@@ -419,12 +429,12 @@ const Simulations = () => {
                 Showing <span className="text-[#1f1f1f]">{displayed.length}</span> of <span className="text-[#1f1f1f]">{filtered.length}</span> Labs
               </p>
               <div className="flex gap-6">
-                {["Higher Education", "High School"].map((l) => (
+                {["All", "Higher Education", "High School"].map((l) => (
                   <button key={l} onClick={() => setActiveLevel(l)}
                     className={`text-[11px] md:text-xs font-bold transition-all relative py-1 cursor-pointer ${
                       activeLevel === l ? 'text-[#0b57d0] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:rounded-t-full after:bg-[#0b57d0]' : 'text-[#444746] hover:text-[#1f1f1f]'
                     }`}>
-                    {l}
+                    {l === "All" ? "All Levels" : l}
                   </button>
                 ))}
               </div>

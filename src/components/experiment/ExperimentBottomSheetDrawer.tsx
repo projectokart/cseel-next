@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, ChevronUp, ChevronDown, FlaskConical } from 'lucide-react';
+import { X, ChevronUp, ChevronDown, FlaskConical, ExternalLink } from 'lucide-react';
 import ExperimentTemplateView, {
   buildExperimentTemplateData,
   ExperimentTemplateData,
@@ -217,6 +217,18 @@ export default function ExperimentBottomSheetDrawer({
               className="flex items-center gap-2 shrink-0"
               onPointerDown={(e) => e.stopPropagation()}
             >
+              <a
+                href={activeExp.slug ? `/experiments/${activeExp.slug}` : (activeExp.id ? `/experiments/${activeExp.id}` : '#')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-8 px-2.5 rounded-full border border-[#747775]/40 hover:border-[#0b57d0] bg-white hover:bg-[#0b57d0]/[0.08] text-[#0b57d0] text-xs font-semibold inline-flex items-center gap-1.5 transition-all shadow-xs"
+                title="Open dedicated experiment profile page in new tab"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">Visit Page</span>
+              </a>
+
               <M3Button
                 variant="tonal"
                 size="sm"

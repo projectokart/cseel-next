@@ -605,25 +605,35 @@ export default function SchoolProfileView({
     ? `${displayClassFrom} to ${displayClassTo}`
     : (displayClassFrom || displayClassTo || '—');
 
-  const mgmtVal = isLiveTemplate ? (templateData?.management || management || '') : (management || '');
-  const isGovt = mgmtVal.toLowerCase().includes('govt') ||
-                 mgmtVal.toLowerCase().includes('department') ||
-                 mgmtVal.toLowerCase().includes('aided') ||
-                 mgmtVal.toLowerCase().includes('kendriya');
+  const rawMgmt = isLiveTemplate ? (templateData?.management || management || '') : (management || '');
+  const mgmtVal = typeof rawMgmt === 'string'
+    ? rawMgmt
+    : (rawMgmt && typeof rawMgmt === 'object'
+        ? ((rawMgmt as any).management_type || (rawMgmt as any).name || (rawMgmt as any).title || (rawMgmt as any).society_trust_name || '')
+        : String(rawMgmt || ''));
+  const lowerMgmt = mgmtVal.toLowerCase();
+  const isGovt = lowerMgmt.includes('govt') ||
+                 lowerMgmt.includes('department') ||
+                 lowerMgmt.includes('aided') ||
+                 lowerMgmt.includes('kendriya');
 
-  const displayManagementLabel = isLiveTemplate
-    ? (templateData?.management || (isGovt ? 'Dept. of School Education, Govt.' : (management || 'Private Unaided (Recognized)')))
-    : (management || (isGovt ? 'Dept. of School Education, Govt.' : 'Private Unaided (Recognized)'));
+  const displayManagementLabel = typeof templateData?.management === 'string' && templateData.management
+    ? templateData.management
+    : (typeof management === 'string' && management
+        ? management
+        : (isGovt ? 'Dept. of School Education, Govt.' : 'Private Unaided (Recognized)'));
 
   const rawBoardStr = isLiveTemplate ? (templateData?.board || displayBoard) : (board || displayBoard);
-  const boardsList = rawBoardStr
-    ? rawBoardStr.split(/[,/|•]+/).map((b: string) => cleanBoardName(b.trim())).filter(Boolean)
+  const boardStr = typeof rawBoardStr === 'string' ? rawBoardStr : (typeof displayBoard === 'string' ? displayBoard : 'CBSE');
+  const boardsList = boardStr
+    ? boardStr.split(/[,/|•]+/).map((b: string) => cleanBoardName(b.trim())).filter(Boolean)
     : [displayBoard];
 
   const rawMediumStr = isLiveTemplate ? (templateData?.medium || medium) : medium;
-  const mediumsList = rawMediumStr
-    ? rawMediumStr.split(/[,/|•]+/).map((m: string) => m.trim()).filter(Boolean)
-    : (medium ? [medium] : ['English', 'Hindi']);
+  const mediumStr = typeof rawMediumStr === 'string' ? rawMediumStr : (typeof medium === 'string' ? medium : '');
+  const mediumsList = mediumStr
+    ? mediumStr.split(/[,/|•]+/).map((m: string) => m.trim()).filter(Boolean)
+    : (medium ? [String(medium)] : ['English', 'Hindi']);
   const displayMedium = mediumsList.join(', ');
 
   // Authentic Facilities List (Zero fake entries)

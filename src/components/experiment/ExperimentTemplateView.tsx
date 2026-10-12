@@ -367,10 +367,16 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
   if (Array.isArray(raw.materials)) {
     rawMaterialsList = raw.materials.map((m: any) => (typeof m === 'string' ? m : m.name || 'Lab Apparatus'));
   } else if (typeof raw.materials === 'string' && raw.materials.trim()) {
-    rawMaterialsList = raw.materials
-      .split(/\r?\n|,/)
-      .map((s: string) => s.trim())
-      .filter(Boolean);
+    try {
+      const parsed = JSON.parse(raw.materials);
+      if (Array.isArray(parsed)) {
+        rawMaterialsList = parsed.map((m: any) => typeof m === 'string' ? m : m.name || 'Lab Apparatus');
+      } else {
+        rawMaterialsList = raw.materials.split(/\r?\n|,/).map((s: string) => s.trim()).filter(Boolean);
+      }
+    } catch {
+      rawMaterialsList = raw.materials.split(/\r?\n|,/).map((s: string) => s.trim()).filter(Boolean);
+    }
   } else if (Array.isArray(raw.sections)) {
     const matSec = raw.sections.find((s: any) => s.type === 'materials');
     if (matSec && Array.isArray(matSec.rows)) {
@@ -417,11 +423,19 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
   let rawStepsList: string[] = [];
   if (Array.isArray(raw.steps)) {
     rawStepsList = raw.steps.map((s: any) => (typeof s === 'string' ? s : s.instruction || s.text || ''));
+  } else if (Array.isArray(raw.procedure)) {
+    rawStepsList = raw.procedure.map((s: any) => (typeof s === 'string' ? s : s.instruction || s.text || ''));
   } else if (typeof raw.procedure === 'string' && raw.procedure.trim()) {
-    rawStepsList = raw.procedure
-      .split(/\r?\n/)
-      .map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim())
-      .filter(Boolean);
+    try {
+      const parsed = JSON.parse(raw.procedure);
+      if (Array.isArray(parsed)) {
+        rawStepsList = parsed.map((s: any) => (typeof s === 'string' ? s : s.instruction || s.text || ''));
+      } else {
+        rawStepsList = raw.procedure.split(/\r?\n/).map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
+      }
+    } catch {
+      rawStepsList = raw.procedure.split(/\r?\n/).map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
+    }
   } else if (Array.isArray(raw.sections)) {
     const procSec = raw.sections.find((s: any) => s.type === 'procedure');
     if (procSec && Array.isArray(procSec.steps)) {
@@ -452,11 +466,19 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
 
   // Safety list
   let safetyList: string[] = [];
-  if (typeof raw.precautions === 'string' && raw.precautions.trim()) {
-    safetyList = raw.precautions
-      .split(/\r?\n/)
-      .map((s: string) => s.trim())
-      .filter(Boolean);
+  if (Array.isArray(raw.precautions)) {
+    safetyList = raw.precautions.map((s: any) => (typeof s === 'string' ? s : s.text || ''));
+  } else if (typeof raw.precautions === 'string' && raw.precautions.trim()) {
+    try {
+      const parsed = JSON.parse(raw.precautions);
+      if (Array.isArray(parsed)) {
+        safetyList = parsed.map((s: any) => (typeof s === 'string' ? s : s.text || ''));
+      } else {
+        safetyList = raw.precautions.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean);
+      }
+    } catch {
+      safetyList = raw.precautions.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean);
+    }
   } else if (raw.safetyLevel) {
     safetyList = [
       `${raw.safetyLevel} — follow all standard laboratory safety guidelines.`,

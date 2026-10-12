@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import {
   MapPin, Filter, ChevronRight, ChevronLeft, ChevronDown, Search, CheckCircle2,
-  Compass, Star, Scale, ArrowLeftRight, Languages, Heart, Share2, X, Check, Building2, Users, Award, Sparkles,
+  Compass, Star, Scale, ArrowLeftRight, Languages, Heart, Share2, X, Check, Building2, Users, Award, Layout,
   HelpCircle, Home, Map, Navigation, BookOpen, Briefcase, Shield, FileText, Building,
   Landmark, Castle, Hotel, Banknote, GraduationCap, FlaskConical, Monitor, Tv, Library,
   Wrench, Bot, Mic, Calculator, Glasses, Laptop, Trees, Gamepad2, Waves, Activity,
@@ -82,37 +82,30 @@ const HERO_IMAGES = [
 
 const POPULAR_CITIES = [
   { name: 'Delhi', query: 'Delhi', icon: 'https://img.icons8.com/color/48/india-gate.png' },
-  { name: 'East Delhi', query: 'East Delhi', icon: 'https://img.icons8.com/color/48/city-buildings.png' },
-  { name: 'Laxmi Nagar', query: 'Laxmi Nagar', icon: 'https://img.icons8.com/color/48/marker.png' },
-  { name: 'Mayur Vihar', query: 'Mayur Vihar', icon: 'https://img.icons8.com/color/48/skyscrapers.png' },
-  { name: 'Vasundhra Enclave', query: 'Vasundhra Enclave', icon: 'https://img.icons8.com/color/48/apartment.png' },
-  { name: 'Preet Vihar', query: 'Preet Vihar', icon: 'https://img.icons8.com/color/48/city.png' },
-  { name: 'Shakarpur', query: 'Shakarpur', icon: 'https://img.icons8.com/color/48/marker.png' },
-  { name: 'Patparganj', query: 'Patparganj', icon: 'https://img.icons8.com/color/48/company.png' },
-  { name: 'Geeta Colony', query: 'Geeta Colony', icon: 'https://img.icons8.com/color/48/marker.png' },
-  { name: 'Gandhi Nagar', query: 'Gandhi Nagar', icon: 'https://img.icons8.com/color/48/marker.png' },
-  { name: 'Shahdara', query: 'Shahdara', icon: 'https://img.icons8.com/color/48/train-station.png' },
-  { name: 'Krishna Nagar', query: 'Krishna Nagar', icon: 'https://img.icons8.com/color/48/marker.png' },
-  { name: 'Anand Vihar', query: 'Anand Vihar', icon: 'https://img.icons8.com/color/48/bus.png' },
-  { name: 'Nirman Vihar', query: 'Nirman Vihar', icon: 'https://img.icons8.com/color/48/city-buildings.png' },
+  { name: 'Gurugram', query: 'Gurugram', icon: 'https://img.icons8.com/color/48/skyscrapers.png' },
+  { name: 'Noida', query: 'Noida', icon: 'https://img.icons8.com/color/48/city-buildings.png' },
+  { name: 'Faridabad', query: 'Faridabad', icon: 'https://img.icons8.com/color/48/company.png' },
+  { name: 'Ghaziabad', query: 'Ghaziabad', icon: 'https://img.icons8.com/color/48/apartment.png' },
+  { name: 'Agra', query: 'Agra', icon: 'https://img.icons8.com/color/48/taj-mahal.png' },
+  { name: 'Meerut', query: 'Meerut', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Jaipur', query: 'Jaipur', icon: 'https://img.icons8.com/color/48/hawa-mahal.png' },
+  { name: 'Chandigarh', query: 'Chandigarh', icon: 'https://img.icons8.com/color/48/city.png' },
+  { name: 'Lucknow', query: 'Lucknow', icon: 'https://img.icons8.com/color/48/landmark.png' },
 ];
 
 const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
-  'Delhi': { lat: 28.6358, lng: 77.2773 },
-  'Delhi NCR': { lat: 28.6358, lng: 77.2773 },
-  'East Delhi': { lat: 28.6358, lng: 77.2873 },
-  'Laxmi Nagar': { lat: 28.6304, lng: 77.2777 },
-  'Mayur Vihar': { lat: 28.6090, lng: 77.2950 },
-  'Vasundhra Enclave': { lat: 28.6010, lng: 77.3185 },
-  'Preet Vihar': { lat: 28.6415, lng: 77.2954 },
-  'Shakarpur': { lat: 28.6280, lng: 77.2789 },
-  'Patparganj': { lat: 28.6227, lng: 77.3038 },
-  'Geeta Colony': { lat: 28.6538, lng: 77.2709 },
-  'Gandhi Nagar': { lat: 28.6606, lng: 77.2669 },
-  'Shahdara': { lat: 28.6734, lng: 77.2890 },
-  'Krishna Nagar': { lat: 28.6565, lng: 77.2830 },
-  'Anand Vihar': { lat: 28.6502, lng: 77.3027 },
-  'Nirman Vihar': { lat: 28.6373, lng: 77.2869 },
+  'Delhi': { lat: 28.6139, lng: 77.2090 },
+  'Delhi NCR': { lat: 28.6139, lng: 77.2090 },
+  'Gurugram': { lat: 28.4595, lng: 77.0266 },
+  'Gurgaon': { lat: 28.4595, lng: 77.0266 },
+  'Noida': { lat: 28.5355, lng: 77.3910 },
+  'Faridabad': { lat: 28.4089, lng: 77.3178 },
+  'Ghaziabad': { lat: 28.6692, lng: 77.4538 },
+  'Agra': { lat: 27.1767, lng: 78.0081 },
+  'Meerut': { lat: 28.9845, lng: 77.7064 },
+  'Jaipur': { lat: 26.9124, lng: 75.7873 },
+  'Chandigarh': { lat: 30.7333, lng: 76.7794 },
+  'Lucknow': { lat: 26.8467, lng: 80.9462 },
 };
 
 import { FACILITY_CATEGORIES } from './FacilityData';
@@ -658,7 +651,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     const normalizeQuery = (raw: string) => {
       const q = raw.toLowerCase().trim();
       if (q === 'delhi ncr' || q === 'new delhi' || q === 'ncr') return 'delhi';
-      if (q === 'east delhi') return 'east';
+      if (q === 'gurgaon') return 'gurugram';
       return q;
     };
 
@@ -685,7 +678,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         ...c,
         count,
       };
-    }).sort((a, b) => b.count - a.count);
+    });
   }, [allLoadedSchools]);
 
   const displayedSchools = useMemo(() => {
@@ -1004,6 +997,39 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     setSortBy('popularity_desc');
     handleFilterChange({ board: undefined, residential: undefined, facility: undefined, q: undefined });
   }, [handleFilterChange]);
+
+  const handleSelectCity = useCallback((city: { name: string; query?: string }) => {
+    setSelectedLocation(city.name);
+    setIsLocationDropdownOpen(false);
+    setIsMobileCityDropdownOpen(false);
+    const qStr = city.query || city.name;
+    setSearchTerm(qStr);
+    setSearchMode('text');
+    const coords = CITY_COORDINATES[city.name];
+    if (coords) {
+      setSearchCenter(coords);
+      setMapFocus({ lat: coords.lat, lng: coords.lng, zoom: 13, timestamp: Date.now() });
+    }
+    handleFilterChange({ q: qStr });
+  }, [handleFilterChange]);
+
+  const handleResetToAllCities = useCallback(() => {
+    setSelectedLocation(null);
+    setIsLocationDropdownOpen(false);
+    setIsMobileCityDropdownOpen(false);
+    setSearchTerm('');
+    setSearchMode('text');
+    const firstSchool = initialData.schools?.find((s) => (s.lat || s.latitude) && (s.lng || s.longitude));
+    if (firstSchool) {
+      const sLat = firstSchool.lat || firstSchool.latitude;
+      const sLng = firstSchool.lng || firstSchool.longitude;
+      setSearchCenter({ lat: sLat, lng: sLng });
+      setMapFocus({ lat: sLat, lng: sLng, zoom: 12, timestamp: Date.now() });
+    } else {
+      setSearchCenter({ lat: 28.1846, lng: 77.4105 });
+    }
+    handleFilterChange({ q: undefined, search: undefined, city: undefined, district: undefined });
+  }, [handleFilterChange, initialData.schools]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -2037,7 +2063,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         <button
           type="button"
           onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-          className={`flex items-center justify-between gap-1.5 px-3 py-1.5 transition-all duration-200 group rounded-full hover:bg-[#1f1f1f]/[0.06] active:scale-[0.98] cursor-pointer ${isCompact ? 'text-xs w-[125px] sm:w-[140px]' : 'text-sm w-[135px] sm:w-[165px]'}`}
+          className={`flex items-center justify-between gap-1 px-2.5 py-1.5 transition-all duration-200 group rounded-full hover:bg-[#1f1f1f]/[0.06] active:scale-[0.98] cursor-pointer ${isCompact ? 'text-xs w-[120px] sm:w-[135px]' : 'text-sm w-[135px] sm:w-[165px]'}`}
         >
           <div className="flex items-center gap-1.5 overflow-hidden">
             <div className="p-1 rounded-full bg-[#e8f0fe] text-[#0b57d0] group-hover:scale-105 transition-transform shrink-0">
@@ -2054,13 +2080,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         {isLocationDropdownOpen && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
-            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[360px] md:w-[410px] max-w-[calc(100vw-2rem)] bg-[#f8fafd] rounded-[16px] shadow-[0_4px_16px_rgba(60,64,67,0.24)] border border-[#c4c7c5] z-50 overflow-hidden text-left">
+            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[340px] max-w-[calc(100vw-2rem)] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-[#c4c7c5] z-50 overflow-hidden text-left">
               <div className="p-2.5 border-b border-[#c4c7c5]/60 bg-white flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#444746] uppercase tracking-wider">Database Cities &amp; Areas</span>
+                <span className="text-[11px] font-bold text-[#444746] uppercase tracking-wider">Popular Cities</span>
                 {selectedLocation && (
                   <button
                     type="button"
-                    onClick={() => { setSelectedLocation(null); setIsLocationDropdownOpen(false); setSearchTerm(''); }}
+                    onClick={handleResetToAllCities}
                     className="text-[11px] text-[#0b57d0] hover:underline font-semibold cursor-pointer"
                   >
                     Clear Location
@@ -2072,17 +2098,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   <button
                     key={city.name}
                     type="button"
-                    onClick={() => {
-                      setSelectedLocation(city.name);
-                      setIsLocationDropdownOpen(false);
-                      setSearchTerm(city.query || city.name);
-                      setSearchMode('text');
-                      const coords = CITY_COORDINATES[city.name];
-                      if (coords) {
-                        setSearchCenter(coords);
-                        setMapFocus({ lat: coords.lat, lng: coords.lng, zoom: 13, timestamp: Date.now() });
-                      }
-                    }}
+                    onClick={() => handleSelectCity(city)}
                     className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-full text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
                       selectedLocation === city.name
                         ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
@@ -2106,13 +2122,19 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   </button>
                 ))}
               </div>
-              <div className="p-2 border-t border-[#c4c7c5]/60 bg-white">
+              <div className="p-2 border-t border-[#c4c7c5]/60 bg-slate-50">
                 <button
                   type="button"
-                  onClick={() => { setSelectedLocation(null); setIsLocationDropdownOpen(false); setSearchTerm(''); }}
-                  className="w-full text-left px-3 py-1.5 text-xs text-[#444746] hover:bg-[#1f1f1f]/[0.08] rounded-full transition-colors cursor-pointer font-medium"
+                  onClick={handleResetToAllCities}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] active:bg-[#0b57d0]/[0.16] rounded-full transition-colors cursor-pointer"
                 >
-                  Show All Cities ({allLoadedSchools.length} Schools)
+                  <div className="flex items-center gap-1.5">
+                    <Globe size={14} className="text-[#0b57d0] shrink-0" />
+                    <span>View All Cities (All Schools)</span>
+                  </div>
+                  <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-2 py-0.5 rounded-full">
+                    {allLoadedSchools.length} Schools
+                  </span>
                 </button>
               </div>
             </div>
@@ -2157,12 +2179,11 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           <button
             type="button"
             onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
-            className={`${isCompact ? 'h-8 px-3' : 'h-9 px-4'} rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 shrink-0 transition-all duration-200 shadow-xs cursor-pointer active:scale-[0.98]`}
+            className={`${isCompact ? 'w-8 h-8' : 'w-9 h-9'} rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white flex items-center justify-center shrink-0 transition-all duration-200 shadow-xs cursor-pointer active:scale-[0.98]`}
             title="Search schools"
             aria-label="Search schools"
           >
-            <Search size={isCompact ? 13 : 14} />
-            <span className="hidden sm:inline">Search</span>
+            <Search size={isCompact ? 14 : 15} />
           </button>
 
           <button
@@ -2177,7 +2198,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             aria-label="Search schools near your location"
           >
             <Navigation size={isCompact ? 12 : 13} />
-            <span className="hidden md:inline">Near Me</span>
+            <span className={isCompact ? "hidden lg:inline" : "hidden sm:inline"}>Near Me</span>
           </button>
         </div>
       </div>
@@ -2330,7 +2351,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           {/* Hero Content Overlay */}
           <div className="relative z-10 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cyan-300 text-xs font-bold tracking-wide uppercase mb-3 shadow-xs">
-              <Sparkles size={12} className="text-amber-300" />
+              <Award size={12} className="text-cyan-300" />
               <span>India&apos;s Experiential School Directory</span>
             </div>
 
@@ -2555,7 +2576,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors relative group cursor-pointer"
                     title="Facilities Filter (Click to Expand)"
                   >
-                    <Sparkles size={16} />
+                    <FlaskConical size={16} />
                     <ChevronRight size={12} className="absolute -right-1 text-gray-400 group-hover:text-blue-600" />
                   </button>
                 </div>
@@ -2618,10 +2639,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           
           {/* Active Status & View Switcher Bar (Hidden when Map is in Fullscreen Expand Mode) */}
           {!(isMapFullscreen && viewMode === 'map') && (
-            <div className={`transition-all ${
+            <div className={`relative z-30 transition-all ${
               viewMode === 'map'
-                ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/90 p-1.5 md:relative md:top-auto md:inset-x-auto md:z-auto md:bg-white md:rounded-t-none md:rounded-b-xl md:border-gray-200 md:shadow-xs md:p-2.5 flex flex-col gap-1.5'
-                : 'bg-white p-2 sm:p-2.5 rounded-t-none rounded-b-xl border border-gray-200 shadow-xs flex flex-col gap-1.5'
+                ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/90 p-1.5 md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white md:rounded-t-none md:rounded-b-xl md:border-gray-200 md:shadow-xs md:p-2.5 flex flex-col gap-1.5'
+                : 'bg-white p-2 sm:p-2.5 rounded-t-none rounded-b-xl border border-gray-200 shadow-xs flex flex-col gap-1.5 relative z-30'
             }`}>
               {/* ─── MOBILE VIEW (< 768px): Maximum Space Search Input with City Icon, Filter & Menu Icons ─── */}
               <div className="md:hidden flex flex-col gap-1 w-full">
@@ -2692,15 +2713,11 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                         />
                         <div className="absolute top-full left-0 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in duration-150">
                           <div className="p-2.5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Database Cities &amp; Areas</span>
+                            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Popular Cities</span>
                             {selectedLocation && (
                               <button
                                 type="button"
-                                onClick={() => {
-                                  setSelectedLocation(null);
-                                  setIsMobileCityDropdownOpen(false);
-                                  setSearchTerm('');
-                                }}
+                                onClick={handleResetToAllCities}
                                 className="text-[11px] text-blue-600 font-bold hover:underline cursor-pointer"
                               >
                                 Clear City
@@ -2712,17 +2729,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                               <button
                                 key={city.name}
                                 type="button"
-                                onClick={() => {
-                                  setSelectedLocation(city.name);
-                                  setIsMobileCityDropdownOpen(false);
-                                  setSearchTerm(city.query || city.name);
-                                  setSearchMode('text');
-                                  const coords = CITY_COORDINATES[city.name];
-                                  if (coords) {
-                                    setSearchCenter(coords);
-                                    setMapFocus({ lat: coords.lat, lng: coords.lng, zoom: 13, timestamp: Date.now() });
-                                  }
-                                }}
+                                onClick={() => handleSelectCity(city)}
                                 className={`flex items-center justify-between gap-1.5 p-1.5 rounded-xl text-xs text-left transition cursor-pointer ${
                                   selectedLocation === city.name
                                     ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
@@ -2745,6 +2752,21 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                                 )}
                               </button>
                             ))}
+                          </div>
+                          <div className="p-2 border-t border-gray-100 bg-gray-50">
+                            <button
+                              type="button"
+                              onClick={handleResetToAllCities}
+                              className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] rounded-xl transition-colors cursor-pointer"
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <Globe size={13} className="text-[#0b57d0] shrink-0" />
+                                <span>View All Cities</span>
+                              </div>
+                              <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-1.5 py-0.5 rounded-full">
+                                {allLoadedSchools.length} Schools
+                              </span>
+                            </button>
                           </div>
                         </div>
                       </>
@@ -2903,7 +2925,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                               }}
                               className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[11.5px] font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
                             >
-                              <Sparkles size={14} className="text-amber-500 shrink-0" />
+                              <Layout size={14} className="text-gray-500 shrink-0" />
                               <span>{isHeroMinimized ? 'Show Banner' : 'Hide Banner'}</span>
                             </button>
                           </div>
@@ -2929,163 +2951,144 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 )}
               </div>
 
-              {/* ─── DESKTOP VIEW (>= 768px): Full Row with Switchers & Search Bar ─── */}
-              <div className="hidden md:flex flex-wrap lg:flex-nowrap items-center justify-between gap-2">
-                
-                {/* Left Side: Results count & View Mode Switcher */}
-                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                  {/* Result count */}
-                  <h2 className="text-xs sm:text-[13px] font-bold text-gray-800 whitespace-nowrap mr-0.5">
-                    {Math.min(displayedSchools.length, 25)} / {totalSchoolsCount} Schools
-                  </h2>
-                  
-                  {/* View Mode Switcher (Pure Iconic Form with Rich Hover Tooltips) */}
-                  <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
-                    {/* Standard Grid / 2 Cards per row */}
-                    <div className="relative group/view">
-                      <button
-                        type="button"
-                        onClick={() => handleViewModeChange('grid')}
-                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
-                          viewMode === 'grid'
-                            ? 'bg-white text-blue-600 shadow-2xs font-bold'
-                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                        }`}
-                        aria-label="2 Columns Card Grid"
-                        title="2 Columns Grid"
-                      >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                          <rect x="1" y="2" width="6" height="12" rx="1.5" />
-                          <rect x="9" y="2" width="6" height="12" rx="1.5" />
-                        </svg>
-                      </button>
-                    </div>
+              {/* ─── DESKTOP VIEW (>= 768px): Fully Responsive Layout (Zero Overlap on any screen width) ─── */}
+              <div className="hidden md:flex flex-col xl:flex-row xl:items-center justify-between gap-2.5 w-full min-w-0">
+                {/* Left/Top Group: Results count & View Mode Switcher + Banner Toggle */}
+                <div className="flex items-center justify-between xl:justify-start gap-2.5 shrink-0 flex-wrap">
+                  <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+                    {/* Result count */}
+                    <h2 className="text-xs sm:text-[13px] font-bold text-gray-800 whitespace-nowrap mr-0.5">
+                      {Math.min(displayedSchools.length, 25)} / {totalSchoolsCount} Schools
+                    </h2>
+                    
+                    {/* View Mode Switcher (Pure Iconic Form with Rich Hover Tooltips) */}
+                    <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
+                      {/* Standard Grid / 2 Cards per row */}
+                      <div className="relative group/view">
+                        <button
+                          type="button"
+                          onClick={() => handleViewModeChange('grid')}
+                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                            viewMode === 'grid'
+                              ? 'bg-white text-blue-600 shadow-2xs font-bold'
+                              : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                          }`}
+                          aria-label="2 Columns Card Grid"
+                          title="2 Columns Grid"
+                        >
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                            <rect x="1" y="2" width="6" height="12" rx="1.5" />
+                            <rect x="9" y="2" width="6" height="12" rx="1.5" />
+                          </svg>
+                        </button>
+                      </div>
 
-                    {/* 3 Columns Grid (Wide view) */}
-                    <div className="relative group/view">
-                      <button
-                        type="button"
-                        onClick={() => handleViewModeChange('grid3')}
-                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
-                          viewMode === 'grid3'
-                            ? 'bg-white text-blue-600 shadow-2xs font-bold'
-                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                        }`}
-                        aria-label="3 Columns Card Grid"
-                        title="3 Columns Grid"
-                      >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                          <rect x="1" y="2" width="3.8" height="12" rx="1" />
-                          <rect x="6.1" y="2" width="3.8" height="12" rx="1" />
-                          <rect x="11.2" y="2" width="3.8" height="12" rx="1" />
-                        </svg>
-                      </button>
-                    </div>
+                      {/* 3 Columns Grid (Wide view) */}
+                      <div className="relative group/view">
+                        <button
+                          type="button"
+                          onClick={() => handleViewModeChange('grid3')}
+                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                            viewMode === 'grid3'
+                              ? 'bg-white text-blue-600 shadow-2xs font-bold'
+                              : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                          }`}
+                          aria-label="3 Columns Card Grid"
+                          title="3 Columns Grid"
+                        >
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                            <rect x="1" y="2" width="3.8" height="12" rx="1" />
+                            <rect x="6.1" y="2" width="3.8" height="12" rx="1" />
+                            <rect x="11.2" y="2" width="3.8" height="12" rx="1" />
+                          </svg>
+                        </button>
+                      </div>
 
-                    {/* Compact List */}
-                    <div className="relative group/view">
-                      <button
-                        type="button"
-                        onClick={() => handleViewModeChange('compact')}
-                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
-                          viewMode === 'compact'
-                            ? 'bg-white text-blue-600 shadow-2xs font-bold'
-                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                        }`}
-                        aria-label="Compact List Row View"
-                        title="Compact List"
-                      >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                          <rect x="1" y="2" width="14" height="3" rx="1" />
-                          <rect x="1" y="6.5" width="14" height="3" rx="1" />
-                          <rect x="1" y="11" width="14" height="3" rx="1" />
-                        </svg>
-                      </button>
-                    </div>
+                      {/* Compact List */}
+                      <div className="relative group/view">
+                        <button
+                          type="button"
+                          onClick={() => handleViewModeChange('compact')}
+                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                            viewMode === 'compact'
+                              ? 'bg-white text-blue-600 shadow-2xs font-bold'
+                              : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                          }`}
+                          aria-label="Compact List Row View"
+                          title="Compact List"
+                        >
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                            <rect x="1" y="2" width="14" height="3" rx="1" />
+                            <rect x="1" y="6.5" width="14" height="3" rx="1" />
+                            <rect x="1" y="11" width="14" height="3" rx="1" />
+                          </svg>
+                        </button>
+                      </div>
 
-                    {/* Integrated Map View Toggle */}
-                    <div className="relative group/view">
-                      <button
-                        type="button"
-                        onClick={() => handleViewModeChange('map')}
-                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
-                          viewMode === 'map'
-                            ? 'bg-[#1A73E8] text-white shadow-2xs font-bold'
-                            : 'text-blue-700 hover:bg-blue-100/60'
-                        }`}
-                        aria-label="Interactive Map View"
-                      >
-                        <Map size={14} />
-                      </button>
-                    </div>
+                      {/* Integrated Map View Toggle */}
+                      <div className="relative group/view">
+                        <button
+                          type="button"
+                          onClick={() => handleViewModeChange('map')}
+                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                            viewMode === 'map'
+                              ? 'bg-[#1A73E8] text-white shadow-2xs font-bold'
+                              : 'text-blue-700 hover:bg-blue-100/60'
+                          }`}
+                          aria-label="Interactive Map View"
+                        >
+                          <Map size={14} />
+                        </button>
+                      </div>
 
-                    {/* Divider */}
-                    <div className="w-[1px] h-4 bg-gray-300 mx-0.5" />
+                      {/* Divider */}
+                      <div className="w-[1px] h-4 bg-gray-300 mx-0.5" />
 
-                    {/* Fullscreen Expand / Restore Toggle (Hides Top Navigation Bar) */}
-                    <div className="relative group/view">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const next = !isFullscreen;
-                          setIsFullscreen(next);
-                          if (viewMode === 'map') {
-                            setIsMapFullscreen(next);
-                          }
-                        }}
-                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
-                          isFullscreen
-                            ? 'bg-blue-600 text-white shadow-2xs font-bold'
-                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                        }`}
-                        aria-label={isFullscreen ? 'Exit Fullscreen' : 'Expand Fullscreen'}
-                        title={isFullscreen ? 'Restore Top Bar' : 'Expand Fullscreen (Hide Navigation)'}
-                      >
-                        {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                      </button>
+                      {/* Fullscreen Expand / Restore Toggle (Hides Top Navigation Bar) */}
+                      <div className="relative group/view">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = !isFullscreen;
+                            setIsFullscreen(next);
+                            if (viewMode === 'map') {
+                              setIsMapFullscreen(next);
+                            }
+                          }}
+                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                            isFullscreen
+                              ? 'bg-blue-600 text-white shadow-2xs font-bold'
+                              : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                          }`}
+                          aria-label={isFullscreen ? 'Exit Fullscreen' : 'Expand Fullscreen'}
+                          title={isFullscreen ? 'Restore Top Bar' : 'Expand Fullscreen (Hide Navigation)'}
+                        >
+                          {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Right Side: Search Bar + Expand Hero Button (When Hero is Minimized) in Single Row */}
-                <div className="flex items-center gap-1.5 shrink-0 justify-end flex-1 min-w-0 max-w-full">
-                  {isHeroMinimized && (
-                    <div className="flex-1 min-w-[280px] max-w-[540px]">
-                      {renderSearchBar(true)}
-                    </div>
-                  )}
-
-                  {/* Fullscreen Expand / Restore Button (Hides Top Navigation Bar) */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const next = !isFullscreen;
-                      setIsFullscreen(next);
-                      if (viewMode === 'map') setIsMapFullscreen(next);
-                    }}
-                    className={`w-8 h-8 rounded-xl border flex items-center justify-center transition cursor-pointer shadow-2xs shrink-0 ${
-                      isFullscreen
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                        : 'bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700'
-                    }`}
-                    title={isFullscreen ? 'Restore Top Navigation Bar' : 'Expand Fullscreen (Hide Top Bar & Maximize Cards)'}
-                  >
-                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                  </button>
 
                   {/* Show Hero Carousel Banner Button */}
                   {isHeroMinimized && (
                     <button
                       type="button"
                       onClick={() => setIsHeroMinimized(false)}
-                      className="h-8 px-3 rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 flex items-center gap-1 transition cursor-pointer text-xs font-semibold shrink-0"
+                      className="h-7.5 px-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 flex items-center gap-1.5 transition cursor-pointer text-xs font-semibold shrink-0 shadow-2xs"
                       title="Show Hero Banner Carousel"
                     >
-                      <Sparkles size={12} className="text-amber-500" />
-                      <span className="hidden xl:inline text-[11px]">Banner</span>
+                      <Layout size={13} className="text-gray-600" />
+                      <span className="text-[11px]">Banner</span>
                     </button>
                   )}
                 </div>
+
+                {/* Right/Bottom Section: Search Bar (When Hero is Minimized) */}
+                {isHeroMinimized && (
+                  <div className="flex-1 w-full xl:max-w-xl 2xl:max-w-2xl min-w-0">
+                    {renderSearchBar(true)}
+                  </div>
+                )}
               </div>
 
 

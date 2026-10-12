@@ -12,10 +12,30 @@ import {
 } from '@/integrations/supabase/schoolSearchClient';
 import { SCHOOLS_DATA, SchoolRecord } from '@/data/schoolFinderData';
 import SchoolProfileView from './SchoolProfileView';
-import { SchoolTemplateProvider, PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
+import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
+import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/templateConstants';
 import { redirect } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
+
+
+function isValidSchoolImage(img: any): boolean {
+  if (typeof img !== 'string' || !img.trim()) return false;
+  const lower = img.toLowerCase();
+  return (
+    !lower.includes('hero-school-') &&
+    !lower.includes('edunova-hero') &&
+    !lower.includes('default-school-campus') &&
+    !lower.includes('unsplash.com') &&
+    !lower.includes('placeholder')
+  );
+}
+
+function resolveHeroImage(syncedHero: any, dbImage: any): string {
+  if (isValidSchoolImage(syncedHero)) return syncedHero;
+  if (isValidSchoolImage(dbImage)) return dbImage;
+  return PLACEHOLDER_EMPTY_IMAGE;
+}
 
 // Zero caching: Refreshing or reopening browser fetches live from Supabase
 export const dynamic = 'force-dynamic';
@@ -603,7 +623,12 @@ export default async function SchoolPage({ params }: PageProps) {
   const displayBlock = syncedProfileData?.contact?.campusLocation?.block || schoolData?.block_name || rawVillage || '';
   const displayVillage = syncedProfileData?.contact?.campusLocation?.village || syncedProfileData?.village || schoolData?.village_name || rawVillage;
   const pincode = cleanCodePrefix(syncedProfileData?.contact?.campusLocation?.pincode || syncedProfileData?.pincode || schoolData?.pincode);
-  const management = syncedProfileData?.management || cleanManagementDesc(schoolData?.management_desc) || '';
+  const rawMgmtInit = syncedProfileData?.management || cleanManagementDesc(schoolData?.management_desc) || '';
+  const management = typeof rawMgmtInit === 'string'
+    ? rawMgmtInit
+    : (rawMgmtInit && typeof rawMgmtInit === 'object'
+        ? ((rawMgmtInit as any).management_type || (rawMgmtInit as any).name || (rawMgmtInit as any).title || (rawMgmtInit as any).society_trust_name || '')
+        : String(rawMgmtInit || ''));
   const board = syncedProfileData?.schoolIdentity?.board || syncedProfileData?.board || cleanBoardName(schoolData?.board_12th) || cleanBoardName(schoolData?.board_10th) || '';
   const medium = syncedProfileData?.schoolIdentity?.mediumOfInstruction || cleanMediumName(schoolData?.primary_medium) || '';
   const establishedYear = cleanCodePrefix(syncedProfileData?.schoolIdentity?.establishedYear || syncedProfileData?.establishedYear || schoolData?.established_year) || '';
@@ -870,9 +895,7 @@ export default async function SchoolPage({ params }: PageProps) {
           phone: rawPhone,
           email: rawEmail,
           website: website,
-          heroImage: (syncedProfileData?.heroImage && !syncedProfileData.heroImage.includes('hero-school-') && !syncedProfileData.heroImage.includes('edunova-hero') && !syncedProfileData.heroImage.includes('default-school-campus') && !syncedProfileData.heroImage.includes('unsplash.com'))
-            ? syncedProfileData.heroImage
-            : ((schoolData?.image_url && !schoolData.image_url.includes('default-school-campus') && !schoolData.image_url.includes('hero-school-') && !schoolData.image_url.includes('unsplash.com')) ? schoolData.image_url : PLACEHOLDER_EMPTY_IMAGE),
+          heroImage: resolveHeroImage(syncedProfileData?.heroImage, schoolData?.image_url),
           logoImage: syncedProfileData?.logoImage || syncedProfileData?.imageOverrides?.['school_logo'] || '',
           affiliationNumber: effectiveAffiliationNo,
           contentOverrides: syncedProfileData?.contentOverrides || {},
@@ -940,9 +963,7 @@ export default async function SchoolPage({ params }: PageProps) {
           rawEmail={rawEmail}
           website={website}
           rawAddress={rawAddress}
-          imageUrl={(syncedProfileData?.heroImage && !syncedProfileData.heroImage.includes('hero-school-') && !syncedProfileData.heroImage.includes('edunova-hero') && !syncedProfileData.heroImage.includes('default-school-campus') && !syncedProfileData.heroImage.includes('unsplash.com'))
-            ? syncedProfileData.heroImage
-            : ((schoolData?.image_url && !schoolData.image_url.includes('default-school-campus') && !schoolData.image_url.includes('hero-school-') && !schoolData.image_url.includes('unsplash.com')) ? schoolData.image_url : PLACEHOLDER_EMPTY_IMAGE)}
+          imageUrl={resolveHeroImage(syncedProfileData?.heroImage, schoolData?.image_url)}
           logoUrl={syncedProfileData?.logoImage || syncedProfileData?.imageOverrides?.['school_logo'] || ''}
           affiliationNumber={syncedProfileData?.schoolIdentity?.affiliationNumber || syncedProfileData?.affiliationNumber || schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
           lat={lat}
@@ -954,7 +975,7 @@ export default async function SchoolPage({ params }: PageProps) {
           residentialSchool={residentialSchool}
           flipbookSlides={(syncedProfileData?.flipbookSlides || []).map((slide: any) => ({
             ...slide,
-            image: (slide.image && !slide.image.includes('hero-school-') && !slide.image.includes('edunova-hero')) ? slide.image : PLACEHOLDER_EMPTY_IMAGE
+            image: isValidSchoolImage(slide?.image) ? slide.image : PLACEHOLDER_EMPTY_IMAGE
           }))}
         />
       </SchoolTemplateProvider>

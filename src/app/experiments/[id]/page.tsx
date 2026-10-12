@@ -12,6 +12,8 @@ import ExperimentTemplateView, {
   ExperimentTemplateData,
 } from '@/components/experiment/ExperimentTemplateView';
 
+import { supabase } from '@/integrations/supabase/client';
+
 export default function ExperimentDetailPage() {
   const params = useParams();
   const activityId = (params?.id as string) || '';
@@ -20,10 +22,27 @@ export default function ExperimentDetailPage() {
   const [overrideExp, setOverrideExp] = useState<any | null>(null);
 
   useEffect(() => {
-    if (activityId) {
-      const found = ExperimentsStorageService.getExperimentById(activityId);
-      if (found) setCustomExp(found);
+    if (!activityId) return;
+
+    const found = ExperimentsStorageService.getExperimentById(activityId);
+    if (found) setCustomExp(found);
+
+    async function fetchFromDb() {
+      try {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activityId);
+        const query = isUuid
+          ? (supabase.from('experiments') as any).select('*').or(`id.eq.${activityId},slug.eq.${activityId}`).maybeSingle()
+          : (supabase.from('experiments') as any).select('*').eq('slug', activityId).maybeSingle();
+
+        const { data, error } = await query;
+        if (!error && data) {
+          setOverrideExp(data);
+        }
+      } catch (err) {
+        // Fallbacks will handle
+      }
     }
+    fetchFromDb();
   }, [activityId]);
 
   const templateData: ExperimentTemplateData = useMemo(() => {

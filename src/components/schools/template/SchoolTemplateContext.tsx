@@ -187,7 +187,8 @@ export interface SchoolTemplateState {
   heroMediaItems?: any[];
 }
 
-export const PLACEHOLDER_EMPTY_IMAGE = '/images/default-school-placeholder.png?v=3';
+import { PLACEHOLDER_EMPTY_IMAGE } from './templateConstants';
+export { PLACEHOLDER_EMPTY_IMAGE };
 
 const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   admissionsOpen: false,

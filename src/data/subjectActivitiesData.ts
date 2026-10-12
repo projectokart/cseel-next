@@ -342,8 +342,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
-    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
+    "image": "/images/experiments/acid-base-titration-hcl-naoh.avif",
+    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "M(HCl) · V(HCl) = M(NaOH) · V(NaOH) => M(HCl) = (0.100 M × 19.60 mL) / 20.00 mL = 0.0980 M",
     "obsCols": [
@@ -701,8 +701,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Chemistry Lab"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
-    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
+    "image": "/images/experiments/redox-titration-kmno4-mohrs-salt.avif",
+    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "2 KMnO4 + 8 H2SO4 + 10 FeSO4(NH4)2SO4 -> K2SO4 + 2 MnSO4 + 5 Fe2(SO4)3 + 10 (NH4)2SO4 + 8 H2O",
     "obsCols": [
@@ -1052,8 +1052,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Practicals"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/qualitative-salt-analysis-cation-anion.avif",
+    "thumbnail_url": "/images/experiments/qualitative-salt-analysis-cation-anion.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "Pb(NO3)2 + 2 KI -> PbI2↓ (Golden Yellow Spangles) + 2 KNO3; BaCl2 + SO4²⁻ -> BaSO4↓ (White ppt)",
     "obsCols": [
@@ -1401,8 +1401,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Analytical Chemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/preparation-standard-oxalic-acid-solution.avif",
+    "thumbnail_url": "/images/experiments/preparation-standard-oxalic-acid-solution.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "Mass of Oxalic Acid required for 250 mL 0.1 M: w = (M · M_w · V) / 1000 = (0.100 × 126.06 × 250) / 1000 = 3.1515 g",
     "obsCols": [
@@ -1698,8 +1698,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Experiential Science"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/ph-determination-universal-indicator-solutions.avif",
+    "thumbnail_url": "/images/experiments/ph-determination-universal-indicator-solutions.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "pH = -log10[H⁺]; pOH = -log10[OH⁻]; pH + pOH = 14.00 (at 25°C)",
     "obsCols": [
@@ -2056,8 +2056,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.avif",
+    "thumbnail_url": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "Na2S2O3 + 2 HCl -> 2 NaCl + SO2↑ + S↓ (Colloidal Sulfur turbidity) + H2O; Rate ∝ 1/t",
     "obsCols": [
@@ -2417,8 +2417,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Organic Chemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/paper-chromatography-plant-pigments.avif",
+    "thumbnail_url": "/images/experiments/paper-chromatography-plant-pigments.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "Rf = (Distance traveled by pigment solute) / (Distance traveled by solvent front)",
     "obsCols": [
@@ -2749,8 +2749,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/preparation-colloidal-sol-tyndall-effect.avif",
+    "thumbnail_url": "/images/experiments/preparation-colloidal-sol-tyndall-effect.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "FeCl3 + 3 H2O (Boiling) -> Fe(OH)3 (Hydrated Ferric Hydroxide Sol - Positive Charge) + 3 HCl",
     "obsCols": [
@@ -3060,8 +3060,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Diagnostic Tests"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/organic-functional-group-tests.avif",
+    "thumbnail_url": "/images/experiments/organic-functional-group-tests.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "R-CHO + 2 [Ag(NH3)2]⁺ + 3 OH⁻ -> R-COO⁻ + 2 Ag↓ (Brilliant Silver Mirror) + 4 NH3 + 2 H2O",
     "obsCols": [
@@ -3405,8 +3405,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Thermodynamics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/enthalpy-of-neutralization-calorimetry.avif",
+    "thumbnail_url": "/images/experiments/enthalpy-of-neutralization-calorimetry.avif",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "ΔH_neut = - (m · c + W) · ΔT / n = - (200 g × 4.184 J/g°C + 40 J/°C) × 6.5 °C / 0.100 mol = -57.0 kJ/mol",
     "obsCols": [
@@ -3817,8 +3817,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/ohms-law-verification-resistance.jpg",
-    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.jpg",
+    "image": "/images/experiments/ohms-law-verification-resistance.avif",
+    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "R = V / I = 5.00 Ω (Constant slope of V-I graph)",
     "obsCols": [
@@ -4157,8 +4157,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Optics Lab"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/refractive-index-glass-prism.jpg",
-    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.jpg",
+    "image": "/images/experiments/refractive-index-glass-prism.avif",
+    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "μ = sin((A + Dm)/2) / sin(A/2) = sin((60° + 39.5°)/2) / sin(30°) = 1.524",
     "obsCols": [
@@ -4495,8 +4495,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Parallax"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
-    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
+    "image": "/images/experiments/focal-length-convex-lens-uv-method.avif",
+    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "1/f = 1/v - 1/u => f = (u · v) / (u + v) = 15.0 cm (Focal Length)",
     "obsCols": [
@@ -4852,8 +4852,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Current Electricity"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/meter-bridge-resistance-combination.jpg",
-    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.jpg",
+    "image": "/images/experiments/meter-bridge-resistance-combination.avif",
+    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "X = R · (100 - l) / l; Rs = R1 + R2 = 5.0 Ω (Series Verification)",
     "obsCols": [
@@ -5188,8 +5188,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
-    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
+    "image": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.avif",
+    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "g = 4 · π² · (L / T²) = 4 · (3.1416)² · (0.80 / 3.22) = 9.80 m/s²",
     "obsCols": [
@@ -5509,8 +5509,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/boyles-law-verification-ideal-gas.avif",
+    "thumbnail_url": "/images/experiments/boyles-law-verification-ideal-gas.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "P · V = k (Constant at room temperature T = 298 K)",
     "obsCols": [
@@ -5843,8 +5843,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Practical Lab"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.avif",
+    "thumbnail_url": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "Total Reading = MSR + (VSR × LC) - Zero Error; LC(Vernier)=0.01 cm, LC(Screw)=0.001 cm",
     "obsCols": [
@@ -6173,8 +6173,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/resonance-tube-velocity-of-sound.avif",
+    "thumbnail_url": "/images/experiments/resonance-tube-velocity-of-sound.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "v = 2 · f · (l2 - l1) = 2 · 512 Hz · (0.495 m - 0.160 m) = 343.04 m/s (at 20°C)",
     "obsCols": [
@@ -6524,8 +6524,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Null Method"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/internal-resistance-primary-cell-potentiometer.avif",
+    "thumbnail_url": "/images/experiments/internal-resistance-primary-cell-potentiometer.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "r = R · (l1 - l2) / l2 = 5.0 · (760.0 - 580.0) / 580.0 = 1.55 Ω",
     "obsCols": [
@@ -6862,8 +6862,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 12 Physics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/faradays-law-electromagnetic-induction-coil.avif",
+    "thumbnail_url": "/images/experiments/faradays-law-electromagnetic-induction-coil.avif",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "ε = -N · (dΦ / dt) (Induced EMF proportional to rate of magnetic flux change)",
     "obsCols": [
@@ -7226,8 +7226,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020 Experiential"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/onion-peel-cell-microscopy.jpg",
-    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.jpg",
+    "image": "/images/experiments/onion-peel-cell-microscopy.avif",
+    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Cell Dimension = Field of View Diameter / Cell Count = 1500 μm / 6 = 250 μm length",
     "obsCols": [
@@ -7557,8 +7557,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Chromosomes"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/mitosis-onion-root-tip-squash.avif",
+    "thumbnail_url": "/images/experiments/mitosis-onion-root-tip-squash.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Mitotic Index (%) = (Number of cells in mitosis / Total number of cells observed) × 100 = (38 / 250) × 100 = 15.2%",
     "obsCols": [
@@ -7869,8 +7869,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Hands-on Biology"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/osmosis-potato-osmoscope-demonstration.avif",
+    "thumbnail_url": "/images/experiments/osmosis-potato-osmoscope-demonstration.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Water Potential Gradient: Ψ_w(Hypotonic outer water = 0) > Ψ_w(Hypertonic cavity sucrose = -1.2 MPa) => Net Endo-osmosis",
     "obsCols": [
@@ -8191,8 +8191,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Biology"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/transpiration-rate-ganongs-potometer.avif",
+    "thumbnail_url": "/images/experiments/transpiration-rate-ganongs-potometer.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Transpiration Rate R = (π · r² · d) / t = (3.1416 × 0.5² mm² × 60 mm) / 10 min = 4.71 mm³/min",
     "obsCols": [
@@ -8530,8 +8530,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NCERT Practicals"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/carbon-dioxide-release-seed-respiration.avif",
+    "thumbnail_url": "/images/experiments/carbon-dioxide-release-seed-respiration.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "C6H12O6 + 6 O2 -> 6 CO2↑ + 6 H2O + 38 ATP; 2 KOH + CO2 -> K2CO3 + H2O (Vacuum creation)",
     "obsCols": [
@@ -8861,8 +8861,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Plant Metabolism"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/photosynthesis-starch-test-iodine.avif",
+    "thumbnail_url": "/images/experiments/photosynthesis-starch-test-iodine.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "6 CO2 + 12 H2O + Light -> C6H12O6 + 6 O2 + 6 H2O; Amylose + I2/KI -> Polyiodide Inclusion Complex (Blue-Black)",
     "obsCols": [
@@ -9181,8 +9181,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Genetics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/dna-isolation-plant-material.avif",
+    "thumbnail_url": "/images/experiments/dna-isolation-plant-material.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Yield of Genomic DNA = Spooled Mass / Tissue Fresh Weight = 1.25 mg DNA / 20.0 g Banana = 0.0625 mg DNA / g fresh tissue",
     "obsCols": [
@@ -9510,8 +9510,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Microscopic Anatomy"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/human-blood-smear-wbc-identification.avif",
+    "thumbnail_url": "/images/experiments/human-blood-smear-wbc-identification.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Differential Leukocyte Count (DLC %): Neutrophils 60-70%, Lymphocytes 20-30%, Monocytes 2-8%, Eosinophils 1-4%, Basophils 0.5-1%",
     "obsCols": [
@@ -9839,8 +9839,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Biochemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/salivary-amylase-starch-digestion.avif",
+    "thumbnail_url": "/images/experiments/salivary-amylase-starch-digestion.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Starch (Amylose/Amylopectin) + Salivary α-Amylase (Ptyalin) -> Maltose + Maltotriose + Dextrins; Achromic Point reached",
     "obsCols": [
@@ -10164,8 +10164,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Epidermal Cells"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/stomata-distribution-density-leaf-epidermis.avif",
+    "thumbnail_url": "/images/experiments/stomata-distribution-density-leaf-epidermis.avif",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Stomatal Index (I) = [S / (E + S)] × 100 = [28 / (112 + 28)] × 100 = 20.0%; Density = Stomata Count / Field Area",
     "obsCols": [
@@ -10470,8 +10470,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020 Hands-on"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
-    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "image": "/images/experiments/pythagoras-theorem-geometric-verification.avif",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
     "obsCols": [
@@ -10791,8 +10791,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Hands-on Math"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/area-of-circle-sector-partitioning.avif",
+    "thumbnail_url": "/images/experiments/area-of-circle-sector-partitioning.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Area of Circle = lim (n -> ∞) [n × Sector Area] = Base × Height = (π · r) × r = π · r² = 3.1416 × 7.0² = 153.94 cm²",
     "obsCols": [
@@ -11100,8 +11100,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "3D Geometry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/surface-area-volume-sphere-cone-cylinder.avif",
+    "thumbnail_url": "/images/experiments/surface-area-volume-sphere-cone-cylinder.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "V(Cone) : V(Sphere) : V(Cylinder) = (1/3 · πr²h) : (4/3 · πr³) : (πr²h) = 1 : 2 : 3 (for h = 2r)",
     "obsCols": [
@@ -11383,8 +11383,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Mathematics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/angle-subtended-by-arc-circle-theorem.avif",
+    "thumbnail_url": "/images/experiments/angle-subtended-by-arc-circle-theorem.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Central Angle = 2 × Inscribed Angle (∠AOB = 2 · ∠APB for any point P on alternating arc)",
     "obsCols": [
@@ -11667,8 +11667,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Hands-on Math"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/circle-tangents-external-point-construction.avif",
+    "thumbnail_url": "/images/experiments/circle-tangents-external-point-construction.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "PT1 = PT2 = √(OP² - r²) = √(13.0² - 5.0²) = √(169 - 25) = √144 = 12.0 cm (Tangents from external point are equal)",
     "obsCols": [
@@ -11980,8 +11980,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Syllabus"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/basic-proportionality-thales-theorem.avif",
+    "thumbnail_url": "/images/experiments/basic-proportionality-thales-theorem.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "AD / DB = AE / EC (If DE ∥ BC in ΔABC, then DE divides AB and AC in the same ratio)",
     "obsCols": [
@@ -12276,8 +12276,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Experiential Math"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/sum-of-natural-numbers-staircase-model.avif",
+    "thumbnail_url": "/images/experiments/sum-of-natural-numbers-staircase-model.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Sn = 1 + 2 + 3 + ... + n = n · (n + 1) / 2 = 10 · 11 / 2 = 55 (Area of Staircase Shape)",
     "obsCols": [
@@ -12631,8 +12631,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Experiential Learning"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/algebraic-identity-cube-of-binomial-3d.avif",
+    "thumbnail_url": "/images/experiments/algebraic-identity-cube-of-binomial-3d.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "(a + b)³ = a³ + 3a²b + 3ab² + b³ (Volume of Large Cube = Sum of Volumes of 8 Dissected Sub-Blocks)",
     "obsCols": [
@@ -12965,8 +12965,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Outdoor STEM"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/clinometer-trigonometric-height-estimation.avif",
+    "thumbnail_url": "/images/experiments/clinometer-trigonometric-height-estimation.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Height H = h_eye + d · tan(θ) = 1.50 m + 10.0 m × tan(38.0°) = 1.50 m + 10.0 m × 0.7813 = 1.50 m + 7.81 m = 9.31 meters",
     "obsCols": [
@@ -13278,8 +13278,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 11 Maths"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/galton-board-normal-distribution-binomial.avif",
+    "thumbnail_url": "/images/experiments/galton-board-normal-distribution-binomial.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "P(X = k) = (n choose k) · p^k · (1-p)^(n-k); lim (n -> ∞) Binomial(n, 0.5) = Normal Distribution N(μ = np, σ² = np(1-p))",
     "obsCols": [
@@ -13662,8 +13662,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020 Hands-on"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
-    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "image": "/images/experiments/pythagoras-theorem-geometric-verification.avif",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
     "obsCols": [
@@ -13983,8 +13983,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Hands-on Math"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/area-of-circle-sector-partitioning.avif",
+    "thumbnail_url": "/images/experiments/area-of-circle-sector-partitioning.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Area of Circle = lim (n -> ∞) [n × Sector Area] = Base × Height = (π · r) × r = π · r² = 3.1416 × 7.0² = 153.94 cm²",
     "obsCols": [
@@ -14292,8 +14292,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "3D Geometry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/surface-area-volume-sphere-cone-cylinder.avif",
+    "thumbnail_url": "/images/experiments/surface-area-volume-sphere-cone-cylinder.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "V(Cone) : V(Sphere) : V(Cylinder) = (1/3 · πr²h) : (4/3 · πr³) : (πr²h) = 1 : 2 : 3 (for h = 2r)",
     "obsCols": [
@@ -14575,8 +14575,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Mathematics"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/angle-subtended-by-arc-circle-theorem.avif",
+    "thumbnail_url": "/images/experiments/angle-subtended-by-arc-circle-theorem.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Central Angle = 2 × Inscribed Angle (∠AOB = 2 · ∠APB for any point P on alternating arc)",
     "obsCols": [
@@ -14859,8 +14859,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Hands-on Math"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/circle-tangents-external-point-construction.avif",
+    "thumbnail_url": "/images/experiments/circle-tangents-external-point-construction.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "PT1 = PT2 = √(OP² - r²) = √(13.0² - 5.0²) = √(169 - 25) = √144 = 12.0 cm (Tangents from external point are equal)",
     "obsCols": [
@@ -15172,8 +15172,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "CBSE Syllabus"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/basic-proportionality-thales-theorem.avif",
+    "thumbnail_url": "/images/experiments/basic-proportionality-thales-theorem.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "AD / DB = AE / EC (If DE ∥ BC in ΔABC, then DE divides AB and AC in the same ratio)",
     "obsCols": [
@@ -15468,8 +15468,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Experiential Math"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/sum-of-natural-numbers-staircase-model.avif",
+    "thumbnail_url": "/images/experiments/sum-of-natural-numbers-staircase-model.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Sn = 1 + 2 + 3 + ... + n = n · (n + 1) / 2 = 10 · 11 / 2 = 55 (Area of Staircase Shape)",
     "obsCols": [
@@ -15823,8 +15823,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Experiential Learning"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/algebraic-identity-cube-of-binomial-3d.avif",
+    "thumbnail_url": "/images/experiments/algebraic-identity-cube-of-binomial-3d.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "(a + b)³ = a³ + 3a²b + 3ab² + b³ (Volume of Large Cube = Sum of Volumes of 8 Dissected Sub-Blocks)",
     "obsCols": [
@@ -16157,8 +16157,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Outdoor STEM"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/clinometer-trigonometric-height-estimation.avif",
+    "thumbnail_url": "/images/experiments/clinometer-trigonometric-height-estimation.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "Height H = h_eye + d · tan(θ) = 1.50 m + 10.0 m × tan(38.0°) = 1.50 m + 10.0 m × 0.7813 = 1.50 m + 7.81 m = 9.31 meters",
     "obsCols": [
@@ -16470,8 +16470,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Class 11 Maths"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/galton-board-normal-distribution-binomial.avif",
+    "thumbnail_url": "/images/experiments/galton-board-normal-distribution-binomial.avif",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "P(X = k) = (n choose k) · p^k · (1-p)^(n-k); lim (n -> ∞) Binomial(n, 0.5) = Normal Distribution N(μ = np, σ² = np(1-p))",
     "obsCols": [

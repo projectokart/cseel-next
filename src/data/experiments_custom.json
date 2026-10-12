@@ -20,8 +20,8 @@
       "NEP 2020"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/ohms-law-verification-resistance.jpg",
-    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.jpg",
+    "heroImage": "/images/experiments/ohms-law-verification-resistance.avif",
+    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.card.avif",
     "materials": [
       "Unknown Resistance Wire (Nichrome / Constantan) × 1 m",
       "DC Voltmeter (0-3V range, least count 0.05V) × 1",
@@ -48,7 +48,7 @@
     ],
     "outcome": "The V-I graph is a straight line passing through the origin. The constant slope (ΔV/ΔI) verifies Ohm's Law and yields the resistance of the unknown conductor.",
     "createdAt": "2026-10-12T11:57:56.649Z",
-    "updatedAt": "2026-10-12T13:06:37.468Z",
+    "updatedAt": "2026-10-12T13:57:27.701Z",
     "formula": "R = V / I = 5.00 Ω (Constant slope of V-I graph)",
     "obsCols": [
       "Trial",
@@ -357,7 +357,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/ohms-law-verification-resistance.jpg"
   },
   {
     "id": "cc00b1af-93b2-411b-b9c4-5e27a219d0bf",
@@ -380,8 +381,8 @@
       "Optics Lab"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/refractive-index-glass-prism.jpg",
-    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.jpg",
+    "heroImage": "/images/experiments/refractive-index-glass-prism.avif",
+    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.card.avif",
     "materials": [
       "Equilateral Triangular Glass Prism (60°) × 1",
       "Drawing Board with Thumb Pins × 1",
@@ -407,7 +408,7 @@
     ],
     "outcome": "The i-D graph forms a smooth parabola with a distinct minimum. The refractive index of crown glass is determined to be approximately 1.51 ± 0.02 using the prism formula.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.708Z",
     "formula": "μ = sin((A + Dm)/2) / sin(A/2) = sin((60° + 39.5°)/2) / sin(30°) = 1.524",
     "obsCols": [
       "Angle of Incidence (i)",
@@ -679,7 +680,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/refractive-index-glass-prism.jpg"
   },
   {
     "id": "9a9669d2-b571-44ec-8bcf-d396c473ece5",
@@ -702,8 +704,8 @@
       "Parallax"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
-    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
+    "heroImage": "/images/experiments/focal-length-convex-lens-uv-method.avif",
+    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.card.avif",
     "materials": [
       "Optical Bench (2 meters long with graduated scale) × 1",
       "Biconvex Lens mounted on upright holder × 1",
@@ -729,7 +731,7 @@
     ],
     "outcome": "The focal length of the convex lens is determined to be 15.0 cm ± 0.2 cm using the lens formula 1/f = 1/v - 1/u and confirmed via the 1/u vs 1/v graph.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.708Z",
     "formula": "1/f = 1/v - 1/u => f = (u · v) / (u + v) = 15.0 cm (Focal Length)",
     "obsCols": [
       "Object Distance u (cm)",
@@ -987,7 +989,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/focal-length-convex-lens-uv-method.jpg"
   },
   {
     "id": "a0ac41ae-1ea8-4276-acf4-fc76201dc144",
@@ -1010,8 +1013,8 @@
       "Current Electricity"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/meter-bridge-resistance-combination.jpg",
-    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.jpg",
+    "heroImage": "/images/experiments/meter-bridge-resistance-combination.avif",
+    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.card.avif",
     "materials": [
       "Meter Bridge Board with 1m Manganin wire × 1",
       "Leclanché Cell or regulated 2V DC power supply × 1",
@@ -1038,7 +1041,7 @@
     ],
     "outcome": "Experimental equivalent resistances for series (Rs = R1 + R2) and parallel (1/Rp = 1/R1 + 1/R2) match theoretical values within an experimental error of < 1.5%.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.708Z",
     "formula": "X = R · (100 - l) / l; Rs = R1 + R2 = 5.0 Ω (Series Verification)",
     "obsCols": [
       "Resistance in Box R (Ω)",
@@ -1317,7 +1320,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/meter-bridge-resistance-combination.jpg"
   },
   {
     "id": "21e4615d-c572-488b-b237-808561a04293",
@@ -1340,8 +1344,8 @@
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
-    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
+    "heroImage": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.avif",
+    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.card.avif",
     "materials": [
       "Heavy Metallic Bob with small hook (brass) × 1",
       "Fine unspun cotton thread (approx 1.5 m) × 1",
@@ -1367,7 +1371,7 @@
     ],
     "outcome": "The L-T² graph is a linear straight line passing through the origin. The acceleration due to gravity g is calculated as 9.78 m/s² ± 0.05 m/s².",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.708Z",
     "formula": "g = 4 · π² · (L / T²) = 4 · (3.1416)² · (0.80 / 3.22) = 9.80 m/s²",
     "obsCols": [
       "Length of Pendulum L (m)",
@@ -1639,7 +1643,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg"
   },
   {
     "id": "b3884c02-0427-404d-be3a-cf4265de00f7",
@@ -1662,8 +1667,8 @@
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/boyles-law-verification-ideal-gas.avif",
+    "thumbnail_url": "/images/experiments/boyles-law-verification-ideal-gas.card.avif",
     "materials": [
       "Boyle's Law Apparatus (Quill tube / graduated closed burette with mercury reservoir) × 1",
       "Fortin's Barometer (to record atmospheric pressure H in cm of Hg) × 1",
@@ -1688,7 +1693,7 @@
     ],
     "outcome": "The product of total absolute pressure P and air column volume V remains constant within 1.2% variance. The P versus 1/V graph is a straight line through the origin.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.708Z",
     "formula": "P · V = k (Constant at room temperature T = 298 K)",
     "obsCols": [
       "Atmospheric H (cm Hg)",
@@ -1931,7 +1936,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/boyles-law-verification-ideal-gas.jpg"
   },
   {
     "id": "dd3ced12-41c0-4ae1-97ea-3597e8c82941",
@@ -1954,8 +1960,8 @@
       "Practical Lab"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.avif",
+    "thumbnail_url": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.card.avif",
     "materials": [
       "Standard Vernier Caliper (0.1 mm least count) × 1",
       "Micrometer Screw Gauge (0.01 mm least count, 50/100 divisions) × 1",
@@ -1981,7 +1987,7 @@
     ],
     "outcome": "Computed least count of Vernier Caliper is 0.01 cm and Screw Gauge is 0.001 cm (10 μm). Volume of cylinder and wire cross-sectional area are measured to 4 significant figures.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Total Reading = MSR + (VSR × LC) - Zero Error; LC(Vernier)=0.01 cm, LC(Screw)=0.001 cm",
     "obsCols": [
       "Instrument & Object",
@@ -2241,7 +2247,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.jpg"
   },
   {
     "id": "1b58e6d5-a9ee-475c-b102-10e0ef321418",
@@ -2264,8 +2271,8 @@
       "Class 11 Physics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/resonance-tube-velocity-of-sound.avif",
+    "thumbnail_url": "/images/experiments/resonance-tube-velocity-of-sound.card.avif",
     "materials": [
       "Resonance Tube Apparatus with water reservoir and pinch cock × 1",
       "Set of Tuning Forks of known frequencies (256 Hz, 384 Hz, 480 Hz, 512 Hz) × 1 set",
@@ -2291,7 +2298,7 @@
     ],
     "outcome": "First and second resonance air column lengths yield sound velocity v = 2f(l2 - l1) = 343.4 m/s at 22°C, matching theoretical acoustic speed within 0.8% error.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "v = 2 · f · (l2 - l1) = 2 · 512 Hz · (0.495 m - 0.160 m) = 343.04 m/s (at 20°C)",
     "obsCols": [
       "Tuning Fork Frequency f (Hz)",
@@ -2547,7 +2554,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/resonance-tube-velocity-of-sound.jpg"
   },
   {
     "id": "2357c24d-bf7c-4f62-bad3-726dcaadb9f8",
@@ -2570,8 +2578,8 @@
       "Null Method"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/internal-resistance-primary-cell-potentiometer.avif",
+    "thumbnail_url": "/images/experiments/internal-resistance-primary-cell-potentiometer.card.avif",
     "materials": [
       "10-Wire Potentiometer board with uniform resistance wires × 1",
       "Storage Accumulator (Lead-Acid / Regulated 4V DC supply) × 1",
@@ -2598,7 +2606,7 @@
     ],
     "outcome": "Internal resistance r = R(l1 - l2)/l2 of the primary Leclanché cell is measured accurately as 1.45 Ω ± 0.05 Ω without drawing active current during open-circuit null balance.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "r = R · (l1 - l2) / l2 = 5.0 · (760.0 - 580.0) / 580.0 = 1.55 Ω",
     "obsCols": [
       "Shunt Resistance R (Ω)",
@@ -2879,7 +2887,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/internal-resistance-primary-cell-potentiometer.jpg"
   },
   {
     "id": "707975d7-5803-4976-a257-02e6e9b8f8c4",
@@ -2902,8 +2911,8 @@
       "Class 12 Physics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/faradays-law-electromagnetic-induction-coil.avif",
+    "thumbnail_url": "/images/experiments/faradays-law-electromagnetic-induction-coil.card.avif",
     "materials": [
       "Insulated Copper Solenoid Coils (100 turns, 500 turns, 1000 turns) × 1 set",
       "Strong Neodymium Bar Magnets (N-S marked) × 2",
@@ -2929,7 +2938,7 @@
     ],
     "outcome": "Induced voltage is directly proportional to the rate of change of magnetic flux (dΦ/dt) and number of turns (N). Deflection reverses when magnet polarity or direction is reversed, verifying Lenz's Law.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "ε = -N · (dΦ / dt) (Induced EMF proportional to rate of magnetic flux change)",
     "obsCols": [
       "Magnet Velocity / Condition",
@@ -3189,7 +3198,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/faradays-law-electromagnetic-induction-coil.jpg"
   },
   {
     "id": "84d65ede-a90d-4c29-9ee6-525648c59dd1",
@@ -3212,8 +3222,8 @@
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
-    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
+    "heroImage": "/images/experiments/acid-base-titration-hcl-naoh.avif",
+    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.card.avif",
     "materials": [
       "Standard 0.1 M NaOH Solution × 250 mL",
       "Unknown HCl Solution × 250 mL",
@@ -3241,7 +3251,7 @@
     ],
     "outcome": "Equivalence point reached when solution turns faintly pink lasting 30 seconds. Concordant burette readings determine the exact concentration of HCl as 0.098 M.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "M(HCl) · V(HCl) = M(NaOH) · V(NaOH) => M(HCl) = (0.100 M × 19.60 mL) / 20.00 mL = 0.0980 M",
     "obsCols": [
       "Burette Trial",
@@ -3547,7 +3557,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/acid-base-titration-hcl-naoh.jpg"
   },
   {
     "id": "3ca9eef1-351f-4199-9a32-4654a47142f7",
@@ -3570,8 +3581,8 @@
       "CBSE Chemistry Lab"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
-    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
+    "heroImage": "/images/experiments/redox-titration-kmno4-mohrs-salt.avif",
+    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.card.avif",
     "materials": [
       "Standard 0.05 M Mohr's Salt Solution × 250 mL",
       "Potassium Permanganate (KMnO4) Solution (~0.02 M) × 250 mL",
@@ -3598,7 +3609,7 @@
     ],
     "outcome": "KMnO4 acts as its own self-indicator (Mn7+ reduced to colorless Mn2+). Concordant endpoint reached when excess drop produces a persistent faint pink color, yielding KMnO4 molarity of 0.020 M.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "2 KMnO4 + 8 H2SO4 + 10 FeSO4(NH4)2SO4 -> K2SO4 + 2 MnSO4 + 5 Fe2(SO4)3 + 10 (NH4)2SO4 + 8 H2O",
     "obsCols": [
       "Burette Trial",
@@ -3883,7 +3894,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg"
   },
   {
     "id": "0383321d-f48e-46bf-9179-07ed1b46a137",
@@ -3906,8 +3918,8 @@
       "CBSE Practicals"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/qualitative-salt-analysis-cation-anion.avif",
+    "thumbnail_url": "/images/experiments/qualitative-salt-analysis-cation-anion.card.avif",
     "materials": [
       "Unknown Inorganic Salt Sample (Lead Sulfate / Lead Nitrate) × 5 g",
       "Dilute and Concentrated HCl, H2SO4, and HNO3 × 1 set",
@@ -3934,7 +3946,7 @@
     ],
     "outcome": "Anion confirmed as Sulfate (SO4²⁻) via white BaSO4 precipitate insoluble in conc. HCl. Cation confirmed as Lead (Pb²⁺) via golden yellow PbI2 spangles test.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Pb(NO3)2 + 2 KI -> PbI2↓ (Golden Yellow Spangles) + 2 KNO3; BaCl2 + SO4²⁻ -> BaSO4↓ (White ppt)",
     "obsCols": [
       "Test Performed",
@@ -4201,7 +4213,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/qualitative-salt-analysis-cation-anion.jpg"
   },
   {
     "id": "c8a43713-9ab9-4df3-819f-890ff4a2b7d1",
@@ -4224,8 +4237,8 @@
       "Analytical Chemistry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/preparation-standard-oxalic-acid-solution.avif",
+    "thumbnail_url": "/images/experiments/preparation-standard-oxalic-acid-solution.card.avif",
     "materials": [
       "Hydrated Oxalic Acid crystals [(COOH)2·2H2O, M.W. = 126.07 g/mol] × 1 bottle",
       "Digital Analytical Balance (precision 0.001 g) × 1",
@@ -4252,7 +4265,7 @@
     ],
     "outcome": "Successfully weighed exactly 3.151 g of oxalic acid crystals and prepared 250.0 mL of standard 0.100 M primary solution for analytical titrations.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Mass of Oxalic Acid required for 250 mL 0.1 M: w = (M · M_w · V) / 1000 = (0.100 × 126.06 × 250) / 1000 = 3.1515 g",
     "obsCols": [
       "Weighing Step",
@@ -4517,7 +4530,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/preparation-standard-oxalic-acid-solution.jpg"
   },
   {
     "id": "5c98dbf7-d5cb-46f0-afaa-badf9e4b58da",
@@ -4540,8 +4554,8 @@
       "Experiential Science"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/ph-determination-universal-indicator-solutions.avif",
+    "thumbnail_url": "/images/experiments/ph-determination-universal-indicator-solutions.card.avif",
     "materials": [
       "Broad-range Universal Indicator Paper strips with standard color chart × 1 box",
       "Test solutions: Dilute HCl, Dilute NaOH, Ethanoic acid (vinegar), Lemon juice, NaHCO3 solution, Distilled water × 20 mL each",
@@ -4566,7 +4580,7 @@
     ],
     "outcome": "Constructed the standard color-coded pH scale (1 to 14). Identified lemon juice as pH 2.2 (strongly acidic), distilled water as pH 7.0 (neutral), and NaOH as pH 13.5 (strongly basic).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "pH = -log10[H⁺]; pOH = -log10[OH⁻]; pH + pOH = 14.00 (at 25°C)",
     "obsCols": [
       "Test Solution Sample",
@@ -4812,7 +4826,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/ph-determination-universal-indicator-solutions.jpg"
   },
   {
     "id": "910370a2-3579-4c90-8085-6ef4ede209b5",
@@ -4835,8 +4850,8 @@
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.avif",
+    "thumbnail_url": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.card.avif",
     "materials": [
       "0.1 M Sodium Thiosulfate (Na2S2O3) solution × 300 mL",
       "1.0 M Hydrochloric Acid (HCl) solution × 100 mL",
@@ -4863,7 +4878,7 @@
     ],
     "outcome": "Reaction rate (1/t) increases linearly with sodium thiosulfate concentration. The rate versus concentration plot is a straight line, confirming first-order kinetics with respect to thiosulfate.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Na2S2O3 + 2 HCl -> 2 NaCl + SO2↑ + S↓ (Colloidal Sulfur turbidity) + H2O; Rate ∝ 1/t",
     "obsCols": [
       "Flask No.",
@@ -5146,7 +5161,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.jpg"
   },
   {
     "id": "9853b28e-4db9-41f1-a628-e4626badf78a",
@@ -5169,8 +5185,8 @@
       "Organic Chemistry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/paper-chromatography-plant-pigments.avif",
+    "thumbnail_url": "/images/experiments/paper-chromatography-plant-pigments.card.avif",
     "materials": [
       "Fresh Spinach Leaves × 50 g",
       "Chromatography Paper (Whatman No. 1, 20 cm × 3 cm strip) × 1",
@@ -5197,7 +5213,7 @@
     ],
     "outcome": "Distinct color bands separated on Whatman paper strip: olive green (Chlorophyll b), blue green (Chlorophyll a), yellow (Xanthophyll), and orange-yellow (Carotene) with distinct Rf values.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Rf = (Distance traveled by pigment solute) / (Distance traveled by solvent front)",
     "obsCols": [
       "Pigment Band Identity",
@@ -5463,7 +5479,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/paper-chromatography-plant-pigments.jpg"
   },
   {
     "id": "2e9130b9-af62-41fb-ac3d-9aa1abaac8f7",
@@ -5486,8 +5503,8 @@
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/preparation-colloidal-sol-tyndall-effect.avif",
+    "thumbnail_url": "/images/experiments/preparation-colloidal-sol-tyndall-effect.card.avif",
     "materials": [
       "Ferric Chloride (FeCl3) 2% w/v solution × 20 mL",
       "Soluble Starch Powder × 2 g",
@@ -5513,7 +5530,7 @@
     ],
     "outcome": "Stable wine-red Ferric Hydroxide sol and translucent starch sol prepared. Red laser beam exhibits clear brilliant Tyndall cone through both sols while remaining invisible in true aqueous NaCl solution.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "FeCl3 + 3 H2O (Boiling) -> Fe(OH)3 (Hydrated Ferric Hydroxide Sol - Positive Charge) + 3 HCl",
     "obsCols": [
       "Optical / Physical Test",
@@ -5774,7 +5791,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/preparation-colloidal-sol-tyndall-effect.jpg"
   },
   {
     "id": "d9c08be5-2de8-47c6-a493-2f2eab43d285",
@@ -5797,8 +5815,8 @@
       "Diagnostic Tests"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/organic-functional-group-tests.avif",
+    "thumbnail_url": "/images/experiments/organic-functional-group-tests.card.avif",
     "materials": [
       "Organic test samples: Formaldehyde/Acetaldehyde, Acetone, Acetic acid, Ethanol × 20 mL each",
       "Tollens' Reagent (Ammoniacal Silver Nitrate, freshly prepared) × 20 mL",
@@ -5823,7 +5841,7 @@
     ],
     "outcome": "Aldehyde confirmed via Tollens' test yielding a shiny reflective silver mirror on glass walls; Carboxylic acid confirmed via vigorous effervescence of CO2 gas with sodium bicarbonate.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "R-CHO + 2 [Ag(NH3)2]⁺ + 3 OH⁻ -> R-COO⁻ + 2 Ag↓ (Brilliant Silver Mirror) + 4 NH3 + 2 H2O",
     "obsCols": [
       "Functional Group Test",
@@ -6076,7 +6094,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/organic-functional-group-tests.jpg"
   },
   {
     "id": "8d3edf3a-b147-4ea8-8323-c267e5939a8c",
@@ -6099,8 +6118,8 @@
       "Thermodynamics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/enthalpy-of-neutralization-calorimetry.avif",
+    "thumbnail_url": "/images/experiments/enthalpy-of-neutralization-calorimetry.card.avif",
     "materials": [
       "1.0 M Hydrochloric Acid (HCl) solution × 150 mL",
       "1.0 M Sodium Hydroxide (NaOH) solution × 150 mL",
@@ -6127,7 +6146,7 @@
     ],
     "outcome": "Temperature rise of 6.7°C measured. Heat released yields enthalpy of neutralization ΔH = -56.8 kJ/mol, matching theoretical standard thermodynamic value (-57.1 kJ/mol) within 0.7% error.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "ΔH_neut = - (m · c + W) · ΔT / n = - (200 g × 4.184 J/g°C + 40 J/°C) × 6.5 °C / 0.100 mol = -57.0 kJ/mol",
     "obsCols": [
       "Calorimetric Parameter",
@@ -6412,7 +6431,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/enthalpy-of-neutralization-calorimetry.jpg"
   },
   {
     "id": "abe9f719-a49e-4734-b52b-0bc08a4506c8",
@@ -6435,8 +6455,8 @@
       "NEP 2020 Experiential"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/onion-peel-cell-microscopy.jpg",
-    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.jpg",
+    "heroImage": "/images/experiments/onion-peel-cell-microscopy.avif",
+    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.card.avif",
     "materials": [
       "Fresh Onion Bulb × 1",
       "Methylene Blue / Safranin Stain Solution (0.5%) × 1 dropper bottle",
@@ -6463,7 +6483,7 @@
     ],
     "outcome": "Clear rectangular epidermal plant cells observed with distinct cell walls, prominent darkly-stained peripheral nuclei, and large central vacuoles.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Cell Dimension = Field of View Diameter / Cell Count = 1500 μm / 6 = 250 μm length",
     "obsCols": [
       "Magnification Objective",
@@ -6728,7 +6748,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/onion-peel-cell-microscopy.jpg"
   },
   {
     "id": "da207a82-ac24-4d67-9e57-6216fde56260",
@@ -6751,8 +6772,8 @@
       "Chromosomes"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/mitosis-onion-root-tip-squash.avif",
+    "thumbnail_url": "/images/experiments/mitosis-onion-root-tip-squash.card.avif",
     "materials": [
       "Freshly germinated Onion Root Tips (1-2 cm long) fixed in Carnoy's fluid (1:3 acetic alcohol) × 1 vial",
       "1N Hydrochloric Acid (HCl) × 20 mL",
@@ -6779,7 +6800,7 @@
     ],
     "outcome": "Distinct mitotic stages clearly observed: condensed chromosome threads (Prophase), equatorial plate alignment (Metaphase), sister chromatid poleward separation (Anaphase), and nuclear reorganization (Telophase).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Mitotic Index (%) = (Number of cells in mitosis / Total number of cells observed) × 100 = (38 / 250) × 100 = 15.2%",
     "obsCols": [
       "Mitotic Phase Observed",
@@ -7038,7 +7059,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/mitosis-onion-root-tip-squash.jpg"
   },
   {
     "id": "28a79657-42ed-45a3-82ef-8e791357cf9f",
@@ -7061,8 +7083,8 @@
       "Hands-on Biology"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/osmosis-potato-osmoscope-demonstration.avif",
+    "thumbnail_url": "/images/experiments/osmosis-potato-osmoscope-demonstration.card.avif",
     "materials": [
       "Large healthy Potato Tuber × 1",
       "Concentrated Sucrose / Sugar Solution (20% w/v) colored with eosin/food coloring × 50 mL",
@@ -7088,7 +7110,7 @@
     ],
     "outcome": "Liquid level in the potato cavity rises significantly above the initial pin mark due to water entering from the petri dish (hypotonic) into the sucrose solution (hypertonic) across selectively permeable potato membranes.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Water Potential Gradient: Ψ_w(Hypotonic outer water = 0) > Ψ_w(Hypertonic cavity sucrose = -1.2 MPa) => Net Endo-osmosis",
     "obsCols": [
       "Time Interval (Hours)",
@@ -7332,7 +7354,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/osmosis-potato-osmoscope-demonstration.jpg"
   },
   {
     "id": "39513e7c-504f-4c80-8bcb-1604e53825e5",
@@ -7355,8 +7378,8 @@
       "CBSE Biology"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/transpiration-rate-ganongs-potometer.avif",
+    "thumbnail_url": "/images/experiments/transpiration-rate-ganongs-potometer.card.avif",
     "materials": [
       "Ganong's Potometer apparatus with graduated capillary tube and water reservoir × 1",
       "Fresh leafy shoot (Coleus / Hibiscus / Nerium) cut underwater × 1",
@@ -7382,7 +7405,7 @@
     ],
     "outcome": "Bubble travel velocity is fastest under bright light and breeze (0.85 cm/min) and slowest in humid shade (0.15 cm/min), demonstrating stomatal transpiration dynamics.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Transpiration Rate R = (π · r² · d) / t = (3.1416 × 0.5² mm² × 60 mm) / 10 min = 4.71 mm³/min",
     "obsCols": [
       "Environmental Condition Tested",
@@ -7630,7 +7653,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/transpiration-rate-ganongs-potometer.jpg"
   },
   {
     "id": "e64e76ca-2898-48fd-8f7c-9a1bdc25decc",
@@ -7653,8 +7677,8 @@
       "NCERT Practicals"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/carbon-dioxide-release-seed-respiration.avif",
+    "thumbnail_url": "/images/experiments/carbon-dioxide-release-seed-respiration.card.avif",
     "materials": [
       "Germinating Gram (Chana) / Moong Seeds × 50 g",
       "Conical Flask (250 mL) with single-bore rubber stopper × 1",
@@ -7681,7 +7705,7 @@
     ],
     "outcome": "Water level in the bent delivery tube rises by 6.2 cm. KOH absorbs exhaled CO2, creating a partial vacuum inside the flask that draws water upward from the beaker.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "C6H12O6 + 6 O2 -> 6 CO2↑ + 6 H2O + 38 ATP; 2 KOH + CO2 -> K2CO3 + H2O (Vacuum creation)",
     "obsCols": [
       "Time Interval (Hours)",
@@ -7946,7 +7970,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/carbon-dioxide-release-seed-respiration.jpg"
   },
   {
     "id": "27df9539-946e-4b23-82e9-f0d45ed688a9",
@@ -7969,8 +7994,8 @@
       "Plant Metabolism"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/photosynthesis-starch-test-iodine.avif",
+    "thumbnail_url": "/images/experiments/photosynthesis-starch-test-iodine.card.avif",
     "materials": [
       "Potted plant with variegated leaves (Croton / Coleus / Money Plant) × 1",
       "Ethanol / Methylated Spirit (95%) × 100 mL",
@@ -7997,7 +8022,7 @@
     ],
     "outcome": "Only green chlorophyll-bearing regions exposed to light turn blue-black with iodine; white and light-blocked areas remain pale yellow/brown, proving light and chlorophyll are essential.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.476Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "6 CO2 + 12 H2O + Light -> C6H12O6 + 6 O2 + 6 H2O; Amylose + I2/KI -> Polyiodide Inclusion Complex (Blue-Black)",
     "obsCols": [
       "Leaf Area Sample",
@@ -8243,7 +8268,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/photosynthesis-starch-test-iodine.jpg"
   },
   {
     "id": "3a6c5e9b-1665-46f4-8fa0-3bab2b14ee83",
@@ -8266,8 +8292,8 @@
       "Genetics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/dna-isolation-plant-material.avif",
+    "thumbnail_url": "/images/experiments/dna-isolation-plant-material.card.avif",
     "materials": [
       "Ripe Banana / Papaya / Green Peas × 50 g",
       "Lysis Buffer: Liquid Dishwashing Detergent (10 mL) + Non-iodized Table Salt (3 g) + Distilled Water (90 mL) × 100 mL",
@@ -8294,7 +8320,7 @@
     ],
     "outcome": "Visible white fibrous threads of aggregated genomic DNA precipitated at the ice-cold alcohol interface and successfully spooled onto a clean glass rod.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Yield of Genomic DNA = Spooled Mass / Tissue Fresh Weight = 1.25 mg DNA / 20.0 g Banana = 0.0625 mg DNA / g fresh tissue",
     "obsCols": [
       "Isolation Protocol Step",
@@ -8545,7 +8571,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/dna-isolation-plant-material.jpg"
   },
   {
     "id": "5dff7235-948c-411f-8535-4ddaa0b83791",
@@ -8568,8 +8595,8 @@
       "Microscopic Anatomy"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/human-blood-smear-wbc-identification.avif",
+    "thumbnail_url": "/images/experiments/human-blood-smear-wbc-identification.card.avif",
     "materials": [
       "Prepared sterile human blood smear slide or fresh finger-prick blood via sterile lancet × 1",
       "Leishman's Stain powder dissolved in absolute methanol (0.15% w/v) × 1 bottle",
@@ -8596,7 +8623,7 @@
     ],
     "outcome": "High magnification examination reveals non-nucleated biconcave RBCs, multi-lobed pinkish-purple Neutrophils (~65%), large-nucleus Lymphocytes (~25%), and kidney-shaped Monocytes.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Differential Leukocyte Count (DLC %): Neutrophils 60-70%, Lymphocytes 20-30%, Monocytes 2-8%, Eosinophils 1-4%, Basophils 0.5-1%",
     "obsCols": [
       "Leukocyte (WBC) Type",
@@ -8851,7 +8878,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/human-blood-smear-wbc-identification.jpg"
   },
   {
     "id": "6c28c2b0-f2aa-42bb-878d-a82eb4d8306d",
@@ -8874,8 +8902,8 @@
       "Biochemistry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/salivary-amylase-starch-digestion.avif",
+    "thumbnail_url": "/images/experiments/salivary-amylase-starch-digestion.card.avif",
     "materials": [
       "1% Soluble Starch solution (freshly prepared) × 50 mL",
       "Dilute Salivary Amylase solution (1:10 filtered human saliva in distilled water) × 20 mL",
@@ -8902,7 +8930,7 @@
     ],
     "outcome": "Blue-black iodine response gradually lightens through violet and red-brown to reach the achromic point (colorless) at 6.5 minutes at body temperature (37°C), proving complete enzyme breakdown to maltose.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Starch (Amylose/Amylopectin) + Salivary α-Amylase (Ptyalin) -> Maltose + Maltotriose + Dextrins; Achromic Point reached",
     "obsCols": [
       "Time Interval (Minutes)",
@@ -9174,7 +9202,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/salivary-amylase-starch-digestion.jpg"
   },
   {
     "id": "cffa990c-dff3-413d-b9c4-df4ab669496d",
@@ -9197,8 +9226,8 @@
       "Epidermal Cells"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/stomata-distribution-density-leaf-epidermis.avif",
+    "thumbnail_url": "/images/experiments/stomata-distribution-density-leaf-epidermis.card.avif",
     "materials": [
       "Fresh leaves: Hibiscus / Nerium (dorsiventral) and Grass / Zea mays (isobilateral) × 2 each",
       "Colorless clear nail polish or quick-drying collodion × 1 bottle",
@@ -9224,7 +9253,7 @@
     ],
     "outcome": "Dorsiventral leaves exhibit significantly higher stomatal frequency on the lower surface (abaxial, ~185 stomata/mm²) than the upper surface (adaxial, ~20 stomata/mm²), minimizing transpirational water loss.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Stomatal Index (I) = [S / (E + S)] × 100 = [28 / (112 + 28)] × 100 = 20.0%; Density = Stomata Count / Field Area",
     "obsCols": [
       "Leaf Epidermal Surface",
@@ -9452,7 +9481,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/stomata-distribution-density-leaf-epidermis.jpg"
   },
   {
     "id": "eb685add-e2b6-49ab-b72a-2a770d0c1f3c",
@@ -9475,8 +9505,8 @@
       "NEP 2020 Hands-on"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
-    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "heroImage": "/images/experiments/pythagoras-theorem-geometric-verification.avif",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.card.avif",
     "materials": [
       "Cardboard base sheet (30 cm × 30 cm) × 1",
       "Colored construction paper (red, blue, yellow) × 3 sheets",
@@ -9501,7 +9531,7 @@
     ],
     "outcome": "Area of the square on the hypotenuse (c²) exactly equals the combined sum of the areas of squares constructed on the base (a²) and perpendicular (b²) through geometric congruence.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
     "obsCols": [
       "Right Triangle Trial",
@@ -9744,7 +9774,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/pythagoras-theorem-geometric-verification.jpg"
   },
   {
     "id": "7e695f1c-6454-47d2-8b46-ee19cb14917e",
@@ -9767,8 +9798,8 @@
       "Hands-on Math"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/area-of-circle-sector-partitioning.avif",
+    "thumbnail_url": "/images/experiments/area-of-circle-sector-partitioning.card.avif",
     "materials": [
       "Cardboard sheet with pre-printed circular disc of radius r = 7 cm × 1",
       "Protractor for measuring 11.25° and 22.5° sector angles × 1",
@@ -9793,7 +9824,7 @@
     ],
     "outcome": "As the number of circular sectors increases, the rearranged shape approaches a rectangle of base length π·r (half circumference) and height r. Area = base × height = π·r × r = π·r².",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Area of Circle = lim (n -> ∞) [n × Sector Area] = Base × Height = (π · r) × r = π · r² = 3.1416 × 7.0² = 153.94 cm²",
     "obsCols": [
       "Sector Partitions (n)",
@@ -10024,7 +10055,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/area-of-circle-sector-partitioning.jpg"
   },
   {
     "id": "021190c5-fe94-4fad-8572-84112536cfcb",
@@ -10047,8 +10079,8 @@
       "3D Geometry"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/surface-area-volume-sphere-cone-cylinder.avif",
+    "thumbnail_url": "/images/experiments/surface-area-volume-sphere-cone-cylinder.card.avif",
     "materials": [
       "Hollow transparent acrylic geometric models: Cylinder (radius r = 5 cm, height h = 10 cm), Sphere (radius r = 5 cm with top aperture), Cone (radius r = 5 cm, height h = 10 cm) × 1 set",
       "Fine dry colored sand or water × 1 kg",
@@ -10073,7 +10105,7 @@
     ],
     "outcome": "Empirically verified that Volume of Cone : Volume of Sphere : Volume of Cylinder = 1 : 2 : 3. Sand from one cone and one sphere exactly fills the circumscribed cylinder without spill.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "V(Cone) : V(Sphere) : V(Cylinder) = (1/3 · πr²h) : (4/3 · πr³) : (πr²h) = 1 : 2 : 3 (for h = 2r)",
     "obsCols": [
       "Geometric Solid Body",
@@ -10290,7 +10322,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/surface-area-volume-sphere-cone-cylinder.jpg"
   },
   {
     "id": "f6b7bed3-1fb8-4f19-a540-895e28ad8cca",
@@ -10313,8 +10346,8 @@
       "CBSE Mathematics"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/angle-subtended-by-arc-circle-theorem.avif",
+    "thumbnail_url": "/images/experiments/angle-subtended-by-arc-circle-theorem.card.avif",
     "materials": [
       "Circular Geoboard with 36-peg graduated circumference × 1",
       "Colored elastic rubber bands (red, blue, yellow) × 1 pack",
@@ -10339,7 +10372,7 @@
     ],
     "outcome": "For any chosen arc AB, angle ∠AOB at center measured 80° while inscribed angle ∠APB at circumference measured exactly 40°. Verified ∠AOB = 2 · ∠APB across all arc lengths.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Central Angle = 2 × Inscribed Angle (∠AOB = 2 · ∠APB for any point P on alternating arc)",
     "obsCols": [
       "Circle Trial",
@@ -10570,7 +10603,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/angle-subtended-by-arc-circle-theorem.jpg"
   },
   {
     "id": "c19950ec-c9c0-4ec3-a9a1-b6b42ce917d4",
@@ -10593,8 +10627,8 @@
       "Hands-on Math"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/circle-tangents-external-point-construction.avif",
+    "thumbnail_url": "/images/experiments/circle-tangents-external-point-construction.card.avif",
     "materials": [
       "Drawing sheet (white chart paper) × 1",
       "Geometry Box (Compass, 30 cm Metric Ruler, Protractor) × 1",
@@ -10618,7 +10652,7 @@
     ],
     "outcome": "Tangents PT1 and PT2 from point P measure exactly 12.0 cm each. Triangle OPT1 is congruent to Triangle OPT2 by RHS criterion, proving PT1 = PT2.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "PT1 = PT2 = √(OP² - r²) = √(13.0² - 5.0²) = √(169 - 25) = √144 = 12.0 cm (Tangents from external point are equal)",
     "obsCols": [
       "Construction Trial",
@@ -10840,7 +10874,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/circle-tangents-external-point-construction.jpg"
   },
   {
     "id": "a82d8ea4-52e8-4cc4-ba99-a30fd90fcf0d",
@@ -10863,8 +10898,8 @@
       "CBSE Syllabus"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/basic-proportionality-thales-theorem.avif",
+    "thumbnail_url": "/images/experiments/basic-proportionality-thales-theorem.card.avif",
     "materials": [
       "Cardboard sheet with parallel ruled line grid (spaced 1 cm apart) × 1",
       "Colored construction paper triangles of varying shapes × 3",
@@ -10889,7 +10924,7 @@
     ],
     "outcome": "Measured segments AD = 4.0 cm, DB = 6.0 cm (ratio = 0.667) and AE = 4.8 cm, EC = 7.2 cm (ratio = 0.667). Ratios AD/DB = AE/EC verified across scalene, isosceles, and right triangles.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "AD / DB = AE / EC (If DE ∥ BC in ΔABC, then DE divides AB and AC in the same ratio)",
     "obsCols": [
       "Triangle Configuration",
@@ -11128,7 +11163,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/basic-proportionality-thales-theorem.jpg"
   },
   {
     "id": "51e20d48-b921-4f37-ab52-8ff2da1a21b4",
@@ -11151,8 +11187,8 @@
       "Experiential Math"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/sum-of-natural-numbers-staircase-model.avif",
+    "thumbnail_url": "/images/experiments/sum-of-natural-numbers-staircase-model.card.avif",
     "materials": [
       "Cardboard sheet (30 cm × 30 cm) with 1 cm × 1 cm grid × 1",
       "Unit wooden / plastic square tiles (1 cm × 1 cm) × 50",
@@ -11176,7 +11212,7 @@
     ],
     "outcome": "Two identical staircases of n = 6 steps (1+2+3+4+5+6 = 21 tiles each) fit together to form a rectangle of dimensions n × (n+1) = 6 × 7 = 42 tiles. Hence S_n = 42 / 2 = 21.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Sn = 1 + 2 + 3 + ... + n = n · (n + 1) / 2 = 10 · 11 / 2 = 55 (Area of Staircase Shape)",
     "obsCols": [
       "Number of Terms (n)",
@@ -11402,7 +11438,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/sum-of-natural-numbers-staircase-model.jpg"
   },
   {
     "id": "0239d714-599b-4a85-811b-80dd124eff6d",
@@ -11425,8 +11462,8 @@
       "Experiential Learning"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/algebraic-identity-cube-of-binomial-3d.avif",
+    "thumbnail_url": "/images/experiments/algebraic-identity-cube-of-binomial-3d.card.avif",
     "materials": [
       "3D Acrylic / Wooden mathematical model set for binomial cube: a = 4 cm, b = 2 cm × 1 set",
       "- Cube of side a (4 × 4 × 4 = 64 cm³) × 1",
@@ -11453,7 +11490,7 @@
     ],
     "outcome": "An assembled cube of side (a + b) decomposes into exactly 8 geometric solid pieces: 1 cube of a³, 3 cuboids of a²b, 3 cuboids of ab², and 1 cube of b³, verifying the identity.",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "(a + b)³ = a³ + 3a²b + 3ab² + b³ (Volume of Large Cube = Sum of Volumes of 8 Dissected Sub-Blocks)",
     "obsCols": [
       "Component Block Identity",
@@ -11714,7 +11751,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/algebraic-identity-cube-of-binomial-3d.jpg"
   },
   {
     "id": "0c762953-3ac1-4dc3-8507-387d93881286",
@@ -11737,8 +11775,8 @@
       "Outdoor STEM"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/clinometer-trigonometric-height-estimation.avif",
+    "thumbnail_url": "/images/experiments/clinometer-trigonometric-height-estimation.card.avif",
     "materials": [
       "180° Plastic Protractor with center hole × 1",
       "Straight drinking straw / hollow tube (optical sight) × 1",
@@ -11765,7 +11803,7 @@
     ],
     "outcome": "Measured elevation angle θ = 35° at distance d = 15.0 m with eye height h1 = 1.45 m. Computed height H = h1 + d · tan(35°) = 1.45 + 15.0 · (0.700) = 11.95 m (true height = 12.0 m).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "Height H = h_eye + d · tan(θ) = 1.50 m + 10.0 m × tan(38.0°) = 1.50 m + 10.0 m × 0.7813 = 1.50 m + 7.81 m = 9.31 meters",
     "obsCols": [
       "Target Object Measured",
@@ -12037,7 +12075,8 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/clinometer-trigonometric-height-estimation.jpg"
   },
   {
     "id": "f2a8bf77-9c3b-460a-867d-d3eed54e4ff8",
@@ -12060,8 +12099,8 @@
       "Class 11 Maths"
     ],
     "badge": "NEP 2020 • EXPERIENTIAL SCIENCE",
-    "heroImage": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "heroImage": "/images/experiments/galton-board-normal-distribution-binomial.avif",
+    "thumbnail_url": "/images/experiments/galton-board-normal-distribution-binomial.card.avif",
     "materials": [
       "Acrylic Galton Board apparatus with 12 rows of staggered hexagonal pegs and collection bins × 1",
       "Steel ball bearings (2 mm diameter) × 1,000",
@@ -12086,7 +12125,7 @@
     ],
     "outcome": "Steel balls accumulating in bottom bins form a smooth symmetric bell-shaped Gaussian curve, empirically proving the convergence of binomial distribution B(n, 0.5) to normal distribution N(μ, σ²).",
     "createdAt": "2026-10-12T11:57:56.656Z",
-    "updatedAt": "2026-10-12T13:06:37.477Z",
+    "updatedAt": "2026-10-12T13:57:27.709Z",
     "formula": "P(X = k) = (n choose k) · p^k · (1-p)^(n-k); lim (n -> ∞) Binomial(n, 0.5) = Normal Distribution N(μ = np, σ² = np(1-p))",
     "obsCols": [
       "Bin Number (Left to Right)",
@@ -12375,6 +12414,7 @@
           ]
         ]
       }
-    ]
+    ],
+    "fallbackImage": "/images/experiments/galton-board-normal-distribution-binomial.jpg"
   }
 ]

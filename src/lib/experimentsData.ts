@@ -300,9 +300,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Voltmeter must always be connected in parallel and ammeter in series.",
       "Check that zero errors of both meters are accounted for before taking readings."
     ],
-    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.jpg",
+    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.card.avif",
     "images": [
-      "/images/experiments/ohms-law-verification-resistance.jpg"
+      "/images/experiments/ohms-law-verification-resistance.card.avif"
     ],
     "tags": [
       "Ohm's Law",
@@ -608,9 +608,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Align pin pricks viewing their feet/bases, not the bent tops.",
       "Do not disturb the prism position while sighting pins."
     ],
-    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.jpg",
+    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.card.avif",
     "images": [
-      "/images/experiments/refractive-index-glass-prism.jpg"
+      "/images/experiments/refractive-index-glass-prism.card.avif"
     ],
     "tags": [
       "Ray Optics",
@@ -914,9 +914,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Object needle must always remain beyond the principal focus (u > f).",
       "Account for index correction for precise distances."
     ],
-    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
+    "thumbnail_url": "/images/experiments/focal-length-convex-lens-uv-method.card.avif",
     "images": [
-      "/images/experiments/focal-length-convex-lens-uv-method.jpg"
+      "/images/experiments/focal-length-convex-lens-uv-method.card.avif"
     ],
     "tags": [
       "Optics",
@@ -1239,9 +1239,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Clean connecting terminals and tighten screws with pliers.",
       "Use shunt across galvanometer during initial rough balance."
     ],
-    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.jpg",
+    "thumbnail_url": "/images/experiments/meter-bridge-resistance-combination.card.avif",
     "images": [
-      "/images/experiments/meter-bridge-resistance-combination.jpg"
+      "/images/experiments/meter-bridge-resistance-combination.card.avif"
     ],
     "tags": [
       "Wheatstone Bridge",
@@ -1543,9 +1543,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Ensure the suspension point is rigid and does not yield during oscillations.",
       "Air currents must be prevented by shutting nearby fans and windows."
     ],
-    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
+    "thumbnail_url": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.card.avif",
     "images": [
-      "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg"
+      "/images/experiments/acceleration-due-to-gravity-simple-pendulum.card.avif"
     ],
     "tags": [
       "Simple Pendulum",
@@ -1832,9 +1832,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Never touch the enclosed gas bulb/tube with bare hands during readings to avoid heating.",
       "Take readings at the top of the mercury meniscus with eyes at the same horizontal level."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/boyles-law-verification-ideal-gas.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/boyles-law-verification-ideal-gas.card.avif"
     ],
     "tags": [
       "Boyle's Law",
@@ -2134,9 +2134,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Take measurements at multiple positions and perpendicular diameters to eliminate non-circularity errors.",
       "Avoid parallax while aligning coinciding Vernier divisions."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.card.avif"
     ],
     "tags": [
       "Measurement",
@@ -2432,9 +2432,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Locate the resonance peak carefully by raising and lowering the water meniscus around the maximum.",
       "Record room air temperature to correct the experimental sound velocity to 0°C (v0 = vt - 0.61t)."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/resonance-tube-velocity-of-sound.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/resonance-tube-velocity-of-sound.card.avif"
     ],
     "tags": [
       "Acoustics",
@@ -2751,9 +2751,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Jockey must never be dragged along potentiometer wires; press lightly to preserve uniform wire diameter.",
       "Ensure balance length l1 > l2 is always observed."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/internal-resistance-primary-cell-potentiometer.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/internal-resistance-primary-cell-potentiometer.card.avif"
     ],
     "tags": [
       "Potentiometer",
@@ -3057,9 +3057,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Use center-zero galvanometer with appropriate sensitivity to prevent pointer slamming against limits.",
       "Perform trials with uniform deliberate speed strokes."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/faradays-law-electromagnetic-induction-coil.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/faradays-law-electromagnetic-induction-coil.card.avif"
     ],
     "tags": [
       "Electromagnetic Induction",
@@ -3397,9 +3397,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Do not blow out the last drop remaining in the pipette tip; it is calibrated for retention.",
       "Use only 2-3 drops of indicator; excessive indicator consumes titrant and skews the endpoint."
     ],
-    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
+    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.card.avif",
     "images": [
-      "/images/experiments/acid-base-titration-hcl-naoh.jpg"
+      "/images/experiments/acid-base-titration-hcl-naoh.card.avif"
     ],
     "tags": [
       "Titration",
@@ -3724,9 +3724,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Mohr's salt solution must be freshly prepared to avoid aerial oxidation of Fe2+ to Fe3+.",
       "Keep endpoint strictly to faint pink; dark purple indicates over-titration error."
     ],
-    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
+    "thumbnail_url": "/images/experiments/redox-titration-kmno4-mohrs-salt.card.avif",
     "images": [
-      "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg"
+      "/images/experiments/redox-titration-kmno4-mohrs-salt.card.avif"
     ],
     "tags": [
       "Redox Titration",
@@ -4043,9 +4043,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Wash nichrome loop with conc. HCl until it produces no persistent color in the flame before testing.",
       "Use clean test tubes rinsed with distilled water for confirmatory wet tests."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/qualitative-salt-analysis-cation-anion.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/qualitative-salt-analysis-cation-anion.card.avif"
     ],
     "tags": [
       "Salt Analysis",
@@ -4360,9 +4360,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Avoid overshooting the graduation mark; if overfilled, the standard solution must be discarded and remade.",
       "Oxalic acid is a toxic organic acid; avoid skin contact and wash spills immediately."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/preparation-standard-oxalic-acid-solution.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/preparation-standard-oxalic-acid-solution.card.avif"
     ],
     "tags": [
       "Standard Solution",
@@ -4625,9 +4625,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Read the color immediately within 10-15 seconds before drying alters the hue.",
       "Rinse pH meter glass electrode thoroughly with distilled water and blot dry with lint-free tissue between tests."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/ph-determination-universal-indicator-solutions.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/ph-determination-universal-indicator-solutions.card.avif"
     ],
     "tags": [
       "pH Scale",
@@ -4951,9 +4951,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Rinse the conical flask thoroughly with distilled water between trials to remove trace sulfur.",
       "Conduct in a well-ventilated lab because sulfur dioxide (SO2) gas is produced."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.card.avif"
     ],
     "tags": [
       "Chemical Kinetics",
@@ -5280,9 +5280,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Keep chromatography jar strictly closed and undisturbed during solvent ascent.",
       "Work in a fume hood or away from open flames as petroleum ether and acetone are volatile and flammable."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/paper-chromatography-plant-pigments.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/paper-chromatography-plant-pigments.card.avif"
     ],
     "tags": [
       "Chromatography",
@@ -5583,9 +5583,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Apparatus must be scrupulously clean; electrolyte traces can coagulate lyophobic sols.",
       "Starch paste must be lump-free before addition to boiling water."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/preparation-colloidal-sol-tyndall-effect.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/preparation-colloidal-sol-tyndall-effect.card.avif"
     ],
     "tags": [
       "Surface Chemistry",
@@ -5870,9 +5870,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Discard silver mirror residues immediately by dissolving in dilute nitric acid.",
       "Neutralize acidic and alkaline waste before disposal."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/organic-functional-group-tests.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/organic-functional-group-tests.card.avif"
     ],
     "tags": [
       "Organic Chemistry",
@@ -6183,9 +6183,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Ensure thermometer bulb is fully submerged in the liquid without touching the cup bottom or walls.",
       "Keep calorimeter cover tightly seated to avoid convective heat losses."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/enthalpy-of-neutralization-calorimetry.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/enthalpy-of-neutralization-calorimetry.card.avif"
     ],
     "tags": [
       "Thermochemistry",
@@ -6506,9 +6506,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Lower the coverslip slowly to avoid trapping air bubbles (air bubbles appear as thick black-rimmed rings).",
       "Wipe off excess glycerine with blotting paper so microscope stage remains clean."
     ],
-    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.jpg",
+    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.card.avif",
     "images": [
-      "/images/experiments/onion-peel-cell-microscopy.jpg"
+      "/images/experiments/onion-peel-cell-microscopy.card.avif"
     ],
     "tags": [
       "Cell Biology",
@@ -6805,9 +6805,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Harvest root tips between 9:00 AM and 10:30 AM when mitotic index peaks in Allium cepa.",
       "Use only the terminal 2 mm apical tip containing active dividing meristem."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/mitosis-onion-root-tip-squash.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/mitosis-onion-root-tip-squash.card.avif"
     ],
     "tags": [
       "Mitosis",
@@ -7085,9 +7085,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Use living, fresh potato cells; boiled potatoes fail because boiling denatures plasma membranes.",
       "Color the sugar solution with a drop of dye to ensure clear visual tracking."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/osmosis-potato-osmoscope-demonstration.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/osmosis-potato-osmoscope-demonstration.card.avif"
     ],
     "tags": [
       "Osmosis",
@@ -7375,9 +7375,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Introduce only a single, compact air bubble into the capillary tube.",
       "Ensure leaves are dry before commencing measurements."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/transpiration-rate-ganongs-potometer.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/transpiration-rate-ganongs-potometer.card.avif"
     ],
     "tags": [
       "Transpiration",
@@ -7682,9 +7682,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Use actively germinating seeds with emerging radicles for high metabolic respiration rates.",
       "Ensure the delivery tube end is submerged well below the beaker water surface."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/carbon-dioxide-release-seed-respiration.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/carbon-dioxide-release-seed-respiration.card.avif"
     ],
     "tags": [
       "Respiration",
@@ -7981,9 +7981,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Boil leaf thoroughly in alcohol until completely bleached so green pigment does not obscure iodine results.",
       "Handle hot glassware with beaker tongs."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/photosynthesis-starch-test-iodine.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/photosynthesis-starch-test-iodine.card.avif"
     ],
     "tags": [
       "Photosynthesis",
@@ -8269,9 +8269,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Do not whip or shake vigorously after adding detergent to prevent shearing long DNA strands into fragments.",
       "Use fresh fruit for highest nucleic acid yield."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/dna-isolation-plant-material.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/dna-isolation-plant-material.card.avif"
     ],
     "tags": [
       "Biotechnology",
@@ -8566,9 +8566,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Buffer pH must be maintained at 6.8 for optimal differential differentiation of granules.",
       "Do not touch slide surface with fingers to prevent lipid smudging."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/human-blood-smear-wbc-identification.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/human-blood-smear-wbc-identification.card.avif"
     ],
     "tags": [
       "Hematology",
@@ -8863,9 +8863,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Rinse the sampling dropper between minute intervals to prevent early transfer of enzyme.",
       "Dilute saliva appropriately so the reaction takes between 5 to 10 minutes for measurable tracking."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/salivary-amylase-starch-digestion.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/salivary-amylase-starch-digestion.card.avif"
     ],
     "tags": [
       "Enzymes",
@@ -9156,9 +9156,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Count multiple microscopic fields (at least 5 fields) and average to obtain statistically reliable stomatal counts.",
       "Avoid leaf veins when counting stomatal density."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/stomata-distribution-density-leaf-epidermis.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/stomata-distribution-density-leaf-epidermis.card.avif"
     ],
     "tags": [
       "Stomata",
@@ -9413,9 +9413,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Measure hypotenuse length with high accuracy before cutting the target square.",
       "Avoid adhesive warping by smoothing paper firmly onto cardboard."
     ],
-    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.card.avif",
     "images": [
-      "/images/experiments/pythagoras-theorem-geometric-verification.jpg"
+      "/images/experiments/pythagoras-theorem-geometric-verification.card.avif"
     ],
     "tags": [
       "Pythagoras Theorem",
@@ -9702,9 +9702,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Keep sector radius r constant throughout circle division.",
       "Handle sharp scissors with care."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/area-of-circle-sector-partitioning.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/area-of-circle-sector-partitioning.card.avif"
     ],
     "tags": [
       "Circle Area",
@@ -9979,9 +9979,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Pour sand through a funnel slowly into the models to avoid spilling outside the measurement rim.",
       "Wipe acrylic models with anti-static cloth to prevent sand grains sticking to walls."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/surface-area-volume-sphere-cone-cylinder.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/surface-area-volume-sphere-cone-cylinder.card.avif"
     ],
     "tags": [
       "Mensuration",
@@ -10230,9 +10230,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Use sharp pencils and fine rubber bands on the geoboard to prevent angular reading errors.",
       "Verify the theorem across both minor arcs, major arcs, and semicircles (angle in a semicircle = 90°)."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/angle-subtended-by-arc-circle-theorem.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/angle-subtended-by-arc-circle-theorem.card.avif"
     ],
     "tags": [
       "Circle Theorems",
@@ -10482,9 +10482,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Align the ruler with hairline accuracy along the points of tangency.",
       "Crease paper cleanly along axis of symmetry OP for folding verification."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/circle-tangents-external-point-construction.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/circle-tangents-external-point-construction.card.avif"
     ],
     "tags": [
       "Tangents to Circles",
@@ -10763,9 +10763,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Avoid using tiny triangles where measurement errors become significant percentages.",
       "Check that points D and E lie strictly on the respective sides."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/basic-proportionality-thales-theorem.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/basic-proportionality-thales-theorem.card.avif"
     ],
     "tags": [
       "Thales Theorem",
@@ -11027,9 +11027,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Ensure student clearly distinguishes between the two contrasting colored staircases.",
       "Test with multiple values of n (n = 4, n = 5, n = 10) to confirm generalizability."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/sum-of-natural-numbers-staircase-model.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/sum-of-natural-numbers-staircase-model.card.avif"
     ],
     "tags": [
       "Arithmetic Progression",
@@ -11350,9 +11350,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Label dimensions a and b clearly on each block face to facilitate spatial tracking.",
       "Store blocks in labeled compartments to prevent losing components."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/algebraic-identity-cube-of-binomial-3d.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/algebraic-identity-cube-of-binomial-3d.card.avif"
     ],
     "tags": [
       "Algebraic Identities",
@@ -11649,9 +11649,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Keep straw sight aligned with the exact apex of the target object.",
       "Include observer eye height (h1); omitting it introduces a 1.4-1.7 m systematic error."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/clinometer-trigonometric-height-estimation.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/clinometer-trigonometric-height-estimation.card.avif"
     ],
     "tags": [
       "Trigonometry",
@@ -11930,9 +11930,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Ensure pegs and balls are clean and dry to minimize electrostatic or frictional bias.",
       "Verify that all bins have uniform internal cross-sectional width."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/galton-board-normal-distribution-binomial.card.avif",
     "images": [
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/galton-board-normal-distribution-binomial.card.avif"
     ],
     "tags": [
       "Probability",

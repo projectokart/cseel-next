@@ -29,6 +29,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "lucide-react": [
+        "./src/lib/icons/googleMaterialIcons.tsx"
       ]
     }
   },
@@ -40,6 +43,7 @@
   ],
   "exclude": [
     "node_modules",
-    ".next"
+    ".next",
+    "archive_assets"
   ]
 }

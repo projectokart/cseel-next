@@ -79,6 +79,7 @@ export interface SchoolSeoQuery {
   facility?: string;
   onlyPmShri?: boolean;
   minStudents?: number;
+  searchQuery?: string;
   
   // Sort & Page
   sortBy: string;
@@ -205,13 +206,15 @@ export function parseSchoolsSeoQuery(
     country: 'India',
     sortBy: 'students',
     page: 1,
-    limit: 24,
+    limit: 25,
     companionDistrictPages: [],
     faqs: []
   };
 
   // 1. Process URL Search Parameters
   if (searchParams) {
+    if (typeof searchParams.q === 'string' && searchParams.q.trim()) result.searchQuery = searchParams.q.trim();
+    if (typeof searchParams.search === 'string' && searchParams.search.trim()) result.searchQuery = searchParams.search.trim();
     if (typeof searchParams.state === 'string') result.state = searchParams.state;
     if (typeof searchParams.district === 'string') result.district = searchParams.district;
     if (typeof searchParams.block === 'string') result.block = searchParams.block;
@@ -225,6 +228,7 @@ export function parseSchoolsSeoQuery(
     if (typeof searchParams.facility === 'string') result.facility = searchParams.facility;
     if (typeof searchParams.sort === 'string') result.sortBy = searchParams.sort;
     if (searchParams.page) result.page = Math.max(Number(searchParams.page) || 1, 1);
+    if (searchParams.limit) result.limit = Math.min(Number(searchParams.limit) || 25, 25);
   }
 
   // 2. Parse High-Intent 25 Category Slug Patterns

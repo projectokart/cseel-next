@@ -619,7 +619,7 @@ export default function SeminarsClient() {
                 <div className="p-4 border-t border-gray-100 bg-white flex items-center justify-between gap-3">
                   <button
                     onClick={() => setSelectedSeminarDetails(null)}
-                    className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition-colors"
+                    className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-full text-xs transition-colors"
                   >
                     Close
                   </button>
@@ -629,7 +629,7 @@ export default function SeminarsClient() {
                       setSelectedSeminarDetails(null);
                       setSelectedSeminarForSchoolReg(sem);
                     }}
-                    className="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white font-black rounded-xl text-xs shadow-md transition-colors flex items-center gap-2"
+                    className="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white font-black rounded-full text-xs shadow-md transition-colors flex items-center gap-2"
                   >
                     <Ticket className="w-3.5 h-3.5" />
                     <span>Register Delegation Pass</span>
@@ -808,7 +808,7 @@ export default function SeminarsClient() {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="w-full py-3 bg-primary hover:bg-primary-hover text-white font-black rounded-xl text-xs shadow-md transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-3 bg-primary hover:bg-primary-hover text-white font-black rounded-full text-xs shadow-md transition-colors flex items-center justify-center gap-2"
                       >
                         <Ticket className="w-4 h-4" />
                         <span>Confirm & Generate Delegation Letterhead Pass</span>
@@ -902,13 +902,13 @@ export default function SeminarsClient() {
                 <div className="p-4 border-t border-gray-100 bg-slate-50 flex items-center justify-between gap-3">
                   <button
                     onClick={() => setSelectedInvitationPass(null)}
-                    className="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl text-xs"
+                    className="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-full text-xs"
                   >
                     Done
                   </button>
                   <button
                     onClick={() => window.print()}
-                    className="px-6 py-2 bg-primary hover:bg-primary-hover text-white font-black rounded-xl text-xs shadow-md flex items-center gap-1.5"
+                    className="px-6 py-2 bg-primary hover:bg-primary-hover text-white font-black rounded-full text-xs shadow-md flex items-center gap-1.5"
                   >
                     <Printer className="w-4 h-4" />
                     <span>Print Delegation Letterhead Pass</span>
@@ -998,7 +998,7 @@ export default function SeminarsClient() {
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-primary text-white rounded-xl text-xs font-black shadow-lg hover:bg-primary/90 transition-colors mt-2"
+                      className="w-full py-3 bg-primary text-white rounded-full text-xs font-black shadow-lg hover:bg-primary/90 transition-colors mt-2"
                     >
                       Confirm Free Individual Pass
                     </button>

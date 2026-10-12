@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { schoolSearchSupabase, mapSupabaseToSchoolRecord } from './schoolSearchClient';
 import { SchoolSeoQuery, KNOWN_STATES } from '@/lib/schoolsSeoParser';
 import { SchoolRecord } from '@/data/schoolFinderData';
@@ -12,6 +14,133 @@ export interface SchoolsDirectoryStats {
   atlCount: number;
   ictCount: number;
 }
+
+const PLACEHOLDER_SVG = '/images/default-school-placeholder.png';
+
+// Strict deduplication helper across UDISE code and normalized school name
+export function deduplicateSchools(list: SchoolRecord[]): SchoolRecord[] {
+  const seenIds = new Set<string>();
+  const seenNames = new Set<string>();
+  const result: SchoolRecord[] = [];
+
+  for (const s of list) {
+    const rawId = (s.udise_code || s.school_id || s.id || '').trim().toUpperCase();
+    const cleanId = rawId.replace(/[^A-Z0-9]/g, '');
+
+    if (cleanId) {
+      if (seenIds.has(cleanId)) continue;
+      seenIds.add(cleanId);
+      result.push(s);
+    } else {
+      const cleanName = (s.school_name || s.name || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      const districtKey = (s.district_name || s.city || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      const nameKey = cleanName ? `${cleanName}__${districtKey}` : '';
+      if (nameKey && seenNames.has(nameKey)) continue;
+      if (nameKey) seenNames.add(nameKey);
+      result.push(s);
+    }
+  }
+
+  return result;
+}
+
+function getLocallyRegisteredSchools(): SchoolRecord[] {
+  try {
+    const tokensFile = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
+    if (!fs.existsSync(tokensFile)) return [];
+    const raw = fs.readFileSync(tokensFile, 'utf8');
+    const store = JSON.parse(raw);
+    const tokens = store?.tokens || {};
+    const localSchools: SchoolRecord[] = [];
+
+    for (const [key, item] of Object.entries<any>(tokens)) {
+      const p = item.profileData || {};
+      const ident = p.schoolIdentity || {};
+      const schoolName = ident.schoolName || p.schoolName || item.schoolName;
+      // Preserve original alphanumeric UDISE code (e.g. 070507ND105)
+      const udiseCode = (item.schoolId || p.udiseCode || key).trim().toUpperCase();
+
+      if (
+        udiseCode.length >= 6 &&
+        schoolName &&
+        schoolName !== 'DELHI PUBLIC SCHOOL' &&
+        schoolName !== 'School Profile'
+      ) {
+        const contact = p.contact?.campusLocation || {};
+        const name = schoolName;
+        const district = contact.district || p.district || '';
+        const state = contact.state || p.state || '';
+        const address = contact.streetAddress || p.address || (district ? `${district}, ${state}` : '');
+        const pincode = String(contact.pincode || p.pincode || '');
+        const board = ident.board || p.board || '';
+        const totalStudents = Number(p.totalStudents || 0);
+        const totalTeachers = Number(p.totalTeachers || 0);
+        const classroomsCount = Number(p.classroomsCount || 0);
+
+        localSchools.push({
+          id: udiseCode,
+          school_id: udiseCode,
+          school_name: name,
+          name: name,
+          udise_code: udiseCode,
+          udiseCode: udiseCode,
+          status: 'Admissions Open',
+          year_desc: '2026-27',
+          established_year: ident.establishedYear || p.establishedYear || '',
+          state_name: state,
+          state: state,
+          district_name: district,
+          city: district,
+          block_name: contact.block || '',
+          village_ward: contact.village || p.village || '',
+          locality: contact.village || p.locality || '',
+          pincode,
+          address,
+          latitude: Number(p.latitude || contact.lat || 0),
+          longitude: Number(p.longitude || contact.lng || 0),
+          lat: Number(p.latitude || contact.lat || 0),
+          lng: Number(p.longitude || contact.lng || 0),
+          rural_urban: p.ruralUrban || 'Urban',
+          school_category: p.schoolCategory || p.category_desc || '',
+          type: p.schoolCategory || p.category_desc || '',
+          management_type: p.managementType || p.management || 'Government',
+          management_desc_state: p.management || 'Government',
+          management: p.management || 'Government',
+          class_from: String(p.classFrom || 1),
+          class_to: String(p.classTo || 12),
+          classes: p.classes || (p.classFrom && p.classTo ? `${p.classFrom}th to ${p.classTo}th` : ''),
+          school_type: p.genderType || 'Co-educational',
+          gender: p.genderType || 'Co-ed',
+          board_secondary_10th: board,
+          board_higher_secondary_12th: board,
+          board: board,
+          medium_of_instruction_1: p.medium || 'English',
+          medium: p.medium || 'English',
+          annual_fee: p.annualFee || 0,
+          annual_fee_formatted: p.annualFee ? `₹${p.annualFee}/yr` : 'Government / Free',
+          residential_school: p.isResidential ? 'Residential' : 'Day School',
+          total_students: totalStudents,
+          total_teachers: totalTeachers,
+          total_classrooms: classroomsCount,
+          working_smart_boards: p.smartBoards || 0,
+          tinkering_lab_atl: p.hasAtl ? 'Yes' : 'No',
+          ict_lab: p.hasIct ? 'Yes' : 'No',
+          integrated_science_lab: p.hasScienceLab ? 'Yes' : 'No',
+          library: 'Yes',
+          playground_available: 'Yes',
+          rating: p.rating || 0,
+          reviews_count: p.reviewsCount || 0,
+          image: p.image || PLACEHOLDER_SVG,
+          image_url: p.image || PLACEHOLDER_SVG,
+        } as any);
+      }
+    }
+    return localSchools;
+  } catch {
+    return [];
+  }
+}
+
 
 export interface SchoolsDirectoryResult {
   query: SchoolSeoQuery;
@@ -44,6 +173,7 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
     gender: seoQuery.gender,
     medium: seoQuery.medium,
     facility: seoQuery.facility,
+    searchQuery: seoQuery.searchQuery,
     sortBy: seoQuery.sortBy,
     page: seoQuery.page,
     limit: seoQuery.limit
@@ -56,7 +186,7 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
 
   try {
     const page = Math.max(seoQuery.page || 1, 1);
-    const limit = Math.min(seoQuery.limit || 24, 100);
+    const limit = Math.min(seoQuery.limit || 25, 25);
     const offset = (page - 1) * limit;
 
     // Helper to construct query
@@ -64,6 +194,19 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
       let q = schoolSearchSupabase
         .from('udise_private_schools')
         .select('*', { count: 'exact' });
+
+      // Free text search query across school name, locality, block, district, state, address, and UDISE code
+      if (seoQuery.searchQuery) {
+        const rawSq = seoQuery.searchQuery.trim();
+        const lowerSq = rawSq.toLowerCase();
+        let sq = rawSq;
+        if (lowerSq === 'delhi ncr' || lowerSq === 'new delhi' || lowerSq === 'ncr') {
+          sq = 'Delhi';
+        } else if (lowerSq === 'east delhi') {
+          sq = 'East';
+        }
+        q = q.or(`school_name.ilike.%${sq}%,village_ward.ilike.%${sq}%,village_name.ilike.%${sq}%,block_name.ilike.%${sq}%,district_name.ilike.%${sq}%,state_name.ilike.%${sq}%,address.ilike.%${sq}%,udise_code.ilike.%${sq}%`);
+      }
 
       if (!relaxLocation) {
         if (seoQuery.state) {
@@ -154,8 +297,16 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
       // Sort order
       if (seoQuery.sortBy === 'teachers') {
         q = q.order('total_teachers', { ascending: false, nullsFirst: false });
-      } else if (seoQuery.sortBy === 'name') {
+      } else if (seoQuery.sortBy === 'name' || seoQuery.sortBy === 'name_asc') {
         q = q.order('school_name', { ascending: true });
+      } else if (seoQuery.sortBy === 'name_desc') {
+        q = q.order('school_name', { ascending: false });
+      } else if (seoQuery.sortBy === 'popularity_asc') {
+        q = q.order('rating', { ascending: true, nullsFirst: false }).order('total_students', { ascending: true, nullsFirst: false });
+      } else if (seoQuery.sortBy === 'popularity_desc') {
+        q = q.order('rating', { ascending: false, nullsFirst: false }).order('total_students', { ascending: false, nullsFirst: false });
+      } else if (seoQuery.sortBy === 'students_asc') {
+        q = q.order('total_students', { ascending: true, nullsFirst: false });
       } else {
         q = q.order('total_students', { ascending: false, nullsFirst: false });
       }
@@ -163,9 +314,25 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
       return q;
     };
 
-    // 1. Primary strict query
+    // Locally registered schools (instant & verified from sync tokens)
+    const allLocalSchools = getLocallyRegisteredSchools();
+    const matchingLocals = allLocalSchools.filter((ls) => {
+      if (seoQuery.state && !ls.state_name?.toLowerCase().includes(seoQuery.state.toLowerCase())) return false;
+      if (seoQuery.district && !ls.district_name?.toLowerCase().includes(seoQuery.district.toLowerCase())) return false;
+      if (seoQuery.board && !ls.board?.toLowerCase().includes(seoQuery.board.toLowerCase())) return false;
+      return true;
+    });
+
+    const runWithTimeout = async <T>(promise: Promise<T>, timeoutMs = 4500): Promise<T> => {
+      return Promise.race([
+        promise,
+        new Promise<T>((_, reject) => setTimeout(() => reject(new Error('Supabase query timeout')), timeoutMs))
+      ]);
+    };
+
+    // 1. Primary strict query with timeout guard
     let dbQuery = buildQuery(true, false).range(offset, offset + limit - 1);
-    let { data: rows, count, error } = await dbQuery;
+    let { data: rows, count, error }: any = await runWithTimeout(dbQuery as any);
 
     if (error) {
       console.error('Supabase Schools query error:', error);
@@ -176,16 +343,17 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
     let fallbackNotice: string | undefined = undefined;
 
     // 2. Smart Fallback if 0 results found (Progressive Relaxation)
-    if (!rows || rows.length === 0 || (count !== null && count === 0)) {
+    // Only relax if the filter matched 0 total schools across the entire DB (not when page > totalPages)
+    if ((count === 0 || count === null) && (!rows || rows.length === 0)) {
       isFallback = true;
       // Step 2a: Relax niche filters within the same district/state
       let fallbackQuery = buildQuery(false, false).range(0, limit - 1);
-      let fbRes = await fallbackQuery;
+      let fbRes: any = await runWithTimeout(fallbackQuery as any).catch(() => ({ data: [], count: 0 }));
       
       // Step 2b: If still 0, relax to state level or top popular nationwide
       if (!fbRes.data || fbRes.data.length === 0) {
         let broaderQuery = buildQuery(false, true).range(0, limit - 1);
-        let broaderRes = await broaderQuery;
+        let broaderRes: any = await runWithTimeout(broaderQuery as any).catch(() => ({ data: [], count: 0 }));
         rows = broaderRes.data || [];
         count = broaderRes.count || rows.length;
         fallbackNotice = seoQuery.state
@@ -202,11 +370,18 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
     let totalCount = count || (rows ? rows.length : 0);
     let schools: SchoolRecord[] = (rows || []).map((row: any) => mapSupabaseToSchoolRecord(row));
 
-    // When DB has no records, keep empty list rather than injecting dummy mock schools
-    if (schools.length === 0) {
-      totalCount = 0;
+    // When DB has no records, fallback to local schools if any exist
+    if (schools.length === 0 && matchingLocals.length > 0) {
+      const pagedLocals = matchingLocals.slice(offset, offset + limit);
+      schools = deduplicateSchools(pagedLocals);
+      totalCount = matchingLocals.length;
       fallbackNotice = '';
       isFallback = false;
+    } else {
+      schools = deduplicateSchools(schools);
+      if (schools.length > limit) {
+        schools = schools.slice(0, limit);
+      }
     }
 
     const totalPages = Math.ceil(totalCount / limit) || 1;
@@ -302,25 +477,36 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
     return result;
   } catch (err) {
     console.error('fetchSchoolsForDirectory error:', err);
+    const allLocalSchools = getLocallyRegisteredSchools();
+    const matchingLocals = allLocalSchools.filter((ls) => {
+      if (seoQuery.state && !ls.state_name?.toLowerCase().includes(seoQuery.state.toLowerCase())) return false;
+      if (seoQuery.district && !ls.district_name?.toLowerCase().includes(seoQuery.district.toLowerCase())) return false;
+      if (seoQuery.board && !ls.board?.toLowerCase().includes(seoQuery.board.toLowerCase())) return false;
+      return true;
+    });
+
+    const sumStudents = matchingLocals.reduce((sum, s) => sum + (s.total_students || 0), 0);
+    const sumTeachers = matchingLocals.reduce((sum, s) => sum + (s.total_teachers || 0), 0);
+
     return {
       query: seoQuery,
-      totalCount: 0,
-      schools: [],
+      totalCount: matchingLocals.length,
+      schools: matchingLocals,
       stats: {
-        totalSchools: 0,
-        totalStudents: 0,
-        totalTeachers: 0,
-        avgRatio: '20:1',
-        privateCount: 0,
+        totalSchools: matchingLocals.length,
+        totalStudents: sumStudents,
+        totalTeachers: sumTeachers,
+        avgRatio: sumTeachers > 0 ? `${Math.round(sumStudents / sumTeachers)}:1` : '20:1',
+        privateCount: matchingLocals.length,
         govtCount: 0,
-        atlCount: 0,
-        ictCount: 0
+        atlCount: matchingLocals.length,
+        ictCount: matchingLocals.length
       },
       subLocations: [],
       faqs: [],
       currentPage: 1,
       totalPages: 1,
-      limit: 24,
+      limit: 25,
       isFallback: false
     };
   }

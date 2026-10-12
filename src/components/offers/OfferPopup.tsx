@@ -225,13 +225,13 @@ const OfferPopup = () => {
                 </div>
               </div>
 
-              {/* Conversion CTAs */}
+              {/* Conversion CTAs — Official M3 Pill Buttons */}
               <div className="space-y-2.5 pt-1">
                 {item.cta_link && (
                   <Link
                     href={item.cta_link}
                     onClick={close}
-                    className="w-full flex items-center justify-center gap-2 bg-[#0f172a] hover:bg-[#1e293b] text-white py-3.5 px-6 rounded-2xl font-bold text-sm sm:text-base shadow-lg shadow-slate-900/15 transition-all transform hover:-translate-y-0.5 active:scale-98 text-decoration-none group"
+                    className="w-full flex items-center justify-center gap-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white h-12 px-7 rounded-full font-semibold text-sm sm:text-base shadow-[0_1px_2px_rgba(60,64,67,0.3),0_1px_3px_1px_rgba(60,64,67,0.15)] hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] text-decoration-none group"
                   >
                     <span>{item.cta_text || "Book Free School Demo"}</span>
                     <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
@@ -243,16 +243,16 @@ const OfferPopup = () => {
                   <Link
                     href="/virtual-lab-tour"
                     onClick={close}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#0284c7] hover:text-sky-700 font-bold transition-colors group"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] px-3 py-1.5 rounded-full font-semibold transition-all duration-200 group"
                   >
-                    <Compass size={14} className="text-[#0284c7] group-hover:rotate-45 transition-transform" />
+                    <Compass size={14} className="text-[#0b57d0] group-hover:rotate-45 transition-transform" />
                     <span>Explore 360° Virtual Lab</span>
                   </Link>
 
                   <button
                     type="button"
                     onClick={close}
-                    className="text-xs text-stone-400 hover:text-stone-700 transition-colors cursor-pointer font-medium"
+                    className="text-xs text-[#444746] hover:text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08] px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer font-medium"
                   >
                     Maybe later
                   </button>

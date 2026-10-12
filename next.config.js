@@ -127,6 +127,14 @@ const nextConfig = {
       },
     ];
   },
+  webpack: (config) => {
+    const path = require('path');
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      'lucide-react': path.resolve(__dirname, 'src/lib/icons/googleMaterialIcons.tsx'),
+    };
+    return config;
+  },
 };
 
 module.exports = nextConfig;

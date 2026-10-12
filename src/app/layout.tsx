@@ -129,10 +129,36 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        {/* Preload Homepage Hero LCP Image */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero/students-doing-chemistry-lab-experiment.webp"
+          type="image/webp"
+          // @ts-ignore
+          fetchpriority="high"
+          fetchPriority="high"
+        />
+
+        {/* Non-Blocking Font Loading (Zero Render-Blocking Overhead) */}
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+        />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+          media="print"
+          // @ts-ignore
+          onLoad="this.media='all'"
         />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+          />
+        </noscript>
         <style
           dangerouslySetInnerHTML={{
             __html: `:root { --font-roboto: 'Roboto', sans-serif; --font-inter: 'Inter', sans-serif; --font-montserrat: 'Montserrat', sans-serif; --font-poppins: 'Poppins', sans-serif; --font-fredoka: 'Fredoka', sans-serif; }`,

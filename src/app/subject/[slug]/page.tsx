@@ -45,6 +45,14 @@ import {
 import { SUBJECTS_DATA, SubjectMetadata, ExperimentActivity, slugifyExperimentTitle } from '@/data/subjectActivitiesData';
 import ExperimentDetailModal from '@/components/subject/ExperimentDetailModal';
 import { useCart } from '@/contexts/CartContext';
+import {
+  M3Button,
+  M3IconButton,
+  M3FilterChip,
+  M3InputChip,
+  M3AssistChip,
+  M3Badge,
+} from '@/components/google-ui';
 
 // Swiper React Component & Modules
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -651,22 +659,32 @@ export default function SubjectActivityPage() {
                 </div>
               </div>
 
-              {/* Hero Footer Bar with Backdrop Blur: Pinned at bottom behind buttons (No icons in buttons) */}
+              {/* Hero Footer Bar with Backdrop Blur: Official M3 Buttons */}
               <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-[#000814]/95 via-[#000a18]/80 to-transparent backdrop-blur-md pt-3 sm:pt-5 pb-5 sm:pb-7 px-3 sm:px-8 pointer-events-auto">
-                <div className="flex flex-row items-center gap-2 xs:gap-3 w-full max-w-sm sm:max-w-md mx-auto sm:mx-0">
-                  <a 
-                    href={slide.ctaLink} 
-                    className="flex-1 min-w-0 inline-flex items-center justify-center px-3.5 py-2.5 xs:py-3 rounded-full bg-[#fbb03b] hover:bg-[#f59e0b] active:scale-95 text-[#07172c] font-bold text-xs sm:text-sm shadow-lg shadow-[#fbb03b]/30 transition-all duration-200 text-center whitespace-nowrap"
+                <div className="flex flex-row items-center gap-2.5 xs:gap-3 w-full max-w-sm sm:max-w-md mx-auto sm:mx-0">
+                  <M3Button
+                    variant="filled"
+                    size="md"
+                    fullWidth
+                    onClick={() => {
+                      const el = document.getElementById('experiments-grid');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
                   >
-                    <span>{slide.ctaText}</span>
-                  </a>
+                    {slide.ctaText}
+                  </M3Button>
 
-                  <a 
-                    href="#experiments-grid" 
-                    className="flex-1 min-w-0 inline-flex items-center justify-center px-3.5 py-2.5 xs:py-3 rounded-full bg-[#071b30]/90 hover:bg-[#071b30] active:scale-95 text-white border border-[#38bdf8]/50 font-bold text-xs sm:text-sm backdrop-blur-md transition-all duration-200 shadow-md text-center whitespace-nowrap"
+                  <M3Button
+                    variant="tonal"
+                    size="md"
+                    fullWidth
+                    onClick={() => {
+                      const el = document.getElementById('experiments-grid');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
                   >
-                    <span>View Experiments</span>
-                  </a>
+                    View Experiments
+                  </M3Button>
                 </div>
               </div>
             </SwiperSlide>
@@ -691,98 +709,83 @@ export default function SubjectActivityPage() {
         <div className="hero-swiper-pagination !absolute !bottom-1 sm:!bottom-1.5 !left-1/2 !-translate-x-1/2 !z-30 !flex !items-center !justify-center !w-auto !bg-black/35 !backdrop-blur-md !px-3 !py-0.5 sm:!py-1 !rounded-full !border !border-sky-400/20 !shadow-lg"></div>
       </section>
 
-      {/* ─── 2. Search, Filter & Sort Toolbar (Google Style Unified Pill) ─── */}
+      {/* ─── 2. Search, Filter & Sort Toolbar (Official Google M3 Search & Filter Bar) ─── */}
       <section id="experiments-grid" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-6 sm:mt-8 w-full max-w-full">
         
-        <div className="w-full bg-white rounded-2xl p-2.5 sm:p-3 border border-slate-200/90 shadow-[0_4px_20px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_24px_rgba(15,23,42,0.09)] transition-all space-y-2 box-border">
+        <div className="w-full bg-white rounded-3xl p-3 sm:p-4 border border-[#dde3ea] shadow-[0_4px_20px_rgba(15,23,42,0.06)] transition-all space-y-2.5 box-border">
           
-          {/* Top Unified Search Bar (Google Style Pill) */}
-          <div className="flex items-center gap-2 w-full bg-slate-50 hover:bg-slate-100/70 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 border border-slate-200/80 rounded-full px-3 py-1.5 transition-all">
-            
-            {/* Search Icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </svg>
+          {/* Official Google M3 Search Bar (52px pill, #eef3fc Surface Container High) */}
+          <div className="flex items-center gap-2.5 w-full h-12 bg-[#eef3fc] hover:bg-[#e3ecf8] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0b57d0] border border-transparent focus-within:border-[#0b57d0] rounded-full px-4 transition-all">
+            <Search size={18} className="text-[#444746] shrink-0" />
 
-            {/* Search Input */}
             <input 
               type="text" 
               placeholder={`Search ${displayName} experiments, topics, concepts...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder-slate-400 outline-none min-w-0"
+              className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#1f1f1f] placeholder-[#444746] outline-none min-w-0"
             />
 
             {searchQuery && (
-              <button
-                type="button"
+              <M3IconButton
+                variant="standard"
+                size="sm"
+                ariaLabel="Clear search"
+                icon={<X size={15} />}
                 onClick={() => setSearchQuery('')}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded-full shrink-0"
-              >
-                <X size={13} />
-              </button>
+              />
             )}
 
-            {/* Bookmark Link Button */}
-            <Link 
-              href="/my-selections" 
-              title="My Selections" 
-              className="relative p-1 text-blue-600 hover:bg-blue-50 rounded-full transition-colors shrink-0"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"></path>
-                <path d="m9 10 2 2 4-4"></path>
-              </svg>
+            {/* Bookmark Link Button with M3IconButton & M3Badge */}
+            <div className="relative shrink-0">
+              <M3IconButton
+                variant="tonal"
+                size="sm"
+                ariaLabel="My Selections"
+                icon={<BookmarkCheck size={15} />}
+                onClick={() => router.push('/my-selections')}
+              />
               {selectedIds.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 text-white rounded-full text-[8px] font-black flex items-center justify-center">
-                  {selectedIds.length}
+                <span className="absolute -top-1 -right-1 pointer-events-none">
+                  <M3Badge count={selectedIds.length} />
                 </span>
               )}
-            </Link>
+            </div>
           </div>
 
-          {/* Quick Action & Class Chips Row (Static Action Buttons + Horizontal Scroll Class Pills) */}
-          <div className="flex items-center gap-1.5 w-full select-none">
+          {/* Quick Action & Class Chips Row (Official M3 IconButtons + M3 FilterChips) */}
+          <div className="flex items-center gap-2 w-full select-none">
             
             {/* Static Action Buttons: Filter Trigger + Sort Trigger */}
             <div className="flex items-center gap-1.5 shrink-0 relative">
               
               {/* Filter Icon Trigger */}
-              <button 
-                type="button" 
-                onClick={() => setIsFilterSheetOpen(true)}
-                title="Filters" 
-                aria-label="Open filters"
-                className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer ${
-                  activeFilterCount > 0
-                    ? 'bg-[#003c6e] text-white border border-[#003c6e] shadow-2xs'
-                    : 'text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-200'
-                }`}
-              >
-                <SlidersHorizontal size={14} strokeWidth={2.2} />
+              <div className="relative">
+                <M3IconButton
+                  variant={activeFilterCount > 0 ? 'filled' : 'tonal'}
+                  size="sm"
+                  selected={activeFilterCount > 0}
+                  ariaLabel="Open filters"
+                  icon={<SlidersHorizontal size={15} strokeWidth={2.2} />}
+                  onClick={() => setIsFilterSheetOpen(true)}
+                />
                 {activeFilterCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black flex items-center justify-center ring-2 ring-white">
-                    {activeFilterCount}
+                  <span className="absolute -top-1 -right-1 pointer-events-none">
+                    <M3Badge count={activeFilterCount} />
                   </span>
                 )}
-              </button>
+              </div>
 
-              {/* Custom Sort Icon Dropdown Trigger */}
+              {/* Sort Icon Dropdown Trigger */}
               <div className="relative shrink-0">
-                <button 
-                  type="button" 
+                <M3IconButton
+                  variant={selectedSort !== 'popularity' || isSortMenuOpen ? 'tonal' : 'outlined'}
+                  size="sm"
+                  selected={selectedSort !== 'popularity' || isSortMenuOpen}
+                  ariaLabel="Open sort menu"
+                  icon={<ArrowUpDown size={15} strokeWidth={2.2} />}
                   onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}
-                  title="Sort options"
-                  aria-label="Open sort menu"
-                  className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer ${
-                    selectedSort !== 'popularity' || isSortMenuOpen
-                      ? 'bg-blue-50 text-[#006fcc] border border-blue-200 shadow-2xs'
-                      : 'text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-200'
-                  }`}
-                >
-                  <ArrowUpDown size={14} strokeWidth={2.2} />
-                </button>
+                />
 
                 {/* Floating Google Dropdown Menu */}
                 {isSortMenuOpen && (
@@ -794,8 +797,8 @@ export default function SubjectActivityPage() {
                     />
 
                     {/* Dropdown Card */}
-                    <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-200/90 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-left overflow-hidden">
-                      <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                    <div className="absolute top-full left-0 mt-2 w-56 bg-[#f8fafd] rounded-2xl shadow-2xl border border-[#dde3ea] py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-left overflow-hidden">
+                      <div className="px-3 py-1.5 text-[10px] font-bold text-[#444746] uppercase tracking-wider border-b border-[#dde3ea] flex items-center justify-between">
                         <span>Sort Activities</span>
                         {selectedSort !== 'popularity' && (
                           <button
@@ -804,7 +807,7 @@ export default function SubjectActivityPage() {
                               setSelectedSort('popularity');
                               setIsSortMenuOpen(false);
                             }}
-                            className="text-[10px] text-blue-600 hover:underline font-bold"
+                            className="text-[10px] text-[#0b57d0] hover:underline font-bold"
                           >
                             Reset
                           </button>
@@ -821,14 +824,14 @@ export default function SubjectActivityPage() {
                                 setSelectedSort(opt.value);
                                 setIsSortMenuOpen(false);
                               }}
-                              className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-colors text-left cursor-pointer ${
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-full text-xs transition-colors text-left cursor-pointer ${
                                 isActive
-                                  ? 'bg-blue-50 text-[#006fcc] font-bold'
-                                  : 'text-slate-700 hover:bg-slate-50 font-medium'
+                                  ? 'bg-[#c2e7ff] text-[#001d35] font-bold'
+                                  : 'text-[#1f1f1f] hover:bg-[#eef3fc] font-medium'
                               }`}
                             >
                               <span>{opt.label}</span>
-                              {isActive && <Check size={14} strokeWidth={2.5} className="text-[#006fcc] shrink-0" />}
+                              {isActive && <Check size={14} strokeWidth={2.5} className="text-[#0b57d0] shrink-0" />}
                             </button>
                           );
                         })}
@@ -841,109 +844,99 @@ export default function SubjectActivityPage() {
             </div>
 
             {/* Small Divider */}
-            <div className="h-4 w-px bg-slate-200 shrink-0 mx-0.5" />
+            <div className="h-5 w-px bg-[#c4c7c5] shrink-0 mx-0.5" />
 
-            {/* Scrollable Class Chips Container */}
+            {/* Scrollable Official M3 FilterChips Container */}
             <div 
-              className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-1 min-w-0"
+              className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 flex-1 min-w-0"
               style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
             >
               {CLASS_OPTIONS.map((c) => {
                 const isActive = selectedClass === c.value;
                 return (
-                  <button
+                  <M3FilterChip
                     key={c.value}
-                    type="button"
+                    label={c.label}
+                    selected={isActive}
                     onClick={() => setSelectedClass(c.value)}
-                    className={`px-3 py-1 rounded-full text-[11px] whitespace-nowrap transition-colors shrink-0 cursor-pointer ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200 shadow-2xs'
-                        : 'text-slate-600 font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200/70'
-                    }`}
-                  >
-                    {c.label}
-                  </button>
+                  />
                 );
               })}
             </div>
 
           </div>
 
-          {/* Active Filters */}
+          {/* Active Filters using Official M3 InputChips */}
           {(activeFilterCount > 0 || searchQuery) && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">Active:</span>
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#dde3ea]">
+              <span className="text-[10px] font-bold text-[#444746] uppercase tracking-wider mr-1">Active:</span>
 
               {searchQuery && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-semibold max-w-[200px] truncate">
-                  &quot;{searchQuery}&quot;
-                  <button onClick={() => setSearchQuery('')} className="hover:text-red-500 shrink-0">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={`"${searchQuery}"`}
+                  selected
+                  onRemove={() => setSearchQuery('')}
+                />
               )}
 
               {selectedClass !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-blue-50 text-[#006fcc] font-semibold border border-blue-200">
-                  {selectedClass}
-                  <button onClick={() => setSelectedClass('All')} className="hover:text-red-500">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={selectedClass}
+                  selected
+                  onRemove={() => setSelectedClass('All')}
+                />
               )}
 
               {selectedChapter !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-amber-50 text-amber-800 font-semibold border border-amber-200 max-w-[180px] truncate">
-                  {selectedChapter}
-                  <button onClick={() => setSelectedChapter('All')} className="hover:text-red-500 shrink-0">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={selectedChapter}
+                  selected
+                  onRemove={() => setSelectedChapter('All')}
+                />
               )}
 
               {selectedTopic !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-purple-50 text-purple-800 font-semibold border border-purple-200">
-                  {selectedTopic}
-                  <button onClick={() => setSelectedTopic('All')} className="hover:text-red-500">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={selectedTopic}
+                  selected
+                  onRemove={() => setSelectedTopic('All')}
+                />
               )}
 
               {selectedDifficulty !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200">
-                  {selectedDifficulty}
-                  <button onClick={() => setSelectedDifficulty('All')} className="hover:text-red-500">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={selectedDifficulty}
+                  selected
+                  onRemove={() => setSelectedDifficulty('All')}
+                />
               )}
 
               {selectedDuration !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-cyan-50 text-cyan-800 font-semibold border border-cyan-200">
-                  {DURATION_FILTERS.find((d) => d.value === selectedDuration)?.label}
-                  <button onClick={() => setSelectedDuration('All')} className="hover:text-red-500">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={DURATION_FILTERS.find((d) => d.value === selectedDuration)?.label || selectedDuration}
+                  selected
+                  onRemove={() => setSelectedDuration('All')}
+                />
               )}
 
               {selectedSafety !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-orange-50 text-orange-800 font-semibold border border-orange-200">
-                  {selectedSafety}
-                  <button onClick={() => setSelectedSafety('All')} className="hover:text-red-500">
-                    <X size={11} />
-                  </button>
-                </span>
+                <M3InputChip
+                  label={selectedSafety}
+                  selected
+                  onRemove={() => setSelectedSafety('All')}
+                />
               )}
 
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="text-[11px] font-bold text-red-600 hover:text-red-700 hover:underline ml-auto flex items-center gap-1 px-1.5 py-0.5"
-              >
-                <RotateCcw size={11} /> Clear All
-              </button>
+              <div className="ml-auto">
+                <M3Button
+                  variant="text"
+                  size="sm"
+                  leadingIcon={<RotateCcw size={13} />}
+                  onClick={resetFilters}
+                >
+                  Clear All
+                </M3Button>
+              </div>
             </div>
           )}
 
@@ -952,7 +945,7 @@ export default function SubjectActivityPage() {
         {/* Results Counter Bar */}
         <div className="mt-5 flex items-center justify-between pb-2.5 border-b border-slate-200">
           <p className="text-xs sm:text-sm font-bold text-slate-700">
-            Showing <span className="text-[#006fcc] font-black">{filteredActivities.length}</span> of {subject.activities.length} {displayName} Experiments
+            Showing <span className="text-[#0b57d0] font-black">{filteredActivities.length}</span> of {subject.activities.length} {displayName} Experiments
           </p>
           <span className="text-xs text-slate-500 font-medium hidden sm:inline">
             NEP 2020 Hands-On Curriculum
@@ -975,12 +968,12 @@ export default function SubjectActivityPage() {
               <div
                 key={act.id}
                 className={`relative flex flex-col justify-between border rounded-2xl bg-white w-full select-none overflow-hidden cursor-pointer group box-border transition-all duration-300 shadow-[0_2px_12px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.13)] hover:-translate-y-1 ${
-                  isSelected ? 'border-[#006fcc] ring-2 ring-[#006fcc]/30 shadow-[0_8px_24px_rgba(0,111,204,0.18)]' : 'border-slate-200/90 hover:border-slate-300'
+                  isSelected ? 'border-[#0b57d0] ring-2 ring-[#0b57d0]/30 shadow-[0_8px_24px_rgba(11,87,208,0.18)]' : 'border-[#dde3ea] hover:border-[#0b57d0]/50'
                 }`}
                 onClick={() => setActiveModalActivity(act)}
               >
                 {/* Top Section: Image and Content Side-by-Side */}
-                <div className="flex flex-row items-stretch gap-3 p-3">
+                <div className="flex flex-row items-stretch gap-3 p-3.5">
                   
                   {/* Image on the Left Side */}
                   <div className="w-28 sm:w-32 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100 relative self-stretch min-h-[96px]">
@@ -993,7 +986,7 @@ export default function SubjectActivityPage() {
                     
                     {/* Time Badge on Image */}
                     <div className="absolute top-2 left-2">
-                      <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-900/75 text-white backdrop-blur-xs border border-white/20 flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-900/75 text-white backdrop-blur-xs border border-white/20 flex items-center gap-1">
                         <Clock size={9} />
                         {act.duration}
                       </span>
@@ -1004,17 +997,17 @@ export default function SubjectActivityPage() {
                   <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                     <div className="space-y-1">
                       {/* Subtle Secondary Category Label */}
-                      <span className="text-[10px] font-medium text-slate-400 block tracking-wide truncate">
+                      <span className="text-[10px] font-semibold text-[#0b57d0] block tracking-wide truncate">
                         {act.category}
                       </span>
 
                       {/* Primary Hero: Bold Prominent Activity Title */}
-                      <h3 className="text-[14px] sm:text-[15px] font-bold text-slate-900 group-hover:text-[#006fcc] leading-snug transition-colors">
+                      <h3 className="text-[14px] sm:text-[15px] font-bold text-[#1f1f1f] group-hover:text-[#0b57d0] leading-snug transition-colors">
                         {act.title}
                       </h3>
 
                       {/* Subdued Description */}
-                      <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                      <p className="text-[11px] text-[#444746] font-normal leading-relaxed line-clamp-2">
                         {act.subtitle || act.description}
                       </p>
                       
@@ -1024,7 +1017,7 @@ export default function SubjectActivityPage() {
                           {act.tags.slice(0, 3).map((tag) => (
                             <span
                               key={tag}
-                              className="inline-flex items-center text-[9px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 transition-colors"
+                              className="inline-flex items-center text-[9px] font-medium text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-full border border-[#d3e3fd] transition-colors"
                             >
                               #{tag}
                             </span>
@@ -1035,72 +1028,58 @@ export default function SubjectActivityPage() {
                   </div>
                 </div>
 
-                {/* Full-Width Card Footer (Stopping Propagation so clicks here never trigger detail modal) */}
+                {/* Full-Width Card Footer using Official Google M3 Components */}
                 <div 
-                  className="flex items-center justify-between gap-2 px-3 py-2.5 border-t border-slate-100 bg-slate-50/70 rounded-b-2xl"
+                  className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-t border-[#dde3ea] bg-[#f8fafd] rounded-b-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* Class Badge */}
+                  {/* Official M3 AssistChip for Class Badge */}
                   <div className="flex items-center min-w-0">
-                    <span className="text-[10px] text-slate-700 font-medium px-2 py-0.5 bg-white rounded-md border border-slate-200 truncate">
-                      {act.gradeLevel}
-                    </span>
+                    <M3AssistChip
+                      label={act.gradeLevel}
+                      icon={<GraduationCap className="w-3.5 h-3.5" />}
+                    />
                   </div>
 
-                  {/* Actions & Select Button Container */}
+                  {/* Official M3 IconButtons & M3Button for Actions */}
                   <div className="flex items-center gap-1.5 shrink-0">
                     {/* Like Button */}
-                    <button
-                      type="button"
+                    <M3IconButton
+                      variant={likedIds.includes(act.id) ? 'tonal' : 'outlined'}
+                      size="sm"
+                      selected={likedIds.includes(act.id)}
+                      ariaLabel="Like experiment"
+                      icon={
+                        <Heart
+                          size={14}
+                          className={likedIds.includes(act.id) ? 'fill-rose-500 text-rose-500' : ''}
+                        />
+                      }
                       onClick={(e) => toggleLike(e, act.id)}
-                      title={likedIds.includes(act.id) ? 'Liked' : 'Like experiment'}
-                      aria-label="Like experiment"
-                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer border shadow-2xs ${
-                        likedIds.includes(act.id)
-                          ? 'bg-rose-50 border-rose-200 text-rose-500'
-                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
-                      }`}
-                    >
-                      <Heart
-                        size={11}
-                        className={likedIds.includes(act.id) ? 'fill-rose-500 text-rose-500' : ''}
-                      />
-                    </button>
+                    />
 
                     {/* Share Button */}
-                    <button
-                      type="button"
+                    <M3IconButton
+                      variant="outlined"
+                      size="sm"
+                      ariaLabel="Share experiment"
+                      icon={<Share2 size={14} />}
                       onClick={(e) => handleShareActivity(e, act)}
-                      title="Share experiment link"
-                      aria-label="Share experiment"
-                      className="w-6 h-6 rounded-full bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
-                    >
-                      <Share2 size={10} />
-                    </button>
+                    />
 
-                    {/* Select Button */}
-                    <button
-                      type="button"
+                    {/* Official M3 Select Button */}
+                    <M3Button
+                      variant={isSelected ? 'filled' : 'tonal'}
+                      size="sm"
+                      leadingIcon={isSelected ? <Check size={14} strokeWidth={2.5} /> : undefined}
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
                         handleToggleSelect(act);
                       }}
-                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all duration-200 cursor-pointer border shadow-2xs ${
-                        isSelected
-                          ? 'bg-[#006fcc] text-white border-[#006fcc]'
-                          : 'bg-white text-slate-700 hover:bg-slate-100 border-slate-200'
-                      }`}
                     >
-                      <span
-                        className={`w-3 h-3 rounded flex items-center justify-center border transition-all ${
-                          isSelected ? 'bg-white border-white text-[#006fcc]' : 'border-slate-400 bg-white'
-                        }`}
-                      >
-                        {isSelected && <Check size={9} strokeWidth={3} />}
-                      </span>
-                      <span>{isSelected ? 'Selected' : 'Select'}</span>
-                    </button>
+                      {isSelected ? 'Selected' : 'Select'}
+                    </M3Button>
                   </div>
                 </div>
               </div>
@@ -1110,21 +1089,24 @@ export default function SubjectActivityPage() {
 
         {/* Empty State */}
         {filteredActivities.length === 0 && (
-          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-slate-200 mt-6 space-y-3">
-            <div className="w-11 h-11 rounded-2xl bg-blue-50 text-[#006fcc] mx-auto flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-[#dde3ea] mt-6 space-y-3">
+            <div className="w-11 h-11 rounded-2xl bg-[#eef3fc] text-[#0b57d0] mx-auto flex items-center justify-center">
               <Search size={22} />
             </div>
-            <h3 className="text-sm sm:text-base font-bold text-slate-800">No matching experiments found</h3>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
+            <h3 className="text-sm sm:text-base font-bold text-[#1f1f1f]">No matching experiments found</h3>
+            <p className="text-xs text-[#444746] max-w-md mx-auto">
               We couldn&apos;t find any experiments matching your current filters. Try selecting a different class or chapter.
             </p>
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="px-4 py-2 bg-[#003c6e] text-white rounded-full text-xs font-bold hover:bg-[#00284d] transition-all shadow-md"
-            >
-              Reset All Filters
-            </button>
+            <div className="pt-1 flex justify-center">
+              <M3Button
+                variant="filled"
+                size="md"
+                leadingIcon={<RotateCcw size={15} />}
+                onClick={resetFilters}
+              >
+                Reset All Filters
+              </M3Button>
+            </div>
           </div>
         )}
       </section>
@@ -1163,21 +1145,23 @@ export default function SubjectActivityPage() {
                 Order complete lab kits with pre-measured non-toxic reagents, electronic sensors, optical prisms, and ATL tinkering components delivered directly to your school or home.
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <Link
-                  href="/projects"
-                  className="group px-4 py-2 rounded-full bg-white text-[#003c6e] hover:bg-blue-50 font-bold text-xs shadow-md transition-all duration-200 flex items-center gap-1.5"
+              {/* Action Buttons using Official M3Button */}
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <M3Button
+                  variant="elevated"
+                  size="md"
+                  trailingIcon={<ArrowRight size={14} />}
+                  onClick={() => router.push('/projects')}
                 >
-                  <span>Browse Projectokart Catalog</span>
-                  <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
-                </Link>
-                <Link
-                  href="/materials"
-                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs backdrop-blur-xs transition-all duration-200"
+                  Browse Projectokart Catalog
+                </M3Button>
+                <M3Button
+                  variant="tonal"
+                  size="md"
+                  onClick={() => router.push('/materials')}
                 >
                   Bulk School Lab Quotation
-                </Link>
+                </M3Button>
               </div>
 
             </div>
@@ -1212,31 +1196,32 @@ export default function SubjectActivityPage() {
 
       {/* ─── 5. Compact Google-Style Horizontal STEAM Subjects Swipe Carousel ─── */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10 sm:mt-14 w-full max-w-full">
-        <div className="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/90 shadow-xs space-y-3.5">
+        <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#dde3ea] shadow-xs space-y-3.5">
           
           {/* Header Row */}
-          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100">
+          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[#dde3ea]">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-blue-50 text-[#006fcc] flex items-center justify-center shrink-0">
-                <Compass size={15} />
+              <div className="w-8 h-8 rounded-xl bg-[#eef3fc] text-[#0b57d0] flex items-center justify-center shrink-0">
+                <Compass size={16} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 truncate">
+                <h3 className="text-xs sm:text-sm font-black text-[#1f1f1f] truncate">
                   Explore Other STEAM Subjects
                 </h3>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium truncate block">
+                <p className="text-[10px] sm:text-[11px] text-[#444746] font-medium truncate block">
                   Swipe horizontally to switch between curriculum labs
                 </p>
               </div>
             </div>
 
-            <Link
-              href="/domain/science"
-              className="text-[11px] sm:text-xs font-bold text-[#006fcc] hover:text-[#003c6e] hover:underline whitespace-nowrap shrink-0 flex items-center gap-1 bg-blue-50/70 px-2.5 py-1 rounded-full border border-blue-100/80"
+            <M3Button
+              variant="tonal"
+              size="sm"
+              trailingIcon={<ArrowRight size={13} />}
+              onClick={() => router.push('/domain/science')}
             >
-              <span>All Subjects ({ALL_SUBJECT_NAV.length})</span>
-              <ArrowRight size={12} />
-            </Link>
+              All Subjects ({ALL_SUBJECT_NAV.length})
+            </M3Button>
           </div>
 
           {/* Horizontal Swiper Carousel with Autoplay */}
@@ -1357,34 +1342,31 @@ export default function SubjectActivityPage() {
           <div className="fixed inset-y-0 left-0 right-auto w-[62vw] xs:w-[270px] sm:w-[310px] md:w-[340px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col z-50 rounded-r-2xl border-r border-slate-200 overflow-hidden box-border animate-in slide-in-from-left duration-300">
             
             {/* Google Refine Results Header */}
-            <div className="px-3.5 py-3 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
+            <div className="px-3.5 py-3 border-b border-[#dde3ea] flex items-center justify-between shrink-0 bg-[#f8fafd]">
               <div className="flex items-center gap-2 min-w-0">
-                <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight truncate">Refine results</h2>
+                <h2 className="text-sm sm:text-base font-bold text-[#1f1f1f] tracking-tight truncate">Refine results</h2>
                 {activeFilterCount > 0 && (
-                  <span className="text-[10px] font-black px-1.5 py-0.2 rounded-full bg-blue-100 text-[#006fcc]">
-                    {activeFilterCount}
-                  </span>
+                  <M3Badge count={activeFilterCount} />
                 )}
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
                 {activeFilterCount > 0 && (
-                  <button
-                    type="button"
+                  <M3Button
+                    variant="text"
+                    size="sm"
                     onClick={resetFilters}
-                    className="text-xs font-semibold text-[#006fcc] hover:underline px-1 py-0.5"
                   >
                     Clear
-                  </button>
+                  </M3Button>
                 )}
-                <button
-                  type="button"
+                <M3IconButton
+                  variant="standard"
+                  size="sm"
+                  ariaLabel="Close refine results"
+                  icon={<X size={15} />}
                   onClick={() => setIsFilterSheetOpen(false)}
-                  className="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors"
-                  aria-label="Close refine results"
-                >
-                  <X size={15} />
-                </button>
+                />
               </div>
             </div>
 
@@ -1719,39 +1701,42 @@ export default function SubjectActivityPage() {
             </div>
 
             {/* Google Refine Results Sticky Footer */}
-            <div className="p-3 border-t border-slate-200 bg-white flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={resetFilters}
+            <div className="p-3 border-t border-[#dde3ea] bg-[#f8fafd] flex items-center gap-2 shrink-0">
+              <M3Button
+                variant="outlined"
+                size="md"
+                fullWidth
                 disabled={activeFilterCount === 0}
-                className="flex-1 py-2 px-2.5 rounded-lg border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-all text-center"
+                onClick={resetFilters}
               >
                 Clear all
-              </button>
+              </M3Button>
 
-              <button
-                type="button"
+              <M3Button
+                variant="filled"
+                size="md"
+                fullWidth
                 onClick={() => {
                   setIsFilterSheetOpen(false);
                   const el = document.getElementById('experiments-grid');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="flex-1 py-2 px-2.5 rounded-lg bg-[#006fcc] hover:bg-[#005bb8] text-white font-bold text-xs shadow-xs transition-all text-center truncate"
               >
                 Apply ({filteredActivities.length})
-              </button>
+              </M3Button>
             </div>
 
           </div>
         </div>
       )}
 
-      {/* ─── 6. Activity Details Modal ─── */}
+      {/* ─── 6. Activity Details Draggable Bottom Sheet Drawer ─── */}
       {activeModalActivity && (
         <ExperimentDetailModal
           activity={activeModalActivity}
           onClose={() => setActiveModalActivity(null)}
           accentColor={subject.accentColor}
+          relatedPool={subject.activities}
         />
       )}
 

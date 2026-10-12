@@ -3,6 +3,7 @@ export interface SchoolRecord {
   id: string;
   school_id: string; // Dynamic links (/org/org-school-${school_id})
   school_name: string;
+  raw_school_name?: string;
   name?: string;
   shortName?: string;
   udise_code: string;

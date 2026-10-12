@@ -1,8 +1,12 @@
 import React from "react";
 import { C } from "./constants";
+import { M3AssistChip } from "@/components/google-ui";
 
 export const Tag = ({ text }: { text: string }) => (
-  <span style={{ display: "inline-block", padding: "2px 9px", borderRadius: 20, background: C.tealLight, color: C.teal, fontSize: 10, fontFamily: "monospace", marginRight: 5, marginBottom: 4, border: `1px solid ${C.tealMid}` }}>{text}</span>
+  <M3AssistChip
+    label={text}
+    className="h-6 text-[10.5px] font-mono bg-[#e8f0fe] border-[#c2e7ff] text-[#0b57d0] mr-1.5 mb-1 pointer-events-none"
+  />
 );
 
 export const FBox = ({ children }: { children: React.ReactNode }) => (

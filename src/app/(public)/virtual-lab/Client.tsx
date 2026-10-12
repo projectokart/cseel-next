@@ -967,7 +967,7 @@ export default function VirtualLab3DClient() {
             <div className="flex items-center gap-2 shrink-0 border-l border-slate-700/80 pl-4">
               <button
                 onClick={() => setHologramActive(!hologramActive)}
-                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-full font-bold text-xs transition flex items-center gap-1.5 cursor-pointer ${
                   hologramActive
                     ? 'bg-emerald-600 text-white shadow-emerald-900/40 shadow-md'
                     : 'bg-slate-800 text-slate-400 hover:bg-slate-700'

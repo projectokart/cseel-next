@@ -183,7 +183,7 @@ export default function AtlMasterClient({ subslug = 'overview' }: Props) {
                   </button>
                   <button
                     onClick={handleCopyLink}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition"
                     title="Copy Link"
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Link2 className="w-3.5 h-3.5" />}
@@ -248,7 +248,7 @@ export default function AtlMasterClient({ subslug = 'overview' }: Props) {
                         </div>
                       </div>
 
-                      <span className="shrink-0 text-[10px] font-bold text-[#005689] bg-[#EDF5FA] group-hover:bg-[#005689] group-hover:text-white px-2.5 py-1 rounded-lg border border-[#B9DCF2] transition flex items-center gap-1">
+                      <span className="shrink-0 text-[10px] font-bold text-[#005689] bg-[#EDF5FA] group-hover:bg-[#005689] group-hover:text-white px-2.5 py-1 rounded-full border border-[#B9DCF2] transition flex items-center gap-1">
                         <span>{link.isPdf ? 'Download' : 'Open Link'}</span>
                         <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                       </span>
@@ -270,7 +270,7 @@ export default function AtlMasterClient({ subslug = 'overview' }: Props) {
                       <Link
                         key={tab.slug}
                         href={tab.href}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 whitespace-nowrap ${
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shrink-0 whitespace-nowrap ${
                           isActive
                             ? 'bg-[#005689] text-white shadow-xs'
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -424,7 +424,7 @@ export default function AtlMasterClient({ subslug = 'overview' }: Props) {
 
                     <button
                       type="submit"
-                      className="w-full py-2.5 px-4 rounded-xl bg-[#005689] text-white font-bold hover:bg-[#003c6e] transition shadow-sm text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-2"
+                      className="w-full py-2.5 px-4 rounded-full bg-[#005689] text-white font-bold hover:bg-[#003c6e] transition shadow-sm text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-2"
                     >
                       <span>Request Free ATL Quote &amp; DPR</span>
                       <ArrowRight className="w-3.5 h-3.5" />

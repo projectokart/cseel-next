@@ -189,11 +189,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isVerified = Boolean(
     user && (
       roles.includes('moderator') ||
-      (typeof window !== 'undefined' && localStorage.getItem('cseel_admin_auth') === 'true') ||
-      user.user_metadata?.is_verified === true ||
       user.app_metadata?.is_verified === true ||
-      verifiedList.includes(user.id.toLowerCase()) ||
-      (user.email && verifiedList.includes(user.email.toLowerCase()))
+      user.user_metadata?.is_verified === true
     )
   );
 

@@ -941,7 +941,7 @@ export default function SchoolsHierarchyClient({ initialData }: Props) {
               <button
                 type="button"
                 onClick={() => setFilterPanelOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a73e8] hover:bg-[#1557b0] text-white text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 <span>Filters & Controls</span>
@@ -1002,14 +1002,14 @@ export default function SchoolsHierarchyClient({ initialData }: Props) {
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="flex-1 py-2.5 px-3 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 transition-colors text-center cursor-pointer"
+                    className="flex-1 py-2.5 px-3 rounded-full border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 transition-colors text-center cursor-pointer"
                   >
                     Reset
                   </button>
                   <button
                     type="button"
                     onClick={() => setFilterPanelOpen(false)}
-                    className="flex-2 py-2.5 px-4 rounded-xl bg-[#1a73e8] hover:bg-[#1557b0] text-white font-bold transition-all shadow-md text-center cursor-pointer"
+                    className="flex-2 py-2.5 px-4 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white font-bold transition-all shadow-md text-center cursor-pointer"
                   >
                     Apply Filters ({displayedSchools.length})
                   </button>
@@ -1152,7 +1152,7 @@ export default function SchoolsHierarchyClient({ initialData }: Props) {
                     </p>
                     <button
                       onClick={resetFilters}
-                      className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl shadow hover:bg-blue-700 transition-all"
+                      className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-full shadow hover:bg-blue-700 transition-all"
                     >
                       Reset All Filters
                     </button>
@@ -1165,7 +1165,7 @@ export default function SchoolsHierarchyClient({ initialData }: Props) {
                     <button
                       onClick={() => handlePageChange(initialData.currentPage - 1)}
                       disabled={initialData.currentPage <= 1}
-                      className="px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 disabled:opacity-40 text-sm font-semibold flex items-center gap-1 hover:bg-slate-50"
+                      className="px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 disabled:opacity-40 text-sm font-semibold flex items-center gap-1 hover:bg-slate-50"
                     >
                       <ChevronLeft className="w-4 h-4" /> Prev
                     </button>
@@ -1175,7 +1175,7 @@ export default function SchoolsHierarchyClient({ initialData }: Props) {
                     <button
                       onClick={() => handlePageChange(initialData.currentPage + 1)}
                       disabled={initialData.currentPage >= initialData.totalPages}
-                      className="px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 disabled:opacity-40 text-sm font-semibold flex items-center gap-1 hover:bg-slate-50"
+                      className="px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 disabled:opacity-40 text-sm font-semibold flex items-center gap-1 hover:bg-slate-50"
                     >
                       Next <ChevronRight className="w-4 h-4" />
                     </button>
@@ -1341,7 +1341,7 @@ function renderSchoolCard(
         <Link
           href={profileUrl}
           onClick={() => setNavigatingTo(profileUrl)}
-          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm text-center shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm text-center shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5"
         >
           <span>View Profile</span>
           <ArrowRight className="w-4 h-4" />

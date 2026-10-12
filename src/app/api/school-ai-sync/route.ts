@@ -4,6 +4,9 @@ import path from 'path';
 import {
   parseSchoolJsonToState,
   BLANK_AI_SCHOOL_SCHEMA,
+  ALL_PREDEFINED_FACILITIES,
+  SECTION_FIELD_SPECS,
+  generateAiPromptForSchool,
 } from '@/components/schools/template/SchoolJsonSchemaHelper';
 import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
 
@@ -25,6 +28,8 @@ interface SyncTokenRecord {
   createdAt: number;
   expiresAt: number;
   isPermanent?: boolean;
+  isApproved?: boolean;
+  status?: string;
   lastUpdatedAt?: number;
   lastUpdatedSource?: string;
   profileData?: any;
@@ -126,11 +131,11 @@ async function verifyUdiseWithGovt(
   inputState?: string,
   inputPincode?: string
 ): Promise<{ valid: boolean; reason?: string; official?: OfficialUdiseData }> {
-  const cleanCode = udiseCode.trim().replace(/\D/g, '');
+  const cleanCode = udiseCode.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (cleanCode.length !== 11) {
     return {
       valid: false,
-      reason: `UDISE code must be exactly 11 digits (provided: "${udiseCode}" with ${cleanCode.length} digits).`,
+      reason: `UDISE code must be exactly 11 characters (provided: "${udiseCode}" with ${cleanCode.length} characters).`,
     };
   }
 
@@ -157,15 +162,34 @@ async function verifyUdiseWithGovt(
       };
     }
 
+    let rawGovtName = String(data.schoolName || '').trim();
+    let rawGovtAddr = String(data.address || '').trim();
+
+    // Separate school name from appended address
+    const commaIdx = rawGovtName.indexOf(',');
+    if (commaIdx !== -1) {
+      const candidateName = rawGovtName.substring(0, commaIdx).trim();
+      const candidateAddr = rawGovtName.substring(commaIdx + 1).trim();
+      const isNameSubstantial = /school|vidyalaya|academy|institute|convent|college|gurukul|pathshala|international|senior secondary|sr\.?\s*sec/i.test(candidateName);
+      const isAddrPart = /(\d+|marg|road|street|sector|plot|near|opp|avenue|delhi|gate|lane|nagar|enclave|block|phase|cantt|vihar|colony)/i.test(candidateAddr);
+      if (isNameSubstantial && isAddrPart) {
+        rawGovtName = candidateName;
+        if (!rawGovtAddr || rawGovtAddr.length < candidateAddr.length) {
+          rawGovtAddr = candidateAddr;
+        }
+      }
+    }
+    rawGovtName = rawGovtName.replace(/,\s*$/, '').trim();
+
     const official: OfficialUdiseData = {
       udiseCode: cleanCode,
-      schoolName: String(data.schoolName || '').trim(),
+      schoolName: rawGovtName,
       district: String(data.districtName || '').trim(),
       state: String(data.stateName || '').trim(),
       pincode: String(data.pincode || '').trim(),
       block: String(data.blockName || '').trim(),
       village: String(data.villageName || '').trim(),
-      address: String(data.address || '').trim(),
+      address: rawGovtAddr,
       classFrom: data.classFrm,
       classTo: data.classTo,
     };
@@ -249,7 +273,7 @@ function extractUdiseCode(body: any, searchParams: URLSearchParams): string {
   if (!body || typeof body !== 'object') return '';
 
   const direct = body.udise_code || body.udiseCode || body.udise || body.school_id || body.id;
-  if (direct && String(direct).replace(/\D/g, '').length === 11) {
+  if (direct && String(direct).replace(/[^A-Za-z0-9]/g, '').length === 11) {
     return String(direct).trim();
   }
 
@@ -341,9 +365,9 @@ export async function GET(req: NextRequest) {
   const store = readSyncStore();
   let record = store.tokens[token];
 
-  // If token record not found directly, check if token follows csl_ai_magic_<11digits>
+  // If token record not found directly, check if token follows csl_ai_magic_<11chars>
   if (!record) {
-    const udiseMatch = token.match(/\d{11}/);
+    const udiseMatch = token.match(/[0-9A-Za-z]{11}/);
     if (udiseMatch) {
       const cleanUdise = udiseMatch[0];
 
@@ -530,12 +554,132 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // Return standard JSON response for programmatic GET
+  const origin = req.nextUrl.origin;
+  const fullSyncUrl = `${origin}/api/school-ai-sync?token=${token}`;
+  const cleanUdise = record.schoolId.replace(/\D/g, '');
+
+  const fullEmptyTemplate = {
+    ...BLANK_AI_SCHOOL_SCHEMA,
+    section_1_basic_info: {
+      ...BLANK_AI_SCHOOL_SCHEMA.section_1_basic_info,
+      school_name: record.schoolName,
+      udise_code: cleanUdise,
+    },
+    section_8_facilities: {
+      ...BLANK_AI_SCHOOL_SCHEMA.section_8_facilities,
+      total_facilities_count: ALL_PREDEFINED_FACILITIES.length, // Exactly 69 Predefined Facilities
+      all_facilities: ALL_PREDEFINED_FACILITIES,
+    },
+    section_13_contact_details: {
+      ...BLANK_AI_SCHOOL_SCHEMA.section_13_contact_details,
+      district: record.profileData?.district || BLANK_AI_SCHOOL_SCHEMA.section_13_contact_details.district,
+      state: record.profileData?.state || BLANK_AI_SCHOOL_SCHEMA.section_13_contact_details.state,
+      pincode: record.profileData?.pincode || BLANK_AI_SCHOOL_SCHEMA.section_13_contact_details.pincode,
+      address: record.profileData?.address || BLANK_AI_SCHOOL_SCHEMA.section_13_contact_details.address,
+    },
+  };
+
+  const sectionParam = searchParams.get('section')?.toLowerCase()?.trim();
+
+  // Map user/AI query param aliases to canonical section keys
+  const sectionAliasMap: Record<string, string> = {
+    '1': 'section_1_basic_info',
+    'basic': 'section_1_basic_info',
+    'section_1_basic_info': 'section_1_basic_info',
+    '2': 'section_2_hero_prestige_metrics',
+    'hero': 'section_2_hero_prestige_metrics',
+    'metrics': 'section_2_hero_prestige_metrics',
+    'section_2_hero_prestige_metrics': 'section_2_hero_prestige_metrics',
+    '3': 'section_3_photobook_slides',
+    'slides': 'section_3_photobook_slides',
+    'photobook': 'section_3_photobook_slides',
+    'section_3_photobook_slides': 'section_3_photobook_slides',
+    '4': 'section_4_statistics',
+    'stats': 'section_4_statistics',
+    'statistics': 'section_4_statistics',
+    'section_4_statistics': 'section_4_statistics',
+    '5': 'section_5_about_and_vision',
+    'about': 'section_5_about_and_vision',
+    'vision': 'section_5_about_and_vision',
+    'section_5_about_and_vision': 'section_5_about_and_vision',
+    '6': 'section_6_principal_desk',
+    'principal': 'section_6_principal_desk',
+    'section_6_principal_desk': 'section_6_principal_desk',
+    'management': 'section_management_desk',
+    'trust': 'section_management_desk',
+    'section_management_desk': 'section_management_desk',
+    '7': 'section_7_academics',
+    'academics': 'section_7_academics',
+    'section_7_academics': 'section_7_academics',
+    '8': 'section_8_facilities',
+    'facilities': 'section_8_facilities',
+    'section_8_facilities': 'section_8_facilities',
+    '9': 'section_9_campus_gallery',
+    'gallery': 'section_9_campus_gallery',
+    'section_9_campus_gallery': 'section_9_campus_gallery',
+    '10': 'section_10_fee_structure',
+    'fees': 'section_10_fee_structure',
+    'fee': 'section_10_fee_structure',
+    'section_10_fee_structure': 'section_10_fee_structure',
+    '11': 'section_11_admissions_guidelines',
+    'admissions': 'section_11_admissions_guidelines',
+    'section_11_admissions_guidelines': 'section_11_admissions_guidelines',
+    '12': 'section_12_faqs',
+    'faq': 'section_12_faqs',
+    'faqs': 'section_12_faqs',
+    'section_12_faqs': 'section_12_faqs',
+    '13': 'section_13_contact_details',
+    'contact': 'section_13_contact_details',
+    'section_13_contact_details': 'section_13_contact_details',
+  };
+
+  // If a specific section was requested (e.g. ?section=about or ?section=5)
+  if (sectionParam && sectionAliasMap[sectionParam]) {
+    const targetKey = sectionAliasMap[sectionParam];
+    const spec = SECTION_FIELD_SPECS[targetKey];
+    const sectionPrompt = generateAiPromptForSchool(record.schoolName, targetKey);
+    const fullMasterPrompt = generateAiPromptForSchool(record.schoolName);
+
+    return NextResponse.json(
+      {
+        status: 'active',
+        schoolId: record.schoolId,
+        schoolName: record.schoolName,
+        mode: 'single_section_focus',
+        section_key: targetKey,
+        section_name: spec?.section_name || targetKey,
+        official_sources: spec?.official_sources || [
+          'Official School Website',
+          'Official Government UDISE+ Portal (https://kys.udiseplus.gov.in)',
+        ],
+        strict_rules: spec?.strict_rules || [],
+        field_character_limits: spec?.field_limits || {},
+        current_section_data: (record.profileData && record.profileData[targetKey]) || null,
+        sample_section_template: (fullEmptyTemplate as any)[targetKey] || null,
+        section_prompt: sectionPrompt,
+        full_ai_prompt: fullMasterPrompt,
+        full_empty_template: fullEmptyTemplate,
+        submission_url: `${fullSyncUrl}&action=update`,
+        crud_endpoints: {
+          update: `POST ${fullSyncUrl}&action=update (or PUT)`,
+          read_all: `GET ${fullSyncUrl}`,
+          read_section: `GET ${fullSyncUrl}&section=${targetKey}`,
+        },
+      },
+      { headers: CORS_HEADERS }
+    );
+  }
+
+  // Full 13-Section Profile Request
+  const masterAiPrompt = generateAiPromptForSchool(record.schoolName);
+
   return NextResponse.json(
     {
       status: 'active',
       schoolId: record.schoolId,
       schoolName: record.schoolName,
+      mode: 'full_profile',
+      total_facilities_count: ALL_PREDEFINED_FACILITIES.length, // 69 Predefined Facilities
       createdAt: new Date(record.createdAt).toISOString(),
       expiresAt: new Date(record.expiresAt).toISOString(),
       remainingDays,
@@ -543,12 +687,16 @@ export async function GET(req: NextRequest) {
       lastUpdatedSource: record.lastUpdatedSource || null,
       hasData: Boolean(record.profileData),
       profileData: record.profileData || null,
-      schemaBlueprint: BLANK_AI_SCHOOL_SCHEMA,
+      ai_prompt: masterAiPrompt,
+      section_field_specs: SECTION_FIELD_SPECS,
+      empty_template: fullEmptyTemplate,
+      submission_url: `${fullSyncUrl}&action=update`,
       crud_endpoints: {
-        create: 'POST /api/school-ai-sync?token=<token> (with action="create")',
-        update: 'POST /api/school-ai-sync?token=<token> (with action="update") or PUT',
-        delete: 'POST /api/school-ai-sync?token=<token> (with action="delete") or DELETE',
-        read: 'GET /api/school-ai-sync?token=<token> or ?action=lookup&udise=<11-digit-code>',
+        create: `POST ${fullSyncUrl}&action=create`,
+        update: `POST ${fullSyncUrl}&action=update (or PUT)`,
+        delete: `POST ${fullSyncUrl}&action=delete (or DELETE)`,
+        read: `GET ${fullSyncUrl}`,
+        read_section: `GET ${fullSyncUrl}&section=<section_name_or_number>`,
       },
     },
     { headers: CORS_HEADERS }
@@ -579,7 +727,7 @@ export async function POST(req: NextRequest) {
   let record = store.tokens[token];
 
   if (!record) {
-    const udiseMatch = token.match(/\d{11}/);
+    const udiseMatch = token.match(/[0-9A-Za-z]{11}/);
     if (udiseMatch) {
       const cleanUdise = udiseMatch[0];
       record = {
@@ -618,6 +766,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Strict Security Rule: If account/claim is pending admin verification, reject write operations
+  if (token !== ADMIN_MASTER_MAGIC_TOKEN && record.isApproved === false && record.status === 'pending') {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'VERIFICATION_PENDING',
+        message: 'Aapka school claim abhi CSEEL Administrator review ke liye pending hai. Admin approval milne ke baad hi profile data update ya publish kiya ja sakta hai. Data checks and verification backend par securely run ho rahe hain.',
+        status: 'pending',
+      },
+      { status: 403, headers: CORS_HEADERS }
+    );
+  }
+
   let body: any;
   try {
     body = await req.json();
@@ -635,7 +796,7 @@ export async function POST(req: NextRequest) {
 
   // Extract UDISE code
   const rawUdise = extractUdiseCode(body, searchParams);
-  const cleanUdise = rawUdise.replace(/\D/g, '');
+  const cleanUdise = rawUdise.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
 
   if (!cleanUdise || cleanUdise.length !== 11) {
     return NextResponse.json(
@@ -819,17 +980,17 @@ export async function POST(req: NextRequest) {
       board_10th: parsed.state.board || 'CBSE',
       board_12th: parsed.state.board || 'CBSE',
       primary_medium: parsed.state.medium || 'English',
-      school_status: 'Operational',
-      total_students: Number(parsed.state.totalStudents) || 500,
-      total_teachers: Number(parsed.state.totalTeachers) || 30,
-      total_classrooms: Number(parsed.state.classroomsCount) || 20,
-      working_smart_boards: 10,
-      atal_stem_lab: 'Yes',
-      computer_ict_lab: 'Yes',
-      integrated_science_lab: 'Yes',
-      library: 'Yes',
-      playground_available: 'Yes',
-      image_url: parsed.state.heroImage || '/images/schools/hero-school-1.png',
+      total_students: Number(parsed.state.totalStudents) || 0,
+      total_teachers: Number(parsed.state.totalTeachers) || 0,
+      total_classrooms: Number(parsed.state.classroomsCount) || 0,
+      working_smart_boards: Number(parsed.state.workingSmartBoards) || 0,
+      atal_stem_lab: (parsed.state.facilities || []).some((f: any) => (f.name || f.title || '').toLowerCase().includes('stem') || (f.name || f.title || '').toLowerCase().includes('tinkering')) ? 'Yes' : 'No',
+      computer_ict_lab: (parsed.state.facilities || []).some((f: any) => (f.name || f.title || '').toLowerCase().includes('computer')) ? 'Yes' : 'No',
+      integrated_science_lab: (parsed.state.facilities || []).some((f: any) => (f.name || f.title || '').toLowerCase().includes('science')) ? 'Yes' : 'No',
+      library: (parsed.state.facilities || []).some((f: any) => (f.name || f.title || '').toLowerCase().includes('library')) ? 'Yes' : 'No',
+      playground_available: (parsed.state.facilities || []).some((f: any) => (f.name || f.title || '').toLowerCase().includes('playground') || (f.name || f.title || '').toLowerCase().includes('sports')) ? 'Yes' : 'No',
+      residential_school: parsed.state.isResidential ? 'Residential' : 'Day School',
+      image_url: parsed.state.heroImage || null,
     };
 
     const { error: insErr } = await schoolSearchSupabase

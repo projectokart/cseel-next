@@ -338,7 +338,7 @@ export default function Client() {
 
                     <button
                       type="submit"
-                      className="w-full py-3.5 mt-2 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white font-extrabold text-xs tracking-wide uppercase transition-all shadow-md active:scale-98 flex items-center justify-center gap-2"
+                      className="w-full py-3.5 mt-2 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-extrabold text-xs tracking-wide uppercase transition-all shadow-md active:scale-98 flex items-center justify-center gap-2"
                     >
                       <span>Get Instant DPR &amp; Price Estimate</span>
                       <ArrowRight className="w-4 h-4" />
@@ -874,7 +874,7 @@ export default function Client() {
                 <div className="flex gap-3">
                   <a
                     href="#book-consultation"
-                    className="px-5 py-2.5 rounded-xl bg-[#005689] text-white font-bold text-xs sm:text-sm hover:bg-[#003c6e] transition-all flex items-center gap-2"
+                    className="px-5 py-2.5 rounded-full bg-[#005689] text-white font-bold text-xs sm:text-sm hover:bg-[#003c6e] transition-all flex items-center gap-2"
                   >
                     <FileText className="w-4 h-4" /> Request Official Proposal
                   </a>
@@ -967,7 +967,7 @@ export default function Client() {
           <div className="mt-12 text-center">
             <Link
               href="/hands-on-experiments"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all"
             >
               <span>Explore All 250+ Hands-on Experiments & Lab Manuals</span>
               <ArrowRight className="w-4 h-4" />
@@ -1065,7 +1065,7 @@ export default function Client() {
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
                   href="/teacher-training"
-                  className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all"
+                  className="px-6 py-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all"
                 >
                   View Full Educator Certification Syllabus
                 </Link>
@@ -1162,7 +1162,7 @@ export default function Client() {
               <button
                 type="button"
                 onClick={() => setFormSubmitted(false)}
-                className="mt-6 px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500"
+                className="mt-6 px-6 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500"
               >
                 Submit Another Request
               </button>
@@ -1272,7 +1272,7 @@ export default function Client() {
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-xl bg-gradient-to-r from-[#003c6e] to-[#005689] hover:from-[#002244] hover:to-[#003c6e] text-white font-bold text-base transition-all shadow-lg shadow-[#005689]/25"
+                className="w-full py-4 rounded-full bg-gradient-to-r from-[#003c6e] to-[#005689] hover:from-[#002244] hover:to-[#003c6e] text-white font-bold text-base transition-all shadow-lg shadow-[#005689]/25"
               >
                 Submit Request for Official Lab Proposal & BOM
               </button>

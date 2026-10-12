@@ -249,11 +249,11 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                 <div className="space-y-4 pt-6 border-t border-gray-100">
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     {/* Quantity Selector */}
-                    <div className="flex items-center justify-between border-2 border-gray-200 rounded-2xl p-1 bg-white sm:w-36">
+                    <div className="flex items-center justify-between border-2 border-gray-200 rounded-full p-1 bg-white sm:w-36">
                       <button
                         onClick={() => setQty(Math.max(1, qty - 1))}
                         disabled={qty <= 1}
-                        className="p-2 rounded-xl text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                        className="p-2 rounded-full text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition-colors"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
@@ -261,7 +261,7 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                       <button
                         onClick={() => setQty(Math.min(item.stock || 99, qty + 1))}
                         disabled={qty >= (item.stock || 99)}
-                        className="p-2 rounded-xl text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                        className="p-2 rounded-full text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -271,7 +271,7 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                     <button
                       onClick={handleAddToCart}
                       disabled={item.stock === 0}
-                      className="flex-1 py-3.5 px-6 rounded-2xl bg-primary text-white font-bold text-sm hover:bg-primary-hover transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="flex-1 py-3.5 px-6 rounded-full bg-primary text-white font-bold text-sm hover:bg-primary-hover transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart
@@ -281,7 +281,7 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                     <button
                       onClick={handleBuyNow}
                       disabled={item.stock === 0}
-                      className="py-3.5 px-6 rounded-2xl bg-gray-900 text-white font-bold text-sm hover:bg-black transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="py-3.5 px-6 rounded-full bg-gray-900 text-white font-bold text-sm hover:bg-black transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                       <Sparkles className="w-4 h-4 text-amber-300" />
                       Buy Now
@@ -291,7 +291,7 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                     <button
                       onClick={handleShare}
                       title="Share Material"
-                      className="p-3.5 rounded-2xl border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center"
+                      className="p-3.5 rounded-full border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center"
                     >
                       <Share2 className="w-4 h-4" />
                     </button>

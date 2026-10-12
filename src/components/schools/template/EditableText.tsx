@@ -164,10 +164,10 @@ export default function EditableText({
         setIsEditing(true);
       }}
       title="Click to edit this text"
-      className={`group/editable relative inline-block cursor-pointer transition-all rounded px-1 -mx-1 hover:bg-blue-50/70 hover:outline hover:outline-1 hover:outline-dashed hover:outline-[#006FCC] ${className}`}
+      className={`group/editable relative inline-block cursor-pointer transition-all rounded px-1.5 py-0.5 border border-dashed border-[#005689]/40 hover:border-[#005689] bg-[#005689]/[0.03] hover:bg-[#EDF5FA] ${className}`}
     >
       <span>{effectiveValue || <span className="italic text-slate-400">{placeholder}</span>}</span>
-      <span className="opacity-0 group-hover/editable:opacity-100 transition-opacity ml-1.5 inline-flex items-center gap-0.5 text-[10px] font-bold bg-[#006FCC] text-white px-1.5 py-0.5 rounded shadow-xs align-middle">
+      <span className="opacity-0 group-hover/editable:opacity-100 transition-opacity ml-1.5 inline-flex items-center gap-0.5 text-[10px] font-bold bg-[#005689] text-white px-1.5 py-0.5 rounded shadow-xs align-middle">
         <Edit2 className="w-2.5 h-2.5" />
         <span>Edit</span>
       </span>

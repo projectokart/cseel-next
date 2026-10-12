@@ -132,6 +132,7 @@ export interface SchoolTemplateState {
   classroomsCount: number | string;
   workingSmartBoards: number | string;
   isResidential: boolean;
+  residentialSchool?: string;
   hasHostel: boolean;
   genderType: string;
   schoolType: string;
@@ -165,6 +166,7 @@ export interface SchoolTemplateState {
   awardCards: AwardItem[];
   faqs?: SchoolFaqItem[];
   tabVisibility: Record<string, boolean>;
+  sectionVisibility?: Record<string, boolean>;
   showContactInfo: boolean;
   completedTabs: Record<string, boolean>;
   verifiedFields: Record<string, boolean>;
@@ -181,40 +183,44 @@ export interface SchoolTemplateState {
   iconOverrides?: Record<string, string>;
   boardResults?: SchoolBoardResultsState;
   admissionsOpen?: boolean;
+  campusVideoUrl?: string;
+  heroMediaItems?: any[];
 }
+
+export const PLACEHOLDER_EMPTY_IMAGE = '/images/default-school-placeholder.png?v=3';
 
 const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   admissionsOpen: false,
   udiseCode: '',
-  schoolName: 'Write Your School Name Here',
-  board: 'CBSE (Central Board of Secondary Education)',
-  medium: 'English & Hindi Medium',
-  principalName: 'Write Principal / Headmaster Name Here',
-  address: 'Plot No. 12, Knowledge Park / Institutional Area, Your City - PIN Code',
-  state: 'State Name (e.g. Haryana)',
-  district: 'District Name (e.g. Rewari)',
-  blockName: 'Zone / Block Name',
-  village: 'Locality / Sector / Village',
-  pincode: '123401',
-  ruralUrban: 'Urban',
-  classFrom: 'Class Nursery',
-  classTo: 'Class 12th',
-  totalStudents: 1250,
-  totalBoys: 650,
-  totalGirls: 600,
-  totalTeachers: 65,
-  maleTeachers: 22,
-  femaleTeachers: 43,
-  classroomsCount: 42,
-  workingSmartBoards: 24,
+  schoolName: '',
+  board: '',
+  medium: '',
+  principalName: '',
+  address: '',
+  state: '',
+  district: '',
+  blockName: '',
+  village: '',
+  pincode: '',
+  ruralUrban: '',
+  classFrom: '',
+  classTo: '',
+  totalStudents: 0,
+  totalBoys: 0,
+  totalGirls: 0,
+  totalTeachers: 0,
+  maleTeachers: 0,
+  femaleTeachers: 0,
+  classroomsCount: 0,
+  workingSmartBoards: 0,
   isResidential: false,
   hasHostel: false,
-  genderType: 'Co-Educational',
-  schoolType: 'Private Unaided (Recognized)',
-  management: 'Private Management / Trust / Society',
-  schoolCategory: 'Senior Secondary (Class 1 to 12th)',
-  establishedYear: '2008',
-  campusArea: '12 Acres',
+  genderType: '',
+  schoolType: '',
+  management: '',
+  schoolCategory: '',
+  establishedYear: '',
+  campusArea: '',
   phone: '',
   email: '',
   website: '',
@@ -226,71 +232,20 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   principalEmail: '',
   careersPhone: '',
   careersEmail: '',
-  heroImage: '/images/schools/hero-school-1.png',
+  heroImage: PLACEHOLDER_EMPTY_IMAGE,
   logoImage: '',
-  aboutText:
-    'Dedicated to delivering future-ready experiential education, world-class scientific inquiry labs, holistic sports development, and values-based character coaching.',
-  visionText:
-    'Empowering independent thinkers and innovative leaders who champion human empathy, scientific temperament, and ethical responsibility in a dynamic global community.',
-  missionText:
-    'Fostering rigorous academic exploration through NEP 2020 experiential pedagogies, hands-on maker practicals, and inclusive athletic development.',
-  // Initial template starts empty as requested by user
+  aboutText: '',
+  visionText: '',
+  missionText: '',
+  // Initial template starts strictly empty - zero fake data
   facilities: [],
   admissions: [],
-  flipbookSlides: [
-    {
-      id: 'fb-0',
-      image: '/images/schools/edunova-hero-students.jpg',
-      title: 'Main Academic Campus & Life',
-      desc: 'Inspiring architecture with lush green surroundings and modern classrooms.',
-      buttonText: 'Explore Campus',
-      actionTab: 'about'
-    },
-    {
-      id: 'fb-1',
-      image: '/images/schools/hero-school-1.png',
-      title: 'Advanced Science Practical Labs',
-      desc: 'Hands-on chemistry, physics and biology labs with individual workstations.',
-      buttonText: 'View Labs',
-      actionTab: 'facilities'
-    },
-    {
-      id: 'fb-2',
-      image: '/images/schools/hero-school-2.jpg',
-      title: 'Interactive Smart Classrooms',
-      desc: 'Digital multimedia boards, audio-visual learning & dedicated teacher guidance.',
-      buttonText: 'Academics & Pedagogy',
-      actionTab: 'academics'
-    },
-    {
-      id: 'fb-3',
-      image: '/images/schools/hero-school-3.jpg',
-      title: 'Sports Complex & Athletic Grounds',
-      desc: 'Dedicated football pitch, basketball court, athletics track and trained sports coaches.',
-      buttonText: 'Sports Academies',
-      actionTab: 'extracurricular'
-    },
-    {
-      id: 'fb-4',
-      image: '/images/schools/hero-school-4.png',
-      title: 'Central Library & Reading Halls',
-      desc: 'Over 10,000 curriculum and reference books, quiet study pods & digital archives.',
-      buttonText: 'Admissions & Inquiries',
-      actionTab: 'admissions'
-    }
-  ],
+  flipbookSlides: [],
   feeTableData: {
     columns: ['Class / Wing', 'Tuition Fee (Qtr)', 'Dev Fee (Annual)', 'Lab / Sports Fee', 'Total Annual (Est.)'],
     rows: []
   },
-  includedAcademicFeatures: [
-    'Smart Interactive 4K Classroom Digital Panels & Animation Modules',
-    'Complete Hands-on STEM, Science & Robotics Laboratory Consumables',
-    'Full Access to Central Library, E-Books & Kindle Digital Reading Corner',
-    'Professional Sports Coaching (Cricket, Football, Basketball, Table Tennis)',
-    'Annual Health & Dental Checkups, 24/7 First Aid & Infirmary Services',
-    'Inter-School Competition Mentorship, CBSE Olympiad & NTSE Preparations'
-  ],
+  includedAcademicFeatures: [],
   galleryItems: [],
   facultyCards: [],
   awardCards: [],
@@ -305,6 +260,26 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
     reviews: true,
     contact: true,
   },
+  sectionVisibility: {
+    basic_info: true,
+    hero: true,
+    photobook: true,
+    stats: true,
+    about: true,
+    about_cards: true,
+    campus_tour: true,
+    important_info: true,
+    principal: true,
+    management: true,
+    academics: true,
+    results: true,
+    facilities: true,
+    gallery: true,
+    fees: true,
+    admissions: true,
+    faqs: true,
+    contact: true,
+  },
   showContactInfo: true,
   completedTabs: {},
   verifiedFields: {},
@@ -312,52 +287,8 @@ const DEFAULT_TEMPLATE_DATA: SchoolTemplateState = {
   imageOverrides: {},
   iconOverrides: {},
   boardResults: {
-    class10Results: [
-      {
-        year: '2024-25',
-        totalStudents: 165,
-        passedStudents: 165,
-        passPercentage: 100,
-        maxScorePercent: 99.2,
-        above90PercentCount: 88,
-      },
-      {
-        year: '2023-24',
-        totalStudents: 158,
-        passedStudents: 158,
-        passPercentage: 100,
-        maxScorePercent: 98.8,
-        above90PercentCount: 76,
-      },
-    ],
-    class12Results: [
-      {
-        year: '2024-25',
-        totalStudents: 142,
-        passedStudents: 142,
-        passPercentage: 100,
-        maxScorePercent: 99.4,
-        above90PercentCount: 79,
-        streams: [
-          { streamName: 'Science', totalStudents: 62, passedStudents: 62, passPercentage: 100, maxScorePercent: 99.4, above90PercentCount: 42 },
-          { streamName: 'Commerce', totalStudents: 48, passedStudents: 48, passPercentage: 100, maxScorePercent: 98.6, above90PercentCount: 24 },
-          { streamName: 'Humanities / Arts', totalStudents: 32, passedStudents: 32, passPercentage: 100, maxScorePercent: 98.8, above90PercentCount: 13 },
-        ],
-      },
-      {
-        year: '2023-24',
-        totalStudents: 135,
-        passedStudents: 135,
-        passPercentage: 100,
-        maxScorePercent: 99.0,
-        above90PercentCount: 68,
-        streams: [
-          { streamName: 'Science', totalStudents: 58, passedStudents: 58, passPercentage: 100, maxScorePercent: 99.0, above90PercentCount: 35 },
-          { streamName: 'Commerce', totalStudents: 46, passedStudents: 46, passPercentage: 100, maxScorePercent: 98.2, above90PercentCount: 21 },
-          { streamName: 'Humanities / Arts', totalStudents: 31, passedStudents: 31, passPercentage: 100, maxScorePercent: 97.6, above90PercentCount: 12 },
-        ],
-      },
-    ],
+    class10Results: [],
+    class12Results: [],
   },
 };
 
@@ -379,6 +310,8 @@ interface SchoolTemplateContextType {
   getImage: (key: string, fallback?: string) => string;
   getIcon: (key: string, fallback?: string) => string;
   toggleTabVisibility: (tabId: string) => void;
+  toggleSectionVisibility: (sectionId: string) => void;
+  setSectionVisibility: (sectionId: string, visible: boolean) => void;
   toggleContactVisibility: () => void;
   saveTab: (tabId: string) => void;
   fetchUdise: (code: string) => Promise<{ success: boolean; message: string }>;
@@ -430,6 +363,14 @@ export function SchoolTemplateProvider({
   const [data, setData] = useState<SchoolTemplateState>(() => ({
     ...DEFAULT_TEMPLATE_DATA,
     ...(initialData || {}),
+    sectionVisibility: {
+      ...DEFAULT_TEMPLATE_DATA.sectionVisibility,
+      ...(initialData?.sectionVisibility || {}),
+    },
+    tabVisibility: {
+      ...DEFAULT_TEMPLATE_DATA.tabVisibility,
+      ...(initialData?.tabVisibility || {}),
+    },
   }));
   const [isEditMode, setIsEditMode] = useState<boolean>(initialEditMode);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -534,28 +475,41 @@ export function SchoolTemplateProvider({
         }
       }
 
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setData((prev) => ({
-          ...prev,
-          ...parsed,
-          tabVisibility: { ...prev.tabVisibility, ...(parsed.tabVisibility || {}) },
-          facilities: Array.isArray(parsed.facilities) ? parsed.facilities : [],
-          admissions: Array.isArray(parsed.admissions) ? parsed.admissions : [],
-        }));
-        setLastSavedAt('Loaded from local storage');
+      // Only restore localStorage draft if explicitly in offline /template mode without initialData
+      const isPureTemplateRoute = typeof window !== 'undefined' && window.location.pathname.includes('/template');
+      if (isPureTemplateRoute) {
+        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setData((prev) => ({
+            ...prev,
+            ...parsed,
+            tabVisibility: { ...prev.tabVisibility, ...(parsed.tabVisibility || {}) },
+            facilities: Array.isArray(parsed.facilities) ? parsed.facilities : [],
+            admissions: Array.isArray(parsed.admissions) ? parsed.admissions : [],
+          }));
+          setLastSavedAt('Loaded from local storage');
+        }
+      } else {
+        // Clear any old leftover local cache from past sessions
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+          } catch (_) {}
+        }
       }
     } catch (e) {
-      console.warn('Failed to parse saved school draft:', e);
+      console.warn('Failed to initialize school state:', e);
     } finally {
       setIsHydrated(true);
     }
   }, []);
 
-  // Debounced auto-save to localStorage whenever data changes
+  // Debounced auto-save to localStorage only when explicitly on /template route
   useEffect(() => {
     if (!isHydrated) return;
+    const isPureTemplateRoute = typeof window !== 'undefined' && window.location.pathname.includes('/template');
+    if (!isPureTemplateRoute) return; // Do NOT persist live school data to localStorage
 
     setIsSaving(true);
     const timer = setTimeout(() => {
@@ -629,6 +583,29 @@ export function SchoolTemplateProvider({
       tabVisibility: {
         ...prev.tabVisibility,
         [tabId]: prev.tabVisibility[tabId] === false ? true : false,
+      },
+    }));
+  }, []);
+
+  const toggleSectionVisibility = useCallback((sectionId: string) => {
+    setData((prev) => {
+      const current = prev.sectionVisibility?.[sectionId] !== false;
+      return {
+        ...prev,
+        sectionVisibility: {
+          ...(prev.sectionVisibility || {}),
+          [sectionId]: !current,
+        },
+      };
+    });
+  }, []);
+
+  const setSectionVisibility = useCallback((sectionId: string, visible: boolean) => {
+    setData((prev) => ({
+      ...prev,
+      sectionVisibility: {
+        ...(prev.sectionVisibility || {}),
+        [sectionId]: visible,
       },
     }));
   }, []);
@@ -1155,6 +1132,8 @@ export function SchoolTemplateProvider({
         getImage,
         getIcon,
         toggleTabVisibility,
+        toggleSectionVisibility,
+        setSectionVisibility,
         toggleContactVisibility,
         saveTab,
         fetchUdise,
@@ -1213,6 +1192,8 @@ export function useSchoolTemplate() {
       lastSavedAt: null,
       saveTab: async () => false,
       toggleTabVisibility: () => {},
+      toggleSectionVisibility: () => {},
+      setSectionVisibility: () => {},
       toggleContactVisibility: () => {},
       updateField: () => {},
       updateNestedField: () => {},

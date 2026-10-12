@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
+import { SchoolTemplateProvider, PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
+import { parseSchoolJsonToState } from '@/components/schools/template/SchoolJsonSchemaHelper';
 import SchoolProfileView from '@/app/school/[state]/[district]/[village]/[schoolSlug]/SchoolProfileView';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -53,70 +54,53 @@ export default function SchoolTemplateClient() {
     if (extractedUdise && extractedUdise.length === 11) {
       setIsResolvingSchool(true);
 
-      const fetchers = [
-        fetch(`/api/udise/lookup?code=${extractedUdise}`).then((r) => r.json()).catch(() => null),
+      const fetchers: Promise<any>[] = [
+        fetch(`/api/udise/standard-profile?code=${extractedUdise}`).then((r) => r.json()).catch(() => null),
       ];
 
       if (token) {
         fetchers.push(
-          fetch(`/api/school-ai-sync?token=${encodeURIComponent(token)}`).then((r) => r.json()).catch(() => null)
+          fetch(`/api/school-ai-sync?token=${encodeURIComponent(token)}&format=json`).then((r) => r.json()).catch(() => null)
         );
       }
 
-      Promise.all(fetchers).then(([lookupData, syncData]) => {
-        let name = '';
-        let state = '';
-        let dist = '';
-        let pin = '';
-        let addr = '';
-        let board = 'CBSE (Central Board of Secondary Education)';
-        let phone = '';
-        let email = '';
-        let totalStudents = 350;
-        let totalTeachers = 18;
-        let classFrom = 'Class 1st';
-        let classTo = 'Class 12th';
-
-        if (lookupData?.success && lookupData.school) {
-          const s = lookupData.school;
-          name = s.schoolName || '';
-          state = s.state || '';
-          dist = s.district || '';
-          pin = s.pincode || '';
-          addr = s.address || (dist ? `${dist}, ${state} - ${pin}` : '');
-          board = s.board || board;
-          classFrom = s.classFrom || classFrom;
-          classTo = s.classTo || classTo;
+      Promise.all(fetchers).then(([standardData, syncData]) => {
+        const rawProfile = syncData?.profileData || syncData?.data || standardData?.data;
+        if (rawProfile) {
+          const parsed = parseSchoolJsonToState(rawProfile);
+          if (parsed.success && parsed.state) {
+            // Guarantee image is placeholder if no custom image is uploaded
+            if (!parsed.state.heroImage || parsed.state.heroImage.includes('hero-school-1.png')) {
+              parsed.state.heroImage = PLACEHOLDER_EMPTY_IMAGE;
+            }
+            if (Array.isArray(parsed.state.flipbookSlides)) {
+              parsed.state.flipbookSlides = parsed.state.flipbookSlides.map((slide) => ({
+                ...slide,
+                image: (slide.image && !slide.image.includes('hero-school-')) ? slide.image : PLACEHOLDER_EMPTY_IMAGE,
+              }));
+            }
+            setResolvedSchool(parsed.state);
+            return;
+          }
         }
 
-        if (syncData?.profileData) {
-          const p = syncData.profileData;
-          if (p.schoolName) name = p.schoolName;
-          if (p.state) state = p.state;
-          if (p.district) dist = p.district;
-          if (p.pincode) pin = p.pincode;
-          if (p.phone) phone = p.phone;
-          if (p.generalEmail) email = p.generalEmail;
-          if (p.board) board = p.board;
-          if (p.totalStudents) totalStudents = Number(p.totalStudents) || totalStudents;
-          if (p.totalTeachers) totalTeachers = Number(p.totalTeachers) || totalTeachers;
-        }
-
-        if (name) {
+        // Fallback to basic standardData fields if parse failed
+        if (standardData?.data?.schoolIdentity) {
+          const id = standardData.data.schoolIdentity;
+          const loc = standardData.data.contact?.campusLocation || {};
           setResolvedSchool({
-            schoolName: name,
+            schoolName: id.schoolName,
             udiseCode: extractedUdise,
-            state: state || 'State Name',
-            district: dist || 'District Name',
-            pincode: pin || '123401',
-            address: addr || (dist ? `${dist}, ${state} - ${pin}` : ''),
-            board,
-            phone,
-            email,
-            totalStudents,
-            totalTeachers,
-            classFrom,
-            classTo,
+            board: id.board || 'CBSE',
+            state: loc.state || 'DELHI',
+            district: loc.district || 'CENTRAL',
+            pincode: loc.pincode || '110002',
+            address: loc.streetAddress || '',
+            phone: standardData.data.contact?.contactDesks?.[0]?.phone || '',
+            email: standardData.data.contact?.contactDesks?.[0]?.email || '',
+            heroImage: PLACEHOLDER_EMPTY_IMAGE,
+            flipbookSlides: [],
+            facilities: [],
           });
         }
       }).finally(() => {
@@ -240,29 +224,29 @@ export default function SchoolTemplateClient() {
         board={schoolProps.board}
         medium="English & Hindi Medium"
         management="Private Unaided / Recognized Institution"
-        establishedYear="2008"
-        schoolCategory="Senior Secondary (Class Nursery to 12th)"
+        establishedYear={schoolProps.establishedYear || "1948"}
+        schoolCategory={schoolProps.schoolCategory || "Senior Secondary (Class 1 to 12th)"}
         classFrom={schoolProps.classFrom}
         classTo={schoolProps.classTo}
-        genderType="Co-Educational"
-        ruralUrban="Urban"
+        genderType={schoolProps.genderType || "Co-Educational"}
+        ruralUrban={schoolProps.ruralUrban || "Urban"}
         totalStudents={schoolProps.totalStudents}
-        totalBoys={Math.round(schoolProps.totalStudents * 0.52)}
-        totalGirls={Math.round(schoolProps.totalStudents * 0.48)}
+        totalBoys={schoolProps.totalBoys || Math.round(Number(schoolProps.totalStudents) * 0.52)}
+        totalGirls={schoolProps.totalGirls || Math.round(Number(schoolProps.totalStudents) * 0.48)}
         totalTeachers={schoolProps.totalTeachers}
-        maleTeachers={Math.round(schoolProps.totalTeachers * 0.35)}
-        femaleTeachers={Math.round(schoolProps.totalTeachers * 0.65)}
-        classroomsCount={Math.max(10, Math.round(schoolProps.totalStudents / 35))}
-        workingSmartBoards={Math.max(5, Math.round(schoolProps.totalStudents / 50))}
+        maleTeachers={schoolProps.maleTeachers || Math.round(Number(schoolProps.totalTeachers) * 0.35)}
+        femaleTeachers={schoolProps.femaleTeachers || Math.round(Number(schoolProps.totalTeachers) * 0.65)}
+        classroomsCount={schoolProps.classroomsCount || 63}
+        workingSmartBoards={schoolProps.workingSmartBoards || 15}
         computerIctLab="Yes"
         atalStemLab="Yes"
         playgroundAvailable="Yes"
-        principalName="Principal / Head of Institution"
+        principalName={schoolProps.principalName || "Principal / Head of Institution"}
         rawPhone={schoolProps.phone}
         rawEmail={schoolProps.email}
-        website=""
+        website={schoolProps.website || ""}
         rawAddress={schoolProps.address}
-        imageUrl="/images/schools/hero-school-1.png"
+        imageUrl={schoolProps.heroImage || PLACEHOLDER_EMPTY_IMAGE}
         lat={28.1885}
         lng={76.6215}
         clusterSchools={[]}

@@ -42,7 +42,9 @@ export default function EditableIcon({
   };
 
   return (
-    <div className={`group/editicon relative ${containerClassName}`}>
+    <div className={`group/editicon relative ${containerClassName} ${
+      isEditMode ? 'rounded-lg ring-1 ring-dashed ring-[#005689]/40 p-0.5 cursor-pointer hover:ring-[#005689]' : ''
+    }`}>
       <IconComponent className={className} />
 
       {/* Mini Edit Badge */}
@@ -54,7 +56,7 @@ export default function EditableIcon({
             setIsModalOpen(true);
           }}
           title="Click to change this icon"
-          className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#006FCC] hover:bg-[#005499] text-white flex items-center justify-center text-[8px] opacity-0 group-hover/editicon:opacity-100 transition-opacity shadow-sm cursor-pointer z-20"
+          className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white flex items-center justify-center text-[8px] opacity-0 group-hover/editicon:opacity-100 transition-opacity shadow-sm cursor-pointer z-20"
         >
           <Edit2 className="w-2 h-2" />
         </button>

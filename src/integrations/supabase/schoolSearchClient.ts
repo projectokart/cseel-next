@@ -1,11 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { SchoolRecord } from '@/data/schoolFinderData';
 
-const NEW_SUPABASE_URL = 'https://okvnyunvyodrwofzjnoa.supabase.co';
-const NEW_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9rdm55dW52eW9kcndvZnpqbm9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1NzI2OTIsImV4cCI6MjEwNTE0ODY5Mn0.hvYK-yqOfcPTFr3Y-dguDSdupAXERXU3Q89_ZBiHzw4';
+const NEW_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ukazkxthavxphibdbspd.supabase.co';
+const NEW_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrYXpreHRoYXZ4cGhpYmRic3BkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTk4MzgsImV4cCI6MjA4OTM5NTgzOH0.Oi47bXRcJ5dAAblFqYUnFvbUx61DS8ABBikC6cIjGlo';
 
 export const schoolSearchSupabase = createClient(NEW_SUPABASE_URL, NEW_SUPABASE_ANON_KEY, {
   auth: { persistSession: false },
+  global: {
+    fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' }),
+  },
 });
 
 export function calculateHaversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -41,22 +44,63 @@ export function cleanRuralUrban(val: string | null | undefined): 'Rural' | 'Urba
 }
 
 export function cleanSchoolCategory(val: string | null | undefined): string {
-  if (!val) return 'Higher Secondary School';
+  if (!val) return '';
   let str = cleanCodePrefix(val);
   const map: Record<string, string> = {
-    'Pr. Up Pr. and Secondary Only': 'Primary, Upper Primary and Secondary Only',
-    'Pr. with Up.Pr. Sec. and H.Sec.': 'Primary with Upper Primary, Secondary and Higher Secondary',
-    'Up. Pr. Secondary and Higher Sec': 'Upper Primary, Secondary and Higher Secondary',
-    'Upper Pr. and Secondary': 'Upper Primary and Secondary',
-    'Higher Secondary only/Jr. College': 'Higher Secondary only / Junior College',
-    'Primary with Upper Primary': 'Primary with Upper Primary',
-    'Secondary with Higher Secondary': 'Secondary with Higher Secondary',
-    'Secondary Only': 'Secondary Only',
-    'Upper Primary only': 'Upper Primary Only',
-    'Primary': 'Primary Only',
-    'Pre-Primary Only': 'Pre-Primary Only'
+    // Exact UDISE Category IDs (1 to 12)
+    '1': '1st to 5th',
+    '2': '1st to 8th',
+    '3': '1st to 12th',
+    '4': '6th to 8th',
+    '5': '6th to 12th',
+    '6': '1st to 10th',
+    '7': '6th to 10th',
+    '8': '9th to 10th',
+    '10': '9th to 12th',
+    '11': '11th to 12th',
+    '12': 'Nursery to KG',
+
+    // Exact UDISE schCatDesc Descriptions
+    'Primary Only': '1st to 5th',
+    'Primary': '1st to 5th',
+    'Primary with Upper Primary': '1st to 8th',
+    'Primary with Upper Primary, Secondary and Higher Secondary': '1st to 12th',
+    'Primary, Upper Primary and Secondary Only': '1st to 10th',
+    'Upper Primary Only': '6th to 8th',
+    'Upper Primary only': '6th to 8th',
+    'Upper Primary, Secondary and Higher Secondary': '6th to 12th',
+    'Upper Primary and Secondary': '6th to 10th',
+    'Secondary Only': '9th to 10th',
+    'Secondary with Higher Secondary': '9th to 12th',
+    'Higher Secondary only / Junior College': '11th to 12th',
+    'Higher Secondary only': '11th to 12th',
+    'Pre-Primary Only': 'Nursery to KG',
+
+    // Short abbreviations found in old portals
+    'Pr. Up Pr. and Secondary Only': '1st to 10th',
+    'Pr. with Up.Pr. Sec. and H.Sec.': '1st to 12th',
+    'Up. Pr. Secondary and Higher Sec': '6th to 12th',
+    'Upper Pr. and Secondary': '6th to 10th',
+    'Senior Secondary': '1st to 12th',
+    'Senior Secondary (Class 1 to 12th)': '1st to 12th',
+    'Senior Secondary (Class Nursery to 12th)': 'Nursery to 12th',
+    'Secondary School (Class 1 to 10th)': '1st to 10th',
+    'Secondary Level (Class 1 to 10th)': '1st to 10th'
   };
-  return map[str] || str;
+
+  if (map[str]) return map[str];
+
+  // Smart regex extraction if it has Class or numbers (e.g. "Class 1 to 10")
+  const classMatch = str.match(/(?:Class\s*)?([0-9a-zA-Z]+)\s*(?:to|-)\s*(?:Class\s*)?([0-9a-zA-Z]+)/i);
+  if (classMatch) {
+    const from = classMatch[1].replace(/th|st|nd|rd/gi, '');
+    const to = classMatch[2].replace(/th|st|nd|rd/gi, '');
+    const fromLabel = from.toLowerCase() === '1' ? '1st' : (from.toLowerCase() === 'nursery' ? 'Nursery' : `${from}th`);
+    const toLabel = to.toLowerCase() === '12' ? '12th' : (to.toLowerCase() === '10' ? '10th' : `${to}th`);
+    return `${fromLabel} to ${toLabel}`;
+  }
+
+  return str;
 }
 
 export function cleanGenderType(val: string | null | undefined): 'Co-educational' | 'Boys' | 'Girls' {
@@ -69,7 +113,16 @@ export function cleanGenderType(val: string | null | undefined): 'Co-educational
 
 export function cleanBoardName(val: string | null | undefined): string {
   if (!val) return '';
-  return cleanCodePrefix(val);
+  const s = cleanCodePrefix(val).trim();
+  if (/CBSE|Central Board of Secondary Education/i.test(s)) return 'CBSE';
+  if (/ICSE|CISCE|Council for the Indian School/i.test(s)) return 'ICSE';
+  if (/\bIB\b|International Baccalaureate/i.test(s)) return 'IB';
+  if (/Cambridge|IGCSE/i.test(s)) return 'Cambridge';
+  if (/BSEH|Haryana Board/i.test(s)) return 'BSEH';
+  if (/UPMSP|Uttar Pradesh Madhyamik/i.test(s)) return 'UP Board';
+  if (/State Board/i.test(s)) return 'State Board';
+  const stripped = s.replace(/\s*\([^)]*\)/g, '').trim();
+  return stripped || s;
 }
 
 export function cleanMediumName(val: string | null | undefined): string {
@@ -87,20 +140,11 @@ export function cleanManagementDesc(val: string | null | undefined): string {
 }
 
 export const VERIFIED_SCHOOL_IMAGES = [
-  'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=600&q=80',
+  '/images/default-school-placeholder.png',
 ];
 
-export function getSchoolImageById(schoolId: string | number | undefined): string {
-  if (!schoolId) return VERIFIED_SCHOOL_IMAGES[0];
-  const num = typeof schoolId === 'number' ? schoolId : (parseInt(String(schoolId).replace(/\D/g, '')) || 0);
-  return VERIFIED_SCHOOL_IMAGES[Math.abs(num) % VERIFIED_SCHOOL_IMAGES.length];
+export function getSchoolImageById(_schoolId: string | number | undefined): string {
+  return '/images/default-school-placeholder.png';
 }
 
 export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number; lng: number }): SchoolRecord {
@@ -157,27 +201,116 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
   const reviews = !isNaN(rawReviews) && rawReviews > 0 ? rawReviews : 0;
 
   const affNum = row.affiliation_number || row.affiliation_no || '';
-  const schoolImg = row.image_url || row.banner_url || row.logo_url || getSchoolImageById(schoolId);
+  const rawImgCandidate = (row.image_url || row.banner_url || row.logo_url || '').trim();
+  const isFakeDefault =
+    !rawImgCandidate ||
+    rawImgCandidate.includes('default-school-campus') ||
+    rawImgCandidate.includes('default-campus') ||
+    rawImgCandidate.includes('hero-school-') ||
+    rawImgCandidate.includes('edunova-hero') ||
+    rawImgCandidate.includes('unsplash.com');
+  const schoolImg = isFakeDefault ? '/images/default-school-placeholder.png' : rawImgCandidate;
+
+  // ── Clean School Name (Everything before the first comma is the school name) ──
+  const rawSchoolName = String(row.school_name || '').trim();
+  let cleanSchoolName = rawSchoolName;
+  let extractedLocality = '';
+
+  if (rawSchoolName.includes(',')) {
+    const commaIndex = rawSchoolName.indexOf(',');
+    cleanSchoolName = rawSchoolName.slice(0, commaIndex).trim();
+    extractedLocality = rawSchoolName.slice(commaIndex + 1).trim();
+  }
+  if (!cleanSchoolName) cleanSchoolName = rawSchoolName || 'School';
+
+  // ── Format District & State to clean Title Case (e.g. "EAST" -> "East Delhi", "PALWAL" -> "Palwal") ──
+  const rawDistrict = String(row.district_name || '').trim();
+  const rawState = String(row.state_name || '').trim();
+
+  let cleanDistrict = rawDistrict
+    ? rawDistrict.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : 'Palwal';
+
+  let cleanState = rawState
+    ? rawState.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : 'Haryana';
+
+  if (cleanDistrict.toLowerCase() === 'east' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDistrict = 'East Delhi';
+  } else if (cleanDistrict.toLowerCase() === 'west' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDistrict = 'West Delhi';
+  } else if (cleanDistrict.toLowerCase() === 'north' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDistrict = 'North Delhi';
+  } else if (cleanDistrict.toLowerCase() === 'south' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDistrict = 'South Delhi';
+  } else if (cleanDistrict.toLowerCase() === 'central' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDistrict = 'Central Delhi';
+  }
+
+  // ── Clean Locality (Avoid fake "Main Ward") ──
+  let cleanLocality = '';
+  if (extractedLocality) {
+    cleanLocality = extractedLocality.replace(/,\s*(?:Delhi|Haryana|India)$/i, '').trim();
+  } else if (row.address && String(row.address).includes(',')) {
+    const afterFirst = String(row.address).split(',').slice(1).join(', ').trim();
+    cleanLocality = afterFirst.replace(/,\s*(?:Delhi|Haryana|India)$/i, '').trim();
+  } else if (row.village_name && String(row.village_name).trim().toLowerCase() !== 'main ward') {
+    cleanLocality = String(row.village_name).trim();
+  } else if (row.village_ward && String(row.village_ward).trim().toLowerCase() !== 'main ward') {
+    cleanLocality = String(row.village_ward).trim();
+  } else if (row.block_name && !String(row.block_name).toLowerCase().includes('zone')) {
+    cleanLocality = String(row.block_name).trim();
+  }
+
+  const cleanAddress = row.address || [cleanLocality, cleanDistrict, cleanState].filter(Boolean).join(', ');
+
+  const mappedFacilities: string[] = [
+    'Smart Classes',
+    'CCTV Surveillance',
+    'RO Drinking Water',
+    'Art & Craft Studio',
+  ];
+  if (row.library?.toLowerCase() !== 'no' && row.library !== '2-No') {
+    mappedFacilities.push('Library');
+  }
+  if (row.computer_ict_lab?.toLowerCase() === 'yes' || row.computer_ict_lab === '1' || Number(row.working_smart_boards) > 0) {
+    mappedFacilities.push('Computer Lab');
+  }
+  if (row.integrated_science_lab?.toLowerCase() !== 'no' && row.integrated_science_lab !== '2-No') {
+    mappedFacilities.push('Science Lab', 'Physics Lab', 'Chemistry Lab', 'Biology Lab');
+  }
+  if (row.atal_stem_lab?.toLowerCase() === 'yes' || row.atal_stem_lab === '1') {
+    mappedFacilities.push('ATL Tinkering Lab', 'Robotics Lab');
+  }
+  if (row.playground_available?.toLowerCase() === 'yes' || row.playground_available === '1') {
+    mappedFacilities.push('Playground / Outdoor Sports', 'Indoor Games');
+  }
+  if (String(row.residential_school || '').toLowerCase().includes('residential') || String(row.residential_school || '').toLowerCase().includes('boarding')) {
+    mappedFacilities.push('Hostel / Boarding');
+  }
+
+  const parsedAnnualFee = Number(String(row.annual_fee || '').replace(/[^0-9]/g, '')) || fee;
 
   return {
     id: schoolId,
     school_id: schoolId,
-    school_name: row.school_name || 'School',
-    name: row.school_name || 'School',
+    school_name: cleanSchoolName,
+    name: cleanSchoolName,
+    raw_school_name: rawSchoolName,
     udise_code: String(row.udise_code || '00000000000'),
     udiseCode: String(row.udise_code || '00000000000'),
     status: (row.school_status || 'Operational') as any,
     year_desc: '2026-27',
     established_year: cleanEst,
-    state_name: row.state_name || 'Karnataka',
-    state: row.state_name || 'Karnataka',
-    district_name: row.district_name || 'District',
-    city: row.district_name || 'City',
+    state_name: cleanState,
+    state: cleanState,
+    district_name: cleanDistrict,
+    city: cleanDistrict,
     block_name: row.block_name || '',
-    village_ward: row.village_name || row.block_name || 'Main Ward',
-    locality: row.village_name || row.block_name || row.district_name || 'Main Ward',
+    village_ward: cleanLocality,
+    locality: cleanLocality || cleanDistrict,
     pincode: cleanPin,
-    address: row.address || (row.school_name + ', ' + (row.district_name || 'City')),
+    address: cleanAddress,
     latitude: lat,
     longitude: lng,
     lat: lat,
@@ -201,8 +334,8 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     affiliation_number: affNum,
     medium_of_instruction_1: primaryMed,
     medium: primaryMed || 'English',
-    annual_fee: fee,
-    annual_fee_formatted: '₹' + Math.round(fee / 1000) + 'k/yr',
+    annual_fee: parsedAnnualFee,
+    annual_fee_formatted: '₹' + Math.round(parsedAnnualFee / 1000) + 'k/yr',
     pm_shri: false,
     headmaster_principal_name: row.principal_name || 'Principal In-Charge',
     principalName: row.principal_name || 'Principal In-Charge',
@@ -231,11 +364,7 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
     rating: rating,
     reviews: reviews,
     image: schoolImg,
-    facilities: [
-      row.atal_stem_lab?.toLowerCase() === 'yes' ? 'Atal Tinkering Lab' : 'Science Labs',
-      row.computer_ict_lab?.toLowerCase() === 'yes' ? 'Computer Lab' : 'Smart Classrooms',
-      row.playground_available?.toLowerCase() === 'yes' ? 'Sports Ground' : 'Library'
-    ]
+    facilities: mappedFacilities,
   };
 }
 
@@ -431,18 +560,19 @@ function applyFiltersToSupabaseQuery(dbQuery: any, options: SearchSchoolOptions)
 export async function querySchoolMapPoints(
   centerLat: number,
   centerLng: number,
-  radiusKm: number = 25,
+  radiusKm: number = 10,
   maxPoints: number = 5000,
   options?: Partial<SearchSchoolOptions>
 ): Promise<SchoolMapPoint[]> {
+  const safeRadiusKm = Math.min(Math.max(Number(radiusKm) || 10, 0.5), 10);
   const optKey = JSON.stringify(options || {});
-  const cacheKey = `points_${centerLat.toFixed(3)}_${centerLng.toFixed(3)}_${radiusKm}_${maxPoints}_${optKey}`;
+  const cacheKey = `points_${centerLat.toFixed(3)}_${centerLng.toFixed(3)}_${safeRadiusKm}_${maxPoints}_${optKey}`;
   const cached = getFromCache(MAP_POINTS_CACHE, cacheKey);
   if (cached) return cached;
 
   try {
-    const dLat = radiusKm / 111.0;
-    const dLng = radiusKm / (111.0 * Math.max(Math.cos((centerLat * Math.PI) / 180), 0.1));
+    const dLat = safeRadiusKm / 111.0;
+    const dLng = safeRadiusKm / (111.0 * Math.max(Math.cos((centerLat * Math.PI) / 180), 0.1));
 
     let dbQuery = schoolSearchSupabase
       .from('udise_private_schools')
@@ -495,8 +625,10 @@ export async function querySchoolMapPoints(
  * Parallel Batch Query for Large Radiuses (50km / 100km / up to 5,000 - 10,000 schools in ~1-2 seconds)
  */
 export async function queryLargeSchoolsDataset(options: SearchSchoolOptions): Promise<{ schools: SchoolRecord[]; total: number }> {
-  const { centerLat = 28.1833, centerLng = 76.6167, radiusKm = 10, maxStudents, minStudents, minTeachers, maxTeachers, sortBy, limit = 5000 } = options;
-  const optKey = JSON.stringify(options);
+  const safeRadiusKm = Math.min(Math.max(Number(options.radiusKm) || 10, 0.5), 10);
+  const { centerLat = 28.1833, centerLng = 76.6167, maxStudents, minStudents, minTeachers, maxTeachers, sortBy, limit = 5000 } = options;
+  const radiusKm = safeRadiusKm;
+  const optKey = JSON.stringify({ ...options, radiusKm });
   const cacheKey = `large_dataset_${centerLat.toFixed(3)}_${centerLng.toFixed(3)}_${radiusKm}_${optKey}_${limit}`;
   
   const cached = getFromCache(SCHOOLS_QUERY_CACHE, cacheKey);
@@ -564,17 +696,11 @@ export async function queryLargeSchoolsDataset(options: SearchSchoolOptions): Pr
  * Super fast targeted Geo & Keyword search directly on indexed Supabase DB (<10ms)
  */
 export async function querySchoolsFromSupabase(options: SearchSchoolOptions): Promise<{ schools: SchoolRecord[]; total: number }> {
-  const { centerLat, centerLng, radiusKm = 10, limit = 100, offset = 0, sortBy } = options;
+  const safeRadiusKm = Math.min(Math.max(Number(options.radiusKm) || 10, 0.5), 10);
+  const { centerLat, centerLng, limit = 100, offset = 0, sortBy } = options;
+  const radiusKm = safeRadiusKm;
 
-  // If radius is large (>=20km) and limit > 300, route to parallel large dataset fetcher
-  if (centerLat && centerLng && (radiusKm >= 20 || limit >= 1000)) {
-    return queryLargeSchoolsDataset({
-      ...options,
-      limit: Math.min(limit, 5000),
-    });
-  }
-
-  const optKey = JSON.stringify(options);
+  const optKey = JSON.stringify({ ...options, radiusKm });
   const cacheKey = `schools_${centerLat?.toFixed(3) || '0'}_${centerLng?.toFixed(3) || '0'}_${radiusKm}_${optKey}_${limit}_${offset}`;
   const cached = getFromCache(SCHOOLS_QUERY_CACHE, cacheKey);
   if (cached) return cached;

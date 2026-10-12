@@ -15,6 +15,17 @@ import { useCart } from "@/contexts/CartContext";
 import { getExperimentList, onListUpdate, startRealtimeSync } from "@/cache/experimentCache";
 import { slugify } from "@/lib/utils";
 import { ALL_EXPERIMENTS } from "@/lib/experimentsData";
+import ExperimentBottomSheetDrawer from "@/components/experiment/ExperimentBottomSheetDrawer";
+import {
+  M3Button,
+  M3FilterChip,
+  M3AssistChip,
+  M3ChipSet,
+  M3Badge,
+  M3IconButton,
+  M3LinearProgress,
+  M3CircularProgress,
+} from "@/components/google-ui";
 const disciplines = ["All", "Chemistry", "Biology", "Physics", "Engineering", "Technology", "Mathematics"];
 const ALL_DISCIPLINES = ["Chemistry", "Biology", "Physics", "Engineering", "Technology", "Mathematics"];
 const ALL_LEVELS = ["Higher Education", "High School"];
@@ -33,13 +44,15 @@ const CardItem = ({
   sim: any; isSelected: boolean; onToggle: () => void; onNavigate: () => void;
 }) => {
   return (
-    <div className={`relative flex flex-row md:flex-col items-center md:items-stretch gap-3 md:gap-0 border rounded-2xl p-3 md:p-0 hover:shadow-xl transition-all bg-white h-full select-none overflow-hidden ${
-      isSelected ? "border-green-400" : "border-gray-100"
+    <div className={`m3-card relative flex flex-row md:flex-col items-center md:items-stretch gap-3 md:gap-0 p-3 md:p-0 transition-all bg-white h-full select-none overflow-hidden ${
+      isSelected
+        ? "m3-card--selected ring-2 ring-[#0b57d0] border border-[#0b57d0]"
+        : "m3-card--outlined hover:shadow-[0_1px_3px_rgba(60,64,67,0.3),0_4px_8px_3px_rgba(60,64,67,0.15)]"
     }`}>
       {/* Image — lazy loaded, only navigates */}
       <div
         onClick={(e) => { e.stopPropagation(); onNavigate(); }}
-        className="w-24 h-24 md:w-full md:h-48 flex-shrink-0 overflow-hidden rounded-xl md:rounded-b-none md:rounded-t-2xl bg-gray-100 cursor-pointer"
+        className="w-24 h-24 md:w-full md:h-48 flex-shrink-0 overflow-hidden rounded-[12px] md:rounded-b-none md:rounded-t-[16px] bg-[#eef3fc] cursor-pointer"
       >
         <LazyImage
           src={sim.thumbnail_url || "https://img.freepik.com/premium-photo/physics-lab-background-with-pendulums-circuits_641503-120945.jpg"}
@@ -51,58 +64,59 @@ const CardItem = ({
       {/* Text */}
       <div
         onClick={(e) => { e.stopPropagation(); onNavigate(); }}
-        className="flex-1 min-w-0 pr-2 md:px-5 md:pt-4 md:pb-12 cursor-pointer"
+        className="flex-1 min-w-0 pr-2 md:px-5 md:pt-4 md:pb-14 cursor-pointer"
       >
-        <span className="text-[9px] md:text-[10px] font-black text-primary uppercase mb-1 block">
+        <span className="text-[10px] font-bold text-[#0b57d0] uppercase tracking-wider mb-1 block">
           {sim.subject}
         </span>
-        <h3 className="text-[13px] md:text-lg font-bold text-gray-900 leading-tight line-clamp-2">
+        <h3 className="text-[13px] md:text-lg font-bold text-[#1f1f1f] leading-tight line-clamp-2">
           {sim.title}
         </h3>
-        <div className="flex items-center gap-2 mt-1.5 md:mt-4">
-          <span className="text-[10px] text-gray-500 font-medium px-2 py-0.5 bg-gray-100 rounded">
+        <div className="flex items-center gap-2 mt-1.5 md:mt-3">
+          <span className="text-[11px] text-[#041e49] font-semibold px-2.5 py-0.5 bg-[#d3e3fd] rounded-full">
             {sim.class || "Higher Ed"}
           </span>
           {sim.difficulty && (
-            <span className="text-[10px] text-gray-500 font-medium px-2 py-0.5 bg-gray-100 rounded">
+            <span className="text-[11px] text-[#444746] font-medium px-2.5 py-0.5 bg-[#e9eef6] rounded-full">
               {sim.difficulty}
             </span>
           )}
         </div>
       </div>
 
-      {/* Desktop select button */}
+      {/* Desktop M3 Button */}
       <div
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
-        className="hidden md:flex absolute bottom-0 right-0 p-4 z-10"
+        className="hidden md:flex absolute bottom-0 right-0 p-3.5 z-10"
       >
-        <button
+        <M3Button
+          size="sm"
+          variant={isSelected ? "filled" : "tonal"}
+          leadingIcon={isSelected ? <Check /> : undefined}
           onClick={(e) => { e.stopPropagation(); e.preventDefault(); onToggle(); }}
-          className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all duration-200 ${
-            isSelected ? "bg-green-500 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-          }`}
         >
-          {isSelected ? <><Check size={11} strokeWidth={3} /> Selected</> : <>+ Select</>}
-        </button>
+          {isSelected ? "Selected" : "+ Select"}
+        </M3Button>
       </div>
 
-      {/* Mobile circle button */}
-      <button
-        onClick={(e) => { e.stopPropagation(); e.preventDefault(); onToggle(); }}
+      {/* Mobile M3 IconButton */}
+      <div
+        onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
-        className="md:hidden flex-shrink-0 flex items-center justify-center p-3 -m-3 mr-[-8px] z-10"
+        className="md:hidden flex-shrink-0 z-10"
       >
-        <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-          isSelected ? "bg-green-500 border-green-500" : "bg-white border-gray-300"
-        }`}>
-          {isSelected && <Check size={11} strokeWidth={3} className="text-white" />}
-        </div>
-      </button>
-
-      {isSelected && <div className="absolute inset-0 rounded-2xl ring-2 ring-green-400 pointer-events-none" />}
+        <M3IconButton
+          size="sm"
+          variant={isSelected ? "filled" : "outlined"}
+          selected={isSelected}
+          onClick={(e) => { e.stopPropagation(); e.preventDefault(); onToggle(); }}
+          icon={<Check />}
+          label="Select experiment"
+        />
+      </div>
     </div>
   );
 };
@@ -134,6 +148,7 @@ const Simulations = () => {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [dbExperiments, setDbExperiments] = useState<any[]>([]);
+  const [activeDrawerExp, setActiveDrawerExp] = useState<any | null>(null);
 
   useEffect(() => {
     async function loadFromSupabase() {
@@ -307,22 +322,21 @@ const Simulations = () => {
               Discipline
               {tempDisciplines.length > 0 && <button onClick={() => setTempDisciplines([])} className="ml-2 normal-case text-gray-400 font-medium underline">Clear</button>}
             </p>
-            <div className="flex flex-wrap gap-2">
+            <M3ChipSet>
               {ALL_DISCIPLINES.map((d) => {
                 const isAvailable = availableDisciplines.includes(d);
                 const isSel = tempDisciplines.includes(d);
                 return (
-                  <button key={d} onClick={() => isAvailable && toggleTempDiscipline(d)} disabled={!isAvailable}
-                    className={`px-4 py-2 rounded-full text-xs font-medium border transition-all flex items-center gap-1.5 ${
-                      isSel ? "bg-black text-white border-black shadow-md"
-                        : isAvailable ? "bg-white text-gray-600 border-gray-200 hover:border-gray-400"
-                        : "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                    }`}>
-                    {isSel && <Check size={10} strokeWidth={3} />}{d}
-                  </button>
+                  <M3FilterChip
+                    key={d}
+                    label={d}
+                    selected={isSel}
+                    disabled={!isAvailable}
+                    onClick={() => isAvailable && toggleTempDiscipline(d)}
+                  />
                 );
               })}
-            </div>
+            </M3ChipSet>
           </div>
         </div>
       )}
@@ -330,11 +344,11 @@ const Simulations = () => {
         <div className="flex flex-col gap-2">
           {SORT_OPTIONS.map((opt) => (
             <button key={opt.value} onClick={() => setTempSort(opt.value)}
-              className={`flex items-center justify-between w-full px-4 py-3.5 rounded-xl text-sm font-medium border transition-all ${
-                tempSort === opt.value ? "bg-gray-50 border-gray-900 text-gray-900" : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+              className={`flex items-center justify-between w-full px-4 py-3.5 rounded-[12px] text-sm font-semibold border transition-all ${
+                tempSort === opt.value ? "bg-[#c2e7ff] border-[#0b57d0] text-[#001d35]" : "bg-white border-[#c4c7c5] text-[#444746] hover:bg-[#f8fafd]"
               }`}>
               <span>{opt.label}</span>
-              {tempSort === opt.value && <span className="w-5 h-5 bg-black rounded-full flex items-center justify-center"><Check size={11} strokeWidth={3} className="text-white" /></span>}
+              {tempSort === opt.value && <span className="w-5 h-5 bg-[#0b57d0] rounded-full flex items-center justify-center"><Check size={11} strokeWidth={3} className="text-white" /></span>}
             </button>
           ))}
         </div>
@@ -347,10 +361,10 @@ const Simulations = () => {
       
       <>
 {/* STICKY HEADER */}
-        <div className="sticky top-0 z-[300] bg-white/95 backdrop-blur-md border-b shadow-sm">
+        <div className="sticky top-0 z-[300] bg-white/95 backdrop-blur-md border-b border-[#dadce0] shadow-xs">
           <div className="max-w-screen-md mx-auto px-4 py-3 flex items-center gap-3">
             <div className="relative flex-1 group">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#444746]">
                 <Search size={18} strokeWidth={2.5} />
               </span>
               <input
@@ -358,62 +372,57 @@ const Simulations = () => {
                 placeholder="Search experiments..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-gray-100 border-none rounded-full text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner" />
+                className="w-full pl-11 pr-4 py-2.5 bg-[#eef3fc] hover:bg-[#e3e9f4] border-none rounded-full text-sm text-[#1f1f1f] outline-none focus:ring-2 focus:ring-[#0b57d0] transition-all" />
             </div>
-            <button onClick={() => router.push("/my-selections")} className="relative flex-shrink-0 w-9 h-9 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors" title="My Selected Experiments">
-              <BookmarkCheck size={18} strokeWidth={2.5} className="text-gray-600" />
-              <AnimatePresence>
-                {selectedIds.length > 0 && (
-                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 text-white rounded-full text-[10px] font-black flex items-center justify-center">
-                    {selectedIds.length}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
+            <M3Badge variant="large" count={selectedIds.length} color="primary" className={selectedIds.length === 0 ? "hidden" : ""}>
+              <M3IconButton
+                variant="tonal"
+                onClick={() => router.push("/my-selections")}
+                icon={<BookmarkCheck />}
+                label="My Selected Experiments"
+              />
+            </M3Badge>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 pb-2 flex flex-col gap-3">
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
-              <button onClick={() => openSheet("filter")}
-                className="flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold flex-shrink-0 hover:bg-gray-50 transition-colors shadow-sm relative">
-                <Filter size={14} strokeWidth={2.5} />
-                Filters
-                {activeFilterCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white rounded-full text-[9px] flex items-center justify-center font-black">{activeFilterCount}</span>
-                )}
-              </button>
-              <button onClick={() => openSheet("sort")}
-                className="flex items-center gap-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold flex-shrink-0 hover:bg-gray-50 transition-colors shadow-sm relative">
-                <ArrowUpDown size={14} strokeWidth={2.5} />
-                Sort
-                {isSortActive && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white rounded-full text-[9px] flex items-center justify-center font-black">1</span>
-                )}
-              </button>
-              <div className="h-4 w-[1px] bg-gray-300 flex-shrink-0 mx-1"></div>
-              {disciplines.map((d) => (
-                <button key={d}
-                  onClick={() => setActiveDisciplines(d === "All" ? [] : [d])}
-                  className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-all ${
-                    (d === "All" && activeDisciplines.length === 0) || activeDisciplines.includes(d)
-                      ? 'bg-black text-white border-black shadow-md'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
-                  }`}>
-                  {d}
-                </button>
-              ))}
-            </div>
+            <M3ChipSet scrollable>
+              <M3AssistChip
+                leadingIcon={<Filter />}
+                label={activeFilterCount > 0 ? `Filters (${activeFilterCount})` : "Filters"}
+                elevated={activeFilterCount > 0}
+                onClick={() => openSheet("filter")}
+              />
+              <M3AssistChip
+                leadingIcon={<ArrowUpDown />}
+                label={isSortActive ? "Sort (1)" : "Sort"}
+                elevated={isSortActive}
+                onClick={() => openSheet("sort")}
+              />
+              <div className="h-5 w-[1px] bg-[#c4c7c5] flex-shrink-0 mx-1" />
+              {disciplines.map((d) => {
+                const isChipSelected =
+                  (d === "All" && activeDisciplines.length === 0) ||
+                  activeDisciplines.includes(d);
+                return (
+                  <M3FilterChip
+                    key={d}
+                    label={d}
+                    selected={isChipSelected}
+                    onClick={() => setActiveDisciplines(d === "All" ? [] : [d])}
+                  />
+                );
+              })}
+            </M3ChipSet>
 
             <div className="flex justify-between items-center pb-2 border-b border-gray-50 md:border-none">
-              <p className="text-[10px] md:text-[11px] text-gray-400 uppercase font-black tracking-widest">
-                Showing <span className="text-gray-900">{displayed.length}</span> of <span className="text-gray-900">{filtered.length}</span> Labs
+              <p className="text-[10px] md:text-[11px] text-[#444746] uppercase font-bold tracking-widest">
+                Showing <span className="text-[#1f1f1f]">{displayed.length}</span> of <span className="text-[#1f1f1f]">{filtered.length}</span> Labs
               </p>
               <div className="flex gap-6">
                 {["Higher Education", "High School"].map((l) => (
                   <button key={l} onClick={() => setActiveLevel(l)}
-                    className={`text-[11px] md:text-xs font-bold transition-all relative py-1 ${
-                      activeLevel === l ? 'text-primary after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-primary' : 'text-gray-400 hover:text-gray-600'
+                    className={`text-[11px] md:text-xs font-bold transition-all relative py-1 cursor-pointer ${
+                      activeLevel === l ? 'text-[#0b57d0] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[3px] after:rounded-t-full after:bg-[#0b57d0]' : 'text-[#444746] hover:text-[#1f1f1f]'
                     }`}>
                     {l}
                   </button>
@@ -422,11 +431,10 @@ const Simulations = () => {
             </div>
           </div>
 
-          <div className="h-[2px] w-full bg-gray-50 overflow-hidden">
-            <motion.div className="h-full bg-primary" initial={{ width: 0 }}
-              animate={{ width: filtered.length > 0 ? `${Math.min(visibleCount / filtered.length * 100, 100)}%` : "0%" }}
-              transition={{ duration: 0.4 }} />
-          </div>
+          <M3LinearProgress
+            value={filtered.length > 0 ? Math.min((visibleCount / filtered.length) * 100, 100) : 0}
+            className="h-1 rounded-none"
+          />
         </div>
 
         {/* HERO */}
@@ -437,8 +445,12 @@ const Simulations = () => {
                 <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Experimental Library</h1>
                 <p className="text-primary-foreground/80 mb-6 text-sm">Turn every concept into a hands-on experience.</p>
                 <div className="flex items-center gap-3">
-                  <Link href="/compare-plans" className="button_secondary px-6 py-2.5 font-bold rounded-[12px] text-sm inline-block shadow-sm">View Plans</Link>
-                  <Link href="/demo" className="btn-outline px-6 py-2.5 border-white text-white font-bold rounded-[12px] text-sm inline-block hover:bg-white/10 transition-colors">View Demo</Link>
+                  <Link href="/compare-plans">
+                    <M3Button variant="tonal">View Plans</M3Button>
+                  </Link>
+                  <Link href="/demo">
+                    <M3Button variant="outlined" className="border-white text-white hover:bg-white/15">View Demo</M3Button>
+                  </Link>
                 </div>
               </ScrollReveal>
             </div>
@@ -478,7 +490,7 @@ const Simulations = () => {
                         sim={sim}
                         isSelected={selectedIds.includes(sim.id)}
                         onToggle={() => toggleSelect(sim)}
-                        onNavigate={() => router.push(`/experiment/${slugify(sim.title) || sim.id}`)}
+                        onNavigate={() => setActiveDrawerExp(sim)}
                       />
                     </div>
                   ))
@@ -514,34 +526,34 @@ const Simulations = () => {
           </div>
         </section>
 
-        {/* SHEET */}
+        {/* SHEET (Google Material Design 3) */}
         <AnimatePresence>
           {sheetMode && (
             <>
               <motion.div key="backdrop"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 bg-black/40 z-[350]"
+                className="fixed inset-0 bg-[#0f172a]/50 backdrop-blur-[2px] z-[1100]"
                 onClick={closeSheet}
               />
               <motion.div key="sheet-mobile" ref={sheetRef}
                 initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
                 transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="md:hidden fixed bottom-0 left-0 right-0 z-[360] bg-white rounded-t-3xl"
+                className="md:hidden fixed bottom-0 left-0 right-0 z-[1150] bg-white rounded-t-[28px] shadow-[0_-12px_36px_rgba(0,0,0,0.22)]"
                 style={{ maxHeight: "85vh", overflowY: "auto" }}
                 onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}
               >
                 <div className="flex justify-center pt-3 pb-1 sticky top-0 bg-white z-10">
-                  <div className="w-10 h-1 bg-gray-200 rounded-full" />
+                  <div className="w-10 h-1.5 bg-[#747775]/40 rounded-full" />
                 </div>
-                <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 sticky top-5 bg-white z-10">
-                  <button onClick={resetSheet} className="text-sm text-gray-500 font-medium">Reset</button>
-                  <h2 className="text-[15px] font-bold text-gray-900">{sheetMode === "filter" ? "Filters" : "Sort by"}</h2>
-                  <button onClick={closeSheet} className="w-7 h-7 flex items-center justify-center bg-gray-100 rounded-full"><X size={14} strokeWidth={2.5} /></button>
+                <div className="flex items-center justify-between px-5 py-3 border-b border-[#dadce0]/80 sticky top-5 bg-white z-10">
+                  <button onClick={resetSheet} className="text-sm text-[#0b57d0] font-semibold">Reset</button>
+                  <h2 className="text-[16px] font-bold text-[#1f1f1f]">{sheetMode === "filter" ? "Filters" : "Sort by"}</h2>
+                  <button onClick={closeSheet} className="w-8 h-8 flex items-center justify-center bg-[#f1f3f4] hover:bg-[#e8eaed] text-[#444746] rounded-full"><X size={16} /></button>
                 </div>
                 <div className="px-5 py-5"><SheetBody /></div>
-                <div className="px-5 pb-8 pt-2 sticky bottom-0 bg-white border-t border-gray-50">
-                  <button onClick={applySheet} className="w-full py-3.5 bg-black text-white rounded-2xl text-sm font-bold tracking-wide active:scale-[0.98] transition-all">
+                <div className="px-5 pb-8 pt-3 sticky bottom-0 bg-white border-t border-[#dadce0]/80">
+                  <button onClick={applySheet} className="w-full py-3.5 bg-[#0b57d0] hover:bg-[#0842a0] text-white rounded-full text-sm font-semibold shadow-[0_1px_3px_rgba(60,64,67,0.3)] active:scale-[0.98] transition-all">
                     Show {sheetMode === "filter" ? tempFiltered.length : filtered.length} Results
                   </button>
                 </div>
@@ -549,17 +561,17 @@ const Simulations = () => {
               <motion.div key="sheet-desktop"
                 initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
                 transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="hidden md:flex flex-col fixed top-0 left-0 bottom-0 z-[360] bg-white shadow-2xl"
+                className="hidden md:flex flex-col fixed top-0 left-0 bottom-0 z-[1150] bg-white rounded-r-[28px] shadow-[0_12px_36px_rgba(0,0,0,0.22)] border-r border-[#dadce0]/80"
                 style={{ width: "360px" }}
               >
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                  <button onClick={resetSheet} className="text-sm text-gray-500 font-medium hover:text-gray-800 transition-colors">Reset</button>
-                  <h2 className="text-[15px] font-bold text-gray-900">{sheetMode === "filter" ? "Filters" : "Sort by"}</h2>
-                  <button onClick={closeSheet} className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><X size={15} strokeWidth={2.5} /></button>
+                <div className="flex items-center justify-between px-6 py-4 border-b border-[#dadce0]/80">
+                  <button onClick={resetSheet} className="text-sm text-[#0b57d0] font-semibold hover:underline transition-colors">Reset</button>
+                  <h2 className="text-[16px] font-bold text-[#1f1f1f]">{sheetMode === "filter" ? "Filters" : "Sort by"}</h2>
+                  <button onClick={closeSheet} className="w-9 h-9 flex items-center justify-center bg-[#f1f3f4] rounded-full hover:bg-[#e8eaed] text-[#444746] transition-colors"><X size={16} /></button>
                 </div>
                 <div className="flex-1 overflow-y-auto px-6 py-6"><SheetBody /></div>
-                <div className="px-6 py-5 border-t border-gray-100">
-                  <button onClick={applySheet} className="w-full py-4 bg-black text-white rounded-2xl text-sm font-bold tracking-wide hover:bg-gray-900 active:scale-[0.98] transition-all">
+                <div className="px-6 py-5 border-t border-[#dadce0]/80">
+                  <button onClick={applySheet} className="w-full py-3.5 bg-[#0b57d0] hover:bg-[#0842a0] text-white rounded-full text-sm font-semibold shadow-[0_1px_3px_rgba(60,64,67,0.3)] active:scale-[0.98] transition-all">
                     Show {sheetMode === "filter" ? tempFiltered.length : filtered.length} Results
                   </button>
                 </div>
@@ -567,6 +579,16 @@ const Simulations = () => {
             </>
           )}
         </AnimatePresence>
+
+        {/* EXPERIMENT DETAIL DRAGGABLE BOTTOM SHEET DRAWER */}
+        {activeDrawerExp && (
+          <ExperimentBottomSheetDrawer
+            experiment={activeDrawerExp}
+            onClose={() => setActiveDrawerExp(null)}
+            subjectFallback={activeDrawerExp.subject}
+            relatedPool={allExperiments}
+          />
+        )}
 
         <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}@keyframes fadeInUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}`}</style>
       </>

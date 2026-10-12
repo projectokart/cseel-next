@@ -1536,7 +1536,7 @@ export default function SchoolFinderClient() {
                   <span>Search Radius Settings</span>
                 </p>
                 <div className="grid grid-cols-6 gap-1 px-1">
-                  {[2, 5, 10, 20, 50, 100].map((km) => (
+                  {[1, 2, 3, 5, 7, 10].map((km) => (
                     <button
                       type="button"
                       key={km}
@@ -1648,7 +1648,7 @@ export default function SchoolFinderClient() {
                   </span>
                 </div>
                 <div className="grid grid-cols-6 gap-1 mb-2">
-                  {[2, 5, 10, 20, 50, 100].map((r) => (
+                  {[1, 2, 3, 5, 7, 10].map((r) => (
                     <button
                       key={r}
                       type="button"
@@ -1666,10 +1666,10 @@ export default function SchoolFinderClient() {
                 <input
                   type="range"
                   min={1}
-                  max={100}
+                  max={10}
                   step={1}
                   value={radiusKm}
-                  onChange={(e) => setRadiusKm(Number(e.target.value))}
+                  onChange={(e) => setRadiusKm(Math.min(Number(e.target.value), 10))}
                   className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#1a73e8]"
                 />
               </div>
@@ -2225,11 +2225,11 @@ export default function SchoolFinderClient() {
                     type="button"
                     onClick={() => {
                       setLocalFilterQuery('');
-                      setRadiusKm(50);
+                      setRadiusKm(10);
                     }}
                     className="mt-1.5 text-xs text-[#1a73e8] font-bold hover:underline block mx-auto"
                   >
-                    Increase Radius to 50km
+                    Increase Radius to 10km
                   </button>
                 </div>
               ) : (

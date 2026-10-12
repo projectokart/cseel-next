@@ -2,18 +2,18 @@
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import {
   MapPin, Filter, ChevronRight, ChevronLeft, ChevronDown, Search, CheckCircle2,
-  Compass, Star, Scale, Heart, Share2, X, Check, Building2, Users, Award, Sparkles,
+  Compass, Star, Scale, ArrowLeftRight, Languages, Heart, Share2, X, Check, Building2, Users, Award, Sparkles,
   HelpCircle, Home, Map, Navigation, BookOpen, Briefcase, Shield, FileText, Building,
   Landmark, Castle, Hotel, Banknote, GraduationCap, FlaskConical, Monitor, Tv, Library,
   Wrench, Bot, Mic, Calculator, Glasses, Laptop, Trees, Gamepad2, Waves, Activity,
   Trophy, Target, CircleDashed, Dumbbell, HeartHandshake, Swords, Footprints, Cctv, Wind,
   Wifi, Bus, Bed, Utensils, Cross, Accessibility, Sun, Droplet, Palette, Music,
   Clapperboard, Medal, Leaf, Camera, UsersRound, Tent, ArrowUpDown, SlidersHorizontal,
-  LayoutGrid, List, Columns3, Lock, ShieldAlert, ShieldCheck, LogIn, Key, AlertCircle,
-  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle
+  LayoutGrid, List, Columns3, Columns2, Lock, ShieldAlert, ShieldCheck, LogIn, Key, AlertCircle,
+  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle, Minus, Maximize2, Minimize2, ChevronUp, Menu, MoreVertical
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SchoolsDirectoryResult } from '@/integrations/supabase/schoolsDirectoryDb';
@@ -23,6 +23,22 @@ import 'leaflet/dist/leaflet.css';
 import { renderFacilityIcon, renderCategoryHeaderIcon, renderBoardLogo, renderClassIcon, renderSchoolTypeIcon, renderSpecialCategoryIcon } from './FacilityIcons';
 import AddSchoolModal from './AddSchoolModal';
 import ClaimSchoolModal from './ClaimSchoolModal';
+import SchoolFilterSheet from './SchoolFilterSheet';
+import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
+
+const getSafeSchoolImage = (img?: string) => {
+  if (
+    !img ||
+    img.includes('default-school-campus') ||
+    img.includes('default-campus') ||
+    img.includes('hero-school-') ||
+    img.includes('edunova-hero') ||
+    img.includes('unsplash.com')
+  ) {
+    return PLACEHOLDER_EMPTY_IMAGE;
+  }
+  return img;
+};
 
 const SchoolFinderMap = dynamic(() => import('@/components/school-finder/SchoolFinderMap'), {
   ssr: false,
@@ -48,64 +64,150 @@ const HERO_IMAGES = [
 ];
 
 const POPULAR_CITIES = [
-  { name: 'Delhi NCR', icon: '/images/cities/delhi-ncr.png' }, // Or https://img.icons8.com/color/48/india.png
-  { name: 'Agra', icon: 'https://img.icons8.com/color/48/taj-mahal.png' },
-  { name: 'Mumbai', icon: 'https://img.icons8.com/color/48/train-station.png' },
-  { name: 'Pune', icon: 'https://img.icons8.com/color/48/castle.png' },
-  { name: 'Bangalore', icon: 'https://img.icons8.com/color/48/laptop.png' },
-  { name: 'Hyderabad', icon: 'https://img.icons8.com/color/48/mosque.png' },
-  { name: 'Chennai', icon: 'https://img.icons8.com/color/48/temple.png' },
-  { name: 'Kolkata', icon: 'https://img.icons8.com/color/48/bridge.png' },
-  { name: 'Chandigarh', icon: 'https://img.icons8.com/color/48/city.png' },
-  { name: 'Raipur', icon: 'https://img.icons8.com/color/48/factory.png' },
-  { name: 'Bhubaneswar', icon: 'https://img.icons8.com/color/48/pagoda.png' },
-  { name: 'Gurugram', icon: 'https://img.icons8.com/color/48/skyscrapers.png' },
-  { name: 'Faridabad', icon: 'https://img.icons8.com/color/48/factory.png' },
-  { name: 'Rewari', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Delhi', query: 'Delhi', icon: 'https://img.icons8.com/color/48/india-gate.png' },
+  { name: 'East Delhi', query: 'East Delhi', icon: 'https://img.icons8.com/color/48/city-buildings.png' },
+  { name: 'Laxmi Nagar', query: 'Laxmi Nagar', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Mayur Vihar', query: 'Mayur Vihar', icon: 'https://img.icons8.com/color/48/skyscrapers.png' },
+  { name: 'Vasundhra Enclave', query: 'Vasundhra Enclave', icon: 'https://img.icons8.com/color/48/apartment.png' },
+  { name: 'Preet Vihar', query: 'Preet Vihar', icon: 'https://img.icons8.com/color/48/city.png' },
+  { name: 'Shakarpur', query: 'Shakarpur', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Patparganj', query: 'Patparganj', icon: 'https://img.icons8.com/color/48/company.png' },
+  { name: 'Geeta Colony', query: 'Geeta Colony', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Gandhi Nagar', query: 'Gandhi Nagar', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Shahdara', query: 'Shahdara', icon: 'https://img.icons8.com/color/48/train-station.png' },
+  { name: 'Krishna Nagar', query: 'Krishna Nagar', icon: 'https://img.icons8.com/color/48/marker.png' },
+  { name: 'Anand Vihar', query: 'Anand Vihar', icon: 'https://img.icons8.com/color/48/bus.png' },
+  { name: 'Nirman Vihar', query: 'Nirman Vihar', icon: 'https://img.icons8.com/color/48/city-buildings.png' },
 ];
 
 const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
-  'Delhi NCR': { lat: 28.6139, lng: 77.2090 },
-  'Agra': { lat: 27.1767, lng: 78.0081 },
-  'Mumbai': { lat: 19.0760, lng: 72.8777 },
-  'Pune': { lat: 18.5204, lng: 73.8567 },
-  'Bangalore': { lat: 12.9716, lng: 77.5946 },
-  'Hyderabad': { lat: 17.3850, lng: 78.4867 },
-  'Chennai': { lat: 13.0827, lng: 80.2707 },
-  'Kolkata': { lat: 22.5726, lng: 88.3639 },
-  'Chandigarh': { lat: 30.7333, lng: 76.7794 },
-  'Raipur': { lat: 21.2514, lng: 81.6296 },
-  'Bhubaneswar': { lat: 20.2961, lng: 85.8245 },
-  'Gurugram': { lat: 28.4595, lng: 77.0266 },
-  'Faridabad': { lat: 28.4089, lng: 77.3178 },
-  'Rewari': { lat: 28.1833, lng: 76.6167 },
+  'Delhi': { lat: 28.6358, lng: 77.2773 },
+  'Delhi NCR': { lat: 28.6358, lng: 77.2773 },
+  'East Delhi': { lat: 28.6358, lng: 77.2873 },
+  'Laxmi Nagar': { lat: 28.6304, lng: 77.2777 },
+  'Mayur Vihar': { lat: 28.6090, lng: 77.2950 },
+  'Vasundhra Enclave': { lat: 28.6010, lng: 77.3185 },
+  'Preet Vihar': { lat: 28.6415, lng: 77.2954 },
+  'Shakarpur': { lat: 28.6280, lng: 77.2789 },
+  'Patparganj': { lat: 28.6227, lng: 77.3038 },
+  'Geeta Colony': { lat: 28.6538, lng: 77.2709 },
+  'Gandhi Nagar': { lat: 28.6606, lng: 77.2669 },
+  'Shahdara': { lat: 28.6734, lng: 77.2890 },
+  'Krishna Nagar': { lat: 28.6565, lng: 77.2830 },
+  'Anand Vihar': { lat: 28.6502, lng: 77.3027 },
+  'Nirman Vihar': { lat: 28.6373, lng: 77.2869 },
 };
 
 import { FACILITY_CATEGORIES } from './FacilityData';
 
+// Helper to extract clean school name (everything before the first comma)
+export function getCleanSchoolName(rawName: string | null | undefined): string {
+  if (!rawName) return 'School';
+  const trimmed = String(rawName).trim();
+  if (trimmed.includes(',')) {
+    return trimmed.split(',')[0].trim() || trimmed;
+  }
+  return trimmed;
+}
+
+// Helper to format clean card location (Locality, District, State)
+export function formatCardLocation(school: SchoolRecord): string {
+  let loc = (school.village_ward || school.locality || '').trim();
+  if (
+    !loc ||
+    loc.toLowerCase() === 'main ward' ||
+    loc.toLowerCase() === 'main' ||
+    loc.toLowerCase() === 'null'
+  ) {
+    const raw = (school as any).raw_school_name || school.school_name || '';
+    if (raw.includes(',')) {
+      loc = raw.split(',').slice(1).join(', ').trim();
+    } else {
+      loc = '';
+    }
+  }
+
+  const dist = (school.district_name || school.city || '').trim();
+  const st = (school.state_name || school.state || '').trim();
+
+  let cleanDist = dist
+    ? dist.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : '';
+  let cleanState = st
+    ? st.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+    : '';
+
+  if (cleanDist.toLowerCase() === 'east' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDist = 'East Delhi';
+  } else if (cleanDist.toLowerCase() === 'west' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDist = 'West Delhi';
+  } else if (cleanDist.toLowerCase() === 'north' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDist = 'North Delhi';
+  } else if (cleanDist.toLowerCase() === 'south' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDist = 'South Delhi';
+  } else if (cleanDist.toLowerCase() === 'central' && cleanState.toLowerCase().includes('delhi')) {
+    cleanDist = 'Central Delhi';
+  }
+
+  const parts: string[] = [];
+  if (loc) {
+    const cleanLoc = loc
+      .replace(new RegExp(`,?\\s*${cleanState}$`, 'i'), '')
+      .replace(new RegExp(`,?\\s*${cleanDist}$`, 'i'), '')
+      .trim();
+    if (cleanLoc && cleanLoc.toLowerCase() !== cleanDist.toLowerCase()) {
+      parts.push(cleanLoc);
+    }
+  }
+
+  if (cleanDist) parts.push(cleanDist);
+  if (cleanState && cleanState.toLowerCase() !== cleanDist.toLowerCase()) {
+    parts.push(cleanState);
+  }
+
+  return parts.join(', ') || (cleanDist ? `${cleanDist}, ${cleanState}` : 'East Delhi, Delhi');
+}
+
 export default function SchoolsDirectoryClient({ initialData }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const query = initialData.query;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchMode, setSearchMode] = useState<'text' | 'near_me'>('text');
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileCityDropdownOpen, setIsMobileCityDropdownOpen] = useState(false);
   
   const [isBoardDropdownOpen, setIsBoardDropdownOpen] = useState(false);
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
   const [selectedBoard, setSelectedBoard] = useState(query.board || 'all');
   const [selectedResidential, setSelectedResidential] = useState(query.residential || 'all');
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
+  const [selectedSchoolTypes, setSelectedSchoolTypes] = useState<string[]>([]);
+  const [selectedSpecialCategories, setSelectedSpecialCategories] = useState<string[]>([]);
   const [onlyAtl, setOnlyAtl] = useState(query.facility?.includes('Atal Tinkering') || false);
-  const [sortBy, setSortBy] = useState(query.sortBy || 'students');
-  const [feeMax, setFeeMax] = useState(500000);
+  const [sortBy, setSortBy] = useState(query.sortBy || 'popularity_desc');
+  const [feeMax, setFeeMax] = useState(1000000);
   const [studentMax, setStudentMax] = useState(5000);
   const [isStateModalOpen, setIsStateModalOpen] = useState(false);
+  const [selectedStateBoard, setSelectedStateBoard] = useState<string | null>(null);
+  const [stateSearchQuery, setStateSearchQuery] = useState('');
 
   // Interactive state
-  const [likedSchoolIds, setLikedSchoolIds] = useState<string[]>([]);
+  const [likedSchoolIds, setLikedSchoolIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const stored = localStorage.getItem('cseel_liked_school_ids');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [likesCounts, setLikesCounts] = useState<Record<string, number>>({});
   const [compareList, setCompareList] = useState<SchoolRecord[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [copiedToastId, setCopiedToastId] = useState<string | null>(null);
@@ -177,8 +279,8 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
       const marker = L.marker([lat, lng], { icon: customPin }).addTo(map);
       marker.bindPopup(`
         <div style="font-family: system-ui, sans-serif; min-width: 180px; padding: 4px;">
-          <b style="color: #003c6e; font-size: 13px;">${googleMapModalSchool.school_name || googleMapModalSchool.name}</b>
-          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${googleMapModalSchool.village_ward || ''}, ${googleMapModalSchool.district_name || ''}</div>
+          <b style="color: #003c6e; font-size: 13px;">${getCleanSchoolName(googleMapModalSchool.school_name || googleMapModalSchool.name)}</b>
+          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${formatCardLocation(googleMapModalSchool)}</div>
           <div style="font-size: 11px; color: #059669; font-weight: bold; margin-top: 4px;">★ Verified Campus</div>
         </div>
       `).openPopup();
@@ -196,10 +298,137 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     };
   }, [googleMapModalSchool]);
 
-  const [mapRadiusKm, setMapRadiusKm] = useState<number>(3);
+  const [mapRadiusKm, setMapRadiusKm] = useState<number>(5);
   const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number }>({ lat: 28.1846, lng: 77.4105 }); // Default to detected live area (Palwal/Delhi NCR)
   const [mapFocus, setMapFocus] = useState<{ lat: number; lng: number; zoom?: number; timestamp: number } | null>(null);
   const [isLocating, setIsLocating] = useState(false);
+
+  // Map display, drawer and pagination states
+  const [mapDisplayMode, setMapDisplayMode] = useState<'page' | 'accumulate' | 'all_dots'>('page');
+  const [accumulatedSchools, setAccumulatedSchools] = useState<SchoolRecord[]>([]);
+  const [allSchoolsMapPoints, setAllSchoolsMapPoints] = useState<SchoolRecord[]>([]);
+  const [isMapSheetMinimized, setIsMapSheetMinimized] = useState<boolean>(false);
+  const [isMapSheetWide, setIsMapSheetWide] = useState<boolean>(false);
+  const [isMapSheetHidden, setIsMapSheetHidden] = useState<boolean>(false);
+  const [isMapFullscreen, setIsMapFullscreen] = useState<boolean>(false);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('half');
+  const [mapListSearch, setMapListSearch] = useState<string>('');
+
+  const [navBottomOffset, setNavBottomOffset] = useState<number>(99);
+
+  // Dynamically calculate navbar bottom so sidebar is always strictly attached without hiding under navbar
+  useEffect(() => {
+    const updateOffset = () => {
+      if (isFullscreen || isMapFullscreen) {
+        setNavBottomOffset(0);
+        return;
+      }
+      const navbar = document.getElementById('site-navbar');
+      if (navbar) {
+        const rect = navbar.getBoundingClientRect();
+        setNavBottomOffset(Math.max(0, Math.round(rect.bottom)));
+      } else {
+        setNavBottomOffset(99);
+      }
+    };
+
+    updateOffset();
+    window.addEventListener('scroll', updateOffset, { passive: true });
+    window.addEventListener('resize', updateOffset, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', updateOffset);
+      window.removeEventListener('resize', updateOffset);
+    };
+  }, [isFullscreen, isMapFullscreen]);
+
+  // Handle ESC key to exit fullscreen mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isFullscreen || isMapFullscreen) {
+          setIsFullscreen(false);
+          setIsMapFullscreen(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen, isMapFullscreen]);
+
+  // ── Page-Based Pagination (Strictly Max 25 Schools Per Page) & Map +25 Point Accumulation ──
+  const [allLoadedSchools, setAllLoadedSchools] = useState<SchoolRecord[]>((initialData.schools || []).slice(0, 25));
+  const [currentPage, setCurrentPage] = useState<number>(initialData.currentPage || 1);
+  const [totalPages, setTotalPages] = useState<number>(
+    initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 25))
+  );
+  const [mapLoadedPage, setMapLoadedPage] = useState<number>(initialData.currentPage || 1);
+  const [totalSchoolsCount, setTotalSchoolsCount] = useState<number>(initialData.totalCount || 0);
+  const [hasMoreSchools, setHasMoreSchools] = useState<boolean>(
+    (initialData.currentPage || 1) < (initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 25)))
+  );
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+
+  // Sync with initialData whenever user triggers a backend filter or SSR navigation
+  useEffect(() => {
+    const pageSchools = (initialData.schools || []).slice(0, 25);
+    const calcTotalPages = initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 25));
+    const curPage = initialData.currentPage || 1;
+    setAllLoadedSchools(pageSchools);
+    setCurrentPage(curPage);
+    setTotalPages(calcTotalPages);
+    setMapLoadedPage(curPage);
+    setTotalSchoolsCount(initialData.totalCount || 0);
+    setHasMoreSchools(curPage < calcTotalPages);
+    setAccumulatedSchools(pageSchools);
+  }, [initialData.schools, initialData.currentPage, initialData.totalCount, initialData.totalPages]);
+
+  // Load next 25 points for Map View accumulation (+25 points per click)
+  const loadNextBatch = useCallback(async () => {
+    if (isLoadingMore || !hasMoreSchools) return;
+    setIsLoadingMore(true);
+    try {
+      const nextPage = mapLoadedPage + 1;
+      const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
+      params.set('page', String(nextPage));
+      params.set('limit', '25');
+      const res = await fetch(`/api/schools-directory?${params.toString()}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.schools)) {
+        const batch25 = data.schools.slice(0, 25);
+        setMapDisplayMode('accumulate');
+        setAccumulatedSchools((prev) => {
+          const base = prev.length > 0 ? prev : allLoadedSchools;
+          const existingKeys = new Set(base.map((s) => String(s.udise_code || s.school_id || s.id)));
+          const uniqueNew = batch25.filter((s: any) => !existingKeys.has(String(s.udise_code || s.school_id || s.id)));
+          return [...base, ...uniqueNew];
+        });
+        setMapLoadedPage(nextPage);
+        const calcTotal = data.totalPages || Math.max(1, Math.ceil((data.totalCount || totalSchoolsCount) / 25));
+        setHasMoreSchools(nextPage < calcTotal);
+        if (data.totalCount) setTotalSchoolsCount(data.totalCount);
+        if (data.totalPages) setTotalPages(data.totalPages);
+      }
+    } catch (err) {
+      console.warn('Failed to load next 25 map points:', err);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, hasMoreSchools, mapLoadedPage, searchParams, allLoadedSchools, totalSchoolsCount]);
+
+  // Fetch all schools map points once when user activates all_dots mode
+  useEffect(() => {
+    if (mapDisplayMode === 'all_dots' && allSchoolsMapPoints.length === 0) {
+      fetch('/api/schools-map-points')
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && json.points) {
+            setAllSchoolsMapPoints(json.points);
+          }
+        })
+        .catch((err) => console.warn('Failed to load all school map points:', err));
+    }
+  }, [mapDisplayMode, allSchoolsMapPoints.length]);
 
   // Auto-detect user's high-precision live GPS location on mount
   useEffect(() => {
@@ -288,11 +517,11 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     : Boolean(effectiveUser);
   const effectiveListingEnabled = isListingEnabledByAdmin;
 
-  // Access rules:
-  const isGuest = !authLoading && !effectiveUser;
+  // Access rules: Open directory browsing for parents and students by default
+  const isGuest = adminSimulateMode === 'simulate_public';
   const isListingDisabled = !authLoading && Boolean(effectiveUser) && !effectiveListingEnabled;
-  const isUserUnverified = !authLoading && Boolean(effectiveUser) && effectiveListingEnabled && !effectiveIsVerified;
-  const canViewSchools = !authLoading && Boolean(effectiveUser) && effectiveListingEnabled && effectiveIsVerified;
+  const isUserUnverified = adminSimulateMode === 'simulate_unverified';
+  const canViewSchools = !isGuest && !isListingDisabled && !isUserUnverified;
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -368,8 +597,12 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     setIsAddSchoolModalOpen(true);
   };
 
-  // Hero Carousel state
+  // Hero Carousel & Minimized state
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [isHeroMinimized, setIsHeroMinimized] = useState(true);
+
+  // Filter Sidebar Minimized state (Desktop)
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -394,9 +627,44 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   return Number((R * c).toFixed(2));
 }
 
+  // Database-driven cities & localities with live school counts
+  const dbCitiesList = useMemo(() => {
+    const normalizeQuery = (raw: string) => {
+      const q = raw.toLowerCase().trim();
+      if (q === 'delhi ncr' || q === 'new delhi' || q === 'ncr') return 'delhi';
+      if (q === 'east delhi') return 'east';
+      return q;
+    };
+
+    const matchesCity = (s: SchoolRecord, cityQuery: string) => {
+      const q = normalizeQuery(cityQuery);
+      const haystack = [
+        s.school_name || s.name || '',
+        s.address || '',
+        s.locality || '',
+        s.village_ward || '',
+        s.block_name || '',
+        s.district_name || s.city || '',
+        s.state_name || s.state || '',
+        formatCardLocation(s),
+      ]
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(q);
+    };
+
+    return POPULAR_CITIES.map((c) => {
+      const count = allLoadedSchools.filter((s) => matchesCity(s, c.query || c.name)).length;
+      return {
+        ...c,
+        count,
+      };
+    }).sort((a, b) => b.count - a.count);
+  }, [allLoadedSchools]);
+
   const displayedSchools = useMemo(() => {
-    // 1. Calculate distance from searchCenter for every school
-    let list = initialData.schools.map((s) => {
+    // 1. Calculate distance from searchCenter for every loaded school in local memory
+    let list = allLoadedSchools.map((s) => {
       const schoolLat = s.lat || s.latitude;
       const schoolLng = s.lng || s.longitude;
       const dist =
@@ -411,39 +679,258 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       };
     });
 
-    // 2. Text Search Filtering
+    // 2. Text Search Filtering (In-Memory across all loaded schools, normalizing Delhi NCR -> Delhi)
     if (searchTerm.trim() && searchMode === 'text') {
-      const q = searchTerm.toLowerCase().trim();
-      list = list.filter(
-        (s) =>
-          (s.school_name || s.name || '').toLowerCase().includes(q) ||
-          (s.village_ward || '').toLowerCase().includes(q) ||
-          (s.district_name || '').toLowerCase().includes(q) ||
-          (s.udise_code || '').includes(q)
-      );
+      const rawQ = searchTerm.toLowerCase().trim();
+      let q = rawQ;
+      if (rawQ === 'delhi ncr' || rawQ === 'new delhi' || rawQ === 'ncr') {
+        q = 'delhi';
+      } else if (rawQ === 'east delhi') {
+        q = 'east';
+      }
+
+      list = list.filter((s) => {
+        const haystack = [
+          s.school_name || s.name || '',
+          s.address || '',
+          s.locality || '',
+          s.village_ward || '',
+          s.block_name || '',
+          s.district_name || s.city || '',
+          s.state_name || s.state || '',
+          s.pincode || '',
+          s.udise_code || '',
+          s.board || s.board_secondary_10th || '',
+          formatCardLocation(s),
+        ]
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(q) || haystack.includes(rawQ);
+      });
     } else if (searchMode === 'near_me' || viewMode === 'map') {
       // 3. Near Me or Map View: Filter by Radius & sort by closest distance
       const inRadius = list.filter((s) => s.distance !== undefined && s.distance <= mapRadiusKm);
       if (inRadius.length > 0) {
         list = inRadius.sort((a, b) => (a.distance || 0) - (b.distance || 0));
       } else {
-        // If none strictly within the radius, show all sorted by closest distance
         list = list.sort((a, b) => (a.distance ?? 9999) - (b.distance ?? 9999));
       }
     }
 
-    // 4. Facilities Filtering
-    if (selectedFacilities.length > 0) {
+    // 4. Curriculum Board Filtering
+    if (selectedBoard && selectedBoard !== 'all') {
+      const boardQ = selectedBoard.toLowerCase();
       list = list.filter((s) => {
-        const facs = (s.facilities || []).map((f: string) => f.toLowerCase());
-        return selectedFacilities.every((selected) =>
-          facs.some((f: string) => f.includes(selected.toLowerCase()) || selected.toLowerCase().includes(f))
-        );
+        const b = `${s.board || ''} ${s.board_secondary_10th || ''} ${s.board_higher_secondary_12th || ''}`.toLowerCase();
+        if (boardQ === 'state board') {
+          const matchesStateBoard = b.includes('state') || b.includes('hbse') || b.includes('upmsp') || b.includes('dbse');
+          if (selectedStateBoard) {
+            const st = (s.state_name || s.state || '').toLowerCase();
+            return matchesStateBoard && st.includes(selectedStateBoard.toLowerCase());
+          }
+          return matchesStateBoard;
+        }
+        if (boardQ.includes('cambridge') || boardQ.includes('igcse')) {
+          return b.includes('cambridge') || b.includes('igcse') || b.includes('caie');
+        }
+        return b.includes(boardQ);
       });
     }
 
-    return list;
-  }, [initialData.schools, searchTerm, searchMode, searchCenter.lat, searchCenter.lng, mapRadiusKm, viewMode, selectedFacilities]);
+    // 5. Class Filter
+    if (selectedClasses.length > 0) {
+      const classLabelToNum = (label: string): number => {
+        const l = label.toLowerCase();
+        if (l.includes('play') || l.includes('pre') || l.includes('nursery') || l.includes('lkg') || l.includes('ukg')) return 0;
+        const m = l.match(/\d+/);
+        return m ? parseInt(m[0], 10) : 1;
+      };
+
+      list = list.filter((s) => {
+        const fromNum = parseInt(String(s.class_from ?? '1'), 10);
+        const toNum = parseInt(String(s.class_to ?? '12'), 10);
+        const classesStr = (s.classes || s.school_category || '').toLowerCase();
+        const minClass = isNaN(fromNum) ? 0 : fromNum;
+        const maxClass = isNaN(toNum) ? 12 : toNum;
+
+        return selectedClasses.some((clsLabel) => {
+          const targetNum = classLabelToNum(clsLabel);
+          if (targetNum === 0) {
+            return minClass <= 1 || classesStr.includes('nursery') || classesStr.includes('primary') || classesStr.includes('pr.');
+          }
+          return targetNum >= minClass && targetNum <= maxClass;
+        });
+      });
+    }
+
+    // 6. School Type Filter (Private Unaided, Government, Government Aided, International)
+    if (selectedSchoolTypes.length > 0) {
+      list = list.filter((s) => {
+        const mgmt = `${s.management || ''} ${s.management_type || ''} ${s.school_type || ''} ${s.school_category || ''} ${s.school_name || ''}`.toLowerCase();
+        return selectedSchoolTypes.some((t) => {
+          const tl = t.toLowerCase();
+          if (tl === 'private unaided') return mgmt.includes('private') || mgmt.includes('unaided') || mgmt.includes('recognized');
+          if (tl === 'government aided') return mgmt.includes('aided') && !mgmt.includes('unaided');
+          if (tl === 'government') return (mgmt.includes('government') || mgmt.includes('dept. of education') || mgmt.includes('mcd') || mgmt.includes('ndmc')) && !mgmt.includes('unaided');
+          if (tl === 'international') return mgmt.includes('international') || mgmt.includes('global') || mgmt.includes('ib') || mgmt.includes('cambridge');
+          return mgmt.includes(tl);
+        });
+      });
+    }
+
+    // 7. Special Categories Filter (Sainik, KVS, JNV, APS, EMRS)
+    if (selectedSpecialCategories.length > 0) {
+      list = list.filter((s) => {
+        const info = `${s.school_name || ''} ${s.name || ''} ${s.management || ''} ${s.school_category || ''}`.toLowerCase();
+        return selectedSpecialCategories.some((cat) => {
+          const cl = cat.toLowerCase();
+          if (cl.includes('sainik')) return info.includes('sainik');
+          if (cl.includes('kendriya') || cl.includes('kvs')) return info.includes('kendriya') || info.includes('kv ');
+          if (cl.includes('navodaya') || cl.includes('jnv')) return info.includes('navodaya') || info.includes('jnv');
+          if (cl.includes('army')) return info.includes('army');
+          if (cl.includes('eklavya') || cl.includes('emrs')) return info.includes('eklavya') || info.includes('emrs');
+          return info.includes(cl);
+        });
+      });
+    }
+
+    // 8. Annual Fees Range Filter
+    if (feeMax < 1000000) {
+      list = list.filter((s) => {
+        const fee = Number(s.annual_fee || 0);
+        return fee <= feeMax;
+      });
+    }
+
+    // 9. Student Strength Filter
+    if (studentMax < 5000) {
+      list = list.filter((s) => {
+        const stu = Number(s.total_students || (s as any).students || 0);
+        return stu <= studentMax;
+      });
+    }
+
+    // 10. Facilities Filtering (In-Memory across all loaded schools)
+    if (selectedFacilities.length > 0) {
+      list = list.filter((s) => {
+        const facs = (s.facilities || []).map((f: string) => f.toLowerCase());
+        return selectedFacilities.every((selected) => {
+          const sel = selected.toLowerCase();
+          return facs.some((f: string) => f.includes(sel) || sel.includes(f));
+        });
+      });
+    }
+
+    // 11. Strict deduplication to ensure zero duplicate cards
+    const seenCards = new Set<string>();
+    const uniqueList: typeof list = [];
+    for (const item of list) {
+      const codeKey = (item.udise_code || item.school_id || item.id || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (codeKey) {
+        if (seenCards.has(codeKey)) continue;
+        seenCards.add(codeKey);
+        uniqueList.push(item);
+      } else {
+        const nameKey = (item.school_name || item.name || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        const distKey = (item.district_name || item.city || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        const compositeKey = nameKey ? `${nameKey}_${distKey}` : '';
+        if (compositeKey && seenCards.has(compositeKey)) continue;
+        if (compositeKey) seenCards.add(compositeKey);
+        uniqueList.push(item);
+      }
+    }
+
+    // 12. Comprehensive Sorting (Popularity Asc/Desc, Distance Nearest/Farthest, Student Strength, Name A-Z/Z-A, Faculty)
+    const getPopularityScore = (s: SchoolRecord) => {
+      const ratingScore = (Number(s.rating) || 0) * 1000;
+      const likesScore = (likesCounts[s.id] ?? ((s as any).likes_count || (s as any).likesCount || 0)) * 100;
+      const reviewsScore = (Number((s as any).reviews_count || s.reviews) || 0) * 10;
+      const studentsScore = (Number(s.total_students || (s as any).students) || 0) * 0.1;
+      const hasRealImg = s.image && !s.image.includes('default-school') ? 250 : 0;
+      return ratingScore + likesScore + reviewsScore + studentsScore + hasRealImg;
+    };
+
+    if (searchMode !== 'near_me') {
+      uniqueList.sort((a, b) => {
+        switch (sortBy) {
+          case 'popularity_desc':
+            return getPopularityScore(b) - getPopularityScore(a);
+          case 'popularity_asc':
+            return getPopularityScore(a) - getPopularityScore(b);
+          case 'distance_asc':
+            return (a.distance ?? 99999) - (b.distance ?? 99999);
+          case 'distance_desc':
+            return (b.distance ?? 0) - (a.distance ?? 0);
+          case 'name':
+          case 'name_asc':
+            return getCleanSchoolName(a.school_name || a.name).localeCompare(getCleanSchoolName(b.school_name || b.name));
+          case 'name_desc':
+            return getCleanSchoolName(b.school_name || b.name).localeCompare(getCleanSchoolName(a.school_name || a.name));
+          case 'students':
+          case 'students_desc':
+            return (Number(b.total_students || (b as any).students) || 0) - (Number(a.total_students || (a as any).students) || 0);
+          case 'students_asc':
+            return (Number(a.total_students || (a as any).students) || 0) - (Number(b.total_students || (b as any).students) || 0);
+          case 'teachers':
+            return (Number(b.total_teachers) || 0) - (Number(a.total_teachers) || 0);
+          default:
+            return getPopularityScore(b) - getPopularityScore(a);
+        }
+      });
+    }
+
+    return uniqueList;
+  }, [
+    allLoadedSchools,
+    searchTerm,
+    searchMode,
+    searchCenter.lat,
+    searchCenter.lng,
+    mapRadiusKm,
+    viewMode,
+    selectedBoard,
+    selectedStateBoard,
+    selectedClasses,
+    selectedSchoolTypes,
+    selectedSpecialCategories,
+    feeMax,
+    studentMax,
+    selectedFacilities,
+    sortBy,
+    likesCounts,
+  ]);
+
+  const schoolsForMap = useMemo(() => {
+    if (mapDisplayMode === 'accumulate') {
+      return accumulatedSchools.length > 0 ? accumulatedSchools : displayedSchools;
+    }
+    return displayedSchools;
+  }, [mapDisplayMode, accumulatedSchools, displayedSchools]);
+
+  const mapFilteredSchools = useMemo(() => {
+    const baseList = mapDisplayMode === 'accumulate' ? schoolsForMap : displayedSchools;
+    if (!mapListSearch.trim()) return baseList;
+    const q = mapListSearch.toLowerCase().trim();
+    return baseList.filter((s) =>
+      (s.school_name || s.name || '').toLowerCase().includes(q) ||
+      (s.village_ward || '').toLowerCase().includes(q) ||
+      (s.district_name || '').toLowerCase().includes(q) ||
+      (s.board || '').toLowerCase().includes(q) ||
+      (s.udise_code || '').includes(q)
+    );
+  }, [displayedSchools, schoolsForMap, mapDisplayMode, mapListSearch]);
+
+  const handleSelectSchoolFromList = (school: SchoolRecord, fromMapMarker = false) => {
+    setMapSelectedSchool(school);
+    const lat = school.lat || school.latitude;
+    const lng = school.lng || school.longitude;
+    if (lat && lng) {
+      setMapFocus({ lat, lng, zoom: 15, timestamp: Date.now() });
+    }
+    if (fromMapMarker && mobileSheetState === 'peek') {
+      setMobileSheetState('half');
+    }
+  };
 
   const toggleFacility = (facilityName: string) => {
     setSelectedFacilities((prev) =>
@@ -463,21 +950,237 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       }
     });
     params.set('page', '1');
-    router.push(`?${params.toString()}`);
+    params.set('limit', '25');
+    const target = pathname ? `${pathname}?${params.toString()}` : `?${params.toString()}`;
+    router.push(target);
   };
 
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
-    params.set('page', newPage.toString());
-    router.push(`?${params.toString()}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleLimitChange = (_newLimit: number) => {
+    // Strictly max 25 schools per page from backend
+    handleFilterChange({ limit: '25' });
   };
 
-  const handleToggleLike = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setLikedSchoolIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+  const handleResetAll = useCallback(() => {
+    setSelectedBoard('all');
+    setSelectedStateBoard(null);
+    setSelectedResidential('all');
+    setSelectedFacilities([]);
+    setSelectedClasses([]);
+    setSelectedSchoolTypes([]);
+    setSelectedSpecialCategories([]);
+    setSelectedLocation(null);
+    setFeeMax(1000000);
+    setStudentMax(5000);
+    setOnlyAtl(false);
+    setSearchTerm('');
+    setSearchMode('text');
+    setMapRadiusKm(10);
+    setSortBy('popularity_desc');
+    handleFilterChange({ board: undefined, residential: undefined, facility: undefined, q: undefined });
+  }, [handleFilterChange]);
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (selectedBoard && selectedBoard !== 'all') count++;
+    if (selectedStateBoard) count++;
+    if (selectedResidential && selectedResidential !== 'all') count++;
+    if (selectedClasses.length > 0) count += selectedClasses.length;
+    if (selectedSchoolTypes.length > 0) count += selectedSchoolTypes.length;
+    if (selectedSpecialCategories.length > 0) count += selectedSpecialCategories.length;
+    if (selectedFacilities.length > 0) count += selectedFacilities.length;
+    if (feeMax < 1000000) count++;
+    if (studentMax < 5000) count++;
+    if (selectedLocation) count++;
+    if (onlyAtl) count++;
+    if (mapRadiusKm < 10) count++;
+    return count;
+  }, [
+    selectedBoard, selectedStateBoard, selectedResidential, selectedClasses,
+    selectedSchoolTypes, selectedSpecialCategories, selectedFacilities, feeMax,
+    studentMax, selectedLocation, onlyAtl, mapRadiusKm
+  ]);
+
+  const handlePageChange = useCallback(async (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages || newPage === currentPage || isLoadingMore) return;
+    setIsLoadingMore(true);
+    setCurrentPage(newPage);
+    try {
+      const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
+      params.set('page', String(newPage));
+      params.set('limit', '25');
+      const res = await fetch(`/api/schools-directory?${params.toString()}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.schools)) {
+        const pageBatch = data.schools.slice(0, 25);
+        setAllLoadedSchools(pageBatch);
+        const resolvedPage = data.currentPage || newPage;
+        const resolvedTotalPages = data.totalPages || Math.max(1, Math.ceil((data.totalCount || totalSchoolsCount) / 25));
+        setCurrentPage(resolvedPage);
+        setTotalPages(resolvedTotalPages);
+        if (data.totalCount) setTotalSchoolsCount(data.totalCount);
+        setAccumulatedSchools((prev) => {
+          const existingKeys = new Set(prev.map((s) => String(s.udise_code || s.school_id || s.id)));
+          const uniqueNew = pageBatch.filter((s: any) => !existingKeys.has(String(s.udise_code || s.school_id || s.id)));
+          return [...prev, ...uniqueNew];
+        });
+      }
+      const target = pathname ? `${pathname}?${params.toString()}` : `?${params.toString()}`;
+      router.push(target, { scroll: false });
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } catch (err) {
+      console.warn('Error changing page:', err);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [totalPages, currentPage, isLoadingMore, searchParams, pathname, router, totalSchoolsCount]);
+
+  // Smart page numbers array for pagination
+  const paginationPages = useMemo(() => {
+    const total = Math.max(1, totalPages);
+    const current = Math.min(Math.max(1, currentPage), total);
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    const pages: (number | string)[] = [1];
+    const left = Math.max(2, current - 1);
+    const right = Math.min(total - 1, current + 1);
+
+    if (left > 2) pages.push('...');
+    for (let p = left; p <= right; p++) {
+      pages.push(p);
+    }
+    if (right < total - 1) pages.push('...');
+    pages.push(total);
+    return pages;
+  }, [totalPages, currentPage]);
+
+  // Reusable Top & Bottom Pagination Bar (Strictly max 25 schools per page)
+  const renderPaginationBar = (position: 'top' | 'bottom') => {
+    const pageCount = Math.min(displayedSchools.length, 25);
+    const startItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : (currentPage - 1) * 25 + 1;
+    const endItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : Math.min((currentPage - 1) * 25 + pageCount, totalSchoolsCount);
+
+    return (
+      <div
+        className={`w-full bg-white rounded-[16px] border border-[#c4c7c5]/80 px-3.5 py-2.5 sm:px-5 sm:py-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-2.5 ${
+          position === 'top' ? 'mb-3' : 'mt-6'
+        }`}
+      >
+        {/* Left: Showing X-Y of Z Schools */}
+        <div className="flex items-center gap-2 text-xs text-[#444746] font-medium">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-[8px] bg-[#e8f0fe] text-[#0b57d0] font-bold text-[11px] border border-[#c2e7ff]">
+            Page {currentPage} of {totalPages}
+          </span>
+          <span>
+            Showing <strong className="text-[#1f1f1f] font-bold">{startItem}–{endItem}</strong> of{' '}
+            <strong className="text-[#1f1f1f] font-bold">{totalSchoolsCount}</strong> Schools
+          </span>
+          <span className="hidden md:inline text-[11px] text-[#747775]">
+            (Max 25 / page)
+          </span>
+          {isLoadingMore && (
+            <Loader2 size={14} className="animate-spin text-[#0b57d0] ml-1" />
+          )}
+        </div>
+
+        {/* Right: Prev + Page Numbers + Next (Uniform M3 Pill Buttons) */}
+        <div className="flex items-center gap-1.5 flex-wrap justify-center">
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage <= 1 || isLoadingMore}
+            className="inline-flex items-center gap-1 h-8 px-3.5 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#0b57d0] text-xs font-semibold transition-all duration-200 ease-in-out active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            title="Previous Page (25 Schools)"
+          >
+            <ChevronLeft size={14} />
+            <span>Prev</span>
+          </button>
+
+          {paginationPages.map((p, idx) =>
+            p === '...' ? (
+              <span key={`dots-${position}-${idx}`} className="px-1.5 text-xs text-[#747775] font-bold">
+                ...
+              </span>
+            ) : (
+              <button
+                key={`page-${position}-${p}`}
+                type="button"
+                onClick={() => handlePageChange(Number(p))}
+                disabled={isLoadingMore}
+                className={`min-w-[32px] h-8 px-2.5 rounded-full text-xs font-semibold transition-all duration-200 ease-in-out active:scale-[0.98] cursor-pointer flex items-center justify-center ${
+                  currentPage === Number(p)
+                    ? 'bg-[#0b57d0] text-white shadow-xs border border-[#0b57d0]'
+                    : 'bg-white hover:bg-[#0b57d0]/[0.08] text-[#444746] hover:text-[#0b57d0] border border-[#c4c7c5]'
+                }`}
+                title={`Go to Page ${p}`}
+              >
+                {p}
+              </button>
+            )
+          )}
+
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= totalPages || isLoadingMore}
+            className="inline-flex items-center gap-1 h-8 px-3.5 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#0b57d0] text-xs font-semibold transition-all duration-200 ease-in-out active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            title="Next Page (25 Schools)"
+          >
+            <span>Next</span>
+            <ChevronRight size={14} />
+          </button>
+        </div>
+      </div>
     );
+  };
+
+  const handleToggleLike = async (id: string, e: React.MouseEvent, udiseCode?: string) => {
+    e.stopPropagation();
+    const isCurrentlyLiked = likedSchoolIds.includes(id);
+    const nextLiked = !isCurrentlyLiked;
+
+    setLikedSchoolIds((prev) => {
+      const nextList = nextLiked ? [...prev, id] : prev.filter((item) => item !== id);
+      try {
+        localStorage.setItem('cseel_liked_school_ids', JSON.stringify(nextList));
+        if (udiseCode) {
+          localStorage.setItem(`liked_school_${udiseCode}`, nextLiked ? 'true' : 'false');
+        }
+      } catch {}
+      return nextList;
+    });
+
+    setLikesCounts((prev) => {
+      const current = prev[id] ?? 0;
+      return {
+        ...prev,
+        [id]: Math.max(0, nextLiked ? current + 1 : current - 1),
+      };
+    });
+
+    const targetUdise = udiseCode || id;
+    try {
+      const res = await fetch('/api/school-engagement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'like',
+          udiseCode: targetUdise,
+          liked: nextLiked,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && typeof data.likesCount === 'number') {
+        setLikesCounts((prev) => ({
+          ...prev,
+          [id]: data.likesCount,
+        }));
+      }
+    } catch (err) {
+      console.warn('Failed to toggle like:', err);
+    }
   };
 
   const handleToggleCompare = (school: SchoolRecord, e: React.MouseEvent) => {
@@ -547,25 +1250,25 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       .slice(0, 8);
   }, [initialData.schools]);
 
-  // Helper to attach verified badge to the last word of school name (prevents orphan badge on new line)
+
+
+  // Helper to render school title with perfectly baseline-aligned verified badge (no word drop/bend)
   const renderSchoolTitleWithVerified = (name: string, isVerified: boolean = true) => {
-    const raw = (name || '').trim();
-    if (!raw) return null;
-    const parts = raw.split(/\s+/);
-    const lastWord = parts.pop() || '';
-    const leadingWords = parts.join(' ');
+    const clean = getCleanSchoolName(name);
+    if (!clean) return null;
 
     return (
       <span className="inline">
-        {leadingWords ? `${leadingWords} ` : ''}
-        <span className="inline-flex items-center gap-1 whitespace-nowrap align-middle">
-          <span>{lastWord}</span>
-          {isVerified && (
-            <span className="inline-flex items-center justify-center shrink-0" title="CSEEL Verified School">
-              <CheckCircle2 size={15} className="text-white fill-blue-600 drop-shadow-xs" />
-            </span>
-          )}
-        </span>
+        {clean}
+        {isVerified && (
+          <span title="CSEEL Verified School" className="inline-flex items-center">
+            <CheckCircle2
+              size={14}
+              className="inline-block align-baseline ml-1 text-white fill-blue-600 drop-shadow-xs -translate-y-[1px] shrink-0"
+              aria-label="CSEEL Verified School"
+            />
+          </span>
+        )}
       </span>
     );
   };
@@ -574,6 +1277,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     const profileUrl = getSchoolUrl(school);
     const isCompared = compareList.some((c) => c.id === school.id);
     const isLiked = likedSchoolIds.includes(school.id);
+    const cardLikesCount = likesCounts[school.id] ?? ((school as any).likes_count || (school as any).likesCount || 0);
     const rawWebsite = (school as any).website || school.website || '';
     const hasWebsite = Boolean(rawWebsite && rawWebsite.trim() !== '' && rawWebsite !== '#' && !rawWebsite.includes('example.com'));
     const cleanWebsiteUrl = hasWebsite ? (rawWebsite.startsWith('http') ? rawWebsite : `https://${rawWebsite}`) : '';
@@ -581,81 +1285,120 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     // Google Local Inspired Card
     return (
       <div key={school.id || idx} className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-shadow group flex flex-col">
-        {/* Card Image Header */}
-        <div className="relative h-48 w-full bg-gray-200 overflow-hidden">
+        {/* Card Image Header - Compact with sleek single row overlay */}
+        <div className="relative h-40 sm:h-44 w-full bg-slate-50 overflow-hidden">
           <img
-            src={school.image || HERO_IMAGES[idx % HERO_IMAGES.length]}
+            src={getSafeSchoolImage(school.image || (school as any).image_url)}
             alt={school.school_name || school.name || 'School Banner'}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => { e.currentTarget.src = HERO_IMAGES[0]; }}
+            onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
           />
           
-          {/* Top Action Buttons (Website, Compare, Share, Like) */}
-          <div className="absolute top-3 right-3 flex items-center gap-1.5">
-            {hasWebsite ? (
-              <a
-                href={cleanWebsiteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white/90 backdrop-blur-md text-blue-600 hover:bg-white hover:text-blue-700 shadow-sm transition"
-                title="Visit Official School Website"
-              >
-                <Globe size={14} />
-              </a>
-            ) : (
-              <button
-                disabled
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-white/60 backdrop-blur-md text-gray-400 opacity-40 cursor-not-allowed select-none shadow-xs pointer-events-none"
-                title="Official Website Not Available"
-              >
-                <Globe size={14} />
-              </button>
-            )}
-            <button
-              onClick={(e) => handleToggleCompare(school, e)}
-              className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm transition ${
-                isCompared ? 'bg-blue-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-white'
-              }`}
-              title="Compare"
-            >
-              <Scale size={14} />
-            </button>
-            <button
-              onClick={(e) => handleShareSchool(school, e)}
-              className="w-8 h-8 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-md text-gray-700 hover:bg-white shadow-sm transition relative"
-              title="Share"
-            >
-              <Share2 size={14} />
-              {copiedToastId === school.id && (
-                <span className="absolute -bottom-8 bg-gray-900 text-white text-[10px] px-2 py-1 rounded">Copied!</span>
-              )}
-            </button>
-            <button
-              onClick={(e) => handleToggleLike(school.id, e)}
-              className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md shadow-sm transition ${
-                isLiked ? 'bg-rose-50 text-rose-500' : 'bg-white/80 text-gray-700 hover:bg-white'
-              }`}
-              title="Like"
-            >
-              <Heart size={14} className={isLiked ? "fill-rose-500" : ""} />
-            </button>
-          </div>
+          {/* Top Single Row Toolbar with Informative Hover Tooltips */}
+          <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between pointer-events-none">
+            {/* Admissions Status Pill on Left */}
+            <div className="bg-emerald-600/95 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[10.5px] font-bold shadow-xs flex items-center gap-1 pointer-events-auto">
+              <CheckCircle2 size={11} /> 
+              <span>Admissions Open</span>
+            </div>
 
-          {/* Badge: Open/Closed Admission */}
-          <div className="absolute bottom-3 left-3 bg-green-600 text-white px-2.5 py-1 rounded-lg text-xs font-bold shadow-md flex items-center gap-1">
-            <CheckCircle2 size={12} /> Admissions Open
+            {/* Action Buttons in a Single Crisp Glass Strip on Right */}
+            <div className="flex items-center gap-1 bg-black/45 backdrop-blur-md p-1 rounded-full border border-white/20 shadow-xs pointer-events-auto">
+              {/* Official Website */}
+              <div className="relative group/tip">
+                {hasWebsite ? (
+                  <a
+                    href={cleanWebsiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white/90 hover:text-white hover:bg-white/25 transition cursor-pointer"
+                  >
+                    <Globe size={13} />
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white/40 opacity-40 cursor-not-allowed pointer-events-none"
+                  >
+                    <Globe size={13} />
+                  </button>
+                )}
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
+                  {hasWebsite ? 'Official Website' : 'Website Not Available'}
+                </span>
+              </div>
+
+              {/* Compare */}
+              <div className="relative group/tip">
+                <button
+                  type="button"
+                  onClick={(e) => handleToggleCompare(school, e)}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
+                    isCompared ? 'bg-blue-600 text-white' : 'text-white/90 hover:text-white hover:bg-white/25'
+                  }`}
+                  aria-label="Compare School"
+                >
+                  <ArrowLeftRight size={13} />
+                </button>
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
+                  {isCompared ? 'Remove from Comparison' : 'Compare School'}
+                </span>
+              </div>
+
+              {/* Share */}
+              <div className="relative group/tip">
+                <button
+                  type="button"
+                  onClick={(e) => handleShareSchool(school, e)}
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-white/90 hover:text-white hover:bg-white/25 transition cursor-pointer"
+                >
+                  <Share2 size={13} />
+                </button>
+                {copiedToastId === school.id ? (
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-bold rounded shadow-md z-30 whitespace-nowrap">
+                    Link Copied!
+                  </span>
+                ) : (
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
+                    Share School
+                  </span>
+                )}
+              </div>
+
+              {/* Like / Wishlist */}
+              <div className="relative group/tip">
+                <button
+                  type="button"
+                  onClick={(e) => handleToggleLike(school.id, e, school.udise_code || school.school_id)}
+                  className={`h-7 px-2 rounded-full flex items-center gap-1 transition cursor-pointer text-xs font-semibold ${
+                    isLiked
+                      ? 'bg-rose-500 text-white shadow-xs'
+                      : 'bg-black/35 text-white hover:bg-black/55 hover:text-white'
+                  }`}
+                >
+                  <Heart size={13} className={isLiked ? "fill-white text-white" : "text-white/90"} />
+                  {cardLikesCount > 0 && <span className="text-[11px] font-bold">{cardLikesCount}</span>}
+                </button>
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
+                  {isLiked ? 'Liked' : 'Like School'}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Card Body */}
-        <div className="p-4 flex-1 flex flex-col">
+        {/* Card Body - Crisp Google Places Local Listing Typography */}
+        <div className="p-3.5 sm:p-4 flex-1 flex flex-col">
           <div className="mb-1.5">
-            <h3 className="font-bold text-base sm:text-[17px] text-gray-900 leading-snug">
-              <Link href={profileUrl} className="hover:text-blue-600 transition-colors inline">
+            <h2 
+              className="font-semibold text-[15px] sm:text-[16px] text-[#1a0dab] hover:underline leading-snug tracking-tight line-clamp-1 cursor-pointer"
+              style={{ fontSize: '15px', color: '#1a0dab', lineHeight: '1.3' }}
+            >
+              <Link href={profileUrl} className="hover:underline transition-colors inline">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
-            </h3>
+            </h2>
           </div>
           
           {/* Rating - Only display if real rating exists */}
@@ -672,10 +1415,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           ) : null}
           
           {/* Address & Meta */}
-          <div className="text-[13px] text-gray-600 flex items-start justify-between gap-1.5 mb-3 leading-snug">
+          <div className="text-[12.5px] text-gray-600 flex items-start justify-between gap-1.5 mb-2.5 leading-snug">
             <div className="flex items-start gap-1.5 min-w-0">
-              <MapPin size={15} className="text-red-500 shrink-0 mt-0.5" />
-              <span className="break-words">{school.village_ward || school.locality}, {school.district_name}, {school.state_name}</span>
+              <MapPin size={14} className="text-red-500 shrink-0 mt-0.5" />
+              <span className="break-words line-clamp-1">{formatCardLocation(school)}</span>
             </div>
             {school.distance !== undefined && school.distance > 0 && (
               <span className="shrink-0 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-2 py-0.5 rounded text-[11px] font-bold shadow-sm whitespace-nowrap">
@@ -686,47 +1429,56 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
           {/* Experiential Science Lab Badge */}
           {school.facilities?.includes('Experiential Science Lab') && (
-            <div className="mb-3">
-              <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 border border-blue-100 px-2.5 py-1 rounded-md text-[10px] font-bold">
-                <FlaskConical size={12} />
-                Have Experiential Science Lab
+            <div className="mb-2.5">
+              <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                <FlaskConical size={11} className="text-[#005689]" />
+                Experiential Science Lab
               </span>
             </div>
           )}
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-2 gap-y-2 gap-x-3 text-[11px] sm:text-xs text-gray-700 mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <Award size={13} className="text-blue-600 shrink-0" />
-              <span className="font-medium truncate">{school.board || school.board_secondary_10th || 'CBSE'}</span>
+          {/* Features Grid - Standard Educational Icons */}
+          <div className="grid grid-cols-2 gap-y-2 gap-x-2.5 text-[11.5px] text-gray-700 mb-3.5 bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/70">
+            {/* 1. Board with Official Logo Badge */}
+            <div className="flex items-center gap-1.5 min-w-0" title={`Board: ${school.board || school.board_secondary_10th || 'CBSE'}`}>
+              <div className="w-4 h-4 flex items-center justify-center shrink-0">
+                {renderBoardLogo(school.board || school.board_secondary_10th || 'CBSE')}
+              </div>
+              <span className="font-semibold text-slate-800 truncate">{school.board || school.board_secondary_10th || 'CBSE'}</span>
             </div>
-            <div className="flex items-center gap-1.5 min-w-0">
-              <Users size={13} className="text-purple-600 shrink-0" />
-              <span className="font-medium truncate">{school.classes || 'Class 1st - 10th'}</span>
+
+            {/* 2. Classes / Grade Range */}
+            <div className="flex items-center gap-1.5 min-w-0" title={`Classes: ${school.classes || 'Class 1st - 10th'}`}>
+              <GraduationCap size={13} className="text-purple-600 shrink-0" />
+              <span className="font-medium text-slate-700 truncate">{school.classes || 'Class 1st - 10th'}</span>
             </div>
-            <div className="flex items-center gap-1.5 min-w-0">
-              <Building2 size={13} className="text-indigo-600 shrink-0" />
-              <span className="font-medium truncate">{school.medium || school.medium_of_instruction_1 || 'English Medium'}</span>
+
+            {/* 3. Medium of Instruction (Languages icon, NOT building) */}
+            <div className="flex items-center gap-1.5 min-w-0" title={`Medium: ${school.medium || school.medium_of_instruction_1 || 'English Medium'}`}>
+              <Languages size={13} className="text-indigo-600 shrink-0" />
+              <span className="font-medium text-slate-700 truncate">{school.medium || school.medium_of_instruction_1 || 'English Medium'}</span>
             </div>
-            <div className="flex items-center gap-1.5 min-w-0">
-              <GraduationCap size={13} className="text-emerald-600 shrink-0" />
-              <span className="font-medium truncate">{school.school_type || school.gender || 'Co-ed Day'}</span>
+
+            {/* 4. Format / Type */}
+            <div className="flex items-center gap-1.5 min-w-0" title={`Type: ${school.school_type || school.gender || 'Co-ed Day'}`}>
+              <Building2 size={13} className="text-emerald-600 shrink-0" />
+              <span className="font-medium text-slate-700 truncate">{school.school_type || school.gender || 'Co-ed Day'}</span>
             </div>
           </div>
 
-          {/* Card Actions - Responsive Dual Button Grid (Fits perfectly in 2 Cols & 3 Cols) */}
-          <div className="mt-auto pt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
+          {/* Card Actions - Official M3 Uniform Pill Buttons */}
+          <div className="mt-auto pt-3 border-t border-gray-100 flex items-center gap-1.5">
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-9 px-2.5 rounded-xl border border-gray-200 bg-white hover:bg-red-50 hover:border-red-200 text-slate-700 hover:text-red-600 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer group shadow-2xs whitespace-nowrap min-w-0"
+              className="h-9 px-3 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#1f1f1f] text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-all duration-200 ease-in-out active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0 flex-1"
               title="Open location on Google Maps (Popup Window)"
             >
               <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
                 <path fill="#EA4335" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                 <circle cx="12" cy="9" r="2.8" fill="#FFFFFF"/>
               </svg>
-              <span className="truncate">Google Maps</span>
+              <span className="truncate">Map</span>
             </button>
             
             <button
@@ -740,18 +1492,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   udiseCode: school.udise_code || school.id || '',
                 });
               }}
-              className="h-9 px-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold inline-flex items-center justify-center gap-1 shadow-2xs hover:shadow transition-all whitespace-nowrap min-w-0 cursor-pointer"
+              className="h-9 px-3 rounded-full bg-[#c2e7ff] hover:bg-[#b1defc] text-[#001d35] text-xs font-semibold inline-flex items-center justify-center gap-1 transition-all duration-200 ease-in-out active:scale-[0.98] whitespace-nowrap min-w-0 cursor-pointer shrink-0"
               title="Claim this school profile to edit details & admissions"
             >
-              <ShieldCheck size={13} className="text-amber-600 shrink-0" />
+              <ShieldCheck size={13} className="text-[#001d35] shrink-0" />
               <span className="truncate">Claim</span>
             </button>
             
             <Link
               href={profileUrl}
-              className="h-9 px-2.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold inline-flex items-center justify-center gap-1 shadow-xs hover:shadow-md transition-all whitespace-nowrap min-w-0"
+              className="h-9 px-3.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] hover:shadow-[0_1px_3px_1px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] whitespace-nowrap min-w-0 flex-1"
             >
-              <span className="truncate">View Details</span>
+              <span className="truncate">Details</span>
               <ArrowRight size={13} className="shrink-0" />
             </Link>
           </div>
@@ -764,26 +1516,27 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     const profileUrl = getSchoolUrl(school);
     const isCompared = compareList.some((c) => c.id === school.id);
     const isLiked = likedSchoolIds.includes(school.id);
+    const cardLikesCount = likesCounts[school.id] ?? ((school as any).likes_count || (school as any).likesCount || 0);
     const rawWebsite = (school as any).website || school.website || '';
     const hasWebsite = Boolean(rawWebsite && rawWebsite.trim() !== '' && rawWebsite !== '#' && !rawWebsite.includes('example.com'));
     const cleanWebsiteUrl = hasWebsite ? (rawWebsite.startsWith('http') ? rawWebsite : `https://${rawWebsite}`) : '';
     const boardName = school.board || school.board_secondary_10th || 'CBSE';
-    const locationStr = [school.village_ward || school.locality, school.district_name].filter(Boolean).join(', ') || school.state_name;
+    const locationStr = formatCardLocation(school);
 
     return (
       <div 
         key={school.id || idx} 
-        className="bg-white rounded-xl sm:rounded-2xl border border-gray-200/90 hover:border-blue-400 hover:shadow-md transition-all p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden"
+        className="bg-white rounded-[16px] border border-[#c4c7c5]/80 hover:border-[#0b57d0]/60 hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden"
       >
         {/* Top/Main block: Thumbnail + Info */}
         <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
           {/* Thumbnail with Rating and Distance at Bottom */}
-          <div className="relative w-20 h-20 min-w-[80px] max-w-[80px] sm:w-28 sm:h-24 sm:min-w-[112px] sm:max-w-[112px] rounded-xl bg-gray-100 overflow-hidden shrink-0 shadow-xs">
+          <div className="relative w-20 h-20 min-w-[80px] max-w-[80px] sm:w-28 sm:h-24 sm:min-w-[112px] sm:max-w-[112px] rounded-[12px] bg-slate-50 border border-slate-100 overflow-hidden shrink-0 shadow-xs">
             <img
-              src={school.image || HERO_IMAGES[idx % HERO_IMAGES.length]}
+              src={getSafeSchoolImage(school.image || (school as any).image_url)}
               alt={school.school_name || school.name || 'School'}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={(e) => { e.currentTarget.src = HERO_IMAGES[0]; }}
+              onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
             />
             {/* Bottom Overlay: Compact Dark Blurred Rectangular Tags */}
             {(school.rating && Number(school.rating) > 0) || (school.distance !== undefined && school.distance > 0) ? (
@@ -809,33 +1562,33 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <div className="flex items-start sm:items-center gap-1.5 mb-1 flex-wrap">
               <Link 
                 href={profileUrl} 
-                className="font-bold text-sm sm:text-base text-gray-900 leading-snug hover:text-blue-600 transition-colors inline"
+                className="font-bold text-sm sm:text-base text-[#1f1f1f] leading-snug hover:text-[#0b57d0] transition-colors inline"
                 title={school.school_name || school.name}
               >
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
-              <span className="inline-flex text-[9.5px] sm:text-[11px] font-semibold text-blue-700 bg-blue-50 px-1.5 sm:px-2 py-0.5 rounded-full border border-blue-100 shrink-0 align-middle">
+              <span className="inline-flex text-[9.5px] sm:text-[11px] font-semibold text-[#0b57d0] bg-[#e8f0fe] px-2 py-0.5 rounded-[8px] border border-[#c2e7ff] shrink-0 align-middle">
                 {boardName}
               </span>
             </div>
 
             {/* Location: Full Address (no truncation) */}
-            <div className="flex items-start gap-1 text-[11px] sm:text-xs text-gray-500 mb-1.5 leading-snug">
+            <div className="flex items-start gap-1 text-[11px] sm:text-xs text-[#444746] mb-1.5 leading-snug">
               <MapPin size={12} className="text-red-500 shrink-0 mt-0.5" />
               <span className="break-words">{locationStr}</span>
             </div>
 
             {/* Quick Info Tags */}
             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-              <span className="text-[10px] sm:text-xs text-gray-700 bg-gray-100 px-2 py-0.5 rounded font-semibold">
+              <span className="text-[10px] sm:text-xs text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px] font-semibold">
                 {school.classes || 'Class 1st - 10th'}
               </span>
-              <span className="text-[10px] sm:text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-semibold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-[10px] sm:text-xs text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-2 py-0.5 rounded-[8px] font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#137333] animate-pulse" />
                 <span>Admissions Open</span>
               </span>
               {school.facilities?.includes('Experiential Science Lab') && (
-                <span className="text-[10px] sm:text-xs text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded font-medium hidden lg:inline-flex items-center gap-1">
+                <span className="text-[10px] sm:text-xs text-[#0b57d0] bg-[#e8f0fe] border border-[#c2e7ff] px-2 py-0.5 rounded-[8px] font-medium hidden lg:inline-flex items-center gap-1">
                   <FlaskConical size={10} /> Experiential Lab
                 </span>
               )}
@@ -843,7 +1596,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           </div>
         </div>
 
-        {/* Action Buttons: Responsive Toolbar */}
+        {/* Action Buttons: Uniform M3 Pill & Icon Buttons */}
         <div className="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 shrink-0 pt-2 sm:pt-0 border-t border-gray-100 sm:border-0 sm:pl-2">
           {/* Secondary Actions group */}
           <div className="flex items-center gap-1 sm:gap-1.5">
@@ -854,7 +1607,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="h-8 w-8 flex items-center justify-center rounded-lg text-blue-600 hover:text-blue-700 hover:bg-blue-50 border border-gray-200 transition cursor-pointer shrink-0"
+                className="h-9 w-9 flex items-center justify-center rounded-full text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
                 title="Visit Official School Website"
               >
                 <Globe size={14} />
@@ -862,18 +1615,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             ) : (
               <button
                 disabled
-                className="h-8 w-8 flex items-center justify-center rounded-lg text-gray-400 bg-gray-50 border border-gray-200 opacity-40 cursor-not-allowed select-none pointer-events-none shrink-0"
+                className="h-9 w-9 flex items-center justify-center rounded-full text-gray-400 bg-gray-50 border border-gray-200 opacity-40 cursor-not-allowed select-none pointer-events-none shrink-0"
                 title="Website Not Available"
               >
                 <Globe size={14} />
               </button>
             )}
 
-            {/* Google Maps Pin Icon Only (h-8 w-8) */}
+            {/* Google Maps Pin Icon Button */}
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-gray-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200 border border-gray-200 transition cursor-pointer shrink-0"
+              className="h-9 w-9 flex items-center justify-center rounded-full text-[#444746] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
               title="Open location on Google Maps"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -886,8 +1639,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => handleToggleCompare(school, e)}
-              className={`h-8 w-8 flex items-center justify-center rounded-lg text-xs transition cursor-pointer border ${
-                isCompared ? 'bg-blue-50 text-blue-600 border-blue-200' : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 border-gray-200'
+              className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
+                isCompared ? 'bg-[#c2e7ff] text-[#001d35] border-transparent' : 'text-[#444746] hover:text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border-[#c4c7c5]'
               }`}
               title="Compare School"
             >
@@ -898,7 +1651,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => handleShareSchool(school, e)}
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-100 border border-gray-200 transition relative cursor-pointer"
+              className="h-9 w-9 flex items-center justify-center rounded-full text-xs text-[#444746] hover:text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] relative cursor-pointer"
               title="Share Profile"
             >
               <Share2 size={14} />
@@ -912,17 +1665,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             {/* Like / Save Button */}
             <button
               type="button"
-              onClick={(e) => handleToggleLike(school.id, e)}
-              className={`h-8 w-8 flex items-center justify-center rounded-lg text-xs transition cursor-pointer border ${
-                isLiked ? 'text-rose-500 bg-rose-50 border-rose-200' : 'text-gray-500 hover:text-rose-500 hover:bg-rose-50 border-gray-200'
+              onClick={(e) => handleToggleLike(school.id, e, school.udise_code || school.school_id)}
+              className={`h-9 px-3 flex items-center gap-1 rounded-full text-xs font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
+                isLiked ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-[#444746] hover:text-rose-500 hover:bg-rose-50 border-[#c4c7c5]'
               }`}
-              title="Save to Favorites"
+              title={isLiked ? "Liked" : "Like School"}
             >
               <Heart size={14} className={isLiked ? "fill-rose-500" : ""} />
+              {cardLikesCount > 0 && <span className="text-[11px] font-bold">{cardLikesCount}</span>}
             </button>
           </div>
           
-          {/* Claim School CTA */}
+          {/* Claim School CTA — Official M3 Tonal Pill */}
           <button
             type="button"
             onClick={(e) => {
@@ -934,20 +1688,113 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 udiseCode: school.udise_code || school.id || '',
               });
             }}
-            className="h-8 px-2.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold transition shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
+            className="h-9 px-3.5 rounded-full bg-[#c2e7ff] hover:bg-[#b1defc] text-[#001d35] text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
             title="Claim this school profile"
           >
-            <ShieldCheck size={13} className="text-amber-600" />
+            <ShieldCheck size={13} className="text-[#001d35]" />
             <span className="hidden sm:inline">Claim</span>
           </button>
           
-          {/* View Details CTA - Google Button Style */}
+          {/* View Details CTA — Official M3 Filled Pill */}
           <Link
             href={profileUrl}
-            className="button_google h-8 px-3.5 sm:px-4 text-white text-xs sm:text-[13px] font-medium !rounded-lg transition shrink-0 inline-flex items-center justify-center shadow-xs"
+            className="h-9 px-4 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs sm:text-[13px] font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-[0_1px_2px_rgba(60,64,67,0.3)]"
           >
             <span>View Details</span>
           </Link>
+        </div>
+      </div>
+    );
+  };
+
+  const renderMapSchoolCard = (school: SchoolRecord, idx: number) => {
+    const isSelected = mapSelectedSchool?.id === school.id || mapSelectedSchool?.udise_code === school.udise_code;
+    const profileUrl = getSchoolUrl(school);
+
+    return (
+      <div
+        key={`map-card-${school.id || school.udise_code || idx}`}
+        onClick={() => handleSelectSchoolFromList(school)}
+        className={`p-2.5 rounded-[16px] border transition-all duration-200 cursor-pointer flex gap-2.5 text-left group ${
+          isSelected
+            ? 'bg-[#e8f0fe] border-[#0b57d0] shadow-xs ring-2 ring-[#0b57d0]/20'
+            : 'bg-white border-[#c4c7c5]/80 hover:border-[#0b57d0]/50 hover:bg-[#f8fafd] shadow-2xs'
+        }`}
+      >
+        {/* Compact Thumbnail (w-12 h-12) */}
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[10px] overflow-hidden bg-slate-50 border border-slate-100 shrink-0 relative">
+          <img
+            src={getSafeSchoolImage(school.image || (school as any).image_url)}
+            alt={school.school_name || 'School'}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
+          />
+          {school.rating && Number(school.rating) > 0 ? (
+            <div className="absolute bottom-0.5 left-0.5 bg-black/75 backdrop-blur-xs text-amber-300 text-[9px] font-bold px-1 rounded flex items-center gap-0.5 leading-tight">
+              <span>★</span>
+              <span>{school.rating}</span>
+            </div>
+          ) : null}
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+          <div>
+            <div className="flex items-center justify-between gap-1">
+              <h4 className="text-[12.5px] font-bold text-[#1f1f1f] truncate group-hover:text-[#0b57d0] leading-tight">
+                {getCleanSchoolName(school.school_name || school.name)}
+              </h4>
+              {school.distance !== undefined && (
+                <span className="text-[9.5px] font-bold text-[#0b57d0] bg-[#e8f0fe] px-1.5 py-0.2 rounded-full shrink-0">
+                  {school.distance} km
+                </span>
+              )}
+            </div>
+
+            <p className="text-[10.5px] text-[#444746] truncate mt-0.5 leading-tight">
+              {formatCardLocation(school)}
+            </p>
+
+            <div className="flex items-center gap-1 mt-1 flex-wrap">
+              {school.board && (
+                <span className="text-[9.5px] font-semibold text-[#444746] bg-[#eef3fc] px-1.5 py-0.2 rounded-[6px]">
+                  {school.board}
+                </span>
+              )}
+              {school.management && (
+                <span className="text-[9.5px] font-medium text-[#137333] bg-[#e6f4ea] px-1.5 py-0.2 rounded-[6px] truncate max-w-[130px]">
+                  {school.management}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Action Row — Uniform M3 Pill Buttons */}
+          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-gray-100 gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectSchoolFromList(school);
+                if (mobileSheetState === 'full') {
+                  setMobileSheetState('half');
+                }
+              }}
+              className="h-6 px-2.5 rounded-full bg-[#c2e7ff] text-[#001d35] hover:bg-[#b1defc] text-[10.5px] font-semibold flex items-center gap-1 cursor-pointer transition-all duration-200 active:scale-[0.98]"
+            >
+              <Navigation size={10} />
+              <span>Fly to Pin</span>
+            </button>
+
+            <Link
+              href={profileUrl}
+              onClick={(e) => e.stopPropagation()}
+              className="h-6 px-3 rounded-full bg-[#0b57d0] text-white hover:bg-[#0842a0] text-[10.5px] font-semibold flex items-center gap-1 transition-all duration-200 active:scale-[0.98]"
+            >
+              <span>Profile</span>
+              <ArrowRight size={10} />
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -957,29 +1804,30 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     const profileUrl = getSchoolUrl(school);
     const isCompared = compareList.some((c) => c.id === school.id);
     const isLiked = likedSchoolIds.includes(school.id);
+    const cardLikesCount = likesCounts[school.id] ?? ((school as any).likes_count || (school as any).likesCount || 0);
     const rawWebsite = (school as any).website || school.website || '';
     const hasWebsite = Boolean(rawWebsite && rawWebsite.trim() !== '' && rawWebsite !== '#' && !rawWebsite.includes('example.com'));
     const cleanWebsiteUrl = hasWebsite ? (rawWebsite.startsWith('http') ? rawWebsite : `https://${rawWebsite}`) : '';
     const boardName = school.board || school.board_secondary_10th || 'CBSE';
-    const locationStr = [school.village_ward || school.locality, school.district_name].filter(Boolean).join(', ') || school.state_name;
+    const locationStr = formatCardLocation(school);
 
     return (
       <div 
         key={`top-${school.id || idx}`}
-        className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white rounded-2xl overflow-hidden border border-gray-200/90 hover:border-blue-400 hover:shadow-lg transition-all group flex flex-col"
+        className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white rounded-[16px] overflow-hidden border border-[#c4c7c5]/80 hover:border-[#0b57d0]/60 hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 group flex flex-col"
       >
         {/* Compact Image */}
-        <div className="relative h-36 w-full bg-gray-100 overflow-hidden shrink-0">
+        <div className="relative h-36 w-full bg-slate-50 overflow-hidden shrink-0">
           <img
-            src={school.image || HERO_IMAGES[idx % HERO_IMAGES.length]}
+            src={getSafeSchoolImage(school.image || (school as any).image_url)}
             alt={school.school_name || school.name || 'School'}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            onError={(e) => { e.currentTarget.src = HERO_IMAGES[0]; }}
+            onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
           />
 
           {/* Top Rating Badge */}
           {school.rating && Number(school.rating) > 0 ? (
-            <div className="absolute top-2.5 left-2.5 bg-black/75 text-white px-2 py-0.5 rounded-lg text-xs font-bold flex items-center gap-1">
+            <div className="absolute top-2.5 left-2.5 bg-black/75 text-white px-2 py-0.5 rounded-[8px] text-xs font-bold flex items-center gap-1">
               <Star size={11} className="fill-amber-400 text-amber-400" />
               <span>{school.rating}</span>
             </div>
@@ -993,7 +1841,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md bg-white/90 text-blue-600 hover:bg-white transition shadow-xs"
+                className="w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md bg-white/90 text-[#0b57d0] hover:bg-white transition shadow-xs"
                 title="Official Website"
               >
                 <Globe size={12} />
@@ -1010,25 +1858,27 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               onClick={(e) => handleToggleCompare(school, e)}
               className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition ${
-                isCompared ? 'bg-blue-600 text-white' : 'bg-white/80 text-gray-700 hover:bg-white'
+                isCompared ? 'bg-[#0b57d0] text-white' : 'bg-white/80 text-gray-700 hover:bg-white'
               }`}
               title="Compare"
             >
-              <Scale size={12} />
+              <ArrowLeftRight size={12} />
             </button>
             <button
-              onClick={(e) => handleToggleLike(school.id, e)}
-              className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition ${
-                isLiked ? 'bg-rose-50 text-rose-500' : 'bg-white/80 text-gray-700 hover:bg-white'
+              type="button"
+              onClick={(e) => handleToggleLike(school.id, e, school.udise_code || school.school_id)}
+              className={`h-7 px-2 rounded-full flex items-center gap-1 backdrop-blur-md text-xs font-semibold transition cursor-pointer ${
+                isLiked ? 'bg-rose-500 text-white' : 'bg-white/80 text-gray-700 hover:bg-white hover:text-rose-500'
               }`}
-              title="Save"
+              title={isLiked ? "Liked" : "Like School"}
             >
-              <Heart size={12} className={isLiked ? "fill-rose-500" : ""} />
+              <Heart size={12} className={isLiked ? "fill-white text-white" : ""} />
+              {cardLikesCount > 0 && <span className="text-[10px] font-bold">{cardLikesCount}</span>}
             </button>
           </div>
 
           {/* Admission Pill */}
-          <div className="absolute bottom-2 left-2.5 bg-emerald-600/95 text-white px-2 py-0.5 rounded-md text-[10px] font-bold flex items-center gap-1 shadow-sm">
+          <div className="absolute bottom-2 left-2.5 bg-emerald-600/95 text-white px-2 py-0.5 rounded-[8px] text-[10px] font-bold flex items-center gap-1 shadow-sm">
             <CheckCircle2 size={10} /> Admissions Open
           </div>
         </div>
@@ -1036,34 +1886,34 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         {/* Compact Card Body */}
         <div className="p-3.5 flex-1 flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-sm text-gray-900 leading-snug mb-1">
-              <Link href={profileUrl} className="hover:text-blue-600 transition-colors inline">
+            <h2 className="font-semibold text-[14px] text-[#1a0dab] hover:underline leading-snug mb-1 line-clamp-1 cursor-pointer" style={{ fontSize: '14.5px', color: '#1a0dab' }}>
+              <Link href={profileUrl} className="hover:text-[#0b57d0] transition-colors inline">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
-            </h3>
+            </h2>
 
-            <div className="text-[11px] text-gray-500 flex items-start gap-1 mb-2.5 leading-snug">
+            <div className="text-[11px] text-[#444746] flex items-start gap-1 mb-2.5 leading-snug">
               <MapPin size={11} className="text-red-500 shrink-0 mt-0.5" />
               <span className="break-words">{locationStr}</span>
             </div>
 
             {/* Quick Pills */}
             <div className="flex items-center gap-1.5 flex-wrap mb-3">
-              <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+              <span className="text-[10px] font-semibold text-[#0b57d0] bg-[#e8f0fe] px-2 py-0.5 rounded-[8px] border border-[#c2e7ff]">
                 {boardName}
               </span>
-              <span className="text-[10px] text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded-md">
+              <span className="text-[10px] text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px]">
                 {school.classes || 'Nursery - 12th'}
               </span>
             </div>
           </div>
 
-          {/* Bottom CTA - Responsive Dual Button Grid */}
+          {/* Bottom CTA - Uniform M3 Pill Buttons */}
           <div className="pt-2.5 border-t border-gray-100 grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-8.5 px-2 rounded-lg border border-gray-200 bg-white hover:bg-red-50 hover:border-red-200 text-slate-700 hover:text-red-600 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer group shadow-2xs whitespace-nowrap min-w-0"
+              className="h-8.5 px-2.5 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#1f1f1f] text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0"
               title="Open location on Google Maps (Popup)"
             >
               <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -1074,7 +1924,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </button>
             <Link
               href={profileUrl}
-              className="h-8.5 px-2 rounded-lg bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold inline-flex items-center justify-center gap-1 shadow-xs hover:shadow-md transition-all whitespace-nowrap min-w-0"
+              className="h-8.5 px-2.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0"
             >
               <span className="truncate">View Details</span>
               <ArrowRight size={12} className="shrink-0" />
@@ -1085,8 +1935,163 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     );
   };
 
+  // Unified Search Bar Helper (Official M3 Pill Search Bar across Full Hero and Compact Minimized Header)
+  const renderSearchBar = (isCompact: boolean) => (
+    <div className={`w-full ${isCompact ? 'max-w-2xl' : 'max-w-3xl'} flex flex-row items-center bg-white rounded-full ${isCompact ? 'shadow-xs px-1.5 py-0.5 border border-[#c4c7c5]' : 'shadow-[0_4px_20px_rgba(0,0,0,0.2)] p-1.5 sm:p-2 border border-white/60'} divide-x divide-[#c4c7c5]/60 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#0b57d0]`}>
+      {/* City Selector */}
+      <div className="relative shrink-0 z-50">
+        <button
+          type="button"
+          onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
+          className={`flex items-center justify-between gap-1.5 px-3 py-1.5 transition-all duration-200 group rounded-full hover:bg-[#1f1f1f]/[0.06] active:scale-[0.98] cursor-pointer ${isCompact ? 'text-xs w-[125px] sm:w-[140px]' : 'text-sm w-[135px] sm:w-[165px]'}`}
+        >
+          <div className="flex items-center gap-1.5 overflow-hidden">
+            <div className="p-1 rounded-full bg-[#e8f0fe] text-[#0b57d0] group-hover:scale-105 transition-transform shrink-0">
+              <MapPin size={isCompact ? 12 : 15} />
+            </div>
+            <span className="text-[11px] sm:text-xs font-semibold text-[#1f1f1f] truncate block">
+              {selectedLocation || 'Select City'}
+            </span>
+          </div>
+          <ChevronDown size={11} className={`text-[#444746] transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* City Dropdown Menu - Official M3 Menu Surface (16px radius) */}
+        {isLocationDropdownOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
+            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[360px] md:w-[410px] max-w-[calc(100vw-2rem)] bg-[#f8fafd] rounded-[16px] shadow-[0_4px_16px_rgba(60,64,67,0.24)] border border-[#c4c7c5] z-50 overflow-hidden text-left">
+              <div className="p-2.5 border-b border-[#c4c7c5]/60 bg-white flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#444746] uppercase tracking-wider">Database Cities &amp; Areas</span>
+                {selectedLocation && (
+                  <button
+                    type="button"
+                    onClick={() => { setSelectedLocation(null); setIsLocationDropdownOpen(false); setSearchTerm(''); }}
+                    className="text-[11px] text-[#0b57d0] hover:underline font-semibold cursor-pointer"
+                  >
+                    Clear Location
+                  </button>
+                )}
+              </div>
+              <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto custom-scrollbar">
+                {dbCitiesList.map((city) => (
+                  <button
+                    key={city.name}
+                    type="button"
+                    onClick={() => {
+                      setSelectedLocation(city.name);
+                      setIsLocationDropdownOpen(false);
+                      setSearchTerm(city.query || city.name);
+                      setSearchMode('text');
+                      const coords = CITY_COORDINATES[city.name];
+                      if (coords) {
+                        setSearchCenter(coords);
+                        setMapFocus({ lat: coords.lat, lng: coords.lng, zoom: 13, timestamp: Date.now() });
+                      }
+                    }}
+                    className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-full text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
+                      selectedLocation === city.name
+                        ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
+                        : 'text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img
+                        src={city.icon}
+                        alt={city.name}
+                        className="w-4 h-4 object-contain shrink-0"
+                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
+                      />
+                      <span className="truncate whitespace-nowrap">{city.name}</span>
+                    </div>
+                    {city.count > 0 && (
+                      <span className="text-[10px] font-bold text-[#0b57d0] bg-[#e8f0fe] px-1.5 py-0.2 rounded-full shrink-0">
+                        {city.count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="p-2 border-t border-[#c4c7c5]/60 bg-white">
+                <button
+                  type="button"
+                  onClick={() => { setSelectedLocation(null); setIsLocationDropdownOpen(false); setSearchTerm(''); }}
+                  className="w-full text-left px-3 py-1.5 text-xs text-[#444746] hover:bg-[#1f1f1f]/[0.08] rounded-full transition-colors cursor-pointer font-medium"
+                >
+                  Show All Cities ({allLoadedSchools.length} Schools)
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Search Input & Icon-Only Action Buttons (Search + Near Me GPS) */}
+      <div className="flex flex-1 items-center justify-between bg-transparent pl-2.5 pr-1 py-0.5 min-w-0 gap-1.5">
+        <div className="flex-1 flex items-center min-w-0">
+          <input
+            type="text"
+            placeholder={isCompact ? "Search school, city, UDISE..." : "Search school, city, UDISE..."}
+            value={searchMode === 'near_me' ? '' : searchTerm}
+            onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleFilterChange({ q: searchTerm.trim() || undefined });
+              }
+            }}
+            disabled={searchMode === 'near_me'}
+            className="bg-transparent w-full focus:outline-none text-xs sm:text-sm text-[#1f1f1f] placeholder-[#444746]/70 font-medium min-w-0"
+          />
+          {searchTerm.trim() && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchTerm('');
+                handleFilterChange({ q: undefined });
+              }}
+              className="w-7 h-7 rounded-full hover:bg-[#1f1f1f]/[0.08] text-[#444746] hover:text-[#1f1f1f] flex items-center justify-center shrink-0 cursor-pointer transition-colors"
+              title="Clear search"
+              aria-label="Clear search"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+
+        {/* Official M3 Pill Action Buttons: Search + Near Me GPS */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
+            className={`${isCompact ? 'h-8 px-3' : 'h-9 px-4'} rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 shrink-0 transition-all duration-200 shadow-xs cursor-pointer active:scale-[0.98]`}
+            title="Search schools"
+            aria-label="Search schools"
+          >
+            <Search size={isCompact ? 13 : 14} />
+            <span className="hidden sm:inline">Search</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setSearchMode('near_me'); handleNearMeSearch(); }}
+            className={`${isCompact ? 'h-8 px-2.5' : 'h-9 px-3.5'} rounded-full inline-flex items-center justify-center gap-1 text-xs font-semibold shrink-0 transition-all duration-200 cursor-pointer active:scale-[0.98] ${
+              searchMode === 'near_me'
+                ? 'bg-[#137333] text-white shadow-xs'
+                : 'bg-[#c2e7ff] text-[#001d35] hover:bg-[#b1defc]'
+            }`}
+            title="Near Me (GPS Location Search)"
+            aria-label="Search schools near your location"
+          >
+            <Navigation size={isCompact ? 12 : 13} />
+            <span className="hidden md:inline">Near Me</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50 text-slate-900 font-sans flex flex-col">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-gray-50 text-slate-900 font-sans flex flex-col">
       {/* ── JSON-LD Structured Data ── */}
       <script
         type="application/ld+json"
@@ -1096,7 +2101,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             '@type': 'ItemList',
             name: query.pageTitle,
             numberOfItems: initialData.totalCount,
-            itemListElement: displayedSchools.slice(0, 10).map((s, idx) => ({
+            itemListElement: (initialData?.schools || []).slice(0, 10).map((s, idx) => ({
               '@type': 'ListItem',
               position: idx + 1,
               name: s.school_name || s.name,
@@ -1106,170 +2111,171 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         }}
       />
 
+      {/* ── Dynamic Sidebar Attachment & Fullscreen Styles ── */}
+      <style
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: `
+        @media (min-width: 768px) {
+          .directory-sidebar-fixed {
+            top: ${navBottomOffset}px !important;
+            height: calc(100vh - ${navBottomOffset}px) !important;
+            max-height: calc(100vh - ${navBottomOffset}px) !important;
+          }
+        }
+        @media (max-width: 767px) {
+          ${viewMode === 'map' ? `
+            html, body {
+              overflow: hidden !important;
+              height: 100% !important;
+              height: 100dvh !important;
+              max-height: 100dvh !important;
+              position: fixed !important;
+              width: 100% !important;
+              overscroll-behavior: none !important;
+              touch-action: none !important;
+            }
+            #site-topbar,
+            .site-topbar,
+            #site-navbar,
+            .site-navbar,
+            #universal-admin-bar,
+            .universal-admin-bar,
+            header,
+            footer,
+            .site-footer,
+            .announcement-bar,
+            [id*="admin-bar"],
+            .offer-popup-banner {
+              display: none !important;
+            }
+          ` : ''}
+        }
+        ${(isFullscreen || isMapFullscreen) ? `
+          #site-topbar,
+          .site-topbar,
+          #site-navbar,
+          .site-navbar,
+          #universal-admin-bar,
+          .universal-admin-bar,
+          header,
+          .announcement-bar,
+          [id*="admin-bar"] {
+            display: none !important;
+          }
+          aside {
+            top: 0px !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+          }
+        ` : ''}
+      `}} />
+
+      {/* Floating Exit Fullscreen Button - Placed in top middle/center */}
+      {(isFullscreen || isMapFullscreen) && (
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[99999] animate-in fade-in slide-in-from-top-2 duration-200">
+          <button
+            type="button"
+            onClick={() => {
+              setIsFullscreen(false);
+              setIsMapFullscreen(false);
+            }}
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-900/90 hover:bg-slate-900 text-white shadow-2xl backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition cursor-pointer"
+            title="Exit Fullscreen"
+            aria-label="Exit Fullscreen"
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
+
       {/* ── Top Nav / Breadcrumbs ── */}
 
 
-      {/* ── Hero Section (Carousel & Search) ── */}
-      <div className="relative h-[400px] w-full bg-gray-900 flex items-center justify-center z-10">
-        {/* Carousel Background */}
-        <div className="absolute inset-0 overflow-hidden">
+      {/* ── Hero Section (Carousel & Search) with Minimise Feature ── */}
+      {/* ── Hero Section (Carousel & Search) with Minimise Feature ── */}
+      {!isHeroMinimized && (
+        <div className={`relative min-h-[360px] sm:min-h-[400px] w-full overflow-hidden bg-slate-950 flex flex-col items-center justify-center transition-all duration-300 ${
+          viewMode === 'map' ? 'hidden md:flex' : ''
+        }`}>
+          {/* Carousel Background Images */}
           {HERO_IMAGES.map((img, idx) => (
             <div
               key={img}
               className={`absolute inset-0 transition-opacity duration-1000 ${
-                idx === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+                idx === currentHeroIndex ? 'opacity-50' : 'opacity-0'
               }`}
             >
-              <img src={img} alt="School" className="w-full h-full object-cover" />
+              <img src={img} alt="School Campus" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-950/70" />
               <div className="absolute inset-0 bg-black/40" />
             </div>
           ))}
-        </div>
-        
-        {/* Search Overlay */}
-        <div className="relative z-20 w-full max-w-3xl px-4 flex flex-col items-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-3 drop-shadow-md">
-            Find the Best Schools for Your Child
-          </h1>
-          <p className="text-sm sm:text-base text-white/90 text-center mb-6 drop-shadow max-w-xl">
-            {query.metaDescription || "Search through thousands of verified schools with detailed insights."}
-          </p>
 
-          <div className="w-full max-w-2xl flex flex-col sm:flex-row items-stretch sm:items-center bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-full shadow-lg relative z-30 p-1.5 sm:p-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 border border-gray-100">
-
-            {/* City Selector */}
-            <div className="relative w-full sm:w-auto z-40 shrink-0">
-              <button
-                onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-                className="flex items-center justify-between gap-3 px-3 py-2 w-full sm:w-[170px] transition-all group rounded-xl sm:rounded-full hover:bg-gray-100/70 active:bg-gray-100"
-              >
-                <div className="flex items-center gap-2.5 overflow-hidden">
-                  <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 group-hover:scale-105 transition-transform shrink-0">
-                    <MapPin size={15} />
-                  </div>
-                  <span className="text-xs sm:text-sm font-semibold text-gray-800 truncate block">
-                    {selectedLocation || 'Select City'}
-                  </span>
-                </div>
-                <ChevronDown size={13} className={`text-gray-400 group-hover:text-gray-600 transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* City Dropdown Menu */}
-              {isLocationDropdownOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
-                  <div className="absolute top-full left-0 mt-2 sm:mt-3 w-[290px] sm:w-[500px] md:w-[680px] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
-                    <div className="p-3 border-b border-gray-50 bg-gray-50/50">
-                      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Popular Cities</span>
-                    </div>
-                    <div className="p-3 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar">
-                      {POPULAR_CITIES.map((city) => (
-                        <button
-                          key={city.name}
-                          onClick={() => {
-                            setSelectedLocation(city.name);
-                            setIsLocationDropdownOpen(false);
-                            setSearchTerm(city.name);
-                            setSearchMode('text');
-                            const coords = CITY_COORDINATES[city.name];
-                            if (coords) {
-                              setSearchCenter(coords);
-                              setMapFocus({ lat: coords.lat, lng: coords.lng, zoom: 13, timestamp: Date.now() });
-                            }
-                          }}
-                          className={`flex items-center gap-2 px-2 py-2 rounded-xl text-xs sm:text-sm transition-colors text-left ${
-                            selectedLocation === city.name
-                              ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200 shadow-sm'
-                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
-                          }`}
-                        >
-                          <img
-                            src={city.icon}
-                            alt={city.name}
-                            className="w-4 h-4 sm:w-5 sm:h-5 object-contain shrink-0"
-                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
-                          />
-                          <span className="truncate whitespace-nowrap">{city.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="p-2 border-t border-gray-50">
-                      <button
-                        onClick={() => { setSelectedLocation(null); setIsLocationDropdownOpen(false); setSearchTerm(''); }}
-                        className="w-full text-left px-3 py-2 text-xs sm:text-sm text-gray-500 hover:bg-gray-50 rounded-xl transition-colors"
-                      >
-                        Clear Location
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Search Input & Near Me */}
-            <div className="flex w-full flex-1 items-center bg-transparent px-2 sm:px-3 py-1 sm:py-0">
-              <div className="flex-1 flex items-center bg-gray-50/80 sm:bg-gray-50 border border-gray-200/60 sm:border-transparent sm:focus-within:border-blue-500 sm:focus-within:bg-white rounded-xl sm:rounded-full px-3 py-1.5 transition-all">
-                <Search
-                  size={16}
-                  className={`mr-2 shrink-0 transition-colors ${
-                    searchTerm.trim() ? 'text-blue-600' : 'text-gray-400'
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder="Search school, city, UDISE..."
-                  value={searchMode === 'near_me' ? '' : searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
-                  disabled={searchMode === 'near_me'}
-                  className="bg-transparent w-full focus:outline-none text-xs text-gray-800 placeholder-gray-400 font-medium"
-                />
-                {searchTerm.trim() && (
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="ml-1 p-1 rounded-full hover:bg-gray-200/80 text-gray-400 hover:text-gray-600 shrink-0"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
-
-              {/* Near Me Button */}
-              <div className="flex items-center pl-2 shrink-0">
-                <button
-                  onClick={() => { setSearchMode('near_me'); handleNearMeSearch(); }}
-                  className={`shrink-0 flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2 rounded-xl sm:rounded-full text-xs font-semibold transition-all border group ${
-                    searchMode === 'near_me'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-transparent'
-                  }`}
-                  title="Near Me"
-                >
-                  <MapPin size={15} className="text-emerald-600 group-hover:scale-110 transition-transform" />
-                  <span className="hidden sm:inline">Near Me</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick CTA: Add / Claim Your School Profile */}
-          <div className="mt-4 flex items-center justify-center gap-2 flex-wrap text-center">
-            <span className="text-xs text-white/85">Are you a school principal or administrator?</span>
+          {/* Top Controls: Minimise Hero Button & Add School Profile */}
+          <div className="absolute top-3 right-3 sm:top-4 sm:right-6 z-20 flex items-center gap-2">
             <button
               type="button"
               onClick={handleAddSchoolClick}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 text-amber-300 hover:text-white text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 text-amber-300 hover:text-white text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
             >
               <PlusCircle size={13} className="text-amber-300 stroke-[2.5]" />
-              <span>Add Your School Profile</span>
+              <span>Add School Profile</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsHeroMinimized(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/55 hover:bg-black/80 backdrop-blur-md border border-white/25 text-white/95 hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-md active:scale-95 group"
+              title="Minimise Hero Section to maximize workspace"
+            >
+              <Minimize2 size={13} className="text-cyan-300 group-hover:scale-110 transition-transform" />
+              <span>Minimise Hero</span>
             </button>
           </div>
+
+          {/* Hero Content Overlay */}
+          <div className="relative z-10 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cyan-300 text-xs font-bold tracking-wide uppercase mb-3 shadow-xs">
+              <Sparkles size={12} className="text-amber-300" />
+              <span>India&apos;s Experiential School Directory</span>
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3 drop-shadow-md">
+              Find the Best Schools for Your Child
+            </h1>
+            <p className="text-xs sm:text-sm md:text-base text-slate-200/90 max-w-2xl mb-6 drop-shadow leading-relaxed">
+              Explore verified schools with comprehensive insights on STEM labs, facilities, admissions, fees, and academic boards across India.
+            </p>
+
+            {/* Centered Hero Search Bar */}
+            <div className="w-full max-w-3xl flex justify-center">
+              {renderSearchBar(false)}
+            </div>
+
+            {/* Carousel Slide Indicators */}
+            <div className="flex items-center gap-1.5 mt-5">
+              {HERO_IMAGES.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  type="button"
+                  onClick={() => setCurrentHeroIndex(dotIdx)}
+                  className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                    dotIdx === currentHeroIndex ? 'w-6 bg-cyan-400' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                  }`}
+                  title={`Slide ${dotIdx + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
+      )}
 
 
       {/* ── Admin Access & Directory Governance Control Bar ── */}
       {isAdmin && (
-        <div className="max-w-screen-2xl mx-auto w-full px-4 md:px-6 lg:px-8 pt-4">
+        <div className={`max-w-screen-2xl mx-auto w-full px-4 md:px-6 lg:px-8 pt-4 ${
+          viewMode === 'map' ? 'hidden md:block' : ''
+        }`}>
           <div className="bg-slate-900 text-white p-3.5 sm:p-4 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse shrink-0" />
@@ -1356,532 +2362,645 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       )}
 
       {/* ── Main Layout: Admin Dashboard Style (Sidebar + Content) ── */}
-      <div className="max-w-screen-2xl mx-auto w-full flex flex-col md:flex-row gap-4 sm:gap-6 p-4 md:p-6 lg:p-8 flex-1">
-        {/* Mobile Filter Backdrop */}
-        {isMobileFilterOpen && (
-          <div 
-            className="fixed inset-0 bg-black/40 z-[60] md:hidden"
-            onClick={() => setIsMobileFilterOpen(false)}
-          />
-        )}
-        
-        {/* Left Sidebar Filters (Side Sheet on Mobile) */}
-        <aside className={`
-          fixed inset-y-0 right-0 z-[70] w-4/5 max-w-[320px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col
-          ${isMobileFilterOpen ? 'translate-x-0' : 'translate-x-full'}
-          md:static md:translate-x-0 md:bg-transparent md:shadow-none md:z-auto md:shrink-0
-          ${isDesktopSidebarOpen ? 'md:w-64 lg:w-72' : 'md:w-16'}
-        `}>
-          {/* Collapsed Desktop Icon Strip */}
-          {!isDesktopSidebarOpen && (
-            <div className="hidden md:flex flex-col items-center py-3 bg-white rounded-2xl border border-gray-200 shadow-sm sticky top-24 w-16 max-h-[calc(100vh-8rem)] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              {/* Expand Toggle */}
-              <button 
-                onClick={() => setIsDesktopSidebarOpen(true)}
-                className="w-11 h-11 flex items-center justify-center text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition group relative mb-2"
-                title="Expand Filters"
-              >
-                <SlidersHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span className="absolute left-full ml-2 px-2.5 py-1 bg-gray-900 text-white text-[11px] font-medium rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-md">
-                  Expand Filters
-                </span>
-              </button>
+      <div className={`w-full flex flex-col md:flex-row gap-3 sm:gap-4 pl-0 pr-2 sm:pr-4 lg:pr-5 pt-0 pb-4 sm:pb-6 flex-1 ${
+        viewMode === 'map' ? 'p-0 md:pl-0 md:pr-4 lg:pr-5 md:pb-6' : ''
+      }`}>
+        {/* ── 1. Modern Mobile Filter Sheet (Drawer / Bottom Sheet on < 768px) ── */}
+        <SchoolFilterSheet
+          mode="sheet"
+          isOpen={isMobileFilterOpen}
+          onClose={() => setIsMobileFilterOpen(false)}
+          totalSchoolsCount={totalSchoolsCount}
+          displayedCount={displayedSchools.length}
+          selectedBoard={selectedBoard}
+          setSelectedBoard={setSelectedBoard}
+          selectedStateBoard={selectedStateBoard}
+          setSelectedStateBoard={setSelectedStateBoard}
+          setIsStateModalOpen={setIsStateModalOpen}
+          selectedResidential={selectedResidential}
+          setSelectedResidential={setSelectedResidential}
+          selectedFacilities={selectedFacilities}
+          toggleFacility={toggleFacility}
+          setSelectedFacilities={setSelectedFacilities}
+          selectedClasses={selectedClasses}
+          setSelectedClasses={setSelectedClasses}
+          selectedSchoolTypes={selectedSchoolTypes}
+          setSelectedSchoolTypes={setSelectedSchoolTypes}
+          selectedSpecialCategories={selectedSpecialCategories}
+          setSelectedSpecialCategories={setSelectedSpecialCategories}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          feeMax={feeMax}
+          setFeeMax={setFeeMax}
+          studentMax={studentMax}
+          setStudentMax={setStudentMax}
+          onlyAtl={onlyAtl}
+          setOnlyAtl={setOnlyAtl}
+          mapRadiusKm={mapRadiusKm}
+          setMapRadiusKm={setMapRadiusKm}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          setSearchMode={setSearchMode}
+          setSearchTerm={setSearchTerm}
+          handleFilterChange={handleFilterChange}
+          onResetAll={handleResetAll}
+        />
 
-              <div className="w-8 h-px bg-gray-100 mb-2 shrink-0" />
-
-              {/* Minimized Category Icons */}
-              <div className="flex flex-col items-center gap-1 w-full px-2">
-                {[
-                  { icon: ArrowUpDown, label: 'Sort Results' },
-                  { icon: Users, label: 'Eligible Schools' },
-                  { icon: GraduationCap, label: 'Class' },
-                  { icon: Award, label: 'Curriculum Board' },
-                  { icon: Building2, label: 'School Type' },
-                  { icon: Shield, label: 'Special Categories' },
-                  { icon: Banknote, label: 'Fees Range' },
-                  { icon: UsersRound, label: 'Student Strength' },
-                  { icon: Sparkles, label: 'Facilities' },
-                ].map((item, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setIsDesktopSidebarOpen(true)}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition group relative shrink-0"
-                    title={item.label}
-                  >
-                    <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    <span className="absolute left-full ml-2 px-2.5 py-1 bg-gray-900 text-white text-[11px] font-medium rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-md">
-                      {item.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Full Filter Panel */}
-          <div className={`flex-1 overflow-y-auto overflow-x-hidden md:bg-white md:rounded-2xl md:border md:border-gray-200 md:shadow-sm md:sticky md:top-24 md:max-h-[calc(100vh-8rem)] p-4 sm:p-5 flex-col custom-scrollbar ${isDesktopSidebarOpen ? 'flex' : 'flex md:hidden'}`}>
-            
-            {/* Mobile Header */}
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100 md:hidden">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-gray-700" />
-                <h2 className="font-bold text-lg text-gray-800">Filters</h2>
-              </div>
-              <button onClick={() => setIsMobileFilterOpen(false)} className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors">
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Desktop Header with Collapse Button */}
-            <div className="hidden md:flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-gray-700 shrink-0" />
-                <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">
-                  Filters
-                </span>
-              </div>
-              <button 
-                onClick={() => setIsDesktopSidebarOpen(false)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-1.5 transition"
-                title="Collapse Filters"
-              >
-                <ChevronLeft size={16} />
-              </button>
-            </div>
-            
-            {/* Filter Content */}
-            <div className="flex-1 flex flex-col">
-            
-            {/* Sort */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Sort Results</h3>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value);
-                      handleFilterChange({ sort: e.target.value });
-                    }}
-                    className="w-full text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option value="students">Student Strength</option>
-                    <option value="teachers">Faculty Count</option>
-                    <option value="name">School Name (A-Z)</option>
-                  </select>
-            </div>
-
-            {/* Map Radius Range (Max 5 km) - Compact */}
-            <div className="mb-4 p-2.5 rounded-xl bg-gradient-to-br from-blue-50/70 via-indigo-50/30 to-white border border-blue-200/70 shadow-2xs">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-1.5 text-slate-700 font-bold text-[11px] uppercase tracking-wider">
-                  <Navigation size={12} className="text-[#005689]" />
-                  <span>Map Radius</span>
-                </div>
-                <span className="text-[11px] font-black text-[#005689] bg-white px-2 py-0.5 rounded-full border border-blue-200 shadow-2xs">
-                  {mapRadiusKm} km
-                </span>
-              </div>
-
-              <div className="space-y-1.5">
-                <input
-                  type="range"
-                  min="0.5"
-                  max="5"
-                  step="0.5"
-                  value={mapRadiusKm}
-                  onChange={(e) => setMapRadiusKm(parseFloat(e.target.value))}
-                  className="w-full h-1.5 bg-blue-200/70 rounded-lg appearance-none cursor-pointer accent-[#005689]"
-                />
-
-                <div className="flex justify-between text-[10px] font-semibold text-slate-400 px-0.5">
-                  <span>0.5 km</span>
-                  <span>2.5 km</span>
-                  <span className="font-bold text-[#005689]">Max 5 km</span>
-                </div>
-
-                {/* Quick select pills */}
-                <div className="grid grid-cols-4 gap-1 pt-0.5">
-                  {[1, 2, 3, 5].map((km) => (
-                    <button
-                      key={km}
-                      type="button"
-                      onClick={() => setMapRadiusKm(km)}
-                      className={`py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer ${
-                        mapRadiusKm === km
-                          ? 'bg-[#005689] text-white shadow-2xs'
-                          : 'bg-white text-slate-600 border border-slate-200 hover:bg-blue-50 hover:text-[#005689]'
-                      }`}
-                    >
-                      {km} km
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Eligible Schools (Add Child Details) */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Eligible Schools</h3>
-                  <button
-                    className="w-full text-left text-sm font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 py-2 px-3 rounded-xl transition-colors flex items-center justify-between"
-                    onClick={() => alert("Add Child Details Modal")}
-                  >
-                    + Add Child Details
-                  </button>
-            </div>
-
-            {/* Class Filter */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center justify-between">
-                    Class
-                    <span className="text-gray-400 hover:text-gray-600 cursor-pointer" title="Select class and get better search results specific to it!">
-                      <HelpCircle size={14} />
-                    </span>
-                  </h3>
-                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
-                    {[
-                      { id: 'playgroup', label: 'Play Group' },
-                      { id: 'prenursery', label: 'Pre-Nursery' },
-                      { id: 'nursery', label: 'Nursery' },
-                      { id: 'lkg', label: 'LKG' },
-                      { id: 'ukg', label: 'UKG' },
-                      { id: 'class1', label: 'Class 1' },
-                      { id: 'class2', label: 'Class 2' },
-                      { id: 'class3', label: 'Class 3' },
-                      { id: 'class4', label: 'Class 4' },
-                      { id: 'class5', label: 'Class 5' },
-                      { id: 'class6', label: 'Class 6' },
-                      { id: 'class7', label: 'Class 7' },
-                      { id: 'class8', label: 'Class 8' },
-                      { id: 'class9', label: 'Class 9' },
-                      { id: 'class10', label: 'Class 10' },
-                      { id: 'class11', label: 'Class 11' },
-                      { id: 'class12', label: 'Class 12' },
-                    ].map((cls) => (
-                      <label key={cls.id} className="flex items-center gap-2 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                        />
-                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                          {renderClassIcon(cls.label)}
-                        </div>
-                        <span className="text-sm text-gray-700 flex-1 group-hover:text-blue-600 transition-colors">{cls.label}</span>
-                      </label>
-                    ))}
-                  </div>
-            </div>
-
-            {/* Board */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-700">Curriculum Board</h3>
-                {selectedBoard !== 'all' && (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedBoard('all')}
-                    className="text-[11px] font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                {[
-                  { name: 'CBSE' },
-                  { name: 'ICSE' },
-                  { name: 'IB' },
-                  { name: 'Cambridge/IGCSE' },
-                  { name: 'State Board' }
-                ].map((b) => {
-                  const isSelected = selectedBoard.toLowerCase() === b.name.toLowerCase() || (b.name === 'CBSE' && selectedBoard === 'CBSE');
-                  return (
-                    <div key={b.name} className="group">
-                      <label className={`flex items-center gap-2.5 p-1.5 rounded-xl cursor-pointer transition-colors ${
-                        isSelected ? 'bg-blue-50/80 text-blue-800 font-semibold' : 'hover:bg-slate-50 text-gray-700'
-                      }`}>
-                        <input
-                          type="checkbox"
-                          name="board"
-                          checked={isSelected}
-                          onChange={() => setSelectedBoard(isSelected ? 'all' : b.name)}
-                          className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                        />
-                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                          {renderBoardLogo(b.name)}
-                        </div>
-                        <span className="text-sm flex-1 group-hover:text-blue-600 transition-colors">
-                          {b.name}
-                        </span>
-                        {b.name === 'State Board' && (
-                          <button 
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsStateModalOpen(true); }}
-                            className="ml-auto text-[11px] font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-colors border border-blue-200"
-                          >
-                            Select State
-                          </button>
-                        )}
-                      </label>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* School Type */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">School Type</h3>
-                  <div className="space-y-2">
-                    {[
-                      { name: 'Private Unaided', Icon: Building },
-                      { name: 'Government', Icon: Landmark },
-                      { name: 'Government Aided', Icon: Castle },
-                      { name: 'International', Icon: Compass }
-                    ].map((type) => (
-                      <label key={type.name} className="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300" />
-                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                          {renderSchoolTypeIcon(type.name)}
-                        </div>
-                        <span className="text-sm text-gray-700 flex-1 group-hover:text-blue-600 transition-colors">{type.name}</span>
-                      </label>
-                    ))}
-                  </div>
-            </div>
-
-            {/* School Category (Find) */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Special Categories</h3>
-                  <div className="space-y-2">
-                    {[
-                      { name: 'Sainik School', Icon: Shield },
-                      { name: 'Kendriya Vidyalaya (KVS)', Icon: Landmark },
-                      { name: 'Navodaya Vidyalaya (JNV)', Icon: GraduationCap },
-                      { name: 'Army Public School (APS)', Icon: Swords },
-                      { name: 'Eklavya Model (EMRS)', Icon: Target }
-                    ].map((cat) => (
-                      <label key={cat.name} className="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300" />
-                        <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                          {renderSpecialCategoryIcon(cat.name)}
-                        </div>
-                        <span className="text-sm text-gray-700 flex-1 group-hover:text-blue-600 transition-colors">{cat.name}</span>
-                      </label>
-                    ))}
-                  </div>
-            </div>
-
-            {/* Fees Range */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Annual Fees Range</h3>
-                  <div className="space-y-4 px-1">
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>₹0</span>
-                      <span className="font-semibold text-gray-700">Up to ₹{(feeMax / 100000).toFixed(1)}L</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="1000000"
-                      step="50000"
-                      value={feeMax}
-                      onChange={(e) => setFeeMax(Number(e.target.value))}
-                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-                    />
-                  </div>
-            </div>
-
-            {/* Student Strength */}
-            <div className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Student Strength</h3>
-                  <div className="space-y-4 px-1">
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>0</span>
-                      <span className="font-semibold text-gray-700">Up to {studentMax === 5000 ? '5000+' : studentMax} students</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="5000"
-                      step="100"
-                      value={studentMax}
-                      onChange={(e) => setStudentMax(Number(e.target.value))}
-                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                    />
-                  </div>
-            </div>
-
-            {/* Comprehensive Facilities */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-700">Facilities</h3>
-                {selectedFacilities.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedFacilities([])}
-                    className="text-[11px] font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
-                  >
-                    Clear ({selectedFacilities.length})
-                  </button>
-                )}
-              </div>
-              <div className="space-y-2.5">
-                {FACILITY_CATEGORIES.map((cat, cIdx) => (
-                  <details key={cat.category} className="group" open={cIdx === 0 || cIdx === 1}>
-                    <summary className="text-xs font-bold text-gray-800 cursor-pointer list-none flex items-center justify-between bg-slate-50 hover:bg-slate-100 p-2 rounded-xl transition-colors border border-slate-200/70">
-                      <div className="flex items-center gap-2">
-                        {renderCategoryHeaderIcon(cat.category, cat.categoryIcon)}
-                        <span>{cat.category}</span>
-                      </div>
-                      <ChevronDown size={14} className="text-gray-500 group-open:rotate-180 transition-transform" />
-                    </summary>
-                    <div className="mt-1.5 space-y-1 px-1 py-1 max-h-48 overflow-y-auto custom-scrollbar">
-                      {cat.items.map((item) => {
-                        const isChecked = selectedFacilities.includes(item.name);
-                        return (
-                          <label
-                            key={item.name}
-                            className={`flex items-center gap-2 p-1.5 rounded-lg cursor-pointer transition-colors group ${
-                              isChecked ? 'bg-blue-50 text-blue-700 font-semibold' : 'hover:bg-slate-50 text-slate-700'
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleFacility(item.name)}
-                              className="w-3.5 h-3.5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                            />
-                            {renderFacilityIcon(item)}
-                            <span className="text-xs group-hover:text-blue-600 transition-colors leading-tight">
-                              {item.name}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            </div>
-
-              <button
-                onClick={() => {
-                  setSelectedBoard('all');
-                  setSelectedResidential('all');
-                  setSelectedFacilities([]);
-                  setOnlyAtl(false);
-                  setSearchTerm('');
-                  setSearchMode('text');
-                  handleFilterChange({ board: undefined, residential: undefined, facility: undefined });
-                }}
-                className="button_secondary w-full py-2.5 rounded-[12px] text-xs font-bold transition mt-auto cursor-pointer border border-[#D6EDFF] text-[#006FCC]"
-              >
-                Reset Filters
-              </button>
-            
-            </div> {/* End collapse wrapper */}
-          </div>
-        </aside>
-
-        {/* Content Area */}
-        <main className="flex-1 min-w-0 flex flex-col gap-4">
-          
-          {/* Active Status & View Switcher Bar */}
-          <div className="bg-white p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                {/* Result count */}
-                <h2 className="text-xs sm:text-sm font-bold text-gray-800 whitespace-nowrap">
-                  {displayedSchools.length} {displayedSchools.length === 1 ? 'Result' : 'Results'}
-                </h2>
-                
-                {/* View Mode Switcher (Icons on mobile, Labels on desktop) */}
-                <div className="flex items-center bg-gray-100 p-0.5 rounded-lg sm:rounded-xl border border-gray-200/70">
-                  {/* Standard Grid / Cards */}
-                  <button
-                    onClick={() => handleViewModeChange('grid')}
-                    className={`flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-xs font-semibold transition ${
-                      viewMode === 'grid'
-                        ? 'bg-white text-blue-600 shadow-xs'
-                        : 'text-gray-500 hover:text-gray-800'
-                    }`}
-                    title="Card View (2 Columns)"
-                  >
-                    <LayoutGrid size={14} />
-                    <span className="hidden sm:inline">2 Cols</span>
-                  </button>
-
-                  {/* 3 Columns Grid (Desktop only) */}
-                  <button
-                    onClick={() => handleViewModeChange('grid3')}
-                    className={`hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
-                      viewMode === 'grid3'
-                        ? 'bg-white text-blue-600 shadow-xs'
-                        : 'text-gray-500 hover:text-gray-800'
-                    }`}
-                    title="3 Columns Grid"
-                  >
-                    <Columns3 size={14} />
-                    <span>3 Cols</span>
-                  </button>
-
-                  {/* Compact List */}
-                  <button
-                    onClick={() => handleViewModeChange('compact')}
-                    className={`flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-xs font-semibold transition ${
-                      viewMode === 'compact'
-                        ? 'bg-white text-blue-600 shadow-xs'
-                        : 'text-gray-500 hover:text-gray-800'
-                    }`}
-                    title="Compact View"
-                  >
-                    <List size={14} />
-                    <span className="hidden sm:inline">Compact</span>
-                  </button>
-
-                  {/* Integrated Map View Toggle */}
-                  <button
-                    onClick={() => handleViewModeChange('map')}
-                    className={`flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-xs font-bold transition ${
-                      viewMode === 'map'
-                        ? 'bg-[#1A73E8] text-white shadow-xs'
-                        : 'text-blue-700 bg-blue-50/70 hover:bg-blue-100'
-                    }`}
-                    title="Map View"
-                  >
-                    <Map size={14} />
-                    <span className="hidden sm:inline">Map</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Actions: Add School Profile & Mobile Filter Toggle */}
-              <div className="flex items-center gap-2">
+        {/* ── 2. Minimized Desktop Sidebar Strip (Shown when minimized, matching user image) ── */}
+        {isSidebarMinimized && (
+          <aside className="hidden md:flex flex-col w-12 shrink-0 md:fixed md:left-0 md:z-30 directory-sidebar-fixed rounded-none transition-all duration-300">
+            <div className="bg-white rounded-none border-r border-b border-gray-200/90 shadow-xs h-full py-2.5 px-1.5 flex flex-col items-center justify-between">
+              {/* Top: Expand Chevron Button */}
+              <div className="flex flex-col items-center gap-3 w-full">
                 <button
                   type="button"
-                  onClick={handleAddSchoolClick}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#005689] hover:bg-[#003c6e] active:scale-95 text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap"
-                  title="List and customize your school on CSEEL"
+                  onClick={() => setIsSidebarMinimized(false)}
+                  className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition shadow-2xs group relative cursor-pointer"
+                  title="Expand Filters"
                 >
-                  <PlusCircle size={13} className="stroke-[2.5]" />
-                  <span className="hidden xs:inline">Add Your Profile</span>
-                  <span className="xs:hidden">+ Add</span>
+                  <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
                 </button>
 
-                <button
-                  onClick={() => setIsMobileFilterOpen(true)}
-                  className="md:hidden h-8 px-2.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 flex items-center gap-1.5 text-xs font-semibold cursor-pointer transition"
-                  title="Open Filters"
-                >
-                  <Filter size={13} />
-                  <span>Filters</span>
-                </button>
+                <div className="w-6 h-px bg-gray-200 my-1" />
+
+                {/* Category Icons with Chevrons (matching user image) */}
+                <div className="flex flex-col items-center gap-3 w-full">
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarMinimized(false)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors relative group cursor-pointer"
+                    title="Board Filter (Click to Expand)"
+                  >
+                    <Award size={16} />
+                    <ChevronRight size={12} className="absolute -right-1 text-gray-400 group-hover:text-blue-600" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarMinimized(false)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors relative group cursor-pointer"
+                    title="Class Filter (Click to Expand)"
+                  >
+                    <GraduationCap size={16} />
+                    <ChevronRight size={12} className="absolute -right-1 text-gray-400 group-hover:text-blue-600" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarMinimized(false)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors relative group cursor-pointer"
+                    title="School Format (Click to Expand)"
+                  >
+                    <Building2 size={16} />
+                    <ChevronRight size={12} className="absolute -right-1 text-gray-400 group-hover:text-blue-600" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsSidebarMinimized(false)}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors relative group cursor-pointer"
+                    title="Facilities Filter (Click to Expand)"
+                  >
+                    <Sparkles size={16} />
+                    <ChevronRight size={12} className="absolute -right-1 text-gray-400 group-hover:text-blue-600" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom: Vertical Text */}
+              <div className="[writing-mode:vertical-rl] rotate-180 text-[10px] font-bold text-gray-400 tracking-wider flex items-center gap-1.5 pb-2">
+                <SlidersHorizontal size={11} className="rotate-90 text-blue-600" />
+                <span>FILTERS</span>
               </div>
             </div>
+          </aside>
+        )}
 
-            <Link href="/about-experiential-lab" className="text-blue-500 hover:text-blue-700 hover:underline text-xs sm:text-[13px] font-semibold transition-colors">
-              What is Experiential Science Lab?
-            </Link>
-          </div>
+        {/* ── 3. Desktop Filter Sidebar Mode (>= 768px Full Sidebar) ── */}
+        <SchoolFilterSheet
+          mode="sidebar"
+          totalSchoolsCount={totalSchoolsCount}
+          displayedCount={displayedSchools.length}
+          selectedBoard={selectedBoard}
+          setSelectedBoard={setSelectedBoard}
+          selectedStateBoard={selectedStateBoard}
+          setSelectedStateBoard={setSelectedStateBoard}
+          setIsStateModalOpen={setIsStateModalOpen}
+          selectedResidential={selectedResidential}
+          setSelectedResidential={setSelectedResidential}
+          selectedFacilities={selectedFacilities}
+          toggleFacility={toggleFacility}
+          setSelectedFacilities={setSelectedFacilities}
+          selectedClasses={selectedClasses}
+          setSelectedClasses={setSelectedClasses}
+          selectedSchoolTypes={selectedSchoolTypes}
+          setSelectedSchoolTypes={setSelectedSchoolTypes}
+          selectedSpecialCategories={selectedSpecialCategories}
+          setSelectedSpecialCategories={setSelectedSpecialCategories}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          feeMax={feeMax}
+          setFeeMax={setFeeMax}
+          studentMax={studentMax}
+          setStudentMax={setStudentMax}
+          onlyAtl={onlyAtl}
+          setOnlyAtl={setOnlyAtl}
+          mapRadiusKm={mapRadiusKm}
+          setMapRadiusKm={setMapRadiusKm}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          setSearchMode={setSearchMode}
+          setSearchTerm={setSearchTerm}
+          handleFilterChange={handleFilterChange}
+          onResetAll={handleResetAll}
+          isSidebarMinimized={isSidebarMinimized}
+          setIsSidebarMinimized={setIsSidebarMinimized}
+        />
+
+        {/* Content Area - Offset by fixed sidebar width so cards never overlap and screen scrolls smoothly */}
+        <main className={`flex-1 min-w-0 flex flex-col gap-4 transition-all duration-300 ${
+          isSidebarMinimized ? 'md:ml-16' : 'md:ml-[272px] lg:ml-[304px]'
+        }`}>
+          
+          {/* Active Status & View Switcher Bar (Hidden when Map is in Fullscreen Expand Mode) */}
+          {!(isMapFullscreen && viewMode === 'map') && (
+            <div className={`transition-all ${
+              viewMode === 'map'
+                ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/90 p-1.5 md:relative md:top-auto md:inset-x-auto md:z-auto md:bg-white md:rounded-t-none md:rounded-b-xl md:border-gray-200 md:shadow-xs md:p-2.5 flex flex-col gap-1.5'
+                : 'bg-white p-2 sm:p-2.5 rounded-t-none rounded-b-xl border border-gray-200 shadow-xs flex flex-col gap-1.5'
+            }`}>
+              {/* ─── MOBILE VIEW (< 768px): Maximum Space Search Input with City Icon, Filter & Menu Icons ─── */}
+              <div className="md:hidden flex flex-col gap-1 w-full">
+                <div className="flex items-center gap-1 w-full">
+                  {/* Unified Search Input Bar - takes maximum width */}
+                  <div className="relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 py-1.5 border border-gray-200 focus-within:bg-white focus-within:border-blue-500 transition-all min-w-0">
+                    {/* Select City Icon & Trigger */}
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileCityDropdownOpen(!isMobileCityDropdownOpen)}
+                      className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition shrink-0 pr-1.5 border-r border-gray-300 cursor-pointer"
+                      title={selectedLocation ? `Selected City: ${selectedLocation}` : "Select City"}
+                    >
+                      <MapPin size={15} className={selectedLocation ? 'text-blue-600' : 'text-gray-500'} />
+                      {selectedLocation && (
+                        <span className="text-[11px] font-bold text-blue-600 max-w-[60px] truncate">
+                          {selectedLocation}
+                        </span>
+                      )}
+                      <ChevronDown size={11} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* Search Text Input */}
+                    <input
+                      type="text"
+                      placeholder={selectedLocation ? `Search in ${selectedLocation}...` : "Search school, city, UDISE..."}
+                      value={searchMode === 'near_me' ? '' : searchTerm}
+                      onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleFilterChange({ q: searchTerm.trim() || undefined });
+                        }
+                      }}
+                      className="flex-1 bg-transparent px-2 py-0.5 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
+                    />
+
+                    {/* Clear Text Icon */}
+                    {searchTerm.trim() && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchTerm('');
+                          handleFilterChange({ q: undefined });
+                        }}
+                        className="p-1 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
+                        title="Clear search"
+                      >
+                        <X size={12} />
+                      </button>
+                    )}
+
+                    {/* Search Icon (Clickable Icon - No Bulky Button) */}
+                    <button
+                      type="button"
+                      onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
+                      className="p-1 text-blue-600 hover:text-blue-700 active:scale-90 transition shrink-0 cursor-pointer"
+                      title="Search"
+                    >
+                      <Search size={16} />
+                    </button>
+
+                    {/* City Dropdown Menu for Mobile */}
+                    {isMobileCityDropdownOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40" 
+                          onClick={() => setIsMobileCityDropdownOpen(false)} 
+                        />
+                        <div className="absolute top-full left-0 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in duration-150">
+                          <div className="p-2.5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Database Cities &amp; Areas</span>
+                            {selectedLocation && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedLocation(null);
+                                  setIsMobileCityDropdownOpen(false);
+                                  setSearchTerm('');
+                                }}
+                                className="text-[11px] text-blue-600 font-bold hover:underline cursor-pointer"
+                              >
+                                Clear City
+                              </button>
+                            )}
+                          </div>
+                          <div className="p-2 grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto custom-scrollbar">
+                            {dbCitiesList.map((city) => (
+                              <button
+                                key={city.name}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedLocation(city.name);
+                                  setIsMobileCityDropdownOpen(false);
+                                  setSearchTerm(city.query || city.name);
+                                  setSearchMode('text');
+                                  const coords = CITY_COORDINATES[city.name];
+                                  if (coords) {
+                                    setSearchCenter(coords);
+                                    setMapFocus({ lat: coords.lat, lng: coords.lng, zoom: 13, timestamp: Date.now() });
+                                  }
+                                }}
+                                className={`flex items-center justify-between gap-1.5 p-1.5 rounded-xl text-xs text-left transition cursor-pointer ${
+                                  selectedLocation === city.name
+                                    ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                                    : 'text-gray-700 hover:bg-gray-50'
+                                }`}
+                              >
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <img
+                                    src={city.icon}
+                                    alt=""
+                                    className="w-4 h-4 object-contain shrink-0"
+                                    onError={(e) => { (e.target as any).style.display = 'none'; }}
+                                  />
+                                  <span className="truncate">{city.name}</span>
+                                </div>
+                                {city.count > 0 && (
+                                  <span className="text-[9.5px] font-bold text-blue-600 bg-blue-50 px-1 rounded">
+                                    {city.count}
+                                  </span>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Filter Icon & Trigger (Modern Badge Indicator) */}
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileFilterOpen(true)}
+                    className="relative p-2 text-gray-700 hover:text-[#005689] active:scale-90 transition shrink-0 cursor-pointer rounded-xl bg-gray-100/90 hover:bg-blue-50 border border-gray-200"
+                    title="Open Filters"
+                  >
+                    <Filter size={17} className={activeFiltersCount > 0 ? 'text-[#005689]' : 'text-gray-600'} />
+                    {activeFiltersCount > 0 && (
+                      <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] rounded-full bg-[#005689] text-white text-[10px] font-black flex items-center justify-center px-1 shadow-xs border-2 border-white">
+                        {activeFiltersCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Menu Icon & Top-Right Dropdown Popover */}
+                  <div className="relative shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                      className={`p-1.5 rounded-lg transition shrink-0 cursor-pointer ${
+                        isMobileMenuOpen ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 active:scale-90'
+                      }`}
+                      title="Directory Options"
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+
+                    {/* Google-Inspired Top-Right Compact Popover */}
+                    {isMobileMenuOpen && (
+                      <>
+                        <div 
+                          className="fixed inset-0 z-40" 
+                          onClick={() => setIsMobileMenuOpen(false)} 
+                        />
+                        <div className="absolute top-full right-0 mt-1.5 w-48 bg-white rounded-2xl shadow-[0_10px_35px_rgba(0,0,0,0.18)] border border-gray-100 py-1 z-50 text-left animate-in fade-in zoom-in-95 duration-150 divide-y divide-gray-100">
+                          {/* Group 1: View Modes (Icon on left, small name on right) */}
+                          <div className="p-1 space-y-0.5">
+                            <div className="px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-gray-400">
+                              View Layout
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => { handleViewModeChange('grid'); setIsMobileMenuOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
+                                viewMode === 'grid'
+                                  ? 'bg-blue-50 text-blue-700 font-bold'
+                                  : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span className="flex items-center gap-2">
+                                <LayoutGrid size={14} className={viewMode === 'grid' ? 'text-blue-600' : 'text-gray-400'} />
+                                <span className="text-[11.5px]">2-Col Grid</span>
+                              </span>
+                              {viewMode === 'grid' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => { handleViewModeChange('grid3'); setIsMobileMenuOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
+                                viewMode === 'grid3'
+                                  ? 'bg-blue-50 text-blue-700 font-bold'
+                                  : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span className="flex items-center gap-2">
+                                <Columns3 size={14} className={viewMode === 'grid3' ? 'text-blue-600' : 'text-gray-400'} />
+                                <span className="text-[11.5px]">3-Col Grid</span>
+                              </span>
+                              {viewMode === 'grid3' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => { handleViewModeChange('compact'); setIsMobileMenuOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
+                                viewMode === 'compact'
+                                  ? 'bg-blue-50 text-blue-700 font-bold'
+                                  : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span className="flex items-center gap-2">
+                                <List size={14} className={viewMode === 'compact' ? 'text-blue-600' : 'text-gray-400'} />
+                                <span className="text-[11.5px]">Compact List</span>
+                              </span>
+                              {viewMode === 'compact' && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => { handleViewModeChange('map'); setIsMobileMenuOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer ${
+                                viewMode === 'map'
+                                  ? 'bg-blue-600 text-white font-bold'
+                                  : 'text-blue-700 hover:bg-blue-50'
+                              }`}
+                            >
+                              <span className="flex items-center gap-2">
+                                <Map size={14} />
+                                <span className="text-[11.5px]">Map View</span>
+                              </span>
+                              {viewMode === 'map' && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                            </button>
+                          </div>
+
+                          {/* Group 2: Actions (Icon on left, small name on right) */}
+                          <div className="p-1 space-y-0.5">
+                            <div className="px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wider text-gray-400">
+                              Actions
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSearchMode('near_me');
+                                handleNearMeSearch();
+                                setIsMobileMenuOpen(false);
+                              }}
+                              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[11.5px] font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+                            >
+                              <MapPin size={14} className="text-emerald-600 shrink-0" />
+                              <span>Near Me (GPS)</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const next = !isFullscreen;
+                                setIsFullscreen(next);
+                                if (viewMode === 'map') setIsMapFullscreen(next);
+                                setIsMobileMenuOpen(false);
+                              }}
+                              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[11.5px] font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+                            >
+                              {isFullscreen ? (
+                                <Minimize2 size={14} className="text-blue-600 shrink-0" />
+                              ) : (
+                                <Maximize2 size={14} className="text-gray-500 shrink-0" />
+                              )}
+                              <span>{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsHeroMinimized(!isHeroMinimized);
+                                setIsMobileMenuOpen(false);
+                              }}
+                              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[11.5px] font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+                            >
+                              <Sparkles size={14} className="text-amber-500 shrink-0" />
+                              <span>{isHeroMinimized ? 'Show Banner' : 'Hide Banner'}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobile Subline: Count & Quick Sort (Hidden in Map Mode) */}
+                {viewMode !== 'map' && (
+                  <div className="flex items-center justify-between text-[11px] text-gray-500 px-0.5 gap-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span><strong className="text-gray-900">{Math.min(displayedSchools.length, 25)}</strong> of <strong className="text-gray-900">{totalSchoolsCount}</strong> Schools</span>
+                      {selectedLocation && (
+                        <span className="inline-flex items-center gap-0.5 text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded font-medium text-[10px]">
+                          <MapPin size={9} />
+                          {selectedLocation}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ─── DESKTOP VIEW (>= 768px): Full Row with Switchers & Search Bar ─── */}
+              <div className="hidden md:flex flex-wrap lg:flex-nowrap items-center justify-between gap-2">
+                
+                {/* Left Side: Results count & View Mode Switcher */}
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  {/* Result count */}
+                  <h2 className="text-xs sm:text-[13px] font-bold text-gray-800 whitespace-nowrap mr-0.5">
+                    {Math.min(displayedSchools.length, 25)} / {totalSchoolsCount} Schools
+                  </h2>
+                  
+                  {/* View Mode Switcher (Pure Iconic Form with Rich Hover Tooltips) */}
+                  <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
+                    {/* Standard Grid / 2 Cards per row */}
+                    <div className="relative group/view">
+                      <button
+                        type="button"
+                        onClick={() => handleViewModeChange('grid')}
+                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          viewMode === 'grid'
+                            ? 'bg-white text-blue-600 shadow-2xs font-bold'
+                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                        }`}
+                        aria-label="2 Columns Card Grid"
+                        title="2 Columns Grid"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                          <rect x="1" y="2" width="6" height="12" rx="1.5" />
+                          <rect x="9" y="2" width="6" height="12" rx="1.5" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* 3 Columns Grid (Wide view) */}
+                    <div className="relative group/view">
+                      <button
+                        type="button"
+                        onClick={() => handleViewModeChange('grid3')}
+                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          viewMode === 'grid3'
+                            ? 'bg-white text-blue-600 shadow-2xs font-bold'
+                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                        }`}
+                        aria-label="3 Columns Card Grid"
+                        title="3 Columns Grid"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                          <rect x="1" y="2" width="3.8" height="12" rx="1" />
+                          <rect x="6.1" y="2" width="3.8" height="12" rx="1" />
+                          <rect x="11.2" y="2" width="3.8" height="12" rx="1" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Compact List */}
+                    <div className="relative group/view">
+                      <button
+                        type="button"
+                        onClick={() => handleViewModeChange('compact')}
+                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          viewMode === 'compact'
+                            ? 'bg-white text-blue-600 shadow-2xs font-bold'
+                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                        }`}
+                        aria-label="Compact List Row View"
+                        title="Compact List"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+                          <rect x="1" y="2" width="14" height="3" rx="1" />
+                          <rect x="1" y="6.5" width="14" height="3" rx="1" />
+                          <rect x="1" y="11" width="14" height="3" rx="1" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Integrated Map View Toggle */}
+                    <div className="relative group/view">
+                      <button
+                        type="button"
+                        onClick={() => handleViewModeChange('map')}
+                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          viewMode === 'map'
+                            ? 'bg-[#1A73E8] text-white shadow-2xs font-bold'
+                            : 'text-blue-700 hover:bg-blue-100/60'
+                        }`}
+                        aria-label="Interactive Map View"
+                      >
+                        <Map size={14} />
+                      </button>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="w-[1px] h-4 bg-gray-300 mx-0.5" />
+
+                    {/* Fullscreen Expand / Restore Toggle (Hides Top Navigation Bar) */}
+                    <div className="relative group/view">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = !isFullscreen;
+                          setIsFullscreen(next);
+                          if (viewMode === 'map') {
+                            setIsMapFullscreen(next);
+                          }
+                        }}
+                        className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          isFullscreen
+                            ? 'bg-blue-600 text-white shadow-2xs font-bold'
+                            : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                        }`}
+                        aria-label={isFullscreen ? 'Exit Fullscreen' : 'Expand Fullscreen'}
+                        title={isFullscreen ? 'Restore Top Bar' : 'Expand Fullscreen (Hide Navigation)'}
+                      >
+                        {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Search Bar + Expand Hero Button (When Hero is Minimized) in Single Row */}
+                <div className="flex items-center gap-1.5 shrink-0 justify-end flex-1 min-w-0 max-w-full">
+                  {isHeroMinimized && (
+                    <div className="flex-1 min-w-[280px] max-w-[540px]">
+                      {renderSearchBar(true)}
+                    </div>
+                  )}
+
+                  {/* Fullscreen Expand / Restore Button (Hides Top Navigation Bar) */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !isFullscreen;
+                      setIsFullscreen(next);
+                      if (viewMode === 'map') setIsMapFullscreen(next);
+                    }}
+                    className={`w-8 h-8 rounded-xl border flex items-center justify-center transition cursor-pointer shadow-2xs shrink-0 ${
+                      isFullscreen
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                        : 'bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700'
+                    }`}
+                    title={isFullscreen ? 'Restore Top Navigation Bar' : 'Expand Fullscreen (Hide Top Bar & Maximize Cards)'}
+                  >
+                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                  </button>
+
+                  {/* Show Hero Carousel Banner Button */}
+                  {isHeroMinimized && (
+                    <button
+                      type="button"
+                      onClick={() => setIsHeroMinimized(false)}
+                      className="h-8 px-3 rounded-full bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 flex items-center gap-1 transition cursor-pointer text-xs font-semibold shrink-0"
+                      title="Show Hero Banner Carousel"
+                    >
+                      <Sparkles size={12} className="text-amber-500" />
+                      <span className="hidden xl:inline text-[11px]">Banner</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+
+
+              <Link href="/about-experiential-lab" className="text-blue-500 hover:text-blue-700 hover:underline text-[11px] sm:text-xs font-semibold transition-colors inline-block w-fit">
+                What is Experiential Science Lab?
+              </Link>
+            </div>
+          )}
 
           {/* ── Conditional Display: Auth & Verification Gate vs School Cards ── */}
           {isGuest ? (
@@ -1911,7 +3030,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   type="button"
                   onClick={handleGoogleSignIn}
                   disabled={googleLoading}
-                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm shadow-xs hover:shadow transition-all cursor-pointer disabled:opacity-60"
+                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm shadow-xs hover:shadow transition-all cursor-pointer disabled:opacity-60"
                 >
                   {googleLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
@@ -1929,7 +3048,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 {/* Email Sign In Button */}
                 <Link
                   href="/login"
-                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all"
+                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>Sign In with Email</span>
@@ -1975,33 +3094,513 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           ) : (
             /* 3. Authorized View: Display Schools & Pagination */
             <>
+              {/* Top Pagination Bar (Strictly max 25 schools per page, shown above school cards) */}
+              {viewMode !== 'map' && renderPaginationBar('top')}
+
               {/* School Cards: Map, Grid, or Compact List */}
               {viewMode === 'map' ? (
-                <div className="w-full h-[620px] sm:h-[720px] rounded-3xl overflow-hidden border border-slate-200/90 shadow-lg relative my-2 bg-slate-50">
-                  <SchoolFinderMap
-                    searchCenter={searchCenter}
-                    mapFocus={mapFocus}
-                    radiusKm={mapRadiusKm}
-                    schools={displayedSchools}
-                    selectedSchool={mapSelectedSchool}
-                    onSelectSchool={(school) => setMapSelectedSchool(school as SchoolRecord)}
-                    onOpenDetails={(school) => router.push(getSchoolUrl(school as SchoolRecord))}
-                    onLocationChange={handleLocationChange}
-                    onLocateMe={handleLocateMe}
-                    isLocating={isLocating}
-                  />
+                <div className={`fixed inset-0 z-20 w-screen h-[100dvh] rounded-none border-none my-0 overflow-hidden flex flex-col md:relative md:inset-auto md:z-auto md:w-full md:rounded-3xl md:border md:border-slate-200/90 md:my-1 md:flex-row bg-slate-50 transition-all duration-300 ${
+                  (isMapFullscreen || isFullscreen)
+                    ? 'md:h-[calc(100vh-1rem)] md:my-0'
+                    : 'md:h-[calc(100vh-140px)] md:min-h-[520px] md:max-h-[820px] md:sm:h-[680px] md:h-[760px]'
+                }`}>
+                  
+                  {/* ─── DESKTOP SIDE SHEET / DRAWER (Left side of map, collapsible, pullable, minimizable) ─── */}
+                  {!isMapSheetHidden && (
+                    <div
+                      className={`hidden md:flex flex-col bg-white/95 backdrop-blur-xl border-r border-slate-200 shadow-xl transition-all duration-300 z-20 shrink-0 h-full relative rounded-l-3xl overflow-hidden ${
+                        isMapSheetMinimized
+                          ? 'w-14'
+                          : isMapSheetWide
+                          ? 'w-[480px]'
+                          : 'w-[320px] lg:w-[380px]'
+                      }`}
+                    >
+                      {/* Minimized Vertical Bar */}
+                      {isMapSheetMinimized ? (
+                        <div className="flex flex-col items-center py-4 h-full justify-between">
+                          <button
+                            type="button"
+                            onClick={() => setIsMapSheetMinimized(false)}
+                            className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition shadow-2xs group relative cursor-pointer"
+                            title="Expand School Results"
+                          >
+                            <ChevronRight size={18} className="group-hover:scale-110 transition-transform" />
+                            <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-[11px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-30">
+                              Show Results List ({schoolsForMap.length})
+                            </span>
+                          </button>
+
+                          <div className="[writing-mode:vertical-rl] rotate-180 text-xs font-bold text-gray-500 tracking-wider flex items-center gap-2">
+                            <span>{schoolsForMap.length} Points</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span>Batch {mapLoadedPage}/{totalPages}</span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setIsMapSheetHidden(true)}
+                            className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition cursor-pointer"
+                            title="Close Sheet"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        /* Expanded Desktop Sheet */
+                        <div className="flex flex-col h-full overflow-hidden">
+                          {/* Sheet Header */}
+                          <div className="p-3.5 border-b border-gray-200 bg-slate-50/70 shrink-0 space-y-2.5">
+                            {/* Title & Action Handles */}
+                            <div className="flex items-center justify-between gap-1.5">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                                  {schoolsForMap.length}
+                                </div>
+                                <div className="truncate">
+                                  <h3 className="text-xs font-bold text-gray-900 truncate">
+                                    Schools on Map
+                                  </h3>
+                                  <p className="text-[10px] text-gray-500 truncate">
+                                    {totalSchoolsCount} total • {mapRadiusKm}km radius
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Sheet Window Controls (Fullscreen Expand, Pull wide, Minimize, Hide) */}
+                              <div className="flex items-center gap-1 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = !isMapFullscreen;
+                                    setIsMapFullscreen(next);
+                                    setIsFullscreen(next);
+                                  }}
+                                  className={`w-7 h-7 rounded-lg border transition cursor-pointer flex items-center justify-center ${
+                                    (isMapFullscreen || isFullscreen)
+                                      ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
+                                      : 'border-gray-200 hover:bg-gray-100 text-gray-600'
+                                  }`}
+                                  title={(isMapFullscreen || isFullscreen) ? 'Restore View (Show Top Bar)' : 'Expand Fullscreen (Hide Top Bar & Maximize Space)'}
+                                >
+                                  {(isMapFullscreen || isFullscreen) ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsMapSheetWide(!isMapSheetWide)}
+                                  className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
+                                  title={isMapSheetWide ? 'Narrow Sheet' : 'Widen Sheet (Pull)'}
+                                >
+                                  <Columns2 size={13} className={isMapSheetWide ? 'rotate-90' : ''} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsMapSheetMinimized(true)}
+                                  className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
+                                  title="Minimize to side strip"
+                                >
+                                  <Minus size={13} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsMapSheetHidden(true)}
+                                  className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-rose-50 hover:text-rose-600 text-gray-400 flex items-center justify-center transition cursor-pointer"
+                                  title="Hide Sheet"
+                                >
+                                  <X size={13} />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Compact Control Row 1: Display Mode & Batch Info */}
+                            <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                              {/* Display Mode Pills */}
+                              <div className="flex items-center bg-gray-200/80 p-0.5 rounded-lg text-[10px] font-bold">
+                                <button
+                                  type="button"
+                                  onClick={() => setMapDisplayMode('page')}
+                                  className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
+                                    mapDisplayMode === 'page'
+                                      ? 'bg-white text-blue-600 shadow-2xs'
+                                      : 'text-gray-600 hover:text-gray-900'
+                                  }`}
+                                  title="Show current page 25 schools"
+                                >
+                                  25 Page
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setMapDisplayMode('accumulate')}
+                                  className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
+                                    mapDisplayMode === 'accumulate'
+                                      ? 'bg-white text-emerald-600 shadow-2xs'
+                                      : 'text-gray-600 hover:text-gray-900'
+                                  }`}
+                                  title="Accumulate 25 points at a time on map"
+                                >
+                                  +Add ({accumulatedSchools.length})
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setMapDisplayMode('all_dots')}
+                                  className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
+                                    mapDisplayMode === 'all_dots'
+                                      ? 'bg-[#EA4335] text-white shadow-2xs'
+                                      : 'text-gray-600 hover:text-gray-900'
+                                  }`}
+                                  title="Show all schools as red dots on map"
+                                >
+                                  All Dots
+                                </button>
+                              </div>
+
+                              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                                25 pts / batch
+                              </span>
+                            </div>
+
+                            {/* Compact Control Row 2: Radius Selector & In-list Search */}
+                            <div className="flex items-center gap-1.5">
+                              {/* In-list filter search input */}
+                              <div className="relative flex-1 min-w-0">
+                                <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                  type="text"
+                                  value={mapListSearch}
+                                  onChange={(e) => setMapListSearch(e.target.value)}
+                                  placeholder="Filter name, board, area..."
+                                  className="w-full pl-7 pr-6 py-1 bg-white border border-gray-200 rounded-lg text-xs placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                />
+                                {mapListSearch && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setMapListSearch('')}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                  >
+                                    <X size={11} />
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Radius Quick Selector */}
+                              <div className="flex items-center gap-0.5 shrink-0 bg-white p-0.5 rounded-lg border border-gray-200">
+                                {[1, 3, 5, 10].map((km) => (
+                                  <button
+                                    key={km}
+                                    type="button"
+                                    onClick={() => setMapRadiusKm(km)}
+                                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition cursor-pointer ${
+                                      mapRadiusKm === km
+                                        ? 'bg-gray-900 text-white shadow-2xs'
+                                        : 'text-gray-600 hover:bg-gray-100'
+                                    }`}
+                                    title={`${km} km radius`}
+                                  >
+                                    {km}k
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Scrollable School Cards List */}
+                          <div className="flex-1 overflow-y-auto p-2.5 space-y-2 custom-scrollbar">
+                            {mapFilteredSchools.length > 0 ? (
+                              mapFilteredSchools.map((school, idx) => renderMapSchoolCard(school, idx))
+                            ) : (
+                              <div className="p-8 text-center text-gray-400 text-xs">
+                                No schools match &quot;{mapListSearch}&quot;
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Sheet Bottom Footer: Add Next 25 Points on Map */}
+                          <div className="p-2.5 border-t border-gray-200 bg-slate-50 shrink-0 flex flex-col gap-1.5">
+                            <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
+                              <span>
+                                Map Points: <strong className="text-gray-900">{schoolsForMap.length}</strong> of{' '}
+                                <strong className="text-gray-900">{totalSchoolsCount}</strong>
+                              </span>
+                              <span className="text-[11px] text-emerald-700 font-semibold">
+                                (+25 pts / click)
+                              </span>
+                            </div>
+
+                            {hasMoreSchools ? (
+                              <button
+                                type="button"
+                                onClick={loadNextBatch}
+                                disabled={isLoadingMore}
+                                className="w-full py-2 px-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-50 cursor-pointer"
+                              >
+                                {isLoadingMore ? (
+                                  <>
+                                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    <span>Adding 25 points...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <PlusCircle size={14} />
+                                    <span>Add Next 25 Points on Map</span>
+                                  </>
+                                )}
+                              </button>
+                            ) : (
+                              <div className="text-center text-[11px] text-gray-500 font-semibold py-1">
+                                ✓ All {totalSchoolsCount} school points added on map
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Re-open Button if Desktop Sheet is Hidden */}
+                  {isMapSheetHidden && (
+                    <button
+                      type="button"
+                      onClick={() => setIsMapSheetHidden(false)}
+                      className="hidden md:flex absolute top-4 left-4 z-30 items-center gap-2 px-3 py-2 bg-white/95 backdrop-blur-md rounded-full border border-gray-200 shadow-md hover:bg-white text-xs font-bold text-blue-600 transition cursor-pointer"
+                    >
+                      <List size={14} />
+                      <span>Show Schools List ({schoolsForMap.length})</span>
+                    </button>
+                  )}
+
+                  {/* ─── MAP CANVAS (Takes rest of container on Desktop, full height on Mobile) ─── */}
+                  <div className="flex-1 h-full relative min-w-0">
+                    <SchoolFinderMap
+                      className="rounded-none md:rounded-r-3xl md:rounded-l-none"
+                      searchCenter={searchCenter}
+                      mapFocus={mapFocus}
+                      radiusKm={mapRadiusKm}
+                      schools={schoolsForMap}
+                      allSchoolsDots={allSchoolsMapPoints}
+                      showAllRedDots={mapDisplayMode === 'all_dots'}
+                      selectedSchool={mapSelectedSchool}
+                      onSelectSchool={(school) => handleSelectSchoolFromList(school as SchoolRecord, true)}
+                      onOpenDetails={(school) => router.push(getSchoolUrl(school as SchoolRecord))}
+                      onLocationChange={handleLocationChange}
+                      onLocateMe={handleLocateMe}
+                      isLocating={isLocating}
+                      mobileSheetState={mobileSheetState}
+                    />
+                  </div>
+
+                  {/* ─── MOBILE BOTTOM DRAWER / SHEET ─── */}
+                  <div
+                    className={`md:hidden absolute inset-x-0 bottom-0 z-30 bg-white/95 backdrop-blur-xl border-t border-gray-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.18)] flex flex-col transition-all duration-300 ease-in-out ${
+                      mobileSheetState === 'peek'
+                        ? 'h-[58px]'
+                        : mobileSheetState === 'half'
+                        ? 'h-[50vh]'
+                        : 'h-[86vh]'
+                    }`}
+                  >
+                    {/* Visual drag pill handle */}
+                    <div 
+                      className="w-12 h-1 bg-gray-300/80 rounded-full mx-auto my-1 shrink-0 cursor-pointer active:bg-gray-400 transition" 
+                      onClick={() => {
+                        setMobileSheetState(
+                          mobileSheetState === 'peek' ? 'half' : mobileSheetState === 'half' ? 'full' : 'peek'
+                        );
+                      }}
+                      title="Pull or toggle results sheet"
+                    />
+
+                    {/* Header Strip with Segmented Tabs */}
+                    <div className="w-full px-3 py-1 flex items-center justify-between gap-2 border-b border-gray-100 shrink-0 bg-white/90">
+                      {/* Segmented View Switcher: Map, Split, Cards */}
+                      <div className="flex items-center bg-gray-100 p-0.5 rounded-lg text-xs font-bold shrink-0 shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={() => setMobileSheetState('peek')}
+                          className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
+                            mobileSheetState === 'peek'
+                              ? 'bg-white text-blue-600 shadow-2xs'
+                              : 'text-gray-600 hover:text-gray-900'
+                          }`}
+                        >
+                          <MapPin size={11} />
+                          <span>Map</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setMobileSheetState('half')}
+                          className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
+                            mobileSheetState === 'half'
+                              ? 'bg-white text-blue-600 shadow-2xs'
+                              : 'text-gray-600 hover:text-gray-900'
+                          }`}
+                        >
+                          <Columns2 size={11} className="rotate-90" />
+                          <span>Split</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setMobileSheetState('full')}
+                          className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
+                            mobileSheetState === 'full'
+                              ? 'bg-white text-blue-600 shadow-2xs'
+                              : 'text-gray-600 hover:text-gray-900'
+                          }`}
+                        >
+                          <List size={11} />
+                          <span>Points ({schoolsForMap.length})</span>
+                        </button>
+                      </div>
+
+                      {/* Right summary indicator with toggle chevron */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileSheetState(
+                            mobileSheetState === 'peek' ? 'half' : mobileSheetState === 'half' ? 'full' : 'peek'
+                          );
+                        }}
+                        className="flex items-center gap-1 text-[11px] font-bold text-gray-500 hover:text-gray-800 cursor-pointer shrink-0"
+                      >
+                        <span className="hidden xs:inline">{schoolsForMap.length}/{totalSchoolsCount}</span>
+                        <ChevronUp
+                          size={14}
+                          className={`transition-transform duration-300 ${
+                            mobileSheetState === 'full' ? 'rotate-180' : mobileSheetState === 'peek' ? '' : 'rotate-90'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Secondary Controls: Search, Radius, Mode (Shown in Half & Full mode) */}
+                    {mobileSheetState !== 'peek' && (
+                      <div className="px-3 py-2 border-b border-gray-100 bg-slate-50/80 space-y-1.5 shrink-0">
+                        {/* Row 1: Search & Radius */}
+                        <div className="flex items-center gap-2">
+                          <div className="relative flex-1 min-w-0">
+                            <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                              type="text"
+                              value={mapListSearch}
+                              onChange={(e) => setMapListSearch(e.target.value)}
+                              placeholder="Filter name, board..."
+                              className="w-full pl-7 pr-6 py-1 bg-white border border-gray-200 rounded-lg text-xs placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                            {mapListSearch && (
+                              <button
+                                type="button"
+                                onClick={() => setMapListSearch('')}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                              >
+                                <X size={11} />
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Radius quick buttons */}
+                          <div className="flex items-center gap-0.5 shrink-0 bg-white p-0.5 rounded-lg border border-gray-200">
+                            {[1, 3, 5, 10].map((km) => (
+                              <button
+                                key={km}
+                                type="button"
+                                onClick={() => setMapRadiusKm(km)}
+                                className={`px-1.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition ${
+                                  mapRadiusKm === km
+                                    ? 'bg-gray-900 text-white shadow-2xs'
+                                    : 'text-gray-600 hover:bg-gray-100'
+                                }`}
+                              >
+                                {km}k
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Row 2: Batch Info & Map Display Mode */}
+                        <div className="flex items-center justify-between gap-1 overflow-x-auto scrollbar-none">
+                          <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 shrink-0">
+                            25 pts / batch
+                          </span>
+
+                          {/* Map Mode */}
+                          <div className="flex items-center gap-0.5 bg-white p-0.5 rounded-lg border border-gray-200 text-[10px] shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setMapDisplayMode('page')}
+                              className={`px-2 py-0.5 rounded font-bold cursor-pointer ${
+                                mapDisplayMode === 'page' ? 'bg-blue-50 text-blue-600 font-black' : 'text-gray-600'
+                              }`}
+                            >
+                              25 Page
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setMapDisplayMode('accumulate')}
+                              className={`px-2 py-0.5 rounded font-bold cursor-pointer ${
+                                mapDisplayMode === 'accumulate' ? 'bg-emerald-50 text-emerald-600 font-black' : 'text-gray-600'
+                              }`}
+                            >
+                              +Add ({accumulatedSchools.length})
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setMapDisplayMode('all_dots')}
+                              className={`px-2 py-0.5 rounded font-bold cursor-pointer ${
+                                mapDisplayMode === 'all_dots' ? 'bg-[#EA4335] text-white font-black' : 'text-gray-600'
+                              }`}
+                            >
+                              All Dots
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Scrollable School Cards */}
+                    {mobileSheetState !== 'peek' && (
+                      <div className="flex-1 overflow-y-auto p-2.5 space-y-2 touch-pan-y overscroll-contain custom-scrollbar">
+                        {mapFilteredSchools.length > 0 ? (
+                          mapFilteredSchools.map((school, idx) => renderMapSchoolCard(school, idx))
+                        ) : (
+                          <div className="p-6 text-center text-gray-400 text-xs">
+                            No schools match &quot;{mapListSearch}&quot;
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Mobile Footer: Add Next 25 Points on Map */}
+                    {mobileSheetState !== 'peek' && (
+                      <div className="p-2 border-t border-gray-100 bg-white flex items-center justify-between gap-2 shrink-0">
+                        <span className="text-[11px] font-bold text-gray-700">
+                          {schoolsForMap.length} / {totalSchoolsCount} Points
+                        </span>
+                        {hasMoreSchools ? (
+                          <button
+                            type="button"
+                            onClick={loadNextBatch}
+                            disabled={isLoadingMore}
+                            className="px-3 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1 disabled:opacity-50 cursor-pointer shadow-2xs"
+                          >
+                            {isLoadingMore ? 'Adding 25...' : '+ Add 25 Points'}
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-gray-500 font-medium">All points added</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : viewMode === 'compact' ? (
-                <div className="flex flex-col gap-2 sm:gap-2.5">
-                  {displayedSchools.map((school, idx) => renderCompactSchoolRow(school, idx))}
+                <div className="flex flex-col gap-2 sm:gap-2.5 touch-pan-y overscroll-contain">
+                  {displayedSchools.slice(0, 25).map((school, idx) => renderCompactSchoolRow(school, idx))}
                 </div>
               ) : viewMode === 'grid3' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
-                  {displayedSchools.map((school, idx) => renderSchoolCard(school, idx))}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 touch-pan-y overscroll-contain">
+                  {displayedSchools.slice(0, 25).map((school, idx) => renderSchoolCard(school, idx))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-5">
-                  {displayedSchools.map((school, idx) => renderSchoolCard(school, idx))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-5 touch-pan-y overscroll-contain">
+                  {displayedSchools.slice(0, 25).map((school, idx) => renderSchoolCard(school, idx))}
                 </div>
               )}
 
@@ -2013,60 +3612,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 </div>
               )}
 
-              {/* Pagination */}
-              {initialData.totalPages > 1 ? (
-                <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-gray-200 shadow-sm">
-                  <span className="text-xs sm:text-sm text-gray-500 font-medium">
-                    Page <span className="font-bold text-gray-800">{initialData.currentPage}</span> of{' '}
-                    <span className="font-bold text-gray-800">{initialData.totalPages}</span> ({initialData.totalCount} schools)
-                  </span>
-
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      disabled={initialData.currentPage <= 1}
-                      onClick={() => handlePageChange(initialData.currentPage - 1)}
-                      className="px-3 py-1.5 sm:px-3.5 sm:py-2 border border-gray-200 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition"
-                    >
-                      <ChevronLeft size={16} />
-                      <span>Prev</span>
-                    </button>
-
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: Math.min(initialData.totalPages, 5) }, (_, i) => {
-                        const pageNum = i + 1;
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => handlePageChange(pageNum)}
-                            className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs sm:text-sm font-bold transition ${
-                              initialData.currentPage === pageNum
-                                ? 'bg-blue-600 text-white shadow-xs'
-                                : 'border border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    <button
-                      disabled={initialData.currentPage >= initialData.totalPages}
-                      onClick={() => handlePageChange(initialData.currentPage + 1)}
-                      className="px-3 py-1.5 sm:px-3.5 sm:py-2 border border-gray-200 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition"
-                    >
-                      <span>Next</span>
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                displayedSchools.length > 0 && (
-                  <div className="mt-6 text-center text-xs text-gray-400 font-medium py-2">
-                    Showing all {displayedSchools.length} {displayedSchools.length === 1 ? 'school' : 'schools'}
-                  </div>
-                )
-              )}
+              {/* Bottom Pagination Bar (Strictly max 25 schools per page, shown below school cards) */}
+              {viewMode !== 'map' && renderPaginationBar('bottom')}
             </>
           )}
         </main>
@@ -2074,7 +3621,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
       {/* ── Top Rated Schools Section (Horizontal Scroll Carousel) ── */}
       {canViewSchools && topSchools.length > 0 && (
-        <div className="w-full bg-gray-50/80 py-8 sm:py-10 border-t border-gray-200">
+        <div className={`w-full bg-gray-50/80 py-8 sm:py-10 border-t border-gray-200 ${
+          viewMode === 'map' ? 'hidden md:block' : ''
+        }`}>
           <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-4 sm:mb-5">
               <div className="flex items-center gap-2">
@@ -2115,7 +3664,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             {/* Horizontal scroll container with compact cards */}
             <div
               id="top-schools-slider"
-              className="flex gap-4 overflow-x-auto pb-4 pt-1 px-1 custom-scrollbar snap-x snap-mandatory scroll-smooth -mx-4 px-4 md:mx-0 md:px-1"
+              className="flex gap-4 overflow-x-auto pb-4 pt-1 custom-scrollbar snap-x snap-mandatory scroll-smooth w-full px-1.5 touch-pan-x overscroll-x-contain"
             >
               {topSchools.map((school, idx) => renderTopSchoolCard(school, idx))}
             </div>
@@ -2150,28 +3699,109 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           </div>
         </div>
       )}
-      {/* State Board Modal */}
+      {/* State Board Modal - Compact & Mobile Friendly (z-[80] so it sits above the filter sheet) */}
       {isStateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/70 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 relative">
-            <button onClick={() => setIsStateModalOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-900">
-              <X size={24} />
-            </button>
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><MapPin className="text-[#0D4979]" /> Select State Board</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-1 custom-scrollbar">
-              {['Andhra Pradesh', 'Delhi', 'Gujarat', 'Haryana', 'Karnataka', 'Kerala', 'Maharashtra', 'Madhya Pradesh', 'Punjab', 'Rajasthan', 'Tamil Nadu', 'Uttar Pradesh', 'West Bengal'].map(state => (
-                <label key={state} className="flex items-center gap-2 p-3 border border-gray-100 hover:border-blue-300 hover:bg-blue-50 rounded-xl cursor-pointer transition-colors group">
-                  <input type="checkbox" name="state_board_select" className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300" />
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">{state}</span>
-                </label>
-              ))}
-            </div>
-            <div className="mt-6 flex justify-end">
+        <div className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div 
+            className="fixed inset-0"
+            onClick={() => setIsStateModalOpen(false)}
+          />
+          <div className="relative bg-white rounded-2xl max-w-sm w-full p-4 shadow-2xl border border-gray-150 z-10 flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-150">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-100">
+              <div className="flex items-center gap-1.5">
+                <div className="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <MapPin size={13} />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900 leading-tight">Select State Board</h3>
+                  <p className="text-[10px] text-gray-500">Choose state curriculum board</p>
+                </div>
+              </div>
               <button 
-                onClick={() => setIsStateModalOpen(false)}
-                className="px-6 py-2 bg-[#0D4979] text-white rounded-xl font-semibold shadow-md hover:bg-[#093254] transition-colors"
+                type="button"
+                onClick={() => setIsStateModalOpen(false)} 
+                className="w-7 h-7 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 flex items-center justify-center transition cursor-pointer"
               >
-                Apply
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Quick Search State Input */}
+            <div className="relative mb-2.5">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={stateSearchQuery}
+                onChange={(e) => setStateSearchQuery(e.target.value)}
+                placeholder="Search state (e.g. Haryana, Delhi)..."
+                className="w-full pl-7 pr-6 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+              {stateSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setStateSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 cursor-pointer"
+                >
+                  <X size={11} />
+                </button>
+              )}
+            </div>
+
+            {/* Compact States Grid */}
+            <div className="grid grid-cols-2 gap-1.5 overflow-y-auto max-h-56 p-0.5 custom-scrollbar">
+              {['Andhra Pradesh', 'Assam', 'Bihar', 'Delhi', 'Gujarat', 'Haryana', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Odisha', 'Punjab', 'Rajasthan', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'West Bengal']
+                .filter(st => st.toLowerCase().includes(stateSearchQuery.toLowerCase()))
+                .map((state) => {
+                  const isChecked = selectedStateBoard === state;
+                  return (
+                    <button
+                      key={state}
+                      type="button"
+                      onClick={() => {
+                        setSelectedStateBoard(isChecked ? null : state);
+                        setSelectedBoard('State Board');
+                      }}
+                      className={`flex items-center justify-between px-2.5 py-1.5 border rounded-xl text-xs transition-all text-left cursor-pointer ${
+                        isChecked
+                          ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold shadow-2xs'
+                          : 'border-gray-200 hover:border-blue-300 hover:bg-slate-50 text-gray-700 font-medium'
+                      }`}
+                    >
+                      <span className="truncate">{state}</span>
+                      {isChecked && <Check size={12} className="text-blue-600 shrink-0 ml-1" />}
+                    </button>
+                  );
+                })}
+            </div>
+
+            {/* Footer Actions */}
+            <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedStateBoard(null);
+                  setSelectedBoard('all');
+                  handleFilterChange({ board: undefined });
+                  setIsStateModalOpen(false);
+                }}
+                className="text-xs font-semibold text-gray-500 hover:text-gray-800 transition cursor-pointer"
+              >
+                Clear
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedStateBoard) {
+                    setSelectedBoard('State Board');
+                    handleFilterChange({ board: 'State Board', q: selectedStateBoard });
+                  }
+                  setIsStateModalOpen(false);
+                }}
+                className="px-4 py-1.5 bg-[#006FCC] hover:bg-[#005499] text-white rounded-xl text-xs font-bold shadow-2xs transition cursor-pointer"
+              >
+                Apply State Board
               </button>
             </div>
           </div>
@@ -2200,7 +3830,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-0.5">
                     <h3 className="text-base sm:text-lg font-bold text-slate-900 truncate">
-                      {googleMapModalSchool.school_name || googleMapModalSchool.name}
+                      {getCleanSchoolName(googleMapModalSchool.school_name || googleMapModalSchool.name)}
                     </h3>
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
                       <CheckCircle2 size={11} className="text-emerald-600 fill-emerald-100" />
@@ -2209,12 +3839,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-500 truncate">
                     <span className="truncate">
-                      {[
-                        googleMapModalSchool.village_ward || googleMapModalSchool.locality,
-                        googleMapModalSchool.district_name,
-                        googleMapModalSchool.state_name,
-                        googleMapModalSchool.pincode
-                      ].filter(Boolean).join(', ')}
+                      {formatCardLocation(googleMapModalSchool)}
                     </span>
                     {googleMapModalSchool.distance !== undefined && (
                       <span className="shrink-0 font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full text-[10px]">
@@ -2259,7 +3884,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 sm:flex-none px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition"
+                  className="flex-1 sm:flex-none px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition"
                 >
                   <Compass size={15} />
                   <span>Get Directions</span>
@@ -2268,7 +3893,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 <Link
                   href={getSchoolUrl(googleMapModalSchool)}
                   onClick={() => setGoogleMapModalSchool(null)}
-                  className="flex-1 sm:flex-none px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1 shadow-sm transition"
+                  className="flex-1 sm:flex-none px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-1 shadow-sm transition"
                 >
                   <span>View Full Profile</span>
                   <ChevronRight size={14} />

@@ -724,7 +724,7 @@ export default function CompositeLabClient() {
 
                     <button
                       type="submit"
-                      className="w-full py-2.5 mt-1 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white font-extrabold text-xs uppercase tracking-wider transition shadow-sm active:scale-98"
+                      className="w-full py-2.5 mt-1 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-extrabold text-xs uppercase tracking-wider transition shadow-sm active:scale-98"
                     >
                       Get Itemized BoQ &amp; 3D Plan
                     </button>

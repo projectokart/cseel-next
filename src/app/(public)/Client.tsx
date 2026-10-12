@@ -18,6 +18,7 @@ import {
   VersionHistoryModal 
 } from "@/components/admin-editor";
 import { HomepageSectionId, HomepageSectionConfig } from "@/features/homepage-cms/types";
+import { M3Button, M3IconButton, M3AssistChip, M3Card } from "@/components/google-ui";
 
 // Swiper React Component & Modules
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -418,6 +419,8 @@ function HeroSlider() {
             <img
               src={slide.src}
               alt={slide.alt}
+              width={800}
+              height={450}
               loading={i === 0 ? "eager" : "lazy"}
               decoding={i === 0 ? "sync" : "async"}
               fetchPriority={i === 0 ? "high" : "low"}
@@ -467,12 +470,15 @@ function HeroText() {
         <strong className="text-[#3C4043] font-medium">real-life application of knowledge</strong>, ensuring that learning is meaningful,
         engaging, and future-ready.
       </div>
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="text-[#1A73E8] hover:text-[#1765CC] font-medium text-[14px] mt-2.5 hover:underline cursor-pointer inline-flex items-center gap-1 transition-colors"
-      >
-        <span>{expanded ? "Read Less ↑" : "Read More ↓"}</span>
-      </button>
+      <div className="mt-2.5 flex justify-center">
+        <M3Button
+          variant="text"
+          size="sm"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Read Less ↑" : "Read More ↓"}
+        </M3Button>
+      </div>
     </div>
   );
 }
@@ -596,9 +602,9 @@ const Index = () => {
           <div className="cseel-hero-container container mx-auto px-4 text-center">
             
             {/* Single-Line Dominant Brand Title (Original CSEEL Brand Blue & Bold Typography) */}
-            <div style={{ animation: "fadeSlideUp 0.8s ease forwards" }} className="my-4 sm:my-7 px-2">
+            <div className="my-4 sm:my-7 px-2">
               <h1
-                className="cseel-brand-hero-h1 text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#005689] leading-tight whitespace-nowrap text-center"
+                className="cseel-brand-hero-h1 text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#005689] leading-tight break-words text-center"
                 style={{
                   fontFamily: "var(--font-montserrat), 'Montserrat', 'Poppins', sans-serif",
                   color: "#005689",
@@ -627,33 +633,38 @@ const Index = () => {
             </div>
 
             {/* Description with Read More */}
-            <div style={{ animation: "fadeSlideUp 0.8s ease 0.15s both" }}>
+            <div>
               <HeroText />
             </div>
 
-            {/* CTA Buttons */}
-            <div
-              className="flex flex-col sm:flex-row justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4"
-              style={{ animation: "fadeSlideUp 0.8s ease 0.3s both" }}
-            >
-              <Link
-                href={heroConfig?.cta_link || "/compare-plans"}
-                className="button_primary group px-8 py-3.5 text-white font-bold text-[15px] rounded-[12px] transition-all flex items-center justify-center gap-2.5 active:scale-98 shadow-[0_4px_18px_rgba(0,111,204,0.35)]"
-              >
-                <span className="text-white">{heroConfig?.cta_text || "Our Plans"}</span>
-                <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform shrink-0" />
+            {/* CTA Buttons — Uniform Official M3 Pill Buttons (rounded-full, 48px lg height) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4">
+              <Link href={heroConfig?.cta_link || "/compare-plans"} className="w-full sm:w-auto">
+                <M3Button
+                  variant="filled"
+                  size="lg"
+                  fullWidth
+                  trailingIcon={<ArrowRight className="w-4 h-4" />}
+                  className="px-8"
+                >
+                  {heroConfig?.cta_text || "Our Plans"}
+                </M3Button>
               </Link>
-              <Link
-                href={heroConfig?.secondary_cta_link || "/virtual-lab-tour"}
-                className="button_secondary group px-8 py-3.5 text-[#006FCC] font-bold text-[15px] rounded-[12px] transition-all flex items-center justify-center gap-2.5 active:scale-98"
-              >
-                <Play className="w-4 h-4 text-[#006FCC] fill-[#006FCC]/20 shrink-0" />
-                <span>{heroConfig?.secondary_cta_text || "Live Lab Tour"}</span>
+              <Link href={heroConfig?.secondary_cta_link || "/virtual-lab-tour"} className="w-full sm:w-auto">
+                <M3Button
+                  variant="tonal"
+                  size="lg"
+                  fullWidth
+                  leadingIcon={<Play className="w-4 h-4 fill-[#001d35]/20" />}
+                  className="px-8"
+                >
+                  {heroConfig?.secondary_cta_text || "Live Lab Tour"}
+                </M3Button>
               </Link>
             </div>
 
             {/* Hero Image Slider - Scaled to fit perfectly */}
-            <div style={{ animation: "fadeSlideUp 0.9s ease 0.45s both" }}>
+            <div>
               <HeroSlider />
             </div>
 
@@ -729,7 +740,10 @@ const Index = () => {
                       <img
                         src={school.logoUrl}
                         alt={school.name}
+                        width={40}
+                        height={40}
                         loading="lazy"
+                        decoding="async"
                         onError={(e) => {
                           const img = e.currentTarget;
                           img.style.display = 'none';
@@ -828,79 +842,79 @@ const Index = () => {
             </div>
             
             {/* Feature Cards Wrapper — Sticky Stacking Effect */}
-            <div className="achievement_list-wrapper flex flex-col gap-8 pb-12 relative">
+            <div className="achievement_list-wrapper flex flex-col gap-6 pb-8 relative">
               
               {/* Feature 1: Soft Blue Background */}
               <div 
-                className="card-soft-blue rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-xl transition-all duration-300 sticky"
-                style={{ top: '100px', zIndex: 10, marginBottom: '2.5rem' }}
+                className="card-soft-blue rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_6px_24px_rgba(0,0,0,0.05)] hover:shadow-lg transition-all duration-300 sticky"
+                style={{ top: '96px', zIndex: 10, marginBottom: '1.25rem' }}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[380px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[270px] lg:min-h-[290px]">
                   {/* Content Section */}
-                  <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
-                    <p className="text-sm font-semibold text-primary mb-2">No need for extra grading or planning time</p>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4" style={{ color: '#023858' }}>
+                  <div className="p-6 sm:p-7 lg:p-8 flex flex-col justify-center">
+                    <p className="text-xs sm:text-sm font-semibold text-primary mb-1.5">No need for extra grading or planning time</p>
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2.5 leading-snug" style={{ color: '#023858' }}>
                       Students look forward to learning at their own pace
                     </h3>
-                    <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
-                      Educators assign CSEEL experimental labs to actively engage students—without increasing their already busy workloads. Higher engagement naturally leads to better understanding, improved grades, and stronger retention.
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed">
+                      Educators assign CSEEL experimental labs to actively engage students—without increasing their already busy workloads. Higher engagement naturally leads to better understanding and improved retention.
                     </p>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                    <div className="space-y-2.5">
+                      <div className="flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-4 w-4 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
                         <div>
-                          <p className="font-semibold text-foreground text-sm md:text-base">C- to B+ Grade Improvement</p>
-                          <p className="text-xs md:text-sm text-muted-foreground">CSEEL helps students improve their academic performance by an average of one full letter grade or more.</p>
+                          <p className="font-semibold text-foreground text-xs sm:text-sm">C- to B+ Grade Improvement</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground">CSEEL helps students improve academic performance by an average of one full letter grade.</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div className="flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-4 w-4 text-primary mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
                         <div>
-                          <p className="font-semibold text-foreground text-sm md:text-base">82% Student Engagement</p>
-                          <p className="text-xs md:text-sm text-muted-foreground">82% of students using CSEEL report high levels of engagement, participation, and interest in learning.</p>
+                          <p className="font-semibold text-foreground text-xs sm:text-sm">82% Student Engagement</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground">82% of students report high levels of engagement and curiosity in learning.</p>
                         </div>
                       </div>
                     </div>
                   </div>
                   {/* Image Section */}
-                  <div className="relative w-full h-64 lg:h-auto lg:min-h-full overflow-hidden group">
-                    <img src="/images/features/virtual-classroom-remote-science-learning.avif" alt="Student learning remotely" loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="relative w-full h-48 sm:h-56 lg:h-auto lg:min-h-full overflow-hidden group">
+                    <img src="/images/features/virtual-classroom-remote-science-learning.avif" alt="Student learning remotely" width={600} height={340} loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                 </div>
               </div>
 
               {/* Feature 2: Soft Peach/Rose Background */}
               <div 
-                className="card-soft-red rounded-3xl overflow-hidden shadow-[0_-6px_28px_rgba(0,0,0,0.07),0_12px_32px_rgba(0,0,0,0.08)] hover:shadow-xl transition-all duration-300 sticky"
-                style={{ top: '124px', zIndex: 20, marginBottom: '2.5rem' }}
+                className="card-soft-red rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_-4px_22px_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.06)] hover:shadow-lg transition-all duration-300 sticky"
+                style={{ top: '116px', zIndex: 20, marginBottom: '1.25rem' }}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[380px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[270px] lg:min-h-[290px]">
                   {/* Image Section */}
-                  <div className="relative w-full h-64 lg:h-auto lg:min-h-full overflow-hidden group lg:order-first order-last">
-                    <img src="/images/features/hands-on-science-laboratory-beakers.avif" alt="Scientists in lab" loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="relative w-full h-48 sm:h-56 lg:h-auto lg:min-h-full overflow-hidden group lg:order-first order-last">
+                    <img src="/images/features/hands-on-science-laboratory-beakers.avif" alt="Scientists in lab" width={600} height={340} loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                   {/* Content Section */}
-                  <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
-                    <p className="text-sm font-semibold text-rose-600 mb-2">Higher Pass Rates. Stronger Retention.</p>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4" style={{ color: '#023858' }}>
+                  <div className="p-6 sm:p-7 lg:p-8 flex flex-col justify-center">
+                    <p className="text-xs sm:text-sm font-semibold text-rose-600 mb-1.5">Higher Pass Rates. Stronger Retention.</p>
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2.5 leading-snug" style={{ color: '#023858' }}>
                       Improved Student Success
                     </h3>
-                    <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
-                      CSEEL has been proven to increase student grades, pass rates, and overall academic performance.
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed">
+                      CSEEL has been proven to increase student grades, pass rates, and overall practical understanding.
                     </p>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-rose-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                    <div className="space-y-2.5">
+                      <div className="flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-4 w-4 text-rose-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
                         <div>
-                          <p className="font-semibold text-foreground text-sm md:text-base">34% Reduction in DFW Rates</p>
-                          <p className="text-xs md:text-sm text-muted-foreground">Institutions using CSEEL have observed a 34% decrease in DFW rates across multiple semesters.</p>
+                          <p className="font-semibold text-foreground text-xs sm:text-sm">34% Reduction in DFW Rates</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground">Institutions using CSEEL report a significant decrease in academic failure rates.</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-rose-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div className="flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-4 w-4 text-rose-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
                         <div>
-                          <p className="font-semibold text-foreground text-sm md:text-base">93% Positive Student Experience</p>
-                          <p className="text-xs md:text-sm text-muted-foreground">93% of students report a positive learning experience with CSEEL.</p>
+                          <p className="font-semibold text-foreground text-xs sm:text-sm">93% Positive Student Experience</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground">93% of students report an inspiring and confidence-building learning journey.</p>
                         </div>
                       </div>
                     </div>
@@ -910,39 +924,39 @@ const Index = () => {
 
               {/* Feature 3: Soft Teal/Emerald Background */}
               <div 
-                className="card-soft-green rounded-3xl overflow-hidden shadow-[0_-6px_28px_rgba(0,0,0,0.07),0_12px_32px_rgba(0,0,0,0.08)] hover:shadow-xl transition-all duration-300 sticky"
-                style={{ top: '148px', zIndex: 30, marginBottom: '1rem' }}
+                className="card-soft-green rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_-4px_22px_rgba(0,0,0,0.05),0_8px_24px_rgba(0,0,0,0.06)] hover:shadow-lg transition-all duration-300 sticky"
+                style={{ top: '136px', zIndex: 30, marginBottom: '0.75rem' }}
               >
-                <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[380px]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[270px] lg:min-h-[290px]">
                   {/* Content Section */}
-                  <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
-                    <p className="text-sm font-semibold text-emerald-700 mb-2">Increase Access</p>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4" style={{ color: '#023858' }}>
+                  <div className="p-6 sm:p-7 lg:p-8 flex flex-col justify-center">
+                    <p className="text-xs sm:text-sm font-semibold text-emerald-700 mb-1.5">Increase Access</p>
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2.5 leading-snug" style={{ color: '#023858' }}>
                       Dismantle Barriers to Achievement
                     </h3>
-                    <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
-                      Expand STEM equity and access among your students. Cseel is designed to meet diverse student needs and offer a more consistent, accessible science learning experience.
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-4 leading-relaxed">
+                      Expand STEM equity and practical access across schools with consistent, scalable virtual and physical learning labs.
                     </p>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                    <div className="space-y-2.5">
+                      <div className="flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
                         <div>
-                          <p className="font-semibold text-foreground text-sm md:text-base">24% Learning Gains for Struggling Students</p>
-                          <p className="text-xs md:text-sm text-muted-foreground">The lowest-performing students show an average 24% improvement in pre-to-post test knowledge.</p>
+                          <p className="font-semibold text-foreground text-xs sm:text-sm">24% Learning Gains for Struggling Students</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground">Students show an average 24% improvement in pre-to-post concept mastery tests.</p>
                         </div>
                       </div>
-                      <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-5 w-5 text-emerald-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
+                      <div className="flex items-start gap-2.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-circle-check-big h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0"><path d="M21.801 10A10 10 0 1 1 17 3.335"></path><path d="m9 11 3 3L22 4"></path></svg>
                         <div>
-                          <p className="font-semibold text-foreground text-sm md:text-base">Trusted by Educators</p>
-                          <p className="text-xs md:text-sm text-muted-foreground">9 out of 10 educators say they would recommend CSEEL to other teachers or institutions.</p>
+                          <p className="font-semibold text-foreground text-xs sm:text-sm">Trusted by Educators</p>
+                          <p className="text-[11px] sm:text-xs text-muted-foreground">9 out of 10 educators recommend CSEEL for practical hands-on curriculum implementation.</p>
                         </div>
                       </div>
                     </div>
                   </div>
                   {/* Image Section */}
-                  <div className="relative w-full h-64 lg:h-auto lg:min-h-full overflow-hidden group">
-                    <img src="/images/features/indian-school-students-interactive-classroom.avif" alt="Students in classroom" loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="relative w-full h-48 sm:h-56 lg:h-auto lg:min-h-full overflow-hidden group">
+                    <img src="/images/features/indian-school-students-interactive-classroom.avif" alt="Students in classroom" width={600} height={340} loading="lazy" decoding="async" className="w-full h-full lg:absolute lg:inset-0 object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                 </div>
               </div>
@@ -974,9 +988,12 @@ const Index = () => {
 
             {/* Header */}
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-[#006fcc] border border-blue-200/80 mb-3">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>{catalogConfig?.badge_text || "SUBJECTS & DISCIPLINES"}</span>
+              <div className="mb-3 flex justify-center">
+                <M3AssistChip
+                  icon={<Sparkles className="w-3.5 h-3.5 text-[#0b57d0]" />}
+                  label={catalogConfig?.badge_text || "SUBJECTS & DISCIPLINES"}
+                  className="bg-[#e8f0fe] border-[#c2e7ff] text-[#0b57d0] font-bold uppercase tracking-wider text-[11px] pointer-events-none"
+                />
               </div>
               <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">
                 {catalogConfig?.title || "Explore the CSEEL Experimental Catalog"}
@@ -986,52 +1003,65 @@ const Index = () => {
               </p>
             </div>
 
-            {/* 3 Domain Cards */}
+            {/* 3 Domain Cards — Official M3Card (16px radius) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {catalogDomains.map((domain, i) => (
                 <Link
                   key={domain.id}
                   href={domain.link}
-                  className="lift block bg-white rounded-card shadow-card border overflow-hidden border-rule/60 flex flex-col justify-between group hover:border-[#005689]/40 hover:shadow-card-hi transition-all"
+                  className="block group"
                   style={{ transitionDelay: `${i * 60}ms` }}
                 >
-                  {/* Top content section */}
-                  <div className="p-7 pb-5 lg:p-8">
-                    <div className="flex items-center justify-between mb-3 gap-2">
-                      <h3 className="text-2xl font-bold text-[#0D4979] group-hover:text-[#005689] transition-colors">
-                        {domain.title}
-                      </h3>
-                      <span className="inline-flex items-center gap-1 text-xs font-bold text-[#005689] group-hover:translate-x-1 transition-transform shrink-0">
-                        Explore Labs <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
+                  <M3Card
+                    variant="outlined"
+                    interactive
+                    className="bg-white rounded-[16px] overflow-hidden border-[#c4c7c5] flex flex-col justify-between h-full p-0 hover:border-[#0b57d0]/50 hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200"
+                  >
+                    {/* Top content section */}
+                    <div className="p-7 pb-5 lg:p-8">
+                      <div className="flex items-center justify-between mb-3 gap-2">
+                        <h3 className="text-2xl font-bold text-[#1f1f1f] group-hover:text-[#0b57d0] transition-colors">
+                          {domain.title}
+                        </h3>
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-[#0b57d0] group-hover:translate-x-1 transition-transform shrink-0">
+                          Explore Labs <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                      <p className="text-[#444746] text-[15px] leading-relaxed">
+                        {domain.desc}
+                      </p>
                     </div>
-                    <p className="text-slate-body text-[15px] leading-relaxed">
-                      {domain.desc}
-                    </p>
-                  </div>
-                  {/* Image section */}
-                  <div className="px-7 pb-7 lg:px-8 lg:pb-8">
-                    <div className="thumb-zoom rounded-xl overflow-hidden shadow-sm">
-                      <img
-                        className="w-full object-cover aspect-[16/9] group-hover:scale-[1.04] transition-transform duration-500"
-                        src={domain.bgImage}
-                        alt={domain.title}
-                        loading="lazy"
-                      />
+                    {/* Image section */}
+                    <div className="px-7 pb-7 lg:px-8 lg:pb-8">
+                      <div className="thumb-zoom rounded-[12px] overflow-hidden shadow-xs">
+                        <img
+                          className="w-full object-cover aspect-[16/9] group-hover:scale-[1.04] transition-transform duration-500"
+                          src={domain.bgImage}
+                          alt={domain.title}
+                          width={400}
+                          height={225}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  </M3Card>
                 </Link>
               ))}
             </div>
 
-            {/* Bottom CTA */}
+            {/* Bottom CTA — Official M3Button Pill */}
             <div className="text-center mt-10">
               <Link
                 href={catalogConfig?.cta_link && catalogConfig.cta_link !== '/subject' ? catalogConfig.cta_link : "/domain/science"}
-                className="button_primary inline-flex items-center gap-2.5 px-8 py-3.5 bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-[15px] rounded-[12px] transition-all shadow-[0_4px_18px_rgba(0,111,204,0.35)] active:scale-98"
               >
-                <span>{catalogConfig?.cta_text || "View All Subject Hubs & Interactive Labs"}</span>
-                <ArrowRight className="w-4 h-4" />
+                <M3Button
+                  variant="filled"
+                  size="lg"
+                  trailingIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  {catalogConfig?.cta_text || "View All Subject Hubs & Interactive Labs"}
+                </M3Button>
               </Link>
             </div>
 
@@ -1127,19 +1157,23 @@ const Index = () => {
                   {finalCtaConfig?.subtitle || "See our plan options, learn more about live labs, and find out how easy it is to get started with CSEEL."}
                 </p>
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link
-                    href={finalCtaConfig?.cta_link || "/compare-plans"}
-                    className="button_primary inline-flex items-center gap-2.5 px-8 py-3.5 bg-[#006FCC] hover:bg-[#005499] text-white font-bold rounded-[12px] transition-all text-base shadow-[0_4px_18px_rgba(0,111,204,0.4)] hover:shadow-[0_6px_24px_rgba(0,111,204,0.55)] active:scale-98"
-                  >
-                    <span>{finalCtaConfig?.cta_text || "Compare Plans & Pricing"}</span>
-                    <ArrowRight className="w-4 h-4" />
+                  <Link href={finalCtaConfig?.cta_link || "/compare-plans"}>
+                    <M3Button
+                      variant="tonal"
+                      size="lg"
+                      trailingIcon={<ArrowRight className="w-4 h-4" />}
+                    >
+                      {finalCtaConfig?.cta_text || "Compare Plans & Pricing"}
+                    </M3Button>
                   </Link>
                 </div>
               </div>
-              <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/15 group">
+              <div className="rounded-[16px] overflow-hidden shadow-2xl border border-white/15 group">
                 <img
                   src={finalCtaConfig?.image || "/images/features/students-collaborative-laptop-learning.avif"}
                   alt="Students with laptop"
+                  width={600}
+                  height={380}
                   loading="lazy"
                   decoding="async"
                   className="w-full h-80 md:h-[380px] object-cover transition-transform duration-700 group-hover:scale-105"
@@ -1208,18 +1242,22 @@ function TestimonialSection() {
               <span className="text-muted-foreground">across the nation.</span>
             </h2>
           </div>
-          {/* Arrows */}
-          <div className="flex gap-3 shrink-0">
-            <button
-              className="testimonial-swiper-prev w-10 h-10 rounded-full bg-white dark:bg-[#1E1F20] border border-border flex items-center justify-center cursor-pointer transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
-            </button>
-            <button
-              className="testimonial-swiper-next w-10 h-10 rounded-full bg-white dark:bg-[#1E1F20] border border-border flex items-center justify-center cursor-pointer transition-all text-muted-foreground hover:text-foreground hover:bg-muted"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
+          {/* Arrows — Official M3IconButton Outlined */}
+          <div className="flex gap-2.5 shrink-0">
+            <M3IconButton
+              ariaLabel="Previous testimonial"
+              variant="outlined"
+              size="md"
+              className="testimonial-swiper-prev"
+              icon={<ChevronLeft className="w-4 h-4" />}
+            />
+            <M3IconButton
+              ariaLabel="Next testimonial"
+              variant="outlined"
+              size="md"
+              className="testimonial-swiper-next"
+              icon={<ChevronRight className="w-4 h-4" />}
+            />
           </div>
         </div>
 
@@ -1273,18 +1311,18 @@ function TestimonialSection() {
                 <div
                   style={{
                     background: cardBg,
-                    borderRadius: 20,
+                    borderRadius: 16,
                     border: `1px solid ${cardBorder}`,
                     padding: "22px",
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    transition: "border-color 0.3s, box-shadow 0.3s, transform 0.3s",
+                    transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
                     cursor: "default",
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
-                    (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)";
+                    (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
                   }}
                   onMouseLeave={e => {
                     (e.currentTarget as HTMLElement).style.boxShadow = "none";
@@ -1297,7 +1335,10 @@ function TestimonialSection() {
                       <img
                         src={t.photo_url || "/images/teachers/verified-teacher-avatar-placeholder.webp"}
                         alt={t.name}
+                        width={44}
+                        height={44}
                         loading="lazy"
+                        decoding="async"
                         style={{ width:"100%", height:"100%", objectFit:"cover" }}
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;
@@ -1373,6 +1414,8 @@ function AwardsSection() {
                 key={i}
                 src={src}
                 alt="Award badge"
+                width={80}
+                height={80}
                 loading="lazy"
                 decoding="async"
                 className="h-20 w-20 object-contain transition-transform duration-300 hover:scale-110"
@@ -1391,10 +1434,14 @@ function AwardsSection() {
             <p className="text-muted-foreground mb-6">
               Cseel has earned recognition for our research-based learning architecture, best-in-class customer support, and student impact. Learn why our hands-on science labs have received more than 10 prestigious education awards.
             </p>
-            <Link href="/about-us"
-              className="button_primary inline-flex items-center gap-2.5 px-7 py-3 bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-sm rounded-[12px] transition-all shadow-[0_4px_14px_rgba(0,111,204,0.35)] active:scale-98"
-            >
-              <span>Learn More About CSEEL</span> <ArrowRight className="w-4 h-4" />
+            <Link href="/about-us">
+              <M3Button
+                variant="filled"
+                size="lg"
+                trailingIcon={<ArrowRight className="w-4 h-4" />}
+              >
+                Learn More About CSEEL
+              </M3Button>
             </Link>
           </div>
         </div>

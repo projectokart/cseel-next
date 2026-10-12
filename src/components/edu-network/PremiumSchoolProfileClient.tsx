@@ -1941,7 +1941,7 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                 <a href="#gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><ImageIcon className="w-4 h-4 text-indigo-600" /><span>Gallery</span></a>
                 <a href="#address_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><MapPin className="w-4 h-4 text-rose-600" /><span>Address & Contact</span></a>
               </div>
-              <button onClick={() => { setIsMobileMenuOpen(false); setIsCallbackModalOpen(true); }} className="w-full py-3 bg-[#00875a] text-white font-black text-xs rounded-xl shadow-xs text-center">Request Callback</button>
+              <button onClick={() => { setIsMobileMenuOpen(false); setIsCallbackModalOpen(true); }} className="w-full py-3 bg-[#00875a] text-white font-black text-xs rounded-full shadow-xs text-center">Request Callback</button>
             </div>
           </div>
         )}
@@ -1971,7 +1971,7 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                 </div>
                 <div className="flex items-center gap-2 p-1.5 bg-slate-50 border rounded-xl">
                   <input type="text" readOnly value={currentShareUrl} className="w-full bg-transparent px-2 text-xs font-mono outline-none select-all truncate" />
-                  <button onClick={handleCopyLink} className={`px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${copiedLink ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'}`}>{copiedLink ? <CheckCheck className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}<span>{copiedLink ? 'Copied' : 'Copy'}</span></button>
+                  <button onClick={handleCopyLink} className={`px-3 py-2 rounded-full text-xs font-bold transition flex items-center gap-1 shrink-0 ${copiedLink ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'}`}>{copiedLink ? <CheckCheck className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}<span>{copiedLink ? 'Copied' : 'Copy'}</span></button>
                 </div>
               </div>
             </div>

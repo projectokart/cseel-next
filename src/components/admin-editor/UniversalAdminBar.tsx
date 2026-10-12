@@ -65,7 +65,8 @@ export const UniversalAdminBar: React.FC = () => {
 
       {/* Floating Universal Control Bar */}
       <div 
-        className={`fixed top-0 left-0 right-0 z-[99997] transition-all duration-300 shadow-xl ${
+        id="universal-admin-bar"
+        className={`universal-admin-bar fixed top-0 left-0 right-0 z-[99997] transition-all duration-300 shadow-xl ${
           isEditMode 
             ? 'bg-slate-900/95 text-white backdrop-blur-md border-b border-[#005689]/40' 
             : 'bg-slate-900/80 text-white backdrop-blur-sm border-b border-slate-800/80'

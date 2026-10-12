@@ -21,6 +21,8 @@ interface SchoolFinderMapProps {
   radiusKm: number;
   schools: SchoolRecord[];
   mapPoints?: SchoolMapPoint[];
+  allSchoolsDots?: SchoolRecord[];
+  showAllRedDots?: boolean;
   selectedSchool: SchoolRecord | null;
   onSelectSchool: (school: SchoolRecord | SchoolMapPoint) => void;
   onLocationChange?: (lat: number, lng: number) => void;
@@ -30,6 +32,8 @@ interface SchoolFinderMapProps {
   onOpenDetails: (school: SchoolRecord) => void;
   viewMode?: 'auto' | 'pins' | 'dots';
   onViewModeChange?: (mode: 'auto' | 'pins' | 'dots') => void;
+  className?: string;
+  mobileSheetState?: 'peek' | 'half' | 'full';
 }
 
 export default function SchoolFinderMap({
@@ -38,7 +42,10 @@ export default function SchoolFinderMap({
   radiusKm,
   schools,
   mapPoints = [],
+  allSchoolsDots = [],
+  showAllRedDots = false,
   selectedSchool,
+  className,
   onSelectSchool,
   onLocationChange,
   onDeselectSchool,
@@ -47,6 +54,7 @@ export default function SchoolFinderMap({
   onOpenDetails,
   viewMode: controlledViewMode,
   onViewModeChange,
+  mobileSheetState,
 }: SchoolFinderMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -74,13 +82,68 @@ export default function SchoolFinderMap({
   const [internalLocating, setInternalLocating] = useState(false);
   const [currentZoom, setCurrentZoom] = useState<number>(13);
 
-  // Auto fit map bounds to the radius circle & schools
+  // Calculates visual target coordinate so point/pin lands slightly below the middle of visible upper half in half mode
+  const getOffsetLatLng = useCallback((lat: number, lng: number, targetZoom: number) => {
+    if (!mapInstanceRef.current || !mapContainerRef.current) return L.latLng(lat, lng);
+    const map = mapInstanceRef.current;
+    const containerHeight = mapContainerRef.current.clientHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
+    const containerWidth = mapContainerRef.current.clientWidth || (typeof window !== 'undefined' ? window.innerWidth : 400);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    let offsetY = 0;
+    let offsetX = 0;
+
+    if (isMobile) {
+      if (mobileSheetState === 'half') {
+        // Visible upper half is 0 to 50vh (middle is 25vh).
+        // User wants point slightly below middle of upper half (around 29% - 30% from top).
+        // Screen center is at 50vh. Distance from 50vh to 29.5vh is ~20.5% of container height.
+        offsetY = Math.round(containerHeight * 0.205);
+      } else if (mobileSheetState === 'full') {
+        offsetY = Math.round(containerHeight * 0.36);
+      } else {
+        // 'peek' mode (58px bottom sheet, ~60px top bar)
+        offsetY = 12;
+      }
+    } else {
+      // Desktop left drawer offset
+      offsetX = Math.round(containerWidth * 0.08);
+    }
+
+    try {
+      const targetPoint = map.project([lat, lng], targetZoom);
+      const offsetPoint = L.point(targetPoint.x - offsetX, targetPoint.y + offsetY);
+      return map.unproject(offsetPoint, targetZoom);
+    } catch {
+      return L.latLng(lat, lng);
+    }
+  }, [mobileSheetState]);
+
+  // Auto fit map bounds to the radius circle & schools (properly centered in visible upper area when bottom sheet is half)
   const fitToCurrentRadius = useCallback(() => {
     if (!mapInstanceRef.current || !circleRef.current) return;
+    const map = mapInstanceRef.current;
     try {
       const bounds = circleRef.current.getBounds();
-      mapInstanceRef.current.fitBounds(bounds, {
-        padding: [35, 35],
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const containerHeight = mapContainerRef.current?.clientHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
+
+      let paddingTop = 40;
+      let paddingBottom = 40;
+
+      if (isMobile && mobileSheetState === 'half') {
+        // 75px clears floating search bar at top
+        paddingTop = 75;
+        // 50% bottom sheet + 15px centers circle nicely slightly below the middle of the upper half
+        paddingBottom = Math.round(containerHeight * 0.50) + 15;
+      } else if (isMobile && mobileSheetState === 'full') {
+        paddingTop = 75;
+        paddingBottom = Math.round(containerHeight * 0.86) + 15;
+      }
+
+      map.fitBounds(bounds, {
+        paddingTopLeft: [30, paddingTop],
+        paddingBottomRight: [30, paddingBottom],
         maxZoom: 15,
         animate: true,
         duration: 0.5,
@@ -88,7 +151,7 @@ export default function SchoolFinderMap({
     } catch (e) {
       console.warn('fitBounds error:', e);
     }
-  }, []);
+  }, [mobileSheetState]);
 
   // Initialize Map Instance directly
   useEffect(() => {
@@ -249,7 +312,8 @@ export default function SchoolFinderMap({
       const { lat, lng } = userCoordsRef.current;
       ensureUserMarker(lat, lng);
       onLocationChangeRef.current?.(lat, lng);
-      map.flyTo([lat, lng], 15, { duration: 0.35 });
+      const offsetLatLng = getOffsetLatLng(lat, lng, 15);
+      map.flyTo(offsetLatLng, 15, { duration: 0.35 });
     }
 
     // 2. Query fresh GPS position with highest accuracy
@@ -261,7 +325,8 @@ export default function SchoolFinderMap({
           const { latitude, longitude } = pos.coords;
           ensureUserMarker(latitude, longitude);
           onLocationChangeRef.current?.(latitude, longitude);
-          map.flyTo([latitude, longitude], 15, { duration: 0.45 });
+          const offsetLatLng = getOffsetLatLng(latitude, longitude, 15);
+          map.flyTo(offsetLatLng, 15, { duration: 0.45 });
         },
         (err) => {
           setInternalLocating(false);
@@ -273,7 +338,7 @@ export default function SchoolFinderMap({
     } else {
       onLocateMeRef.current?.();
     }
-  }, [ensureUserMarker]);
+  }, [ensureUserMarker, getOffsetLatLng]);
 
   // GPS Blue Dot & Immediate Auto-Center Red Pin (Never resets on parent renders)
   useEffect(() => {
@@ -324,22 +389,15 @@ export default function SchoolFinderMap({
     };
   }, [mapReady, ensureUserMarker]);
 
-  // Smooth flyTo when mapFocus changes
+  // Smooth flyTo when mapFocus changes (pointer, Fly to Pin, school selection)
   useEffect(() => {
     if (!mapInstanceRef.current || !mapReady || !mapFocus) return;
     const map = mapInstanceRef.current;
     const curZoom = map.getZoom();
     const targetZoom = typeof mapFocus.zoom === 'number' ? mapFocus.zoom : curZoom;
 
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const offsetY = isMobile ? Math.round(window.innerHeight * 0.14) : 0;
-    const offsetX = !isMobile ? Math.round(window.innerWidth * 0.08) : 0;
-
     try {
-      const targetPoint = map.project([mapFocus.lat, mapFocus.lng], targetZoom);
-      const offsetPoint = L.point(targetPoint.x - offsetX, targetPoint.y + offsetY);
-      const offsetLatLng = map.unproject(offsetPoint, targetZoom);
-
+      const offsetLatLng = getOffsetLatLng(mapFocus.lat, mapFocus.lng, targetZoom);
       map.flyTo(offsetLatLng, targetZoom, {
         duration: 0.5,
         easeLinearity: 0.25,
@@ -347,7 +405,22 @@ export default function SchoolFinderMap({
     } catch {
       map.flyTo([mapFocus.lat, mapFocus.lng], targetZoom, { duration: 0.5 });
     }
-  }, [mapFocus, mapReady]);
+  }, [mapFocus, mapReady, getOffsetLatLng]);
+
+  // When mobileSheetState changes (e.g. user toggles Split / Half mode),
+  // smoothly re-center the active school pointer or search center into the visible upper area
+  useEffect(() => {
+    if (!mapInstanceRef.current || !mapReady) return;
+    const target = selectedSchool
+      ? { lat: Number(selectedSchool.latitude || selectedSchool.lat), lng: Number(selectedSchool.longitude || selectedSchool.lng) }
+      : searchCenter;
+
+    if (target && target.lat && target.lng) {
+      const zoom = mapInstanceRef.current.getZoom();
+      const offsetLatLng = getOffsetLatLng(target.lat, target.lng, zoom);
+      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.4 });
+    }
+  }, [mobileSheetState, getOffsetLatLng]);
 
   // Search Center Red SVG Pin + Draggable + Radius Circle
   useEffect(() => {
@@ -389,7 +462,14 @@ export default function SchoolFinderMap({
         const newPos = e.target.getLatLng();
         if (newPos) {
           onLocationChangeRef.current?.(newPos.lat, newPos.lng);
+          const offsetLatLng = getOffsetLatLng(newPos.lat, newPos.lng, map.getZoom());
+          map.flyTo(offsetLatLng, map.getZoom(), { duration: 0.35 });
         }
+      });
+
+      marker.on('click', () => {
+        const offsetLatLng = getOffsetLatLng(searchCenter.lat, searchCenter.lng, map.getZoom());
+        map.flyTo(offsetLatLng, map.getZoom(), { duration: 0.35 });
       });
 
       centerMarkerRef.current = marker;
@@ -431,11 +511,48 @@ export default function SchoolFinderMap({
     const canvasRenderer = canvasRendererRef.current || L.canvas({ padding: 0.5, tolerance: 8 });
     const layerGroup = L.layerGroup();
 
+    // 1. If showAllRedDots is enabled, render background schools as small high-density red dots
+    if (showAllRedDots && allSchoolsDots && allSchoolsDots.length > 0) {
+      const activeIds = new Set(validSchools.map((s) => String(s.udise_code || s.school_id || s.id || '').toUpperCase()));
+      const validBackgroundDots = allSchoolsDots.filter(
+        (s) => s.lat && s.lng && !isNaN(s.lat) && !isNaN(s.lng) && s.lat > 5
+      );
+
+      validBackgroundDots.forEach((school) => {
+        const schoolKey = String(school.udise_code || school.school_id || school.id || '').toUpperCase();
+        if (activeIds.has(schoolKey)) return; // already rendered as main active school
+
+        const bgMarker = L.circleMarker([school.lat!, school.lng!], {
+          renderer: canvasRenderer,
+          radius: 4,
+          color: '#ffffff',
+          weight: 1.2,
+          fillColor: '#ea4335',
+          fillOpacity: 0.85,
+        });
+
+        bgMarker.bindTooltip(
+          `<div class="font-sans text-xs">
+            <strong>${school.school_name || (school as any).name}</strong><br/>
+            <span style="color: #64748b;">${school.distance !== undefined ? `${school.distance} km • ` : ''}${school.board || school.management || 'Private School'}</span>
+          </div>`,
+          { direction: 'top', offset: [0, -4] }
+        );
+
+        bgMarker.on('click', () => {
+          onSelectSchoolRef.current?.(school);
+        });
+
+        layerGroup.addLayer(bgMarker);
+      });
+    }
+
+    // 2. Render Active / Paginated Schools as prominent markers
     validSchools.forEach((school) => {
       const isGovt = (school.management_desc_state || school.management) === 'Government';
       const isSelected = selectedSchool?.id === school.id;
       const dotColor = isSelected ? '#ea4335' : isGovt ? '#059669' : '#1a73e8';
-      const dotRadius = isSelected ? 7 : 5;
+      const dotRadius = isSelected ? 7 : 5.5;
 
       const circleMarker = L.circleMarker([school.lat, school.lng], {
         renderer: canvasRenderer,
@@ -463,7 +580,7 @@ export default function SchoolFinderMap({
 
     layerGroup.addTo(map);
     dotsLayerGroupRef.current = layerGroup;
-  }, [schools, selectedSchool, mapReady]);
+  }, [schools, selectedSchool, mapReady, showAllRedDots, allSchoolsDots]);
 
   // Selected School Popup
   useEffect(() => {
@@ -680,12 +797,12 @@ export default function SchoolFinderMap({
   };
 
   return (
-    <div className="relative w-full h-full min-h-[550px] overflow-hidden bg-slate-100 flex flex-col select-none rounded-3xl">
+    <div className={`relative w-full h-full min-h-0 md:min-h-[500px] overflow-hidden bg-slate-100 flex flex-col select-none ${className !== undefined ? className : 'rounded-3xl'}`}>
       {/* Map Container */}
-      <div ref={mapContainerRef} className="w-full h-full min-h-[550px] z-0 flex-1" />
+      <div ref={mapContainerRef} className="w-full h-full min-h-0 md:min-h-[500px] z-0 flex-1" />
 
       {/* Floating Map Zoom & GPS Controls */}
-      <div className="absolute bottom-6 right-4 z-10 flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
+      <div className="absolute top-24 sm:top-28 right-2.5 sm:right-3 md:top-auto md:bottom-6 md:right-4 z-10 flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
         <button
           onClick={handleZoomIn}
           className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100"

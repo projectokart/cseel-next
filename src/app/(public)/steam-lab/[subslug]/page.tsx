@@ -216,7 +216,7 @@ export default function SteamLabSubpage({ params }: Props) {
               </p>
               <Link
                 href="/contact-us"
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#F8A130] text-slate-950 font-bold text-xs hover:bg-[#e89425] transition-all shadow"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#F8A130] text-slate-950 font-bold text-xs hover:bg-[#e89425] transition-all shadow"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
                 <span>Talk to Lab Architect</span>
@@ -238,13 +238,13 @@ export default function SteamLabSubpage({ params }: Props) {
           <div className="flex items-center gap-3">
             <Link
               href="/virtual-lab"
-              className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="px-4 py-2 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
             >
               Virtual Labs Tour
             </Link>
             <Link
               href="/composite-lab"
-              className="px-4 py-2 rounded-xl bg-[#0A4B69] text-white text-xs font-semibold hover:bg-[#07364c]"
+              className="px-4 py-2 rounded-full bg-[#0A4B69] text-white text-xs font-semibold hover:bg-[#07364c]"
             >
               CBSE Composite Lab
             </Link>

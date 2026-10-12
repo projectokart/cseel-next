@@ -875,7 +875,7 @@ export default function SchoolVacancyPageClient({ orgId, backUrl }: SchoolVacanc
               <div className="p-5 space-y-3 text-xs">
                 <div className="flex items-center gap-2 p-1.5 bg-slate-50 border rounded-xl">
                   <input type="text" readOnly value={currentUrl} className="w-full bg-transparent px-2 text-xs font-mono outline-none select-all truncate" />
-                  <button onClick={handleCopyLink} className={`px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1 shrink-0 ${copiedLink ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'}`}>
+                  <button onClick={handleCopyLink} className={`px-3 py-2 rounded-full text-xs font-bold transition flex items-center gap-1 shrink-0 ${copiedLink ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white'}`}>
                     {copiedLink ? <CheckCheck className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedLink ? 'Copied' : 'Copy'}</span>
                   </button>

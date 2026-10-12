@@ -23,6 +23,16 @@ import {
   Wrench,
   Bot
 } from 'lucide-react';
+import ExperimentBottomSheetDrawer from '@/components/experiment/ExperimentBottomSheetDrawer';
+import {
+  M3Button,
+  M3IconButton,
+  M3ChipSet,
+  M3AssistChip,
+  M3FilterChip,
+  M3Card,
+  M3TextField,
+} from '@/components/google-ui';
 
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
@@ -708,6 +718,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
   const [showBrochureModal, setShowBrochureModal] = useState<boolean>(false);
   const [brochureSubmitted, setBrochureSubmitted] = useState<boolean>(false);
   const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '', institution: '' });
+  const [selectedExperimentModule, setSelectedExperimentModule] = useState<any | null>(null);
 
   // Rotate chat bubble prompt every 4 seconds
   useEffect(() => {
@@ -759,31 +770,32 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                 {domain.lead}
               </p>
               
-              <div className="flex flex-wrap gap-3 mb-6">
-                <Link
-                  href="/contact-us"
-                  className="btn btn-primary inline-flex items-center gap-2 px-6 py-3.5 bg-[#005689] text-white rounded-xl font-bold text-sm hover:bg-[#0D4979] shadow-btn transition-all"
-                >
-                  Book a demo
-                  <ArrowRight className="w-4 h-4" />
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <Link href="/contact-us">
+                  <M3Button
+                    variant="filled"
+                    size="lg"
+                    trailingIcon={<ArrowRight className="w-4 h-4" />}
+                  >
+                    Book a demo
+                  </M3Button>
                 </Link>
                 
-                <Link
-                  href="/virtual-lab"
-                  className="btn btn-secondary inline-flex items-center gap-2 px-6 py-3.5 bg-white text-[#005689] border border-[#005689] rounded-xl font-bold text-sm hover:bg-[#EDF5FA] transition-all"
-                >
-                  Explore modules
+                <Link href="/virtual-lab">
+                  <M3Button variant="tonal" size="lg">
+                    Explore modules
+                  </M3Button>
                 </Link>
                 
-                <button
+                <M3Button
                   type="button"
+                  variant="outlined"
+                  size="lg"
                   onClick={() => setShowBrochureModal(true)}
-                  className="btn inline-flex items-center gap-2 px-6 py-3.5 bg-white text-[#005689] border border-[#005689] rounded-xl font-bold text-sm hover:bg-[#EDF5FA] transition-all cursor-pointer"
-                  style={{ outline: '1px solid #005689' }}
+                  leadingIcon={<Download className="w-4 h-4" />}
                 >
-                  <Download className="w-4 h-4 text-[#005689]" />
                   Download brochure
-                </button>
+                </M3Button>
               </div>
               
               <p className="text-slate-muted font-medium tracking-wide text-[13px]">
@@ -899,41 +911,52 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                 {domain.sampleHeading}
               </h2>
             </div>
-            <Link
-              className="inline-flex items-center gap-2 font-bold text-[#005689] group flex-shrink-0 hover:text-[#0D4979] transition-colors"
-              href="/virtual-lab"
-            >
-              See all modules
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <Link href="/virtual-lab">
+              <M3Button
+                variant="text"
+                size="md"
+                trailingIcon={<ArrowRight className="w-4 h-4" />}
+              >
+                See all modules
+              </M3Button>
             </Link>
           </div>
 
-          {/* Stream Filter Chips */}
-          <div className="flex flex-wrap mb-10 gap-2.5">
+          {/* Stream Filter Chips — Official M3FilterChip */}
+          <M3ChipSet className="mb-10 gap-2.5">
             {domain.filterStreams.map((st) => {
               const isActive = activeStream.toLowerCase() === st.toLowerCase();
               return (
-                <button
+                <M3FilterChip
                   key={st}
-                  type="button"
+                  label={st}
+                  selected={isActive}
                   onClick={() => setActiveStream(st)}
-                  className={`discipline-chip ${isActive ? 'is-active' : ''}`}
-                >
-                  {st}
-                </button>
+                />
               );
             })}
-          </div>
+          </M3ChipSet>
 
-          {/* Module Cards Grid (3 Columns) */}
+          {/* Module Cards Grid (3 Columns) — Official M3Card & M3AssistChip */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {filteredModules.map((m, idx) => (
-              <Link
+              <M3Card
                 key={idx}
-                href={m.link}
-                className="lift block bg-white rounded-card shadow-card border border-rule/60 overflow-hidden group hover:border-[#005689]/40 transition-all"
+                variant="outlined"
+                interactive
+                onClick={() =>
+                  setSelectedExperimentModule({
+                    id: `dom-${currentSlug}-${idx}`,
+                    title: m.title,
+                    subject: m.stream,
+                    category: m.topic,
+                    subtitle: m.topic,
+                    description: `${m.title} — ${m.topic} (${m.type})`,
+                  })
+                }
+                className="bg-white overflow-hidden group hover:border-[#0b57d0]/40 transition-all cursor-pointer p-0 rounded-[16px]"
               >
-                <div className="thumb-zoom rounded-none overflow-hidden aspect-[16/10] bg-[#EDF5FA]">
+                <div className="thumb-zoom rounded-none overflow-hidden aspect-[16/10] bg-[#eef3fc]">
                   <img
                     src={m.image}
                     alt={m.title}
@@ -942,22 +965,24 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                   />
                 </div>
                 <div className="p-5">
-                  <h3 className="text-[17px] font-bold text-[#0D4979] mb-2 leading-snug group-hover:text-[#005689] transition-colors">
+                  <h3 className="text-[17px] font-bold text-[#1f1f1f] mb-1.5 leading-snug group-hover:text-[#0b57d0] transition-colors">
                     {m.title}
                   </h3>
-                  <p className="text-slate-body mb-3 text-[14px]">
+                  <p className="text-[#444746] mb-3.5 text-[14px]">
                     {m.topic}
                   </p>
-                  <div className="flex items-center gap-2 font-medium text-[12px]">
-                    <span className="px-2.5 py-1 rounded-full bg-[#005689]/10 text-[#005689] font-bold">
-                      {m.stream}
-                    </span>
-                    <span className="px-2.5 py-1 rounded-full bg-rule text-slate-body font-semibold">
-                      {m.type}
-                    </span>
-                  </div>
+                  <M3ChipSet className="gap-2">
+                    <M3AssistChip
+                      label={m.stream}
+                      className="h-7 text-[11.5px] bg-[#e8f0fe] border-[#c2e7ff] text-[#0b57d0] pointer-events-none"
+                    />
+                    <M3AssistChip
+                      label={m.type}
+                      className="h-7 text-[11.5px] bg-[#f8fafd] border-[#c4c7c5] text-[#444746] pointer-events-none"
+                    />
+                  </M3ChipSet>
                 </div>
-              </Link>
+              </M3Card>
             ))}
           </div>
 
@@ -1207,14 +1232,12 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
           <p className="text-slate-body mb-6 font-bold text-[15px] uppercase tracking-wider text-slate-500">
             Explore other disciplines
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             {domain.otherDisciplines.map((od, idx) => (
-              <Link
-                key={idx}
-                className="btn btn-secondary text-[14px] px-6 py-3 bg-white hover:bg-[#EDF5FA] rounded-xl border border-[#005689] text-[#005689] font-bold shadow-2xs hover:shadow-xs transition-all"
-                href={od.href}
-              >
-                {od.title}
+              <Link key={idx} href={od.href}>
+                <M3Button variant="outlined" size="md" className="bg-white">
+                  {od.title}
+                </M3Button>
               </Link>
             ))}
           </div>
@@ -1243,119 +1266,140 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
           <p className="text-sky-100 mb-9 mx-auto text-lg max-w-[640px] leading-relaxed">
             {domain.ctaSub}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/contact-us"
-              className="btn btn-on-blue inline-flex items-center gap-2 px-7 py-3.5 bg-white text-[#005689] rounded-xl font-bold text-sm hover:bg-[#EDF5FA] shadow-md transition-all"
-            >
-              Book a demo
-              <ArrowRight className="w-4 h-4 text-[#005689]" />
+          <div className="flex flex-wrap items-center justify-center gap-3.5">
+            <Link href="/contact-us">
+              <M3Button
+                variant="elevated"
+                size="lg"
+                trailingIcon={<ArrowRight className="w-4 h-4" />}
+              >
+                Book a demo
+              </M3Button>
             </Link>
-            <button
+            <M3Button
               type="button"
+              variant="tonal"
+              size="lg"
               onClick={() => setShowBrochureModal(true)}
-              className="btn inline-flex items-center gap-2 px-7 py-3.5 bg-transparent text-white border border-white/50 hover:border-white hover:bg-white/10 rounded-xl font-bold text-sm transition-all cursor-pointer"
+              leadingIcon={<Download className="w-4 h-4" />}
             >
-              <Download className="w-4 h-4" />
               Download brochure
-            </button>
-            <Link
-              href="/contact-us"
-              className="btn btn-ghost-white inline-flex items-center gap-2 px-7 py-3.5 text-white/90 hover:text-white rounded-xl font-bold text-sm transition-all"
-            >
-              Talk to academic team
+            </M3Button>
+            <Link href="/contact-us">
+              <M3Button
+                variant="text"
+                size="lg"
+                className="!text-white hover:!bg-white/15"
+              >
+                Talk to academic team
+              </M3Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── BROCHURE & DEMO POPUP MODAL ─────────────────────────────────── */}
+      {/* ── BROCHURE & DEMO POPUP MODAL (Official M3 Dialog & M3TextField) ── */}
       {showBrochureModal && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-[#0F172A]/75 backdrop-blur-xs transition-opacity"
+            className="absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity"
             onClick={() => setShowBrochureModal(false)}
           />
-          <div className="relative bg-white rounded-card shadow-card-hi w-full max-w-[460px] p-7 sm:p-8 z-10 border border-rule">
-            <div className="flex items-center justify-between mb-5">
+          <M3Card
+            variant="elevated"
+            className="relative bg-[#f8fafd] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.24)] w-full max-w-[460px] p-6 sm:p-8 z-10 border border-[#c4c7c5]/60"
+          >
+            <div className="flex items-start justify-between gap-3 mb-6">
               <div>
-                <p className="eyebrow mb-1">Academic Brochure</p>
-                <h3 className="text-xl font-extrabold text-[#0D4979]">Download {domain.highlightWord} curriculum guide</h3>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-[#0b57d0] mb-1">
+                  Academic Brochure
+                </p>
+                <h3 className="text-xl font-bold text-[#1f1f1f]">
+                  Download {domain.highlightWord} curriculum guide
+                </h3>
               </div>
-              <button
+              <M3IconButton
+                icon={<X className="w-5 h-5" />}
+                ariaLabel="Close dialog"
+                variant="standard"
+                size="sm"
                 onClick={() => setShowBrochureModal(false)}
-                type="button"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              />
             </div>
 
             {brochureSubmitted ? (
               <div className="text-center py-8">
-                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                <div className="w-14 h-14 rounded-full bg-[#e6f4ea] text-[#137333] flex items-center justify-center mx-auto mb-3">
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
-                <h4 className="text-lg font-bold text-[#0D4979]">Brochure On The Way!</h4>
-                <p className="text-sm text-slate-600 mt-1.5">
+                <h4 className="text-lg font-bold text-[#1f1f1f]">Brochure On The Way!</h4>
+                <p className="text-sm text-[#444746] mt-1.5">
                   We have dispatched the complete {domain.highlightWord} curriculum catalogue &amp; lab specs to your email.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleLeadSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" htmlFor="lead-name">
-                    Full Name
-                  </label>
-                  <input
-                    id="lead-name"
-                    type="text"
-                    required
-                    placeholder="e.g. Dr. Rajesh Sharma"
-                    value={leadForm.name}
-                    onChange={(e) => setLeadForm((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full border border-rule rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005689]"
-                  />
+                <M3TextField
+                  variant="outlined"
+                  label="Full Name"
+                  id="lead-name"
+                  type="text"
+                  required
+                  placeholder="e.g. Dr. Rajesh Sharma"
+                  value={leadForm.name}
+                  onChange={(e) => setLeadForm((prev) => ({ ...prev, name: e.target.value }))}
+                />
+                <M3TextField
+                  variant="outlined"
+                  label="Institutional Email"
+                  id="lead-email"
+                  type="email"
+                  required
+                  placeholder="rajesh@college.edu.in"
+                  value={leadForm.email}
+                  onChange={(e) => setLeadForm((prev) => ({ ...prev, email: e.target.value }))}
+                />
+                <M3TextField
+                  variant="outlined"
+                  label="School / University Name"
+                  id="lead-inst"
+                  type="text"
+                  required
+                  placeholder="e.g. National Science Academy"
+                  value={leadForm.institution}
+                  onChange={(e) => setLeadForm((prev) => ({ ...prev, institution: e.target.value }))}
+                />
+                <div className="pt-2 flex items-center justify-end gap-2">
+                  <M3Button
+                    type="button"
+                    variant="text"
+                    size="md"
+                    onClick={() => setShowBrochureModal(false)}
+                  >
+                    Cancel
+                  </M3Button>
+                  <M3Button
+                    type="submit"
+                    variant="filled"
+                    size="md"
+                    leadingIcon={<Download className="w-4 h-4" />}
+                  >
+                    Download Syllabus PDF
+                  </M3Button>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" htmlFor="lead-email">
-                    Institutional Email
-                  </label>
-                  <input
-                    id="lead-email"
-                    type="email"
-                    required
-                    placeholder="rajesh@college.edu.in"
-                    value={leadForm.email}
-                    onChange={(e) => setLeadForm((prev) => ({ ...prev, email: e.target.value }))}
-                    className="w-full border border-rule rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005689]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" htmlFor="lead-inst">
-                    School / University Name
-                  </label>
-                  <input
-                    id="lead-inst"
-                    type="text"
-                    required
-                    placeholder="e.g. National Science Academy"
-                    value={leadForm.institution}
-                    onChange={(e) => setLeadForm((prev) => ({ ...prev, institution: e.target.value }))}
-                    className="w-full border border-rule rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#005689]"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-3.5 bg-[#005689] hover:bg-[#0D4979] text-white font-bold rounded-xl text-sm shadow-btn transition-colors mt-2"
-                >
-                  Download Complete Syllabus PDF
-                </button>
               </form>
             )}
-          </div>
+          </M3Card>
         </div>
+      )}
+
+      {/* ── EXPERIMENT DRAGGABLE BOTTOM SHEET DRAWER ──────────────────── */}
+      {selectedExperimentModule && (
+        <ExperimentBottomSheetDrawer
+          experiment={selectedExperimentModule}
+          onClose={() => setSelectedExperimentModule(null)}
+          subjectFallback={selectedExperimentModule.subject}
+        />
       )}
 
     </main>

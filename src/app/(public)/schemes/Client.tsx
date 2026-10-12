@@ -241,7 +241,7 @@ export default function SchemesHubClient() {
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
                     <Link
                       href={`/schemes/${scheme.slug}`}
-                      className="flex-1 py-2 px-3 rounded-xl bg-[#005689] text-white font-bold text-xs hover:bg-[#003c6e] transition flex items-center justify-center gap-1.5"
+                      className="flex-1 py-2 px-3 rounded-full bg-[#005689] text-white font-bold text-xs hover:bg-[#003c6e] transition flex items-center justify-center gap-1.5"
                     >
                       <span>Read Full Guide</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -252,7 +252,7 @@ export default function SchemesHubClient() {
                         href={scheme.officialLinks[0].url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-[#005689] hover:bg-slate-50 transition"
+                        className="p-2 rounded-full border border-slate-200 text-slate-600 hover:text-[#005689] hover:bg-slate-50 transition"
                         title="Official Government Portal"
                       >
                         <ExternalLink className="w-4 h-4" />
@@ -477,7 +477,7 @@ export default function SchemesHubClient() {
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 px-4 rounded-xl bg-[#005689] text-white font-bold hover:bg-[#003c6e] transition shadow-sm text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-2"
+                    className="w-full py-2.5 px-4 rounded-full bg-[#005689] text-white font-bold hover:bg-[#003c6e] transition shadow-sm text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-2"
                   >
                     <span>Request Free DPR &amp; Consultation</span>
                     <ArrowRight className="w-3.5 h-3.5" />

@@ -23,10 +23,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const cleanCode = code.trim().replace(/\D/g, '');
+    const cleanCode = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (cleanCode.length < 8) {
       return NextResponse.json(
-        { success: false, error: 'Invalid UDISE code format. Must be 11 digits.' },
+        { success: false, error: 'Invalid UDISE code format. Must be 11 characters.' },
         { status: 400 }
       );
     }
@@ -81,10 +81,10 @@ export async function GET(req: NextRequest) {
     // Extract Established Year
     const estYear =
       profile?.estdYear ||
-      (supabaseData?.established_year ? String(supabaseData?.established_year) : '2005');
+      (supabaseData?.established_year ? String(supabaseData?.established_year) : '');
 
     // Extract Board
-    let board = 'CBSE';
+    let board = '';
     if (profile?.boardSecName && profile.boardSecName !== 'NA' && profile.boardSecName !== '0') {
       board = profile.boardSecName.replace(/^\d+-/, '');
     } else if (profile?.boardHighSecName && profile.boardHighSecName !== 'NA' && profile.boardHighSecName !== '0') {
@@ -101,19 +101,22 @@ export async function GET(req: NextRequest) {
     else if (stats?.totalBoy > 0 && stats?.totalGirl === 0) gender = 'Boys Only';
     else if (stats?.totalGirl > 0 && stats?.totalBoy === 0) gender = 'Girls Only';
 
-    // Nature: Day School, Residential
-    let nature = 'Day School';
-    if (profile?.resiSchDesc?.toLowerCase().includes('residential') && !profile.resiSchDesc.toLowerCase().includes('non')) {
-      nature = 'Residential / Boarding';
-    } else if (profile?.resiSchYn === 1) {
-      nature = 'Residential / Boarding';
-    }
+    // Nature: Day School, Residential / Boarding
+    const resiDesc = String(profile?.resiSchDesc || '').toLowerCase();
+    const resiYn = Number(profile?.resiSchYn);
+    const isResidential = (resiDesc.includes('residential') && !resiDesc.includes('non')) || resiYn === 1 || resiYn === 2;
+    const isDaySchool = resiDesc.includes('non residential') || resiYn === 3 || !isResidential;
+    const boardingType = isResidential
+      ? (profile?.resiSchTypeName && profile.resiSchTypeName !== 'NA' ? profile.resiSchTypeName : 'Residential / Boarding School')
+      : 'Day School';
+    const nature = isResidential ? 'Residential / Boarding' : 'Day School';
 
-    // Affiliation Number
+    // Affiliation Number (Strict: Only if present in official data, no fake auto-generation)
     const affNumber =
       profile?.affNo ||
       profile?.boardAffNo ||
-      (board === 'CBSE' ? `CBSE/AFF/${cleanCode.slice(-6)}/${new Date().getFullYear()}` : `${board}/REG/${cleanCode.slice(-6)}`);
+      supabaseData?.affiliation_number ||
+      '';
 
     // Location & Contact
     const contactPhone = profile?.schPhone || supabaseData?.contact_number || '';
@@ -136,7 +139,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Student & Teacher Statistics
-    const totalStudents = Number(stats?.totalCount || (Number(stats?.totalBoy || 0) + Number(stats?.totalGirl || 0)) || supabaseData?.total_students || 450);
+    const totalStudents = Number(stats?.totalCount || (Number(stats?.totalBoy || 0) + Number(stats?.totalGirl || 0)) || supabaseData?.total_students || 0);
     const totalBoys = Number(stats?.totalBoy || 0);
     const totalGirls = Number(stats?.totalGirl || 0);
 
@@ -144,14 +147,14 @@ export async function GET(req: NextRequest) {
     const totalTeacherFemale = Number(stats?.totalTeacherFemale || 0);
     const totalTeacherReg = Number(stats?.totalTeacherReg || 0);
     const totalTeacherCon = Number(stats?.totalTeacherCon || 0);
-    const totalTeachers = (totalTeacherMale + totalTeacherFemale) || (totalTeacherReg + totalTeacherCon) || 18;
+    const totalTeachers = (totalTeacherMale + totalTeacherFemale) || (totalTeacherReg + totalTeacherCon) || Number(supabaseData?.total_teachers || 0);
 
     // Student-Teacher Ratio (STR)
-    const ratioVal = totalTeachers > 0 ? Math.max(10, Math.min(45, Math.round(totalStudents / totalTeachers))) : 25;
-    const strRatio = `1:${ratioVal}`;
+    const ratioVal = totalTeachers > 0 && totalStudents > 0 ? Math.round(totalStudents / totalTeachers) : 0;
+    const strRatio = ratioVal > 0 ? `1:${ratioVal}` : '—';
 
     // Facility Details
-    const classroomsCount = Number(facility?.clsrmsInst || facility?.clsrmsGd || 18);
+    const classroomsCount = Number(facility?.clsrmsInst || facility?.clsrmsGd || supabaseData?.total_classrooms || 0);
     const compLabDesc = facility?.compLabYnDesc || (facility?.ictLabYn === 1 ? '1-Yes' : '2-No');
     const hasCompLab = String(compLabDesc).includes('Yes') || String(compLabDesc).startsWith('1');
 
@@ -167,47 +170,26 @@ export async function GET(req: NextRequest) {
     const drinkingWaterDesc = facility?.drinkingWaterYnDesc || (facility?.drinkingWaterYn === 1 ? '1-Yes' : '2-No');
     const hasDrinkingWater = String(drinkingWaterDesc).includes('Yes') || String(drinkingWaterDesc).startsWith('1');
 
-    // Generate chips based on live facilities
+    // Generate chips strictly from verified live facilities
     const labChips = [
-      hasStemLab ? 'Atal Tinkering Lab (ATL)' : 'Robotics & AI Innovation Cell',
-      hasCompLab ? 'High-Speed Computer Lab' : 'Smart ICT Workstations',
-      'Dedicated Physics Laboratory',
-      'Chemistry Lab with Fume Hood',
-      'Biology & Microscopy Lab',
+      ...(hasStemLab ? ['Atal Tinkering Lab (ATL)'] : []),
+      ...(hasCompLab ? ['Computer ICT Lab'] : []),
     ];
 
     const sportsChips = [
-      hasPlayground ? 'Full-size Football & Athletics Ground' : 'Multi-purpose Play Arena',
-      'Cricket Pitch & Practice Nets',
-      'Synthetic Basketball Court',
-      'Badminton & Table Tennis Zone',
+      ...(hasPlayground ? ['Playground & Sports Arena'] : []),
     ];
 
     const safetyChips = [
-      '100% CCTV Surveillance Coverage',
-      hasDrinkingWater ? 'RO Purified Drinking Water System' : 'Safe Potable Water',
-      'POCSO Child Safety Committee',
-      'Resident Nurse & First Aid Infirmary',
-      'Fire Safety Certified System',
+      ...(hasDrinkingWater ? ['Purified Drinking Water System'] : []),
     ];
 
-    const transportChips = [
-      'GPS Live Tracking App',
-      'In-Bus CCTV Surveillance',
-      'Dedicated Female Bus Attendants',
-      'Speed Governors & First-Aid Kit',
-    ];
+    const transportChips: string[] = [];
+    const pedagogyChips: string[] = [];
 
-    const pedagogyChips = [
-      'NEP 2020 Experiential Learning',
-      'Practical STEM & Project Based',
-      'Integrated Olympiad & Competitive Prep',
-      'Activity-Based Learning Framework',
-    ];
-
-    // Class range
-    const classFrom = byYear?.classFrm || 1;
-    const classTo = byYear?.classTo || 12;
+    // Class range strictly from verified byYear data
+    const classFrom = byYear?.classFrm ? Number(byYear.classFrm) : null;
+    const classTo = byYear?.classTo ? Number(byYear.classTo) : null;
 
     // Academic years history
     const academicYears = Array.isArray(byYearJson?.data)
@@ -225,6 +207,9 @@ export async function GET(req: NextRequest) {
         board,
         gender,
         nature,
+        isResidential,
+        isBoarding: isResidential,
+        boardingType,
         affNumber,
         contactPhone,
         contactWhatsapp,

@@ -12,10 +12,14 @@ import {
 } from '@/integrations/supabase/schoolSearchClient';
 import { SCHOOLS_DATA, SchoolRecord } from '@/data/schoolFinderData';
 import SchoolProfileView from './SchoolProfileView';
-import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
+import { SchoolTemplateProvider, PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
 import { redirect } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
+
+// Zero caching: Refreshing or reopening browser fetches live from Supabase
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Helper to retrieve official AI synced profile data from sync store
 function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
@@ -24,21 +28,24 @@ function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
     if (fs.existsSync(tokensFile)) {
       const store = JSON.parse(fs.readFileSync(tokensFile, 'utf8'));
       const tokens = store.tokens || {};
-      const targetDigits = (udiseCode || '').replace(/\D/g, '');
+      const targetCode = (udiseCode || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
       const cleanSlugNorm = cleanSlug.replace(/[^a-z0-9]/gi, '').toLowerCase();
 
       // Check exact UDISE magic token first
-      if (targetDigits && tokens[`csl_ai_magic_${targetDigits}`]?.profileData) {
-        return tokens[`csl_ai_magic_${targetDigits}`].profileData;
+      if (targetCode && tokens[`csl_ai_magic_${targetCode}`]?.profileData) {
+        return tokens[`csl_ai_magic_${targetCode}`].profileData;
+      }
+      if (targetCode && tokens[`csl_ai_magic_${targetCode.toUpperCase()}`]?.profileData) {
+        return tokens[`csl_ai_magic_${targetCode.toUpperCase()}`].profileData;
       }
 
       for (const tKey of Object.keys(tokens)) {
         const rec = tokens[tKey];
-        const recSchoolId = (rec.schoolId || '').replace(/\D/g, '');
-        const recUdise = (rec.profileData?.udiseCode || '').replace(/\D/g, '');
+        const recSchoolId = (rec.schoolId || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+        const recUdise = (rec.profileData?.udiseCode || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
 
         if (
-          (targetDigits && targetDigits.length >= 6 && (recSchoolId === targetDigits || recUdise === targetDigits)) ||
+          (targetCode && targetCode.length >= 6 && (recSchoolId === targetCode || recUdise === targetCode)) ||
           (cleanSlugNorm && tKey.toLowerCase().includes(cleanSlugNorm))
         ) {
           return rec.profileData || null;
@@ -92,14 +99,14 @@ function mapSeedSchoolToRecord(s: SchoolRecord, fallbackState: string, fallbackD
     board_10th: s.board_secondary_10th || s.board,
     board_12th: s.board_higher_secondary_12th || s.board,
     primary_medium: s.medium_of_instruction_1 || s.medium,
-    total_students: s.total_students,
-    total_boys: s.total_boys || Math.round(s.total_students * 0.52),
-    total_girls: s.total_girls || Math.round(s.total_students * 0.48),
-    total_teachers: s.total_teachers,
-    male_teachers: s.male_teachers || Math.round(s.total_teachers * 0.4),
-    female_teachers: s.female_teachers || Math.round(s.total_teachers * 0.6),
-    total_classrooms: s.classrooms_total || 28,
-    working_smart_boards: s.digital_boards_working || 6,
+    total_students: s.total_students || 0,
+    total_boys: s.total_boys || 0,
+    total_girls: s.total_girls || 0,
+    total_teachers: s.total_teachers || 0,
+    male_teachers: s.male_teachers || 0,
+    female_teachers: s.female_teachers || 0,
+    total_classrooms: s.classrooms_total || 0,
+    working_smart_boards: s.digital_boards_working || 0,
     tinkering_lab_atl: s.tinkering_lab_atl,
     atal_stem_lab: s.tinkering_lab_atl === 'Yes' || s.tinkering_lab_atl === true ? 'Yes' : 'No',
     ict_lab: s.ict_lab,
@@ -122,6 +129,79 @@ function mapSeedSchoolToRecord(s: SchoolRecord, fallbackState: string, fallbackD
 async function fetchSchoolRecord(state: string, district: string, village: string, cleanSlug: string) {
   const rawClean = cleanSlug.replace(/\.html$/i, '').trim();
   const digitsOnly = rawClean.replace(/\D/g, '');
+
+  // 0. Check local sync tokens store (Instant & authoritative for newly added/synced schools)
+  const syncedData = getSyncedProfileData(digitsOnly, rawClean);
+  if (syncedData) {
+    const ident = syncedData.schoolIdentity || {};
+    const loc = syncedData.contact?.campusLocation || {};
+    const name = ident.schoolName || syncedData.schoolName || rawClean.replace(/[-_]/g, ' ');
+    const st = loc.state || syncedData.state || state;
+    const dist = loc.district || syncedData.district || district;
+    const vill = loc.village || syncedData.village || village;
+    const addr = loc.streetAddress || syncedData.address || `${vill}, ${dist}, ${st}`;
+    const udise = ident.udiseCode || syncedData.udiseCode || digitsOnly;
+    const board = ident.board || syncedData.board || 'CBSE';
+    const totalStudents = Number(syncedData.totalStudents || ident.totalStudents || syncedData.home?.statisticsBar?.find((s: any) => s.id === 'stat_students')?.value?.replace(/\D/g, '') || 0);
+    const totalTeachers = Number(syncedData.totalTeachers || syncedData.home?.statisticsBar?.find((s: any) => s.id === 'stat_faculty')?.value?.replace(/\D/g, '') || 0);
+    const classroomsCount = Number(syncedData.classroomsCount || syncedData.home?.statisticsBar?.find((s: any) => s.id === 'stat_classrooms')?.value?.replace(/\D/g, '') || 0);
+
+    return {
+      id: udise,
+      school_id: udise,
+      school_name: name,
+      udise_code: udise,
+      state_name: st,
+      district_name: dist,
+      block_name: loc.block || vill,
+      village_name: vill,
+      pincode: loc.pincode || syncedData.pincode || '',
+      address: addr,
+      latitude: syncedData.contact?.latitude || null,
+      longitude: syncedData.contact?.longitude || null,
+      school_category: ident.schoolCategory || syncedData.schoolCategory || '',
+      management_type: ident.management || syncedData.management || '',
+      management_desc: ident.management || syncedData.management || '',
+      class_from: ident.classFrom || syncedData.classFrom || '',
+      class_to: ident.classTo || syncedData.classTo || '',
+      school_type: ident.schoolType || syncedData.schoolType || '',
+      gender_type: ident.genderType || syncedData.genderType || '',
+      rural_urban: syncedData.ruralUrban || '',
+      headmaster_principal_name: syncedData.leadership?.principalName || syncedData.principalName || '',
+      principal_name: syncedData.leadership?.principalName || syncedData.principalName || '',
+      phone: syncedData.contact?.contactDesks?.[0]?.phone || syncedData.phone || '',
+      email: syncedData.contact?.contactDesks?.[0]?.email || syncedData.email || '',
+      website: syncedData.contact?.website || syncedData.website || '',
+      board_10th: board,
+      board_12th: board,
+      primary_medium: ident.mediumOfInstruction || syncedData.medium || '',
+      total_students: totalStudents,
+      total_boys: Number(syncedData.totalBoys || 0),
+      total_girls: Number(syncedData.totalGirls || 0),
+      total_teachers: totalTeachers,
+      male_teachers: Number(syncedData.maleTeachers || 0),
+      female_teachers: Number(syncedData.femaleTeachers || 0),
+      total_classrooms: classroomsCount,
+      working_smart_boards: Number(syncedData.workingSmartBoards || 0),
+      tinkering_lab_atl: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('tinkering')) ? 'Yes' : 'No',
+      atal_stem_lab: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('stem')) ? 'Yes' : 'No',
+      ict_lab: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('computer')) ? 'Yes' : 'No',
+      computer_ict_lab: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('computer')) ? 'Yes' : 'No',
+      integrated_science_lab: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('science')) ? 'Yes' : 'No',
+      library: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('library')) ? 'Yes' : 'No',
+      playground: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('playground')) ? 'Yes' : 'No',
+      playground_available: syncedData.facilities?.items?.some((f: any) => (f.name || f.title || '').toLowerCase().includes('playground')) ? 'Yes' : 'No',
+      annual_fee: syncedData.annual_fee || 0,
+      annual_fee_formatted: syncedData.annual_fee_formatted || '',
+      established_year: ident.establishedYear || syncedData.establishedYear || '',
+      image_url: syncedData.heroImage || PLACEHOLDER_EMPTY_IMAGE,
+      image: syncedData.heroImage || PLACEHOLDER_EMPTY_IMAGE,
+      rating: 0,
+      reviews: 0,
+      facilities: syncedData.facilities?.items || [],
+      affiliation_number: ident.affiliationNumber || syncedData.affiliationNumber || '',
+    };
+  }
 
   // 1. Check local authoritative seed data first (instant & reliable)
   const localMatch = SCHOOLS_DATA.find((s) => {
@@ -223,12 +303,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const udise = dbSchool?.udise_code || '';
   const synced = getSyncedProfileData(udise, cleanSlug);
 
-  const displayName = synced?.schoolName || dbSchool?.school_name || fallbackSchoolName;
-  const displayVillage = synced?.village || dbSchool?.village_name || village;
-  const displayDistrict = synced?.district || dbSchool?.district_name || district;
-  const displayState = synced?.state || dbSchool?.state_name || state;
-  const pincode = (synced?.pincode || dbSchool?.pincode ? String(synced?.pincode || dbSchool.pincode).replace(/\.0$/, '') : '');
-  const board = (synced?.board || dbSchool?.board_12th || dbSchool?.board_10th || 'CBSE').replace(/^\d+-/, '');
+  const displayName = synced?.schoolIdentity?.schoolName || synced?.schoolName || dbSchool?.school_name || fallbackSchoolName;
+  const displayVillage = synced?.contact?.campusLocation?.village || synced?.village || dbSchool?.village_name || village;
+  const displayDistrict = synced?.contact?.campusLocation?.district || synced?.district || dbSchool?.district_name || district;
+  const displayState = synced?.contact?.campusLocation?.state || synced?.state || dbSchool?.state_name || state;
+  const pincode = (synced?.contact?.campusLocation?.pincode || synced?.pincode || dbSchool?.pincode ? String(synced?.contact?.campusLocation?.pincode || synced?.pincode || dbSchool.pincode).replace(/\.0$/, '') : '');
+  const board = (synced?.schoolIdentity?.board || synced?.board || dbSchool?.board_12th || dbSchool?.board_10th || 'CBSE').replace(/^\d+-/, '');
 
   const canonicalUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
   
@@ -412,46 +492,155 @@ export default async function SchoolPage({ params }: PageProps) {
 
   // Format variables strictly from Supabase record or template mode
   const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
-  const udiseCode = isTemplate ? '06170100101' : (schoolData?.udise_code || '');
-  const syncedProfileData = getSyncedProfileData(udiseCode, cleanSlug);
-  const displaySchoolName = isTemplate ? 'Write Your School Name Here' : (schoolData?.school_name || fallbackSchoolName);
-  const displayState = schoolData?.state_name || rawState;
-  const displayDistrict = schoolData?.district_name || rawDistrict;
-  const displayBlock = schoolData?.block_name || rawVillage || '';
-  const displayVillage = schoolData?.village_name || rawVillage;
-  const pincode = cleanCodePrefix(schoolData?.pincode);
-  const management = cleanManagementDesc(schoolData?.management_desc);
-  const board = cleanBoardName(schoolData?.board_12th) || cleanBoardName(schoolData?.board_10th) || 'State Board / CBSE';
-  const medium = cleanMediumName(schoolData?.primary_medium) || 'English';
-  const establishedYear = cleanCodePrefix(schoolData?.established_year);
-  const totalStudents = Number(schoolData?.total_students) || 0;
-  const totalBoys = Number(schoolData?.total_boys) || 0;
-  const totalGirls = Number(schoolData?.total_girls) || 0;
-  const totalTeachers = Number(schoolData?.total_teachers) || 0;
-  const maleTeachers = Number(schoolData?.male_teachers) || 0;
-  const femaleTeachers = Number(schoolData?.female_teachers) || 0;
-  const classroomsCount = Number(schoolData?.total_classrooms) || 0;
-  const classFrom = cleanCodePrefix(schoolData?.class_from) || '1';
-  const classTo = cleanCodePrefix(schoolData?.class_to) || '10';
+  const cleanDigits = (cleanSlug || '').replace(/\D/g, '');
+  
+  const rawCleanCode = (cleanSlug || '').replace(/\.html$/i, '').trim();
+  const targetUdise = cleanDigits || schoolData?.udise_code || rawCleanCode;
+
+  let dbProfileJson: any = null;
+  let profRow: any = null;
+  if (targetUdise) {
+    try {
+      const res = await schoolSearchSupabase
+        .from('school_profiles')
+        .select('*')
+        .eq('udise_code', targetUdise)
+        .maybeSingle();
+      profRow = res.data;
+      if (profRow) {
+        const rawProfile = typeof profRow.profile_data === 'string' ? JSON.parse(profRow.profile_data) : (profRow.profile_data || {});
+        // Priority: dedicated section columns override profile_data
+        dbProfileJson = {
+          ...rawProfile,
+          ...(profRow.basic_info && Object.keys(profRow.basic_info).length > 0 ? { basic_info: profRow.basic_info } : {}),
+          ...(profRow.hero && Object.keys(profRow.hero).length > 0 ? { hero: profRow.hero, ...profRow.hero } : {}),
+          ...(profRow.stats && Object.keys(profRow.stats).length > 0 ? { stats: profRow.stats, ...profRow.stats } : {}),
+          ...(profRow.about && Object.keys(profRow.about).length > 0 ? { about: profRow.about, ...profRow.about } : {}),
+          ...(profRow.principal && Object.keys(profRow.principal).length > 0 ? { principal: profRow.principal } : {}),
+          ...(profRow.management && Object.keys(profRow.management).length > 0 ? { management: profRow.management } : {}),
+          ...(profRow.academics && Object.keys(profRow.academics).length > 0 ? { academics: profRow.academics } : {}),
+          ...(profRow.results && Object.keys(profRow.results).length > 0 ? { results: profRow.results } : {}),
+          ...(profRow.facilities && (Array.isArray(profRow.facilities) ? profRow.facilities.length > 0 : Object.keys(profRow.facilities).length > 0)
+            ? {
+                facilities: Array.isArray(profRow.facilities)
+                  ? profRow.facilities
+                  : Array.isArray(profRow.facilities.facilities_list)
+                  ? profRow.facilities.facilities_list
+                  : rawProfile.facilities || [],
+                facilitiesMeta: !Array.isArray(profRow.facilities) ? profRow.facilities : undefined,
+              }
+            : {}),
+          ...(profRow.gallery && (Array.isArray(profRow.gallery) ? profRow.gallery.length > 0 : Object.keys(profRow.gallery).length > 0)
+            ? {
+                gallery: profRow.gallery,
+                galleryItems: Array.isArray(profRow.gallery)
+                  ? profRow.gallery
+                  : Array.isArray(profRow.gallery.gallery_items)
+                  ? profRow.gallery.gallery_items
+                  : rawProfile.galleryItems,
+              }
+            : {}),
+          ...(profRow.fees && Object.keys(profRow.fees).length > 0 ? { fees: profRow.fees } : {}),
+          ...(profRow.admissions && Object.keys(profRow.admissions).length > 0 ? { admissions: profRow.admissions } : {}),
+          ...(profRow.faqs && (Array.isArray(profRow.faqs) ? profRow.faqs.length > 0 : Object.keys(profRow.faqs).length > 0)
+            ? {
+                faqs: Array.isArray(profRow.faqs)
+                  ? profRow.faqs
+                  : Array.isArray(profRow.faqs.faq_items)
+                  ? profRow.faqs.faq_items
+                  : rawProfile.faqs || [],
+              }
+            : {}),
+          ...(profRow.contact && Object.keys(profRow.contact).length > 0 ? { contact: profRow.contact } : {}),
+          ...(profRow.careers && Object.keys(profRow.careers).length > 0 ? { careers: profRow.careers } : {}),
+          reviews: Array.isArray(profRow.reviews) && profRow.reviews.length > 0 ? profRow.reviews : (rawProfile.reviews || []),
+          likesCount: typeof profRow.likes_count === 'number' ? profRow.likes_count : (rawProfile.likesCount || 0),
+          sectionVisibility: profRow.section_visibility || rawProfile.sectionVisibility || {},
+        };
+      }
+    } catch (profErr) {
+      console.warn('Error reading live school_profiles from Supabase:', profErr);
+    }
+  }
+
+  // 2. Fetch from local sync tokens store as fallback/base
+  const localSyncedData = getSyncedProfileData(schoolData?.udise_code || rawCleanCode || cleanDigits, cleanSlug);
+
+  // 3. Deeply merge so no section is lost
+  const syncedProfileData: any = {
+    ...(localSyncedData || {}),
+    ...(dbProfileJson || {}),
+    contentOverrides: {
+      ...(localSyncedData?.contentOverrides || {}),
+      ...(dbProfileJson?.contentOverrides || {}),
+    },
+    imageOverrides: {
+      ...(localSyncedData?.imageOverrides || {}),
+      ...(dbProfileJson?.imageOverrides || {}),
+    },
+    sectionVisibility: {
+      ...(localSyncedData?.sectionVisibility || {}),
+      ...(dbProfileJson?.sectionVisibility || {}),
+    },
+    feeTableData: dbProfileJson?.feeTableData || dbProfileJson?.feeTable || dbProfileJson?.fees?.fee_table || localSyncedData?.feeTableData || localSyncedData?.feeTable || undefined,
+    feeTable: dbProfileJson?.feeTable || dbProfileJson?.feeTableData || dbProfileJson?.fees?.fee_table || localSyncedData?.feeTable || localSyncedData?.feeTableData || undefined,
+    class10Results: dbProfileJson?.class10Results || dbProfileJson?.boardResults?.class10Results || dbProfileJson?.results?.class10Results || localSyncedData?.class10Results || localSyncedData?.boardResults?.class10Results || [],
+    class12Results: dbProfileJson?.class12Results || dbProfileJson?.boardResults?.class12Results || dbProfileJson?.results?.class12Results || localSyncedData?.class12Results || localSyncedData?.boardResults?.class12Results || [],
+    streamCategories: dbProfileJson?.streamCategories || dbProfileJson?.academics?.stream_categories || localSyncedData?.streamCategories || undefined,
+    galleryItems: dbProfileJson?.galleryItems || dbProfileJson?.gallery?.gallery_items || localSyncedData?.galleryItems || undefined,
+    heroMediaItems: dbProfileJson?.heroMediaItems || dbProfileJson?.hero?.hero_media_items || localSyncedData?.heroMediaItems || undefined,
+    facilities: (Array.isArray(dbProfileJson?.facilities) && dbProfileJson.facilities.length > 0)
+      ? dbProfileJson.facilities
+      : (Array.isArray(dbProfileJson?.facilities?.facilities_list) && dbProfileJson.facilities.facilities_list.length > 0)
+      ? dbProfileJson.facilities.facilities_list
+      : (localSyncedData?.facilities || undefined),
+  };
+
+  const udiseCode = isTemplate ? '06170100101' : (syncedProfileData?.schoolIdentity?.udiseCode || syncedProfileData?.udiseCode || schoolData?.udise_code || cleanDigits || '');
+  const displaySchoolName = isTemplate ? 'Write Your School Name Here' : (syncedProfileData?.schoolIdentity?.schoolName || syncedProfileData?.schoolName || schoolData?.school_name || fallbackSchoolName);
+  const displayState = syncedProfileData?.contact?.campusLocation?.state || syncedProfileData?.state || schoolData?.state_name || rawState;
+  const displayDistrict = syncedProfileData?.contact?.campusLocation?.district || syncedProfileData?.district || schoolData?.district_name || rawDistrict;
+  const displayBlock = syncedProfileData?.contact?.campusLocation?.block || schoolData?.block_name || rawVillage || '';
+  const displayVillage = syncedProfileData?.contact?.campusLocation?.village || syncedProfileData?.village || schoolData?.village_name || rawVillage;
+  const pincode = cleanCodePrefix(syncedProfileData?.contact?.campusLocation?.pincode || syncedProfileData?.pincode || schoolData?.pincode);
+  const management = syncedProfileData?.management || cleanManagementDesc(schoolData?.management_desc) || '';
+  const board = syncedProfileData?.schoolIdentity?.board || syncedProfileData?.board || cleanBoardName(schoolData?.board_12th) || cleanBoardName(schoolData?.board_10th) || '';
+  const medium = syncedProfileData?.schoolIdentity?.mediumOfInstruction || cleanMediumName(schoolData?.primary_medium) || '';
+  const establishedYear = cleanCodePrefix(syncedProfileData?.schoolIdentity?.establishedYear || syncedProfileData?.establishedYear || schoolData?.established_year) || '';
+  const totalStudents = Number(syncedProfileData?.totalStudents || syncedProfileData?.schoolIdentity?.totalStudents || schoolData?.total_students) || 0;
+  const totalBoys = Number(schoolData?.total_boys || syncedProfileData?.totalBoys || 0);
+  const totalGirls = Number(schoolData?.total_girls || syncedProfileData?.totalGirls || 0);
+  const totalTeachers = Number(syncedProfileData?.totalTeachers || schoolData?.total_teachers) || 0;
+  const maleTeachers = Number(schoolData?.male_teachers || syncedProfileData?.maleTeachers || 0);
+  const femaleTeachers = Number(schoolData?.female_teachers || syncedProfileData?.femaleTeachers || 0);
+  const classroomsCount = Number(syncedProfileData?.classroomsCount || schoolData?.total_classrooms) || 0;
+  const classFrom = cleanCodePrefix(schoolData?.class_from) || '';
+  const classTo = cleanCodePrefix(schoolData?.class_to) || '';
   const schoolCategory = cleanSchoolCategory(schoolData?.school_category);
   const genderType = cleanGenderType(schoolData?.gender_type);
   const ruralUrban = cleanRuralUrban(schoolData?.rural_urban);
+  const residentialSchool = cleanCodePrefix(
+    syncedProfileData?.heroSection?.boardingStatus ||
+    syncedProfileData?.residentialSchool ||
+    syncedProfileData?.schoolFormat ||
+    schoolData?.residential_school
+  ) || 'Day School';
   
-  const workingSmartBoards = Number(schoolData?.working_smart_boards) || 0;
-  const computerIctLab = schoolData?.computer_ict_lab || '';
-  const atalStemLab = schoolData?.atal_stem_lab || '';
-  const playgroundAvailable = schoolData?.playground_available || '';
+  const workingSmartBoards = Number(schoolData?.working_smart_boards || syncedProfileData?.workingSmartBoards || 0);
+  const computerIctLab = schoolData?.computer_ict_lab || (syncedProfileData?.hasComputerLab ? 'Yes' : 'No');
+  const atalStemLab = schoolData?.atal_stem_lab || (syncedProfileData?.hasStemLab ? 'Yes' : 'No');
+  const playgroundAvailable = schoolData?.playground_available || (syncedProfileData?.hasPlayground ? 'Yes' : 'No');
 
-  const principalName = schoolData?.principal_name || '';
-  const rawPhone = schoolData?.phone ? String(schoolData.phone).replace(/\.0$/, '') : '';
-  const rawEmail = schoolData?.email || '';
-  const website = schoolData?.website || '';
+  const principalName = syncedProfileData?.leadership?.principalName || syncedProfileData?.principalName || schoolData?.principal_name || '';
+  const rawPhone = syncedProfileData?.contact?.contactDesks?.[0]?.phone || syncedProfileData?.phone || (schoolData?.phone ? String(schoolData.phone).replace(/\.0$/, '') : '');
+  const rawEmail = syncedProfileData?.contact?.contactDesks?.[0]?.email || syncedProfileData?.email || schoolData?.email || '';
+  const website = syncedProfileData?.contact?.website || syncedProfileData?.website || schoolData?.website || '';
   
   const lat = Number(schoolData?.latitude) || 28.1405;
   const lng = Number(schoolData?.longitude) || 77.3259;
-  const rawAddress = schoolData?.address 
+  const rawAddress = syncedProfileData?.contact?.campusLocation?.streetAddress || syncedProfileData?.address || (schoolData?.address 
     ? schoolData.address.split('\n')[0] 
-    : `${displayVillage}, ${displayBlock ? `${displayBlock}, ` : ''}${displayDistrict}, ${displayState}${pincode ? ` - ${pincode}` : ''}`;
+    : `${displayVillage}, ${displayBlock ? `${displayBlock}, ` : ''}${displayDistrict}, ${displayState}${pincode ? ` - ${pincode}` : ''}`);
 
   const pageUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
 
@@ -650,57 +839,125 @@ export default async function SchoolPage({ params }: PageProps) {
     ],
   };
 
+  const effectiveAffiliationNo = syncedProfileData?.schoolIdentity?.affiliationNumber || syncedProfileData?.affiliationNumber || schoolData?.affiliation_number || schoolData?.affiliation_no || '';
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <SchoolProfileView
-        state={displayState}
-        district={displayDistrict}
-        blockName={displayBlock}
-        village={displayVillage}
-        schoolName={displaySchoolName}
-        schoolSlug={cleanSlug}
-        udiseCode={udiseCode}
-        pincode={pincode}
-        management={management}
-        board={board}
-        medium={medium}
-        establishedYear={establishedYear}
-        totalStudents={totalStudents}
-        totalBoys={totalBoys}
-        totalGirls={totalGirls}
-        totalTeachers={totalTeachers}
-        maleTeachers={maleTeachers}
-        femaleTeachers={femaleTeachers}
-        classroomsCount={classroomsCount}
-        classFrom={classFrom}
-        classTo={classTo}
-        schoolCategory={schoolCategory}
-        genderType={genderType}
-        ruralUrban={ruralUrban}
-        workingSmartBoards={workingSmartBoards}
-        computerIctLab={computerIctLab}
-        atalStemLab={atalStemLab}
-        playgroundAvailable={playgroundAvailable}
-        principalName={principalName}
-        rawPhone={rawPhone}
-        rawEmail={rawEmail}
-        website={website}
-        rawAddress={rawAddress}
-        imageUrl={syncedProfileData?.heroImage || schoolData?.image_url || ''}
-        logoUrl={syncedProfileData?.logoImage || syncedProfileData?.imageOverrides?.['school_logo'] || ''}
-        affiliationNumber={syncedProfileData?.affiliationNumber || schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
-        lat={lat}
-        lng={lng}
-        clusterSchools={clusterSchools}
-        districtSchools={districtSchools}
-        isTemplate={isTemplate}
-        initialProfileData={syncedProfileData}
-        flipbookSlides={syncedProfileData?.flipbookSlides}
-      />
+      <SchoolTemplateProvider
+        initialData={{
+          schoolName: displaySchoolName,
+          udiseCode: udiseCode,
+          board: board,
+          medium: medium,
+          principalName: principalName,
+          address: rawAddress,
+          state: displayState,
+          district: displayDistrict,
+          village: displayVillage,
+          pincode: pincode,
+          management: management,
+          schoolCategory: schoolCategory,
+          classFrom: classFrom,
+          classTo: classTo,
+          totalStudents: totalStudents,
+          totalTeachers: totalTeachers,
+          classroomsCount: classroomsCount,
+          workingSmartBoards: workingSmartBoards,
+          phone: rawPhone,
+          email: rawEmail,
+          website: website,
+          heroImage: (syncedProfileData?.heroImage && !syncedProfileData.heroImage.includes('hero-school-') && !syncedProfileData.heroImage.includes('edunova-hero') && !syncedProfileData.heroImage.includes('default-school-campus') && !syncedProfileData.heroImage.includes('unsplash.com'))
+            ? syncedProfileData.heroImage
+            : ((schoolData?.image_url && !schoolData.image_url.includes('default-school-campus') && !schoolData.image_url.includes('hero-school-') && !schoolData.image_url.includes('unsplash.com')) ? schoolData.image_url : PLACEHOLDER_EMPTY_IMAGE),
+          logoImage: syncedProfileData?.logoImage || syncedProfileData?.imageOverrides?.['school_logo'] || '',
+          affiliationNumber: effectiveAffiliationNo,
+          contentOverrides: syncedProfileData?.contentOverrides || {},
+          imageOverrides: syncedProfileData?.imageOverrides || {},
+          iconOverrides: syncedProfileData?.iconOverrides || {},
+          facilities: syncedProfileData?.facilities || [],
+          admissions: syncedProfileData?.admissions || syncedProfileData?.admissionsCards || [],
+          feeTableData: syncedProfileData?.feeTableData || syncedProfileData?.feeTable || undefined,
+          boardResults: syncedProfileData?.boardResults || ((syncedProfileData?.class10Results?.length > 0 || syncedProfileData?.class12Results?.length > 0) ? {
+            class10Results: syncedProfileData?.class10Results || [],
+            class12Results: syncedProfileData?.class12Results || [],
+          } : undefined),
+          campusVideoUrl: syncedProfileData?.campusVideoUrl || '',
+          flipbookSlides: syncedProfileData?.flipbookSlides || [],
+          galleryItems: syncedProfileData?.galleryItems || [],
+          faqs: (syncedProfileData?.faqItems || syncedProfileData?.faqs || []).map((f: any, idx: number) => ({
+            id: f.id || `faq-${idx}`,
+            q: f.q || f.question || '',
+            a: f.a || f.answer || '',
+            category: f.category || 'General',
+          })),
+          includedAcademicFeatures: syncedProfileData?.includedAcademicFeatures || [],
+          heroMediaItems: syncedProfileData?.heroMediaItems || [],
+          admissionsOpen: Boolean(syncedProfileData?.admissionsOpen),
+          sectionVisibility: syncedProfileData?.sectionVisibility || {},
+          tabVisibility: syncedProfileData?.tabVisibility || {},
+          aboutText: syncedProfileData?.aboutText || '',
+          visionText: syncedProfileData?.visionText || '',
+          missionText: syncedProfileData?.missionText || '',
+          residentialSchool: residentialSchool,
+        }}
+        initialEditMode={false}
+      >
+        <SchoolProfileView
+          state={displayState}
+          district={displayDistrict}
+          blockName={displayBlock}
+          village={displayVillage}
+          schoolName={displaySchoolName}
+          schoolSlug={cleanSlug}
+          udiseCode={udiseCode}
+          pincode={pincode}
+          management={management}
+          board={board}
+          medium={medium}
+          establishedYear={establishedYear}
+          totalStudents={totalStudents}
+          totalBoys={totalBoys}
+          totalGirls={totalGirls}
+          totalTeachers={totalTeachers}
+          maleTeachers={maleTeachers}
+          femaleTeachers={femaleTeachers}
+          classroomsCount={classroomsCount}
+          classFrom={classFrom}
+          classTo={classTo}
+          schoolCategory={schoolCategory}
+          genderType={genderType}
+          ruralUrban={ruralUrban}
+          workingSmartBoards={workingSmartBoards}
+          computerIctLab={computerIctLab}
+          atalStemLab={atalStemLab}
+          playgroundAvailable={playgroundAvailable}
+          principalName={principalName}
+          rawPhone={rawPhone}
+          rawEmail={rawEmail}
+          website={website}
+          rawAddress={rawAddress}
+          imageUrl={(syncedProfileData?.heroImage && !syncedProfileData.heroImage.includes('hero-school-') && !syncedProfileData.heroImage.includes('edunova-hero') && !syncedProfileData.heroImage.includes('default-school-campus') && !syncedProfileData.heroImage.includes('unsplash.com'))
+            ? syncedProfileData.heroImage
+            : ((schoolData?.image_url && !schoolData.image_url.includes('default-school-campus') && !schoolData.image_url.includes('hero-school-') && !schoolData.image_url.includes('unsplash.com')) ? schoolData.image_url : PLACEHOLDER_EMPTY_IMAGE)}
+          logoUrl={syncedProfileData?.logoImage || syncedProfileData?.imageOverrides?.['school_logo'] || ''}
+          affiliationNumber={syncedProfileData?.schoolIdentity?.affiliationNumber || syncedProfileData?.affiliationNumber || schoolData?.affiliation_number || schoolData?.affiliation_no || ''}
+          lat={lat}
+          lng={lng}
+          clusterSchools={clusterSchools}
+          districtSchools={districtSchools}
+          isTemplate={isTemplate}
+          initialProfileData={syncedProfileData}
+          residentialSchool={residentialSchool}
+          flipbookSlides={(syncedProfileData?.flipbookSlides || []).map((slide: any) => ({
+            ...slide,
+            image: (slide.image && !slide.image.includes('hero-school-') && !slide.image.includes('edunova-hero')) ? slide.image : PLACEHOLDER_EMPTY_IMAGE
+          }))}
+        />
+      </SchoolTemplateProvider>
     </>
   );
 }

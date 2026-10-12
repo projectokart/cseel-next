@@ -1,3 +1,4 @@
+@import '../styles/m3-design-system.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -94,7 +95,7 @@
     --brand-secondary-bg: #EDF5FA;
     --brand-secondary-text: #006FCC;
     --brand-secondary-border: #D6EDFF;
-    --btn-radius: 12px;
+    --btn-radius: 9999px;
     --btn-shadow: 0 4px 14px rgba(0, 111, 204, 0.35);
     --card-radius: 16px;
     --google-blue: #1A73E8;
@@ -423,21 +424,21 @@
      ═══════════════════════════════════════════════════════════ */
   .btn-sm {
     @apply h-9 px-3.5 py-1.5 text-xs;
-    border-radius: calc(var(--btn-radius, 12px) * 0.85);
+    border-radius: var(--btn-radius, 9999px);
   }
   .btn-md {
     @apply h-11 px-5 py-2.5 text-sm md:text-[15px];
-    border-radius: var(--btn-radius, 12px);
+    border-radius: var(--btn-radius, 9999px);
   }
   .btn-lg {
     @apply h-12 px-8 py-3.5 text-base;
-    border-radius: var(--btn-radius, 12px);
+    border-radius: var(--btn-radius, 9999px);
   }
 
-  /* ── 🌟 VARIATION 1: CSEEL MODERN SIGNATURE BUTTON (12px rounded, bold, glow shadow) ── */
+  /* ── 🌟 VARIATION 1: CSEEL MODERN SIGNATURE BUTTON (Pill rounded-full, bold, glow shadow) ── */
   .btn-cseel, .button_cseel {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    border-radius: 12px !important;
+    border-radius: 9999px !important;
     background-color: var(--brand-primary, #006FCC) !important;
     color: #ffffff !important;
     box-shadow: 0 4px 14px rgba(0, 111, 204, 0.35) !important;
@@ -451,10 +452,10 @@
     color: #ffffff !important;
   }
 
-  /* ── 🌟 VARIATION 2: GOOGLE MATERIAL BUTTON (Google Places / Search card style rounded-lg #1A73E8) ── */
+  /* ── 🌟 VARIATION 2: GOOGLE MATERIAL BUTTON (Pill rounded-full #1A73E8) ── */
   .btn-google, .button_google {
-    @apply inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer;
-    border-radius: 8px !important;
+    @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer;
+    border-radius: 9999px !important;
     background-color: var(--google-blue, #1A73E8) !important;
     color: #ffffff !important;
     font-family: var(--font-google-sans), Google Sans, Roboto, sans-serif !important;
@@ -470,10 +471,10 @@
     color: #ffffff !important;
   }
 
-  /* ── 🌟 DYNAMIC PRIMARY BUTTON (Adapts to Admin Choice: CSEEL vs Google style) ── */
+  /* ── 🌟 DYNAMIC PRIMARY BUTTON (Adapts to Admin Choice: Pill Shape) ── */
   .btn-google-primary, .btn-primary, .button_primary, .button-primary, a.button_primary, button.button_primary, a.btn-primary, button.btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    border-radius: var(--btn-radius, 12px);
+    border-radius: var(--btn-radius, 9999px);
     background-color: var(--brand-primary, #006FCC) !important;
     color: #ffffff !important;
     box-shadow: var(--btn-shadow, 0 4px 14px rgba(0, 111, 204, 0.35));
@@ -489,7 +490,7 @@
 
   .btn-google-tonal, .btn-tonal, .btn-google-secondary, .btn-secondary, .button_secondary, .button-secondary, a.button_secondary, button.button_secondary, a.btn-secondary, button.btn-secondary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    border-radius: var(--btn-radius, 12px);
+    border-radius: var(--btn-radius, 9999px);
     background-color: var(--brand-secondary-bg, #EDF5FA) !important;
     color: var(--brand-secondary-text, #006FCC) !important;
     border: 1px solid var(--brand-secondary-border, #D6EDFF) !important;
@@ -502,7 +503,7 @@
   }
   .btn-google-outline, .btn-outline, .button_outline, .button-outline, a.button_outline, button.button_outline, a.btn-outline, button.btn-outline {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-white active:scale-[0.98] transition-all cursor-pointer;
-    border-radius: var(--btn-radius, 12px);
+    border-radius: var(--btn-radius, 9999px);
     border: 2px solid var(--brand-primary, #006FCC);
     color: var(--brand-primary, #006FCC);
   }
@@ -510,13 +511,13 @@
     background-color: var(--brand-secondary-bg, #EDF5FA);
   }
   .btn-google-danger, .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] text-sm font-semibold bg-[#EA4335] hover:bg-[#D93025] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold bg-[#EA4335] hover:bg-[#D93025] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
   }
   .btn-google-success, .btn-success {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] text-sm font-semibold bg-[#34A853] hover:bg-[#2D9247] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold bg-[#34A853] hover:bg-[#2D9247] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
   }
   .btn-google-icon, .btn-icon {
-    @apply inline-flex items-center justify-center w-9 h-9 rounded-xl text-[#5F6368] dark:text-[#9AA0A6] hover:text-[#202124] dark:hover:text-[#E8EAED] hover:bg-[#F1F3F4] dark:hover:bg-[#282A2C] transition-all cursor-pointer;
+    @apply inline-flex items-center justify-center w-9 h-9 rounded-full text-[#5F6368] dark:text-[#9AA0A6] hover:text-[#202124] dark:hover:text-[#E8EAED] hover:bg-[#F1F3F4] dark:hover:bg-[#282A2C] transition-all cursor-pointer;
   }
 
   /* ═══════════════════════════════════════════════════════════
@@ -1174,7 +1175,7 @@
   color: #005689;
   font-weight: 700;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1191,7 +1192,7 @@
   border: 1.5px solid rgba(255, 255, 255, 0.4);
   font-weight: 700;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1208,7 +1209,7 @@
   border: 1.5px solid #005689;
   font-weight: 700;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   gap: 8px;

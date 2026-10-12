@@ -22,6 +22,7 @@ import 'swiper/css/navigation';
 import { AdSlotId, MarketingPromotion } from '@/features/marketing/types';
 import { useMarketingCampaigns } from '@/features/marketing/useMarketingCampaigns';
 import { CSEELHtmlJsInjector } from '@/features/marketing/CSEELSlotRuntime';
+import { M3Button, M3IconButton } from '@/components/google-ui';
 
 interface OffersSectionProps {
   slotId?: AdSlotId;
@@ -140,7 +141,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
         item.image_url || '/images/hero/students-doing-chemistry-lab-experiment.webp';
       return (
         <div
-          className="group relative rounded-2xl overflow-hidden min-h-[240px] md:min-h-[270px] flex items-center p-6 sm:p-10 shadow-lg transition-all duration-300"
+          className="group relative rounded-[16px] overflow-hidden min-h-[240px] md:min-h-[270px] flex items-center p-6 sm:p-10 shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out"
           style={{ border: `1.5px solid ${borderColor}` }}
         >
           <img
@@ -165,7 +166,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                   fontSize: '12px',
                   fontWeight: 700,
                   padding: '4px 12px',
-                  borderRadius: '20px',
+                  borderRadius: '8px',
                 }}
               >
                 {badgeText}
@@ -174,7 +175,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                 <button
                   type="button"
                   onClick={(e) => handleCopyPromoCode(e, item)}
-                  className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-white/15 hover:bg-white/25 border border-dashed border-amber-300/80 text-amber-300 cursor-pointer transition-all"
+                  className="h-8 px-3 rounded-[8px] text-xs font-mono font-bold bg-white/15 hover:bg-white/25 border border-dashed border-amber-300/80 text-amber-300 cursor-pointer transition-all duration-200 active:scale-[0.98]"
                 >
                   {isCopied ? `✓ COPIED: ${item.coupon_code}` : `🎟️ CODE: ${item.coupon_code} (Copy)`}
                 </button>
@@ -211,19 +212,15 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                 href={ctaHref}
                 target={linkTarget}
                 onClick={(e) => handleActionClick(e, item)}
-                style={{
-                  backgroundColor: buttonBg,
-                  color: '#ffffff',
-                  borderRadius: '20px',
-                  padding: '9px 26px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-                className="inline-flex items-center gap-2 hover:opacity-95 active:scale-95 transition-all shadow-md"
               >
-                <span>{isCopied ? 'Code Copied! ✓' : ctaText}</span>
-                <ArrowRight size={15} />
+                <M3Button
+                  variant="filled"
+                  size="md"
+                  style={{ backgroundColor: buttonBg }}
+                  trailingIcon={<ArrowRight size={16} />}
+                >
+                  {isCopied ? 'Code Copied! ✓' : ctaText}
+                </M3Button>
               </Link>
             </div>
           </div>
@@ -238,12 +235,12 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
 
     return (
       <div
-        className="group relative overflow-hidden h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.16)]"
+        className="group relative overflow-hidden h-full rounded-[16px] transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_1px_3px_rgba(60,64,67,0.3),0_4px_8px_3px_rgba(60,64,67,0.15)]"
         style={{
           background: isImageCard ? '#0f172a' : item.bg_color || '#ffffff',
           border: `1px solid ${borderColor}`,
-          borderRadius: '14px',
-          padding: '18px',
+          borderRadius: '16px',
+          padding: '20px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
@@ -272,7 +269,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
           </>
         )}
 
-        {/* Header Row: Icon + Title + Pill Badge */}
+        {/* Header Row: Icon + Title + M3 Chip Badge */}
         <div
           className="relative z-10"
           style={{
@@ -318,7 +315,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                 margin: 0,
                 fontSize: '18px',
                 fontWeight: 700,
-                color: isImageCard ? '#ffffff' : '#2c2c2c',
+                color: isImageCard ? '#ffffff' : '#1f1f1f',
                 letterSpacing: '-0.2px',
               }}
             >
@@ -333,7 +330,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
               fontSize: '12px',
               fontWeight: 600,
               padding: '4px 10px',
-              borderRadius: '20px',
+              borderRadius: '8px',
               whiteSpace: 'nowrap',
               flexShrink: 0,
             }}
@@ -348,7 +345,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
           style={{
             fontSize: '14px',
             lineHeight: 1.5,
-            color: isImageCard ? 'rgba(255,255,255,0.92)' : '#222222',
+            color: isImageCard ? 'rgba(255,255,255,0.92)' : '#1f1f1f',
             marginBottom: '18px',
           }}
         >
@@ -361,7 +358,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
               href={termsHref}
               target={linkTarget}
               style={{
-                color: isImageCard ? '#ffffff' : '#000000',
+                color: isImageCard ? '#ffffff' : '#0b57d0',
                 textDecoration: 'underline',
                 fontWeight: 500,
                 fontSize: '13px',
@@ -374,7 +371,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                 type="button"
                 onClick={(e) => handleCopyPromoCode(e, item)}
                 title="Click to copy promo code"
-                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md border border-dashed text-[11px] font-mono font-bold cursor-pointer transition-all active:scale-95 ${
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] border border-dashed text-[11px] font-mono font-bold cursor-pointer transition-all duration-200 active:scale-[0.98] ${
                   isImageCard
                     ? 'bg-white/15 hover:bg-white/25 text-amber-300 border-amber-300/70'
                     : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-400'
@@ -389,7 +386,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
           </div>
         </div>
 
-        {/* Footer with Price & Pill Button */}
+        {/* Footer with Price & Uniform M3 Pill Button */}
         <div
           className="relative z-10"
           style={{
@@ -424,7 +421,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                 style={{
                   fontSize: '18px',
                   fontWeight: 700,
-                  color: isImageCard ? '#ffffff' : '#111111',
+                  color: isImageCard ? '#ffffff' : '#1f1f1f',
                 }}
               >
                 {newPrice}
@@ -433,7 +430,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                     style={{
                       fontSize: '13px',
                       fontWeight: 400,
-                      color: isImageCard ? 'rgba(255,255,255,0.78)' : '#4b5563',
+                      color: isImageCard ? 'rgba(255,255,255,0.78)' : '#444746',
                       marginLeft: '2px',
                     }}
                   >
@@ -448,31 +445,15 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
             href={ctaHref}
             target={linkTarget}
             onClick={(e) => handleActionClick(e, item)}
-            style={{
-              backgroundColor: buttonBg,
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '20px',
-              padding: '8px 24px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-            className="hover:opacity-90 active:scale-95 transition-all"
           >
-            {isCopied ? (
-              <>
-                <Check size={14} />
-                <span>Copied</span>
-              </>
-            ) : (
-              <span>{ctaText}</span>
-            )}
+            <M3Button
+              variant="filled"
+              size="sm"
+              style={{ backgroundColor: buttonBg }}
+              leadingIcon={isCopied ? <Check size={14} /> : undefined}
+            >
+              {isCopied ? 'Copied' : ctaText}
+            </M3Button>
           </Link>
         </div>
       </div>
@@ -495,7 +476,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
             {settings.show_section_header ? (
               <div className="flex items-center gap-2">
                 <Tag size={17} className="text-[#ea3829]" />
-                <p className="text-xs font-bold text-primary uppercase tracking-widest">
+                <p className="text-xs font-bold text-[#0b57d0] uppercase tracking-widest">
                   {settings.section_badge || 'Special Offers & Events'}
                 </p>
               </div>
@@ -505,20 +486,22 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
 
             {settings.show_arrows && activeItems.length > 1 && (
               <div className="flex items-center gap-2 ml-auto">
-                <button
+                <M3IconButton
                   type="button"
-                  aria-label="Previous offer slide"
-                  className={`${prevBtnClass} w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all cursor-pointer shadow-2xs`}
-                >
-                  <ChevronLeft size={17} />
-                </button>
-                <button
+                  ariaLabel="Previous offer slide"
+                  variant="outlined"
+                  size="sm"
+                  className={prevBtnClass}
+                  icon={<ChevronLeft size={17} />}
+                />
+                <M3IconButton
                   type="button"
-                  aria-label="Next offer slide"
-                  className={`${nextBtnClass} w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all cursor-pointer shadow-2xs`}
-                >
-                  <ChevronRight size={17} />
-                </button>
+                  ariaLabel="Next offer slide"
+                  variant="outlined"
+                  size="sm"
+                  className={nextBtnClass}
+                  icon={<ChevronRight size={17} />}
+                />
               </div>
             )}
           </div>

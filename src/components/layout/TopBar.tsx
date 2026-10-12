@@ -126,7 +126,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className="bg-[#023858] text-white text-xs border-b border-white/15 relative z-[600] select-none shadow-xs">
+    <div id="site-topbar" className="site-topbar bg-[#023858] text-white text-xs border-b border-white/15 relative z-[600] select-none shadow-xs">
       <div className="container mx-auto px-2.5 sm:px-4 max-w-7xl">
         <div className="flex items-center justify-between py-1 gap-2 min-h-[34px] w-full">
           
@@ -192,6 +192,7 @@ const TopBar = () => {
             {/* Careers Link */}
             <Link
               href="/careers"
+              aria-label="Careers at CSEEL"
               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-white hover:bg-white/15 transition-all shrink-0"
               title="Careers at CSEEL"
             >
@@ -202,6 +203,7 @@ const TopBar = () => {
             {/* Get Support */}
             <Link
               href="/get-support"
+              aria-label="Student and Teacher Support"
               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-white hover:bg-white/15 transition-all shrink-0"
               title="Helpdesk & Student/Teacher Support"
             >
@@ -212,6 +214,7 @@ const TopBar = () => {
             {/* Contact Us */}
             <Link
               href="/contact-us"
+              aria-label="Contact CSEEL Directorate"
               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-white hover:bg-white/15 transition-all shrink-0"
               title="Contact CSEEL National Directorate"
             >

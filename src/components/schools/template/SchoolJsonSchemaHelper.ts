@@ -17,21 +17,25 @@ export function limitLength(val: any, maxChars: number): string {
   return str.length > maxChars ? str.substring(0, maxChars) : str;
 }
 
-/**
- * All 62+ Predefined School Facilities with verified icons and categories.
- * Selection is strictly restricted to these items.
- */
 export const ALL_PREDEFINED_FACILITIES = FACILITY_CATEGORIES.flatMap((cat) =>
-  cat.items.map((item) => ({
-    name: item.name,
-    category: cat.category,
-    icon: item.icon,
-  }))
+  cat.items.map((item) => {
+    const key = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
+    return {
+      id: key,
+      key,
+      name: item.name,
+      category: cat.category,
+      icon: item.icon,
+      selected: false,
+    };
+  })
 );
 
-const PREDEFINED_FACILITY_MAP = new Map<string, { name: string; category: string; icon: string }>();
+const PREDEFINED_FACILITY_MAP = new Map<string, { id: string; key: string; name: string; category: string; icon: string; selected: boolean }>();
 ALL_PREDEFINED_FACILITIES.forEach((item) => {
   PREDEFINED_FACILITY_MAP.set(item.name.toLowerCase().trim(), item);
+  PREDEFINED_FACILITY_MAP.set(item.key, item);
+  PREDEFINED_FACILITY_MAP.set(item.id, item);
 });
 
 /**
@@ -55,47 +59,45 @@ export const BLANK_AI_SCHOOL_SCHEMA = {
   // ========================================================
   section_1_basic_info: {
     section_name: 'Basic Institutional Identity',
-    school_name: 'DELHI PUBLIC SCHOOL', // Max 65 chars (Government UDISE verified)
-    udise_code: '06170505907', // Exactly 11 digits (Primary Key)
-    board: 'CBSE (Central Board of Secondary Education)', // Max 50 chars
-    medium: 'English & Hindi Medium', // Max 35 chars
-    established_year: '2013', // Max 10 chars
-    campus_area: '14 Acres', // Max 20 chars
-    school_type: 'Private Unaided (Recognized)', // Max 35 chars
-    management: 'Delhi Public School Society', // Max 45 chars
-    school_category: 'Senior Secondary (Class 1 to 12th)', // Max 45 chars
-    gender_type: 'Co-Educational', // 'Co-Educational' | 'Boys' | 'Girls'
-    affiliation_number: '831374', // Max 25 chars
+    school_name: '', // Max 65 chars (Government UDISE verified)
+    udise_code: '', // Exactly 11 characters (Primary Key)
+    board: '', // Max 50 chars
+    medium: '', // Max 35 chars
+    established_year: '', // Max 10 chars
+    campus_area: '', // Max 20 chars (Leave empty if unverified)
+    school_type: '', // Max 35 chars
+    management: '', // Max 45 chars
+    school_category: '', // Max 45 chars
+    gender_type: '', // 'Co-Educational' | 'Boys' | 'Girls'
+    affiliation_number: '', // Max 25 chars
+    logo_url: '', // Official School Logo Icon Image URL (Displayed in Top Navbar & Branding)
     branding: {
-      logo_image_url: '/images/schools/hero-school-1.png',
-      hero_banner_image: '/images/schools/hero-school-1.png',
+      logo_url: '', // Official School Logo Icon Image URL
+      logo_image_url: '',
+      hero_banner_image: '',
     },
   },
 
   // ========================================================
-  // SECTION 2: HERO FLOATING PRESTIGE ATTRACTION METRICS
+  // SECTION 2: HERO FLOATING PRESTIGE ATTRACTION METRICS (4 CARDS)
   // ========================================================
   section_2_hero_prestige_metrics: {
     section_name: 'Hero Floating Attraction Metrics',
     metric_1_board_results: {
-      value: '100%', // Max 10 chars (e.g. '100%')
-      label: 'Board Pass Rate', // Max 25 chars
+      value: 'CBSE', // Max 12 chars (e.g. 'CBSE' or '100%')
+      label: 'Affiliated Board', // Max 25 chars
     },
     metric_2_student_teacher_ratio: {
-      value: '1:15', // Max 10 chars (e.g. '1:15')
+      value: '1:15', // Max 12 chars (e.g. '1:15')
       label: 'Student-Teacher Ratio', // Max 25 chars
     },
-    metric_3_labs_studios: {
-      value: '25+', // Max 10 chars (e.g. '25+')
-      label: 'Hi-Tech Labs & Studios', // Max 25 chars
+    metric_3_classrooms_labs: {
+      value: '55+', // Max 12 chars (e.g. '55+')
+      label: 'Classrooms & Labs', // Max 25 chars
     },
-    metric_4_awards: {
-      value: '40+', // Max 10 chars (e.g. '40+')
-      label: 'Awards & Honors', // Max 25 chars
-    },
-    metric_5_parent_trust: {
-      value: '99%', // Max 10 chars (e.g. '99%')
-      label: 'Parent Trust Rating', // Max 25 chars
+    metric_4_class_range: {
+      value: 'Class 1-12', // Max 14 chars (e.g. 'Class 1-12' or '40+ Awards')
+      label: 'Class Range', // Max 25 chars
     },
   },
 
@@ -173,6 +175,17 @@ export const BLANK_AI_SCHOOL_SCHEMA = {
   },
 
   // ========================================================
+  // SECTION: GOVERNING BODY & MANAGEMENT MESSAGE
+  // ========================================================
+  section_management_desk: {
+    section_name: 'Governing Body & Management Message',
+    management_name: 'Delhi Public School Society', // Max 50 chars
+    management_designation: 'Governing Council / Managing Committee', // Max 45 chars
+    management_message: 'Our mission as guardians of this institution is to ensure world-class infrastructure, compassionate pedagogical mentorship, and accessible education for every family.', // Max 280 chars
+    management_logo: '', // Official seal/logo URL
+  },
+
+  // ========================================================
   // SECTION 7: ACADEMICS, CURRICULUM & STREAMS
   // ========================================================
   section_7_academics: {
@@ -196,24 +209,23 @@ export const BLANK_AI_SCHOOL_SCHEMA = {
   },
 
   // ========================================================
-  // SECTION 8: FACILITIES & INFRASTRUCTURE (From 62 Predefined List)
+  // SECTION 8: FACILITIES & INFRASTRUCTURE (All Predefined Facilities Catalogue with Icons)
   // ========================================================
   section_8_facilities: {
     section_name: 'Facilities & Infrastructure',
+    instructions: 'Har facility ka exact key, name, category, aur official icon link niche diya hai. School me jo-jo facility available hai, unhe "selected": true set karein.',
+    total_facilities_count: ALL_PREDEFINED_FACILITIES.length,
+    all_facilities: ALL_PREDEFINED_FACILITIES,
     selected_facility_names: [
       'Smart Classes',
       'Library',
       'Physics Lab',
       'Chemistry Lab',
       'Biology Lab',
-      'Robotics Lab',
       'Computer Lab',
       'Playground / Outdoor Sports',
       'CCTV Surveillance',
-      'Medical Room / Clinic',
-      'Art & Craft Studio',
-      'Music Room',
-      'Wi-Fi Campus',
+      'Drinking Water',
     ],
   },
 
@@ -358,9 +370,9 @@ export const BLANK_AI_SCHOOL_SCHEMA = {
 };
 
 /**
- * Categorized listing of all 62 Predefined Facilities to embed in AI prompts.
+ * Categorized listing of all 69 Predefined Facilities to embed in AI prompts.
  */
-function getPredefinedFacilitiesPromptList(): string {
+export function getPredefinedFacilitiesPromptList(): string {
   return FACILITY_CATEGORIES.map((cat) => {
     const itemNames = cat.items.map((i) => `"${i.name}"`).join(', ');
     return `• ${cat.category} (${cat.items.length} options): [${itemNames}]`;
@@ -368,52 +380,264 @@ function getPredefinedFacilitiesPromptList(): string {
 }
 
 /**
- * Standard Prompt template to give to ChatGPT / Claude / Gemini / DeepSeek
+ * Strict Character Limit Specification & Source Rules for each individual section.
  */
-export function generateAiPromptForSchool(schoolNameOrDetails: string = ''): string {
-  const schemaString = JSON.stringify(BLANK_AI_SCHOOL_SCHEMA, null, 2);
+export const SECTION_FIELD_SPECS: Record<
+  string,
+  {
+    section_id: string;
+    section_name: string;
+    official_sources: string[];
+    strict_rules: string[];
+    field_limits: Record<string, { max_chars?: number; type: string; description: string; rule: string }>;
+  }
+> = {
+  section_1_basic_info: {
+    section_id: 'section_1_basic_info',
+    section_name: 'Basic Institutional Identity',
+    official_sources: [
+      'Official School Website (About Us / Mandatory Public Disclosure Appendix IX)',
+      'Official Government UDISE+ Portal (https://kys.udiseplus.gov.in)',
+      'CBSE / ICSE / State Board Affiliation Register',
+    ],
+    strict_rules: [
+      'School name must match official board affiliation/UDISE records.',
+      'UDISE Code must be exactly 11 digits numeric.',
+      'Never exceed character limits; UI card containers will overflow.',
+    ],
+    field_limits: {
+      school_name: { max_chars: 65, type: 'string', description: 'Official School Name', rule: 'Max 65 chars (UPPERCASE or Title Case)' },
+      udise_code: { max_chars: 11, type: 'string', description: 'Government UDISE Code', rule: 'Exactly 11 digits' },
+      board: { max_chars: 50, type: 'string', description: 'Affiliation Board', rule: 'Max 50 chars (e.g. CBSE / ICSE / IB)' },
+      affiliation_number: { max_chars: 25, type: 'string', description: 'Board Affiliation Number', rule: 'Max 25 chars' },
+      medium: { max_chars: 35, type: 'string', description: 'Medium of Instruction', rule: 'Max 35 chars (e.g. English & Hindi Medium)' },
+      established_year: { max_chars: 10, type: 'string', description: 'Year Established', rule: 'Max 10 chars (e.g. 2013)' },
+      campus_area: { max_chars: 20, type: 'string', description: 'Total Campus Land Area', rule: 'Max 20 chars (e.g. 14 Acres)' },
+      school_type: { max_chars: 35, type: 'string', description: 'Institution Type', rule: 'Max 35 chars (e.g. Private Unaided)' },
+      management: { max_chars: 45, type: 'string', description: 'Society / Trust Management', rule: 'Max 45 chars' },
+      school_category: { max_chars: 45, type: 'string', description: 'School Class Category', rule: 'Max 45 chars (e.g. Class 1 to 12th)' },
+      gender_type: { max_chars: 25, type: 'string', description: 'Gender Admission Type', rule: 'Co-Educational | Boys | Girls' },
+    },
+  },
+  section_2_hero_prestige_metrics: {
+    section_id: 'section_2_hero_prestige_metrics',
+    section_name: 'Hero Floating Attraction Metrics (4 Cards)',
+    official_sources: ['School Website Home / Academics', 'Board Results Notification', 'UDISE+ Teacher Records'],
+    strict_rules: ['Provide exactly 4 metrics for the 4 floating cards.', 'Keep value strictly under 12 characters.'],
+    field_limits: {
+      metric_1_board_results: { max_chars: 12, type: 'string', description: 'Affiliated Board / Pass %', rule: 'Max 12 chars (e.g. "CBSE" or "100%")' },
+      metric_2_student_teacher_ratio: { max_chars: 12, type: 'string', description: 'Student-Teacher Ratio', rule: 'Max 12 chars (e.g. "1:15")' },
+      metric_3_classrooms_labs: { max_chars: 12, type: 'string', description: 'Classrooms & Labs Count', rule: 'Max 12 chars (e.g. "55+")' },
+      metric_4_class_range: { max_chars: 14, type: 'string', description: 'Class Range / Awards', rule: 'Max 14 chars (e.g. "Class 1-12")' },
+    },
+  },
+  section_3_photobook_slides: {
+    section_id: 'section_3_photobook_slides',
+    section_name: '3D PhotoBook Carousel Showcase',
+    official_sources: ['Official School Gallery / Campus Photos', 'School Facebook/Instagram official handles'],
+    strict_rules: ['Between 3 to 6 slides maximum.', 'Slide title max 35 chars, description max 90 chars.'],
+    field_limits: {
+      title: { max_chars: 35, type: 'string', description: 'Slide Heading', rule: 'Max 35 chars' },
+      desc: { max_chars: 90, type: 'string', description: 'Slide Subtitle / Highlight', rule: 'Max 90 chars' },
+      button_text: { max_chars: 18, type: 'string', description: 'Action Button Label', rule: 'Max 18 chars' },
+      image_url: { type: 'string', description: 'High-Res Landscape Photo URL', rule: 'Valid image URL' },
+    },
+  },
+  section_4_statistics: {
+    section_id: 'section_4_statistics',
+    section_name: 'Physical Campus Statistics',
+    official_sources: ['UDISE+ Portal Infrastructure Report', 'School Annual Report'],
+    strict_rules: ['Use integers only.', 'Must be authentic campus figures.'],
+    field_limits: {
+      total_students: { type: 'number', description: 'Total Enrolled Students', rule: 'Positive integer' },
+      total_teachers: { type: 'number', description: 'Total Teaching Faculty', rule: 'Positive integer' },
+      classrooms_count: { type: 'number', description: 'Total Classrooms', rule: 'Positive integer' },
+      working_smart_boards: { type: 'number', description: 'Digital Smart Boards Count', rule: 'Positive integer' },
+    },
+  },
+  section_5_about_and_vision: {
+    section_id: 'section_5_about_and_vision',
+    section_name: 'About School, Vision & Mission',
+    official_sources: ['Official School Website (About Us & Vision Pages)'],
+    strict_rules: ['Strict character limits: About (300), Vision (180), Mission (180).'],
+    field_limits: {
+      about_text: { max_chars: 300, type: 'string', description: 'School Heritage Story', rule: 'Max 300 chars (2-3 concise sentences)' },
+      vision_text: { max_chars: 180, type: 'string', description: 'Future Institutional Vision', rule: 'Max 180 chars' },
+      mission_text: { max_chars: 180, type: 'string', description: 'Core Educational Mission', rule: 'Max 180 chars' },
+    },
+  },
+  section_6_principal_desk: {
+    section_id: 'section_6_principal_desk',
+    section_name: "Principal's Desk & Leadership Message",
+    official_sources: ['School Website (Principal Desk / Message)'],
+    strict_rules: ['Principal message max 250 characters.', 'Name max 40 characters.'],
+    field_limits: {
+      principal_name: { max_chars: 40, type: 'string', description: 'Principal Full Name with Salutation', rule: 'Max 40 chars' },
+      principal_designation: { max_chars: 40, type: 'string', description: 'Designation', rule: 'Max 40 chars (e.g. Principal / Head of School)' },
+      principal_message: { max_chars: 250, type: 'string', description: 'Welcome / Leadership Quote', rule: 'Max 250 chars' },
+      principal_image_url: { type: 'string', description: 'Portrait Photo URL', rule: 'Square/portrait aspect ratio' },
+    },
+  },
+  section_management_desk: {
+    section_id: 'section_management_desk',
+    section_name: 'Governing Body & Management Message',
+    official_sources: ['School Website (Management / Trust Page)'],
+    strict_rules: ['Management message max 280 characters.'],
+    field_limits: {
+      management_name: { max_chars: 45, type: 'string', description: 'Registered Society/Trust Name', rule: 'Max 45 chars' },
+      management_designation: { max_chars: 45, type: 'string', description: 'Governing Body Role', rule: 'Max 45 chars' },
+      management_message: { max_chars: 280, type: 'string', description: 'Trustee / Society Message', rule: 'Max 280 chars' },
+      management_logo: { type: 'string', description: 'Society Seal/Logo URL', rule: 'Valid image URL' },
+    },
+  },
+  section_7_academics: {
+    section_id: 'section_7_academics',
+    section_name: 'Curriculum, Streams & Special Programs',
+    official_sources: ['School Website (Academics / Curriculum)'],
+    strict_rules: ['Curriculum bullet points max 70 chars each.', 'Streams offered max 80 chars each.'],
+    field_limits: {
+      class_from: { max_chars: 20, type: 'string', description: 'Starting Class Level', rule: 'Max 20 chars (e.g. Pre-Nursery or Class 1st)' },
+      class_to: { max_chars: 20, type: 'string', description: 'Highest Class Level', rule: 'Max 20 chars (e.g. Class 12th)' },
+      curriculum_features: { max_chars: 70, type: 'array of strings', description: '3-5 Pedagogical Highlights', rule: 'Each max 70 chars' },
+      streams_offered: { max_chars: 80, type: 'array of strings', description: 'Senior Secondary Streams', rule: 'Each max 80 chars' },
+    },
+  },
+  section_8_facilities: {
+    section_id: 'section_8_facilities',
+    section_name: 'Facilities & Infrastructure (69 Predefined Options)',
+    official_sources: ['Official School Website Infrastructure Page', 'UDISE+ Physical Facilities Report'],
+    strict_rules: ['Pick 12 to 25 items ONLY from the 69 predefined facility names list.', 'Do NOT invent new names.'],
+    field_limits: {
+      selected_facility_names: { type: 'array of strings', description: 'Verified Facilities Present', rule: 'Must match official 69 names verbatim' },
+    },
+  },
+  section_9_campus_gallery: {
+    section_id: 'section_9_campus_gallery',
+    section_name: 'Campus Photo & Video Gallery',
+    official_sources: ['Official School Website Gallery / Campus Infrastructure Media'],
+    strict_rules: ['Title max 35 chars.', 'Category: Campus | Labs | Sports | Events.'],
+    field_limits: {
+      title: { max_chars: 35, type: 'string', description: 'Photo Caption', rule: 'Max 35 chars' },
+      category: { max_chars: 20, type: 'string', description: 'Media Category', rule: 'Campus | Labs | Sports | Events' },
+      url: { type: 'string', description: 'Image/Video URL', rule: 'Valid URL' },
+    },
+  },
+  section_10_fee_structure: {
+    section_id: 'section_10_fee_structure',
+    section_name: 'Transparent Fee Structure Table',
+    official_sources: ['School Website Fee Structure Page / CBSE Appendix IX PDF'],
+    strict_rules: ['4 to 6 columns max.', 'Class row names and fee amounts formatted in INR (₹).'],
+    field_limits: {
+      columns: { max_chars: 25, type: 'array of strings', description: 'Table Headers', rule: 'Each header max 25 chars' },
+      rows: { type: 'array of string arrays', description: 'Class-wise Fee Breakdown', rule: 'Values formatted with ₹ symbol' },
+    },
+  },
+  section_11_admissions_guidelines: {
+    section_id: 'section_11_admissions_guidelines',
+    section_name: 'Admissions Guidelines & Criteria',
+    official_sources: ['School Website Admissions Notice'],
+    strict_rules: ['Track title max 35 chars, criteria max 110 chars, points max 35 chars.'],
+    field_limits: {
+      session: { max_chars: 15, type: 'string', description: 'Academic Session', rule: 'Max 15 chars (e.g. 2026-27)' },
+      admission_status: { max_chars: 25, type: 'string', description: 'Status Badge', rule: 'Admissions Open | Admissions Closed' },
+      title: { max_chars: 35, type: 'string', description: 'Track Heading', rule: 'Max 35 chars' },
+      criteria: { max_chars: 110, type: 'string', description: 'Eligibility Requirement', rule: 'Max 110 chars' },
+    },
+  },
+  section_12_faqs: {
+    section_id: 'section_12_faqs',
+    section_name: 'Frequently Asked Questions (FAQs)',
+    official_sources: ['School Website FAQ / Helpdesk'],
+    strict_rules: ['Question max 120 chars, Answer max 320 chars.'],
+    field_limits: {
+      question: { max_chars: 120, type: 'string', description: 'User Question', rule: 'Max 120 chars' },
+      answer: { max_chars: 320, type: 'string', description: 'Factual Answer', rule: 'Max 320 chars' },
+      category: { max_chars: 25, type: 'string', description: 'Category', rule: 'Admissions | Facilities | Fees | Sports' },
+    },
+  },
+  section_13_contact_details: {
+    section_id: 'section_13_contact_details',
+    section_name: 'Official Contact Channels & Location',
+    official_sources: ['Official School Contact Page', 'Government UDISE+ Registered Address'],
+    strict_rules: ['Address max 120 chars.', 'Pincode must be exactly 6 digits.'],
+    field_limits: {
+      address: { max_chars: 120, type: 'string', description: 'Official Address', rule: 'Max 120 chars' },
+      pincode: { max_chars: 6, type: 'string', description: 'Postal PIN Code', rule: 'Exactly 6 digits' },
+      phone: { max_chars: 25, type: 'string', description: 'Primary Phone', rule: 'Max 25 chars' },
+      email: { max_chars: 50, type: 'string', description: 'Official Email', rule: 'Max 50 chars' },
+      website: { max_chars: 70, type: 'string', description: 'Official Website URL', rule: 'Max 70 chars' },
+      campus_video_url: { max_chars: 150, type: 'string', description: 'Campus Walkthrough Video URL', rule: 'YouTube / MP4 URL' },
+    },
+  },
+};
+
+/**
+ * Standard Prompt template to give to ChatGPT / Claude / Gemini / DeepSeek.
+ * Can generate either the full 13-section prompt OR a focused section prompt.
+ */
+export function generateAiPromptForSchool(schoolNameOrDetails: string = '', sectionKey?: string): string {
   const facilitiesListText = getPredefinedFacilitiesPromptList();
+
+  // If a specific section was requested, generate a laser-focused prompt for that section
+  if (sectionKey && SECTION_FIELD_SPECS[sectionKey]) {
+    const spec = SECTION_FIELD_SPECS[sectionKey];
+    const sectionTemplate = (BLANK_AI_SCHOOL_SCHEMA as any)[sectionKey] || {};
+
+    return `You are a Senior School Admissions Data Specialist for CSEEL (India's premier experiential school directory).
+
+TASK:
+Research and compile authentic data for ONE SPECIFIC SECTION: "${spec.section_name}" (${spec.section_id}) for:
+SCHOOL: ${schoolNameOrDetails.trim() ? schoolNameOrDetails : '[PASTE SCHOOL NAME / UDISE HERE]'}
+
+MANDATORY OFFICIAL SOURCES:
+${spec.official_sources.map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+STRICT RULES & CHARACTER LIMITS (NEVER EXCEED OR UI WILL BREAK):
+${spec.strict_rules.map((r) => `• ${r}`).join('\n')}
+Field Character Limits:
+${Object.entries(spec.field_limits).map(([f, d]) => `• "${f}": ${d.rule} (${d.description})`).join('\n')}
+
+RETURN FORMAT:
+Return ONLY valid raw JSON for this section wrapped in a \`\`\`json code block:
+\`\`\`json
+${JSON.stringify({ [sectionKey]: sectionTemplate }, null, 2)}
+\`\`\`
+`;
+  }
+
+  // Otherwise generate the Master 13-Section Prompt
+  const schemaString = JSON.stringify(BLANK_AI_SCHOOL_SCHEMA, null, 2);
 
   return `You are a Senior School Admissions & Institutional Profile Specialist for CSEEL (India's premier experiential school directory).
 
 TASK:
-Compile a complete, highly realistic, and visually attractive School Profile JSON for the specified school.
-The JSON structure maps DIRECTLY to the 6 tabs of the school profile:
-1. tab_1_home: Hero Attraction Metrics for Parents (Board Results, Student-Teacher Ratio, Labs, Awards, Parent Trust), School Identity, 3D Photo Book (3 to 8 slides), Physical Statistics, About Us, Principal's Desk, Vision & Mission.
-2. tab_2_academics: Class range, Curriculum features, Offered Streams.
-3. tab_3_facilities: Selected facilities picked ONLY from the 62 Predefined Facilities list below.
-4. tab_4_gallery: Campus photo & video media showcase items.
-5. tab_5_admissions_fees: Fee structure table (rows & columns) and admission criteria guidelines.
-6. tab_6_contact: Official Address, Location, Phone, Email & Website.
+Compile a 100% FACTUAL, OFFICIAL, and COMPACT School Profile JSON for the specified school across all 13 sections.
 
 SCHOOL TO COMPILE:
-${schoolNameOrDetails.trim() ? schoolNameOrDetails : '[PASTE SCHOOL NAME, LOCATION, WEBSITE, OR BROCHURE TEXT HERE]'}
+${schoolNameOrDetails.trim() ? schoolNameOrDetails : '[PASTE SCHOOL NAME, LOCATION, WEBSITE, OR UDISE HERE]'}
 
-STRICT RULES & CONSTRAINTS (MANDATORY TO AVOID BREAKING LAYOUTS):
-1. Return ONLY raw, valid JSON wrapped in a \`\`\`json code block. Do NOT include any introductory or concluding conversational prose.
-2. PRESERVE ALL Tab IDs and Field IDs exactly as given in the schema.
-3. ⚠️ STRICT CHARACTER LENGTH LIMITS (NEVER EXCEED, otherwise UI structure breaks):
-   - School Name: Max 60 characters
-   - About Text: Max 300 characters
-   - Vision & Mission: Max 180 characters each
-   - Principal Name: Max 40 characters
-   - Principal Message: Max 250 characters
-   - PhotoBook Slide Title: Max 35 characters
-   - PhotoBook Slide Desc: Max 90 characters
-   - PhotoBook Button: Max 18 characters
-   - Hero Prestige Values: Max 10 characters (e.g. "100%", "1:15", "25+", "50+", "99%")
-   - Hero Prestige Labels: Max 25 characters (e.g. "Board Pass Rate", "Student-Teacher Ratio")
-   - Facility / Admission titles: Max 35 characters
-4. 🏢 62 PREDEFINED FACILITIES SELECTION (CRITICAL):
-   For "tab_3_facilities.selected_facility_names", you MUST pick 12 to 25 items ONLY from these exact predefined facility names:
+MANDATORY DATA EXTRACTION HIERARCHY (SOURCE OF TRUTH):
+1. PRIMARY SOURCE 1: Official School Website (About Us, Fee Structure PDF/Page, Principal Message, Mandatory Public Disclosure / CBSE Appendix IX).
+2. PRIMARY SOURCE 2: Official Government UDISE+ Portal (https://kys.udiseplus.gov.in) for verified School Name, UDISE Code, Established Year, District, State, Pincode, and Management Type.
+3. SECONDARY SOURCE: Verified Educational Aggregators (UniApply, Edustoke, SchoolMyKids, Google Maps Official Business Listing).
+
+STRICT CHARACTER LIMITS (NEVER EXCEED, otherwise UI structure breaks):
+• School Name: Max 65 chars (Government UDISE verified)
+• About Text: Max 300 chars (concise 2-3 sentences)
+• Vision & Mission: Max 180 chars each
+• Principal Name & Designation: Max 40 chars each
+• Principal Message & Management Message: Max 250-280 chars
+• Hero Metric Values (4 Cards): Max 12 chars each (e.g. "CBSE", "1:15", "55+", "Class 1-12")
+• Hero Metric Labels: Max 25 chars each
+• PhotoBook Slide Titles: Max 35 chars | Descriptions: Max 90 chars
+• Facility & Admission Titles: Max 35 chars
+
+🏢 69 PREDEFINED FACILITIES SELECTION (CRITICAL):
+For "section_8_facilities.selected_facility_names", you MUST pick 12 to 25 items ONLY from these exact 69 predefined facility names:
 ${facilitiesListText}
-   Do NOT invent new facility names. The system will automatically attach the verified official icons!
-5. 📊 HERO PRESTIGE vs PHYSICAL STATS:
-   - "hero_prestige_metrics": Must highlight 5 key parent/student attraction metrics (Board Results, Student-Teacher Ratio, Hi-Tech Labs & Studios, Awards, Parent Trust).
-   - "statistics": Contains physical scale facts (Established Year, Campus Area, Total Students, Total Teachers).
-   Do NOT duplicate values between these two sections!
+Do NOT invent new facility names. The system will automatically attach verified official icons!
 
---- EXACT JSON BLUEPRINT TO FILL ---
+--- EXACT VERIFIED JSON BLUEPRINT TO FILL ---
 ${schemaString}
 `;
 }
@@ -435,7 +659,7 @@ export interface ImportSummary {
  */
 export function parseSchoolJsonToState(
   rawInput: any,
-  currentState: SchoolTemplateState
+  currentState?: SchoolTemplateState
 ): { success: boolean; state?: SchoolTemplateState; summary?: ImportSummary; error?: string } {
   try {
     let parsed: any = rawInput;
@@ -454,9 +678,9 @@ export function parseSchoolJsonToState(
     }
 
     const nextState: SchoolTemplateState = {
-      ...currentState,
-      contentOverrides: { ...(currentState.contentOverrides || {}) },
-    };
+      ...(currentState || {}),
+      contentOverrides: { ...(currentState?.contentOverrides || {}) },
+    } as any;
 
     // ==========================================
     // TAB 1: HOME
@@ -511,22 +735,22 @@ export function parseSchoolJsonToState(
       parsed.sections?.section_2_hero_prestige_metrics ||
       parsed.sections?.section_2_hero_metrics;
     if (heroMetrics && typeof heroMetrics === 'object') {
-      const m1 = heroMetrics.metric_1_board_results || heroMetrics.metric_1;
+      const m1 = heroMetrics.metric_1_board_results || heroMetrics.metric_1_board || heroMetrics.metric_1;
       if (m1) {
         if (m1.value) nextState.contentOverrides!['hero_stat_val_1'] = limitLength(m1.value, 12);
         if (m1.label) nextState.contentOverrides!['hero_stat_lbl_1'] = limitLength(m1.label, 28);
       }
-      const m2 = heroMetrics.metric_2_student_teacher_ratio || heroMetrics.metric_2;
+      const m2 = heroMetrics.metric_2_student_teacher_ratio || heroMetrics.metric_2_ratio || heroMetrics.metric_2;
       if (m2) {
         if (m2.value) nextState.contentOverrides!['hero_stat_val_2'] = limitLength(m2.value, 12);
         if (m2.label) nextState.contentOverrides!['hero_stat_lbl_2'] = limitLength(m2.label, 28);
       }
-      const m3 = heroMetrics.metric_3_labs_studios || heroMetrics.metric_3;
+      const m3 = heroMetrics.metric_3_classrooms_labs || heroMetrics.metric_3_labs_studios || heroMetrics.metric_3;
       if (m3) {
         if (m3.value) nextState.contentOverrides!['hero_stat_val_3'] = limitLength(m3.value, 12);
         if (m3.label) nextState.contentOverrides!['hero_stat_lbl_3'] = limitLength(m3.label, 28);
       }
-      const m4 = heroMetrics.metric_4_awards || heroMetrics.metric_4;
+      const m4 = heroMetrics.metric_4_class_range || heroMetrics.metric_4_awards || heroMetrics.metric_4;
       if (m4) {
         if (m4.value) nextState.contentOverrides!['hero_stat_val_4'] = limitLength(m4.value, 12);
         if (m4.label) nextState.contentOverrides!['hero_stat_lbl_4'] = limitLength(m4.label, 28);
@@ -640,8 +864,48 @@ export function parseSchoolJsonToState(
       tabHome;
     if (principalObj && typeof principalObj === 'object') {
       if (principalObj.principal_name) nextState.principalName = limitLength(principalObj.principal_name, 45);
+      if (principalObj.principal_designation) {
+        nextState.contentOverrides!['principal_designation'] = limitLength(principalObj.principal_designation, 45);
+      }
       if (principalObj.principal_message) {
-        nextState.contentOverrides!['principal_message'] = limitLength(principalObj.principal_message, 280);
+        const msg = limitLength(principalObj.principal_message, 280);
+        nextState.contentOverrides!['principal_message'] = msg;
+        nextState.contentOverrides!['principal_quote'] = msg;
+        nextState.contentOverrides!['principal_body_1'] = msg;
+      }
+      const pImg = principalObj.principal_image_url || principalObj.principal_image;
+      if (pImg) {
+        nextState.imageOverrides = {
+          ...(nextState.imageOverrides || {}),
+          principal_photo: String(pImg).trim(),
+        };
+      }
+    }
+
+    // Management Desk & Trust Message
+    const mgmtObj =
+      tabHome?.management_desk ||
+      parsed.section_management_desk ||
+      parsed.section_management_message ||
+      parsed.sections?.section_management_desk;
+    if (mgmtObj && typeof mgmtObj === 'object') {
+      if (mgmtObj.management_name || mgmtObj.management) {
+        nextState.management = limitLength(mgmtObj.management_name || mgmtObj.management, 50);
+      }
+      if (mgmtObj.management_designation) {
+        nextState.contentOverrides!['management_designation'] = limitLength(mgmtObj.management_designation, 50);
+      }
+      if (mgmtObj.management_message || mgmtObj.message) {
+        const msg = limitLength(mgmtObj.management_message || mgmtObj.message, 280);
+        nextState.contentOverrides!['management_quote'] = msg;
+        nextState.contentOverrides!['management_body_1'] = msg;
+      }
+      const mLogo = mgmtObj.management_logo || mgmtObj.logo_url;
+      if (mLogo) {
+        nextState.imageOverrides = {
+          ...(nextState.imageOverrides || {}),
+          management_logo: String(mLogo).trim(),
+        };
       }
     }
 
@@ -773,6 +1037,15 @@ export function parseSchoolJsonToState(
       parsed.facilities ||
       parsed.section_6_facilities;
     const rawFacList =
+      (Array.isArray(tabFacilities?.items)
+        ? tabFacilities.items.filter((item: any) => item.selected === true || item.available === true)
+        : null) ||
+      (Array.isArray(tabFacilities?.all_facilities)
+        ? tabFacilities.all_facilities.filter((item: any) => item.selected === true || item.available === true)
+        : null) ||
+      (Array.isArray(tabFacilities?.facilities_catalogue)
+        ? tabFacilities.facilities_catalogue.filter((item: any) => item.selected === true || item.available === true)
+        : null) ||
       tabFacilities?.selected_facility_names ||
       tabFacilities?.facilities_list ||
       tabFacilities?.facilities ||
@@ -782,9 +1055,12 @@ export function parseSchoolJsonToState(
       const normalizedFacilities: FacilityCardItem[] = [];
 
       rawFacList.forEach((f: any, idx: number) => {
-        const rawName = typeof f === 'string' ? f : f?.name || f?.title || '';
+        const rawName = typeof f === 'string' ? f : f?.name || f?.title || f?.key || f?.id || '';
         const cleanName = rawName.toLowerCase().trim();
-        const matched = PREDEFINED_FACILITY_MAP.get(cleanName);
+        const matched =
+          PREDEFINED_FACILITY_MAP.get(cleanName) ||
+          PREDEFINED_FACILITY_MAP.get(cleanName.replace(/[^a-z0-9]/g, '_')) ||
+          PREDEFINED_FACILITY_MAP.get(cleanName.replace(/_/g, ' '));
 
         if (matched) {
           // Exactly matched predefined facility
@@ -793,7 +1069,7 @@ export function parseSchoolJsonToState(
             title: matched.name,
             desc: typeof f === 'object' && f.desc ? limitLength(f.desc, 95) : '',
             badge: typeof f === 'object' && f.badge ? limitLength(f.badge, 25) : matched.category,
-            icon: matched.icon, // Verified predefined icon URL
+            icon: matched.icon || (typeof f === 'object' ? f.icon : undefined), // Verified predefined icon URL
             points: typeof f === 'object' && Array.isArray(f.points)
               ? f.points.slice(0, 3).map((p: any) => limitLength(p, 35))
               : [],
@@ -880,9 +1156,26 @@ export function parseSchoolJsonToState(
       (nextState as any).officialFeeUrl = String(feeLink).trim();
     }
 
-    const campusVid = parsed.campusVideoUrl || parsed.campus_video_url;
+    const tabContact =
+      parsed.tab_6_contact ||
+      parsed.tab_contact ||
+      parsed.section_13_contact_details ||
+      parsed.sections?.section_13_contact_details ||
+      parsed.section_13_contact ||
+      parsed.contact ||
+      parsed.section_2_location_contact ||
+      parsed;
+
+    const campusVid =
+      parsed.section_13_contact_details?.campus_video_url ||
+      parsed.section_13_contact_details?.campusVideoUrl ||
+      tabContact?.campus_video_url ||
+      tabContact?.campusVideoUrl ||
+      parsed.campusVideoUrl ||
+      parsed.campus_video_url;
     if (campusVid) {
       (nextState as any).campusVideoUrl = String(campusVid).trim();
+      nextState.contentOverrides!['campus_video_url'] = String(campusVid).trim();
     }
 
     if (parsed.admissionsOpen !== undefined) {
@@ -939,15 +1232,6 @@ export function parseSchoolJsonToState(
     // ==========================================
     // SECTION 13 / TAB 6: CONTACT US
     // ==========================================
-    const tabContact =
-      parsed.tab_6_contact ||
-      parsed.tab_contact ||
-      parsed.section_13_contact_details ||
-      parsed.sections?.section_13_contact_details ||
-      parsed.section_13_contact ||
-      parsed.contact ||
-      parsed.section_2_location_contact ||
-      parsed;
     if (tabContact && typeof tabContact === 'object') {
       if (tabContact.address !== undefined) nextState.address = limitLength(tabContact.address, 120);
       else if (parsed.address !== undefined) nextState.address = limitLength(parsed.address, 120);
@@ -1049,24 +1333,24 @@ export function convertStateToStructuredJson(data: SchoolTemplateState): any {
       tab_title: 'Home',
       hero_prestige_metrics: {
         metric_1_board_results: {
-          value: data.contentOverrides?.['hero_stat_val_1'] || '100%',
-          label: data.contentOverrides?.['hero_stat_lbl_1'] || 'Board Pass Rate',
+          value: data.contentOverrides?.['hero_stat_val_1'] || data.board || 'Recognized',
+          label: data.contentOverrides?.['hero_stat_lbl_1'] || (data.affiliationNumber ? `Affiliation: ${data.affiliationNumber}` : (data.board ? `${data.board} Curriculum` : 'Affiliated Board')),
         },
         metric_2_student_teacher_ratio: {
-          value: data.contentOverrides?.['hero_stat_val_2'] || '1:15',
+          value: data.contentOverrides?.['hero_stat_val_2'] || (data.totalStudents && data.totalTeachers && Number(data.totalStudents) > 0 && Number(data.totalTeachers) > 0 ? `1:${Math.round(Number(data.totalStudents) / Math.max(Number(data.totalTeachers), 1))}` : '—'),
           label: data.contentOverrides?.['hero_stat_lbl_2'] || 'Student-Teacher Ratio',
         },
         metric_3_labs_studios: {
-          value: data.contentOverrides?.['hero_stat_val_3'] || '25+',
-          label: data.contentOverrides?.['hero_stat_lbl_3'] || 'Hi-Tech Labs & Studios',
+          value: data.contentOverrides?.['hero_stat_val_3'] || (data.classroomsCount ? `${data.classroomsCount}` : '—'),
+          label: data.contentOverrides?.['hero_stat_lbl_3'] || 'Classrooms & Labs',
         },
         metric_4_awards: {
-          value: data.contentOverrides?.['hero_stat_val_4'] || '50+',
-          label: data.contentOverrides?.['hero_stat_lbl_4'] || 'Awards & Honors',
+          value: data.contentOverrides?.['hero_stat_val_4'] || (data.schoolCategory || (data.classFrom && data.classTo ? `${data.classFrom} to ${data.classTo}` : '—')),
+          label: data.contentOverrides?.['hero_stat_lbl_4'] || 'Class Range',
         },
         metric_5_parent_trust: {
-          value: data.contentOverrides?.['hero_stat_val_5'] || '99%',
-          label: data.contentOverrides?.['hero_stat_lbl_5'] || 'Parent Trust Rating',
+          value: data.contentOverrides?.['hero_stat_val_5'] || (data.udiseCode ? 'Verified' : 'Registered'),
+          label: data.contentOverrides?.['hero_stat_lbl_5'] || (data.udiseCode ? `UDISE: ${data.udiseCode}` : 'UDISE Reg. School'),
         },
       },
       school_basic_info: {
@@ -1081,10 +1365,12 @@ export function convertStateToStructuredJson(data: SchoolTemplateState): any {
         school_category: data.schoolCategory,
         gender_type: data.genderType,
         affiliation_number: data.affiliationNumber,
+        logo_url: data.logoImage || '',
       },
       branding: {
-        logo_image_url: data.logoImage,
-        hero_banner_image: data.heroImage,
+        logo_url: data.logoImage || '',
+        logo_image_url: data.logoImage || '',
+        hero_banner_image: data.heroImage || '',
       },
       statistics: {
         total_students: data.totalStudents,

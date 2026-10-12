@@ -1029,7 +1029,7 @@ const Projects = () => {
                 </div>
                 <div className="px-5 py-5"><SheetBody /></div>
                 <div className="px-5 pb-8 pt-2 sticky bottom-0 bg-white border-t border-gray-50">
-                  <button onClick={applySheet} className="w-full py-3.5 bg-black text-white rounded-2xl text-sm font-bold tracking-wide active:scale-[0.98] transition-all">
+                  <button onClick={applySheet} className="w-full py-3.5 bg-black text-white rounded-full text-sm font-bold tracking-wide active:scale-[0.98] transition-all">
                     Apply Filters
                   </button>
                 </div>
@@ -1051,7 +1051,7 @@ const Projects = () => {
                 </div>
                 <div className="flex-1 overflow-y-auto px-6 py-6"><SheetBody /></div>
                 <div className="px-6 py-5 border-t border-gray-100">
-                  <button onClick={applySheet} className="w-full py-4 bg-black text-white rounded-2xl text-sm font-bold tracking-wide hover:bg-gray-900 active:scale-[0.98] transition-all">
+                  <button onClick={applySheet} className="w-full py-4 bg-black text-white rounded-full text-sm font-bold tracking-wide hover:bg-gray-900 active:scale-[0.98] transition-all">
                     Apply Filters
                   </button>
                 </div>

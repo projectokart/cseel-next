@@ -376,7 +376,7 @@ export default function SeminarDetailClient({ seminar, allSeminars }: Props) {
                 <div className="space-y-2.5">
                   <button
                     onClick={() => setShowSchoolRegModal(true)}
-                    className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-2xl text-xs font-black shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-full text-xs font-black shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
                   >
                     <School className="w-4 h-4" />
                     <span>Register School Delegation</span>
@@ -384,7 +384,7 @@ export default function SeminarDetailClient({ seminar, allSeminars }: Props) {
 
                   <button
                     onClick={() => setShowIndRegModal(true)}
-                    className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-gray-800 rounded-2xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-gray-800 rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-2"
                   >
                     <Ticket className="w-3.5 h-3.5 text-gray-600" />
                     <span>Individual Delegate Pass</span>
@@ -392,7 +392,7 @@ export default function SeminarDetailClient({ seminar, allSeminars }: Props) {
 
                   <button
                     onClick={() => setShowLetterheadModal(true)}
-                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-gray-700 rounded-2xl text-xs font-bold border border-gray-200/80 transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-gray-700 rounded-full text-xs font-bold border border-gray-200/80 transition-colors flex items-center justify-center gap-2"
                   >
                     <Printer className="w-3.5 h-3.5 text-gray-500" />
                     <span>Official Letterhead Pass</span>
@@ -587,7 +587,7 @@ export default function SeminarDetailClient({ seminar, allSeminars }: Props) {
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-2xl font-black text-xs shadow-md transition-all mt-2"
+                      className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-full font-black text-xs shadow-md transition-all mt-2"
                     >
                       Confirm Free School Delegation Passes (0 INR)
                     </button>
@@ -666,7 +666,7 @@ export default function SeminarDetailClient({ seminar, allSeminars }: Props) {
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-2xl font-black text-xs shadow-md transition-all mt-2"
+                      className="w-full py-3 bg-primary hover:bg-primary-hover text-white rounded-full font-black text-xs shadow-md transition-all mt-2"
                     >
                       Issue Free Individual Pass
                     </button>
@@ -738,14 +738,14 @@ export default function SeminarDetailClient({ seminar, allSeminars }: Props) {
                 <div className="flex items-center justify-end gap-2 pt-2">
                   <button
                     onClick={() => window.print()}
-                    className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-full flex items-center gap-1.5"
                   >
                     <Printer className="w-3.5 h-3.5" />
                     <span>Print / Save PDF</span>
                   </button>
                   <button
                     onClick={() => setShowLetterheadModal(false)}
-                    className="px-4 py-2.5 bg-slate-100 text-gray-700 text-xs font-bold rounded-xl"
+                    className="px-4 py-2.5 bg-slate-100 text-gray-700 text-xs font-bold rounded-full"
                   >
                     Close
                   </button>

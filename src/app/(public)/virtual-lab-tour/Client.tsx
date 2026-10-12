@@ -1051,7 +1051,7 @@ export default function VirtualLabTourClient() {
               <Layers size={14} />
               <span>Launch 3D Lab Workbench</span>
             </Link>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-muted border border-border text-xs font-semibold text-foreground">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted border border-border text-xs font-semibold text-foreground">
               <Scan className="w-4 h-4 text-primary animate-pulse" />
               <span>Click Barcode to Scan</span>
             </div>
@@ -1063,7 +1063,7 @@ export default function VirtualLabTourClient() {
                   window.speechSynthesis.cancel();
                 }
               }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition cursor-pointer ${
                 !isAudioMuted
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300'
                   : 'bg-card text-muted-foreground border-border hover:bg-muted'
@@ -1091,7 +1091,7 @@ export default function VirtualLabTourClient() {
                   setPanX(0);
                   setPanY(0);
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 border cursor-pointer shrink-0 ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 border cursor-pointer shrink-0 ${
                   isSelected
                     ? 'btn-google-primary shadow-sm'
                     : 'bg-card text-foreground border-border hover:bg-muted'
@@ -1351,7 +1351,7 @@ export default function VirtualLabTourClient() {
             {/* Language Switcher */}
             <button
               onClick={() => handleToggleLang(narrationLang === 'en' ? 'hi' : 'en')}
-              className="text-xs font-semibold px-2.5 py-1 rounded-xl bg-muted border border-border text-foreground hover:bg-card transition cursor-pointer flex items-center gap-1"
+              className="text-xs font-semibold px-3 py-1 rounded-full bg-muted border border-border text-foreground hover:bg-card transition cursor-pointer flex items-center gap-1"
             >
               <Languages size={13} />
               <span>{narrationLang === 'en' ? 'हिंदी' : 'English'}</span>
@@ -1396,7 +1396,7 @@ export default function VirtualLabTourClient() {
                     stopAllAudio();
                   }}
                   title="Stop audio narration"
-                  className="px-2.5 py-1.5 rounded-xl bg-muted hover:bg-border text-muted-foreground hover:text-foreground text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                  className="px-3 py-1.5 rounded-full bg-muted hover:bg-border text-muted-foreground hover:text-foreground text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
                 >
                   <VolumeX size={14} className="text-red-500" />
                   <span className="hidden sm:inline">Stop Audio</span>
@@ -1456,7 +1456,7 @@ export default function VirtualLabTourClient() {
 
                 <button
                   onClick={() => copyToClipboard(selectedHotspot.barcode)}
-                  className="w-full sm:w-auto px-3 py-1.5 rounded-xl bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-1.5 rounded-full bg-card border border-border text-xs font-semibold text-foreground hover:bg-muted transition flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   {copiedBarcode ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
                   <span>{copiedBarcode ? 'Copied' : 'Copy Barcode'}</span>
@@ -1518,7 +1518,7 @@ export default function VirtualLabTourClient() {
                 <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                   <button
                     onClick={() => handleToggleLang('en')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
                       narrationLang === 'en'
                         ? 'bg-emerald-600 text-white shadow-xs'
                         : 'bg-card text-foreground border border-border'
@@ -1528,7 +1528,7 @@ export default function VirtualLabTourClient() {
                   </button>
                   <button
                     onClick={() => handleToggleLang('hi')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
                       narrationLang === 'hi'
                         ? 'bg-emerald-600 text-white shadow-xs'
                         : 'bg-card text-foreground border border-border'
@@ -1538,7 +1538,7 @@ export default function VirtualLabTourClient() {
                   </button>
                   <button
                     onClick={stopAllAudio}
-                    className="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-200 transition cursor-pointer flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-200 transition cursor-pointer flex items-center gap-1"
                     title="Stop Audio Speech"
                   >
                     <VolumeX size={13} />

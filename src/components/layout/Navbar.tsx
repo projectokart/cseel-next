@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, MapPin } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useNavVisibility } from '@/contexts/NavigationContext';
+import { M3Button, M3IconButton, M3AssistChip } from '@/components/google-ui';
 
 /* ─── Types ─────────────────────────────────────── */
 export interface SubMenuItem {
@@ -554,7 +555,8 @@ const Navbar = () => {
     <>
       <header
         ref={headerRef}
-        className={`sticky top-0 w-full z-[400] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
+        id="site-navbar"
+        className={`site-navbar sticky top-0 w-full z-[400] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
           isScrolled
             ? 'shadow-[0_4px_5px_0_rgba(0,0,0,0.14),0_1px_10px_0_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.2)]'
             : ''
@@ -562,19 +564,25 @@ const Navbar = () => {
         onMouseLeave={handleMouseLeave}
       >
         {/* ── Main Navbar Bar (64px Height matching Google Search Console) ── */}
-        <div className="max-w-[1440px] w-full mx-auto flex items-center justify-between px-4 sm:px-6 h-16">
+        <div className="max-w-[1440px] w-full mx-auto flex items-center justify-between px-3 sm:px-6 h-16">
 
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-3 xl:mr-5">
+          <Link
+            href="/"
+            aria-label="CSEEL - Home"
+            className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-2 xl:mr-5"
+          >
             <img
               src="/images/cseel-logo.png"
               alt="CSEEL - Centre for Scientific Exploration & Experiential Learning"
-              className="h-9 sm:h-10 w-auto object-contain shrink-0"
+              width={140}
+              height={40}
+              className="h-8 xl:h-10 w-auto object-contain shrink-0"
             />
           </Link>
 
-          {/* Center Desktop Navigation: STRICTLY SINGLE LINE (whitespace-nowrap flex-nowrap) */}
-          <nav className="hidden lg:flex items-center gap-2 xl:gap-5 h-full flex-nowrap shrink-0">
+          {/* Center Desktop Navigation: STRICTLY SINGLE LINE (Official M3 State Layer Pills) */}
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-2 h-full flex-nowrap shrink-0">
             {visibleNavItems.map((item) => {
               const isOpen = openDropdown === item.label;
 
@@ -589,29 +597,28 @@ const Navbar = () => {
                       onClick={() => handleToggle(item.label)}
                       onMouseEnter={() => handleMouseEnter(item.label)}
                       onMouseLeave={handleMouseLeave}
-                      className={`top-nav-link flex items-center gap-1.5 text-[15px] font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 py-1.5 px-2.5 rounded-md ${
-                        isOpen ? 'is-open text-[#1A73E8] bg-[#E8F0FE]' : 'text-[#3C4043] hover:bg-[#F1F3F4]'
+                      className={`top-nav-link flex items-center gap-1 xl:gap-1.5 text-[13px] xl:text-[14px] font-semibold transition-all duration-200 ease-in-out cursor-pointer whitespace-nowrap shrink-0 h-9 xl:h-10 px-2 xl:px-3 rounded-full active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b57d0] ${
+                        isOpen
+                          ? 'is-open text-[#001d35] bg-[#c2e7ff]'
+                          : 'text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08]'
                       }`}
-                      style={{ color: isOpen ? '#1A73E8' : '#3C4043' }}
                     >
-                      <span className="whitespace-nowrap" style={{ color: isOpen ? '#1A73E8' : '#3C4043' }}>
+                      <span className="whitespace-nowrap">
                         {item.label}
                       </span>
                       <ChevronDown
-                        className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
-                          isOpen ? 'rotate-180' : ''
+                        className={`h-3.5 w-3.5 xl:h-4 xl:w-4 shrink-0 transition-transform duration-200 ${
+                          isOpen ? 'rotate-180 text-[#001d35]' : 'text-[#444746]'
                         }`}
-                        style={{ color: isOpen ? '#1A73E8' : '#5F6368' }}
                       />
                     </button>
                   ) : (
                     <Link
                       href={item.to || '/'}
                       onMouseEnter={handleMouseLeave}
-                      className="top-nav-link text-[15px] font-medium transition-colors whitespace-nowrap shrink-0 py-1.5 px-2.5 rounded-md hover:bg-[#F1F3F4]"
-                      style={{ color: '#3C4043' }}
+                      className="top-nav-link inline-flex items-center text-[13px] xl:text-[14px] font-semibold text-[#1f1f1f] transition-all duration-200 ease-in-out whitespace-nowrap shrink-0 h-9 xl:h-10 px-2 xl:px-3 rounded-full hover:bg-[#1f1f1f]/[0.08] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b57d0]"
                     >
-                      <span style={{ color: '#3C4043' }}>{item.label}</span>
+                      <span>{item.label}</span>
                     </Link>
                   )}
                 </div>
@@ -619,70 +626,73 @@ const Navbar = () => {
             })}
           </nav>
 
-          {/* Far Right Action Buttons (Rounded 12px Style) */}
-          <div className="hidden lg:flex items-center gap-2.5 xl:gap-3 shrink-0 flex-nowrap ml-3 xl:ml-5">
-            <Link
-              href="/schools?view=map"
-              className="inline-flex items-center justify-center gap-1.5 px-4 h-10 text-sm font-bold text-[#006FCC] hover:bg-[#EDF5FA] rounded-[12px] transition-all border border-[#006FCC]/30 whitespace-nowrap shrink-0"
-            >
-              <span>📍 Find School</span>
+          {/* Far Right Action Buttons (Responsive width to prevent cut-off on laptop viewports) */}
+          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0 flex-nowrap ml-1.5 xl:ml-4">
+            <Link href="/schools?view=map" className="shrink-0">
+              <M3Button
+                variant="tonal"
+                size="sm"
+                className="h-8 xl:h-9 text-xs xl:text-sm px-2.5 xl:px-4 font-semibold"
+                leadingIcon={<MapPin className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-[#001d35]" />}
+              >
+                Find School
+              </M3Button>
             </Link>
 
-            <Link
-              href="/contact-us"
-              className="button_primary inline-flex items-center justify-center px-5 h-10 bg-[#006FCC] hover:bg-[#005499] text-white font-bold rounded-[12px] transition-all text-sm whitespace-nowrap shrink-0 active:scale-98 shadow-[0_4px_14px_rgba(0,111,204,0.35)] hover:shadow-[0_6px_20px_rgba(0,111,204,0.45)]"
-            >
-              Get a Demo
+            <Link href="/contact-us" className="shrink-0">
+              <M3Button
+                variant="filled"
+                size="sm"
+                className="h-8 xl:h-9 text-xs xl:text-sm px-3 xl:px-4 font-semibold"
+                trailingIcon={<ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
+              >
+                Get a Demo
+              </M3Button>
             </Link>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <button
-            type="button"
-            aria-label="Toggle navigation menu"
-            className="lg:hidden text-[#023858] p-2 hover:bg-slate-100 rounded-xl transition cursor-pointer"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="h-6 w-6 text-[#023858]" /> : <Menu className="h-6 w-6 text-[#023858]" />}
-          </button>
+          {/* Mobile Hamburger Button (Official M3IconButton) */}
+          <div className="lg:hidden">
+            <M3IconButton
+              ariaLabel="Toggle navigation menu"
+              variant="standard"
+              size="md"
+              icon={mobileOpen ? <X className="h-6 w-6 text-[#1f1f1f]" /> : <Menu className="h-6 w-6 text-[#1f1f1f]" />}
+              onClick={() => setMobileOpen(!mobileOpen)}
+            />
+          </div>
         </div>
 
-        {/* ── FULL-WIDTH MEGA DROPDOWN (EXACT LABSTER VISUAL DESIGN & COLORS) ── */}
+        {/* ── FULL-WIDTH MEGA DROPDOWN (STANDARD CLEAN TYPOGRAPHY & ZERO SCROLL) ── */}
         {activeItem && activeItem.columns && (
           <div
             className="hidden lg:block absolute top-full left-0 w-full bg-white border-b border-[#E8E9E9] shadow-[0_20px_40px_-10px_rgba(0,28,51,0.08)] z-[450] animate-in fade-in duration-150"
             onMouseEnter={clearTimers}
             onMouseLeave={handleMouseLeave}
           >
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-9">
-              <div className="grid grid-cols-12 gap-8 items-start">
+            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-5">
+              <div className="grid grid-cols-12 gap-6 items-start">
 
-                {/* Left Zone: 2 Columns with Vertical Divider & SMOOTH VERTICAL SCROLLING (8 cols) */}
-                <div
-                  className="col-span-8 max-h-[66vh] overflow-y-auto pr-8 relative"
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#CBD5E1 transparent',
-                  }}
-                >
-                  <div className="grid grid-cols-2 gap-10 relative">
+                {/* Left Zone: 2 Columns with Vertical Divider (8 cols) */}
+                <div className="col-span-8 pr-4 relative">
+                  <div className="grid grid-cols-2 gap-8 relative">
 
                     {/* Column 1 */}
-                    <div className="space-y-6">
+                    <div className="space-y-3">
                       {activeItem.columns[0] && (
                         <>
-                          <div className="sticky top-0 bg-white/95 backdrop-blur-xs py-1 z-10">
-                            <span className="text-[14px] font-bold text-[#006FCC] block">
+                          <div className="pb-1 border-b border-gray-100">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#006FCC] block">
                               {activeItem.columns[0].categoryTitle}
                             </span>
                           </div>
-                          <div className="space-y-5">
+                          <div className="space-y-3">
                             {activeItem.columns[0].items.map((sub, idx) => {
                               const isSubExpanded = expandedSubItem === sub.label;
                               const hasSub = Boolean(sub.subItems && sub.subItems.length > 0);
 
                               return (
-                                <div key={idx} className="group/item border-b border-transparent hover:border-[#F0F2F4] pb-2 transition-all">
+                                <div key={idx} className="group/item pb-1.5 transition-all">
                                   <div className="flex items-start justify-between gap-2">
                                     <Link
                                       href={sub.to}
@@ -690,12 +700,12 @@ const Navbar = () => {
                                       className="group block flex-1"
                                     >
                                       <div className="flex items-center gap-1.5">
-                                        <h5 className="nav-menu-item-title text-[16.5px] font-bold leading-[1.3] text-[#023858] group-hover:text-[#006FCC] transition-colors">
+                                        <h5 className="nav-menu-item-title text-[13.5px] font-semibold leading-tight text-[#023858] group-hover:text-[#006FCC] transition-colors">
                                           {sub.label}
                                         </h5>
-                                        <ArrowRight className="w-3.5 h-3.5 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
+                                        <ArrowRight className="w-3 h-3 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-150 shrink-0" />
                                       </div>
-                                      <p className="text-[13px] text-[#5F6265] leading-[1.48] mt-1 font-normal">
+                                      <p className="text-[11.5px] text-[#5F6265] leading-[1.4] mt-0.5 font-normal line-clamp-2">
                                         {sub.desc}
                                       </p>
                                     </Link>
@@ -708,23 +718,23 @@ const Navbar = () => {
                                           e.stopPropagation();
                                           setExpandedSubItem(isSubExpanded ? null : sub.label);
                                         }}
-                                        className={`mt-0.5 px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+                                        className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
                                           isSubExpanded
-                                            ? 'bg-[#006FCC] text-white shadow-xs'
+                                            ? 'bg-[#006FCC] text-white shadow-2xs'
                                             : 'bg-[#EDF5FA] text-[#006FCC] hover:bg-[#DDECF6]'
                                         }`}
                                         title="Toggle Subcategories"
                                       >
                                         <span>{isSubExpanded ? 'Hide' : `${sub.subItems!.length} Sub-links`}</span>
-                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isSubExpanded ? 'rotate-180' : ''}`} />
+                                        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isSubExpanded ? 'rotate-180' : ''}`} />
                                       </button>
                                     )}
                                   </div>
 
                                   {/* Submenu List */}
                                   {hasSub && isSubExpanded && (
-                                    <div className="mt-2.5 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F8FAFD] p-2.5 rounded-r-xl animate-in fade-in slide-in-from-top-1 duration-150">
-                                      <div className="text-[10.5px] font-bold uppercase tracking-wider text-[#006FCC] px-2 py-0.5">
+                                    <div className="mt-1.5 ml-1 pl-2.5 border-l-2 border-[#006FCC] space-y-0.5 bg-[#F8FAFD] p-2 rounded-r-lg animate-in fade-in slide-in-from-top-1 duration-150">
+                                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5">
                                         Subcategories & Material Lists
                                       </div>
                                       {sub.subItems!.map((child, cIdx) => (
@@ -732,14 +742,14 @@ const Navbar = () => {
                                           key={cIdx}
                                           href={child.to}
                                           onClick={() => setOpenDropdown(null)}
-                                          className="flex items-center justify-between py-1.5 px-2 rounded-md hover:bg-white text-[13px] font-semibold text-[#023858] hover:text-[#006FCC] transition-colors group/child"
+                                          className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[11.5px] font-medium text-[#023858] hover:text-[#006FCC] transition-colors group/child"
                                         >
-                                          <div className="flex items-center gap-2">
+                                          <div className="flex items-center gap-1.5">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#006FCC]/60 group-hover/child:bg-[#006FCC] group-hover/child:scale-125 transition-all" />
                                             <span>{child.label}</span>
                                           </div>
                                           {child.badge && (
-                                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white text-[#006FCC] border border-[#006FCC]/20">
+                                            <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20">
                                               {child.badge}
                                             </span>
                                           )}
@@ -759,21 +769,21 @@ const Navbar = () => {
                     <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-[#E8E9E9]" />
 
                     {/* Column 2 */}
-                    <div className="space-y-6 pl-6">
+                    <div className="space-y-3 pl-4">
                       {activeItem.columns[1] && (
                         <>
-                          <div className="sticky top-0 bg-white/95 backdrop-blur-xs py-1 z-10">
-                            <span className="text-[14px] font-bold text-[#006FCC] block">
+                          <div className="pb-1 border-b border-gray-100">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#006FCC] block">
                               {activeItem.columns[1].categoryTitle}
                             </span>
                           </div>
-                          <div className="space-y-5">
+                          <div className="space-y-3">
                             {activeItem.columns[1].items.map((sub, idx) => {
                               const isSubExpanded = expandedSubItem === sub.label;
                               const hasSub = Boolean(sub.subItems && sub.subItems.length > 0);
 
                               return (
-                                <div key={idx} className="group/item border-b border-transparent hover:border-[#F0F2F4] pb-2 transition-all">
+                                <div key={idx} className="group/item pb-1.5 transition-all">
                                   <div className="flex items-start justify-between gap-2">
                                     <Link
                                       href={sub.to}
@@ -781,12 +791,12 @@ const Navbar = () => {
                                       className="group block flex-1"
                                     >
                                       <div className="flex items-center gap-1.5">
-                                        <h5 className="nav-menu-item-title text-[16.5px] font-bold leading-[1.3] text-[#023858] group-hover:text-[#006FCC] transition-colors">
+                                        <h5 className="nav-menu-item-title text-[13.5px] font-semibold leading-tight text-[#023858] group-hover:text-[#006FCC] transition-colors">
                                           {sub.label}
                                         </h5>
-                                        <ArrowRight className="w-3.5 h-3.5 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
+                                        <ArrowRight className="w-3 h-3 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-150 shrink-0" />
                                       </div>
-                                      <p className="text-[13px] text-[#5F6265] leading-[1.48] mt-1 font-normal">
+                                      <p className="text-[11.5px] text-[#5F6265] leading-[1.4] mt-0.5 font-normal line-clamp-2">
                                         {sub.desc}
                                       </p>
                                     </Link>
@@ -799,23 +809,23 @@ const Navbar = () => {
                                           e.stopPropagation();
                                           setExpandedSubItem(isSubExpanded ? null : sub.label);
                                         }}
-                                        className={`mt-0.5 px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+                                        className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
                                           isSubExpanded
-                                            ? 'bg-[#006FCC] text-white shadow-xs'
+                                            ? 'bg-[#006FCC] text-white shadow-2xs'
                                             : 'bg-[#EDF5FA] text-[#006FCC] hover:bg-[#DDECF6]'
                                         }`}
                                         title="Toggle Subcategories"
                                       >
                                         <span>{isSubExpanded ? 'Hide' : `${sub.subItems!.length} Sub-links`}</span>
-                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isSubExpanded ? 'rotate-180' : ''}`} />
+                                        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isSubExpanded ? 'rotate-180' : ''}`} />
                                       </button>
                                     )}
                                   </div>
 
                                   {/* Submenu List */}
                                   {hasSub && isSubExpanded && (
-                                    <div className="mt-2.5 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F8FAFD] p-2.5 rounded-r-xl animate-in fade-in slide-in-from-top-1 duration-150">
-                                      <div className="text-[10.5px] font-bold uppercase tracking-wider text-[#006FCC] px-2 py-0.5">
+                                    <div className="mt-1.5 ml-1 pl-2.5 border-l-2 border-[#006FCC] space-y-0.5 bg-[#F8FAFD] p-2 rounded-r-lg animate-in fade-in slide-in-from-top-1 duration-150">
+                                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5">
                                         Subcategories & Material Lists
                                       </div>
                                       {sub.subItems!.map((child, cIdx) => (
@@ -823,14 +833,14 @@ const Navbar = () => {
                                           key={cIdx}
                                           href={child.to}
                                           onClick={() => setOpenDropdown(null)}
-                                          className="flex items-center justify-between py-1.5 px-2 rounded-md hover:bg-white text-[13px] font-semibold text-[#023858] hover:text-[#006FCC] transition-colors group/child"
+                                          className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[11.5px] font-medium text-[#023858] hover:text-[#006FCC] transition-colors group/child"
                                         >
-                                          <div className="flex items-center gap-2">
+                                          <div className="flex items-center gap-1.5">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#006FCC]/60 group-hover/child:bg-[#006FCC] group-hover/child:scale-125 transition-all" />
                                             <span>{child.label}</span>
                                           </div>
                                           {child.badge && (
-                                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-white text-[#006FCC] border border-[#006FCC]/20">
+                                            <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20">
                                               {child.badge}
                                             </span>
                                           )}
@@ -849,30 +859,35 @@ const Navbar = () => {
                   </div>
                 </div>
 
-                {/* Right Zone: Labster .navbar_dropdown-content-right Gray Card (4 cols) */}
+                {/* Right Zone: Official M3 Surface Container Card (4 cols) */}
                 {activeItem.featuredPanel && (
-                  <div className="col-span-4 bg-[#F7F8F8] rounded-[18px] p-8 flex flex-col justify-between sticky top-0 border border-[#E8E9E9]/60">
+                  <div className="col-span-4 bg-[#f3f6fc] rounded-[14px] p-5 flex flex-col justify-between border border-[#c4c7c5]/50 shadow-2xs">
                     <div>
-                      <span className="text-[13.5px] font-bold text-[#006FCC] block mb-3">
+                      <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#0b57d0] block mb-2">
                         {activeItem.featuredPanel.eyebrow}
                       </span>
                       <h4
-                        className="nav-menu-item-title text-[18px] font-bold leading-[1.35] mb-3 cursor-pointer"
+                        className="nav-menu-item-title text-[15px] font-bold text-[#1f1f1f] leading-snug mb-2 cursor-pointer"
                       >
                         {activeItem.featuredPanel.title}
                       </h4>
-                      <p className="text-[13.5px] text-[#5F6265] leading-[1.55]">
+                      <p className="text-[12px] text-[#444746] leading-relaxed">
                         {activeItem.featuredPanel.desc}
                       </p>
                     </div>
 
-                    <div className="mt-7">
+                    <div className="mt-5">
                       <Link
                         href={activeItem.featuredPanel.ctaHref}
                         onClick={() => setOpenDropdown(null)}
-                        className="button_primary inline-flex items-center justify-center px-6 py-3 bg-[#006FCC] hover:bg-[#005499] text-white text-[14px] font-bold rounded-[12px] transition-all active:scale-98 shadow-[0_4px_14px_rgba(0,111,204,0.35)] hover:shadow-[0_6px_20px_rgba(0,111,204,0.45)]"
                       >
-                        {activeItem.featuredPanel.ctaText}
+                        <M3Button
+                          variant="filled"
+                          size="sm"
+                          trailingIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                        >
+                          {activeItem.featuredPanel.ctaText}
+                        </M3Button>
                       </Link>
                     </div>
                   </div>
@@ -883,32 +898,36 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* ── Mobile Drawer (Exact Minimalist Clean Look with All Features) ── */}
+        {/* ── Mobile Drawer (Official M3 Surface & Pill Buttons) ── */}
         <div
-          className={`lg:hidden border-t border-[#E8E9E9] bg-white text-[#1B1F23] absolute top-full left-0 w-full shadow-2xl overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out z-[410] ${
+          className={`lg:hidden border-t border-[#c4c7c5] bg-[#f8fafd] text-[#1f1f1f] absolute top-full left-0 w-full shadow-[0_8px_24px_rgba(60,64,67,0.2)] rounded-b-[28px] overflow-y-auto max-h-[85vh] transition-all duration-300 ease-in-out z-[410] ${
             mobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
           }`}
         >
           <div className="px-5 sm:px-6 py-5 space-y-2">
-            {/* Top Action Buttons: Book Demo & Find Your School */}
+            {/* Top Action Buttons: Book Demo & Find School (Uniform M3 Pill Buttons) */}
             <div className="grid grid-cols-2 gap-2.5 pb-4">
               <Link
                 href="/contact-us"
-                className="w-full py-3.5 px-3 bg-[#006FCC] hover:bg-[#005499] text-white rounded-[14px] text-[14px] sm:text-[15px] font-bold shadow-xs flex items-center justify-center transition-all active:scale-98 text-center"
                 onClick={() => setMobileOpen(false)}
               >
-                Book Demo
+                <M3Button variant="filled" size="lg" fullWidth>
+                  Book Demo
+                </M3Button>
               </Link>
-              <a
-                href="https://schoolsearch.cseel.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3.5 px-3 bg-[#EDF5FA] hover:bg-[#E0EFF8] text-[#006FCC] border border-[#006FCC]/40 rounded-[14px] text-[13.5px] sm:text-[14px] font-bold shadow-2xs flex items-center justify-center gap-1.5 transition-all active:scale-98 text-center"
+              <Link
+                href="/schools?view=map"
                 onClick={() => setMobileOpen(false)}
               >
-                <span>📍</span>
-                <span className="whitespace-nowrap font-bold">Find Your School</span>
-              </a>
+                <M3Button
+                  variant="tonal"
+                  size="lg"
+                  fullWidth
+                  leadingIcon={<MapPin className="w-4 h-4 text-[#001d35]" />}
+                >
+                  Find School
+                </M3Button>
+              </Link>
             </div>
 
             {/* Clean Category Rows (Exact match with user's screenshot) */}

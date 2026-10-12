@@ -244,7 +244,7 @@ const BlogDetail = () => {
             </p>
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005689] text-white rounded-xl text-sm font-bold hover:bg-[#004570] transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005689] text-white rounded-full text-sm font-bold hover:bg-[#004570] transition-colors"
             >
               Browse All Articles <ArrowRight className="w-4 h-4" />
             </Link>
@@ -436,7 +436,7 @@ const BlogDetail = () => {
             </div>
             <Link
               href="/contact-us"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#005689] text-white rounded-xl text-sm font-bold hover:bg-[#004570] transition-all flex-shrink-0 shadow-sm hover:shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#005689] text-white rounded-full text-sm font-bold hover:bg-[#004570] transition-all flex-shrink-0 shadow-sm hover:shadow-md"
             >
               Get in touch <ArrowRight className="w-4 h-4" />
             </Link>

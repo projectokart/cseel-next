@@ -49,6 +49,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: '/art', priority: 0.7, changeFrequency: 'monthly' as const },
     { url: '/safety', priority: 0.7, changeFrequency: 'monthly' as const },
     { url: '/media-archive', priority: 0.7, changeFrequency: 'monthly' as const },
+    { url: '/domain/science', priority: 0.95, changeFrequency: 'weekly' as const },
+    { url: '/domain/engineering', priority: 0.95, changeFrequency: 'weekly' as const },
+    { url: '/domain/art', priority: 0.95, changeFrequency: 'weekly' as const },
+    { url: '/subject/physics', priority: 0.95, changeFrequency: 'weekly' as const },
+    { url: '/subject/chemistry', priority: 0.95, changeFrequency: 'weekly' as const },
+    { url: '/subject/biology', priority: 0.95, changeFrequency: 'weekly' as const },
+    { url: '/subject/mathematics', priority: 0.95, changeFrequency: 'weekly' as const },
     { url: '/terms', priority: 0.5, changeFrequency: 'yearly' as const },
     { url: '/privacy', priority: 0.5, changeFrequency: 'yearly' as const },
   ];

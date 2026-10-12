@@ -59,6 +59,8 @@ export interface ExperimentGraphData {
 
 export interface ExperimentTemplateData {
   id?: string;
+  slug?: string;
+  canonicalUrl?: string;
   crumb: string[];
   title: string;
   meta: string[];
@@ -587,17 +589,24 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
           ? customMatch.tags.slice(0, 4)
           : DEFAULT_FARADAY_EXPERIMENT.related);
 
+  const slugKey = raw.slug || customMatch?.slug || '';
   const heroImage =
+    (slugKey ? `/images/experiments/${slugKey}.jpg` : undefined) ||
     raw.heroImage ||
-    raw.image ||
-    raw.thumbnail_url ||
     customMatch?.heroImage ||
-    customMatch?.thumbnail_url ||
-    (raw.slug ? `/images/experiments/${raw.slug}.avif` : (customMatch?.slug ? `/images/experiments/${customMatch.slug}.avif` : undefined));
+    raw.image ||
+    (slugKey ? `/images/experiments/${slugKey}.avif` : undefined) ||
+    raw.thumbnail_url ||
+    customMatch?.thumbnail_url;
 
-  return {
-    id: raw.id || customMatch?.id || 'exp-1',
-    crumb: ['Home', 'Experiments', subject],
+    const finalSlug = raw.slug || customMatch?.slug || raw.id || customMatch?.id || '';
+    const finalCanonical = `https://www.cseel.org/experiments/${finalSlug}`;
+
+    return {
+      id: raw.id || customMatch?.id || 'exp-1',
+      slug: finalSlug,
+      canonicalUrl: finalCanonical,
+      crumb: ['Home', 'Experiments', subject],
     title,
     meta: [grade, subject, duration, difficulty].filter(Boolean),
     image: heroImage,
@@ -687,8 +696,20 @@ export default function ExperimentTemplateView({
     ? (completedStepsCount / data.steps.length) * 100
     : 0;
 
+  const handleToggleCart = (id: string) => {
+    setCart((prev) => {
+      const copy = { ...prev };
+      if (copy[id]) {
+        delete copy[id];
+      } else {
+        copy[id] = 1;
+      }
+      return copy;
+    });
+  };
+
   const handleAddToCart = (id: string) => {
-    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    handleToggleCart(id);
   };
 
   const handleUpdateCartQty = (id: string, delta: number) => {
@@ -705,19 +726,137 @@ export default function ExperimentTemplateView({
 
   const handleShare = async () => {
     try {
-      const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.cseel.org';
+      const targetSlug = data.slug || data.id || '';
+      const shareUrl = targetSlug ? `${origin}/experiments/${targetSlug}` : (typeof window !== 'undefined' ? window.location.href : 'https://www.cseel.org');
+
       if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title: data.title, url: shareUrl });
+        await navigator.share({ title: data.title, text: data.objective, url: shareUrl });
       } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(shareUrl);
-        setShareLabel('Link copied');
+        setShareLabel('Detail link copied');
         setTimeout(() => setShareLabel('Share'), 1500);
       }
     } catch {}
   };
 
   const handlePrint = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined') return;
+
+    // Generate dedicated, self-contained printable HTML document
+    const printDoc = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <title>${data.title} — Laboratory Report</title>
+        <style>
+          @page { margin: 1.5cm; size: A4 portrait; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            color: #1f2937;
+            background: #fff;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+          }
+          .header { border-bottom: 2px solid #005689; padding-bottom: 12px; margin-bottom: 20px; }
+          .crumb { font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600; letter-spacing: 0.05em; }
+          h1 { font-size: 20px; color: #003c6e; margin: 4px 0 10px; font-weight: 800; line-height: 1.3; }
+          .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+          .chip { font-size: 11px; font-weight: 600; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 999px; }
+          .section { margin-bottom: 22px; page-break-inside: avoid; }
+          .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #003c6e; letter-spacing: 0.05em; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; margin-bottom: 8px; }
+          p { font-size: 12.5px; margin: 0 0 6px; color: #374151; }
+          ol, ul { margin: 0; padding-left: 20px; font-size: 12.5px; color: #374151; }
+          li { margin-bottom: 6px; }
+          .formula-box { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 13px; font-weight: bold; padding: 8px 14px; border-radius: 8px; margin: 8px 0; }
+          table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-top: 8px; }
+          th { background: #f1f5f9; text-align: left; padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: 700; color: #1e293b; }
+          td { padding: 6px 10px; border: 1px solid #cbd5e1; color: #334155; }
+          .footer { font-size: 10px; color: #9ca3af; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 12px; margin-top: 30px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="crumb">${data.crumb.join(' › ')}</div>
+          <h1>${data.title}</h1>
+          <div class="meta-chips">
+            ${data.meta.map(m => `<span class="chip">${m}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">1. Aim & Objective</div>
+          <p>${data.objective}</p>
+        </div>
+
+        <div class="section">
+          <div class="section-title">2. Materials & Apparatus Required</div>
+          <ul>
+            ${data.materials.map(m => `<li><strong>${m.name}</strong> (Qty: ${m.qty})</li>`).join('')}
+          </ul>
+        </div>
+
+        ${data.formula ? `
+        <div class="section">
+          <div class="section-title">3. Governing Formula & Principle</div>
+          <div class="formula-box">${data.formula}</div>
+        </div>` : ''}
+
+        <div class="section">
+          <div class="section-title">4. Experimental Procedure</div>
+          <ol>
+            ${data.steps.map(s => `<li>${s.text}</li>`).join('')}
+          </ol>
+        </div>
+
+        ${data.obsCols && data.obsRows && data.obsRows.length > 0 ? `
+        <div class="section">
+          <div class="section-title">5. Observation Table</div>
+          <table>
+            <thead>
+              <tr>${data.obsCols.map(c => `<th>${c}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+              ${data.obsRows.map(r => `<tr>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : ''}
+
+        <div class="section">
+          <div class="section-title">6. Result & Conclusion</div>
+          <p>${data.conclusion}</p>
+        </div>
+
+        ${data.safety && data.safety.length > 0 ? `
+        <div class="section">
+          <div class="section-title">7. Safety Precautions</div>
+          <ul>
+            ${data.safety.map(s => `<li>${s}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        <div class="footer">
+          Generated via CSEEL Experiential Science Platform — www.cseel.org
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = function() { window.close(); };
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    const printWin = window.open('', '_blank', 'width=850,height=900');
+    if (printWin) {
+      printWin.document.open();
+      printWin.document.write(printDoc);
+      printWin.document.close();
+    } else {
       window.print();
     }
   };
@@ -843,6 +982,7 @@ export default function ExperimentTemplateView({
 
   const selectedSheetItem =
     subSheet?.mode === 'item' ? data.materials.find((m) => m.id === subSheet.id) : null;
+  const isItemAdded = selectedSheetItem ? (cart[selectedSheetItem.id] || 0) > 0 : false;
 
   return (
     <div className="exp-template-root">
@@ -1333,25 +1473,76 @@ export default function ExperimentTemplateView({
           }
         }
         @media print {
+          /* Hide surrounding navigation, backdrops, sheets, and interactive elements */
+          body * {
+            visibility: hidden;
+          }
+          .exp-template-root,
+          .exp-template-root * {
+            visibility: visible;
+          }
+          .exp-template-root {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+          }
+          .exp-wrap {
+            max-width: 100% !important;
+            padding: 12px 18px !important;
+            background: #ffffff !important;
+          }
           .exp-acts,
           .exp-video,
           .exp-sh,
-          .exp-bk {
+          .exp-bk,
+          .exp-dots,
+          button,
+          a[href^="#"] {
             display: none !important;
           }
           .exp-xp {
-            grid-template-rows: 1fr !important;
+            display: block !important;
+            max-height: none !important;
+            overflow: visible !important;
+          }
+          .exp-xi {
+            overflow: visible !important;
+          }
+          .exp-xc {
+            display: block !important;
           }
           .exp-rc {
-            display: block;
-            overflow: visible;
+            display: block !important;
+            overflow: visible !important;
           }
           .exp-rcd {
-            max-width: none;
-            margin-bottom: 10px;
+            max-width: none !important;
+            margin-bottom: 12px !important;
+            page-break-inside: avoid;
           }
-          .exp-dots {
-            display: none;
+          /* Print friendly cards */
+          .m3-card,
+          [class*="M3Card"] {
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
+            margin-bottom: 12px !important;
+          }
+          table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+          }
+          th, td {
+            border: 1px solid #cbd5e1 !important;
+            padding: 6px 10px !important;
+          }
+          @page {
+            margin: 1.5cm;
+            size: A4 portrait;
           }
         }
       `}</style>
@@ -1402,54 +1593,50 @@ export default function ExperimentTemplateView({
             Print
           </M3Button>
 
-          <M3Button
-            variant="tonal"
-            size="md"
-            leadingIcon={<ShoppingCart className="w-4 h-4" />}
-            trailingIcon={
-              totalCartCount > 0 ? <M3Badge count={totalCartCount} /> : undefined
-            }
-            onClick={() => setSubSheet({ mode: 'cart' })}
-          >
-            Cart
-          </M3Button>
+          {/* Cart button hidden for now */}
         </div>
 
-        {/* 1. Authentic Apparatus Showcase (Replaces fake video box) */}
-        <M3Card variant="outlined" className="p-2 sm:p-2.5 mb-2.5 bg-white overflow-hidden">
-          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-xl overflow-hidden bg-slate-900/[0.04] border border-[#dde3ea] flex items-center justify-center p-1.5 group">
-            {data.heroImage || data.thumbnail_url || data.image ? (
-              <img
-                src={data.heroImage || data.thumbnail_url || data.image}
-                alt={data.title}
-                className="w-full h-full object-contain object-center rounded-lg transition-transform duration-500 group-hover:scale-[1.02]"
-              />
-            ) : (
-              <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#041e49] to-[#0b57d0] flex items-center justify-center text-white">
-                <FlaskConical className="w-12 h-12 text-white/60" />
-              </div>
-            )}
-
-            {/* Floating Authentic Apparatus Badge */}
-            <div className="absolute top-2.5 left-2.5 bg-slate-900/85 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/20 shadow-md">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Laboratory Apparatus Setup • {data.meta?.[0] || 'NEP 2020'}</span>
+        {/* 1. Authentic Apparatus Showcase - Full Container Fit */}
+        <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden bg-slate-900 border border-[#dde3ea] shadow-xs mb-2.5 group">
+          {data.heroImage || data.thumbnail_url || data.image ? (
+            <img
+              src={data.heroImage || data.thumbnail_url || data.image}
+              alt={data.title}
+              className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (!target.src.endsWith('/images/categories/chemistry.jpg')) {
+                  target.src = '/images/categories/chemistry.jpg';
+                }
+              }}
+            />
+          ) : (
+            <div className="w-full h-full rounded-2xl bg-gradient-to-br from-[#041e49] to-[#0b57d0] flex items-center justify-center text-white">
+              <FlaskConical className="w-12 h-12 text-white/60" />
             </div>
+          )}
 
-            {/* Optional video walkthrough if URL exists */}
-            {data.videoUrl ? (
-              <a
-                href={data.videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="absolute bottom-2.5 right-2.5 bg-[#0b57d0] hover:bg-[#003c6e] text-white text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg transition-colors cursor-pointer"
-              >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Watch Video Walkthrough</span>
-              </a>
-            ) : null}
+          {/* Contrast overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/30 pointer-events-none" />
+
+          {/* Floating Authentic Apparatus Badge */}
+          <div className="absolute top-2.5 left-2.5 bg-slate-900/85 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center border border-white/20 shadow-md">
+            <span>Laboratory Apparatus Setup • {data.meta?.[0] || 'NEP 2020'}</span>
           </div>
-        </M3Card>
+
+          {/* Optional video walkthrough if URL exists */}
+          {data.videoUrl ? (
+            <a
+              href={data.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-2.5 right-2.5 bg-[#0b57d0] hover:bg-[#003c6e] text-white text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg transition-colors cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Watch Video Walkthrough</span>
+            </a>
+          ) : null}
+        </div>
 
         {/* 2. Objective Section inside Official M3Card */}
         <M3Card variant="outlined" className="p-3 sm:p-3.5 mb-2.5 bg-white">
@@ -1462,34 +1649,22 @@ export default function ExperimentTemplateView({
           <h2 className="exp-h2">Materials needed</h2>
           <ul className="exp-list exp-mt">
             {data.materials.map((m) => {
-              const isChecked = !!checkedMaterials[m.id];
               const isOpen = !!expandedMaterials[m.id];
-              const addedCount = cart[m.id] || 0;
+              const isAdded = (cart[m.id] || 0) > 0;
 
               return (
                 <li key={m.id}>
                   <div className="exp-row">
                     <div
-                      className={`exp-chk ${isChecked ? 'checked' : ''}`}
+                      className="exp-chk"
                       onClick={() =>
-                        setCheckedMaterials((prev) => ({
+                        setExpandedMaterials((prev) => ({
                           ...prev,
                           [m.id]: !prev[m.id],
                         }))
                       }
                     >
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <M3Checkbox
-                          checked={isChecked}
-                          onChange={() =>
-                            setCheckedMaterials((prev) => ({
-                              ...prev,
-                              [m.id]: !prev[m.id],
-                            }))
-                          }
-                        />
-                      </div>
-                      <span className="font-medium text-[#1f1f1f]">{m.name}</span>
+                      <span className="font-medium text-[#1f1f1f] text-xs sm:text-sm">{m.name}</span>
                       <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
                         <M3AssistChip label={`Qty × ${m.qty}`} />
                       </div>
@@ -1538,34 +1713,7 @@ export default function ExperimentTemplateView({
                             </div>
                           ))}
                         </dl>
-                        <div className="exp-sf">
-                          <M3Button
-                            variant="outlined"
-                            size="sm"
-                            leadingIcon={<ExternalLink className="w-4 h-4" />}
-                            onClick={() => {
-                              if (typeof window !== 'undefined' && m.buy) {
-                                window.open(m.buy, m.buy !== '#' ? '_blank' : '_self');
-                              }
-                            }}
-                          >
-                            Buy link
-                          </M3Button>
-                          <M3Button
-                            variant={addedCount > 0 ? 'tonal' : 'filled'}
-                            size="sm"
-                            leadingIcon={
-                              addedCount > 0 ? (
-                                <Check className="w-4 h-4" />
-                              ) : (
-                                <ShoppingCart className="w-4 h-4" />
-                              )
-                            }
-                            onClick={() => handleAddToCart(m.id)}
-                          >
-                            {addedCount > 0 ? `Added (${addedCount})` : 'Add to cart'}
-                          </M3Button>
-                        </div>
+                        {/* Buy and cart buttons hidden for now */}
                       </div>
                     </div>
                   </div>
@@ -1574,7 +1722,7 @@ export default function ExperimentTemplateView({
             })}
           </ul>
           <p className="exp-hint">
-            Tick items as you collect them. Tap + to see the product, specifications and buy options.
+            Tap + to view item specifications, buy options, and add to your apparatus kit.
           </p>
         </M3Card>
 
@@ -1591,45 +1739,36 @@ export default function ExperimentTemplateView({
           </ul>
         </M3Card>
 
-        {/* 5. Steps Section inside Official M3Card with M3LinearProgress & M3Checkbox */}
+        {/* 5. Steps Section inside Official M3Card */}
         <M3Card variant="outlined" className="exp-steps p-3 sm:p-3.5 mb-2.5 bg-white">
-          <h2 className="exp-h2">Steps</h2>
-          <M3LinearProgress value={progressPercent} />
-          <div className="exp-pt">
-            {completedStepsCount} of {data.steps.length} steps done
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="exp-h2 m-0">Procedure & Steps</h2>
+            <span className="text-[11px] font-semibold text-[#0b57d0] bg-[#eef3fc] px-2.5 py-0.5 rounded-full border border-[#d3e3fd]">
+              {data.steps.length} Steps
+            </span>
           </div>
 
           <ul className="exp-list">
             {data.steps.map((s, idx) => {
               const hasDetails = Boolean(s.observe || s.safety);
-              const isChecked = !!checkedSteps[idx];
               const isOpen = !!expandedSteps[idx];
 
               return (
                 <li key={idx}>
                   <div className="exp-row">
                     <div
-                      className={`exp-chk ${isChecked ? 'checked' : ''}`}
-                      onClick={() =>
-                        setCheckedSteps((prev) => ({
-                          ...prev,
-                          [idx]: !prev[idx],
-                        }))
-                      }
+                      className="exp-chk"
+                      onClick={() => {
+                        if (hasDetails) {
+                          setExpandedSteps((prev) => ({
+                            ...prev,
+                            [idx]: !prev[idx],
+                          }));
+                        }
+                      }}
                     >
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <M3Checkbox
-                          checked={isChecked}
-                          onChange={() =>
-                            setCheckedSteps((prev) => ({
-                              ...prev,
-                              [idx]: !prev[idx],
-                            }))
-                          }
-                        />
-                      </div>
                       <b className="exp-n">{idx + 1}</b>
-                      <span className="text-[#1f1f1f]">{s.text}</span>
+                      <span className="text-[#1f1f1f] text-xs sm:text-[13px] leading-relaxed">{s.text}</span>
                     </div>
 
                     {hasDetails && (
@@ -1837,7 +1976,6 @@ export default function ExperimentTemplateView({
               <M3SuggestionChip
                 key={idx}
                 label={relTitle}
-                icon={<Sparkles className="w-3.5 h-3.5" />}
                 onClick={() => {
                   if (onSelectRelated) {
                     onSelectRelated(relTitle);
@@ -1949,28 +2087,7 @@ export default function ExperimentTemplateView({
                     </ul>
                   </div>
                 </div>
-                <div className="exp-sf">
-                  <M3Button
-                    variant="outlined"
-                    size="sm"
-                    leadingIcon={<ExternalLink className="w-4 h-4" />}
-                    onClick={() => {
-                      if (typeof window !== 'undefined' && selectedSheetItem.buy) {
-                        window.open(selectedSheetItem.buy, '_blank');
-                      }
-                    }}
-                  >
-                    Buy link
-                  </M3Button>
-                  <M3Button
-                    variant="filled"
-                    size="sm"
-                    leadingIcon={<ShoppingCart className="w-4 h-4" />}
-                    onClick={() => handleAddToCart(selectedSheetItem.id)}
-                  >
-                    Add to cart
-                  </M3Button>
-                </div>
+                {/* Buy and cart buttons hidden for now */}
               </>
             )}
           </aside>

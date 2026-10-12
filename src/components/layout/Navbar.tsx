@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ChevronDown, Menu, X, ArrowRight, MapPin } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useNavVisibility } from '@/contexts/NavigationContext';
+import { useBookDemoModal } from '@/contexts/BookDemoModalContext';
 import { M3Button, M3IconButton, M3AssistChip } from '@/components/google-ui';
 
 /* ─── Types ─────────────────────────────────────── */
@@ -454,6 +455,7 @@ const navItems: NavItem[] = [
 /* ─── Main Component ─────────────────────────────── */
 const Navbar = () => {
   const { navCategories } = useNavVisibility();
+  const { openDemoModal } = useBookDemoModal();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [expandedSubItem, setExpandedSubItem] = useState<string | null>(null);
@@ -639,16 +641,17 @@ const Navbar = () => {
               </M3Button>
             </Link>
 
-            <Link href="/contact-us" className="shrink-0">
+            <div className="shrink-0">
               <M3Button
                 variant="filled"
                 size="sm"
-                className="h-8 xl:h-9 text-xs xl:text-sm px-3 xl:px-4 font-semibold"
+                onClick={() => openDemoModal({ source: 'Navbar Desktop' })}
+                className="h-8 xl:h-9 text-xs xl:text-sm px-3 xl:px-4 font-semibold cursor-pointer"
                 trailingIcon={<ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
               >
-                Get a Demo
+                Book a Demo
               </M3Button>
-            </Link>
+            </div>
           </div>
 
           {/* Mobile Hamburger Button (Official M3IconButton) */}
@@ -907,14 +910,20 @@ const Navbar = () => {
           <div className="px-5 sm:px-6 py-5 space-y-2">
             {/* Top Action Buttons: Book Demo & Find School (Uniform M3 Pill Buttons) */}
             <div className="grid grid-cols-2 gap-2.5 pb-4">
-              <Link
-                href="/contact-us"
-                onClick={() => setMobileOpen(false)}
-              >
-                <M3Button variant="filled" size="lg" fullWidth>
+              <div>
+                <M3Button
+                  variant="filled"
+                  size="lg"
+                  fullWidth
+                  onClick={() => {
+                    setMobileOpen(false);
+                    openDemoModal({ source: 'Navbar Mobile Drawer' });
+                  }}
+                  className="cursor-pointer"
+                >
                   Book Demo
                 </M3Button>
-              </Link>
+              </div>
               <Link
                 href="/schools?view=map"
                 onClick={() => setMobileOpen(false)}

@@ -210,7 +210,8 @@ const GOOGLE_MATERIAL_SVG_PATHS: Record<string, string> = {
 function createGoogleMaterialIcon(iconName: string): LucideIcon {
   const pathData =
     GOOGLE_MATERIAL_SVG_PATHS[iconName] ||
-    GOOGLE_MATERIAL_SVG_PATHS.Sparkles;
+    GOOGLE_MATERIAL_SVG_PATHS.HelpCircle ||
+    '';
 
   const Component = React.forwardRef<SVGSVGElement, LucideProps>(
     ({ size = 20, color = 'currentColor', className = '', style, children, strokeWidth, absoluteStrokeWidth, ...rest }, ref) => {
@@ -608,7 +609,7 @@ export const Siren = createGoogleMaterialIcon('Siren');
 export const Sliders = createGoogleMaterialIcon('Sliders');
 export const SlidersHorizontal = createGoogleMaterialIcon('SlidersHorizontal');
 export const Smartphone = createGoogleMaterialIcon('Smartphone');
-export const Sparkles = createGoogleMaterialIcon('Sparkles');
+export const Sparkles: LucideIcon = React.forwardRef<SVGSVGElement, LucideProps>(() => null);
 export const Star = createGoogleMaterialIcon('Star');
 export const Stethoscope = createGoogleMaterialIcon('Stethoscope');
 export const Strikethrough = createGoogleMaterialIcon('Strikethrough');

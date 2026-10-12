@@ -34,10 +34,12 @@ const DEFAULT_POPUP: PromoItem = {
 };
 
 import { useMarketingCampaigns } from "@/features/marketing/useMarketingCampaigns";
+import { useBookDemoModal } from "@/contexts/BookDemoModalContext";
 
 const OfferPopup = () => {
   const { isSectionEnabled } = useHomepageCms();
   const { promotions, hydrated } = useMarketingCampaigns();
+  const { openDemoModal } = useBookDemoModal();
   const [item, setItem] = useState<PromoItem | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -227,16 +229,20 @@ const OfferPopup = () => {
 
               {/* Conversion CTAs — Official M3 Pill Buttons */}
               <div className="space-y-2.5 pt-1">
-                {item.cta_link && (
-                  <Link
-                    href={item.cta_link}
-                    onClick={close}
-                    className="w-full flex items-center justify-center gap-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white h-12 px-7 rounded-full font-semibold text-sm sm:text-base shadow-[0_1px_2px_rgba(60,64,67,0.3),0_1px_3px_1px_rgba(60,64,67,0.15)] hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] text-decoration-none group"
-                  >
-                    <span>{item.cta_text || "Book Free School Demo"}</span>
-                    <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
-                  </Link>
-                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    close();
+                    openDemoModal({
+                      note: item.title,
+                      source: `Promo Popup: ${item.id}`,
+                    });
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white h-12 px-7 rounded-full font-semibold text-sm sm:text-base shadow-[0_1px_2px_rgba(60,64,67,0.3),0_1px_3px_1px_rgba(60,64,67,0.15)] hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] cursor-pointer group"
+                >
+                  <span>{item.cta_text || "Book Free School Demo"}</span>
+                  <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+                </button>
 
                 {/* Secondary 360 Tour Quick Link & Dismiss */}
                 <div className="flex items-center justify-between pt-1 px-1">

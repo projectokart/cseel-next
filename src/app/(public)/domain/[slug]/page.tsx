@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   ArrowRight, 
   Download, 
@@ -343,7 +344,7 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
       },
     ],
     libEyebrow: 'The engineering library',
-    libHeading: 'Four engineering disciplines. One platform.',
+    libHeading: 'Robotics & IoT disciplines. One platform.',
     subjects: [
       {
         title: 'Robotics & Automation',
@@ -357,22 +358,10 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
         image: '/images/categories/engineering.jpg',
         link: '/subject/technology',
       },
-      {
-        title: 'Mechanical & Fluid Power',
-        desc: 'Dissect four-stroke internal combustion engines, gear trains, hydraulic actuators, and wind turbine aerodynamics in exploded 3D views.',
-        image: '/images/categories/engineering.jpg',
-        link: '/subject/engineering',
-      },
-      {
-        title: 'Civil & Structural Design',
-        desc: 'Conduct tensile strain tests on concrete beams, bridge truss deflection analyses, and total station topographical surveying virtually.',
-        image: '/images/categories/technology.jpg',
-        link: '/subject/engineering',
-      },
     ],
     sampleEyebrow: 'The library',
     sampleHeading: 'A sample of the engineering library.',
-    filterStreams: ['All', 'Robotics', 'Electronics', 'Mechanical', 'Civil'],
+    filterStreams: ['All', 'Robotics', 'Electronics'],
     sampleModules: [
       {
         title: '6-Axis Industrial Robotic Arm',
@@ -391,36 +380,12 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
         link: '/subject/technology',
       },
       {
-        title: 'Truss Bridge Structural Load Testing',
-        topic: 'Finite Element Stress Deflection',
-        stream: 'Civil',
-        type: 'Simulation',
-        image: '/images/categories/engineering.jpg',
-        link: '/subject/engineering',
-      },
-      {
-        title: 'Four-Stroke Diesel Engine Cycle',
-        topic: 'Thermodynamics & PV Indicator',
-        stream: 'Mechanical',
-        type: 'Experiment',
-        image: '/images/categories/engineering.jpg',
-        link: '/subject/engineering',
-      },
-      {
         title: 'Smart Home IoT Sensor Network',
         topic: 'MQTT & Cloud Data Visualisation',
         stream: 'Electronics',
         type: 'Experiment',
         image: '/images/categories/technology.jpg',
         link: '/subject/technology',
-      },
-      {
-        title: 'Hydraulic Actuator Circuit',
-        topic: 'Fluid Power Control & Valves',
-        stream: 'Mechanical',
-        type: 'Simulation',
-        image: '/images/categories/engineering.jpg',
-        link: '/subject/engineering',
       },
     ],
     tutorEyebrow: 'Meet 7thi',
@@ -683,7 +648,15 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 
 export default function DomainPage({ params }: { params: { slug: string } }) {
+  const router = useRouter();
   const currentSlug = params?.slug?.toLowerCase() || 'science';
+
+  useEffect(() => {
+    if (currentSlug === 'art' || currentSlug === 'arts') {
+      router.replace('/under-construction');
+    }
+  }, [currentSlug, router]);
+
   const defaultDomain = DOMAIN_DATA[currentSlug] || DOMAIN_DATA['science'];
   const [domain, setDomain] = useState<DomainConfig>(defaultDomain);
 

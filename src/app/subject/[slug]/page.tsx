@@ -40,11 +40,14 @@ import {
   Flame,
   Beaker,
   Heart,
-  Share2
+  Share2,
+  Plus,
+  Minus,
 } from 'lucide-react';
 import { SUBJECTS_DATA, SubjectMetadata, ExperimentActivity, slugifyExperimentTitle } from '@/data/subjectActivitiesData';
 import ExperimentDetailModal from '@/components/subject/ExperimentDetailModal';
 import { useCart } from '@/contexts/CartContext';
+import { useBookDemoModal } from '@/contexts/BookDemoModalContext';
 import { supabase } from '@/integrations/supabase/client';
 import {
   M3Button,
@@ -124,7 +127,16 @@ const SORT_OPTIONS = [
 export default function SubjectActivityPage() {
   const params = useParams();
   const router = useRouter();
-  const { totalItems, isInCart, selectedIds, toggleSelect: cartToggle } = useCart();
+  const {
+    totalItems,
+    isInCart,
+    selectedIds,
+    selectedExperiments,
+    totalSelectedQuantity,
+    toggleSelect: cartToggle,
+    addSelection,
+    updateSelectionQty,
+  } = useCart();
   const rawSlug = Array.isArray(params?.slug) ? params.slug[0] : params?.slug || 'chemistry';
 
   // Normalize slug variations
@@ -452,6 +464,7 @@ export default function SubjectActivityPage() {
   }, [baseActivities]);
 
   // State Filters & Search
+  const { openDemoModal } = useBookDemoModal();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClass, setSelectedClass] = useState<string>('All');
   const [selectedChapter, setSelectedChapter] = useState<string>('All');
@@ -465,6 +478,19 @@ export default function SubjectActivityPage() {
   const [activeModalActivity, setActiveModalActivity] = useState<ExperimentActivity | null>(null);
   const [likedIds, setLikedIds] = useState<string[]>([]);
   const [shareToastText, setShareToastText] = useState<string | null>(null);
+
+  // Pagination & Blurred Cards Lead Generation State
+  const [visibleCount, setVisibleCount] = useState<number>(10);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [hasLoadedMore, setHasLoadedMore] = useState<boolean>(false);
+  const [inlineFormSubmitted, setInlineFormSubmitted] = useState<boolean>(false);
+  const [inlineFormLoading, setInlineFormLoading] = useState<boolean>(false);
+  const [inlineFormData, setInlineFormData] = useState({
+    name: '',
+    designation: '',
+    contact: '',
+    note: '',
+  });
 
   // Load liked experiments from localStorage
   useEffect(() => {
@@ -794,42 +820,52 @@ export default function SubjectActivityPage() {
         
         <div className="w-full bg-white rounded-3xl p-3 sm:p-4 border border-[#dde3ea] shadow-[0_4px_20px_rgba(15,23,42,0.06)] transition-all space-y-2.5 box-border">
           
-          {/* Official Google M3 Search Bar (52px pill, #eef3fc Surface Container High) */}
-          <div className="flex items-center gap-2.5 w-full h-12 bg-[#eef3fc] hover:bg-[#e3ecf8] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0b57d0] border border-transparent focus-within:border-[#0b57d0] rounded-full px-4 transition-all">
-            <Search size={18} className="text-[#444746] shrink-0" />
+          {/* Search Bar Row: Search Pill + External Selections Bookmark Button */}
+          <div className="flex items-center gap-2.5 w-full">
+            {/* Official Google M3 Search Bar (52px pill, #eef3fc Surface Container High) */}
+            <div className="flex items-center gap-2.5 flex-1 min-w-0 h-12 bg-[#eef3fc] hover:bg-[#e3ecf8] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0b57d0] border border-transparent focus-within:border-[#0b57d0] rounded-full px-4 transition-all">
+              <Search size={18} className="text-[#444746] shrink-0" />
 
-            <input 
-              type="text" 
-              placeholder={`Search ${displayName} experiments, topics, concepts...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#1f1f1f] placeholder-[#444746] outline-none min-w-0"
-            />
-
-            {searchQuery && (
-              <M3IconButton
-                variant="standard"
-                size="sm"
-                ariaLabel="Clear search"
-                icon={<X size={15} />}
-                onClick={() => setSearchQuery('')}
+              <input 
+                type="text" 
+                placeholder={`Search ${displayName} experiments, topics, concepts...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#1f1f1f] placeholder-[#444746] outline-none min-w-0"
               />
-            )}
 
-            {/* Bookmark Link Button with M3IconButton & M3Badge */}
-            <div className="relative shrink-0">
-              <M3IconButton
-                variant="tonal"
-                size="sm"
-                ariaLabel="My Selections"
-                icon={<BookmarkCheck size={15} />}
-                onClick={() => router.push('/my-selections')}
-              />
-              {selectedIds.length > 0 && (
-                <span className="absolute -top-1 -right-1 pointer-events-none">
-                  <M3Badge count={selectedIds.length} />
-                </span>
+              {searchQuery && (
+                <M3IconButton
+                  variant="standard"
+                  size="sm"
+                  ariaLabel="Clear search"
+                  icon={<X size={15} />}
+                  onClick={() => setSearchQuery('')}
+                />
               )}
+            </div>
+
+            {/* Standalone Selected Items Button Outside Search Bar */}
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => router.push('/my-selections')}
+                aria-label="View Selected Experiments"
+                title="View Selected Experiments"
+                className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs active:scale-95 ${
+                  totalSelectedQuantity > 0
+                    ? 'bg-[#0b57d0] text-white hover:bg-[#003c6e] ring-2 ring-[#0b57d0]/20'
+                    : 'bg-[#eef3fc] text-[#001d35] hover:bg-[#d3e3fd] border border-[#dde3ea]'
+                }`}
+              >
+                <BookmarkCheck size={20} strokeWidth={2.4} />
+
+                {totalSelectedQuantity > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 bg-[#b3261e] text-white text-[11px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs animate-in zoom-in-75 duration-150">
+                    {totalSelectedQuantity}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -1034,9 +1070,13 @@ export default function SubjectActivityPage() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4.5 mt-5">
-          {filteredActivities.map((act, index) => {
+          {filteredActivities.slice(0, visibleCount).map((act, index) => {
             const isSelected = selectedIds.includes(act.id);
+            const selectedItem = selectedExperiments.find((e) => e.id === act.id);
+            const selectedQty = selectedItem?.quantity || 1;
+            const actSlug = act.slug || act.id;
             const imageSrc =
+              (actSlug ? `/images/experiments/${actSlug}.jpg` : undefined) ||
               act.image ||
               act.thumbnail_url ||
               CATEGORY_IMAGES[activeSlugKey] ||
@@ -1053,18 +1093,25 @@ export default function SubjectActivityPage() {
                 {/* Top Section: Image and Content Side-by-Side */}
                 <div className="flex flex-row items-stretch gap-3 p-3.5">
                   
-                  {/* Image on the Left Side - Perfectly fitted apparatus preview */}
-                  <div className="w-28 sm:w-36 flex-shrink-0 overflow-hidden rounded-xl bg-slate-900/[0.04] border border-slate-200/80 relative self-stretch min-h-[96px] flex items-center justify-center p-1">
+                  {/* Image on the Left Side - Full container fitted apparatus photo */}
+                  <div className="w-28 sm:w-36 flex-shrink-0 overflow-hidden rounded-xl bg-slate-900/[0.04] border border-slate-200/80 relative self-stretch min-h-[96px]">
                     <img
                       src={imageSrc}
                       alt={act.title}
-                      className="w-full h-full object-contain object-center rounded-lg transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        const fallback = CATEGORY_IMAGES[activeSlugKey] || '/images/categories/chemistry.jpg';
+                        if (target.src !== fallback) {
+                          target.src = fallback;
+                        }
+                      }}
                     />
                     
                     {/* Time Badge on Image */}
-                    <div className="absolute top-2 left-2">
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-900/75 text-white backdrop-blur-xs border border-white/20 flex items-center gap-1">
+                    <div className="absolute top-2 left-2 z-10">
+                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-900/75 text-white backdrop-blur-xs border border-white/20 flex items-center gap-1 shadow-xs">
                         <Clock size={9} />
                         {act.duration}
                       </span>
@@ -1145,24 +1192,355 @@ export default function SubjectActivityPage() {
                       onClick={(e) => handleShareActivity(e, act)}
                     />
 
-                    {/* Official M3 Select Button */}
-                    <M3Button
-                      variant={isSelected ? 'filled' : 'tonal'}
-                      size="sm"
-                      leadingIcon={isSelected ? <Check size={14} strokeWidth={2.5} /> : undefined}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        handleToggleSelect(act);
-                      }}
-                    >
-                      {isSelected ? 'Selected' : 'Select'}
-                    </M3Button>
+                    {/* Official M3 Quantity Controller (+ / -) or Add Button */}
+                    {isSelected ? (
+                      <div className="flex items-center gap-1.5 bg-[#eef3fc] rounded-full p-1 border border-[#0b57d0]/30 shadow-xs">
+                        <button
+                          type="button"
+                          aria-label="Decrease quantity"
+                          className="w-7 h-7 rounded-full bg-white text-[#0b57d0] hover:bg-[#d3e3fd] border border-[#d3e3fd] flex items-center justify-center transition-all cursor-pointer shrink-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            updateSelectionQty(act.id, -1);
+                          }}
+                        >
+                          <Minus size={13} strokeWidth={2.5} />
+                        </button>
+
+                        <span className="min-w-[20px] text-center text-xs font-black text-[#0b57d0] select-none">
+                          {selectedQty}
+                        </span>
+
+                        <button
+                          type="button"
+                          aria-label="Increase quantity"
+                          className="w-7 h-7 rounded-full bg-[#0b57d0] text-white hover:bg-[#003c6e] flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-2xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            updateSelectionQty(act.id, 1);
+                          }}
+                        >
+                          <Plus size={13} strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        aria-label="Add to selection"
+                        className="h-8 px-3 rounded-full bg-[#eef3fc] hover:bg-[#0b57d0] text-[#0b57d0] hover:text-white border border-[#d3e3fd] hover:border-[#0b57d0] text-xs font-bold inline-flex items-center gap-1 transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          addSelection({
+                            id: act.id,
+                            title: act.title,
+                            subject: subject.name.replace(' Activities', ''),
+                            thumbnail_url: imageSrc,
+                            class: act.gradeLevel,
+                            quantity: 1,
+                          });
+                        }}
+                      >
+                        <Plus size={14} strokeWidth={2.5} />
+                        <span>Add</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
             );
           })}
+
+          {/* ─── 5-6 Fake Blurred Cards with Teaser Content when Loaded More ─── */}
+          {hasLoadedMore && [
+            {
+              title: `Advanced ${displayName} Optical Spectrometry & Calibration`,
+              sub: 'NEP 2020 Senior Secondary High-Precision Quantitative Simulation',
+              grade: 'Class 12th',
+              time: '50 Mins',
+              category: `${displayName} Advanced Series`,
+            },
+            {
+              title: `Microscale Precision Analysis & Sensor Automation`,
+              sub: 'Computer-interfaced electronic data logging & real-time telemetric graph',
+              grade: 'Class 11th',
+              time: '45 Mins',
+              category: `${displayName} Smart Sensor Series`,
+            },
+            {
+              title: `Curriculum Master Laboratory: Complete Board Practicals`,
+              sub: 'Step-by-step full lab apparatus manual, observation formulas and viva questions',
+              grade: 'Class 10th',
+              time: '60 Mins',
+              category: `${displayName} CBSE / ICSE Labs`,
+            },
+            {
+              title: `Industrial Real-Time Process & Chemical Synthesis`,
+              sub: 'Safety-certified virtual pilot plant simulation with full variable sliders',
+              grade: 'Class 12th',
+              time: '55 Mins',
+              category: `${displayName} Industry Grade`,
+            },
+            {
+              title: `Thermodynamic Equilibrium & Dynamic Reaction Kinetics`,
+              sub: 'Interactive mathematical modeling and phase transformation charts',
+              grade: 'Class 11th',
+              time: '40 Mins',
+              category: `${displayName} Advanced Theory`,
+            },
+            {
+              title: `ATL Tinkering Innovation & Prototype Design Kit`,
+              sub: 'Atal Innovation Mission aligned maker project with circuit schematics',
+              grade: 'Class 9th',
+              time: '45 Mins',
+              category: `${displayName} ATL Tinkering`,
+            },
+          ].map((fakeItem, fIdx) => (
+            <div
+              key={`blurred-fake-${fIdx}`}
+              className="relative flex flex-col justify-between border border-dashed border-[#b0c4de] rounded-2xl bg-white/70 backdrop-blur-md select-none overflow-hidden transition-all filter blur-[3.5px] opacity-60 hover:opacity-75 pointer-events-none"
+            >
+              <div className="flex flex-row items-stretch gap-3 p-3.5">
+                <div className="w-28 sm:w-36 flex-shrink-0 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 border border-slate-200 flex items-center justify-center min-h-[96px]">
+                  <Sparkles className="w-8 h-8 text-[#005689]/40" />
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 space-y-1">
+                  <span className="text-[10px] font-semibold text-[#0b57d0] block tracking-wide truncate">
+                    {fakeItem.category}
+                  </span>
+                  <h3 className="text-[14px] sm:text-[15px] font-bold text-[#1f1f1f] leading-snug">
+                    {fakeItem.title}
+                  </h3>
+                  <p className="text-[11px] text-[#444746] font-normal leading-relaxed line-clamp-2">
+                    {fakeItem.sub}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-t border-[#dde3ea] bg-[#f8fafd]">
+                <span className="text-xs font-bold text-slate-500">{fakeItem.grade}</span>
+                <span className="text-xs font-bold text-slate-400">Locked Premium</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ─── Load More Button with Animated Spinner Flow ─── */}
+        {!hasLoadedMore && filteredActivities.length > visibleCount && (
+          <div className="mt-8 flex flex-col items-center justify-center space-y-2">
+            <button
+              type="button"
+              disabled={isLoadingMore}
+              onClick={() => {
+                setIsLoadingMore(true);
+                setTimeout(() => {
+                  setIsLoadingMore(false);
+                  setHasLoadedMore(true);
+                }, 700);
+              }}
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200 active:scale-95 cursor-pointer disabled:opacity-70"
+            >
+              {isLoadingMore ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Loading More Experiments...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles size={16} />
+                  <span>Load More Experiments</span>
+                </>
+              )}
+            </button>
+            <p className="text-xs text-slate-500 font-medium">
+              Click to view more advanced curriculum experiments
+            </p>
+          </div>
+        )}
+
+        {/* ─── Elegant Locked Blur Lead Generation Card & Form (Name, Designation, Contact, Note) ─── */}
+        {hasLoadedMore && (
+          <div className="mt-8 rounded-3xl bg-gradient-to-br from-[#0c2340] via-[#005689] to-[#0466c8] p-6 sm:p-8 text-white shadow-2xl border border-blue-400/30 relative overflow-hidden">
+            {/* Ambient Background Glows */}
+            <div className="absolute -top-16 -right-16 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 max-w-3xl mx-auto text-center space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-black uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 fill-amber-300" />
+                <span>1,000+ Full Experiments Available</span>
+              </div>
+
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight" style={{ color: '#ffffff' }}>
+                More Experiments Dekhne Ke Liye Contact Karein
+              </h3>
+
+              <p className="text-blue-100 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+                CSEEL provides complete CBSE, ICSE &amp; State Board practical syllabus access, teacher manuals, DIY kits and customized simulations for schools. Fill below for instant access:
+              </p>
+
+              {inlineFormSubmitted ? (
+                <div className="mt-6 p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-center space-y-2 max-w-md mx-auto">
+                  <div className="w-12 h-12 bg-emerald-400 text-slate-950 rounded-full flex items-center justify-center mx-auto font-black shadow-lg">
+                    <Check size={24} strokeWidth={3} />
+                  </div>
+                  <h4 className="text-lg font-bold text-white">Inquiry Received!</h4>
+                  <p className="text-xs text-blue-100 leading-relaxed">
+                    Hamari team jald hi aapse contact karegi aur additional experiments ka access provide karegi.
+                  </p>
+                </div>
+              ) : (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!inlineFormData.name || !inlineFormData.contact) return;
+                    setInlineFormLoading(true);
+                    try {
+                      await fetch('/api/demo-enquiry', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          name: inlineFormData.name,
+                          designation: inlineFormData.designation,
+                          contact: inlineFormData.contact,
+                          note: inlineFormData.note || `Request for more ${displayName} experiments`,
+                          source: `Subject Listing Page Blur Cards: ${displayName}`,
+                        }),
+                      });
+                      setInlineFormSubmitted(true);
+                    } catch (err) {
+                      // Fallback
+                    } finally {
+                      setInlineFormLoading(false);
+                    }
+                  }}
+                  className="mt-6 bg-white/10 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-white/20 text-left max-w-2xl mx-auto space-y-3.5 shadow-xl"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* 1. Name */}
+                    <div>
+                      <label className="block text-xs font-bold text-blue-100 mb-1">
+                        Full Name <span className="text-amber-300">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={inlineFormData.name}
+                        onChange={(e) => setInlineFormData((prev) => ({ ...prev, name: e.target.value }))}
+                        placeholder="e.g. Ramesh Kumar / Teacher"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                    </div>
+
+                    {/* 2. Designation */}
+                    <div>
+                      <label className="block text-xs font-bold text-blue-100 mb-1">
+                        Designation
+                      </label>
+                      <input
+                        type="text"
+                        value={inlineFormData.designation}
+                        onChange={(e) => setInlineFormData((prev) => ({ ...prev, designation: e.target.value }))}
+                        placeholder="e.g. Teacher, HOD, Principal, Student"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                    </div>
+
+                    {/* 3. Contact */}
+                    <div>
+                      <label className="block text-xs font-bold text-blue-100 mb-1">
+                        Contact Number / Email <span className="text-amber-300">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={inlineFormData.contact}
+                        onChange={(e) => setInlineFormData((prev) => ({ ...prev, contact: e.target.value }))}
+                        placeholder="e.g. +91 98765 43210 or email"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                    </div>
+
+                    {/* 4. Note */}
+                    <div>
+                      <label className="block text-xs font-bold text-blue-100 mb-1">
+                        Note / Specific Requirements
+                      </label>
+                      <input
+                        type="text"
+                        value={inlineFormData.note}
+                        onChange={(e) => setInlineFormData((prev) => ({ ...prev, note: e.target.value }))}
+                        placeholder="e.g. Physics class 11 lab experiments"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-amber-300"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p className="text-[11px] text-blue-200">
+                      ⚡ 100% Free Consultation &amp; Full Syllabus Access
+                    </p>
+                    <button
+                      type="submit"
+                      disabled={inlineFormLoading}
+                      className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
+                    >
+                      {inlineFormLoading ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                          <span>Submitting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Contact For More Experiments</span>
+                          <ArrowRight size={14} />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ─── For More Experiments Contact Company Banner ─── */}
+        <div className="mt-8 sm:mt-10 p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-[#eef3fc] via-[#f0f4f9] to-[#e3ecf8] border border-[#d3e3fd] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="space-y-1 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0b57d0]/10 text-[#0b57d0] text-[11px] font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Looking for More Experiments or Custom Syllabus?</span>
+            </div>
+            <h4 className="text-base sm:text-lg font-black text-[#1f1f1f]">
+              Need Additional Practical Modules or Custom Lab Setups?
+            </h4>
+            <p className="text-xs sm:text-sm text-[#444746] leading-relaxed">
+              We have 1,000+ experiments covering CBSE, ICSE, and state boards. For specialized kits, custom simulations, or school demo sessions, reach out directly to our team.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0 flex-wrap justify-center">
+            <button
+              type="button"
+              onClick={() => openDemoModal({
+                schoolName: '',
+                note: `Inquiry for additional ${displayName} experiments`,
+                source: `Listing Page Footer: ${displayName}`,
+              })}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+            >
+              <span>Book a Demo</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <Link
+              href="/contact-us"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-slate-50 text-[#005689] border border-[#005689]/30 text-xs sm:text-sm font-bold shadow-xs transition-all active:scale-95"
+            >
+              <span>Contact Company</span>
+            </Link>
+          </div>
         </div>
 
         {/* Empty State */}
@@ -1598,7 +1976,7 @@ export default function SubjectActivityPage() {
               <div className="pt-3 space-y-1.5">
                 <div className="flex items-center justify-between py-1">
                   <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <Sparkles size={13} className="text-[#006fcc]" /> Concept / Tag
+                    <BookmarkCheck size={13} className="text-[#006fcc]" /> Concept / Tag
                   </span>
                   {selectedTopic !== 'All' && (
                     <button onClick={() => setSelectedTopic('All')} className="text-[10px] text-slate-400 hover:text-red-500 font-medium">Clear</button>

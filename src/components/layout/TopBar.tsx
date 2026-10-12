@@ -136,16 +136,16 @@ const TopBar = () => {
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/10 hover:bg-white/20 active:bg-white/25 text-white font-bold text-[11px] transition-all border border-white/20 shadow-xs shrink-0 cursor-pointer group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/15 hover:bg-white/25 active:bg-white/35 text-white font-bold text-xs transition-all border border-white/25 shadow-xs shrink-0 cursor-pointer select-none group min-h-[30px]"
                 title="Go Back to Previous Page"
               >
-                <ArrowLeft className="w-3 h-3 text-white group-hover:-translate-x-0.5 transition-transform" />
-                <span className="text-white">Back</span>
+                <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform shrink-0" />
+                <span className="text-white font-bold">Back</span>
               </button>
             ) : (
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 text-white hover:text-white/90 font-black text-xs shrink-0 transition-colors"
+                className="inline-flex items-center gap-1.5 text-white hover:text-white/90 font-black text-xs shrink-0 transition-colors py-1 px-1.5 rounded"
               >
                 <Home className="w-3.5 h-3.5 text-white" />
                 <span className="text-white">CSEEL</span>
@@ -321,11 +321,11 @@ const TopBar = () => {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1 px-2.5 py-0.5 text-white hover:bg-white/15 active:bg-white/25 font-bold text-xs rounded-md border border-white/25 hover:border-white/50 transition-all shrink-0 whitespace-nowrap ml-1 shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-white hover:bg-white/20 active:bg-white/30 font-bold text-xs rounded-md border border-white/40 hover:border-white/70 transition-all shrink-0 whitespace-nowrap ml-1 shadow-xs select-none cursor-pointer min-h-[30px]"
                 title="Sign in to CSEEL Portal"
               >
-                <LogIn className="w-3 h-3 text-white shrink-0" />
-                <span className="text-white">Login</span>
+                <LogIn className="w-4 h-4 text-white shrink-0" />
+                <span className="text-white font-bold">Login</span>
               </Link>
             )}
 

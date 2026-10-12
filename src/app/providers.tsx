@@ -9,6 +9,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { useState, Suspense } from "react";
 import TopProgressBar from "@/components/shared/TopProgressBar";
 import GlobalThemeSync from "@/features/theme-system/GlobalThemeSync";
+import { BookDemoModalProvider } from "@/contexts/BookDemoModalContext";
+import { BookDemoModal } from "@/components/shared/BookDemoModal";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -35,7 +37,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <GlobalThemeSync />
         <AuthProvider>
           <CartProvider>
-            {children}
+            <BookDemoModalProvider>
+              {children}
+              <BookDemoModal />
+            </BookDemoModalProvider>
           </CartProvider>
         </AuthProvider>
       </TooltipProvider>

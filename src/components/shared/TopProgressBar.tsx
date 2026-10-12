@@ -102,17 +102,22 @@ export default function TopProgressBar() {
     document.addEventListener("click", handleAnchorClick, { capture: true });
     window.addEventListener("popstate", handlePopState);
 
-    // Initial page load detection: if document hasn't fully loaded, show brief blur/loader
+    // Initial page load check: if document hasn't completed, start briefly and finish on load or max 600ms
     if (typeof document !== "undefined" && document.readyState !== "complete") {
       startLoading();
       const handleLoad = () => {
         finishLoading();
       };
-      window.addEventListener("load", handleLoad);
+      window.addEventListener("load", handleLoad, { once: true });
+      const safetyTimer = setTimeout(() => {
+        finishLoading();
+      }, 700);
+
       return () => {
         document.removeEventListener("click", handleAnchorClick, { capture: true });
         window.removeEventListener("popstate", handlePopState);
         window.removeEventListener("load", handleLoad);
+        clearTimeout(safetyTimer);
         clearTimers();
       };
     }

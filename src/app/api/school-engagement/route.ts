@@ -38,19 +38,27 @@ interface ReviewItem {
  */
 async function getSchoolData(udiseCode: string) {
   const cleanUdise = udiseCode.replace(/\D/g, '').trim();
+  const canonicalUdise = cleanUdise.length === 10 ? '0' + cleanUdise : cleanUdise;
+  const candidates = Array.from(new Set([cleanUdise, canonicalUdise, cleanUdise.replace(/^0+/, '')])).filter(Boolean);
+
   let reviews: ReviewItem[] = [];
   let likesCount: number = 0;
+  let likedUsers: string[] = [];
   let rawProfileData: any = {};
+  let targetUdiseCode = canonicalUdise || cleanUdise;
 
-  // 1. Check Supabase school_profiles (dedicated columns 'reviews' & 'likes_count' prioritized)
+  // 1. Check Supabase school_profiles (try candidates)
   try {
-    const { data: row } = await schoolSearchSupabase
+    const { data: rows } = await schoolSearchSupabase
       .from('school_profiles')
-      .select('reviews, likes_count, profile_data')
-      .eq('udise_code', cleanUdise)
-      .maybeSingle();
+      .select('udise_code, reviews, likes_count, profile_data')
+      .in('udise_code', candidates)
+      .limit(1);
+
+    const row = rows && rows.length > 0 ? rows[0] : null;
 
     if (row) {
+      targetUdiseCode = row.udise_code;
       rawProfileData = typeof row.profile_data === 'string' ? JSON.parse(row.profile_data) : (row.profile_data || {});
       // Dedicated column reviews takes priority
       if (Array.isArray(row.reviews) && row.reviews.length > 0) {
@@ -65,6 +73,10 @@ async function getSchoolData(udiseCode: string) {
       } else if (typeof rawProfileData.likesCount === 'number') {
         likesCount = rawProfileData.likesCount;
       }
+
+      if (Array.isArray(rawProfileData.likedUsers)) {
+        likedUsers = rawProfileData.likedUsers;
+      }
     }
   } catch (err) {
     console.warn('Supabase fetch error in school-engagement:', err);
@@ -76,31 +88,42 @@ async function getSchoolData(udiseCode: string) {
     for (const key of Object.keys(store.tokens || {})) {
       const rec = store.tokens[key];
       const recUdise = String(rec.schoolId || rec.profileData?.udiseCode || '').replace(/\D/g, '');
-      if (recUdise === cleanUdise && rec.profileData) {
+      if (candidates.includes(recUdise) && rec.profileData) {
         if (Array.isArray(rec.profileData.reviews) && rec.profileData.reviews.length > 0) {
           reviews = rec.profileData.reviews;
         }
         if (typeof rec.profileData.likesCount === 'number') {
           likesCount = rec.profileData.likesCount;
         }
+        if (Array.isArray(rec.profileData.likedUsers)) {
+          likedUsers = rec.profileData.likedUsers;
+        }
         break;
       }
     }
   }
 
-  return { cleanUdise, reviews, likesCount, rawProfileData };
+  return { cleanUdise: targetUdiseCode, reviews, likesCount, likedUsers, rawProfileData };
 }
 
 /**
  * Helper to save school reviews & likes back to Supabase and sync store
  */
-async function saveSchoolData(udiseCode: string, reviews: ReviewItem[], likesCount: number, existingProfileData: any = {}) {
+async function saveSchoolData(
+  udiseCode: string,
+  reviews: ReviewItem[],
+  likesCount: number,
+  likedUsers: string[] = [],
+  existingProfileData: any = {}
+) {
   const cleanUdise = udiseCode.replace(/\D/g, '').trim();
+  const canonicalUdise = cleanUdise.length === 10 ? '0' + cleanUdise : cleanUdise;
   const updatedProfileData = {
     ...existingProfileData,
-    udiseCode: cleanUdise,
+    udiseCode: canonicalUdise,
     reviews,
     likesCount,
+    likedUsers,
     reviewsCount: reviews.length,
     averageRating: reviews.length > 0 
       ? Number((reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1))
@@ -114,7 +137,7 @@ async function saveSchoolData(udiseCode: string, reviews: ReviewItem[], likesCou
       .from('school_profiles')
       .upsert(
         {
-          udise_code: cleanUdise,
+          udise_code: canonicalUdise,
           reviews,
           likes_count: likesCount,
           profile_data: updatedProfileData,
@@ -129,7 +152,7 @@ async function saveSchoolData(udiseCode: string, reviews: ReviewItem[], likesCou
         .from('school_profiles')
         .upsert(
           {
-            udise_code: cleanUdise,
+            udise_code: canonicalUdise,
             profile_data: updatedProfileData,
             updated_at: new Date().toISOString(),
           },
@@ -143,11 +166,12 @@ async function saveSchoolData(udiseCode: string, reviews: ReviewItem[], likesCou
   // 2. Also persist to local sync store for offline & dev server consistency
   try {
     const store = readSyncStore();
+    const candidates = [cleanUdise, canonicalUdise, cleanUdise.replace(/^0+/, '')];
     let tokenFound = false;
     for (const key of Object.keys(store.tokens || {})) {
       const rec = store.tokens[key];
       const recUdise = String(rec.schoolId || rec.profileData?.udiseCode || '').replace(/\D/g, '');
-      if (recUdise === cleanUdise) {
+      if (candidates.includes(recUdise)) {
         rec.profileData = {
           ...(rec.profileData || {}),
           ...updatedProfileData,
@@ -158,10 +182,10 @@ async function saveSchoolData(udiseCode: string, reviews: ReviewItem[], likesCou
       }
     }
     if (!tokenFound) {
-      const tokenKey = `sync_${cleanUdise}`;
+      const tokenKey = `sync_${canonicalUdise}`;
       store.tokens[tokenKey] = {
         token: tokenKey,
-        schoolId: cleanUdise,
+        schoolId: canonicalUdise,
         schoolName: existingProfileData.schoolName || 'School',
         createdAt: Date.now(),
         lastUpdatedAt: Date.now(),
@@ -179,7 +203,7 @@ async function saveSchoolData(udiseCode: string, reviews: ReviewItem[], likesCou
 
 /**
  * GET /api/school-engagement?udiseCode=...&userId=...
- * Returns list of reviews, current user's review (if any), and total likes count
+ * Returns list of reviews, current user's review (if any), total likes count, and userLiked status
  */
 export async function GET(req: NextRequest) {
   try {
@@ -194,7 +218,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const { reviews, likesCount } = await getSchoolData(udiseCode);
+    const { cleanUdise, reviews, likesCount, likedUsers } = await getSchoolData(udiseCode);
 
     // Identify user's existing review if userId/userEmail provided
     const userReview = userId
@@ -205,13 +229,16 @@ export async function GET(req: NextRequest) {
       ? Number((reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1))
       : 5.0;
 
+    const isUserLiked = userId ? likedUsers.includes(userId) : false;
+
     return NextResponse.json(
       {
         success: true,
-        udiseCode,
+        udiseCode: cleanUdise,
         totalReviews: reviews.length,
         averageRating: avgRating,
         likesCount,
+        userLiked: isUserLiked,
         reviews,
         userReview,
       },
@@ -228,7 +255,8 @@ export async function GET(req: NextRequest) {
 /**
  * POST /api/school-engagement
  * Handles:
- * - action === 'like': toggle school like / increment or decrement
+ * - action === 'like': toggle school like (strictly 1 like per user)
+ * - action === 'like_review': toggle helpful vote on a review
  * - action === 'review': create or update review (strictly 1 review per user)
  * - action === 'delete_review': delete the user's review
  */
@@ -258,27 +286,66 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { reviews, likesCount, rawProfileData } = await getSchoolData(cleanUdise);
+    const { cleanUdise: targetCode, reviews, likesCount, likedUsers, rawProfileData } = await getSchoolData(cleanUdise);
 
     // ───────────────────────────────────────────────
-    // 1. ACTION: LIKE / UNLIKE SCHOOL
+    // 1. ACTION: LIKE / UNLIKE SCHOOL (Strictly 1 like per user)
     // ───────────────────────────────────────────────
     if (action === 'like') {
+      const userIdentifier = (userId || userEmail || 'guest').trim();
+      let updatedLikedUsers = [...likedUsers];
       let newLikesCount = likesCount;
-      if (typeof liked === 'boolean') {
-        newLikesCount = liked ? likesCount + 1 : Math.max(0, likesCount - 1);
-      } else {
-        newLikesCount = likesCount + 1;
+
+      if (liked === true || liked === undefined) {
+        if (!updatedLikedUsers.includes(userIdentifier)) {
+          updatedLikedUsers.push(userIdentifier);
+          newLikesCount = likesCount + 1;
+        }
+      } else if (liked === false) {
+        if (updatedLikedUsers.includes(userIdentifier)) {
+          updatedLikedUsers = updatedLikedUsers.filter((u) => u !== userIdentifier);
+          newLikesCount = Math.max(0, likesCount - 1);
+        }
       }
 
-      await saveSchoolData(cleanUdise, reviews, newLikesCount, rawProfileData);
+      await saveSchoolData(targetCode, reviews, newLikesCount, updatedLikedUsers, rawProfileData);
 
       return NextResponse.json(
         {
           success: true,
           action: 'like',
           likesCount: newLikesCount,
+          userLiked: updatedLikedUsers.includes(userIdentifier),
           message: 'School like updated successfully',
+        },
+        { headers: CORS_HEADERS }
+      );
+    }
+
+    // ───────────────────────────────────────────────
+    // 1.5 ACTION: LIKE / HELPFUL ON A REVIEW
+    // ───────────────────────────────────────────────
+    if (action === 'like_review') {
+      const targetReviewId = reviewId || body.id;
+      const updatedReviews = reviews.map((r) => {
+        if (String(r.id) === String(targetReviewId)) {
+          const currentHelpful = Number(r.likes) || 0;
+          return {
+            ...r,
+            likes: liked ? currentHelpful + 1 : Math.max(0, currentHelpful - 1),
+          };
+        }
+        return r;
+      });
+
+      await saveSchoolData(targetCode, updatedReviews, likesCount, likedUsers, rawProfileData);
+
+      return NextResponse.json(
+        {
+          success: true,
+          action: 'like_review',
+          reviews: updatedReviews,
+          message: 'Review helpful updated successfully',
         },
         { headers: CORS_HEADERS }
       );
@@ -302,7 +369,7 @@ export async function POST(req: NextRequest) {
         return true;
       });
 
-      await saveSchoolData(cleanUdise, filtered, likesCount, rawProfileData);
+      await saveSchoolData(targetCode, filtered, likesCount, likedUsers, rawProfileData);
 
       return NextResponse.json(
         {
@@ -378,7 +445,7 @@ export async function POST(req: NextRequest) {
         reviews.unshift(updatedReviewItem);
       }
 
-      await saveSchoolData(cleanUdise, reviews, likesCount, rawProfileData);
+      await saveSchoolData(targetCode, reviews, likesCount, likedUsers, rawProfileData);
 
       return NextResponse.json(
         {

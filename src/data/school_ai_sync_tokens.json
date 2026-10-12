@@ -34252,7 +34252,7 @@
       "schoolId": "07040322510",
       "schoolName": "School",
       "createdAt": 1791721294304,
-      "lastUpdatedAt": 1791721307998,
+      "lastUpdatedAt": 1791832961241,
       "isPermanent": true,
       "profileData": {
         "facilities": [
@@ -34814,10 +34814,13 @@
         "sectionVisibility": {},
         "udiseCode": "07040322510",
         "reviews": [],
-        "likesCount": 2,
+        "likesCount": 3,
         "reviewsCount": 0,
         "averageRating": 5,
-        "updated_at": "2026-10-11T12:21:47.258Z"
+        "updated_at": "2026-10-12T19:22:40.696Z",
+        "likedUsers": [
+          "test_school_user"
+        ]
       }
     },
     "sync_07040322005": {

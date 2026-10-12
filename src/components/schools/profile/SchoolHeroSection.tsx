@@ -24,6 +24,21 @@ import EditableText from '@/components/schools/template/EditableText';
 import EditableIcon from '@/components/schools/template/EditableIcon';
 import SectionVisibilityToggle from '@/components/schools/template/SectionVisibilityToggle';
 import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolTemplateContext';
+import { useAuth } from '@/contexts/AuthContext';
+
+function getPersistentClientId(): string {
+  if (typeof window === 'undefined') return '';
+  try {
+    let id = localStorage.getItem('cseel_client_uid');
+    if (!id) {
+      id = 'usr_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+      localStorage.setItem('cseel_client_uid', id);
+    }
+    return id;
+  } catch {
+    return 'guest_user';
+  }
+}
 
 export interface HeroMediaItem {
   id: string;
@@ -141,6 +156,9 @@ export default function SchoolHeroSection({
     setActiveIndex((prev) => (prev + 1) % mediaItems.length);
   };
 
+  const { user } = useAuth();
+  const effectiveUserId = user?.id || user?.email || (typeof window !== 'undefined' ? getPersistentClientId() : '');
+
   // School Like state and persistence
   const [likesCount, setLikesCount] = useState<number>(() => {
     return typeof templateData?.likesCount === 'number' ? templateData.likesCount : 0;
@@ -150,20 +168,29 @@ export default function SchoolHeroSection({
 
   useEffect(() => {
     if (!displayUdise) return;
+    const uid = effectiveUserId;
     try {
       const localLiked = localStorage.getItem(`liked_school_${displayUdise}`) === 'true';
-      setIsLiked(localLiked);
+      if (localLiked) setIsLiked(true);
     } catch {}
 
-    fetch(`/api/school-engagement?udiseCode=${encodeURIComponent(displayUdise)}`)
+    fetch(`/api/school-engagement?udiseCode=${encodeURIComponent(displayUdise)}&userId=${encodeURIComponent(uid)}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && typeof data.likesCount === 'number') {
-          setLikesCount(data.likesCount);
+        if (data.success) {
+          if (typeof data.likesCount === 'number') {
+            setLikesCount(data.likesCount);
+          }
+          if (typeof data.userLiked === 'boolean') {
+            setIsLiked(data.userLiked);
+            try {
+              localStorage.setItem(`liked_school_${displayUdise}`, data.userLiked ? 'true' : 'false');
+            } catch {}
+          }
         }
       })
       .catch(() => {});
-  }, [displayUdise]);
+  }, [displayUdise, effectiveUserId]);
 
   const handleToggleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -181,12 +208,18 @@ export default function SchoolHeroSection({
         body: JSON.stringify({
           action: 'like',
           udiseCode: displayUdise,
+          userId: effectiveUserId,
           liked: nextLiked,
         }),
       });
       const data = await res.json();
-      if (data.success && typeof data.likesCount === 'number') {
-        setLikesCount(data.likesCount);
+      if (data.success) {
+        if (typeof data.likesCount === 'number') {
+          setLikesCount(data.likesCount);
+        }
+        if (typeof data.userLiked === 'boolean') {
+          setIsLiked(data.userLiked);
+        }
       }
     } catch (err) {
       console.error('Failed to toggle like:', err);
@@ -256,36 +289,32 @@ export default function SchoolHeroSection({
         {/* ═══════════════════════════════════════════════════════════ */}
         {/* TOP PILL BADGE (Replaces duplicate inner navbar)           */}
         {/* ═══════════════════════════════════════════════════════════ */}
-        <div className="flex items-center justify-between gap-4 pb-3 sm:pb-4">
-          <div className="inline-flex items-center gap-2 sm:gap-2.5 px-3 sm:px-3.5 py-1 rounded-full bg-white/95 border border-[#EADBBD] shadow-2xs text-[#005689] text-xs font-bold tracking-wide flex-wrap">
-            <span className="w-2 h-2 rounded-full bg-[#FBBC04] animate-pulse" />
-            <span className="uppercase tracking-wider text-[10px] sm:text-[11px] font-black">{displayBoard} AFFILIATED</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-slate-600 font-mono text-[10px] sm:text-[11px]">UDISE: {displayUdise || 'Verified'}</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-blue-800 bg-blue-50/90 border border-blue-200/80 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
+        <div className="flex items-center justify-between gap-2.5 pb-3 sm:pb-4 w-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 border border-[#EADBBD] shadow-2xs text-[#005689] text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis max-w-[calc(100%-140px)] sm:max-w-none">
+            <span className="w-2 h-2 rounded-full bg-[#FBBC04] animate-pulse shrink-0" />
+            <span className="text-slate-700 font-mono text-[11px] font-bold shrink-0">UDISE: {displayUdise || 'Verified'}</span>
+            <span className="text-slate-300 shrink-0">•</span>
+            <span className="text-blue-800 bg-blue-50/90 border border-blue-200/80 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 truncate">
               {templateData?.residentialSchool || residentialSchool || templateData?.schoolFormat || 'Day School'}
             </span>
-            <span className="text-slate-300">•</span>
-            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase">CSEEL Verified</span>
           </div>
 
           {/* Quick Helpline on Top Right & Edit Mode Section Toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* School Like Button */}
             <button
               type="button"
               onClick={handleToggleLike}
               disabled={isLiking}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all shadow-2xs border cursor-pointer select-none ${
+              className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all shadow-2xs border cursor-pointer select-none active:scale-95 ${
                 isLiked
                   ? 'bg-rose-50 border-rose-200 text-rose-600 shadow-rose-100'
                   : 'bg-white/95 border-slate-200/90 text-slate-700 hover:text-rose-600 hover:bg-rose-50/50 hover:border-rose-200'
               }`}
               title={isLiked ? "Unlike school" : "Like this school"}
             >
-              <Heart className={`w-3.5 h-3.5 transition-transform duration-200 ${isLiked ? "fill-rose-500 text-rose-500 scale-110" : "text-slate-400"}`} />
-              <span>{likesCount > 0 ? `${likesCount} ${likesCount === 1 ? 'Like' : 'Likes'}` : 'Like'}</span>
+              <Heart className={`w-3.5 h-3.5 transition-transform duration-200 shrink-0 ${isLiked ? "fill-rose-500 text-rose-500 scale-110" : "text-slate-400"}`} />
+              <span className="shrink-0">{likesCount > 0 ? `${likesCount} ${likesCount === 1 ? 'Like' : 'Likes'}` : 'Like'}</span>
             </button>
 
             <SectionVisibilityToggle sectionId="hero" sectionTitle="Hero Section" />

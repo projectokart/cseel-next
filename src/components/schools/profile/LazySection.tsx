@@ -18,8 +18,8 @@ interface LazySectionProps {
 export default function LazySection({
   children,
   fallback,
-  minHeight = '300px',
-  rootMargin = '250px',
+  minHeight = '280px',
+  rootMargin = '400px',
   id,
 }: LazySectionProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -50,10 +50,10 @@ export default function LazySection({
         observer.observe(containerRef.current);
       }
 
-      // Idle fallback: Mount after 2.5s anyway during idle browser cycles
+      // Idle fallback: Mount after 1.2s during idle browser cycles
       const idleCallback = (window as any).requestIdleCallback
-        ? (window as any).requestIdleCallback(() => setIsVisible(true), { timeout: 3000 })
-        : setTimeout(() => setIsVisible(true), 2500);
+        ? (window as any).requestIdleCallback(() => setIsVisible(true), { timeout: 1500 })
+        : setTimeout(() => setIsVisible(true), 1200);
 
       return () => {
         observer.disconnect();

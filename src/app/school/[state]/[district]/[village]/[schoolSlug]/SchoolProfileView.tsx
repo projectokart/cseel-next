@@ -1283,25 +1283,27 @@ export default function SchoolProfileView({
             />
           )}
 
-          {/* 1.5. DEDICATED STATISTICAL CARDS SECTION (BELOW HERO SECTION) */}
+          {/* 1.5. DEDICATED STATISTICAL CARDS SECTION (BELOW HERO SECTION - LAZY VIEWPORT) */}
           {isSectionVisible('stats') && (
             <div className="relative group/sect">
               <SectionVisibilityToggle sectionId="stats" sectionTitle="Key Statistics" />
-              <SchoolStatsSection
-                displayBoard={displayBoard}
-                displayUdise={displayUdise}
-                totalStudents={totalStudents}
-                totalTeachers={totalTeachers}
-                classroomsCount={classroomsCount}
-                schoolCategory={schoolCategory}
-                classFrom={classFrom}
-                classTo={classTo}
-                templateData={templateData}
-                residentialSchool={residentialSchool}
-                schoolType={management}
-                medium={medium}
-                genderType={genderType}
-              />
+              <LazySection id="stats" minHeight="240px">
+                <SchoolStatsSection
+                  displayBoard={displayBoard}
+                  displayUdise={displayUdise}
+                  totalStudents={totalStudents}
+                  totalTeachers={totalTeachers}
+                  classroomsCount={classroomsCount}
+                  schoolCategory={schoolCategory}
+                  classFrom={classFrom}
+                  classTo={classTo}
+                  templateData={templateData}
+                  residentialSchool={residentialSchool}
+                  schoolType={management}
+                  medium={medium}
+                  genderType={genderType}
+                />
+              </LazySection>
             </div>
           )}
 
@@ -1327,20 +1329,22 @@ export default function SchoolProfileView({
             </div>
           )}
 
-          {/* 2.5. DEDICATED ABOUT CARDS SECTION (4 FLOATING 3D CARDS) */}
+          {/* 2.5. DEDICATED ABOUT CARDS SECTION (4 FLOATING 3D CARDS - LAZY VIEWPORT) */}
           {isSectionVisible('about') && isSectionVisible('about_cards') && (
             <div className="relative group/sect">
               <SectionVisibilityToggle sectionId="about_cards" sectionTitle="Heritage Cards" />
-              <SchoolAboutCardsSection
-                displayName={displayName}
-                isLiveTemplate={isLiveTemplate}
-                isEditMode={isEditMode}
-                templateData={templateData}
-                displayEstablished={displayEstablished}
-                displayStudents={displayStudents}
-                displayTeachers={displayTeachers}
-                displayCampusArea={displayCampusArea}
-              />
+              <LazySection id="about-cards" minHeight="300px">
+                <SchoolAboutCardsSection
+                  displayName={displayName}
+                  isLiveTemplate={isLiveTemplate}
+                  isEditMode={isEditMode}
+                  templateData={templateData}
+                  displayEstablished={displayEstablished}
+                  displayStudents={displayStudents}
+                  displayTeachers={displayTeachers}
+                  displayCampusArea={displayCampusArea}
+                />
+              </LazySection>
             </div>
           )}
 

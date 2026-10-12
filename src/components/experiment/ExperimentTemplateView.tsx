@@ -17,7 +17,9 @@ import {
   Award,
   Camera,
   X,
+  Heart,
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   M3Button,
   M3IconButton,
@@ -662,6 +664,83 @@ export default function ExperimentTemplateView({
   const [activeDot, setActiveDot] = useState(0);
   // Uploaded photos preview for the 3 slots
   const [uploadedPhotos, setUploadedPhotos] = useState<Record<number, string>>({});
+
+  const { user } = useAuth();
+  const [likesCount, setLikesCount] = useState<number>(0);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isLiking, setIsLiking] = useState<boolean>(false);
+
+  useEffect(() => {
+    const expId = data.id || data.slug || '';
+    if (!expId) return;
+
+    let uid = user?.id || user?.email || '';
+    if (!uid && typeof window !== 'undefined') {
+      uid = localStorage.getItem('cseel_client_uid') || '';
+      if (!uid) {
+        uid = 'usr_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        localStorage.setItem('cseel_client_uid', uid);
+      }
+    }
+
+    try {
+      const localLiked = localStorage.getItem(`liked_exp_${expId}`) === 'true';
+      if (localLiked) setIsLiked(true);
+    } catch {}
+
+    fetch(`/api/experiment-engagement?experimentId=${encodeURIComponent(expId)}&userId=${encodeURIComponent(uid)}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          if (typeof json.likesCount === 'number') setLikesCount(json.likesCount);
+          if (typeof json.userLiked === 'boolean') {
+            setIsLiked(json.userLiked);
+            try {
+              localStorage.setItem(`liked_exp_${expId}`, json.userLiked ? 'true' : 'false');
+            } catch {}
+          }
+        }
+      })
+      .catch(() => {});
+  }, [data.id, data.slug, user]);
+
+  const handleToggleLike = async () => {
+    const expId = data.id || data.slug || '';
+    if (!expId || isLiking) return;
+    setIsLiking(true);
+
+    let uid = user?.id || user?.email || '';
+    if (!uid && typeof window !== 'undefined') {
+      uid = localStorage.getItem('cseel_client_uid') || 'guest_user';
+    }
+
+    const nextLiked = !isLiked;
+    setIsLiked(nextLiked);
+    setLikesCount((prev) => Math.max(0, nextLiked ? prev + 1 : prev - 1));
+
+    try {
+      localStorage.setItem(`liked_exp_${expId}`, nextLiked ? 'true' : 'false');
+      const res = await fetch('/api/experiment-engagement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'like',
+          experimentId: expId,
+          userId: uid,
+          liked: nextLiked,
+        }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        if (typeof json.likesCount === 'number') setLikesCount(json.likesCount);
+        if (typeof json.userLiked === 'boolean') setIsLiked(json.userLiked);
+      }
+    } catch (err) {
+      console.warn('Failed to toggle experiment like:', err);
+    } finally {
+      setIsLiking(false);
+    }
+  };
 
   const rcRef = useRef<HTMLDivElement>(null);
 
@@ -1589,8 +1668,22 @@ export default function ExperimentTemplateView({
           })}
         </M3ChipSet>
 
-        {/* Official Google M3 Buttons: Share, Print, Cart */}
+        {/* Official Google M3 Buttons: Like, Share, Print, Cart */}
         <div className="exp-acts">
+          <M3Button
+            variant={isLiked ? "filled" : "outlined"}
+            size="md"
+            leadingIcon={
+              <Heart
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isLiked ? "fill-rose-500 text-rose-500 scale-110" : "text-slate-500"
+                }`}
+              />
+            }
+            onClick={handleToggleLike}
+          >
+            {likesCount > 0 ? `${likesCount} ${likesCount === 1 ? 'Like' : 'Likes'}` : 'Like'}
+          </M3Button>
           <M3Button
             variant="filled"
             size="md"

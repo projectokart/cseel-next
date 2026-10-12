@@ -274,9 +274,9 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
         zoomControl: true,
       });
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
       // Custom pulsing pin
@@ -4040,7 +4040,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   onClick={() => setGoogleMapModalSchool(null)}
                   className="flex-1 sm:flex-none px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-xs sm:text-sm font-bold flex items-center justify-center gap-1 shadow-sm transition"
                 >
-                  <span>View Full Profile</span>
+                  <span>Profile</span>
                   <ChevronRight size={14} />
                 </Link>
               </div>

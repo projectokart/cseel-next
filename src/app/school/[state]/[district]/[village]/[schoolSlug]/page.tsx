@@ -432,8 +432,34 @@ export default async function SchoolPage({ params }: PageProps) {
   const cleanSlug = rawSlug.replace(/\.html$/i, '');
   const fallbackSchoolName = cleanSlug.replace(/[-_]/g, ' ');
 
-  // Fetch school from Supabase
-  const schoolData = await fetchSchoolRecord(rawState, rawDistrict, rawVillage, cleanSlug);
+  // Format variables strictly from Supabase record or template mode
+  const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
+  const cleanDigits = (cleanSlug || '').replace(/\D/g, '');
+  const rawCleanCode = (cleanSlug || '').replace(/\.html$/i, '').trim();
+  const preliminaryUdise = cleanDigits || rawCleanCode;
+  const canonicalUdise = preliminaryUdise.length === 10 ? '0' + preliminaryUdise : preliminaryUdise;
+  const udiseCandidates = Array.from(new Set([preliminaryUdise, canonicalUdise, preliminaryUdise.replace(/^0+/, '')])).filter(Boolean);
+
+  // Parallel server data fetching for instant response
+  const [schoolDataResult, dSchoolsResult, profRowsResult] = await Promise.allSettled([
+    fetchSchoolRecord(rawState, rawDistrict, rawVillage, cleanSlug),
+    schoolSearchSupabase
+      .from('udise_private_schools')
+      .select('school_id, school_name, district_name, village_name, state_name, udise_code, total_students, board_10th, management_desc')
+      .ilike('district_name', `%${rawDistrict.trim()}%`)
+      .limit(8),
+    udiseCandidates.length > 0
+      ? schoolSearchSupabase
+          .from('school_profiles')
+          .select('*')
+          .in('udise_code', udiseCandidates)
+          .limit(1)
+      : Promise.resolve({ data: null, error: null }),
+  ]);
+
+  const schoolData: any = schoolDataResult.status === 'fulfilled' ? schoolDataResult.value : null;
+  const dSchools: any[] = dSchoolsResult.status === 'fulfilled' && (dSchoolsResult.value as any)?.data ? (dSchoolsResult.value as any).data : [];
+  let profRow: any = profRowsResult.status === 'fulfilled' && (profRowsResult.value as any)?.data?.[0] ? (profRowsResult.value as any).data[0] : null;
 
   // If accessed via digits-only UDISE without school name, redirect to canonical named URL
   const schoolNameParam = (resolvedParams as any).schoolName;
@@ -459,20 +485,9 @@ export default async function SchoolPage({ params }: PageProps) {
   let clusterSchools: any[] = [];
   let districtSchools: any[] = [];
 
-  try {
-    // Fetch sibling district schools
-    const { data: dSchools } = await schoolSearchSupabase
-      .from('udise_private_schools')
-      .select('school_id, school_name, district_name, village_name, state_name, udise_code, total_students, board_10th, management_desc')
-      .ilike('district_name', `%${rawDistrict.trim()}%`)
-      .limit(8);
-
-    if (dSchools && dSchools.length > 0) {
-      districtSchools = dSchools.filter((s: any) => s.school_name !== (schoolData?.school_name || fallbackSchoolName)).slice(0, 4);
-      clusterSchools = dSchools.slice(4, 7);
-    }
-  } catch (err) {
-    console.warn('Error fetching sibling schools:', err);
+  if (dSchools && dSchools.length > 0) {
+    districtSchools = dSchools.filter((s: any) => s.school_name !== (schoolData?.school_name || fallbackSchoolName)).slice(0, 4);
+    clusterSchools = dSchools.slice(4, 7);
   }
 
   // Fallback sibling schools from seed data
@@ -510,24 +525,22 @@ export default async function SchoolPage({ params }: PageProps) {
     }));
   }
 
-  // Format variables strictly from Supabase record or template mode
-  const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
-  const cleanDigits = (cleanSlug || '').replace(/\D/g, '');
-  
-  const rawCleanCode = (cleanSlug || '').replace(/\.html$/i, '').trim();
-  const targetUdise = cleanDigits || schoolData?.udise_code || rawCleanCode;
-
-  let dbProfileJson: any = null;
-  let profRow: any = null;
-  if (targetUdise) {
+  // If profRow wasn't matched with preliminaryUdise but schoolData has an alternative udise_code
+  if (!profRow && schoolData?.udise_code) {
     try {
-      const res = await schoolSearchSupabase
+      const altUdise = String(schoolData.udise_code).replace(/\D/g, '');
+      const altCanonical = altUdise.length === 10 ? '0' + altUdise : altUdise;
+      const { data: altRows } = await schoolSearchSupabase
         .from('school_profiles')
         .select('*')
-        .eq('udise_code', targetUdise)
-        .maybeSingle();
-      profRow = res.data;
-      if (profRow) {
+        .in('udise_code', [altUdise, altCanonical])
+        .limit(1);
+      if (altRows && altRows.length > 0) profRow = altRows[0];
+    } catch {}
+  }
+
+  let dbProfileJson: any = null;
+  if (profRow) {
         const rawProfile = typeof profRow.profile_data === 'string' ? JSON.parse(profRow.profile_data) : (profRow.profile_data || {});
         // Priority: dedicated section columns override profile_data
         dbProfileJson = {
@@ -578,10 +591,6 @@ export default async function SchoolPage({ params }: PageProps) {
           sectionVisibility: profRow.section_visibility || rawProfile.sectionVisibility || {},
         };
       }
-    } catch (profErr) {
-      console.warn('Error reading live school_profiles from Supabase:', profErr);
-    }
-  }
 
   // 2. Fetch from local sync tokens store as fallback/base
   const localSyncedData = getSyncedProfileData(schoolData?.udise_code || rawCleanCode || cleanDigits, cleanSlug);

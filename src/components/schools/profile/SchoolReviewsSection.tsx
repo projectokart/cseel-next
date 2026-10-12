@@ -160,11 +160,28 @@ export default function SchoolReviewsSection({
     }
   };
 
-  const handleToggleLike = (id: string | number) => {
+  const handleToggleLike = async (id: string | number) => {
+    const nextVal = !userLikesMap[id];
     setUserLikesMap((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: nextVal
     }));
+    try {
+      localStorage.setItem(`liked_review_${id}`, nextVal ? 'true' : 'false');
+      await fetch('/api/school-engagement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'like_review',
+          udiseCode,
+          reviewId: id,
+          userId: user?.id || user?.email || '',
+          liked: nextVal,
+        }),
+      });
+    } catch (e) {
+      console.warn('Error saving review like:', e);
+    }
   };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {

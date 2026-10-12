@@ -45,6 +45,7 @@ import {
 import { SUBJECTS_DATA, SubjectMetadata, ExperimentActivity, slugifyExperimentTitle } from '@/data/subjectActivitiesData';
 import ExperimentDetailModal from '@/components/subject/ExperimentDetailModal';
 import { useCart } from '@/contexts/CartContext';
+import { supabase } from '@/integrations/supabase/client';
 import {
   M3Button,
   M3IconButton,
@@ -353,25 +354,90 @@ export default function SubjectActivityPage() {
     ];
   }, [activeSlugKey, subject, displayName]);
 
+  // Live Supabase Experiments
+  const [dbActivities, setDbActivities] = useState<ExperimentActivity[] | null>(null);
+
+  useEffect(() => {
+    async function fetchSubjectExperiments() {
+      try {
+        const querySubject =
+          activeSlugKey === 'physics' ? 'Physics' :
+          activeSlugKey === 'chemistry' ? 'Chemistry' :
+          activeSlugKey === 'biology' ? 'Biology' :
+          (activeSlugKey === 'math' || activeSlugKey === 'mathematics') ? 'Mathematics' :
+          displayName;
+
+        const { data, error } = await (supabase.from('experiments') as any)
+          .select('*')
+          .ilike('subject', querySubject);
+
+        if (!error && data && data.length > 0) {
+          const mapped: ExperimentActivity[] = data.map((row: any) => ({
+            id: row.id,
+            slug: row.slug || row.id,
+            title: row.title,
+            subtitle: row.description || '',
+            description: row.description || '',
+            category: `${row.subject} Practical Laboratory`,
+            gradeLevel:
+              row.class?.includes('11') || row.class?.includes('12')
+                ? 'Senior Sec (11-12)'
+                : row.class?.includes('9') || row.class?.includes('10')
+                ? 'Secondary (9-10)'
+                : 'Middle (6-8)',
+            difficulty: row.difficulty || 'Intermediate',
+            duration: `${row.duration_minutes || 45} Mins`,
+            safetyLevel: 'Standard Educational Lab Grade',
+            scientificPrinciple: row.outcome || row.description || '',
+            materials: Array.isArray(row.materials) ? row.materials : [],
+            steps: Array.isArray(row.procedure) ? row.procedure : [],
+            procedure: Array.isArray(row.procedure) ? row.procedure : [],
+            precautions: Array.isArray(row.precautions) ? row.precautions : [],
+            outcome: row.outcome || '',
+            realWorldApplication: row.outcome || '',
+            tags: Array.isArray(row.tags) ? row.tags : [row.subject],
+            badge: 'NEP 2020 Aligned',
+            image: row.thumbnail_url,
+            thumbnail_url: row.thumbnail_url,
+            colorTheme:
+              row.subject === 'Physics'
+                ? 'from-cyan-500 to-blue-600'
+                : row.subject === 'Chemistry'
+                ? 'from-amber-500 to-orange-600'
+                : row.subject === 'Biology'
+                ? 'from-emerald-500 to-teal-600'
+                : 'from-purple-500 to-indigo-600',
+          }));
+          setDbActivities(mapped);
+        }
+      } catch (e) {
+        // Fallback to static
+      }
+    }
+    fetchSubjectExperiments();
+  }, [activeSlugKey, displayName]);
+
+  const baseActivities = dbActivities && dbActivities.length > 0 ? dbActivities : subject.activities;
+
   // Dynamic Extractors for Chapters & Topics from Current Subject Activities
   const dynamicChapters = useMemo(() => {
     const map = new Map<string, number>();
-    subject.activities.forEach((act) => {
+    baseActivities.forEach((act) => {
       const cat = act.category || 'General Science';
       map.set(cat, (map.get(cat) || 0) + 1);
     });
     return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
-  }, [subject]);
+  }, [baseActivities]);
 
   const dynamicTopics = useMemo(() => {
     const map = new Map<string, number>();
-    subject.activities.forEach((act) => {
+    baseActivities.forEach((act) => {
       act.tags.forEach((tag) => {
         map.set(tag, (map.get(tag) || 0) + 1);
       });
     });
     return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
-  }, [subject]);
+  }, [baseActivities]);
 
   // State Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -489,7 +555,7 @@ export default function SubjectActivityPage() {
 
   // Filtered & Sorted Activities
   const filteredActivities = useMemo(() => {
-    let list = subject.activities.filter((act) => {
+    let list = baseActivities.filter((act) => {
       // Search
       const matchesSearch =
         !searchQuery ||
@@ -536,7 +602,7 @@ export default function SubjectActivityPage() {
 
     return list;
   }, [
-    subject,
+    baseActivities,
     searchQuery,
     selectedClass,
     selectedChapter,
@@ -945,7 +1011,7 @@ export default function SubjectActivityPage() {
         {/* Results Counter Bar */}
         <div className="mt-5 flex items-center justify-between pb-2.5 border-b border-slate-200">
           <p className="text-xs sm:text-sm font-bold text-slate-700">
-            Showing <span className="text-[#0b57d0] font-black">{filteredActivities.length}</span> of {subject.activities.length} {displayName} Experiments
+            Showing <span className="text-[#0b57d0] font-black">{filteredActivities.length}</span> of {baseActivities.length} {displayName} Experiments
           </p>
           <span className="text-xs text-slate-500 font-medium hidden sm:inline">
             NEP 2020 Hands-On Curriculum
@@ -958,11 +1024,9 @@ export default function SubjectActivityPage() {
             const isSelected = selectedIds.includes(act.id);
             const imageSrc =
               act.image ||
-              (activeSlugKey === 'chemistry'
-                ? index % 2 === 0
-                  ? '/images/categories/chemistry-card-1.jpg'
-                  : '/images/categories/chemistry-card-2.png'
-                : CATEGORY_IMAGES[activeSlugKey] || '/images/categories/chemistry.jpg');
+              act.thumbnail_url ||
+              CATEGORY_IMAGES[activeSlugKey] ||
+              '/images/categories/chemistry.jpg';
 
             return (
               <div
@@ -1736,7 +1800,7 @@ export default function SubjectActivityPage() {
           activity={activeModalActivity}
           onClose={() => setActiveModalActivity(null)}
           accentColor={subject.accentColor}
-          relatedPool={subject.activities}
+          relatedPool={baseActivities}
         />
       )}
 

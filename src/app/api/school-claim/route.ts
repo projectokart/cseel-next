@@ -312,33 +312,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const cleanUdise = String(udise_code || '').replace(/\D/g, '').trim();
+    let cleanUdise = String(udise_code || '').replace(/\D/g, '').trim();
 
+    // If UDISE is not provided or incomplete, generate a temporary institutional code
     if (!cleanUdise || cleanUdise.length !== 11) {
-      return NextResponse.json(
-        { success: false, error: 'A valid 11-digit official UDISE code is required.' },
-        { status: 400 }
-      );
+      cleanUdise = `SCH${Date.now().toString().slice(-8)}`;
     }
 
     if (!claimant_name || !claimant_email || !whatsapp_number) {
       return NextResponse.json(
-        { success: false, error: 'Name, official email, and WhatsApp number are required fields.' },
+        { success: false, error: 'Name, official email, and contact number are required fields.' },
         { status: 400 }
       );
     }
 
-    // Validate UDISE with Supabase or Government Database (unless verified_udise_data was already passed)
-    const govtVerification = await verifyGovtUdiseRecord(cleanUdise);
-    if (!govtVerification.valid && !verified_udise_data?.schoolName && request_type !== 'add_school') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `UDISE Verification Failed: ${govtVerification.reason || 'School code not recognized in government database.'}`,
-        },
-        { status: 400 }
-      );
-    }
+    // Note: UDISE government verification is now inactive as requested (UDISE data is not guaranteed)
 
     const sanitizedName = sanitizeInput(claimant_name);
     const sanitizedEmail = sanitizeInput(claimant_email).toLowerCase();
@@ -346,11 +334,11 @@ export async function POST(req: NextRequest) {
     const sanitizedDesignation = sanitizeInput(designation || 'School Representative');
     const sanitizedNote = sanitizeInput(note);
     const resolvedSchoolName = sanitizeInput(
-      school_name || govtVerification.schoolName || verified_udise_data?.schoolName || 'School Profile'
+      school_name || verified_udise_data?.schoolName || 'School Profile'
     );
-    const resolvedState = sanitizeInput(state || govtVerification.state || verified_udise_data?.state || 'DELHI');
+    const resolvedState = sanitizeInput(state || verified_udise_data?.state || 'DELHI');
     const resolvedDistrict = sanitizeInput(
-      district || govtVerification.district || verified_udise_data?.district || 'NEW DELHI'
+      district || verified_udise_data?.district || 'NEW DELHI'
     );
     const resolvedCity = sanitizeInput(city || verified_udise_data?.village || resolvedDistrict);
     const resolvedPincode = sanitizeInput(pincode || verified_udise_data?.pincode || '');

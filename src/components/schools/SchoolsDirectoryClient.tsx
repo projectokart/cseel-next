@@ -13,7 +13,7 @@ import {
   Wifi, Bus, Bed, Utensils, Cross, Accessibility, Sun, Droplet, Palette, Music,
   Clapperboard, Medal, Leaf, Camera, UsersRound, Tent, ArrowUpDown, SlidersHorizontal,
   LayoutGrid, List, Columns3, Columns2, Lock, ShieldAlert, ShieldCheck, LogIn, Key, AlertCircle,
-  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle, Minus, Maximize2, Minimize2, ChevronUp, Menu, MoreVertical
+  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle, Minus, Maximize2, Minimize2, ChevronUp, Menu, MoreVertical, Plus
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SchoolsDirectoryResult } from '@/integrations/supabase/schoolsDirectoryDb';
@@ -601,6 +601,7 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   
   // Modal States for Add School & Claim School
   const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
+  const [isAddSchoolExpanded, setIsAddSchoolExpanded] = useState(false);
   const [claimModalData, setClaimModalData] = useState<{
     isOpen: boolean;
     schoolName: string;
@@ -3081,6 +3082,53 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       <span className="text-[11px]">Banner</span>
                     </button>
                   )}
+
+                  {/* ─── 90-Degree Key Unlock Rotating Expandable "+ Add School" Button ─── */}
+                  <div className="relative inline-flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isAddSchoolExpanded) {
+                          handleAddSchoolClick();
+                        } else {
+                          setIsAddSchoolExpanded(true);
+                        }
+                      }}
+                      className={`h-7.5 rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-sm active:scale-95 ${
+                        isAddSchoolExpanded
+                          ? 'px-3.5 bg-gradient-to-r from-[#003c6e] to-[#005689] text-white ring-2 ring-blue-400/40 shadow-md gap-1.5'
+                          : 'w-7.5 bg-gradient-to-r from-[#005689] to-[#0077b6] hover:from-[#003c6e] hover:to-[#005689] text-white hover:shadow'
+                      }`}
+                      title={isAddSchoolExpanded ? "Click to Open School Registration Page" : "Click to unlock Add School"}
+                    >
+                      {/* Plus icon rotates 90 degrees like unlocking a lock key */}
+                      <span
+                        className={`inline-flex items-center justify-center transition-transform duration-300 ease-out ${
+                          isAddSchoolExpanded ? 'rotate-90 text-amber-300' : 'rotate-0 text-white'
+                        }`}
+                      >
+                        <Plus size={15} strokeWidth={2.8} />
+                      </span>
+                      {isAddSchoolExpanded && (
+                        <span className="text-xs font-black tracking-wide whitespace-nowrap animate-in fade-in duration-200">
+                          Add School
+                        </span>
+                      )}
+                    </button>
+                    {isAddSchoolExpanded && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsAddSchoolExpanded(false);
+                        }}
+                        className="ml-1 w-5 h-5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] transition cursor-pointer"
+                        title="Close"
+                      >
+                        <X size={11} />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Right/Bottom Section: Search Bar (When Hero is Minimized) */}
@@ -4000,6 +4048,52 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           </div>
         </div>
       )}
+
+      {/* ── Floating Key-Unlock Expandable "+ Add School" Floating Action Button ── */}
+      <aside aria-label="Add School Floating Button" className="fixed bottom-6 right-6 z-40 flex items-center gap-1.5 animate-in fade-in slide-in-from-bottom-3 duration-300">
+        <button
+          type="button"
+          onClick={() => {
+            if (isAddSchoolExpanded) {
+              handleAddSchoolClick();
+            } else {
+              setIsAddSchoolExpanded(true);
+            }
+          }}
+          className={`rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-2xl active:scale-95 border-2 border-white/50 ${
+            isAddSchoolExpanded
+              ? 'h-12 px-5 bg-gradient-to-r from-[#003c6e] via-[#005689] to-[#0284c7] text-white ring-4 ring-blue-500/30 gap-2 shadow-blue-900/40'
+              : 'w-12 h-12 bg-gradient-to-tr from-[#005689] to-[#0284c7] hover:from-[#003c6e] hover:to-[#005689] text-white hover:scale-105'
+          }`}
+          title={isAddSchoolExpanded ? "Click to open Add School page" : "Click to unlock Add School"}
+        >
+          {/* 90-degree key rotation animation like unlocking a lock key */}
+          <span
+            className={`inline-flex items-center justify-center transition-transform duration-300 ease-out ${
+              isAddSchoolExpanded ? 'rotate-90 text-amber-300' : 'rotate-0 text-white'
+            }`}
+          >
+            <Plus size={22} strokeWidth={2.8} />
+          </span>
+
+          {isAddSchoolExpanded && (
+            <span className="text-sm font-black tracking-wide whitespace-nowrap animate-in fade-in duration-200">
+              Add School
+            </span>
+          )}
+        </button>
+
+        {isAddSchoolExpanded && (
+          <button
+            type="button"
+            onClick={() => setIsAddSchoolExpanded(false)}
+            className="w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-90"
+            title="Minimize Add School button"
+          >
+            <X size={14} />
+          </button>
+        )}
+      </aside>
 
       {/* ── Add School Profile Modal ── */}
       <AddSchoolModal

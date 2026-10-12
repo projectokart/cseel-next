@@ -52,6 +52,23 @@ const SchoolFinderMap = dynamic(() => import('@/components/school-finder/SchoolF
   ),
 });
 
+// Google Material Symbols 'balance' icon (matches official Google Material Symbols vector & two-pan balance)
+const GoogleBalanceIcon = ({ size = 14, className = "" }: { size?: number; className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 -960 960 960" 
+    fill="currentColor" 
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="m260-520 74-148q-23-6-46-8.5T240-679q-25 0-48.5 3t-47.5 9l76 147Zm220 360v-80h-80v-80h80v-434q-32-9-58-29.5T380-800q0-42 29-71t71-29q42 0 71 29t29 71q0 31-26 51.5T476-720v434h84v80h-80v80h-80Zm-280-80q-42 0-71-29t-29-71q0-28 14-52t38-36l108-212h160l108 212q24 12 38 36t14 52q0 42-29 71t-71 29H200Zm480 0q-42 0-71-29t-29-71q0-28 14-52t38-36l108-212h160l108 212q24 12 38 36t14 52q0 42-29 71t-71 29H680Z"/>
+  </svg>
+);
+
+// Toggle for Compare Button (Default false/hidden as requested; logic & Google balance icon preserved)
+const SHOW_COMPARE_BUTTON = false;
+
 interface Props {
   initialData: SchoolsDirectoryResult;
 }
@@ -1252,54 +1269,48 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
 
 
-  // Helper to format classes in clean numeric format (e.g. '1st - 12th', 'Nursery - 12th')
+  // Helper to format classes in clean numeric format (e.g. 'Class 1st-12th', 'Class Nursery-12th')
   const formatCompactClasses = (classesVal?: string): string => {
     const raw = (classesVal || '').trim();
-    if (!raw) return '1st - 12th';
+    if (!raw) return 'Class 1st-12th';
     const lower = raw.toLowerCase();
 
+    let res = '1st-12th';
     // Already standard numeric like "1st - 12th", "1 - 10th", "1st - 10th", "Nursery - 12th"
     if (/^\d+(?:st|nd|rd|th)?\s*[-–]\s*\d+(?:st|nd|rd|th)?$/i.test(raw)) {
-      return raw.replace(/[-–]/, ' - ');
-    }
-    if (/^(?:nursery|play|kg|pre-nursery|pre-school|prep)\s*[-–]\s*\d+(?:st|nd|rd|th)?$/i.test(raw)) {
-      return raw.replace(/[-–]/, ' - ');
-    }
-
-    // Pre-school / Nursery start
-    if (lower.includes('pre') || lower.includes('nurs') || lower.includes('kg') || lower.includes('play')) {
-      if (lower.includes('12') || lower.includes('senior') || lower.includes('sr.')) return 'Nursery - 12th';
-      if (lower.includes('10') || lower.includes('sec')) return 'Nursery - 10th';
-      if (lower.includes('8') || lower.includes('middle')) return 'Nursery - 8th';
-      if (lower.includes('5') || lower.includes('primary')) return 'Nursery - 5th';
-      return 'Nursery - 12th';
-    }
-
-    // Primary (1st) start
-    if (lower.includes('primary') || lower.includes('class 1') || lower.includes('1st')) {
-      if (lower.includes('senior') || lower.includes('12') || lower.includes('sr.')) return '1st - 12th';
-      if (lower.includes('second') || lower.includes('10')) return '1st - 10th';
-      if (lower.includes('middle') || lower.includes('8')) return '1st - 8th';
-      if (lower.includes('5')) return '1st - 5th';
-      return '1st - 10th';
-    }
-
-    // Middle (6th) start
-    if (lower.includes('middle') || lower.includes('class 6') || lower.includes('6th')) {
-      if (lower.includes('senior') || lower.includes('12')) return '6th - 12th';
-      return '6th - 10th';
-    }
-
-    // Extract numbers if contains e.g. "Class 1st to 10th"
-    const numbers = raw.match(/\d+/g);
-    if (numbers && numbers.length >= 2) {
-      return `${numbers[0]}th - ${numbers[1]}th`;
-    }
-    if (numbers && numbers.length === 1) {
-      return `Up to ${numbers[0]}th`;
+      res = raw.replace(/\s*[-–]\s*/, '-');
+    } else if (/^(?:nursery|play|kg|pre-nursery|pre-school|prep)\s*[-–]\s*\d+(?:st|nd|rd|th)?$/i.test(raw)) {
+      res = raw.replace(/\s*[-–]\s*/, '-');
+    } else if (lower.includes('pre') || lower.includes('nurs') || lower.includes('kg') || lower.includes('play')) {
+      if (lower.includes('12') || lower.includes('senior') || lower.includes('sr.')) res = 'Nursery-12th';
+      else if (lower.includes('10') || lower.includes('sec')) res = 'Nursery-10th';
+      else if (lower.includes('8') || lower.includes('middle')) res = 'Nursery-8th';
+      else if (lower.includes('5') || lower.includes('primary')) res = 'Nursery-5th';
+      else res = 'Nursery-12th';
+    } else if (lower.includes('primary') || lower.includes('class 1') || lower.includes('1st')) {
+      if (lower.includes('senior') || lower.includes('12') || lower.includes('sr.')) res = '1st-12th';
+      else if (lower.includes('second') || lower.includes('10')) res = '1st-10th';
+      else if (lower.includes('middle') || lower.includes('8')) res = '1st-8th';
+      else if (lower.includes('5')) res = '1st-5th';
+      else res = '1st-10th';
+    } else if (lower.includes('middle') || lower.includes('class 6') || lower.includes('6th')) {
+      if (lower.includes('senior') || lower.includes('12')) res = '6th-12th';
+      else res = '6th-10th';
+    } else {
+      const numbers = raw.match(/\d+/g);
+      if (numbers && numbers.length >= 2) {
+        res = `${numbers[0]}th-${numbers[1]}th`;
+      } else if (numbers && numbers.length === 1) {
+        res = `Up to ${numbers[0]}th`;
+      } else {
+        res = '1st-12th';
+      }
     }
 
-    return '1st - 12th';
+    if (res.toLowerCase().startsWith('class')) {
+      return res;
+    }
+    return `Class ${res}`;
   };
 
   // Helper to render school title with perfectly baseline-aligned verified badge (no word drop/bend)
@@ -1381,22 +1392,24 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 </span>
               </div>
 
-              {/* Compare */}
-              <div className="relative group/tip">
-                <button
-                  type="button"
-                  onClick={(e) => handleToggleCompare(school, e)}
-                  className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
-                    isCompared ? 'bg-blue-600 text-white' : 'text-white/90 hover:text-white hover:bg-white/25'
-                  }`}
-                  aria-label="Compare School"
-                >
-                  <Scale size={13} />
-                </button>
-                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
-                  {isCompared ? 'Remove from Comparison' : 'Compare School'}
-                </span>
-              </div>
+              {/* Compare Button - Google Material Symbols Balance Icon (Temporarily Hidden) */}
+              {SHOW_COMPARE_BUTTON && (
+                <div className="relative group/tip">
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleCompare(school, e)}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center transition cursor-pointer ${
+                      isCompared ? 'bg-blue-600 text-white' : 'text-white/90 hover:text-white hover:bg-white/25'
+                    }`}
+                    aria-label="Compare School"
+                  >
+                    <GoogleBalanceIcon size={14} />
+                  </button>
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 bg-gray-900/95 text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover/tip:opacity-100 pointer-events-none transition-opacity shadow-md z-30">
+                    {isCompared ? 'Remove from Comparison' : 'Compare School'}
+                  </span>
+                </div>
+              )}
 
               {/* Share */}
               <div className="relative group/tip">
@@ -1478,6 +1491,16 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               </span>
             )}
           </div>
+
+          {/* Admissions Open Tag — Controlled by school profile toggle (default off/hidden) */}
+          {Boolean((school as any).admissions_open || (school as any).is_admissions_open) && (
+            <div className="mb-2.5">
+              <span className="inline-flex items-center gap-1.5 bg-[#e6f4ea] text-[#137333] border border-[#ceead6] px-2 py-0.5 rounded-md text-[10.5px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#137333] animate-pulse" />
+                Admissions Open
+              </span>
+            </div>
+          )}
 
           {/* Experiential Science Lab Badge */}
           {school.facilities?.includes('Experiential Science Lab') && (
@@ -1630,11 +1653,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               <span className="break-words">{locationStr}</span>
             </div>
 
-            {/* Quick Info Tags — Compact Numbers (e.g. 1st - 12th) & No Admissions Open */}
+            {/* Quick Info Tags — Compact Numbers (e.g. Class 1st-12th) & Admissions Open (Toggle-controlled) */}
             <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
               <span className="text-[10px] sm:text-xs text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px] font-semibold">
                 {formatCompactClasses(school.classes || (school as any).class_range)}
               </span>
+              {/* Admissions Open Tag — Controlled by school profile toggle (default off/hidden) */}
+              {Boolean((school as any).admissions_open || (school as any).is_admissions_open) && (
+                <span className="text-[10px] sm:text-xs text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-2 py-0.5 rounded-[8px] font-semibold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#137333] animate-pulse" />
+                  <span>Admissions Open</span>
+                </span>
+              )}
               {school.facilities?.includes('Experiential Science Lab') && (
                 <span className="text-[10px] sm:text-xs text-[#0b57d0] bg-[#e8f0fe] border border-[#c2e7ff] px-2 py-0.5 rounded-[8px] font-medium hidden lg:inline-flex items-center gap-1">
                   <FlaskConical size={10} /> Experiential Lab
@@ -1683,17 +1713,19 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               </svg>
             </button>
 
-            {/* Compare Button — Scale (Balance Measure) Icon */}
-            <button
-              type="button"
-              onClick={(e) => handleToggleCompare(school, e)}
-              className={`h-8 w-8 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
-                isCompared ? 'bg-[#c2e7ff] text-[#001d35] border-transparent' : 'text-[#444746] hover:text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border-[#c4c7c5]'
-              }`}
-              title="Compare School"
-            >
-              <Scale size={14} />
-            </button>
+            {/* Compare Button — Google Material Symbols Balance Icon (Temporarily Hidden) */}
+            {SHOW_COMPARE_BUTTON && (
+              <button
+                type="button"
+                onClick={(e) => handleToggleCompare(school, e)}
+                className={`h-8 w-8 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
+                  isCompared ? 'bg-[#c2e7ff] text-[#001d35] border-transparent' : 'text-[#444746] hover:text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border-[#c4c7c5]'
+                }`}
+                title="Compare School"
+              >
+                <GoogleBalanceIcon size={14} />
+              </button>
+            )}
 
             {/* Share Button */}
             <button
@@ -1903,15 +1935,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 <Globe size={12} />
               </button>
             )}
-            <button
-              onClick={(e) => handleToggleCompare(school, e)}
-              className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition ${
-                isCompared ? 'bg-[#0b57d0] text-white' : 'bg-white/80 text-gray-700 hover:bg-white'
-              }`}
-              title="Compare"
-            >
-              <Scale size={12} />
-            </button>
+            {/* Compare Button — Google Material Symbols Balance Icon (Temporarily Hidden) */}
+            {SHOW_COMPARE_BUTTON && (
+              <button
+                onClick={(e) => handleToggleCompare(school, e)}
+                className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition ${
+                  isCompared ? 'bg-[#0b57d0] text-white' : 'bg-white/80 text-gray-700 hover:bg-white'
+                }`}
+                title="Compare"
+              >
+                <GoogleBalanceIcon size={12} />
+              </button>
+            )}
             <button
               type="button"
               onClick={(e) => handleToggleLike(school.id, e, school.udise_code || school.school_id)}
@@ -1924,6 +1959,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               {cardLikesCount > 0 && <span className="text-[10px] font-bold">{cardLikesCount}</span>}
             </button>
           </div>
+
+          {/* Admission Pill — Controlled by school profile toggle (default off/hidden) */}
+          {Boolean((school as any).admissions_open || (school as any).is_admissions_open) && (
+            <div className="absolute bottom-2 left-2.5 bg-emerald-600/95 text-white px-2 py-0.5 rounded-[8px] text-[10px] font-bold flex items-center gap-1 shadow-sm">
+              <CheckCircle2 size={10} /> Admissions Open
+            </div>
+          )}
         </div>
 
         {/* Compact Card Body */}

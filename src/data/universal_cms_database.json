@@ -403,5 +403,13 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-09T08:20:00.501Z",
     "updatedBy": "Auto Init"
+  },
+  "subject:chemistry": {
+    "pageKey": "subject:chemistry",
+    "title": "Subject Chemistry",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-12T12:26:05.255Z",
+    "updatedBy": "Auto Init"
   }
 }

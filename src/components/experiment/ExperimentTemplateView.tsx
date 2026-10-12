@@ -363,32 +363,36 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
   ];
   const samplePrices = [180, 90, 350, 120, 60, 150, 220, 95];
 
-  let rawMaterialsList: string[] = [];
-  if (Array.isArray(raw.materials)) {
-    rawMaterialsList = raw.materials.map((m: any) => (typeof m === 'string' ? m : m.name || 'Lab Apparatus'));
+  let rawMaterialsInput: any[] = [];
+  if (Array.isArray(raw.richMaterials) && raw.richMaterials.length > 0) {
+    rawMaterialsInput = raw.richMaterials;
+  } else if (Array.isArray(raw.materials)) {
+    rawMaterialsInput = raw.materials;
   } else if (typeof raw.materials === 'string' && raw.materials.trim()) {
     try {
       const parsed = JSON.parse(raw.materials);
       if (Array.isArray(parsed)) {
-        rawMaterialsList = parsed.map((m: any) => typeof m === 'string' ? m : m.name || 'Lab Apparatus');
+        rawMaterialsInput = parsed;
       } else {
-        rawMaterialsList = raw.materials.split(/\r?\n|,/).map((s: string) => s.trim()).filter(Boolean);
+        rawMaterialsInput = raw.materials.split(/\r?\n|,/).map((s: string) => s.trim()).filter(Boolean);
       }
     } catch {
-      rawMaterialsList = raw.materials.split(/\r?\n|,/).map((s: string) => s.trim()).filter(Boolean);
+      rawMaterialsInput = raw.materials.split(/\r?\n|,/).map((s: string) => s.trim()).filter(Boolean);
     }
   } else if (Array.isArray(raw.sections)) {
     const matSec = raw.sections.find((s: any) => s.type === 'materials');
     if (matSec && Array.isArray(matSec.rows)) {
-      rawMaterialsList = matSec.rows.map((r: any) => r.name || 'Apparatus').filter(Boolean);
+      rawMaterialsInput = matSec.rows;
     }
   }
 
   const materials: ExperimentMaterialItem[] =
-    rawMaterialsList.length > 0
-      ? rawMaterialsList.map((mName, idx) => {
+    rawMaterialsInput.length > 0
+      ? rawMaterialsInput.map((mItem, idx) => {
+          const isObj = typeof mItem === 'object' && mItem !== null;
+          const mName: string = isObj ? (mItem.name || 'Lab Apparatus') : String(mItem);
           const qtyMatch = mName.match(/[×x]\s*(\d+)/i);
-          const qty = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
+          const qty = isObj && typeof mItem.qty === 'number' ? mItem.qty : (qtyMatch ? parseInt(qtyMatch[1], 10) : 1);
           const cleanName = mName.replace(/[×x]\s*\d+/i, '').trim() || mName;
           const iconKey =
             subject.toLowerCase().includes('chem')
@@ -401,67 +405,72 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
                 : iconKeys[idx % iconKeys.length]
               : iconKeys[idx % iconKeys.length];
 
+          const about =
+            isObj && mItem.about
+              ? mItem.about
+              : `Laboratory-grade ${cleanName.toLowerCase()} specified in the "${title}" ${subject} curriculum for accurate hands-on practical investigation.`;
+
+          const specs: [string, string][] =
+            isObj && Array.isArray(mItem.specs) && mItem.specs.length > 0
+              ? mItem.specs
+              : [
+                  ['Category', `${subject} Lab Apparatus`],
+                  ['Grade', 'CBSE / NEP 2020 Laboratory Standard'],
+                  ['Quantity Required', `${qty} unit${qty > 1 ? 's' : ''}`],
+                  ['Handling', 'Inspect before calibration and clean thoroughly after experiment'],
+                ];
+
           return {
-            id: `mat-${idx}`,
+            id: isObj && mItem.id ? mItem.id : `mat-${idx}`,
             name: cleanName,
             qty,
-            price: samplePrices[idx % samplePrices.length],
+            price: isObj && typeof mItem.price === 'number' ? mItem.price : samplePrices[idx % samplePrices.length],
             icon: iconKey,
             buy: '/materials',
-            about: `Laboratory-grade ${cleanName.toLowerCase()} used in the "${title}" ${subject} experiment for accurate hands-on measurement and observation.`,
-            specs: [
-              ['Category', `${subject} Lab Apparatus`],
-              ['Grade', 'Standard Educational / NEP 2020 Lab Grade'],
-              ['Quantity Required', `${qty} unit${qty > 1 ? 's' : ''}`],
-              ['Handling', 'Inspect before use and clean after experiment'],
-            ],
+            about,
+            specs,
           };
         })
       : DEFAULT_FARADAY_EXPERIMENT.materials;
 
   // Parse steps
-  let rawStepsList: string[] = [];
-  if (Array.isArray(raw.steps)) {
-    rawStepsList = raw.steps.map((s: any) => (typeof s === 'string' ? s : s.instruction || s.text || ''));
-  } else if (Array.isArray(raw.procedure)) {
-    rawStepsList = raw.procedure.map((s: any) => (typeof s === 'string' ? s : s.instruction || s.text || ''));
+  let rawStepsInput: any[] = [];
+  if (Array.isArray(raw.steps) && raw.steps.length > 0) {
+    rawStepsInput = raw.steps;
+  } else if (Array.isArray(raw.procedure) && raw.procedure.length > 0) {
+    rawStepsInput = raw.procedure;
   } else if (typeof raw.procedure === 'string' && raw.procedure.trim()) {
     try {
       const parsed = JSON.parse(raw.procedure);
       if (Array.isArray(parsed)) {
-        rawStepsList = parsed.map((s: any) => (typeof s === 'string' ? s : s.instruction || s.text || ''));
+        rawStepsInput = parsed;
       } else {
-        rawStepsList = raw.procedure.split(/\r?\n/).map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
+        rawStepsInput = raw.procedure.split(/\r?\n/).map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
       }
     } catch {
-      rawStepsList = raw.procedure.split(/\r?\n/).map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
+      rawStepsInput = raw.procedure.split(/\r?\n/).map((s: string) => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
     }
   } else if (Array.isArray(raw.sections)) {
     const procSec = raw.sections.find((s: any) => s.type === 'procedure');
     if (procSec && Array.isArray(procSec.steps)) {
-      rawStepsList = procSec.steps.map((st: any) => st.instruction || st.title || '').filter(Boolean);
+      rawStepsInput = procSec.steps;
     }
   }
 
   const steps: ExperimentStepItem[] =
-    rawStepsList.length > 0
-      ? rawStepsList.map((stText, idx) => ({
-          text: stText,
-          observe:
-            idx === 0
-              ? 'Verify that all apparatus components are properly aligned and at baseline zero before starting.'
-              : idx === Math.floor(rawStepsList.length / 2)
-              ? 'Notice the distinct physical/chemical change occurring as the primary variable is adjusted.'
-              : idx === rawStepsList.length - 1
-              ? 'Consistent readings confirm the theoretical relationship across repeated trials.'
-              : undefined,
-          safety:
-            idx === 0
-              ? 'Ensure the workbench is clean, dry, and all safety gear is worn properly.'
-              : idx === 1
-              ? 'Handle apparatus gently and avoid sudden force or spills.'
-              : undefined,
-        }))
+    rawStepsInput.length > 0
+      ? rawStepsInput.map((stItem, idx) => {
+          const isObj = typeof stItem === 'object' && stItem !== null;
+          const stText: string = isObj ? (stItem.instruction || stItem.text || '') : String(stItem);
+          const observe: string | undefined = isObj && stItem.observe ? stItem.observe : undefined;
+          const safety: string | undefined = isObj && stItem.safety ? stItem.safety : undefined;
+
+          return {
+            text: stText,
+            observe,
+            safety,
+          };
+        })
       : DEFAULT_FARADAY_EXPERIMENT.steps;
 
   // Safety list
@@ -491,8 +500,8 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
 
   // Formula & Conclusion
   const conclusion =
-    raw.scientificPrinciple ||
     raw.outcome ||
+    raw.scientificPrinciple ||
     raw.realWorldApplication ||
     DEFAULT_FARADAY_EXPERIMENT.conclusion;
 

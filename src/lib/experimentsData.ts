@@ -28,38 +28,218 @@ export interface ExperimentItem {
   images: string[];
   video_link?: string;
   demo_link?: string;
-  materials: string[];
-  procedure: string[];
-  outcome: string;
+  materials: any[];
+  procedure: any[];
+  steps?: any[];
   precautions: string[];
+  outcome: string;
   learning_objectives?: string[];
   tags?: string[];
   popularity?: number;
   formulas?: { formula: string; explanation: string }[];
   quiz?: QuizQuestion[];
   relatedMaterialIds?: string[];
+  formula?: string;
+  obsCols?: string[];
+  obsRows?: string[][];
+  interp?: [string, string][];
+  graph?: {
+    title: string;
+    xLabel: string;
+    yLabel: string;
+    points: [string, number][];
+  };
 }
 
 export const ALL_EXPERIMENTS: ExperimentItem[] = [
   {
     "id": "9bc212e4-49b7-4c22-8666-48092e0ed7a6",
-    "title": "Verification of Ohm's Law and Resistance Determination",
     "slug": "ohms-law-verification-resistance",
+    "title": "Verification of Ohm's Law and Resistance Determination",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Determine the resistance per unit length of a given wire by plotting a graph between potential difference (V) and current (I), verifying Ohm's Law (V = IR) at constant temperature.",
     "outcome": "The V-I graph is a straight line passing through the origin. The constant slope (ΔV/ΔI) verifies Ohm's Law and yields the resistance of the unknown conductor.",
     "materials": [
-      "Unknown Resistance Wire (Nichrome / Constantan) × 1 m",
-      "DC Voltmeter (0-3V range, least count 0.05V) × 1",
-      "DC Ammeter (0-1.5A range, least count 0.02A) × 1",
-      "Rheostat (100Ω variable resistor) × 1",
-      "DC Battery Eliminator / 2V Accumulator × 1",
-      "One-way Plug Key with plug × 1",
-      "Connecting Copper Wires & Sandpaper × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Unknown Resistance Wire (Nichrome / Constantan)  m",
+        "qty": 1,
+        "price": 50,
+        "about": "High-resistivity alloy wire (80% Ni, 20% Cr) with minimal temperature coefficient of resistance.",
+        "specs": [
+          [
+            "Length",
+            "1.0 meter"
+          ],
+          [
+            "Diameter",
+            "0.37 mm (28 SWG)"
+          ],
+          [
+            "Resistivity",
+            "1.10 × 10⁻⁶ Ω·m"
+          ],
+          [
+            "Mounting",
+            "Tensioned on wooden meter board"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "DC Voltmeter (0-3V range, least count 0.05V)",
+        "qty": 1,
+        "price": 95,
+        "about": "Moving-coil DC voltmeter calibrated for accurate potential drop measurement.",
+        "specs": [
+          [
+            "Range",
+            "0 – 3.0 V"
+          ],
+          [
+            "Least Count",
+            "0.05 V (50 mV)"
+          ],
+          [
+            "Internal Resistance",
+            "> 2000 Ω"
+          ],
+          [
+            "Zero Adjuster",
+            "Mechanical screw on dial"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "DC Ammeter (0-1.5A range, least count 0.02A)",
+        "qty": 1,
+        "price": 140,
+        "about": "Dead-beat moving coil DC ammeter with clear mirror scale to eliminate parallax error.",
+        "specs": [
+          [
+            "Range",
+            "0 – 1.5 A"
+          ],
+          [
+            "Least Count",
+            "0.02 A (20 mA)"
+          ],
+          [
+            "Internal Resistance",
+            "< 0.05 Ω"
+          ],
+          [
+            "Damping",
+            "Eddy current air-damped"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Rheostat (100Ω variable resistor)",
+        "qty": 1,
+        "price": 185,
+        "about": "Heavy-duty wire-wound variable resistor for smooth current regulation.",
+        "specs": [
+          [
+            "Resistance",
+            "100 Ω"
+          ],
+          [
+            "Current Capacity",
+            "1.5 A continuous"
+          ],
+          [
+            "Core",
+            "Vitreous enameled porcelain tube"
+          ],
+          [
+            "Slider",
+            "Phosphor bronze spring contact"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "DC Battery Eliminator / 2V Accumulator",
+        "qty": 1,
+        "price": 230,
+        "about": "Regulated solid-state DC voltage source replacing lead-acid accumulators.",
+        "specs": [
+          [
+            "Output Voltages",
+            "2V, 4V, 6V selectable DC"
+          ],
+          [
+            "Current Rating",
+            "2.0 A max"
+          ],
+          [
+            "Ripple",
+            "< 0.5% RMS"
+          ],
+          [
+            "Protection",
+            "Inbuilt thermal fuse"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "One-way Plug Key with plug",
+        "qty": 1,
+        "price": 275,
+        "about": "Solid brass contact block with removable tapered brass plug for positive circuit interruption.",
+        "specs": [
+          [
+            "Block Material",
+            "Machined brass block"
+          ],
+          [
+            "Base",
+            "Bakelite insulated pad"
+          ],
+          [
+            "Resistance",
+            "< 0.002 Ω plugged"
+          ],
+          [
+            "Plug",
+            "Knurled ebonite handle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Connecting Copper Wires & Sandpaper  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Heavy-gauge insulated copper connecting leads and abrasive sandpaper.",
+        "specs": [
+          [
+            "Conductor",
+            "99.9% pure annealed copper"
+          ],
+          [
+            "Gauge",
+            "18 SWG"
+          ],
+          [
+            "Sandpaper",
+            "P220 aluminum oxide grit"
+          ],
+          [
+            "Insulation",
+            "Double PVC sheath"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Clean the ends of all connecting wires with sandpaper to remove oxide insulation.",
@@ -70,16 +250,59 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Shift the rheostat slider to 5 distinct positions to record 5 sets of (V, I) readings.",
       "Calculate resistance R = V / I for each trial and plot the V versus I graph on millimeter graph paper."
     ],
+    "steps": [
+      {
+        "instruction": "Clean the ends of all connecting wires with sandpaper to remove oxide insulation.",
+        "text": "Clean the ends of all connecting wires with sandpaper to remove oxide insulation.",
+        "observe": "Clean shiny copper terminals guarantee near-zero contact resistance at all binding posts.",
+        "safety": "Use fine-grit sandpaper gently to avoid thinning the delicate copper leads."
+      },
+      {
+        "instruction": "Assemble the circuit in series: battery positive to ammeter positive, ammeter negative to resistance wire, wire to rheostat, rheostat to key, and key to battery negative.",
+        "text": "Assemble the circuit in series: battery positive to ammeter positive, ammeter negative to resistance wire, wire to rheostat, rheostat to key, and key to battery negative.",
+        "observe": "Polarities match correctly: Ammeter (+) connects directly to battery (+) eliminator.",
+        "safety": "Keep battery eliminator switched OFF while completing circuit wiring."
+      },
+      {
+        "instruction": "Connect the voltmeter in parallel across the resistance wire observing correct polarity (+ to +, - to -).",
+        "text": "Connect the voltmeter in parallel across the resistance wire observing correct polarity (+ to +, - to -).",
+        "observe": "Voltmeter is placed strictly across the test wire, drawing negligible branch current.",
+        "safety": "Ensure voltmeter terminals do not short-circuit across adjacent bare leads."
+      },
+      {
+        "instruction": "Insert the plug key and slide the rheostat contact to achieve a low measurable current on the ammeter.",
+        "text": "Insert the plug key and slide the rheostat contact to achieve a low measurable current on the ammeter.",
+        "observe": "Ammeter needle deflects smoothly without fluctuating or sticking on the dial.",
+        "safety": "Never force the rheostat slider beyond its stop collar."
+      },
+      {
+        "instruction": "Record the ammeter reading (I) and corresponding voltmeter reading (V).",
+        "text": "Record the ammeter reading (I) and corresponding voltmeter reading (V).",
+        "observe": "At 0.10 A current, potential difference across the 1m wire reads exactly 0.50 V.",
+        "safety": "Unplug key immediately after reading to avoid Joule heating (I²Rt)."
+      },
+      {
+        "instruction": "Shift the rheostat slider to 5 distinct positions to record 5 sets of (V, I) readings.",
+        "text": "Shift the rheostat slider to 5 distinct positions to record 5 sets of (V, I) readings.",
+        "observe": "Equal stepwise increments of 0.10 A generate uniform 0.50 V increments.",
+        "safety": "If wire feels warm to touch, wait 2 minutes before the next reading."
+      },
+      {
+        "instruction": "Calculate resistance R = V / I for each trial and plot the V versus I graph on millimeter graph paper.",
+        "text": "Calculate resistance R = V / I for each trial and plot the V versus I graph on millimeter graph paper.",
+        "observe": "Calculated ratios V/I remain strictly identical at 5.00 Ω within ±1% experimental limit.",
+        "safety": "Switch off main power before dismantling circuit components."
+      }
+    ],
     "precautions": [
       "Ensure all circuit connections are tight and clean.",
       "Never keep the key plugged continuously; remove the plug between readings to prevent wire heating.",
       "Voltmeter must always be connected in parallel and ammeter in series.",
       "Check that zero errors of both meters are accounted for before taking readings."
     ],
-    "learning_objectives": [
-      "Understand the linear relationship between voltage and current in ohmic conductors.",
-      "Calculate least count and zero error of electrical measuring instruments.",
-      "Analyze graphical slope to determine experimental resistance."
+    "thumbnail_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Ohm's Law",
@@ -88,35 +311,245 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Circuit Analysis",
       "NEP 2020"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
+    "formula": "R = V / I = 5.00 Ω (Constant slope of V-I graph)",
+    "obsCols": [
+      "Trial",
+      "Ammeter (I, Amperes)",
+      "Voltmeter (V, Volts)",
+      "Calculated R = V/I (Ω)"
     ],
-    "popularity": 98,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1176,
-    "likes": 784,
-    "rating": 5
+    "obsRows": [
+      [
+        "1",
+        "0.10 A",
+        "0.50 V",
+        "5.00 Ω"
+      ],
+      [
+        "2",
+        "0.20 A",
+        "1.00 V",
+        "5.00 Ω"
+      ],
+      [
+        "3",
+        "0.30 A",
+        "1.50 V",
+        "5.00 Ω"
+      ],
+      [
+        "4",
+        "0.40 A",
+        "2.00 V",
+        "5.00 Ω"
+      ],
+      [
+        "5",
+        "0.50 A",
+        "2.50 V",
+        "5.00 Ω"
+      ]
+    ],
+    "interp": [
+      [
+        "Linear V-I Relation",
+        "Potential difference across the conductor is strictly directly proportional to current passing through it."
+      ],
+      [
+        "Constant Slope (ΔV/ΔI)",
+        "The resistance of the nichrome wire remains constant at 5.00 Ω across all applied voltages."
+      ],
+      [
+        "Ohmic Behavior Verified",
+        "Because temperature was held constant by disconnecting between trials, Ohm's law is verified."
+      ],
+      [
+        "Zero Offset Check",
+        "The line passes cleanly through the origin (0, 0), indicating zero voltmeter and ammeter offset errors."
+      ]
+    ],
+    "graph": {
+      "title": "Potential Difference (V) vs Current (I) Characteristic",
+      "xLabel": "Current I (A)",
+      "yLabel": "Voltage V (V)",
+      "points": [
+        [
+          "0.0 A",
+          0
+        ],
+        [
+          "0.1 A",
+          0.5
+        ],
+        [
+          "0.2 A",
+          1
+        ],
+        [
+          "0.3 A",
+          1.5
+        ],
+        [
+          "0.4 A",
+          2
+        ],
+        [
+          "0.5 A",
+          2.5
+        ]
+      ]
+    },
+    "views": 1200,
+    "likes": 450,
+    "rating": 4.9
   },
   {
     "id": "cc00b1af-93b2-411b-b9c4-5e27a219d0bf",
-    "title": "Determination of Refractive Index of Glass Prism",
     "slug": "refractive-index-glass-prism",
+    "title": "Determination of Refractive Index of Glass Prism",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Determine the angle of minimum deviation (Dm) for a given glass triangular prism by plotting the i-D curve and calculate the refractive index (μ) of the prism material.",
     "outcome": "The i-D graph forms a smooth parabola with a distinct minimum. The refractive index of crown glass is determined to be approximately 1.51 ± 0.02 using the prism formula.",
     "materials": [
-      "Equilateral Triangular Glass Prism (60°) × 1",
-      "Drawing Board with Thumb Pins × 1",
-      "White Drawing Sheet (A3/A4) × 2",
-      "Optical Fixing Pins × 6",
-      "Protractor & 30cm Metric Scale × 1 set",
-      "Sharp Pencil & Eraser × 1"
+      {
+        "id": "mat-0",
+        "name": "Equilateral Triangular Glass Prism (60°)",
+        "qty": 1,
+        "price": 50,
+        "about": "High-purity optical crown glass equilateral prism with polished refracting faces and ground base.",
+        "specs": [
+          [
+            "Refracting Angle (A)",
+            "60° ± 0.1°"
+          ],
+          [
+            "Face Dimensions",
+            "38 mm × 38 mm"
+          ],
+          [
+            "Glass Type",
+            "Dense Crown (Schott BK7 equivalent)"
+          ],
+          [
+            "Optical Flatness",
+            "λ/4 wave"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Drawing Board with Thumb Pins",
+        "qty": 1,
+        "price": 95,
+        "about": "Seasoned soft pine wood drawing board with non-warping laminated construction.",
+        "specs": [
+          [
+            "Size",
+            "450 mm × 300 mm × 15 mm"
+          ],
+          [
+            "Material",
+            "Soft pine wood core"
+          ],
+          [
+            "Surface",
+            "Smooth sanded natural grain"
+          ],
+          [
+            "Edge",
+            "True-edge ebony strip"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "White Drawing Sheet (A3/A4)",
+        "qty": 2,
+        "price": 140,
+        "about": "Rigid stainless steel entomological laboratory pins with sharp points.",
+        "specs": [
+          [
+            "Length",
+            "38 mm"
+          ],
+          [
+            "Diameter",
+            "0.65 mm"
+          ],
+          [
+            "Head",
+            "Solid brass round head"
+          ],
+          [
+            "Corrosion Resistance",
+            "Nickel plated finish"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Optical Fixing Pins",
+        "qty": 6,
+        "price": 185,
+        "about": "Transparent acrylic 360-degree precision protractor and bevelled millimeter ruler.",
+        "specs": [
+          [
+            "Protractor Diameter",
+            "150 mm"
+          ],
+          [
+            "Angular Accuracy",
+            "0.5 degree divisions"
+          ],
+          [
+            "Scale Length",
+            "30 cm / 1 mm divisions"
+          ],
+          [
+            "Material",
+            "Optical grade acrylic"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Protractor & 30cm Metric Scale  set",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Determination of Refractive Index of Glass Prism.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Sharp Pencil & Eraser",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Determination of Refractive Index of Glass Prism.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Fix the white paper firmly on the wooden drawing board with thumb pins.",
@@ -127,16 +560,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Remove the prism, join the pin pricks, produce incident and emergent rays to measure the deviation angle (D).",
       "Repeat for incident angles 40°, 45°, 50°, 55°, and 60°, then plot the angle of incidence vs deviation (i-D) graph."
     ],
+    "steps": [
+      {
+        "instruction": "Fix the white paper firmly on the wooden drawing board with thumb pins.",
+        "text": "Fix the white paper firmly on the wooden drawing board with thumb pins.",
+        "observe": "Drawing board is perfectly flat with paper tautly pinned down without any wrinkles.",
+        "safety": "Press board pins straight downward using a thumb pin press to protect fingertips."
+      },
+      {
+        "instruction": "Place the prism on its triangular base and draw its boundary ABC with a sharp pencil.",
+        "text": "Place the prism on its triangular base and draw its boundary ABC with a sharp pencil.",
+        "observe": "Pencil outline shows crisp 60° triangular vertices without multiple overlapping traces.",
+        "safety": "Handle optical prism only by its frosted ground base, never touching polished refracting faces."
+      },
+      {
+        "instruction": "Draw a normal on face AB and erect an incident ray at an angle i = 35°.",
+        "text": "Draw a normal on face AB and erect an incident ray at an angle i = 35°.",
+        "observe": "Normal drawn at 90° using circular protractor; incident ray accurately marked at chosen angle.",
+        "safety": "Use a sharpened 2H pencil for high precision line width < 0.2 mm."
+      },
+      {
+        "instruction": "Fix two optical pins P1 and P2 vertically along the incident ray separated by at least 5 cm.",
+        "text": "Fix two optical pins P1 and P2 vertically along the incident ray separated by at least 5 cm.",
+        "observe": "Fix pins P1 and P2 vertically separated by at least 5 cm for minimal parallax angular error.",
+        "safety": "Check pin straightness before fixing into board."
+      },
+      {
+        "instruction": "Look through face AC of the prism and fix pins P3 and P4 such that their bases align with images of P1 and P2.",
+        "text": "Look through face AC of the prism and fix pins P3 and P4 such that their bases align with images of P1 and P2.",
+        "observe": "Looking through opposite face: feet of images P1', P2' align strictly with pins P3 and P4.",
+        "safety": "Keep eye level with the horizontal plane of the prism table to avoid vertical tilt error."
+      },
+      {
+        "instruction": "Remove the prism, join the pin pricks, produce incident and emergent rays to measure the deviation angle (D).",
+        "text": "Remove the prism, join the pin pricks, produce incident and emergent rays to measure the deviation angle (D).",
+        "observe": "Incident ray and emergent ray extended to intersect at deviation angle D.",
+        "safety": "Store prism immediately into its velvet-lined box after completing tracings."
+      },
+      {
+        "instruction": "Repeat for incident angles 40°, 45°, 50°, 55°, and 60°, then plot the angle of incidence vs deviation (i-D) graph.",
+        "text": "Repeat for incident angles 40°, 45°, 50°, 55°, and 60°, then plot the angle of incidence vs deviation (i-D) graph."
+      }
+    ],
     "precautions": [
       "Optical pins must be fixed strictly vertically into the board.",
       "Distance between pins on the same ray must not be less than 5 cm to ensure angular accuracy.",
       "Align pin pricks viewing their feet/bases, not the bent tops.",
       "Do not disturb the prism position while sighting pins."
     ],
-    "learning_objectives": [
-      "Understand Snell's Law and refraction through non-parallel interfaces.",
-      "Derive and apply the prism formula: μ = sin((A+Dm)/2) / sin(A/2).",
-      "Identify the angle of minimum deviation from experimental data curves."
+    "thumbnail_url": "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Ray Optics",
@@ -145,35 +619,243 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Physics",
       "Optics Lab"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80"
+    "formula": "μ = sin((A + Dm)/2) / sin(A/2) = sin((60° + 39.5°)/2) / sin(30°) = 1.524",
+    "obsCols": [
+      "Angle of Incidence (i)",
+      "Angle of Emergence (e)",
+      "Angle of Deviation (D = i + e - A)",
+      "i + e Sum"
     ],
-    "popularity": 96,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1152,
-    "likes": 768,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "35°",
+        "65.5°",
+        "40.5°",
+        "100.5°"
+      ],
+      [
+        "40°",
+        "59.8°",
+        "39.8°",
+        "99.8°"
+      ],
+      [
+        "45°",
+        "54.5°",
+        "39.5° (Dm)",
+        "99.5°"
+      ],
+      [
+        "50°",
+        "50.0°",
+        "40.0°",
+        "100.0°"
+      ],
+      [
+        "55°",
+        "46.2°",
+        "41.2°",
+        "101.2°"
+      ],
+      [
+        "60°",
+        "43.0°",
+        "43.0°",
+        "103.0°"
+      ]
+    ],
+    "interp": [
+      [
+        "Minimum Deviation Point",
+        "At i = 45°, angle of deviation reaches its unique minimum value Dm = 39.5°."
+      ],
+      [
+        "Symmetry Condition",
+        "At minimum deviation Dm, the angle of incidence equals angle of emergence (i ≈ e = 45°-50°)."
+      ],
+      [
+        "Internal Ray Parallelism",
+        "At Dm, the refracted ray travels exactly parallel to the base of the equilateral prism."
+      ],
+      [
+        "Refractive Index of Glass",
+        "Formula μ = sin(49.75°)/sin(30°) yields μ = 1.524, confirming standard crown glass."
+      ]
+    ],
+    "graph": {
+      "title": "Angle of Incidence (i) vs Angle of Deviation (D) Curve",
+      "xLabel": "Angle of Incidence i (°)",
+      "yLabel": "Angle of Deviation D (°)",
+      "points": [
+        [
+          "35°",
+          40.5
+        ],
+        [
+          "40°",
+          39.8
+        ],
+        [
+          "45°",
+          39.5
+        ],
+        [
+          "50°",
+          40
+        ],
+        [
+          "55°",
+          41.2
+        ],
+        [
+          "60°",
+          43
+        ]
+      ]
+    },
+    "views": 1237,
+    "likes": 468,
+    "rating": 4.9
   },
   {
     "id": "9a9669d2-b571-44ec-8bcf-d396c473ece5",
-    "title": "Focal Length of Convex Lens using u-v Method",
     "slug": "focal-length-convex-lens-uv-method",
+    "title": "Focal Length of Convex Lens using u-v Method",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Determine the focal length of a thin convex lens by finding the image distance (v) for various object distances (u) on an optical bench, removing parallax.",
     "outcome": "The focal length of the convex lens is determined to be 15.0 cm ± 0.2 cm using the lens formula 1/f = 1/v - 1/u and confirmed via the 1/u vs 1/v graph.",
     "materials": [
-      "Optical Bench (2 meters long with graduated scale) × 1",
-      "Biconvex Lens mounted on upright holder × 1",
-      "Object Optical Needle × 1",
-      "Image Optical Needle × 1",
-      "Index Needle for measuring bench error × 1",
-      "Screen / Spirit Level × 1"
+      {
+        "id": "mat-0",
+        "name": "Optical Bench (2 meters long with graduated scale)",
+        "qty": 1,
+        "price": 50,
+        "about": "Dual-rail brass and cast iron optical bench with engraved millimeter graduations.",
+        "specs": [
+          [
+            "Length",
+            "1.5 meter / 150 cm"
+          ],
+          [
+            "Scale Resolution",
+            "1 mm divisions with vernier to 0.1 mm"
+          ],
+          [
+            "Uprights Included",
+            "4 sliding uprights with slow-motion rack"
+          ],
+          [
+            "Material",
+            "Heavy cast iron bed, machined steel rails"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Biconvex Lens mounted on upright holder",
+        "qty": 1,
+        "price": 95,
+        "about": "Double convex optical glass lens with high-quality polished spherical surfaces.",
+        "specs": [
+          [
+            "Nominal Focal Length",
+            "+15 cm"
+          ],
+          [
+            "Diameter",
+            "50 mm aperture"
+          ],
+          [
+            "Material",
+            "Optical crown glass"
+          ],
+          [
+            "Mounting",
+            "Spring-loaded ring clamp"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Object Optical Needle",
+        "qty": 1,
+        "price": 140,
+        "about": "Two vertical brass optical needles with fine points mounted on adjustable slider uprights.",
+        "specs": [
+          [
+            "Length",
+            "12 cm"
+          ],
+          [
+            "Diameter",
+            "3 mm brass rod with hardened tip"
+          ],
+          [
+            "Vertical Travel",
+            "50 mm adjustable height"
+          ],
+          [
+            "Base Fitting",
+            "Knurled lock-ring fitting"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Image Optical Needle",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Focal Length of Convex Lens using u-v Method.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Index Needle for measuring bench error",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Focal Length of Convex Lens using u-v Method.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Screen / Spirit Level",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Focal Length of Convex Lens using u-v Method.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Level the optical bench horizontally using the leveling screws and spirit level.",
@@ -184,16 +866,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Adjust the position of the image needle until its tip coincides with the inverted tip of the object needle image without parallax.",
       "Note the positions of lens, object needle, and image needle to compute u and v across 6 distinct distances."
     ],
+    "steps": [
+      {
+        "instruction": "Level the optical bench horizontally using the leveling screws and spirit level.",
+        "text": "Level the optical bench horizontally using the leveling screws and spirit level.",
+        "observe": "Optical bench leveling screws adjusted with spirit level so bench rails are strictly horizontal.",
+        "safety": "Do not drop heavy cast-iron optical uprights onto bench brass scales."
+      },
+      {
+        "instruction": "Obtain a rough estimate of the focal length by projecting the image of a distant tree or building on a white wall.",
+        "text": "Obtain a rough estimate of the focal length by projecting the image of a distant tree or building on a white wall.",
+        "observe": "Focus distant window image onto paper screen; rough focal length measured at approx 15 cm.",
+        "safety": "Never view the sun directly through the convex lens; intense focal heat can cause retinal burns."
+      },
+      {
+        "instruction": "Mount the convex lens in the middle of the optical bench on an upright holder.",
+        "text": "Mount the convex lens in the middle of the optical bench on an upright holder.",
+        "observe": "Object needle tip, lens optical center, and image needle tip aligned to identical vertical height.",
+        "safety": "Keep needle tips covered with rubber caps when adjusting upright heights."
+      },
+      {
+        "instruction": "Place the object needle at a distance u > 2f from the lens and illuminate it.",
+        "text": "Place the object needle at a distance u > 2f from the lens and illuminate it.",
+        "observe": "Object needle placed at 30 cm from lens; real inverted image forms on the other side.",
+        "safety": "Ensure lens holder clamping knob is finger-tight without cracking glass edge."
+      },
+      {
+        "instruction": "Place the image needle on the other side of the lens and look through the lens from a distance.",
+        "text": "Place the image needle on the other side of the lens and look through the lens from a distance.",
+        "observe": "Move eye sideways: image needle tip stays locked to inverted image tip without relative displacement.",
+        "safety": "Maintain 25 cm minimum distance between eye and needles to avoid eye strain."
+      },
+      {
+        "instruction": "Adjust the position of the image needle until its tip coincides with the inverted tip of the object needle image without parallax.",
+        "text": "Adjust the position of the image needle until its tip coincides with the inverted tip of the object needle image without parallax.",
+        "observe": "Repeat for 5 distinct object distances from 25 cm to 45 cm; all yield f = 15.0 cm.",
+        "safety": "Secure all brass thumbscrews before reading vernier indexes on uprights."
+      },
+      {
+        "instruction": "Note the positions of lens, object needle, and image needle to compute u and v across 6 distinct distances.",
+        "text": "Note the positions of lens, object needle, and image needle to compute u and v across 6 distinct distances."
+      }
+    ],
     "precautions": [
       "Tips of the object needle, lens optical center, and image needle must lie along the same horizontal axis.",
       "Parallax must be completely eliminated between the real inverted image and the image needle.",
       "Object needle must always remain beyond the principal focus (u > f).",
       "Account for index correction for precise distances."
     ],
-    "learning_objectives": [
-      "Master the technique of removing optical parallax with needles.",
-      "Verify the thin lens formula 1/f = 1/v - 1/u.",
-      "Calculate focal length through analytical means and graphical intercepts."
+    "thumbnail_url": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Optics",
@@ -202,36 +925,262 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Optical Bench",
       "Parallax"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?auto=format&fit=crop&w=800&q=80"
+    "formula": "1/f = 1/v - 1/u => f = (u · v) / (u + v) = 15.0 cm (Focal Length)",
+    "obsCols": [
+      "Object Distance u (cm)",
+      "Image Distance v (cm)",
+      "u + v (cm)",
+      "Calculated f = uv/(u+v) (cm)"
     ],
-    "popularity": 94,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1128,
-    "likes": 752,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "-25.0 cm",
+        "+37.5 cm",
+        "62.5 cm",
+        "15.00 cm"
+      ],
+      [
+        "-30.0 cm",
+        "+30.0 cm",
+        "60.0 cm",
+        "15.00 cm (2f position)"
+      ],
+      [
+        "-35.0 cm",
+        "+26.2 cm",
+        "61.2 cm",
+        "14.97 cm"
+      ],
+      [
+        "-40.0 cm",
+        "+24.0 cm",
+        "64.0 cm",
+        "15.00 cm"
+      ],
+      [
+        "-45.0 cm",
+        "+22.5 cm",
+        "67.5 cm",
+        "15.00 cm"
+      ]
+    ],
+    "interp": [
+      [
+        "Convex Lens Real Image",
+        "For object distance |u| > f, the lens produces a real, inverted image on the opposite side."
+      ],
+      [
+        "Symmetric 2f Condition",
+        "At u = -30.0 cm, v = +30.0 cm; image is real, inverted, exactly same size as object, confirming 2f = 30 cm, f = 15 cm."
+      ],
+      [
+        "Concordant Focal Length",
+        "Mean focal length across 5 independent optical bench trials is f = 15.0 ± 0.05 cm."
+      ],
+      [
+        "Parallax Removal",
+        "Complete absence of parallax between image and search needle confirms accurate conjugate focal alignment."
+      ]
+    ],
+    "graph": {
+      "title": "Object Distance (u) vs Image Distance (v) Hyperbola",
+      "xLabel": "Object Distance u (-cm)",
+      "yLabel": "Image Distance v (+cm)",
+      "points": [
+        [
+          "20 cm",
+          60
+        ],
+        [
+          "25 cm",
+          37.5
+        ],
+        [
+          "30 cm",
+          30
+        ],
+        [
+          "35 cm",
+          26.2
+        ],
+        [
+          "40 cm",
+          24
+        ],
+        [
+          "45 cm",
+          22.5
+        ]
+      ]
+    },
+    "views": 1274,
+    "likes": 486,
+    "rating": 4.9
   },
   {
     "id": "a0ac41ae-1ea8-4276-acf4-fc76201dc144",
-    "title": "Resistance Combination & Verification using Meter Bridge",
     "slug": "meter-bridge-resistance-combination",
+    "title": "Resistance Combination & Verification using Meter Bridge",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "55 Mins",
     "duration_minutes": 55,
     "description": "Verify the laws of combination of resistances (series and parallel) using a Wheatstone meter bridge apparatus and determine unknown resistances.",
     "outcome": "Experimental equivalent resistances for series (Rs = R1 + R2) and parallel (1/Rp = 1/R1 + 1/R2) match theoretical values within an experimental error of < 1.5%.",
     "materials": [
-      "Meter Bridge Board with 1m Manganin wire × 1",
-      "Leclanché Cell or regulated 2V DC power supply × 1",
-      "Sensitive Galvanometer (center zero) × 1",
-      "Standard Resistance Box (1 to 100 Ω) × 1",
-      "Jockey with sharp knife edge × 1",
-      "Two standard resistance coils (R1 ≈ 2Ω, R2 ≈ 3Ω) × 2",
-      "One-way key and thick copper connecting strips × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Meter Bridge Board with 1m Manganin wire",
+        "qty": 1,
+        "price": 50,
+        "about": "One-meter long manganin or constantan resistance wire tensioned over a graduated wooden meter scale.",
+        "specs": [
+          [
+            "Wire Length",
+            "100.0 cm"
+          ],
+          [
+            "Wire Composition",
+            "Constantan (60% Cu, 40% Ni)"
+          ],
+          [
+            "Strip Thickness",
+            "3.0 mm thick copper strips"
+          ],
+          [
+            "Base",
+            "Teakwood polished board"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Leclanché Cell or regulated 2V DC power supply",
+        "qty": 1,
+        "price": 95,
+        "about": "Decade plug-type resistance box with non-inductively wound manganin coils.",
+        "specs": [
+          [
+            "Total Resistance",
+            "1 – 100 Ω"
+          ],
+          [
+            "Accuracy",
+            "± 0.1%"
+          ],
+          [
+            "Plugs",
+            "Heavy brass plugs with taper fit"
+          ],
+          [
+            "Base",
+            "Ebonite top plate"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Sensitive Galvanometer (center zero)",
+        "qty": 1,
+        "price": 140,
+        "about": "Centre-zero dead-beat moving coil galvanometer with high current sensitivity.",
+        "specs": [
+          [
+            "Scale",
+            "30 – 0 – 30 divisions"
+          ],
+          [
+            "Current Sensitivity",
+            "20 μA / division"
+          ],
+          [
+            "Internal Resistance",
+            "80 Ω"
+          ],
+          [
+            "Terminals",
+            "Gold-plated binding posts"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Standard Resistance Box (1 to 100 Ω)",
+        "qty": 1,
+        "price": 185,
+        "about": "Spring-loaded knife-edge sliding contact with insulated handle.",
+        "specs": [
+          [
+            "Contact Edge",
+            "Phosphor bronze knife-edge"
+          ],
+          [
+            "Handle",
+            "Moulded ebonite grip"
+          ],
+          [
+            "Action",
+            "Spring-loaded push-to-touch"
+          ],
+          [
+            "Terminal",
+            "Screw terminal for lead"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Jockey with sharp knife edge",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Resistance Combination & Verification using Meter Bridge.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Two standard resistance coils (R1 ≈ 2Ω, R2 ≈ 3Ω)",
+        "qty": 2,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Resistance Combination & Verification using Meter Bridge.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "One-way key and thick copper connecting strips  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Resistance Combination & Verification using Meter Bridge.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Connect the meter bridge circuit strictly according to Wheatstone bridge principles.",
@@ -242,16 +1191,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Repeat the determination with R1 and R2 connected in series, then in parallel.",
       "Compare the experimental combination values with theoretical series and parallel formulas."
     ],
+    "steps": [
+      {
+        "instruction": "Connect the meter bridge circuit strictly according to Wheatstone bridge principles.",
+        "text": "Connect the meter bridge circuit strictly according to Wheatstone bridge principles.",
+        "observe": "Heavy copper boundary strips cleaned with sandpaper to eliminate contact resistance at terminal joints.",
+        "safety": "Disconnect battery eliminator key while setting up bridge connections."
+      },
+      {
+        "instruction": "Introduce a resistance R from the resistance box in the left gap and unknown coil X in the right gap.",
+        "text": "Introduce a resistance R from the resistance box in the left gap and unknown coil X in the right gap.",
+        "observe": "Null test: Touching jockey at left end gives left deflection; touching right gives right deflection.",
+        "safety": "Never drag the jockey knife-edge along the wire; tap gently to avoid scraping or thinning the wire."
+      },
+      {
+        "instruction": "Touch the jockey at 0 cm and 100 cm of the bridge wire to verify opposite deflections in the galvanometer.",
+        "text": "Touch the jockey at 0 cm and 100 cm of the bridge wire to verify opposite deflections in the galvanometer.",
+        "observe": "Unplug 2.0 Ω from box; jockey tapped along wire until galvanometer needle stays exactly at zero division.",
+        "safety": "Hold jockey by its insulated ebonite handle."
+      },
+      {
+        "instruction": "Gently slide the jockey along the manganin wire until the galvanometer indicates zero deflection (null point l).",
+        "text": "Gently slide the jockey along the manganin wire until the galvanometer indicates zero deflection (null point l).",
+        "observe": "Null length l reads 40.0 cm; calculated unknown resistance X = 2.0 × (60.0/40.0) = 3.00 Ω.",
+        "safety": "Release jockey contact between trials to prevent local wire heating."
+      },
+      {
+        "instruction": "Calculate unknown resistance X = R × (100 - l) / l.",
+        "text": "Calculate unknown resistance X = R × (100 - l) / l.",
+        "observe": "Connect both coils in series end-to-end; null point shifts to 44.4 cm with R = 4.0 Ω.",
+        "safety": "Ensure inter-coil series joint is twisted tight or clamped securely."
+      },
+      {
+        "instruction": "Repeat the determination with R1 and R2 connected in series, then in parallel.",
+        "text": "Repeat the determination with R1 and R2 connected in series, then in parallel.",
+        "observe": "Experimental Rs = 5.01 Ω confirms theoretical addition law within 0.2% tolerance.",
+        "safety": "Disconnect battery plug upon completing measurements."
+      },
+      {
+        "instruction": "Compare the experimental combination values with theoretical series and parallel formulas.",
+        "text": "Compare the experimental combination values with theoretical series and parallel formulas."
+      }
+    ],
     "precautions": [
       "Do not drag or scrape the jockey along the bridge wire; touch it gently to prevent non-uniform wire cross-section.",
       "Ensure balance point lies near the center (between 40 cm and 60 cm) for maximum bridge sensitivity.",
       "Clean connecting terminals and tighten screws with pliers.",
       "Use shunt across galvanometer during initial rough balance."
     ],
-    "learning_objectives": [
-      "Understand Wheatstone bridge balance condition: P/Q = R/S.",
-      "Measure unknown electrical resistances with high null-deflection precision.",
-      "Empirically verify series and parallel resistor combination formulas."
+    "thumbnail_url": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Wheatstone Bridge",
@@ -260,35 +1250,241 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Physics",
       "Current Electricity"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1517420704952-d9f39e95b43e?auto=format&fit=crop&w=800&q=80"
+    "formula": "X = R · (100 - l) / l; Rs = R1 + R2 = 5.0 Ω (Series Verification)",
+    "obsCols": [
+      "Resistance in Box R (Ω)",
+      "Balancing Length l (cm)",
+      "100 - l (cm)",
+      "Unknown X = R(100-l)/l (Ω)"
     ],
-    "popularity": 92,
-    "status": "published",
-    "duration": "55 Mins",
-    "views": 1104,
-    "likes": 736,
-    "rating": 5
+    "obsRows": [
+      [
+        "2.0 Ω",
+        "40.0 cm",
+        "60.0 cm",
+        "3.00 Ω (R1)"
+      ],
+      [
+        "2.0 Ω",
+        "50.0 cm",
+        "50.0 cm",
+        "2.00 Ω (R2)"
+      ],
+      [
+        "4.0 Ω",
+        "44.4 cm",
+        "55.6 cm",
+        "5.01 Ω (Rs Series: R1+R2)"
+      ],
+      [
+        "1.0 Ω",
+        "45.5 cm",
+        "54.5 cm",
+        "1.20 Ω (Rp Parallel: R1R2/(R1+R2))"
+      ],
+      [
+        "3.0 Ω",
+        "50.0 cm",
+        "50.0 cm",
+        "3.00 Ω (Repeated test R1)"
+      ]
+    ],
+    "interp": [
+      [
+        "Wheatstone Principle",
+        "At null deflection, ratio of resistances equals ratio of wire segment lengths (P/Q = R/X)."
+      ],
+      [
+        "Series Law Verified",
+        "Experimental series resistance Rs = 5.01 Ω matches theoretical R1 + R2 = 3.0 + 2.0 = 5.0 Ω within 0.2%."
+      ],
+      [
+        "Parallel Law Verified",
+        "Experimental parallel resistance Rp = 1.20 Ω matches theoretical (3.0 × 2.0) / (3.0 + 2.0) = 1.20 Ω."
+      ],
+      [
+        "Minimal End Error",
+        "Balancing lengths obtained near wire center (40–60 cm) minimize meter bridge copper strip end resistance."
+      ]
+    ],
+    "graph": {
+      "title": "Resistance Box (R) vs Balancing Length (l) Characteristic",
+      "xLabel": "Known Resistance R (Ω)",
+      "yLabel": "Null Point Length l (cm)",
+      "points": [
+        [
+          "1.0 Ω",
+          25
+        ],
+        [
+          "2.0 Ω",
+          40
+        ],
+        [
+          "3.0 Ω",
+          50
+        ],
+        [
+          "4.0 Ω",
+          57.1
+        ],
+        [
+          "5.0 Ω",
+          62.5
+        ]
+      ]
+    },
+    "views": 1311,
+    "likes": 504,
+    "rating": 4.9
   },
   {
     "id": "21e4615d-c572-488b-b237-808561a04293",
-    "title": "Acceleration due to Gravity (g) using Simple Pendulum",
     "slug": "acceleration-due-to-gravity-simple-pendulum",
+    "title": "Acceleration due to Gravity (g) using Simple Pendulum",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 11",
     "difficulty": "Beginner",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Determine acceleration due to gravity (g) at a place by studying the variation of time period (T) with effective length (L) of a simple pendulum and plotting an L-T² graph.",
     "outcome": "The L-T² graph is a linear straight line passing through the origin. The acceleration due to gravity g is calculated as 9.78 m/s² ± 0.05 m/s².",
     "materials": [
-      "Heavy Metallic Bob with small hook (brass) × 1",
-      "Fine unspun cotton thread (approx 1.5 m) × 1",
-      "Split Cork & Rigid Retort Stand with clamp × 1",
-      "Precision Vernier Caliper for measuring bob radius × 1",
-      "Digital Stopwatch (least count 0.01s) × 1",
-      "Meter Scale & Chalk for fiducial mark × 1"
+      {
+        "id": "mat-0",
+        "name": "Heavy Metallic Bob with small hook (brass)",
+        "qty": 1,
+        "price": 50,
+        "about": "Solid machined brass spherical pendulum bob with integral brass suspension ring.",
+        "specs": [
+          [
+            "Mass",
+            "150 grams"
+          ],
+          [
+            "Diameter",
+            "25.0 mm"
+          ],
+          [
+            "Material",
+            "High density naval brass"
+          ],
+          [
+            "Finish",
+            "Polished lacquer coat"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Fine unspun cotton thread (appro.5 m) × 1",
+        "qty": 1,
+        "price": 95,
+        "about": "Cast iron laboratory retort stand with 75 cm steel rod and heavy rectangular base.",
+        "specs": [
+          [
+            "Base Size",
+            "200 mm × 125 mm × 25 mm"
+          ],
+          [
+            "Rod Dimensions",
+            "750 mm length, 12.5 mm diameter"
+          ],
+          [
+            "Weight",
+            "2.5 kg stability base"
+          ],
+          [
+            "Clamp",
+            "Universal bosshead and jaw clamp"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Split Cork & Rigid Retort Stand with clamp",
+        "qty": 1,
+        "price": 140,
+        "about": "Unspun fine linen suspension thread and split cork pad.",
+        "specs": [
+          [
+            "Thread Type",
+            "Inextensible waxed linen cord"
+          ],
+          [
+            "Length",
+            "1.5 meters"
+          ],
+          [
+            "Cork",
+            "Natural split cork stopper"
+          ],
+          [
+            "Tensile Strength",
+            "5 kg proof"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Precision Vernier Caliper for measuring bob radius",
+        "qty": 1,
+        "price": 185,
+        "about": "Precision digital quartz stopwatch with lap memory and split counting.",
+        "specs": [
+          [
+            "Resolution",
+            "0.01 second (10 ms)"
+          ],
+          [
+            "Accuracy",
+            "± 0.001 s/day"
+          ],
+          [
+            "Display",
+            "High contrast 7-digit LCD"
+          ],
+          [
+            "Controls",
+            "Start, Stop, Split/Reset"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Digital Stopwatch (least count 0.01s)",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Acceleration due to Gravity (g) using Simple Pendulum.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Meter Scale & Chalk for fiducial mark",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Acceleration due to Gravity (g) using Simple Pendulum.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Measure the diameter of the brass bob with a Vernier caliper in two perpendicular directions and compute its radius r.",
@@ -299,16 +1495,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Using the stopwatch, time 20 complete oscillations and calculate the time period T = time / 20.",
       "Repeat for lengths 80 cm, 90 cm, 100 cm, 110 cm, and 120 cm, then plot the L versus T² graph."
     ],
+    "steps": [
+      {
+        "instruction": "Measure the diameter of the brass bob with a Vernier caliper in two perpendicular directions and compute its radius r.",
+        "text": "Measure the diameter of the brass bob with a Vernier caliper in two perpendicular directions and compute its radius r.",
+        "observe": "Measure bob diameter with Vernier Caliper (2r = 2.50 cm => r = 1.25 cm); add to thread length for effective length L.",
+        "safety": "Tighten split cork securely in retort clamp so thread suspension point does not slip."
+      },
+      {
+        "instruction": "Tie one end of the fine thread to the hook of the bob and pass the other end through the split cork held firmly in the clamp.",
+        "text": "Tie one end of the fine thread to the hook of the bob and pass the other end through the split cork held firmly in the clamp.",
+        "observe": "Mark equilibrium reference line with chalk on bench floor directly behind suspended bob.",
+        "safety": "Ensure heavy retort stand base is stabilized with a counterweight."
+      },
+      {
+        "instruction": "Adjust the thread length such that the effective length L (length of thread + hook + bob radius) is exactly 70 cm.",
+        "text": "Adjust the thread length such that the effective length L (length of thread + hook + bob radius) is exactly 70 cm.",
+        "observe": "Displace bob horizontally by no more than 3 to 4 cm (angular displacement < 4°) for simple harmonic motion.",
+        "safety": "Release bob gently without imparting any spin, twist, or elliptical trajectory."
+      },
+      {
+        "instruction": "Make a vertical chalk mark on the wall behind the bob's rest position as the reference mean position.",
+        "text": "Make a vertical chalk mark on the wall behind the bob's rest position as the reference mean position.",
+        "observe": "Start digital stopwatch as bob crosses central equilibrium line; count 20 full return oscillations.",
+        "safety": "Turn off ceiling fans to prevent turbulent air drag on oscillating bob."
+      },
+      {
+        "instruction": "Displace the bob slightly (amplitude < 5°) and release it without jerk to execute simple harmonic motion.",
+        "text": "Displace the bob slightly (amplitude < 5°) and release it without jerk to execute simple harmonic motion.",
+        "observe": "Record t = 35.9 s for L = 0.80 m; average across three trials gives T = 1.795 s.",
+        "safety": "Reset stopwatch smoothly after recording time."
+      },
+      {
+        "instruction": "Using the stopwatch, time 20 complete oscillations and calculate the time period T = time / 20.",
+        "text": "Using the stopwatch, time 20 complete oscillations and calculate the time period T = time / 20.",
+        "observe": "Graph L vs T² yields slope 0.248 m/s²; multiplying by 4π² gives g = 9.80 m/s².",
+        "safety": "Store brass bob safely in storage drawer to prevent floor damage."
+      },
+      {
+        "instruction": "Repeat for lengths 80 cm, 90 cm, 100 cm, 110 cm, and 120 cm, then plot the L versus T² graph.",
+        "text": "Repeat for lengths 80 cm, 90 cm, 100 cm, 110 cm, and 120 cm, then plot the L versus T² graph."
+      }
+    ],
     "precautions": [
       "Angular amplitude of oscillation must be kept very small (< 4°-5°) for true SHM behavior (sin θ ≈ θ).",
       "The pendulum must oscillate strictly in a single vertical plane without spinning.",
       "Ensure the suspension point is rigid and does not yield during oscillations.",
       "Air currents must be prevented by shutting nearby fans and windows."
     ],
-    "learning_objectives": [
-      "Explore conditions for Simple Harmonic Motion in pendulum systems.",
-      "Master oscillation counting and reduce timing errors through averaging.",
-      "Calculate local gravitational acceleration g from the slope of L-T² plot."
+    "thumbnail_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Simple Pendulum",
@@ -317,34 +1554,226 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Mechanics",
       "Class 11 Physics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=800&q=80"
+    "formula": "g = 4 · π² · (L / T²) = 4 · (3.1416)² · (0.80 / 3.22) = 9.80 m/s²",
+    "obsCols": [
+      "Length of Pendulum L (m)",
+      "Time for 20 Oscillations t (s)",
+      "Time Period T = t/20 (s)",
+      "T² (s²)",
+      "Calculated g = 4π²L/T² (m/s²)"
     ],
-    "popularity": 95,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1140,
-    "likes": 760,
-    "rating": 5
+    "obsRows": [
+      [
+        "0.60 m",
+        "31.0 s",
+        "1.55 s",
+        "2.40 s²",
+        "9.87 m/s²"
+      ],
+      [
+        "0.70 m",
+        "33.6 s",
+        "1.68 s",
+        "2.82 s²",
+        "9.79 m/s²"
+      ],
+      [
+        "0.80 m",
+        "35.9 s",
+        "1.80 s",
+        "3.24 s²",
+        "9.75 m/s²"
+      ],
+      [
+        "0.90 m",
+        "38.1 s",
+        "1.90 s",
+        "3.61 s²",
+        "9.83 m/s²"
+      ],
+      [
+        "1.00 m",
+        "40.1 s",
+        "2.00 s",
+        "4.00 s²",
+        "9.87 m/s²"
+      ]
+    ],
+    "interp": [
+      [
+        "Isochronism Verified",
+        "Time period depends solely on length L and gravitational field g; independent of bob mass or small amplitude (< 5°)."
+      ],
+      [
+        "L vs T² Linearity",
+        "The plot of L versus T² is a straight line through origin with slope L/T² = 0.248 m/s²."
+      ],
+      [
+        "Accurate Local Value of g",
+        "Mean calculated g = 9.80 ± 0.04 m/s², matching standard Earth sea-level gravitational acceleration."
+      ],
+      [
+        "Effective Length Inclusion",
+        "Accurately adding the hook length and bob spherical radius (r = 1.25 cm) removes systematic zero offset."
+      ]
+    ],
+    "graph": {
+      "title": "Length of Pendulum (L) vs Square of Time Period (T²)",
+      "xLabel": "Pendulum Length L (m)",
+      "yLabel": "Square of Period T² (s²)",
+      "points": [
+        [
+          "0.0 m",
+          0
+        ],
+        [
+          "0.6 m",
+          2.4
+        ],
+        [
+          "0.7 m",
+          2.82
+        ],
+        [
+          "0.8 m",
+          3.24
+        ],
+        [
+          "0.9 m",
+          3.61
+        ],
+        [
+          "1.0 m",
+          4
+        ]
+      ]
+    },
+    "views": 1348,
+    "likes": 522,
+    "rating": 4.9
   },
   {
     "id": "b3884c02-0427-404d-be3a-cf4265de00f7",
-    "title": "Verification of Boyle's Law of Ideal Gases",
     "slug": "boyles-law-verification-ideal-gas",
+    "title": "Verification of Boyle's Law of Ideal Gases",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 11",
     "difficulty": "Intermediate",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Verify Boyle's Law (P × V = constant) at constant ambient room temperature using a Quill tube / Boyle's Law J-tube apparatus containing an enclosed dry air column.",
     "outcome": "The product of total absolute pressure P and air column volume V remains constant within 1.2% variance. The P versus 1/V graph is a straight line through the origin.",
     "materials": [
-      "Boyle's Law Apparatus (Quill tube / graduated closed burette with mercury reservoir) × 1",
-      "Fortin's Barometer (to record atmospheric pressure H in cm of Hg) × 1",
-      "Pure clean Mercury (in closed apparatus) × 1",
-      "Laboratory Thermometer (0-100°C) × 1",
-      "Vertical Metric Scale & Plumb line × 1"
+      {
+        "id": "mat-0",
+        "name": "Boyle's Law Apparatus (Quill tube / graduated closed burette with mercury reservoir)",
+        "qty": 1,
+        "price": 50,
+        "about": "Heavy cast-iron frame Boyle's Law apparatus with precision graduated glass tubes and mercury reservoir.",
+        "specs": [
+          [
+            "Closed Tube",
+            "Graduated 0 – 30 cm, uniform precision bore"
+          ],
+          [
+            "Open Tube",
+            "Parallel vertical tube open to atmosphere"
+          ],
+          [
+            "Base Scale",
+            "Silvered brass meter scale, 1 mm divisions"
+          ],
+          [
+            "Mercury Capacity",
+            "Approx 150 mL triple-distilled"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Fortin's Barometer (to record atmospheric pressure H in cm of Hg)",
+        "qty": 1,
+        "price": 95,
+        "about": "Fortin's mercurial laboratory barometer for true local atmospheric pressure reference.",
+        "specs": [
+          [
+            "Range",
+            "650 – 800 mm Hg"
+          ],
+          [
+            "Vernier Least Count",
+            "0.1 mm Hg"
+          ],
+          [
+            "Casing",
+            "Enamelled brass tube with glass window"
+          ],
+          [
+            "Cistern",
+            "Flexible leather bottom with ivory pointer"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Pure clean Mercury (in closed apparatus)",
+        "qty": 1,
+        "price": 140,
+        "about": "Neoprene high-pressure flexible connecting tube with stainless steel hose clamps.",
+        "specs": [
+          [
+            "Internal Diameter",
+            "6.0 mm"
+          ],
+          [
+            "Wall Thickness",
+            "2.5 mm heavy wall"
+          ],
+          [
+            "Burst Pressure",
+            "5 bar proof"
+          ],
+          [
+            "Fluid Compatibility",
+            "Chemically inert to liquid mercury"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Laboratory Thermometer (0-100°C)",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Verification of Boyle's Law of Ideal Gases.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Vertical Metric Scale & Plumb line",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Verification of Boyle's Law of Ideal Gases.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Record the ambient room temperature and atmospheric pressure (H) using the Fortin's barometer in cm of Hg.",
@@ -355,16 +1784,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Calculate total pressure P = H + h and compute product P × l.",
       "Lower the open tube below the closed tube by several steps to take negative gauge pressure readings (P = H - h) and verify P × V = constant."
     ],
+    "steps": [
+      {
+        "instruction": "Record the ambient room temperature and atmospheric pressure (H) using the Fortin's barometer in cm of Hg.",
+        "text": "Record the ambient room temperature and atmospheric pressure (H) using the Fortin's barometer in cm of Hg.",
+        "observe": "Record laboratory barometric atmospheric pressure H = 75.8 cm Hg from Fortin barometer.",
+        "safety": "Check mercury reservoir and rubber tubing for leak-tight connections."
+      },
+      {
+        "instruction": "Check that the apparatus is set vertical with a plumb line.",
+        "text": "Check that the apparatus is set vertical with a plumb line.",
+        "observe": "Align mercury levels in both closed and open limbs to read equal baseline zero difference.",
+        "safety": "Wear nitrile safety gloves when working with mercury-filled glass apparatus."
+      },
+      {
+        "instruction": "Adjust the open mercury tube to bring the mercury levels in both limbs to the same height (gauge pressure = 0).",
+        "text": "Adjust the open mercury tube to bring the mercury levels in both limbs to the same height (gauge pressure = 0).",
+        "observe": "Raise open limb slowly by 10 cm; enclosed air column in closed limb compresses visibly.",
+        "safety": "Raise limb slowly to avoid mercury surging or column separation."
+      },
+      {
+        "instruction": "Note the initial length of the enclosed dry air column (l1), which is proportional to volume V1.",
+        "text": "Note the initial length of the enclosed dry air column (l1), which is proportional to volume V1.",
+        "observe": "Wait 2 minutes for thermal equilibrium; record mercury difference h and closed tube air column length V.",
+        "safety": "Keep room temperature stable without direct sunlight on apparatus."
+      },
+      {
+        "instruction": "Raise the open tube by 5 cm to increase the pressure. Record the difference in mercury levels (h) and new air column length (l).",
+        "text": "Raise the open tube by 5 cm to increase the pressure. Record the difference in mercury levels (h) and new air column length (l).",
+        "observe": "Lower open limb below closed limb to test rarefaction state (P < H).",
+        "safety": "Do not drop limb slider; clamp securely after every displacement."
+      },
+      {
+        "instruction": "Calculate total pressure P = H + h and compute product P × l.",
+        "text": "Calculate total pressure P = H + h and compute product P × l.",
+        "observe": "P · V products calculate to 1500, 1498, 1501, 1496, 1500 cm² Hg, verifying Boyle's Law.",
+        "safety": "Keep mercury spill collection tray under apparatus at all times."
+      },
+      {
+        "instruction": "Lower the open tube below the closed tube by several steps to take negative gauge pressure readings (P = H - h) and verify P × V = constant.",
+        "text": "Lower the open tube below the closed tube by several steps to take negative gauge pressure readings (P = H - h) and verify P × V = constant."
+      }
+    ],
     "precautions": [
       "The air enclosed in the tube must be completely dry (moisture causes vapor pressure deviations).",
       "Wait at least 2 minutes after adjusting mercury levels so gas temperature returns to room temperature.",
       "Never touch the enclosed gas bulb/tube with bare hands during readings to avoid heating.",
       "Take readings at the top of the mercury meniscus with eyes at the same horizontal level."
     ],
-    "learning_objectives": [
-      "Understand isothermal gas behavior and the kinetic theory of ideal gases.",
-      "Distinguish between absolute pressure, atmospheric pressure, and gauge pressure.",
-      "Graphically evaluate Boyle's constant P·V = k."
+    "thumbnail_url": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Boyle's Law",
@@ -373,35 +1843,239 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Kinetic Theory",
       "Class 11 Physics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?auto=format&fit=crop&w=800&q=80"
+    "formula": "P · V = k (Constant at room temperature T = 298 K)",
+    "obsCols": [
+      "Atmospheric H (cm Hg)",
+      "Manometer Difference h (cm Hg)",
+      "Total Pressure P = H ± h (cm Hg)",
+      "Air Column Length V (cm)",
+      "P · V Product (cm² Hg)"
     ],
-    "popularity": 88,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1056,
-    "likes": 704,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "75.8 cm Hg",
+        "-15.8 cm Hg",
+        "60.0 cm Hg",
+        "25.0 cm",
+        "1500.0"
+      ],
+      [
+        "75.8 cm Hg",
+        "-5.8 cm Hg",
+        "70.0 cm Hg",
+        "21.4 cm",
+        "1498.0"
+      ],
+      [
+        "75.8 cm Hg",
+        "+0.0 cm Hg",
+        "75.8 cm Hg (Atm)",
+        "19.8 cm",
+        "1500.8"
+      ],
+      [
+        "75.8 cm Hg",
+        "+9.2 cm Hg",
+        "85.0 cm Hg",
+        "17.6 cm",
+        "1496.0"
+      ],
+      [
+        "75.8 cm Hg",
+        "+24.2 cm Hg",
+        "100.0 cm Hg",
+        "15.0 cm",
+        "1500.0"
+      ]
+    ],
+    "interp": [
+      [
+        "Inverse Proportionality",
+        "Pressure P and volume V exhibit strict inverse proportionality (P ∝ 1/V) at constant temperature."
+      ],
+      [
+        "Constant Product P·V",
+        "Product P · V remains constant at 1499 ± 3 cm² Hg across all five hydrostatic compression trials."
+      ],
+      [
+        "Linear P vs 1/V Graph",
+        "A plot of absolute pressure P against reciprocal volume (1/V) yields a straight line passing through origin."
+      ],
+      [
+        "Isothermal Assumption Valid",
+        "Allowing 2 minutes equilibrium between height adjustments prevents adiabatic temperature fluctuations."
+      ]
+    ],
+    "graph": {
+      "title": "Pressure (P) vs Volume (V) Isothermal Hyperbola",
+      "xLabel": "Gas Volume V (cm length)",
+      "yLabel": "Absolute Pressure P (cm Hg)",
+      "points": [
+        [
+          "15.0 cm",
+          100
+        ],
+        [
+          "17.6 cm",
+          85
+        ],
+        [
+          "19.8 cm",
+          75.8
+        ],
+        [
+          "21.4 cm",
+          70
+        ],
+        [
+          "25.0 cm",
+          60
+        ]
+      ]
+    },
+    "views": 1385,
+    "likes": 540,
+    "rating": 4.9
   },
   {
     "id": "dd3ced12-41c0-4ae1-97ea-3597e8c82941",
-    "title": "Precision Measurement via Vernier Caliper and Screw Gauge",
     "slug": "vernier-caliper-screw-gauge-precision-measurement",
+    "title": "Precision Measurement via Vernier Caliper and Screw Gauge",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 11",
     "difficulty": "Beginner",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Measure the internal diameter, external diameter, and depth of a calorimeter using a Vernier Caliper, and measure the diameter of a thin wire using a Micrometer Screw Gauge.",
     "outcome": "Computed least count of Vernier Caliper is 0.01 cm and Screw Gauge is 0.001 cm (10 μm). Volume of cylinder and wire cross-sectional area are measured to 4 significant figures.",
     "materials": [
-      "Standard Vernier Caliper (0.1 mm least count) × 1",
-      "Micrometer Screw Gauge (0.01 mm least count, 50/100 divisions) × 1",
-      "Hollow Metallic Cylinder / Calorimeter with lid × 1",
-      "Thin copper/brass resistance wire sample × 1",
-      "Glass plate / irregular lead shot × 1",
-      "Magnifying glass lens × 1"
+      {
+        "id": "mat-0",
+        "name": "Standard Vernier Caliper (0.1 mm least count)",
+        "qty": 1,
+        "price": 50,
+        "about": "Hardened stainless steel manual Vernier Caliper with ground measurement jaws and depth gauge blade.",
+        "specs": [
+          [
+            "Range",
+            "0 – 150 mm (0 – 15 cm)"
+          ],
+          [
+            "Least Count",
+            "0.02 mm / 0.01 cm"
+          ],
+          [
+            "Construction",
+            "Hardened stainless steel satin chrome finish"
+          ],
+          [
+            "Features",
+            "External jaws, internal nibs, depth blade"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Micrometer Screw Gauge (0.01 mm least count, 50/100 divisions)",
+        "qty": 1,
+        "price": 95,
+        "about": "Cast steel frame external micrometer screw gauge with carbide tipped anvil and spindle.",
+        "specs": [
+          [
+            "Range",
+            "0 – 25 mm"
+          ],
+          [
+            "Pitch",
+            "1.0 mm or 0.5 mm ground spindle screw"
+          ],
+          [
+            "Least Count",
+            "0.01 mm (0.001 cm)"
+          ],
+          [
+            "Ratchet Stop",
+            "Constant-force friction ratchet"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Hollow Metallic Cylinder / Calorimeter with lid",
+        "qty": 1,
+        "price": 140,
+        "about": "Standard test specimens: cylindrical glass calorimeter, fine copper wire, and microscope glass slide.",
+        "specs": [
+          [
+            "Calorimeter",
+            "Borosilicate glass 50 mL"
+          ],
+          [
+            "Wire Specimen",
+            "28 SWG annealed copper wire"
+          ],
+          [
+            "Slide",
+            "75 mm × 25 mm optical glass slide"
+          ],
+          [
+            "Tolerance",
+            "Class A lab standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Thin copper/brass resistance wire sample",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Precision Measurement via Vernier Caliper and Screw Gauge.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Glass plate / irregular lead shot",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Precision Measurement via Vernier Caliper and Screw Gauge.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Magnifying glass lens",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Precision Measurement via Vernier Caliper and Screw Gauge.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Determine the value of one main scale division (MSD) and total Vernier scale divisions (VSD) to calculate Vernier Least Count = 1 MSD - 1 VSD.",
@@ -412,16 +2086,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Switch to the Screw Gauge: determine pitch = distance moved / full rotations and least count = pitch / circular divisions.",
       "Clamp the thin wire between anvil and spindle using the ratchet stop until 3 clicks are heard, and compute mean corrected diameter."
     ],
+    "steps": [
+      {
+        "instruction": "Determine the value of one main scale division (MSD) and total Vernier scale divisions (VSD) to calculate Vernier Least Count = 1 MSD - 1 VSD.",
+        "text": "Determine the value of one main scale division (MSD) and total Vernier scale divisions (VSD) to calculate Vernier Least Count = 1 MSD - 1 VSD.",
+        "observe": "Determine Vernier Least Count: 1 MSD = 1 mm; 10 VSD = 9 MSD => LC = 1 MSD - 1 VSD = 0.1 mm = 0.01 cm.",
+        "safety": "Clean caliper jaws with a soft lint-free cloth to remove dust particles."
+      },
+      {
+        "instruction": "Inspect the instrument with jaws closed to record any positive or negative zero error.",
+        "text": "Inspect the instrument with jaws closed to record any positive or negative zero error.",
+        "observe": "Close jaws gently: verify zero of vernier aligns with zero of main scale (no zero error).",
+        "safety": "Do not overtighten thumb screw when jaws contact each other."
+      },
+      {
+        "instruction": "Place the cylinder between the lower jaws to measure external diameter across three different orientations.",
+        "text": "Place the cylinder between the lower jaws to measure external diameter across three different orientations.",
+        "observe": "Grip cylindrical beaker between external jaws; read MSR = 4.2 cm, 6th vernier division coincides.",
+        "safety": "Clamp locking screw before tilting caliper to read scale."
+      },
+      {
+        "instruction": "Insert upper internal jaws inside the cylinder mouth to measure internal diameter.",
+        "text": "Insert upper internal jaws inside the cylinder mouth to measure internal diameter.",
+        "observe": "Determine Screw Gauge LC: Pitch = 1.0 mm / 1 rev; 100 circular divisions => LC = 1/100 = 0.01 mm = 0.001 cm.",
+        "safety": "Always rotate the spindle using the ratchet stop at the rear, never the thimble body."
+      },
+      {
+        "instruction": "Use the rear depth probe strip to measure the internal depth of the cylinder.",
+        "text": "Use the rear depth probe strip to measure the internal depth of the cylinder.",
+        "observe": "Insert thin wire between stud and anvil; turn ratchet until it clicks three times.",
+        "safety": "Stop turning immediately upon hearing ratchet slip clicks."
+      },
+      {
+        "instruction": "Switch to the Screw Gauge: determine pitch = distance moved / full rotations and least count = pitch / circular divisions.",
+        "text": "Switch to the Screw Gauge: determine pitch = distance moved / full rotations and least count = pitch / circular divisions.",
+        "observe": "CSR = 38 divisions gives wire diameter = 0 mm + (38 × 0.01 mm) = 0.38 mm.",
+        "safety": "Store instruments with jaws slightly separated to prevent rust and thermal binding."
+      },
+      {
+        "instruction": "Clamp the thin wire between anvil and spindle using the ratchet stop until 3 clicks are heard, and compute mean corrected diameter.",
+        "text": "Clamp the thin wire between anvil and spindle using the ratchet stop until 3 clicks are heard, and compute mean corrected diameter."
+      }
+    ],
     "precautions": [
       "Never over-tighten the screw gauge spindle; always use the ratchet head to ensure uniform contact pressure.",
       "Account for zero error with appropriate algebraic sign before reporting final measurements.",
       "Take measurements at multiple positions and perpendicular diameters to eliminate non-circularity errors.",
       "Avoid parallax while aligning coinciding Vernier divisions."
     ],
-    "learning_objectives": [
-      "Calculate least count and zero correction for linear and circular vernier mechanisms.",
-      "Handle significant figures, instrumental limits, and random error reduction through averaging.",
-      "Determine physical dimensions and derive 3D geometric volumes."
+    "thumbnail_url": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Measurement",
@@ -430,35 +2145,235 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 11 Physics",
       "Practical Lab"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=800&q=80"
+    "formula": "Total Reading = MSR + (VSR × LC) - Zero Error; LC(Vernier)=0.01 cm, LC(Screw)=0.001 cm",
+    "obsCols": [
+      "Instrument & Object",
+      "Main Scale Reading (MSR)",
+      "Vernier/Circular Division (VSR/CSR)",
+      "Least Count (LC)",
+      "Corrected Dimension (cm)"
     ],
-    "popularity": 91,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1092,
-    "likes": 728,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Vernier: Beaker Ext. Dia.",
+        "4.20 cm",
+        "6 divisions",
+        "0.01 cm",
+        "4.260 cm"
+      ],
+      [
+        "Vernier: Beaker Int. Dia.",
+        "3.80 cm",
+        "4 divisions",
+        "0.01 cm",
+        "3.840 cm"
+      ],
+      [
+        "Vernier: Beaker Depth",
+        "6.50 cm",
+        "3 divisions",
+        "0.01 cm",
+        "6.530 cm"
+      ],
+      [
+        "Screw Gauge: Copper Wire Dia.",
+        "0.00 cm (0 mm)",
+        "38 divisions",
+        "0.001 cm (0.01 mm)",
+        "0.038 cm (0.38 mm)"
+      ],
+      [
+        "Screw Gauge: Glass Plate Thickness",
+        "0.20 cm (2 mm)",
+        "42 divisions",
+        "0.001 cm (0.01 mm)",
+        "0.242 cm (2.42 mm)"
+      ]
+    ],
+    "interp": [
+      [
+        "Order of Magnitude Precision",
+        "Screw gauge provides 10× finer precision (0.001 cm = 10 μm) compared to Vernier caliper (0.01 cm = 100 μm)."
+      ],
+      [
+        "Zero Error Compensation",
+        "Accurate algebraic subtraction of instrument zero error prevents systematic dimensional bias."
+      ],
+      [
+        "Internal/External Jaw Utility",
+        "Vernier upper jaws reliably measure internal diameters without parallax line-of-sight obstruction."
+      ],
+      [
+        "Ratchet Mechanism Reliability",
+        "Using the screw gauge friction ratchet prevents specimen compression and micrometer thread stripping."
+      ]
+    ],
+    "graph": {
+      "title": "Circular Scale Divisions vs Linear Displacement (Pitch Calibration)",
+      "xLabel": "Circular Scale Rotation (Divisions)",
+      "yLabel": "Spindle Displacement (mm)",
+      "points": [
+        [
+          "0 div",
+          0
+        ],
+        [
+          "25 div",
+          0.25
+        ],
+        [
+          "50 div",
+          0.5
+        ],
+        [
+          "75 div",
+          0.75
+        ],
+        [
+          "100 div (1 rev)",
+          1
+        ]
+      ]
+    },
+    "views": 1422,
+    "likes": 558,
+    "rating": 4.9
   },
   {
     "id": "1b58e6d5-a9ee-475c-b102-10e0ef321418",
-    "title": "Velocity of Sound in Air using Resonance Tube",
     "slug": "resonance-tube-velocity-of-sound",
+    "title": "Velocity of Sound in Air using Resonance Tube",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 11",
     "difficulty": "Intermediate",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Determine the speed of sound in air at room temperature using a resonance column tube apparatus and a set of standard tuning forks of known frequencies.",
     "outcome": "First and second resonance air column lengths yield sound velocity v = 2f(l2 - l1) = 343.4 m/s at 22°C, matching theoretical acoustic speed within 0.8% error.",
     "materials": [
-      "Resonance Tube Apparatus with water reservoir and pinch cock × 1",
-      "Set of Tuning Forks of known frequencies (256 Hz, 384 Hz, 480 Hz, 512 Hz) × 1 set",
-      "Rubber Striking Pad / Mallet × 1",
-      "Laboratory Thermometer (0-50°C) × 1",
-      "Metre scale & Plumb line × 1",
-      "Water jug × 1"
+      {
+        "id": "mat-0",
+        "name": "Resonance Tube Apparatus with water reservoir and pinch cock",
+        "qty": 1,
+        "price": 50,
+        "about": "One-meter vertical borosilicate glass tube mounted on polished wooden stand with millimeter scale and leveling screws.",
+        "specs": [
+          [
+            "Tube Length",
+            "100 cm (1 meter)"
+          ],
+          [
+            "Internal Diameter",
+            "25 mm precision bore"
+          ],
+          [
+            "Scale",
+            "0 – 100 cm graduated in 1 mm"
+          ],
+          [
+            "Reservoir",
+            "Brass reservoir with fine height adjust clamp"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Set of Tuning Forks of known frequencies (256 Hz, 384 Hz, 480 Hz, 512 Hz)  set",
+        "qty": 1,
+        "price": 95,
+        "about": "Set of 5 matched frequency steel acoustic tuning forks stamped with nominal frequencies.",
+        "specs": [
+          [
+            "Frequencies",
+            "256, 341.3, 384, 480, 512 Hz"
+          ],
+          [
+            "Material",
+            "High-carbon forged acoustic tool steel"
+          ],
+          [
+            "Accuracy",
+            "± 0.2% calibrated at 20°C"
+          ],
+          [
+            "Finish",
+            "Nickel chrome plating"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Rubber Striking Pad / Mallet",
+        "qty": 1,
+        "price": 140,
+        "about": "Hard vulcanized rubber striking block for exciting clean fundamental harmonic vibration.",
+        "specs": [
+          [
+            "Dimensions",
+            "75 mm × 50 mm × 25 mm"
+          ],
+          [
+            "Durometer",
+            "60 Shore A vulcanized rubber"
+          ],
+          [
+            "Base",
+            "Weighted wooden anti-slip base"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Laboratory Thermometer (0-50°C)",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Velocity of Sound in Air using Resonance Tube.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Metre scale & Plumb line",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Velocity of Sound in Air using Resonance Tube.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Water jug",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Velocity of Sound in Air using Resonance Tube.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Level the resonance tube apparatus and fill the reservoir with clean water.",
@@ -469,16 +2384,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Lower the water level further until the sound swells loudly again at the second resonance position (l2 ≈ 3l1).",
       "Calculate velocity v = 2f(l2 - l1) which eliminates end correction (e = (l2 - 3l1)/2). Repeat for two other tuning forks."
     ],
+    "steps": [
+      {
+        "instruction": "Level the resonance tube apparatus and fill the reservoir with clean water.",
+        "text": "Level the resonance tube apparatus and fill the reservoir with clean water.",
+        "observe": "Fill reservoir with clean water; adjust height to bring water meniscus close to top of resonance tube.",
+        "safety": "Clamp water reservoir securely; do not let rubber hose kink or spill."
+      },
+      {
+        "instruction": "Strike the tuning fork of highest frequency (e.g. 512 Hz) against the rubber pad to set its prongs in vibration.",
+        "text": "Strike the tuning fork of highest frequency (e.g. 512 Hz) against the rubber pad to set its prongs in vibration.",
+        "observe": "Strike 512 Hz tuning fork gently on a soft rubber strike pad; hold vibrating prongs horizontally over tube mouth.",
+        "safety": "Never strike tuning fork against hard metal or table corners; this damages harmonic calibration."
+      },
+      {
+        "instruction": "Hold the vibrating prongs horizontally about 1 cm above the open end of the glass resonance tube.",
+        "text": "Hold the vibrating prongs horizontally about 1 cm above the open end of the glass resonance tube.",
+        "observe": "Lower water level gradually while listening attentively; loud acoustic resonance roar occurs at l1 = 16.0 cm.",
+        "safety": "Do not touch vibrating tuning fork prongs against the glass tube rim."
+      },
+      {
+        "instruction": "Slowly lower the water level by releasing the pinch cock until a loud sound (first resonance) is distinctly heard.",
+        "text": "Slowly lower the water level by releasing the pinch cock until a loud sound (first resonance) is distinctly heard.",
+        "observe": "Continue lowering water column until second loud resonance maximum booms at l2 = 49.5 cm.",
+        "safety": "Verify water column surface is stationary before taking length reading on millimeter scale."
+      },
+      {
+        "instruction": "Pinpoint the water meniscus reading for first resonance length (l1).",
+        "text": "Pinpoint the water meniscus reading for first resonance length (l1).",
+        "observe": "Difference l2 - l1 = 33.5 cm gives half-wavelength λ/2; full wavelength λ = 0.670 m.",
+        "safety": "Dry tuning forks immediately after use with clean cloth to prevent rust."
+      },
+      {
+        "instruction": "Lower the water level further until the sound swells loudly again at the second resonance position (l2 ≈ 3l1).",
+        "text": "Lower the water level further until the sound swells loudly again at the second resonance position (l2 ≈ 3l1).",
+        "observe": "Calculated speed v = 2 × 512 × 0.335 = 343.04 m/s matches standard acoustic velocity at 20°C.",
+        "safety": "Empty water reservoir before packing away apparatus."
+      },
+      {
+        "instruction": "Calculate velocity v = 2f(l2 - l1) which eliminates end correction (e = (l2 - 3l1)/2). Repeat for two other tuning forks.",
+        "text": "Calculate velocity v = 2f(l2 - l1) which eliminates end correction (e = (l2 - 3l1)/2). Repeat for two other tuning forks."
+      }
+    ],
     "precautions": [
       "Never strike the tuning fork on metallic or hard surfaces; use only the rubber pad.",
       "Hold vibrating prongs horizontally along the tube diameter without touching the glass rim.",
       "Locate the resonance peak carefully by raising and lowering the water meniscus around the maximum.",
       "Record room air temperature to correct the experimental sound velocity to 0°C (v0 = vt - 0.61t)."
     ],
-    "learning_objectives": [
-      "Understand stationary sound waves, nodes, and antinodes in closed organ pipes.",
-      "Apply resonance principles to eliminate tube end-correction errors experimentally.",
-      "Relate acoustic velocity, wave frequency, and wavelength: v = f·λ."
+    "thumbnail_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Acoustics",
@@ -487,36 +2443,256 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Waves",
       "Class 11 Physics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80"
+    "formula": "v = 2 · f · (l2 - l1) = 2 · 512 Hz · (0.495 m - 0.160 m) = 343.04 m/s (at 20°C)",
+    "obsCols": [
+      "Tuning Fork Frequency f (Hz)",
+      "First Resonance Length l1 (cm)",
+      "Second Resonance Length l2 (cm)",
+      "l2 - l1 (cm)",
+      "Sound Velocity v = 2f(l2-l1) (m/s)"
     ],
-    "popularity": 89,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1068,
-    "likes": 712,
-    "rating": 5
+    "obsRows": [
+      [
+        "512 Hz",
+        "16.0 cm",
+        "49.5 cm",
+        "33.5 cm",
+        "343.04 m/s"
+      ],
+      [
+        "480 Hz",
+        "17.1 cm",
+        "52.8 cm",
+        "35.7 cm",
+        "342.72 m/s"
+      ],
+      [
+        "384 Hz",
+        "21.5 cm",
+        "66.1 cm",
+        "44.6 cm",
+        "342.53 m/s"
+      ],
+      [
+        "341.3 Hz",
+        "24.2 cm",
+        "74.4 cm",
+        "50.2 cm",
+        "342.66 m/s"
+      ],
+      [
+        "256 Hz",
+        "32.3 cm",
+        "99.3 cm",
+        "67.0 cm",
+        "343.04 m/s"
+      ]
+    ],
+    "interp": [
+      [
+        "End Correction Elimination",
+        "Subtracting resonance lengths (l2 - l1 = λ/2) completely eliminates fictitious antinode end correction error e."
+      ],
+      [
+        "Harmonic Relationship Verified",
+        "Second resonance occurs at approximately 3× the first resonance column length (l2 ≈ 3·l1)."
+      ],
+      [
+        "Temperature Normalized Speed",
+        "Measured velocity v = 343.0 m/s at 20°C normalizes via v0 = v / √(1 + t/273) to 331.3 m/s at 0°C."
+      ],
+      [
+        "Acoustic Antinode Position",
+        "Calculated end correction e = (l2 - 3·l1)/2 = 0.75 cm matches theoretical 0.3 × tube inner diameter."
+      ]
+    ],
+    "graph": {
+      "title": "Reciprocal Frequency (1/f) vs First Resonance Length (l1)",
+      "xLabel": "Reciprocal Frequency 1/f (×10⁻³ s)",
+      "yLabel": "Resonance Length l1 (m)",
+      "points": [
+        [
+          "1.95 (512 Hz)",
+          0.16
+        ],
+        [
+          "2.08 (480 Hz)",
+          0.171
+        ],
+        [
+          "2.60 (384 Hz)",
+          0.215
+        ],
+        [
+          "2.93 (341 Hz)",
+          0.242
+        ],
+        [
+          "3.91 (256 Hz)",
+          0.323
+        ]
+      ]
+    },
+    "views": 1459,
+    "likes": 576,
+    "rating": 4.9
   },
   {
     "id": "2357c24d-bf7c-4f62-bad3-726dcaadb9f8",
-    "title": "Internal Resistance of Primary Cell via Potentiometer",
     "slug": "internal-resistance-primary-cell-potentiometer",
+    "title": "Internal Resistance of Primary Cell via Potentiometer",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 12",
     "difficulty": "Advanced",
+    "duration": "60 Mins",
     "duration_minutes": 60,
     "description": "Determine the internal resistance (r) of a primary Leclanché/Daniel cell using a high-precision 10-wire electrical potentiometer.",
     "outcome": "Internal resistance r = R(l1 - l2)/l2 of the primary Leclanché cell is measured accurately as 1.45 Ω ± 0.05 Ω without drawing active current during open-circuit null balance.",
     "materials": [
-      "10-Wire Potentiometer board with uniform resistance wires × 1",
-      "Storage Accumulator (Lead-Acid / Regulated 4V DC supply) × 1",
-      "Leclanché Cell / Dry Cell (primary test cell) × 1",
-      "Sensitive Galvanometer with high resistance protection × 1",
-      "Standard Resistance Box (1 to 20 Ω) × 1",
-      "High Resistance Box (10,000 Ω) × 1",
-      "Jockey, 2 one-way plug keys, and connecting wires × 1 set"
+      {
+        "id": "mat-0",
+        "name": "10-Wire Potentiometer board with uniform resistance wires",
+        "qty": 1,
+        "price": 50,
+        "about": "Ten-meter constantan wire potentiometer mounted on polished wooden board with brass return strips.",
+        "specs": [
+          [
+            "Total Wire Length",
+            "10.0 meters (10 × 100 cm segments)"
+          ],
+          [
+            "Wire Composition",
+            "Manganin / Constantan (uniform diameter)"
+          ],
+          [
+            "Meter Scales",
+            "Double scale 0 – 100 cm and 100 – 0 cm"
+          ],
+          [
+            "Base Dimensions",
+            "115 cm × 25 cm teakwood base"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Storage Accumulator (Lead-Acid / Regulated 4V DC supply)",
+        "qty": 1,
+        "price": 95,
+        "about": "Leclanché primary cell with porous pot, carbon electrode, and zinc rod in ammonium chloride electrolyte.",
+        "specs": [
+          [
+            "EMF",
+            "1.45 Volts"
+          ],
+          [
+            "Depolarizer",
+            "Manganese dioxide / carbon granules in porous pot"
+          ],
+          [
+            "Electrolyte",
+            "20% Ammonium chloride (NH4Cl) solution"
+          ],
+          [
+            "Jar",
+            "Heavy glass square jar"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Leclanché Cell / Dry Cell (primary test cell)",
+        "qty": 1,
+        "price": 140,
+        "about": "Heavy-duty 2V lead-acid accumulator or regulated low-ripple electronic battery eliminator.",
+        "specs": [
+          [
+            "Voltage",
+            "2.0 V DC constant output"
+          ],
+          [
+            "Capacity",
+            "10 Ah low-discharge rating"
+          ],
+          [
+            "Voltage Stability",
+            "± 0.05% over 1 hour run"
+          ],
+          [
+            "Terminals",
+            "Heavy insulated screw posts"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Sensitive Galvanometer with high resistance protection",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Internal Resistance of Primary Cell via Potentiometer.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Standard Resistance Box (1 to 20 Ω)",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Internal Resistance of Primary Cell via Potentiometer.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "High Resistance Box (10,000 Ω)",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Internal Resistance of Primary Cell via Potentiometer.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Jockey, 2 one-way plug keys, and connecting wires  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Internal Resistance of Primary Cell via Potentiometer.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Connect the auxiliary driver circuit: battery positive to terminal A of potentiometer, negative through rheostat and key K1 to terminal B.",
@@ -527,16 +2703,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Find the new balancing length l2 where null deflection is achieved (terminal voltage balance).",
       "Compute internal resistance r = R × (l1 - l2) / l2 across 5 different shunt resistor values (2Ω, 4Ω, 6Ω, 8Ω, 10Ω)."
     ],
+    "steps": [
+      {
+        "instruction": "Connect the auxiliary driver circuit: battery positive to terminal A of potentiometer, negative through rheostat and key K1 to terminal B.",
+        "text": "Connect the auxiliary driver circuit: battery positive to terminal A of potentiometer, negative through rheostat and key K1 to terminal B.",
+        "observe": "Assemble primary potentiometer circuit with 2V accumulator, rheostat, and key across 10-meter wire.",
+        "safety": "Ensure battery polarity is strictly aligned: positive of accumulator and positive of test cell both connect to terminal A."
+      },
+      {
+        "instruction": "Connect primary cell positive to terminal A, negative to galvanometer, high resistance, and jockey.",
+        "text": "Connect primary cell positive to terminal A, negative to galvanometer, high resistance, and jockey.",
+        "observe": "Test dual-end deflection: jockey at 0 cm and 1000 cm produces equal and opposite galvanometer swings.",
+        "safety": "If deflection is unidirectional, check whether driver battery voltage is lower than test cell EMF."
+      },
+      {
+        "instruction": "Connect a shunt resistance box R in parallel across the primary cell via key K2.",
+        "text": "Connect a shunt resistance box R in parallel across the primary cell via key K2.",
+        "observe": "With shunt key K2 open (open circuit), slide jockey to find null balance length l1 = 760.0 cm.",
+        "safety": "Tap jockey gently without scraping wire surface."
+      },
+      {
+        "instruction": "Keep K2 open (cell on open circuit). Touch jockey along wires to find balancing length l1 where galvanometer deflection is zero (emf balance).",
+        "text": "Keep K2 open (cell on open circuit). Touch jockey along wires to find balancing length l1 where galvanometer deflection is zero (emf balance).",
+        "observe": "Plug shunt key K2 with R = 5.0 Ω in resistance box; null point shifts backward to l2 = 580.0 cm.",
+        "safety": "Close shunt key K2 only momentarily during balance check to avoid rapid cell polarization."
+      },
+      {
+        "instruction": "Close key K2 with a resistance R = 5 Ω unplugged in the shunt box.",
+        "text": "Close key K2 with a resistance R = 5 Ω unplugged in the shunt box.",
+        "observe": "Repeat with R = 4, 3, 2 Ω; calculate r = R·(l1 - l2)/l2 for each load setting.",
+        "safety": "Unplug main circuit key between trials to conserve battery."
+      },
+      {
+        "instruction": "Find the new balancing length l2 where null deflection is achieved (terminal voltage balance).",
+        "text": "Find the new balancing length l2 where null deflection is achieved (terminal voltage balance).",
+        "observe": "Consistent internal resistance r = 1.55 Ω verifies potentiometric null-method accuracy.",
+        "safety": "Store chemicals and zinc rods of primary cell properly after experiment."
+      },
+      {
+        "instruction": "Compute internal resistance r = R × (l1 - l2) / l2 across 5 different shunt resistor values (2Ω, 4Ω, 6Ω, 8Ω, 10Ω).",
+        "text": "Compute internal resistance r = R × (l1 - l2) / l2 across 5 different shunt resistor values (2Ω, 4Ω, 6Ω, 8Ω, 10Ω)."
+      }
+    ],
     "precautions": [
       "Electromotive force (emf) of the auxiliary driver battery must be strictly greater than that of the test primary cell.",
       "Positive terminals of both the driver battery and primary cell must connect to the same starting terminal (A).",
       "Jockey must never be dragged along potentiometer wires; press lightly to preserve uniform wire diameter.",
       "Ensure balance length l1 > l2 is always observed."
     ],
-    "learning_objectives": [
-      "Understand the zero-current null measurement advantage of potentiometers over voltmeters.",
-      "Distinguish between open-circuit EMF (E) and closed-circuit terminal voltage (V).",
-      "Derive and compute cell internal resistance from balancing lengths."
+    "thumbnail_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Potentiometer",
@@ -545,35 +2762,243 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Physics",
       "Null Method"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80"
+    "formula": "r = R · (l1 - l2) / l2 = 5.0 · (760.0 - 580.0) / 580.0 = 1.55 Ω",
+    "obsCols": [
+      "Shunt Resistance R (Ω)",
+      "Open Circuit Balance l1 (cm)",
+      "Closed Circuit Balance l2 (cm)",
+      "(l1 - l2) (cm)",
+      "Internal Resistance r = R(l1-l2)/l2 (Ω)"
     ],
-    "popularity": 93,
-    "status": "published",
-    "duration": "60 Mins",
-    "views": 1116,
-    "likes": 744,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "2.0 Ω",
+        "760.0 cm",
+        "425.0 cm",
+        "335.0 cm",
+        "1.58 Ω"
+      ],
+      [
+        "3.0 Ω",
+        "760.0 cm",
+        "498.0 cm",
+        "262.0 cm",
+        "1.58 Ω"
+      ],
+      [
+        "4.0 Ω",
+        "760.0 cm",
+        "545.0 cm",
+        "215.0 cm",
+        "1.58 Ω"
+      ],
+      [
+        "5.0 Ω",
+        "760.0 cm",
+        "580.0 cm",
+        "180.0 cm",
+        "1.55 Ω"
+      ],
+      [
+        "6.0 Ω",
+        "760.0 cm",
+        "605.0 cm",
+        "155.0 cm",
+        "1.54 Ω"
+      ]
+    ],
+    "interp": [
+      [
+        "Zero Current Advantage",
+        "Potentiometer draws zero current at null balance, measuring true electromotive force (EMF) without voltmeter loading error."
+      ],
+      [
+        "Terminal Voltage Drop",
+        "Introducing shunt resistance R causes cell internal current, reducing terminal voltage V and shifting balance length from l1 to l2."
+      ],
+      [
+        "Constant Internal Resistance",
+        "Mean internal resistance of Leclanché/Daniel cell r = 1.56 ± 0.02 Ω across different external load currents."
+      ],
+      [
+        "Driving Cell Condition",
+        "Auxiliary accumulator EMF (> 2.0 V) strictly exceeds test cell EMF (1.45 V), ensuring balance points lie within the 10m wire length."
+      ]
+    ],
+    "graph": {
+      "title": "Reciprocal Shunt Resistance (1/R) vs Reciprocal Balance Length (1/l2)",
+      "xLabel": "Reciprocal Shunt 1/R (Ω⁻¹)",
+      "yLabel": "Reciprocal Balance Length 1/l2 (×10⁻³ cm⁻¹)",
+      "points": [
+        [
+          "0.0 Ω⁻¹ (Open)",
+          1.31
+        ],
+        [
+          "0.167 Ω⁻¹ (6Ω)",
+          1.65
+        ],
+        [
+          "0.200 Ω⁻¹ (5Ω)",
+          1.72
+        ],
+        [
+          "0.250 Ω⁻¹ (4Ω)",
+          1.83
+        ],
+        [
+          "0.333 Ω⁻¹ (3Ω)",
+          2.01
+        ],
+        [
+          "0.500 Ω⁻¹ (2Ω)",
+          2.35
+        ]
+      ]
+    },
+    "views": 1496,
+    "likes": 594,
+    "rating": 4.9
   },
   {
     "id": "707975d7-5803-4976-a257-02e6e9b8f8c4",
-    "title": "Faraday's Law of Electromagnetic Induction",
     "slug": "faradays-law-electromagnetic-induction-coil",
+    "title": "Faraday's Law of Electromagnetic Induction",
     "subject": "Physics",
     "subject_slug": "physics",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Investigate electromagnetic induction by demonstrating that relative motion between a bar magnet and a solenoid coil induces an electromotive force (EMF) and current according to Faraday's Law.",
     "outcome": "Induced voltage is directly proportional to the rate of change of magnetic flux (dΦ/dt) and number of turns (N). Deflection reverses when magnet polarity or direction is reversed, verifying Lenz's Law.",
     "materials": [
-      "Insulated Copper Solenoid Coils (100 turns, 500 turns, 1000 turns) × 1 set",
-      "Strong Neodymium Bar Magnets (N-S marked) × 2",
-      "Center-zero Micro-Galvanometer (±30 divisions) × 1",
-      "Connecting Wires with banana/alligator clips × 1 set",
-      "Soft iron core rod × 1",
-      "Digital Multimeter / Oscilloscope (optional for waveform visualization) × 1"
+      {
+        "id": "mat-0",
+        "name": "Insulated Copper Solenoid Coils (100 turns, 500 turns, 1000 turns)  set",
+        "qty": 1,
+        "price": 50,
+        "about": "Induction coil wound with 200/500 turns of enamelled copper wire on hollow bakelite cylinder.",
+        "specs": [
+          [
+            "Turns",
+            "200 & 500 turns tapped"
+          ],
+          [
+            "Wire Gauge",
+            "26 SWG enamelled copper wire"
+          ],
+          [
+            "Hollow Core Diameter",
+            "30 mm clear bore for magnet entry"
+          ],
+          [
+            "Terminals",
+            "4 mm color-coded brass terminals"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Strong Neodymium Bar Magnets (N-S marked)",
+        "qty": 2,
+        "price": 95,
+        "about": "High-strength Alnico cylindrical bar magnet with painted North and South magnetic poles.",
+        "specs": [
+          [
+            "Dimensions",
+            "100 mm length × 12.5 mm diameter"
+          ],
+          [
+            "Material",
+            "Alnico V permanent magnet alloy"
+          ],
+          [
+            "Field Strength",
+            "0.15 Tesla at pole surface"
+          ],
+          [
+            "Keepers",
+            "Soft iron keeper bars included"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Center-zero Micro-Galvanometer (±30 divisions)",
+        "qty": 1,
+        "price": 140,
+        "about": "High-sensitivity centre-zero moving coil galvanometer with anti-parallax mirror dial.",
+        "specs": [
+          [
+            "Scale",
+            "30 – 0 – 30 divisions"
+          ],
+          [
+            "Sensitivity",
+            "20 μA / division"
+          ],
+          [
+            "Internal Resistance",
+            "75 Ω"
+          ],
+          [
+            "Coil Suspension",
+            "Phosphor bronze ribbon suspended"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Connecting Wires with banana/alligator clips  set",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Faraday's Law of Electromagnetic Induction.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Soft iron core rod",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Faraday's Law of Electromagnetic Induction.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Digital Multimeter / Oscilloscope (optional for waveform visualization)",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Faraday's Law of Electromagnetic Induction.",
+        "specs": [
+          [
+            "Category",
+            "Physics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Connect the terminals of the 500-turn coil directly to the center-zero galvanometer without any battery in the circuit.",
@@ -584,16 +3009,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Repeat with the South pole entering first: observe deflection opposite to the North pole entry.",
       "Vary insertion speed and switch to the 1000-turn coil and soft-iron core to observe proportionally larger deflections."
     ],
+    "steps": [
+      {
+        "instruction": "Connect the terminals of the 500-turn coil directly to the center-zero galvanometer without any battery in the circuit.",
+        "text": "Connect the terminals of the 500-turn coil directly to the center-zero galvanometer without any battery in the circuit.",
+        "observe": "Connect 200-turn insulated copper coil directly to centre-zero galvanometer in a single closed circuit without any external battery.",
+        "safety": "Cover bare terminal connections with electrical insulating sleeve."
+      },
+      {
+        "instruction": "Hold the bar magnet at rest inside the coil and observe the galvanometer needle (indicates strictly 0 deflection).",
+        "text": "Hold the bar magnet at rest inside the coil and observe the galvanometer needle (indicates strictly 0 deflection).",
+        "observe": "Hold powerful bar magnet stationary inside hollow coil core; needle stays exactly at zero division.",
+        "safety": "Keep magnet away from smartwatches, smartphones, and debit cards."
+      },
+      {
+        "instruction": "Thrust the North pole of the magnet quickly into the coil: note the instantaneous deflection to the right.",
+        "text": "Thrust the North pole of the magnet quickly into the coil: note the instantaneous deflection to the right.",
+        "observe": "Thrust North pole into coil rapidly: needle swings sharply to +18 divisions before returning to zero.",
+        "safety": "Do not strike magnet against fragile coil interior walls."
+      },
+      {
+        "instruction": "Hold the magnet stationary inside: needle returns to zero immediately.",
+        "text": "Hold the magnet stationary inside: needle returns to zero immediately.",
+        "observe": "Move magnet slowly: needle deflects only +4 divisions, proving EMF depends on speed of motion.",
+        "safety": "Perform repeated strokes with consistent manual velocity."
+      },
+      {
+        "instruction": "Withdraw the North pole rapidly from the coil: needle deflects in the opposite direction (left).",
+        "text": "Withdraw the North pole rapidly from the coil: needle deflects in the opposite direction (left).",
+        "observe": "Pull North pole out: needle deflects in opposite direction (-18 divisions), demonstrating Lenz's Law.",
+        "safety": "Maintain stable workbench without shaking galvanometer casing."
+      },
+      {
+        "instruction": "Repeat with the South pole entering first: observe deflection opposite to the North pole entry.",
+        "text": "Repeat with the South pole entering first: observe deflection opposite to the North pole entry.",
+        "observe": "Flip to South pole and insert rapidly: deflection reverses sign compared to North pole insertion.",
+        "safety": "Store bar magnets with keeper plates across poles to preserve magnetic strength."
+      },
+      {
+        "instruction": "Vary insertion speed and switch to the 1000-turn coil and soft-iron core to observe proportionally larger deflections.",
+        "text": "Vary insertion speed and switch to the 1000-turn coil and soft-iron core to observe proportionally larger deflections."
+      }
+    ],
     "precautions": [
       "Keep powerful neodymium magnets away from electronic smartwatches, credit cards, and computers.",
       "Ensure coil connection wires do not move or flex during magnet thrusts to avoid contact noise.",
       "Use center-zero galvanometer with appropriate sensitivity to prevent pointer slamming against limits.",
       "Perform trials with uniform deliberate speed strokes."
     ],
-    "learning_objectives": [
-      "Formulate Faraday's Law: ε = -N(dΦ/dt).",
-      "Verify Lenz's Law of conservation of energy in electromagnetic systems.",
-      "Analyze factors influencing induced EMF: magnetic field strength, coil turns, and relative velocity."
+    "thumbnail_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Electromagnetic Induction",
@@ -602,37 +3068,277 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Magnetism",
       "Class 12 Physics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+    "formula": "ε = -N · (dΦ / dt) (Induced EMF proportional to rate of magnetic flux change)",
+    "obsCols": [
+      "Magnet Velocity / Condition",
+      "Direction of Motion",
+      "Galvanometer Deflection (divisions)",
+      "Deflection Direction"
     ],
-    "popularity": 97,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1164,
-    "likes": 776,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Stationary (Rest inside coil)",
+        "No movement",
+        "0 divisions",
+        "Null (Zero current)"
+      ],
+      [
+        "Slow insertion (N-pole in)",
+        "Towards coil",
+        "4 divisions",
+        "Right deflection (+)"
+      ],
+      [
+        "Fast insertion (N-pole in)",
+        "Towards coil",
+        "18 divisions",
+        "Right deflection (+)"
+      ],
+      [
+        "Slow withdrawal (N-pole out)",
+        "Away from coil",
+        "4 divisions",
+        "Left deflection (-)"
+      ],
+      [
+        "Fast withdrawal (N-pole out)",
+        "Away from coil",
+        "18 divisions",
+        "Left deflection (-)"
+      ],
+      [
+        "Fast insertion (S-pole in)",
+        "Towards coil",
+        "18 divisions",
+        "Left deflection (-)"
+      ]
+    ],
+    "interp": [
+      [
+        "Rate of Flux Dependency",
+        "Deflection magnitude increases more than 4× from slow (4 div) to fast (18 div), verifying ε ∝ dΦ/dt."
+      ],
+      [
+        "Relative Motion Essential",
+        "Zero deflection when magnet is stationary inside coil proves that static magnetic flux induces zero EMF."
+      ],
+      [
+        "Lenz's Law Directionality",
+        "Reversing magnet direction or pole orientation flips deflection sign, verifying opposition to flux change (Lenz's Law)."
+      ],
+      [
+        "Turns Proportionality",
+        "Doubling active coil turns from 200 to 400 under identical speed doubles induced galvanometer peak swing."
+      ]
+    ],
+    "graph": {
+      "title": "Magnet Entry Speed vs Induced Deflection",
+      "xLabel": "Relative Velocity State",
+      "yLabel": "Galvanometer Deflection (div)",
+      "points": [
+        [
+          "Stationary",
+          0
+        ],
+        [
+          "Slow (0.2 m/s)",
+          4
+        ],
+        [
+          "Medium (0.6 m/s)",
+          11
+        ],
+        [
+          "Fast (1.2 m/s)",
+          18
+        ],
+        [
+          "Very Fast (2.0 m/s)",
+          26
+        ]
+      ]
+    },
+    "views": 1533,
+    "likes": 612,
+    "rating": 4.9
   },
   {
     "id": "84d65ede-a90d-4c29-9ee6-525648c59dd1",
-    "title": "Acid-Base Titration: Standardizing HCl with 0.1M NaOH",
     "slug": "acid-base-titration-hcl-naoh",
+    "title": "Acid-Base Titration: Standardizing HCl with 0.1M NaOH",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 11",
     "difficulty": "Intermediate",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Determine the strength and molarity of a given Hydrochloric Acid (HCl) solution by titrating against a standard 0.1 M Sodium Hydroxide (NaOH) solution using phenolphthalein indicator.",
     "outcome": "Equivalence point reached when solution turns faintly pink lasting 30 seconds. Concordant burette readings determine the exact concentration of HCl as 0.098 M.",
     "materials": [
-      "Standard 0.1 M NaOH Solution × 250 mL",
-      "Unknown HCl Solution × 250 mL",
-      "Phenolphthalein Indicator Solution × 1 dropper bottle",
-      "Burette (50 mL, 0.1 mL graduation) with clamp stand × 1",
-      "Volumetric Pipette (20 mL or 25 mL) with safety bulb × 1",
-      "Conical Flasks (250 mL) × 2",
-      "Glass Funnel, Wash Bottle with Distilled Water × 1 set",
-      "White porcelain tile × 1"
+      {
+        "id": "mat-0",
+        "name": "Standard 0.1 M NaOH Solution  mL",
+        "qty": 250,
+        "price": 50,
+        "about": "Class A precision 50 mL glass burette with straight bore PTFE stopcock and 0.1 mL graduations.",
+        "specs": [
+          [
+            "Capacity",
+            "50.0 mL"
+          ],
+          [
+            "Tolerance",
+            "± 0.05 mL (Class A)"
+          ],
+          [
+            "Stopcock",
+            "Self-lubricating PTFE stopcock"
+          ],
+          [
+            "Material",
+            "Borosilicate glass 3.3"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Unknown HCl Solution  mL",
+        "qty": 250,
+        "price": 95,
+        "about": "Standardized 0.100 M Sodium Hydroxide secondary standard solution prepared in carbon dioxide free water.",
+        "specs": [
+          [
+            "Concentration",
+            "0.100 M (0.100 N)"
+          ],
+          [
+            "Purity",
+            "AR Analytical Reagent grade"
+          ],
+          [
+            "Standardization",
+            "Calibrated against primary standard potassium hydrogen phthalate"
+          ],
+          [
+            "Bottle",
+            "Airtight amber HDPE container"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Phenolphthalein Indicator Solution  dropper bottle",
+        "qty": 1,
+        "price": 140,
+        "about": "Volumetric one-mark bulb pipette calibrated to deliver (TD) at 20°C.",
+        "specs": [
+          [
+            "Volume",
+            "20.00 mL"
+          ],
+          [
+            "Tolerance",
+            "± 0.03 mL (Class A)"
+          ],
+          [
+            "Marking",
+            "Amber permanent enamel index"
+          ],
+          [
+            "Flow Time",
+            "25 – 30 seconds standard delivery"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Burette (50 mL, 0.1 mL graduation) with clamp stand",
+        "qty": 1,
+        "price": 185,
+        "about": "0.1% Phenolphthalein indicator solution in 95% ethyl alcohol.",
+        "specs": [
+          [
+            "pH Range",
+            "8.2 (colorless) to 10.0 (magenta/pink)"
+          ],
+          [
+            "Solvent",
+            "50% ethanol / 50% distilled water"
+          ],
+          [
+            "Dispenser",
+            "Amber dropper bottle with glass pipette"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Volumetric Pipette (20 mL or 25 mL) with safety bulb",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Acid-Base Titration: Standardizing HCl with 0.1M NaOH.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Conical Flasks (250 mL)",
+        "qty": 2,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Acid-Base Titration: Standardizing HCl with 0.1M NaOH.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Glass Funnel, Wash Bottle with Distilled Water  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Acid-Base Titration: Standardizing HCl with 0.1M NaOH.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-7",
+        "name": "White porcelain tile",
+        "qty": 1,
+        "price": 365,
+        "about": "Standard laboratory apparatus used in Acid-Base Titration: Standardizing HCl with 0.1M NaOH.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Rinse and fill the burette with standard 0.1 M NaOH solution, ensuring no air bubbles in the jet.",
@@ -643,16 +3349,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Add NaOH dropwise while swirling constantly until a single drop imparts a permanent pale pink tint.",
       "Record the final burette reading. Repeat the titration until three concordant burette readings (±0.05 mL) are obtained."
     ],
+    "steps": [
+      {
+        "instruction": "Rinse and fill the burette with standard 0.1 M NaOH solution, ensuring no air bubbles in the jet.",
+        "text": "Rinse and fill the burette with standard 0.1 M NaOH solution, ensuring no air bubbles in the jet.",
+        "observe": "Rinse burette with distilled water, then with standard 0.1 M NaOH solution; ensure jet tip is filled with no air bubbles.",
+        "safety": "Clamp burette vertically; wear safety splash goggles and nitrile gloves."
+      },
+      {
+        "instruction": "Adjust the NaOH meniscus to exactly 0.0 mL with the bottom of the curve touching the mark.",
+        "text": "Adjust the NaOH meniscus to exactly 0.0 mL with the bottom of the curve touching the mark.",
+        "observe": "Adjust meniscus to exactly 0.00 mL with lower curve of clear NaOH solution resting precisely on zero mark.",
+        "safety": "Remove plastic funnel from top of burette before taking initial reading to prevent titrant droplets."
+      },
+      {
+        "instruction": "Rinse a 20 mL pipette with the unknown HCl solution and pipette exactly 20.0 mL into a clean conical flask.",
+        "text": "Rinse a 20 mL pipette with the unknown HCl solution and pipette exactly 20.0 mL into a clean conical flask.",
+        "observe": "Pipette exactly 20.00 mL of unknown HCl into clean 250 mL conical flask; touch pipette tip to inner wall.",
+        "safety": "Never pipette acids by mouth; always use a rubber pipette suction bulb."
+      },
+      {
+        "instruction": "Add 2 to 3 drops of phenolphthalein indicator into the flask (solution remains colorless in acidic medium).",
+        "text": "Add 2 to 3 drops of phenolphthalein indicator into the flask (solution remains colorless in acidic medium).",
+        "observe": "Add 2 drops of phenolphthalein indicator; swirling shows solution remains completely clear and colorless.",
+        "safety": "Do not add excessive indicator (max 2-3 drops) as indicators are weak acids."
+      },
+      {
+        "instruction": "Place the flask on the white tile below the burette tip to observe sharp color transitions.",
+        "text": "Place the flask on the white tile below the burette tip to observe sharp color transitions.",
+        "observe": "Titrate with steady swirling over white tile until a single drop produces permanent faint pink tint lasting 30 s.",
+        "safety": "Control stopcock with left hand around barrel; swirl flask with right hand."
+      },
+      {
+        "instruction": "Add NaOH dropwise while swirling constantly until a single drop imparts a permanent pale pink tint.",
+        "text": "Add NaOH dropwise while swirling constantly until a single drop imparts a permanent pale pink tint.",
+        "observe": "Final reading 19.60 mL; concordant trials confirm exact HCl molarity = 0.0980 M.",
+        "safety": "Neutralize and rinse waste solutions down the sink with excess tap water."
+      },
+      {
+        "instruction": "Record the final burette reading. Repeat the titration until three concordant burette readings (±0.05 mL) are obtained.",
+        "text": "Record the final burette reading. Repeat the titration until three concordant burette readings (±0.05 mL) are obtained."
+      }
+    ],
     "precautions": [
       "Always remove the glass funnel from the top of the burette before taking readings to avoid dripping.",
       "Ensure no trapped air bubble remains in the burette stopcock nozzle.",
       "Do not blow out the last drop remaining in the pipette tip; it is calibrated for retention.",
       "Use only 2-3 drops of indicator; excessive indicator consumes titrant and skews the endpoint."
     ],
-    "learning_objectives": [
-      "Master quantitative volumetric analysis and burette meniscus readings.",
-      "Understand acid-base neutralization stoichiometry: M1·V1 = M2·V2.",
-      "Identify sharp equivalence endpoints using pH indicator transition intervals."
+    "thumbnail_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Titration",
@@ -661,36 +3408,264 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 11 Chemistry",
       "Physical Chemistry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80"
+    "formula": "M(HCl) · V(HCl) = M(NaOH) · V(NaOH) => M(HCl) = (0.100 M × 19.60 mL) / 20.00 mL = 0.0980 M",
+    "obsCols": [
+      "Burette Trial",
+      "Initial Burette (mL)",
+      "Final Burette (mL)",
+      "Volume NaOH Used (mL)",
+      "Concordance Status"
     ],
-    "popularity": 99,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1188,
-    "likes": 792,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Rough Pilot",
+        "0.00 mL",
+        "20.10 mL",
+        "20.10 mL",
+        "Pilot estimate"
+      ],
+      [
+        "Trial 1",
+        "0.00 mL",
+        "19.65 mL",
+        "19.65 mL",
+        "Recorded"
+      ],
+      [
+        "Trial 2",
+        "19.65 mL",
+        "39.25 mL",
+        "19.60 mL",
+        "Concordant"
+      ],
+      [
+        "Trial 3",
+        "0.00 mL",
+        "19.60 mL",
+        "19.60 mL",
+        "Concordant (V = 19.60 mL)"
+      ],
+      [
+        "Trial 4",
+        "19.60 mL",
+        "39.20 mL",
+        "19.60 mL",
+        "Concordant confirmed"
+      ]
+    ],
+    "interp": [
+      [
+        "Sharp Equivalence Point",
+        "A single drop (0.05 mL) of 0.1M NaOH turns the solution from clear to persistent faint pink lasting > 30 seconds."
+      ],
+      [
+        "Concordant Burette Volume",
+        "Three consecutive trials yield identical 19.60 mL titrant volume (±0.05 mL tolerance)."
+      ],
+      [
+        "Precise Molarity Determination",
+        "Calculated molarity of hydrochloric acid is exactly 0.0980 M (strength = 0.0980 × 36.5 = 3.577 g/L)."
+      ],
+      [
+        "Indicator Suitability",
+        "Phenolphthalein pH transition interval (8.2 – 10.0) coincides perfectly with the steep equivalence surge of a strong acid - strong base titration."
+      ]
+    ],
+    "graph": {
+      "title": "Strong Acid - Strong Base Titration pH Curve",
+      "xLabel": "Volume 0.1M NaOH Added (mL)",
+      "yLabel": "Solution pH",
+      "points": [
+        [
+          "0.0 mL",
+          1
+        ],
+        [
+          "10.0 mL",
+          1.5
+        ],
+        [
+          "18.0 mL",
+          2.3
+        ],
+        [
+          "19.5 mL",
+          3.6
+        ],
+        [
+          "19.6 mL (Equiv)",
+          7
+        ],
+        [
+          "19.7 mL",
+          10.4
+        ],
+        [
+          "25.0 mL",
+          12
+        ]
+      ]
+    },
+    "views": 1570,
+    "likes": 630,
+    "rating": 4.9
   },
   {
     "id": "3ca9eef1-351f-4199-9a32-4654a47142f7",
-    "title": "Redox Titration: Potassium Permanganate vs Mohr's Salt",
     "slug": "redox-titration-kmno4-mohrs-salt",
+    "title": "Redox Titration: Potassium Permanganate vs Mohr's Salt",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 12",
     "difficulty": "Advanced",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Determine the molarity and strength of Potassium Permanganate (KMnO4) solution by titrating against a standard 0.05 M solution of Mohr's Salt [FeSO4·(NH4)2SO4·6H2O] in acidic medium.",
     "outcome": "KMnO4 acts as its own self-indicator (Mn7+ reduced to colorless Mn2+). Concordant endpoint reached when excess drop produces a persistent faint pink color, yielding KMnO4 molarity of 0.020 M.",
     "materials": [
-      "Standard 0.05 M Mohr's Salt Solution × 250 mL",
-      "Potassium Permanganate (KMnO4) Solution (~0.02 M) × 250 mL",
-      "Dilute Sulfuric Acid (2 M H2SO4) × 100 mL",
-      "50 mL Burette with Burette Stand × 1",
-      "20 mL Volumetric Pipette × 1",
-      "Conical Flask (250 mL) & White Tile × 1",
-      "Distilled water wash bottle × 1"
+      {
+        "id": "mat-0",
+        "name": "Standard 0.05 M Mohr's Salt Solution  mL",
+        "qty": 250,
+        "price": 50,
+        "about": "Mohr's Salt (Ferrous Ammonium Sulfate hexahydrate, FeSO4·(NH4)2SO4·6H2O) AR primary standard crystals.",
+        "specs": [
+          [
+            "Purity",
+            "≥ 99.5% AR grade"
+          ],
+          [
+            "Formula Weight",
+            "392.14 g/mol"
+          ],
+          [
+            "Appearance",
+            "Light blue-green crystalline powder"
+          ],
+          [
+            "Stability",
+            "Resistant to atmospheric air oxidation"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Potassium Permanganate (KMnO4) Solution (~0.02 M)  mL",
+        "qty": 250,
+        "price": 95,
+        "about": "Potassium Permanganate (KMnO4) volumetric analytical reagent solution.",
+        "specs": [
+          [
+            "Concentration",
+            "Approx 0.02 M / 0.01 M"
+          ],
+          [
+            "Purity",
+            "AR Analytical Grade"
+          ],
+          [
+            "Appearance",
+            "Deep purple / violet liquid"
+          ],
+          [
+            "Storage",
+            "Amber glass bottle away from organic matter"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Dilute Sulfuric Acid (2 M H2SO4)  mL",
+        "qty": 100,
+        "price": 140,
+        "about": "Class A 50 mL burette with white porcelain backing strip for easy meniscus reading.",
+        "specs": [
+          [
+            "Capacity",
+            "50.0 mL"
+          ],
+          [
+            "Graduation",
+            "0.1 mL intervals"
+          ],
+          [
+            "Backing",
+            "Schellbach blue stripe on white enamel"
+          ],
+          [
+            "Tolerance",
+            "± 0.05 mL"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "50 mL Burette with Burette Stand",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Redox Titration: Potassium Permanganate vs Mohr's Salt.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "20 mL Volumetric Pipette",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Redox Titration: Potassium Permanganate vs Mohr's Salt.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Conical Flask (250 mL) & White Tile",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Redox Titration: Potassium Permanganate vs Mohr's Salt.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Distilled water wash bottle",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Redox Titration: Potassium Permanganate vs Mohr's Salt.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Rinse and fill the burette with the dark purple KMnO4 solution. Read the upper meniscus level.",
@@ -701,16 +3676,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Continue titrating until a single drop gives a permanent, distinct pale pink color that persists for 30 seconds.",
       "Note the concordant volume of KMnO4 and apply the redox equation: 5 Fe2+ + MnO4- + 8 H+ -> 5 Fe3+ + Mn2+ + 4 H2O."
     ],
+    "steps": [
+      {
+        "instruction": "Rinse and fill the burette with the dark purple KMnO4 solution. Read the upper meniscus level.",
+        "text": "Rinse and fill the burette with the dark purple KMnO4 solution. Read the upper meniscus level.",
+        "observe": "Prepare standard M/20 (0.05 M) Mohr's salt solution by dissolving 4.90 g in 250 mL volumetric flask with 5 mL dilute H2SO4.",
+        "safety": "Handle concentrated H2SO4 with utmost care; always add acid to water, never water to acid."
+      },
+      {
+        "instruction": "Pipette out 20.0 mL of standard 0.05 M Mohr's salt solution into a clean conical flask.",
+        "text": "Pipette out 20.0 mL of standard 0.05 M Mohr's salt solution into a clean conical flask.",
+        "observe": "Rinse and fill burette with dark purple KMnO4 solution; take initial reading at UPPER meniscus.",
+        "safety": "KMnO4 stains skin and clothes dark brown (MnO2); clean any spills immediately."
+      },
+      {
+        "instruction": "Add one full test tube (~20 mL) of 2 M dilute sulfuric acid into the conical flask to ensure acidic medium.",
+        "text": "Add one full test tube (~20 mL) of 2 M dilute sulfuric acid into the conical flask to ensure acidic medium.",
+        "observe": "Pipette 20.00 mL Mohr's salt solution into conical flask; add one full test tube (~20 mL) of 2M H2SO4.",
+        "safety": "Never use HCl or HNO3 as acid medium; HCl oxidizes to toxic Cl2 gas and HNO3 is an oxidizing agent."
+      },
+      {
+        "instruction": "No external indicator is needed since KMnO4 is a self-indicator.",
+        "text": "No external indicator is needed since KMnO4 is a self-indicator.",
+        "observe": "Titrate at room temperature without heating; purple drops decolorize instantaneously upon swirling.",
+        "safety": "Swirl continuously to ensure complete stoichiometric reduction of permanganate."
+      },
+      {
+        "instruction": "Titrate by adding KMnO4 dropwise while swirling. The purple color discharges immediately upon contact with Fe2+.",
+        "text": "Titrate by adding KMnO4 dropwise while swirling. The purple color discharges immediately upon contact with Fe2+.",
+        "observe": "Endpoint is marked by appearance of permanent faint pink coloration persisting for 30 seconds.",
+        "safety": "Do not overshoot endpoint; stop when a single drop gives the faintest detectable pink hue."
+      },
+      {
+        "instruction": "Continue titrating until a single drop gives a permanent, distinct pale pink color that persists for 30 seconds.",
+        "text": "Continue titrating until a single drop gives a permanent, distinct pale pink color that persists for 30 seconds.",
+        "observe": "Three concordant readings of 20.20 mL yield KMnO4 molarity = 0.0099 M (~0.01 M).",
+        "safety": "Dispose of manganese waste in designated heavy-metal laboratory waste receptacle."
+      },
+      {
+        "instruction": "Note the concordant volume of KMnO4 and apply the redox equation: 5 Fe2+ + MnO4- + 8 H+ -> 5 Fe3+ + Mn2+ + 4 H2O.",
+        "text": "Note the concordant volume of KMnO4 and apply the redox equation: 5 Fe2+ + MnO4- + 8 H+ -> 5 Fe3+ + Mn2+ + 4 H2O."
+      }
+    ],
     "precautions": [
       "For dark purple KMnO4, read the upper meniscus of the burette level at eye line.",
       "Always use dilute H2SO4; never use HCl (oxidized to chlorine) or HNO3 (competing oxidizing agent).",
       "Mohr's salt solution must be freshly prepared to avoid aerial oxidation of Fe2+ to Fe3+.",
       "Keep endpoint strictly to faint pink; dark purple indicates over-titration error."
     ],
-    "learning_objectives": [
-      "Understand oxidation-reduction electron transfer mechanisms in quantitative titrations.",
-      "Recognize self-indicator action of transition metal ions (MnO4-).",
-      "Calculate solution molarity and strength in grams per liter using stoichiometric ratios."
+    "thumbnail_url": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Redox Titration",
@@ -719,36 +3735,256 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Chemistry",
       "CBSE Chemistry Lab"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1603555501671-8f96b3fce8e4?auto=format&fit=crop&w=800&q=80"
+    "formula": "2 KMnO4 + 8 H2SO4 + 10 FeSO4(NH4)2SO4 -> K2SO4 + 2 MnSO4 + 5 Fe2(SO4)3 + 10 (NH4)2SO4 + 8 H2O",
+    "obsCols": [
+      "Burette Trial",
+      "Initial Reading (mL)",
+      "Final Reading (mL)",
+      "Volume KMnO4 Used (mL)",
+      "Concordance"
     ],
-    "popularity": 97,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1164,
-    "likes": 776,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Rough Pilot",
+        "0.00 mL",
+        "20.60 mL",
+        "20.60 mL",
+        "Pilot estimate"
+      ],
+      [
+        "Trial 1",
+        "0.00 mL",
+        "20.20 mL",
+        "20.20 mL",
+        "Recorded"
+      ],
+      [
+        "Trial 2",
+        "20.20 mL",
+        "40.40 mL",
+        "20.20 mL",
+        "Concordant"
+      ],
+      [
+        "Trial 3",
+        "0.00 mL",
+        "20.20 mL",
+        "20.20 mL",
+        "Concordant (V = 20.20 mL)"
+      ],
+      [
+        "Trial 4",
+        "20.20 mL",
+        "40.40 mL",
+        "20.20 mL",
+        "Concordant confirmed"
+      ]
+    ],
+    "interp": [
+      [
+        "Self-Indicator Action",
+        "KMnO4 acts as its own indicator; purple MnO4⁻ reduces to colorless Mn²⁺ until the first excess drop imparts permanent faint pink."
+      ],
+      [
+        "Upper Meniscus Reading",
+        "Because KMnO4 is darkly colored, readings are strictly taken from the upper meniscus edge for both initial and final levels."
+      ],
+      [
+        "Acid Medium Requirement",
+        "One test tube of dilute H2SO4 (approx 20 mL) is essential to prevent formation of brown MnO2 precipitate."
+      ],
+      [
+        "Concordant Volume Molarity",
+        "Concordant titrant volume 20.20 mL gives molarity of KMnO4 solution = M(Mohr)·V(Mohr) / (5 · V_KMnO4) = (0.05 × 20.0) / (5 × 20.20) = 0.0099 M (~0.01 M)."
+      ]
+    ],
+    "graph": {
+      "title": "Redox Potential (ORP mV) vs Volume of KMnO4 Added",
+      "xLabel": "Volume 0.01M KMnO4 (mL)",
+      "yLabel": "Redox Potential (mV vs SHE)",
+      "points": [
+        [
+          "0.0 mL",
+          680
+        ],
+        [
+          "5.0 mL",
+          710
+        ],
+        [
+          "15.0 mL",
+          750
+        ],
+        [
+          "19.5 mL",
+          820
+        ],
+        [
+          "20.2 mL (Equiv)",
+          1250
+        ],
+        [
+          "21.0 mL",
+          1420
+        ],
+        [
+          "25.0 mL",
+          1480
+        ]
+      ]
+    },
+    "views": 1607,
+    "likes": 648,
+    "rating": 4.9
   },
   {
     "id": "0383321d-f48e-46bf-9179-07ed1b46a137",
-    "title": "Systematic Qualitative Salt Analysis: Cation & Anion Detection",
     "slug": "qualitative-salt-analysis-cation-anion",
+    "title": "Systematic Qualitative Salt Analysis: Cation & Anion Detection",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 12",
     "difficulty": "Advanced",
+    "duration": "60 Mins",
     "duration_minutes": 60,
     "description": "Systematically analyze an unknown inorganic salt to identify one acid radical (anion) and one basic radical (cation) through preliminary and confirmatory wet tests.",
     "outcome": "Anion confirmed as Sulfate (SO4²⁻) via white BaSO4 precipitate insoluble in conc. HCl. Cation confirmed as Lead (Pb²⁺) via golden yellow PbI2 spangles test.",
     "materials": [
-      "Unknown Inorganic Salt Sample (Lead Sulfate / Lead Nitrate) × 5 g",
-      "Dilute and Concentrated HCl, H2SO4, and HNO3 × 1 set",
-      "Barium Chloride (BaCl2) Solution × 50 mL",
-      "Potassium Iodide (KI) Solution × 50 mL",
-      "Potassium Chromate (K2CrO4) Solution × 50 mL",
-      "Test Tubes with Stand, Test Tube Holder, & Boiling Tube × 1 set",
-      "Bunsen Burner & Platinum/Nichrome wire for flame test × 1"
+      {
+        "id": "mat-0",
+        "name": "Unknown Inorganic Salt Sample (Lead Sulfate / Lead Nitrate)  g",
+        "qty": 5,
+        "price": 50,
+        "about": "Pure analytical reagent grade Lead Nitrate [Pb(NO3)2] test salt sample.",
+        "specs": [
+          [
+            "Purity",
+            "≥ 99.0% AR grade"
+          ],
+          [
+            "Heavy Metal",
+            "Standard group analysis reference"
+          ],
+          [
+            "Physical State",
+            "White crystalline solid"
+          ],
+          [
+            "Packaging",
+            "Polyethylene screw-cap bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Dilute and Concentrated HCl, H2SO4, and HNO3  set",
+        "qty": 1,
+        "price": 95,
+        "about": "Set of diagnostic analytical chemical reagents in dropper bottles.",
+        "specs": [
+          [
+            "Reagents",
+            "Dilute HCl (2M), BaCl2 (0.1M), KI (0.1M), K2CrO4 (0.1M)"
+          ],
+          [
+            "Bottles",
+            "60 mL amber glass dropper bottles with vinyl teats"
+          ],
+          [
+            "Purity",
+            "Reagent Grade"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Barium Chloride (BaCl2) Solution  mL",
+        "qty": 50,
+        "price": 140,
+        "about": "Hard glass borosilicate test tubes and wooden test tube rack with peg drying stand.",
+        "specs": [
+          [
+            "Tube Size",
+            "15 mm × 150 mm rimless culture tubes"
+          ],
+          [
+            "Material",
+            "Borosilicate glass 3.3 thermal shock resistant"
+          ],
+          [
+            "Rack",
+            "6-place polished hardwood rack with drying pins"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Potassium Iodide (KI) Solution  mL",
+        "qty": 50,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Systematic Qualitative Salt Analysis: Cation & Anion Detection.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Potassium Chromate (K2CrO4) Solution  mL",
+        "qty": 50,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Systematic Qualitative Salt Analysis: Cation & Anion Detection.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Test Tubes with Stand, Test Tube Holder, & Boiling Tube  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Systematic Qualitative Salt Analysis: Cation & Anion Detection.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Bunsen Burner & Platinum/Nichrome wire for flame test",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Systematic Qualitative Salt Analysis: Cation & Anion Detection.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Preliminary physical examination: record salt color, crystalline/amorphous state, and odor.",
@@ -759,16 +3995,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Prepare original solution (O.S.) for cation group separation: add dil. HCl to precipitate Group I (Pb²⁺ as white PbCl2).",
       "Boil PbCl2 with water and divide: add KI solution to observe bright yellow PbI2 precipitation forming golden spangles upon cooling."
     ],
+    "steps": [
+      {
+        "instruction": "Preliminary physical examination: record salt color, crystalline/amorphous state, and odor.",
+        "text": "Preliminary physical examination: record salt color, crystalline/amorphous state, and odor.",
+        "observe": "Record physical appearance: crystalline white powder without odor dissolves completely in warm distilled water.",
+        "safety": "Never taste laboratory chemicals; use clean spatula to handle salt crystals."
+      },
+      {
+        "instruction": "Dry heating test: heat a pinch of salt in a dry test tube; observe decrepitation, sublimation, or gas evolution.",
+        "text": "Dry heating test: heat a pinch of salt in a dry test tube; observe decrepitation, sublimation, or gas evolution.",
+        "observe": "Treat salt with dilute H2SO4: no evolution of CO2, H2S, or NO2 gas eliminates Group 1 anions.",
+        "safety": "Point test tube mouth away from yourself and neighboring students."
+      },
+      {
+        "instruction": "Flame test: prepare a paste with conc. HCl on a nichrome wire loop and introduce into non-luminous flame.",
+        "text": "Flame test: prepare a paste with conc. HCl on a nichrome wire loop and introduce into non-luminous flame.",
+        "observe": "Add BaCl2 to salt solution: dense white precipitate of BaSO4 forms; remains insoluble in concentrated HCl.",
+        "safety": "Handle concentrated mineral acids in fume hood."
+      },
+      {
+        "instruction": "Anion detection: test salt with dil. H2SO4 (carbonate/sulfite group), then conc. H2SO4 (chloride/nitrate group).",
+        "text": "Anion detection: test salt with dil. H2SO4 (carbonate/sulfite group), then conc. H2SO4 (chloride/nitrate group).",
+        "observe": "To original salt solution add dilute HCl: curdy white precipitate forms, indicating Group I cation (Pb²⁺).",
+        "safety": "Wash dropper immediately after transferring reagent."
+      },
+      {
+        "instruction": "Wet test for sulfate: dissolve salt in water, add BaCl2 solution to obtain a thick white BaSO4 precipitate.",
+        "text": "Wet test for sulfate: dissolve salt in water, add BaCl2 solution to obtain a thick white BaSO4 precipitate.",
+        "observe": "Boil white precipitate with distilled water and add KI solution: bright golden-yellow precipitate of PbI2 appears.",
+        "safety": "Use test tube holder while heating; boil gently without bumping."
+      },
+      {
+        "instruction": "Prepare original solution (O.S.) for cation group separation: add dil. HCl to precipitate Group I (Pb²⁺ as white PbCl2).",
+        "text": "Prepare original solution (O.S.) for cation group separation: add dil. HCl to precipitate Group I (Pb²⁺ as white PbCl2).",
+        "observe": "Cool yellow solution under cold tap: breathtaking golden spangles crystallize and glitter under light.",
+        "safety": "Lead salts are toxic heavy metals; collect waste in designated heavy metal disposal bottle."
+      },
+      {
+        "instruction": "Boil PbCl2 with water and divide: add KI solution to observe bright yellow PbI2 precipitation forming golden spangles upon cooling.",
+        "text": "Boil PbCl2 with water and divide: add KI solution to observe bright yellow PbI2 precipitation forming golden spangles upon cooling."
+      }
+    ],
     "precautions": [
       "Always add concentrated acids dropwise along the inner wall of the test tube; never look down into the tube.",
       "Never point the mouth of a heated boiling tube towards yourself or neighboring students.",
       "Wash nichrome loop with conc. HCl until it produces no persistent color in the flame before testing.",
       "Use clean test tubes rinsed with distilled water for confirmatory wet tests."
     ],
-    "learning_objectives": [
-      "Master systematic qualitative scheme of cation group separation (Groups 0 to VI).",
-      "Understand selective precipitation through solubility product (Ksp) and common ion effect.",
-      "Formulate ionic reaction equations for analytical confirmatory tests."
+    "thumbnail_url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Salt Analysis",
@@ -777,36 +4054,254 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Lab",
       "CBSE Practicals"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=800&q=80"
+    "formula": "Pb(NO3)2 + 2 KI -> PbI2↓ (Golden Yellow Spangles) + 2 KNO3; BaCl2 + SO4²⁻ -> BaSO4↓ (White ppt)",
+    "obsCols": [
+      "Test Performed",
+      "Experimental Procedure",
+      "Observation",
+      "Inference / Confirmation"
     ],
-    "popularity": 96,
-    "status": "published",
-    "duration": "60 Mins",
-    "views": 1152,
-    "likes": 768,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Preliminary Physical",
+        "Color, state, odor, and solubility in water",
+        "White crystalline powder, odorless, soluble",
+        "Absence of Cu²⁺, Fe³⁺, Co²⁺, Ni²⁺; Salt is water soluble"
+      ],
+      [
+        "Anion Dry Test",
+        "Salt + dilute H2SO4 in dry test tube",
+        "No brisk effervescence, no gas evolved",
+        "Absence of CO3²⁻, S²⁻, SO3²⁻, NO2⁻"
+      ],
+      [
+        "Sulfate Confirmation",
+        "Salt solution + BaCl2 followed by dilute HCl",
+        "Dense white precipitate insoluble in conc. HCl",
+        "Confirms Sulfate ion (SO4²⁻)"
+      ],
+      [
+        "Cation Group I Test",
+        "Salt solution + dilute HCl",
+        "White precipitate forms immediately",
+        "Group I cation present (Pb²⁺ indicated)"
+      ],
+      [
+        "Lead Confirmation",
+        "Boil ppt in water, add Potassium Iodide (KI)",
+        "Brilliant golden yellow precipitate soluble in hot water, re-crystallizes as golden spangles",
+        "Confirms Lead cation (Pb²⁺)"
+      ]
+    ],
+    "interp": [
+      [
+        "Group I Cation Confirmed",
+        "Formation of white PbCl2 precipitate upon adding dilute HCl confirms Group I basic radical (Lead, Pb²⁺)."
+      ],
+      [
+        "Golden Spangles Reaction",
+        "Pb²⁺ reaction with KI produces PbI2 which dissolves on boiling and crystallizes upon cooling as shimmering golden-yellow spangles."
+      ],
+      [
+        "Sulfate Anion Confirmed",
+        "Formation of white BaSO4 precipitate that remains insoluble even in concentrated boiling HCl confirms sulfate (SO4²⁻)."
+      ],
+      [
+        "Systematic Identification",
+        "The given inorganic salt is conclusively identified as Lead Sulfate / Lead Nitrate [Pb²⁺ and SO4²⁻ / NO3⁻]."
+      ]
+    ],
+    "graph": {
+      "title": "Solubility of Lead Iodide (PbI2) in Water vs Temperature",
+      "xLabel": "Solution Temperature (°C)",
+      "yLabel": "Solubility (g PbI2 / 100 mL H2O)",
+      "points": [
+        [
+          "0 °C",
+          0.044
+        ],
+        [
+          "20 °C",
+          0.076
+        ],
+        [
+          "40 °C",
+          0.13
+        ],
+        [
+          "60 °C",
+          0.24
+        ],
+        [
+          "80 °C",
+          0.38
+        ],
+        [
+          "100 °C (Boiling)",
+          0.43
+        ]
+      ]
+    },
+    "views": 1644,
+    "likes": 666,
+    "rating": 4.9
   },
   {
     "id": "c8a43713-9ab9-4df3-819f-890ff4a2b7d1",
-    "title": "Preparation of Standard 0.1 M Oxalic Acid Solution",
     "slug": "preparation-standard-oxalic-acid-solution",
+    "title": "Preparation of Standard 0.1 M Oxalic Acid Solution",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 11",
     "difficulty": "Beginner",
+    "duration": "35 Mins",
     "duration_minutes": 35,
     "description": "Prepare 250 mL of standard 0.1 M primary standard solution of hydrated Oxalic Acid [(COOH)2·2H2O] using an analytical balance and volumetric flask.",
     "outcome": "Successfully weighed exactly 3.151 g of oxalic acid crystals and prepared 250.0 mL of standard 0.100 M primary solution for analytical titrations.",
     "materials": [
-      "Hydrated Oxalic Acid crystals [(COOH)2·2H2O, M.W. = 126.07 g/mol] × 1 bottle",
-      "Digital Analytical Balance (precision 0.001 g) × 1",
-      "Volumetric Measuring Flask (250 mL with glass stopper) × 1",
-      "Clean Dry Watch Glass & Spatula × 1",
-      "Glass Funnel and Stirring Rod × 1",
-      "Wash bottle with double-distilled water × 1",
-      "Beaker (100 mL) × 1"
+      {
+        "id": "mat-0",
+        "name": "Hydrated Oxalic Acid crystals [(COOH)2·2H2O, M.W. = 126.07 g/mol]  bottle",
+        "qty": 1,
+        "price": 50,
+        "about": "Oxalic Acid Dihydrate [(COOH)2·2H2O] certified primary standard crystals.",
+        "specs": [
+          [
+            "Purity",
+            "≥ 99.9% Primary Standard grade"
+          ],
+          [
+            "Molecular Weight",
+            "126.06 g/mol"
+          ],
+          [
+            "Heavy Metals (Pb)",
+            "< 0.0005%"
+          ],
+          [
+            "Chloride (Cl)",
+            "< 0.0005%"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Digital Analytical Balance (precision 0.001 g)",
+        "qty": 1,
+        "price": 95,
+        "about": "Class A volumetric measuring flask with ground glass penny-head stopper.",
+        "specs": [
+          [
+            "Capacity",
+            "250.00 mL"
+          ],
+          [
+            "Tolerance",
+            "± 0.15 mL (Class A, ISO 1042)"
+          ],
+          [
+            "Calibration Temperature",
+            "20 °C"
+          ],
+          [
+            "Material",
+            "Borosilicate glass 3.3"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Volumetric Measuring Flask (250 mL with glass stopper)",
+        "qty": 1,
+        "price": 140,
+        "about": "Analytical precision electronic dual-range balance with draft shield chamber.",
+        "specs": [
+          [
+            "Capacity",
+            "220 grams"
+          ],
+          [
+            "Readability",
+            "0.0001 g (0.1 mg)"
+          ],
+          [
+            "Repeatability",
+            "± 0.1 mg"
+          ],
+          [
+            "Calibration",
+            "Internal motorized motorized weight"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Clean Dry Watch Glass & Spatula",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Preparation of Standard 0.1 M Oxalic Acid Solution.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Glass Funnel and Stirring Rod",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Preparation of Standard 0.1 M Oxalic Acid Solution.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Wash bottle with double-distilled water",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Preparation of Standard 0.1 M Oxalic Acid Solution.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Beaker (100 mL)",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Preparation of Standard 0.1 M Oxalic Acid Solution.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Calculate mass required: Mass = Molarity × Molar Mass × Volume (L) = 0.1 × 126.07 × 0.250 = 3.151 g.",
@@ -817,16 +4312,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Transfer solution quantitatively into the 250 mL volumetric flask using the funnel and rinse beaker 3 times.",
       "Make up the volume with distilled water dropwise until the lower meniscus touches the 250 mL graduation mark, stopper and invert 10 times to homogenize."
     ],
+    "steps": [
+      {
+        "instruction": "Calculate mass required: Mass = Molarity × Molar Mass × Volume (L) = 0.1 × 126.07 × 0.250 = 3.151 g.",
+        "text": "Calculate mass required: Mass = Molarity × Molar Mass × Volume (L) = 0.1 × 126.07 × 0.250 = 3.151 g.",
+        "observe": "Clean 4-decimal analytical balance pan; place watch glass and tare to 0.0000 g reading.",
+        "safety": "Always use camel hair brush to remove any stray crystal dust from balance pan."
+      },
+      {
+        "instruction": "Weigh a clean, dry watch glass on the digital balance and tare to 0.000 g.",
+        "text": "Weigh a clean, dry watch glass on the digital balance and tare to 0.000 g.",
+        "observe": "Weigh out exactly 3.1515 g of translucent prismatic oxalic acid crystals using a clean bone spatula.",
+        "safety": "Keep draft shields of analytical balance closed during final reading."
+      },
+      {
+        "instruction": "Carefully weigh out exactly 3.151 g of pure oxalic acid crystals using a dry spatula.",
+        "text": "Carefully weigh out exactly 3.151 g of pure oxalic acid crystals using a dry spatula.",
+        "observe": "Transfer crystals quantitatively into 250 mL beaker via clean glass funnel; wash watch glass with jet of distilled water.",
+        "safety": "Oxalic acid is poisonous and irritating to skin; do not breathe chemical dust."
+      },
+      {
+        "instruction": "Transfer crystals into a 100 mL beaker through a glass funnel. Rinse the watch glass with distilled water into the beaker.",
+        "text": "Transfer crystals into a 100 mL beaker through a glass funnel. Rinse the watch glass with distilled water into the beaker.",
+        "observe": "Dissolve completely in about 100 mL of warm distilled water using a glass stirring rod.",
+        "safety": "Do not heat above 40°C to prevent thermal decomposition of oxalic acid."
+      },
+      {
+        "instruction": "Add ~50 mL distilled water to the beaker and stir with a glass rod until crystals dissolve completely.",
+        "text": "Add ~50 mL distilled water to the beaker and stir with a glass rod until crystals dissolve completely.",
+        "observe": "Pour into 250 mL volumetric flask; add washings; add distilled water until bottom of meniscus reaches calibrated mark.",
+        "safety": "Add final few drops using a Pasteur pipette to avoid overshooting graduation ring."
+      },
+      {
+        "instruction": "Transfer solution quantitatively into the 250 mL volumetric flask using the funnel and rinse beaker 3 times.",
+        "text": "Transfer solution quantitatively into the 250 mL volumetric flask using the funnel and rinse beaker 3 times.",
+        "observe": "Insert ground glass stopper; invert flask 15 times for complete uniform mixing.",
+        "safety": "Store prepared standard solution in clearly labelled glass stoppered bottle."
+      },
+      {
+        "instruction": "Make up the volume with distilled water dropwise until the lower meniscus touches the 250 mL graduation mark, stopper and invert 10 times to homogenize.",
+        "text": "Make up the volume with distilled water dropwise until the lower meniscus touches the 250 mL graduation mark, stopper and invert 10 times to homogenize."
+      }
+    ],
     "precautions": [
       "Do not touch chemical crystals or weighing balance pan with bare hands.",
       "Ensure all transfers are quantitative: wash funnel and beaker walls thoroughly into the flask.",
       "Avoid overshooting the graduation mark; if overfilled, the standard solution must be discarded and remade.",
       "Oxalic acid is a toxic organic acid; avoid skin contact and wash spills immediately."
     ],
-    "learning_objectives": [
-      "Understand criteria of a primary standard substance (high purity, known formula, stable in air).",
-      "Operate precision analytical balances and volumetric glassware according to GLP standards.",
-      "Calculate molecular concentration, equivalents, and dilution factors."
+    "thumbnail_url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Standard Solution",
@@ -835,34 +4371,202 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 11 Chemistry",
       "Analytical Chemistry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=80"
+    "formula": "Mass of Oxalic Acid required for 250 mL 0.1 M: w = (M · M_w · V) / 1000 = (0.100 × 126.06 × 250) / 1000 = 3.1515 g",
+    "obsCols": [
+      "Weighing Step",
+      "Observed Mass (grams)",
+      "Tare / Net State",
+      "Resulting Solution Property"
     ],
-    "popularity": 90,
-    "status": "published",
-    "duration": "35 Mins",
-    "views": 1080,
-    "likes": 720,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Mass of clean dry watch glass",
+        "15.4220 g",
+        "Tare baseline",
+        "Clean dry glass"
+      ],
+      [
+        "Mass of watch glass + Oxalic acid crystals",
+        "18.5735 g",
+        "Gross mass",
+        "Hydrated crystals (H2C2O4·2H2O)"
+      ],
+      [
+        "Net mass of transferred Oxalic acid",
+        "3.1515 g",
+        "Net exact weight",
+        "Stoichiometric accuracy (0.1000 M)"
+      ],
+      [
+        "Final volumetric solution volume",
+        "250.00 mL",
+        "Meniscus at mark",
+        "Primary standard solution ready"
+      ]
+    ],
+    "interp": [
+      [
+        "Primary Standard Criteria",
+        "Hydrated oxalic acid crystals (H2C2O4·2H2O, Mw = 126.06 g/mol) have definite composition, high purity (>99.9%), and do not deliquesce."
+      ],
+      [
+        "Weighing Accuracy",
+        "Weighing exactly 3.1515 g on an analytical balance ensures true 0.1000 M concentration without standardization."
+      ],
+      [
+        "Complete Quantitative Transfer",
+        "Washing the funnel with distilled water wash bottle guarantees zero loss of crystals on funnel surfaces."
+      ],
+      [
+        "Homogeneous Mixing",
+        "Inverting the volumetric flask 15 times with stopper firmly seated ensures complete density uniformity throughout the solution."
+      ]
+    ],
+    "graph": {
+      "title": "Concentration vs Density of Aqueous Oxalic Acid Solutions at 20°C",
+      "xLabel": "Molarity M (mol/L)",
+      "yLabel": "Solution Density (g/mL)",
+      "points": [
+        [
+          "0.00 M (Water)",
+          0.9982
+        ],
+        [
+          "0.05 M",
+          1.0015
+        ],
+        [
+          "0.10 M",
+          1.0048
+        ],
+        [
+          "0.15 M",
+          1.008
+        ],
+        [
+          "0.20 M",
+          1.0112
+        ]
+      ]
+    },
+    "views": 1681,
+    "likes": 684,
+    "rating": 4.9
   },
   {
     "id": "5c98dbf7-d5cb-46f0-afaa-badf9e4b58da",
-    "title": "pH Determination of Common Solutions using Universal Indicator",
     "slug": "ph-determination-universal-indicator-solutions",
+    "title": "pH Determination of Common Solutions using Universal Indicator",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "30 Mins",
     "duration_minutes": 30,
     "description": "Determine the pH values of various everyday and laboratory solutions (lemon juice, vinegar, saliva, baking soda, NaOH, HCl) using pH paper strips and a calibrated pH meter.",
     "outcome": "Constructed the standard color-coded pH scale (1 to 14). Identified lemon juice as pH 2.2 (strongly acidic), distilled water as pH 7.0 (neutral), and NaOH as pH 13.5 (strongly basic).",
     "materials": [
-      "Broad-range Universal Indicator Paper strips with standard color chart × 1 box",
-      "Test solutions: Dilute HCl, Dilute NaOH, Ethanoic acid (vinegar), Lemon juice, NaHCO3 solution, Distilled water × 20 mL each",
-      "Clean porcelain spot plate / series of test tubes × 1 set",
-      "Glass dropper pipettes × 6",
-      "Digital Pocket pH Pen Meter with calibration buffer packets × 1"
+      {
+        "id": "mat-0",
+        "name": "Broad-range Universal Indicator Paper strips with standard color chart  box",
+        "qty": 1,
+        "price": 50,
+        "about": "Full range universal indicator solution and calibrated pH test strips (pH 1 – 14).",
+        "specs": [
+          [
+            "pH Range",
+            "1.0 to 14.0 full spectrum"
+          ],
+          [
+            "Indicator Formula",
+            "Thymol blue, methyl red, bromothymol blue, phenolphthalein"
+          ],
+          [
+            "Color Chart",
+            "Gloss laminated 14-step color comparator"
+          ],
+          [
+            "Format",
+            "Booklet of 100 test strips + 100 mL dropper bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Test solutions: Dilute HCl, Dilute NaOH, Ethanoic acid (vinegar), Lemon juice, NaHCO3 solution, Distilled water  mL each",
+        "qty": 20,
+        "price": 95,
+        "about": "Set of standardized test chemical solutions in dropper bottles.",
+        "specs": [
+          [
+            "Solutions",
+            "0.1M HCl, 0.1M CH3COOH, Lemon juice, Distilled H2O, 0.1M NaHCO3, 0.1M NaOH"
+          ],
+          [
+            "Volume",
+            "50 mL each"
+          ],
+          [
+            "Purity",
+            "Analytical Reagent grade"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Clean porcelain spot plate / series of test tubes  set",
+        "qty": 1,
+        "price": 140,
+        "about": "White glazed ceramic 12-cavity spot plate for clear color comparison.",
+        "specs": [
+          [
+            "Cavities",
+            "12 hemispherical depressions (1 mL capacity each)"
+          ],
+          [
+            "Material",
+            "Glazed chemical porcelain, acid/alkali resistant"
+          ],
+          [
+            "Dimensions",
+            "115 mm × 90 mm × 12 mm"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Glass dropper pipettes",
+        "qty": 6,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in pH Determination of Common Solutions using Universal Indicator.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Digital Pocket pH Pen Meter with calibration buffer packets",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in pH Determination of Common Solutions using Universal Indicator.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Place clean porcelain spot plate on a clean white surface.",
@@ -873,16 +4577,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Cross-check readings using the digital pH electrode rinsed with distilled water between samples.",
       "Tabulate solution name, observed color, inferred pH, and acidic/basic nature."
     ],
+    "steps": [
+      {
+        "instruction": "Place clean porcelain spot plate on a clean white surface.",
+        "text": "Place clean porcelain spot plate on a clean white surface.",
+        "observe": "Place 6 clean dry porcelain cavity tiles on workbench; arrange solutions in order of expected acidity.",
+        "safety": "Wear lab coat and splash-proof safety goggles."
+      },
+      {
+        "instruction": "Tear small 1 cm strips of broad-range universal pH paper and place one strip in each well.",
+        "text": "Tear small 1 cm strips of broad-range universal pH paper and place one strip in each well.",
+        "observe": "Use clean dry glass rod to touch 0.1 M HCl to universal pH strip: color turns immediate scarlet red (pH 1.0).",
+        "safety": "Rinse glass rod thoroughly in distilled water and dry with tissue between every sample."
+      },
+      {
+        "instruction": "Using a clean dropper, apply 1 drop of dilute HCl onto the first strip and observe the instantaneous color change.",
+        "text": "Using a clean dropper, apply 1 drop of dilute HCl onto the first strip and observe the instantaneous color change.",
+        "observe": "Test fresh lemon juice: strip turns vibrant pinkish-red matching pH 2.5 on standard comparison chart.",
+        "safety": "Do not contaminate stock reagent bottles with sampling droppers."
+      },
+      {
+        "instruction": "Compare the developed red color immediately with the standard pH reference chart to read pH ≈ 1.",
+        "text": "Compare the developed red color immediately with the standard pH reference chart to read pH ≈ 1.",
+        "observe": "Test distilled water: strip turns pure forest green, confirming neutral pH 7.0.",
+        "safety": "Ensure wash bottle water is freshly distilled; atmospheric CO2 absorption can lower water pH to 5.8."
+      },
+      {
+        "instruction": "Repeat the test with lemon juice (reddish orange, pH ~2), vinegar (orange, pH ~3), distilled water (green, pH ~7), baking soda (blue-green, pH ~8.5), and dilute NaOH (deep violet, pH ~13).",
+        "text": "Repeat the test with lemon juice (reddish orange, pH ~2), vinegar (orange, pH ~3), distilled water (green, pH ~7), baking soda (blue-green, pH ~8.5), and dilute NaOH (deep violet, pH ~13).",
+        "observe": "Test sodium bicarbonate solution: turns distinct blue-green matching pH 8.5.",
+        "safety": "Keep basic solutions away from eyes."
+      },
+      {
+        "instruction": "Cross-check readings using the digital pH electrode rinsed with distilled water between samples.",
+        "text": "Cross-check readings using the digital pH electrode rinsed with distilled water between samples.",
+        "observe": "Test 0.1 M NaOH: instant deep violet purple coloration confirms extreme alkalinity pH 13.0.",
+        "safety": "In case of NaOH skin contact, wash immediately under copious flowing tap water for 15 minutes."
+      },
+      {
+        "instruction": "Tabulate solution name, observed color, inferred pH, and acidic/basic nature.",
+        "text": "Tabulate solution name, observed color, inferred pH, and acidic/basic nature."
+      }
+    ],
     "precautions": [
       "Use a separate clean dropper for each solution to prevent cross-contamination.",
       "Do not touch active indicator paper test zones with fingers.",
       "Read the color immediately within 10-15 seconds before drying alters the hue.",
       "Rinse pH meter glass electrode thoroughly with distilled water and blot dry with lint-free tissue between tests."
     ],
-    "learning_objectives": [
-      "Understand the logarithmic pH scale: pH = -log10[H+].",
-      "Correlate hydrogen ion concentration with indicator color transitions.",
-      "Classify everyday household and chemical substances into acidic, neutral, and alkaline domains."
+    "thumbnail_url": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "pH Scale",
@@ -891,36 +4636,263 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Chemistry",
       "Experiential Science"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1614935151651-0bea6508db6b?auto=format&fit=crop&w=800&q=80"
+    "formula": "pH = -log10[H⁺]; pOH = -log10[OH⁻]; pH + pOH = 14.00 (at 25°C)",
+    "obsCols": [
+      "Test Solution Sample",
+      "Color with Universal Indicator",
+      "Observed pH (Indicator Paper)",
+      "Digital pH Meter Reading",
+      "Nature of Solution"
     ],
-    "popularity": 94,
-    "status": "published",
-    "duration": "30 Mins",
-    "views": 1128,
-    "likes": 752,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "0.1 M Hydrochloric Acid (HCl)",
+        "Deep Scarlet Red",
+        "pH 1.0",
+        "pH 1.02",
+        "Strongly Acidic"
+      ],
+      [
+        "Lemon Juice (Citric acid)",
+        "Pinkish Red",
+        "pH 2.5",
+        "pH 2.35",
+        "Moderately Acidic"
+      ],
+      [
+        "Vinegar (Acetic acid, CH3COOH)",
+        "Orange",
+        "pH 3.0",
+        "pH 2.88",
+        "Weakly Acidic"
+      ],
+      [
+        "Distilled Pure Water (H2O)",
+        "Neutral Green",
+        "pH 7.0",
+        "pH 6.95",
+        "Neutral"
+      ],
+      [
+        "Sodium Bicarbonate (NaHCO3)",
+        "Blue-Green",
+        "pH 8.5",
+        "pH 8.40",
+        "Weakly Alkaline"
+      ],
+      [
+        "0.1 M Sodium Hydroxide (NaOH)",
+        "Deep Indigo Violet",
+        "pH 13.0",
+        "pH 12.98",
+        "Strongly Alkaline"
+      ]
+    ],
+    "interp": [
+      [
+        "Full Spectrum pH Correlation",
+        "Color transitions follow standard rainbow progression: Red (pH 1-3) -> Orange (pH 4-5) -> Green (pH 7) -> Blue (pH 9-10) -> Violet (pH >12)."
+      ],
+      [
+        "Strong vs Weak Acid Contrast",
+        "HCl (0.1M) dissociates completely giving pH ~1.0; 0.1M Acetic acid dissociates only partially (~1.3%) giving pH ~2.9."
+      ],
+      [
+        "Buffer Stability in Salts",
+        "Baking soda (NaHCO3) hydrolyzes weakly in water generating bicarbonate buffer at pH ~8.4."
+      ],
+      [
+        "Digital Meter Verification",
+        "Visual color scale matched digital glass electrode measurements within ±0.15 pH units across the entire 1-13 spectrum."
+      ]
+    ],
+    "graph": {
+      "title": "Hydrogen Ion Concentration [H⁺] vs pH Logarithmic Curve",
+      "xLabel": "Solution Sample Type",
+      "yLabel": "Measured pH Value",
+      "points": [
+        [
+          "0.1M HCl",
+          1
+        ],
+        [
+          "Lemon Juice",
+          2.4
+        ],
+        [
+          "Vinegar",
+          2.9
+        ],
+        [
+          "Distilled Water",
+          7
+        ],
+        [
+          "Baking Soda",
+          8.4
+        ],
+        [
+          "0.1M NaOH",
+          13
+        ]
+      ]
+    },
+    "views": 1718,
+    "likes": 702,
+    "rating": 4.9
   },
   {
     "id": "910370a2-3579-4c90-8085-6ef4ede209b5",
-    "title": "Chemical Reaction Kinetics: Sodium Thiosulfate and HCl",
     "slug": "reaction-kinetics-sodium-thiosulfate-hcl",
+    "title": "Chemical Reaction Kinetics: Sodium Thiosulfate and HCl",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Investigate the effect of concentration on the rate of reaction between Sodium Thiosulfate (Na2S2O3) and Hydrochloric Acid (HCl) by timing the opacity created by colloidal sulfur.",
     "outcome": "Reaction rate (1/t) increases linearly with sodium thiosulfate concentration. The rate versus concentration plot is a straight line, confirming first-order kinetics with respect to thiosulfate.",
     "materials": [
-      "0.1 M Sodium Thiosulfate (Na2S2O3) solution × 300 mL",
-      "1.0 M Hydrochloric Acid (HCl) solution × 100 mL",
-      "Conical Flask (100 mL) × 1",
-      "Measuring Cylinders (10 mL and 50 mL) × 2",
-      "White paper tile with a bold black cross mark (X) × 1",
-      "Digital Stopwatch (least count 0.01 s) × 1",
-      "Distilled water wash bottle × 1"
+      {
+        "id": "mat-0",
+        "name": "0.1 M Sodium Thiosulfate (Na2S2O3) solution  mL",
+        "qty": 300,
+        "price": 50,
+        "about": "Standard 0.10 M Sodium Thiosulfate pentahydrate (Na2S2O3·5H2O) AR solution.",
+        "specs": [
+          [
+            "Concentration",
+            "0.100 M ± 0.002 M"
+          ],
+          [
+            "Solute",
+            "Sodium thiosulfate pentahydrate AR"
+          ],
+          [
+            "Preservative",
+            "Trace sodium carbonate (0.1 g/L) to prevent bacterial breakdown"
+          ],
+          [
+            "Volume",
+            "500 mL"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "1.0 M Hydrochloric Acid (HCl) solution  mL",
+        "qty": 100,
+        "price": 95,
+        "about": "1.0 M Hydrochloric Acid volumetric reagent solution.",
+        "specs": [
+          [
+            "Concentration",
+            "1.00 M HCl"
+          ],
+          [
+            "Purity",
+            "Analytical Reagent grade"
+          ],
+          [
+            "Specific Gravity",
+            "1.016 g/mL at 20°C"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Conical Flask (100 mL)",
+        "qty": 1,
+        "price": 140,
+        "about": "Precision 250 mL borosilicate glass conical flasks with optical-flat bottom.",
+        "specs": [
+          [
+            "Quantity",
+            "5 matched flasks"
+          ],
+          [
+            "Base Flatness",
+            "Optically flat base for minimal distortion"
+          ],
+          [
+            "Material",
+            "Borosilicate glass 3.3"
+          ],
+          [
+            "Graduation",
+            "White ceramic graduations"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Measuring Cylinders (10 mL and 50 mL)",
+        "qty": 2,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Chemical Reaction Kinetics: Sodium Thiosulfate and HCl.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "White paper tile with a bold black cross mark (X)",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Chemical Reaction Kinetics: Sodium Thiosulfate and HCl.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Digital Stopwatch (least count 0.01 s)",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Chemical Reaction Kinetics: Sodium Thiosulfate and HCl.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Distilled water wash bottle",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Chemical Reaction Kinetics: Sodium Thiosulfate and HCl.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Draw a bold black cross 'X' on a white sheet of paper and place the conical flask directly over it.",
@@ -931,16 +4903,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Stop the stopwatch the exact moment the black cross mark becomes invisible. Record time (t).",
       "Repeat the experiment using 40 mL, 30 mL, 20 mL, and 10 mL of thiosulfate diluted with water to maintain a constant 50 mL volume. Plot 1/t vs concentration."
     ],
+    "steps": [
+      {
+        "instruction": "Draw a bold black cross 'X' on a white sheet of paper and place the conical flask directly over it.",
+        "text": "Draw a bold black cross 'X' on a white sheet of paper and place the conical flask directly over it.",
+        "observe": "Draw a bold black cross (+) with waterproof marker on white paper sheet; place under 250 mL conical flask.",
+        "safety": "Perform in a well-ventilated laboratory; reaction generates pungent sulfur dioxide (SO2) gas."
+      },
+      {
+        "instruction": "Measure 50 mL of 0.1 M Na2S2O3 into the flask.",
+        "text": "Measure 50 mL of 0.1 M Na2S2O3 into the flask.",
+        "observe": "Measure 50 mL of 0.1 M Na2S2O3 into flask; cross is crisply visible looking vertically through solution.",
+        "safety": "Use separate graduated cylinders for thiosulfate and hydrochloric acid."
+      },
+      {
+        "instruction": "Measure 5.0 mL of 1.0 M HCl; pour it rapidly into the flask and start the stopwatch immediately.",
+        "text": "Measure 5.0 mL of 1.0 M HCl; pour it rapidly into the flask and start the stopwatch immediately.",
+        "observe": "Add 10 mL of 1 M HCl and simultaneously start stopwatch; swirl once and place immediately over cross.",
+        "safety": "Start stopwatch at the exact moment acid mixes with thiosulfate."
+      },
+      {
+        "instruction": "Swirl the flask once and look down vertically through the liquid at the cross mark.",
+        "text": "Swirl the flask once and look down vertically through the liquid at the cross mark.",
+        "observe": "Solution turns opalescent milky yellow as colloidal sulfur precipitates; cross disappears completely at t = 20.0 s.",
+        "safety": "Stop timer the moment the black cross lines are no longer distinguishable."
+      },
+      {
+        "instruction": "As colloidal sulfur precipitates (Na2S2O3 + 2HCl -> 2NaCl + SO2 + S↓ + H2O), the solution turns milky yellow.",
+        "text": "As colloidal sulfur precipitates (Na2S2O3 + 2HCl -> 2NaCl + SO2 + S↓ + H2O), the solution turns milky yellow.",
+        "observe": "Repeat with diluted thiosulfate (40, 30, 20, 10 mL + water); cross disappearance time increases systematically up to 100.0 s.",
+        "safety": "Immediately dispose of turbid mixture and rinse flask to prevent sulfur coating inside glass."
+      },
+      {
+        "instruction": "Stop the stopwatch the exact moment the black cross mark becomes invisible. Record time (t).",
+        "text": "Stop the stopwatch the exact moment the black cross mark becomes invisible. Record time (t).",
+        "observe": "Plot 1/t vs concentration: straight line confirms reaction rate is directly proportional to concentration.",
+        "safety": "Keep flasks covered with clock glass after reaction to contain SO2 vapors."
+      },
+      {
+        "instruction": "Repeat the experiment using 40 mL, 30 mL, 20 mL, and 10 mL of thiosulfate diluted with water to maintain a constant 50 mL volume. Plot 1/t vs concentration.",
+        "text": "Repeat the experiment using 40 mL, 30 mL, 20 mL, and 10 mL of thiosulfate diluted with water to maintain a constant 50 mL volume. Plot 1/t vs concentration."
+      }
+    ],
     "precautions": [
       "Keep eye position directly above the mouth of the flask at a uniform distance for every trial.",
       "Use the same conical flask and black cross throughout the experiment for optical consistency.",
       "Rinse the conical flask thoroughly with distilled water between trials to remove trace sulfur.",
       "Conduct in a well-ventilated lab because sulfur dioxide (SO2) gas is produced."
     ],
-    "learning_objectives": [
-      "Understand collision theory and the effect of reactant concentration on reaction rates.",
-      "Relate optical turbidity extinction time with reaction velocity: Rate ∝ 1/t.",
-      "Determine reaction order from linear rate-concentration graphs."
+    "thumbnail_url": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Chemical Kinetics",
@@ -949,36 +4962,266 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Chemistry",
       "Physical Chemistry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1567427018141-0584cfcbf1b8?auto=format&fit=crop&w=800&q=80"
+    "formula": "Na2S2O3 + 2 HCl -> 2 NaCl + SO2↑ + S↓ (Colloidal Sulfur turbidity) + H2O; Rate ∝ 1/t",
+    "obsCols": [
+      "Flask No.",
+      "Na2S2O3 0.1M (mL)",
+      "Water Added (mL)",
+      "Conc. Na2S2O3 (M)",
+      "Time for Cross to Disappear t (s)",
+      "Reciprocal Time 1/t (s⁻¹)"
     ],
-    "popularity": 91,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1092,
-    "likes": 728,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "1",
+        "50 mL",
+        "0 mL",
+        "0.100 M",
+        "20.0 s",
+        "0.0500 s⁻¹"
+      ],
+      [
+        "2",
+        "40 mL",
+        "10 mL",
+        "0.080 M",
+        "25.0 s",
+        "0.0400 s⁻¹"
+      ],
+      [
+        "3",
+        "30 mL",
+        "20 mL",
+        "0.060 M",
+        "33.3 s",
+        "0.0300 s⁻¹"
+      ],
+      [
+        "4",
+        "20 mL",
+        "30 mL",
+        "0.040 M",
+        "50.0 s",
+        "0.0200 s⁻¹"
+      ],
+      [
+        "5",
+        "10 mL",
+        "40 mL",
+        "0.020 M",
+        "100.0 s",
+        "0.0100 s⁻¹"
+      ]
+    ],
+    "interp": [
+      [
+        "Direct First-Order Linearity",
+        "Plot of 1/t versus concentration of Na2S2O3 is a perfect straight line passing through the origin (0,0)."
+      ],
+      [
+        "Reaction Rate Law",
+        "Rate = k · [Na2S2O3]¹; doubling thiosulfate concentration cuts precipitation time exactly in half (100s -> 50s -> 25s)."
+      ],
+      [
+        "Colloidal Turbidity Endpoint",
+        "The optical extinction of the black cross mark corresponds to a fixed, constant optical density of precipitated sulfur particles."
+      ],
+      [
+        "Temperature Control Significance",
+        "Conducting all 5 runs at identical room temperature (25°C) isolates concentration dependence from Arrhenius activation kinetics."
+      ]
+    ],
+    "graph": {
+      "title": "Concentration of Na2S2O3 vs Reaction Rate (1/t)",
+      "xLabel": "Concentration of Na2S2O3 (M)",
+      "yLabel": "Rate 1/t (s⁻¹)",
+      "points": [
+        [
+          "0.00 M",
+          0
+        ],
+        [
+          "0.02 M",
+          0.01
+        ],
+        [
+          "0.04 M",
+          0.02
+        ],
+        [
+          "0.06 M",
+          0.03
+        ],
+        [
+          "0.08 M",
+          0.04
+        ],
+        [
+          "0.10 M",
+          0.05
+        ]
+      ]
+    },
+    "views": 1755,
+    "likes": 720,
+    "rating": 4.9
   },
   {
     "id": "9853b28e-4db9-41f1-a628-e4626badf78a",
-    "title": "Paper Chromatography of Plant Pigments in Spinach Leaves",
     "slug": "paper-chromatography-plant-pigments",
+    "title": "Paper Chromatography of Plant Pigments in Spinach Leaves",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 11",
     "difficulty": "Beginner",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Separate and identify photosynthetic leaf pigments (Chlorophyll a, Chlorophyll b, Xanthophyll, and Carotene) from fresh spinach extract using ascending paper chromatography.",
     "outcome": "Distinct color bands separated on Whatman paper strip: olive green (Chlorophyll b), blue green (Chlorophyll a), yellow (Xanthophyll), and orange-yellow (Carotene) with distinct Rf values.",
     "materials": [
-      "Fresh Spinach Leaves × 50 g",
-      "Chromatography Paper (Whatman No. 1, 20 cm × 3 cm strip) × 1",
-      "Extraction Solvent: Acetone (analytical grade) × 20 mL",
-      "Developing Solvent: Petroleum Ether and Acetone (9:1 ratio v/v) × 50 mL",
-      "Mortar and Pestle with fine washed sand × 1 set",
-      "Capillary tube / fine micropipette × 1",
-      "Chromatography Developing Jar with airtight lid × 1"
+      {
+        "id": "mat-0",
+        "name": "Fresh Spinach Leaves  g",
+        "qty": 50,
+        "price": 50,
+        "about": "Whatman No. 1 qualitative cellulose chromatography paper sheets and strips.",
+        "specs": [
+          [
+            "Paper Grade",
+            "Whatman No. 1 pure cellulose"
+          ],
+          [
+            "Pore Size",
+            "11 μm"
+          ],
+          [
+            "Thickness",
+            "0.18 mm"
+          ],
+          [
+            "Capillary Rise",
+            "130 mm / 30 min (water)"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Chromatography Paper (Whatman No. 1, 20 cm  cm strip) × 1",
+        "qty": 3,
+        "price": 95,
+        "about": "Chromatography solvent system: Petroleum Ether (b.p. 60-80°C) and AR Acetone in 9:1 volume ratio.",
+        "specs": [
+          [
+            "Petroleum Ether",
+            "Boiling range 60 – 80 °C AR grade"
+          ],
+          [
+            "Acetone",
+            "Anhydrous AR grade ≥ 99.5%"
+          ],
+          [
+            "Ratio",
+            "9 parts Pet Ether : 1 part Acetone (v/v)"
+          ],
+          [
+            "Volume",
+            "200 mL pre-mixed"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Extraction Solvent: Acetone (analytical grade)  mL",
+        "qty": 20,
+        "price": 140,
+        "about": "Gas-tight cylindrical glass chromatography developing chamber with ground flat rim and airtight glass lid.",
+        "specs": [
+          [
+            "Height",
+            "250 mm"
+          ],
+          [
+            "Internal Diameter",
+            "60 mm"
+          ],
+          [
+            "Lid",
+            "Ground glass disc with suspension hook"
+          ],
+          [
+            "Material",
+            "Heavy-wall borosilicate glass"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Developing Solvent: Petroleum Ether and Acetone (9:1 ratio v/v)  mL",
+        "qty": 50,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Paper Chromatography of Plant Pigments in Spinach Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Mortar and Pestle with fine washed sand  set",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Paper Chromatography of Plant Pigments in Spinach Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Capillary tube / fine micropipette",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Paper Chromatography of Plant Pigments in Spinach Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Chromatography Developing Jar with airtight lid",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Paper Chromatography of Plant Pigments in Spinach Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Grind fresh spinach leaves with 10 mL acetone and a pinch of sand in a mortar to obtain a concentrated dark green extract.",
@@ -989,16 +5232,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Pour 10 mL of developing solvent into the jar and suspend the paper so the tip dips into solvent while the spot remains 1 cm above the liquid.",
       "Cover the jar tightly; allow the solvent front to ascend 15 cm. Remove strip, mark solvent front, and calculate Retention Factors: Rf = distance traveled by pigment / distance traveled by solvent."
     ],
+    "steps": [
+      {
+        "instruction": "Grind fresh spinach leaves with 10 mL acetone and a pinch of sand in a mortar to obtain a concentrated dark green extract.",
+        "text": "Grind fresh spinach leaves with 10 mL acetone and a pinch of sand in a mortar to obtain a concentrated dark green extract.",
+        "observe": "Grind 10 g fresh spinach leaves in mortar with 5 mL acetone and pinch of sand to extract concentrated dark green chlorophyll.",
+        "safety": "Acetone and petroleum ether are extremely flammable volatile solvents; keep away from any open flame or sparks."
+      },
+      {
+        "instruction": "Cut Whatman chromatography paper into a strip 20 cm × 3 cm with a pointed V-shape at the bottom.",
+        "text": "Cut Whatman chromatography paper into a strip 20 cm × 3 cm with a pointed V-shape at the bottom.",
+        "observe": "Cut Whatman No. 1 chromatography strip (20 cm × 3 cm); draw pencil baseline 2 cm from bottom notch.",
+        "safety": "Handle chromatography paper only by edges with clean dry forceps to avoid finger oil contamination."
+      },
+      {
+        "instruction": "Draw a faint pencil baseline 2 cm above the pointed edge.",
+        "text": "Draw a faint pencil baseline 2 cm above the pointed edge.",
+        "observe": "Using fine glass capillary, spot pigment extract on baseline; dry with gentle breath; repeat 10 times to build dense concentrated dark spot.",
+        "safety": "Keep spot diameter under 2-3 mm for maximum resolution of separated bands."
+      },
+      {
+        "instruction": "Using a fine capillary tube, apply a tiny drop of pigment extract on the center of the baseline and let dry.",
+        "text": "Using a fine capillary tube, apply a tiny drop of pigment extract on the center of the baseline and let dry.",
+        "observe": "Suspend strip vertically inside development jar containing petroleum ether : acetone (9:1) solvent, dipping 5 mm below spot.",
+        "safety": "Ensure spotted pencil line is strictly ABOVE the solvent reservoir level."
+      },
+      {
+        "instruction": "Repeat spotting 8-10 times over the exact same spot until a dark, concentrated green dot is formed.",
+        "text": "Repeat spotting 8-10 times over the exact same spot until a dark, concentrated green dot is formed.",
+        "observe": "Solvent climbs by capillary action; watch four distinct pigment bands separate progressively up the paper.",
+        "safety": "Keep development chamber tightly sealed with greased glass lid during development."
+      },
+      {
+        "instruction": "Pour 10 mL of developing solvent into the jar and suspend the paper so the tip dips into solvent while the spot remains 1 cm above the liquid.",
+        "text": "Pour 10 mL of developing solvent into the jar and suspend the paper so the tip dips into solvent while the spot remains 1 cm above the liquid.",
+        "observe": "When solvent reaches 10 cm, remove strip; instantly mark solvent front; measure band centers and calculate Rf values.",
+        "safety": "Dry chromatogram in chemical fume hood away from heat sources."
+      },
+      {
+        "instruction": "Cover the jar tightly; allow the solvent front to ascend 15 cm. Remove strip, mark solvent front, and calculate Retention Factors: Rf = distance traveled by pigment / distance traveled by solvent.",
+        "text": "Cover the jar tightly; allow the solvent front to ascend 15 cm. Remove strip, mark solvent front, and calculate Retention Factors: Rf = distance traveled by pigment / distance traveled by solvent."
+      }
+    ],
     "precautions": [
       "Keep the sample spot as small and concentrated as possible (< 3 mm diameter).",
       "Do not let the pigment spot immerse directly into the developing solvent pool.",
       "Keep chromatography jar strictly closed and undisturbed during solvent ascent.",
       "Work in a fume hood or away from open flames as petroleum ether and acetone are volatile and flammable."
     ],
-    "learning_objectives": [
-      "Understand principles of partition and adsorption chromatography.",
-      "Calculate Rf (Retention Factor) values to identify separated phytochemical components.",
-      "Relate molecular polarity with differential mobility in non-polar mobile phases."
+    "thumbnail_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Chromatography",
@@ -1007,36 +5291,245 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 11 Chemistry",
       "Organic Chemistry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1518152006812-edab29b069ac?auto=format&fit=crop&w=800&q=80"
+    "formula": "Rf = (Distance traveled by pigment solute) / (Distance traveled by solvent front)",
+    "obsCols": [
+      "Pigment Band Identity",
+      "Visual Color of Band",
+      "Distance Traveled (cm)",
+      "Solvent Front Distance (cm)",
+      "Calculated Retention Factor (Rf)"
     ],
-    "popularity": 93,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1116,
-    "likes": 744,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Chlorophyll b",
+        "Olive / Yellow-Green",
+        "1.8 cm",
+        "10.0 cm",
+        "0.18"
+      ],
+      [
+        "Chlorophyll a",
+        "Blue-Green",
+        "3.5 cm",
+        "10.0 cm",
+        "0.35"
+      ],
+      [
+        "Xanthophyll",
+        "Bright Golden Yellow",
+        "6.2 cm",
+        "10.0 cm",
+        "0.62"
+      ],
+      [
+        "Carotene (β-Carotene)",
+        "Vibrant Orange-Yellow",
+        "9.5 cm",
+        "10.0 cm",
+        "0.95"
+      ]
+    ],
+    "interp": [
+      [
+        "Differential Adsorption & Partition",
+        "Carotene is highly non-polar and hydrocarbon-soluble, traveling almost with the petroleum ether front (Rf = 0.95)."
+      ],
+      [
+        "Polarity Order Revealed",
+        "Polarity sequence: Chlorophyll b (most polar, strong H-bonding to cellulose, Rf = 0.18) > Chlorophyll a (0.35) > Xanthophyll (0.62) > Carotene (least polar, 0.95)."
+      ],
+      [
+        "Distinct Band Separation",
+        "Four razor-sharp pigment bands separate cleanly across 10 cm solvent migration without smearing or tailing."
+      ],
+      [
+        "Solvent Front Calibration",
+        "Marking solvent front pencil line immediately upon removing strip prevents under-estimation of Rf due to rapid solvent evaporation."
+      ]
+    ],
+    "graph": {
+      "title": "Chromatographic Retention Factor (Rf) vs Pigment Hydrophobicity",
+      "xLabel": "Photosynthetic Pigment Band",
+      "yLabel": "Retention Factor (Rf Value)",
+      "points": [
+        [
+          "Chlorophyll b",
+          0.18
+        ],
+        [
+          "Chlorophyll a",
+          0.35
+        ],
+        [
+          "Xanthophyll",
+          0.62
+        ],
+        [
+          "Carotene",
+          0.95
+        ]
+      ]
+    },
+    "views": 1792,
+    "likes": 738,
+    "rating": 4.9
   },
   {
     "id": "2e9130b9-af62-41fb-ac3d-9aa1abaac8f7",
-    "title": "Preparation of Colloidal Sol & Tyndall Effect Demonstration",
     "slug": "preparation-colloidal-sol-tyndall-effect",
+    "title": "Preparation of Colloidal Sol & Tyndall Effect Demonstration",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Prepare a lyophilic starch sol and a lyophobic Ferric Hydroxide [Fe(OH)3] sol, and demonstrate light scattering (Tyndall Effect) using a red laser beam.",
     "outcome": "Stable wine-red Ferric Hydroxide sol and translucent starch sol prepared. Red laser beam exhibits clear brilliant Tyndall cone through both sols while remaining invisible in true aqueous NaCl solution.",
     "materials": [
-      "Ferric Chloride (FeCl3) 2% w/v solution × 20 mL",
-      "Soluble Starch Powder × 2 g",
-      "Sodium Chloride (NaCl) crystals × 5 g",
-      "Red Semiconductor Laser Pointer (650 nm) × 1",
-      "Boiling Beakers (250 mL and 500 mL) × 2",
-      "Bunsen Burner, Tripod stand, and Wire Gauze × 1 set",
-      "Glass Rod and Dropper Pipette × 1"
+      {
+        "id": "mat-0",
+        "name": "Ferric Chloride (FeCl3) 2% w/v solution  mL",
+        "qty": 20,
+        "price": 50,
+        "about": "Anhydrous / Hexahydrate Iron(III) Chloride (FeCl3·6H2O) AR analytical crystals.",
+        "specs": [
+          [
+            "Purity",
+            "≥ 99.0% AR grade"
+          ],
+          [
+            "Iron Content",
+            "Approx 20% Fe"
+          ],
+          [
+            "State",
+            "Brownish-yellow deliquescent lumps"
+          ],
+          [
+            "Solubility",
+            "Freely soluble in water"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Soluble Starch Powder  g",
+        "qty": 2,
+        "price": 95,
+        "about": "Red 650 nm collimated diode laser pointer for optical scattering analysis.",
+        "specs": [
+          [
+            "Wavelength",
+            "650 nm (Visible Red)"
+          ],
+          [
+            "Output Power",
+            "< 5 mW Class 3R laser"
+          ],
+          [
+            "Beam Divergence",
+            "< 1.5 mrad"
+          ],
+          [
+            "Power Source",
+            "2 × AAA alkaline cells"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Sodium Chloride (NaCl) crystals  g",
+        "qty": 5,
+        "price": 140,
+        "about": "Dialysis tubing membrane (regenerated cellulose) with sealing clamps.",
+        "specs": [
+          [
+            "Membrane Material",
+            "Regenerated cellulose membrane"
+          ],
+          [
+            "Pore Molecular Cutoff",
+            "12,000 – 14,000 Daltons"
+          ],
+          [
+            "Flat Width",
+            "32 mm"
+          ],
+          [
+            "Length",
+            "1.0 meter"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Red Semiconductor Laser Pointer (650 nm)",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Preparation of Colloidal Sol & Tyndall Effect Demonstration.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Boiling Beakers (250 mL and 500 mL)",
+        "qty": 2,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Preparation of Colloidal Sol & Tyndall Effect Demonstration.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Bunsen Burner, Tripod stand, and Wire Gauze  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Preparation of Colloidal Sol & Tyndall Effect Demonstration.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Glass Rod and Dropper Pipette",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Preparation of Colloidal Sol & Tyndall Effect Demonstration.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Preparation of Starch Sol (Lyophilic): Make a smooth paste of 1 g starch in 10 mL cold water. Pour this paste slowly with vigorous stirring into 100 mL boiling distilled water. Boil for 2 minutes and cool.",
@@ -1046,16 +5539,53 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Darken the room. Pass the red laser beam horizontally through: (1) True NaCl solution, (2) Starch sol, (3) Fe(OH)3 sol.",
       "Observe that the laser path is invisible in true solution, but produces a brilliant illuminated optical cone (Tyndall Effect) in the colloidal sols."
     ],
+    "steps": [
+      {
+        "instruction": "Preparation of Starch Sol (Lyophilic): Make a smooth paste of 1 g starch in 10 mL cold water. Pour this paste slowly with vigorous stirring into 100 mL boiling distilled water. Boil for 2 minutes and cool.",
+        "text": "Preparation of Starch Sol (Lyophilic): Make a smooth paste of 1 g starch in 10 mL cold water. Pour this paste slowly with vigorous stirring into 100 mL boiling distilled water. Boil for 2 minutes and cool.",
+        "observe": "Clean 250 mL conical flask by steaming out thoroughly with distilled water to remove ionic impurities.",
+        "safety": "Wear heat-resistant gloves while handling boiling glassware."
+      },
+      {
+        "instruction": "Preparation of Fe(OH)3 Sol (Lyophobic): Boil 100 mL distilled water in a beaker. Add 2% FeCl3 solution drop by drop using a dropper while boiling continuously.",
+        "text": "Preparation of Fe(OH)3 Sol (Lyophobic): Boil 100 mL distilled water in a beaker. Add 2% FeCl3 solution drop by drop using a dropper while boiling continuously.",
+        "observe": "Boil 100 mL of double distilled water vigorously on wire gauze using Bunsen burner.",
+        "safety": "Support beaker securely on heavy tripod stand with ceramic center wire gauze."
+      },
+      {
+        "instruction": "A deep wine-red/brown colloidal sol forms via hydrolysis: FeCl3 + 3 H2O -> Fe(OH)3(sol) + 3 HCl.",
+        "text": "A deep wine-red/brown colloidal sol forms via hydrolysis: FeCl3 + 3 H2O -> Fe(OH)3(sol) + 3 HCl.",
+        "observe": "Add 2% Ferric Chloride (FeCl3) solution drop-by-drop using a dropper while boiling continuously.",
+        "safety": "Add FeCl3 slowly (1 drop per 2 seconds); rapid addition causes brown precipitate instead of sol."
+      },
+      {
+        "instruction": "Prepare a true solution of NaCl in 100 mL water as a control comparison.",
+        "text": "Prepare a true solution of NaCl in 100 mL water as a control comparison.",
+        "observe": "Solution transforms from yellow to brilliant clear deep wine-red Fe(OH)3 colloidal sol.",
+        "safety": "Continue boiling for only 2-3 minutes after last drop; excessive boiling causes coagulation."
+      },
+      {
+        "instruction": "Darken the room. Pass the red laser beam horizontally through: (1) True NaCl solution, (2) Starch sol, (3) Fe(OH)3 sol.",
+        "text": "Darken the room. Pass the red laser beam horizontally through: (1) True NaCl solution, (2) Starch sol, (3) Fe(OH)3 sol.",
+        "observe": "Cool to room temperature; shine 650 nm red laser pointer through sol alongside NaCl true solution.",
+        "safety": "Never shine laser pointer directly into eyes or at reflective mirrored surfaces."
+      },
+      {
+        "instruction": "Observe that the laser path is invisible in true solution, but produces a brilliant illuminated optical cone (Tyndall Effect) in the colloidal sols.",
+        "text": "Observe that the laser path is invisible in true solution, but produces a brilliant illuminated optical cone (Tyndall Effect) in the colloidal sols.",
+        "observe": "Laser beam creates brilliant glowing illuminated track in Fe(OH)3 sol, while remaining invisible in NaCl.",
+        "safety": "Pour sol through parchment paper dialysis bag to remove excess HCl electrolyte."
+      }
+    ],
     "precautions": [
       "Distilled water must be boiling vigorously when adding FeCl3 dropwise to prevent coarse precipitation.",
       "Never point the laser beam towards anyone's eyes.",
       "Apparatus must be scrupulously clean; electrolyte traces can coagulate lyophobic sols.",
       "Starch paste must be lump-free before addition to boiling water."
     ],
-    "learning_objectives": [
-      "Differentiate between true solutions, colloidal dispersions, and suspensions.",
-      "Understand lyophilic versus lyophobic colloidal stability mechanisms.",
-      "Observe and explain optical scattering (Tyndall Effect) in dispersed colloidal systems."
+    "thumbnail_url": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Surface Chemistry",
@@ -1064,36 +5594,236 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Chemistry",
       "Physical Chemistry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80"
+    "formula": "FeCl3 + 3 H2O (Boiling) -> Fe(OH)3 (Hydrated Ferric Hydroxide Sol - Positive Charge) + 3 HCl",
+    "obsCols": [
+      "Optical / Physical Test",
+      "True Solution (0.1M NaCl)",
+      "Colloidal Sol (Fe(OH)3 Sol)",
+      "Suspension (Chalk in Water)"
     ],
-    "popularity": 88,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1056,
-    "likes": 704,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Laser Beam Path (Tyndall Effect)",
+        "Invisible / Dark (No scattering)",
+        "Brilliant luminous laser beam path illuminated",
+        "Scattered & blocked rapidly (Opaque)"
+      ],
+      [
+        "Appearance in White Light",
+        "Crystal clear, completely transparent",
+        "Translucent deep wine-red / reddish-brown",
+        "Turbid, milky white suspension"
+      ],
+      [
+        "Filterability (Whatman Paper)",
+        "Passes through completely without residue",
+        "Passes through filter paper without residue",
+        "Retained on filter paper as solid residue"
+      ],
+      [
+        "Stability after 24 hours",
+        "Completely stable, no settling",
+        "Completely stable, no coagulation or sediment",
+        "Particles settle out completely by gravity"
+      ]
+    ],
+    "interp": [
+      [
+        "Colloidal Particle Size Range",
+        "Sol particles lie in 1 to 100 nm colloidal range, larger than solvent molecules but small enough to remain suspended by Brownian motion."
+      ],
+      [
+        "Tyndall Light Scattering",
+        "Colloidal particles have dimensions comparable to visible laser wavelength (λ = 650 nm), scattering photons laterally (Tyndall cone)."
+      ],
+      [
+        "Positive Sol Charge Stability",
+        "Fe(OH)3 particles preferentially adsorb Fe³⁺ ions from solution, acquiring positive electrical charge preventing coagulation."
+      ],
+      [
+        "True Solution Comparison",
+        "NaCl ions are < 1 nm in size; they do not scatter laser light, leaving the beam path completely invisible inside the liquid."
+      ]
+    ],
+    "graph": {
+      "title": "Scattered Light Intensity (Tyndall Effect) vs Dispersed Particle Diameter",
+      "xLabel": "Particle Diameter (nm)",
+      "yLabel": "Relative Rayleigh Scattering Intensity",
+      "points": [
+        [
+          "0.5 nm (True solution)",
+          0.01
+        ],
+        [
+          "5.0 nm (Fe(OH)3 sol)",
+          1.2
+        ],
+        [
+          "20.0 nm (Colloidal sol)",
+          14.5
+        ],
+        [
+          "100.0 nm (Upper colloid)",
+          120
+        ],
+        [
+          "1000.0 nm (Suspension)",
+          450
+        ]
+      ]
+    },
+    "views": 1829,
+    "likes": 756,
+    "rating": 4.9
   },
   {
     "id": "d9c08be5-2de8-47c6-a493-2f2eab43d285",
-    "title": "Systematic Tests for Organic Functional Groups",
     "slug": "organic-functional-group-tests",
+    "title": "Systematic Tests for Organic Functional Groups",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Perform characteristic chemical diagnostic tests to detect the presence of Carbonyl (Aldehyde/Ketone), Carboxylic Acid, and Alcoholic functional groups in organic compounds.",
     "outcome": "Aldehyde confirmed via Tollens' test yielding a shiny reflective silver mirror on glass walls; Carboxylic acid confirmed via vigorous effervescence of CO2 gas with sodium bicarbonate.",
     "materials": [
-      "Organic test samples: Formaldehyde/Acetaldehyde, Acetone, Acetic acid, Ethanol × 20 mL each",
-      "Tollens' Reagent (Ammoniacal Silver Nitrate, freshly prepared) × 20 mL",
-      "Fehling's Solution A and Fehling's Solution B × 30 mL each",
-      "Sodium Bicarbonate (NaHCO3) 10% solution × 30 mL",
-      "Neutral Ferric Chloride (FeCl3) solution × 20 mL",
-      "Ceric Ammonium Nitrate reagent × 15 mL",
-      "Test tubes, test tube holder, water bath, and burner × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Organic test samples: Formaldehyde/Acetaldehyde, Acetone, Acetic acid, Ethanol  mL each",
+        "qty": 20,
+        "price": 50,
+        "about": "Set of diagnostic organic analytical reagents in amber dropper bottles.",
+        "specs": [
+          [
+            "Reagents",
+            "Silver Nitrate (5%), Dilute NH4OH (2M), Fehling A, Fehling B, Saturated NaHCO3, Neutral FeCl3 (1%)"
+          ],
+          [
+            "Purity",
+            "AR Analytical Grade"
+          ],
+          [
+            "Bottles",
+            "60 mL amber dropper bottles with glass pipettes"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Tollens' Reagent (Ammoniacal Silver Nitrate, freshly prepared)  mL",
+        "qty": 20,
+        "price": 95,
+        "about": "Pure organic reference test substances.",
+        "specs": [
+          [
+            "Substances",
+            "Acetaldehyde (5%), Acetic acid (pure), Phenol (pure), Ethanol (99%), Acetone (pure)"
+          ],
+          [
+            "Quantity",
+            "50 mL each"
+          ],
+          [
+            "Grade",
+            "Spectroscopic / Analytical grade"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Fehling's Solution A and Fehling's Solution B  mL each",
+        "qty": 30,
+        "price": 140,
+        "about": "Thermostatically controlled electric laboratory water bath.",
+        "specs": [
+          [
+            "Temperature Range",
+            "Ambient to 100 °C"
+          ],
+          [
+            "Stability",
+            "± 0.5 °C"
+          ],
+          [
+            "Rack",
+            "Stainless steel test tube rack for 12 tubes"
+          ],
+          [
+            "Power",
+            "500 W heater with digital display"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Sodium Bicarbonate (NaHCO3) 10% solution  mL",
+        "qty": 30,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Systematic Tests for Organic Functional Groups.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Neutral Ferric Chloride (FeCl3) solution  mL",
+        "qty": 20,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Systematic Tests for Organic Functional Groups.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Ceric Ammonium Nitrate reagent  mL",
+        "qty": 15,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Systematic Tests for Organic Functional Groups.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Test tubes, test tube holder, water bath, and burner  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Systematic Tests for Organic Functional Groups.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Tollens' Silver Mirror Test for Aldehydes: Add 2 mL freshly prepared Tollens' reagent to 1 mL aldehyde sample in a clean test tube. Warm gently in a 60°C water bath for 5 minutes without shaking. A brilliant silver mirror coats the tube wall.",
@@ -1102,16 +5832,47 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Esterification Test: Warm 1 mL ethanol, 1 mL acetic acid, and 2 drops conc. H2SO4; pour into water to detect characteristic fruity pleasant aroma of ethyl acetate.",
       "Ceric Ammonium Nitrate Test for Alcohols: Add reagent to sample; red color confirms aliphatic alcohol."
     ],
+    "steps": [
+      {
+        "instruction": "Tollens' Silver Mirror Test for Aldehydes: Add 2 mL freshly prepared Tollens' reagent to 1 mL aldehyde sample in a clean test tube. Warm gently in a 60°C water bath for 5 minutes without shaking. A brilliant silver mirror coats the tube wall.",
+        "text": "Tollens' Silver Mirror Test for Aldehydes: Add 2 mL freshly prepared Tollens' reagent to 1 mL aldehyde sample in a clean test tube. Warm gently in a 60°C water bath for 5 minutes without shaking. A brilliant silver mirror coats the tube wall.",
+        "observe": "Prepare fresh Tollens' reagent: to 2 mL 5% AgNO3 add 2 drops NaOH, then add dilute NH4OH dropwise until brown precipitate just dissolves.",
+        "safety": "Always prepare Tollens' reagent fresh; never store it as explosive silver fulminate forms on standing."
+      },
+      {
+        "instruction": "Fehling's Test for Aldehydes: Mix equal volumes (1 mL each) of Fehling's A and B. Add 1 mL sample and heat in boiling water bath. A red precipitate of Cuprous Oxide (Cu2O) confirms aldehyde.",
+        "text": "Fehling's Test for Aldehydes: Mix equal volumes (1 mL each) of Fehling's A and B. Add 1 mL sample and heat in boiling water bath. A red precipitate of Cuprous Oxide (Cu2O) confirms aldehyde.",
+        "observe": "Add 3 drops of test sample (acetaldehyde); warm in water bath at 60°C without shaking.",
+        "safety": "Never heat Tollens' tube directly over open Bunsen burner flame; use warm water bath."
+      },
+      {
+        "instruction": "Sodium Bicarbonate Test for Carboxylic Acid: Add 1 mL saturated NaHCO3 to 1 mL acetic acid sample. Immediate brisk effervescence occurs; pass the gas through lime water to turn it milky (confirms CO2).",
+        "text": "Sodium Bicarbonate Test for Carboxylic Acid: Add 1 mL saturated NaHCO3 to 1 mL acetic acid sample. Immediate brisk effervescence occurs; pass the gas through lime water to turn it milky (confirms CO2).",
+        "observe": "Within 2 minutes, glistening metallic silver plates out on test tube glass, creating a perfect reflective mirror.",
+        "safety": "Wash silver mirror immediately with dilute nitric acid (HNO3) before discarding."
+      },
+      {
+        "instruction": "Esterification Test: Warm 1 mL ethanol, 1 mL acetic acid, and 2 drops conc. H2SO4; pour into water to detect characteristic fruity pleasant aroma of ethyl acetate.",
+        "text": "Esterification Test: Warm 1 mL ethanol, 1 mL acetic acid, and 2 drops conc. H2SO4; pour into water to detect characteristic fruity pleasant aroma of ethyl acetate.",
+        "observe": "Test carboxylic sample with saturated NaHCO3: vigorous effervescence of CO2 bubbles vigorously.",
+        "safety": "Direct gas evolution via bent delivery tube into lime water to confirm white CaCO3 turbidity."
+      },
+      {
+        "instruction": "Ceric Ammonium Nitrate Test for Alcohols: Add reagent to sample; red color confirms aliphatic alcohol.",
+        "text": "Ceric Ammonium Nitrate Test for Alcohols: Add reagent to sample; red color confirms aliphatic alcohol.",
+        "observe": "Test phenol sample with 1% neutral FeCl3: immediate intense ink-violet coloration confirms phenolic -OH.",
+        "safety": "Ensure FeCl3 is strictly neutral (boiled with NH4OH until faint precipitate and filtered)."
+      }
+    ],
     "precautions": [
       "Always prepare Tollens' reagent freshly; do not store as it forms explosive silver fulminate on standing.",
       "Use warm water baths instead of direct flames when heating flammable organic liquids.",
       "Discard silver mirror residues immediately by dissolving in dilute nitric acid.",
       "Neutralize acidic and alkaline waste before disposal."
     ],
-    "learning_objectives": [
-      "Identify reactive functional groups using specific chemical diagnostic reagents.",
-      "Formulate redox and condensation reaction equations for aldehydes, acids, and alcohols.",
-      "Relate molecular structural features to observed chemical reactivity."
+    "thumbnail_url": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Organic Chemistry",
@@ -1120,36 +5881,250 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Chemistry",
       "Diagnostic Tests"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=800&q=80"
+    "formula": "R-CHO + 2 [Ag(NH3)2]⁺ + 3 OH⁻ -> R-COO⁻ + 2 Ag↓ (Brilliant Silver Mirror) + 4 NH3 + 2 H2O",
+    "obsCols": [
+      "Functional Group Test",
+      "Reagent & Reaction Conditions",
+      "Observation",
+      "Confirmed Functional Group"
     ],
-    "popularity": 95,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1140,
-    "likes": 760,
-    "rating": 5
+    "obsRows": [
+      [
+        "Tollens' Silver Mirror Test",
+        "Ammoniacal Silver Nitrate + Warm water bath",
+        "Gleaming specular silver mirror coats inside of test tube",
+        "Aldehydic Group (-CHO)"
+      ],
+      [
+        "Fehling's Test",
+        "Fehling A + B equal volume + Boil 2 mins",
+        "Deep blue color turns to brick-red cuprous oxide (Cu2O↓) ppt",
+        "Aliphatic Aldehyde (-CHO)"
+      ],
+      [
+        "Sodium Bicarbonate Test",
+        "Saturated NaHCO3 solution at room temp",
+        "Brisk effervescence of CO2 gas turns lime water milky",
+        "Carboxylic Acid (-COOH)"
+      ],
+      [
+        "Neutral FeCl3 Test",
+        "Neutral Ferric Chloride solution + gentle shake",
+        "Intense violet / purple coloration forms",
+        "Phenolic Group (Ar-OH)"
+      ],
+      [
+        "Cerium Ammonium Nitrate Test",
+        "CAN reagent dissolved in dilute HNO3",
+        "Color changes from yellow to blood-red",
+        "Alcoholic Group (-OH)"
+      ]
+    ],
+    "interp": [
+      [
+        "Selective Reduction of Tollens'",
+        "Aldehydes readily reduce Ag⁺ to metallic silver which plates the clean glass wall as a shining mirror, while ketones fail to react."
+      ],
+      [
+        "Carboxylic Acid Effervescence",
+        "Carboxylic acids (-COOH) are stronger acids than carbonic acid, displacing CO2 with brisk effervescence (RCOOH + NaHCO3 -> RCOONa + H2O + CO2↑)."
+      ],
+      [
+        "Phenolic Coordination Complex",
+        "Phenols form a brightly colored hexakis-phenolate iron complex [Fe(OAr)6]³⁻ responsible for the diagnostic deep violet hue."
+      ],
+      [
+        "Diagnostic Systematics",
+        "A battery of orthogonal chemical tests definitively classifies unknown organic compounds without ambiguity."
+      ]
+    ],
+    "graph": {
+      "title": "Relative Oxidation Rate of Carbonyls by Tollens' Reagent at 60°C",
+      "xLabel": "Organic Substrate Type",
+      "yLabel": "Silver Plating Rate (mg Ag / min)",
+      "points": [
+        [
+          "Formaldehyde",
+          18.5
+        ],
+        [
+          "Acetaldehyde",
+          12.2
+        ],
+        [
+          "Benzaldehyde",
+          5.8
+        ],
+        [
+          "Acetone (Ketone)",
+          0
+        ],
+        [
+          "Acetophenone",
+          0
+        ]
+      ]
+    },
+    "views": 1866,
+    "likes": 774,
+    "rating": 4.9
   },
   {
     "id": "8d3edf3a-b147-4ea8-8323-c267e5939a8c",
-    "title": "Enthalpy of Neutralization Calorimetry: Strong Acid & Strong Base",
     "slug": "enthalpy-of-neutralization-calorimetry",
+    "title": "Enthalpy of Neutralization Calorimetry: Strong Acid & Strong Base",
     "subject": "Chemistry",
     "subject_slug": "chemistry",
     "class": "Class 12",
     "difficulty": "Advanced",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Determine the enthalpy of neutralization of a strong acid (1.0 M HCl) with a strong base (1.0 M NaOH) using a polystyrene coffee cup calorimeter.",
     "outcome": "Temperature rise of 6.7°C measured. Heat released yields enthalpy of neutralization ΔH = -56.8 kJ/mol, matching theoretical standard thermodynamic value (-57.1 kJ/mol) within 0.7% error.",
     "materials": [
-      "1.0 M Hydrochloric Acid (HCl) solution × 150 mL",
-      "1.0 M Sodium Hydroxide (NaOH) solution × 150 mL",
-      "Expanded Polystyrene (Styrofoam) Cup Calorimeter with lid × 1",
-      "Precision Beckman/Digital Thermometer (0.01°C least count) × 1",
-      "Calorimeter Plastic Stirrer × 1",
-      "Graduated Cylinders (100 mL) × 2",
-      "Distilled water wash bottle × 1"
+      {
+        "id": "mat-0",
+        "name": "1.0 M Hydrochloric Acid (HCl) solution  mL",
+        "qty": 150,
+        "price": 50,
+        "about": "Vacuum-jacketed silvered glass Dewar calorimeter flask mounted in protective wooden case with cork lid.",
+        "specs": [
+          [
+            "Capacity",
+            "500 mL"
+          ],
+          [
+            "Thermal Leakage Rate",
+            "< 0.05 °C/min"
+          ],
+          [
+            "Lid Fittings",
+            "Holes for thermometer and wire stirrer"
+          ],
+          [
+            "Insulation",
+            "High vacuum silvered double-wall Dewar"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "1.0 M Sodium Hydroxide (NaOH) solution  mL",
+        "qty": 150,
+        "price": 95,
+        "about": "High-precision 1/10th degree laboratory thermometer.",
+        "specs": [
+          [
+            "Range",
+            "0 to 50 °C"
+          ],
+          [
+            "Graduation",
+            "0.1 °C divisions"
+          ],
+          [
+            "Accuracy",
+            "± 0.05 °C calibrated"
+          ],
+          [
+            "Filling",
+            "Non-toxic organic blue liquid with white backing"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Expanded Polystyrene (Styrofoam) Cup Calorimeter with lid",
+        "qty": 1,
+        "price": 140,
+        "about": "Standardized 1.00 M Hydrochloric Acid and 1.00 M Sodium Hydroxide volumetric solutions.",
+        "specs": [
+          [
+            "Concentration",
+            "1.000 M ± 0.005 M"
+          ],
+          [
+            "Purity",
+            "AR Analytical Reagent grade"
+          ],
+          [
+            "Volume",
+            "500 mL each bottle"
+          ],
+          [
+            "Specific Heat",
+            "c = 4.184 J/g°C"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Precision Beckman/Digital Thermometer (0.01°C least count)",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Enthalpy of Neutralization Calorimetry: Strong Acid & Strong Base.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Calorimeter Plastic Stirrer",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Enthalpy of Neutralization Calorimetry: Strong Acid & Strong Base.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Graduated Cylinders (100 mL)",
+        "qty": 2,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Enthalpy of Neutralization Calorimetry: Strong Acid & Strong Base.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Distilled water wash bottle",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Enthalpy of Neutralization Calorimetry: Strong Acid & Strong Base.",
+        "specs": [
+          [
+            "Category",
+            "Chemistry Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Determine calorimeter water equivalent (W) using hot and cold water mixing method.",
@@ -1160,16 +6135,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Immediately replace the insulated lid, insert the thermometer and stirrer, and stir smoothly.",
       "Record the temperature every 15 seconds until it reaches a maximum peak (T2) and begins to fall. Calculate ΔH = -[m·c + W]·(T2 - T1) / n."
     ],
+    "steps": [
+      {
+        "instruction": "Determine calorimeter water equivalent (W) using hot and cold water mixing method.",
+        "text": "Determine calorimeter water equivalent (W) using hot and cold water mixing method.",
+        "observe": "Determine water equivalent W of polished vacuum Dewar flask calorimeter using warm water mixing method (W = 40 J/°C).",
+        "safety": "Inspect thermos glass liner for cracks before mounting in wooden housing."
+      },
+      {
+        "instruction": "Measure exactly 100 mL of 1.0 M HCl in a graduated cylinder and transfer to the calorimeter cup.",
+        "text": "Measure exactly 100 mL of 1.0 M HCl in a graduated cylinder and transfer to the calorimeter cup.",
+        "observe": "Measure exactly 100 mL of 1.0 M HCl into clean calorimeter; record steady baseline temperature T1 = 24.2 °C.",
+        "safety": "Use 0.1°C precision Beckman or digital thermometer; do not bump bulb on calorimeter bottom."
+      },
+      {
+        "instruction": "Measure exactly 100 mL of 1.0 M NaOH in another cylinder. Place both solutions side by side until both reach the exact same initial temperature (T1).",
+        "text": "Measure exactly 100 mL of 1.0 M NaOH in another cylinder. Place both solutions side by side until both reach the exact same initial temperature (T1).",
+        "observe": "Measure exactly 100 mL of 1.0 M NaOH in separate beaker; ensure temperature T2 matches T1 within 0.1°C.",
+        "safety": "Rinse thermometer thoroughly between measuring acid and base."
+      },
+      {
+        "instruction": "Record initial temperature T1 to 0.1°C precision.",
+        "text": "Record initial temperature T1 to 0.1°C precision.",
+        "observe": "Pour NaOH rapidly into calorimeter, seal lid immediately with rubber cork, and stir gently with plastic stirrer.",
+        "safety": "Pour quickly without splashing; seal immediately to minimize evaporative heat loss."
+      },
+      {
+        "instruction": "Pour the 100 mL NaOH quickly into the calorimeter cup containing HCl.",
+        "text": "Pour the 100 mL NaOH quickly into the calorimeter cup containing HCl.",
+        "observe": "Record temperature every 15 seconds; temperature peaks rapidly at T_max = 30.7 °C (ΔT = 6.5 °C).",
+        "safety": "Stir with steady circular rhythm without excessive friction heating."
+      },
+      {
+        "instruction": "Immediately replace the insulated lid, insert the thermometer and stirrer, and stir smoothly.",
+        "text": "Immediately replace the insulated lid, insert the thermometer and stirrer, and stir smoothly.",
+        "observe": "Calculate heat evolved Q = (m·c + W)·ΔT = (200 × 4.184 + 40) × 6.5 = 5700 J for 0.1 mol => ΔH = -57.0 kJ/mol.",
+        "safety": "Neutralized salt solution (pure 0.5M NaCl) is safe to wash down sink."
+      },
+      {
+        "instruction": "Record the temperature every 15 seconds until it reaches a maximum peak (T2) and begins to fall. Calculate ΔH = -[m·c + W]·(T2 - T1) / n.",
+        "text": "Record the temperature every 15 seconds until it reaches a maximum peak (T2) and begins to fall. Calculate ΔH = -[m·c + W]·(T2 - T1) / n."
+      }
+    ],
     "precautions": [
       "Mix acid and base rapidly without splashing to minimize early heat dissipation.",
       "Stir gently and constantly to maintain uniform thermal equilibrium throughout the mixture.",
       "Ensure thermometer bulb is fully submerged in the liquid without touching the cup bottom or walls.",
       "Keep calorimeter cover tightly seated to avoid convective heat losses."
     ],
-    "learning_objectives": [
-      "Understand thermochemical principles and conservation of energy in chemical reactions.",
-      "Operate constant-pressure calorimeters and calculate heat capacities.",
-      "Explain why strong acid-strong base neutralizations share a constant ΔH ≈ -57.1 kJ/mol (formation of 1 mol H2O from H+ and OH-)."
+    "thumbnail_url": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Thermochemistry",
@@ -1178,36 +6194,260 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Chemistry",
       "Thermodynamics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1581093806997-124204d9fa9d?auto=format&fit=crop&w=800&q=80"
+    "formula": "ΔH_neut = - (m · c + W) · ΔT / n = - (200 g × 4.184 J/g°C + 40 J/°C) × 6.5 °C / 0.100 mol = -57.0 kJ/mol",
+    "obsCols": [
+      "Calorimetric Parameter",
+      "Value / Reading",
+      "Units",
+      "Scientific Significance"
     ],
-    "popularity": 90,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1080,
-    "likes": 720,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Initial Temp of 1.0 M HCl (T1)",
+        "24.2 °C",
+        "Degrees Celsius",
+        "Ambient thermal equilibrium"
+      ],
+      [
+        "Initial Temp of 1.0 M NaOH (T2)",
+        "24.2 °C",
+        "Degrees Celsius",
+        "Matched baseline temperature"
+      ],
+      [
+        "Mean Initial Temperature (T_init)",
+        "24.2 °C",
+        "Degrees Celsius",
+        "T_init = (T1 + T2)/2"
+      ],
+      [
+        "Maximum Neutralization Temp (T_max)",
+        "30.7 °C",
+        "Degrees Celsius",
+        "Peak exothermic reading"
+      ],
+      [
+        "Temperature Rise (ΔT)",
+        "6.5 °C",
+        "Degrees Celsius",
+        "ΔT = T_max - T_init"
+      ],
+      [
+        "Calculated Molar Enthalpy (ΔH_neut)",
+        "-57.0 kJ/mol",
+        "kJ per mole of H2O",
+        "Close to theoretical -57.3 kJ/mol"
+      ]
+    ],
+    "interp": [
+      [
+        "Exothermic Heat of Neutralization",
+        "Neutralization of strong acid by strong base (H⁺ + OH⁻ -> H2O) releases heat, raising solution temperature by 6.5 °C."
+      ],
+      [
+        "Theoretical Agreement",
+        "Experimental ΔH = -57.0 kJ/mol matches theoretical literature value -57.3 kJ/mol within 0.5% experimental error."
+      ],
+      [
+        "Calorimeter Water Equivalent",
+        "Incorporating the calorimeter water equivalent (W = 40 J/°C) accounts for heat absorbed by the thermos glass and thermometer."
+      ],
+      [
+        "Constancy for Strong Pairs",
+        "Any strong acid - strong base pair gives essentially identical ΔH (~ -57.3 kJ/mol) because the net reaction is purely water formation."
+      ]
+    ],
+    "graph": {
+      "title": "Calorimeter Temperature vs Time (Cooling Curve Extrapolation)",
+      "xLabel": "Time Elapsed (seconds)",
+      "yLabel": "Temperature (°C)",
+      "points": [
+        [
+          "0 s (Mixing)",
+          24.2
+        ],
+        [
+          "15 s",
+          28.5
+        ],
+        [
+          "30 s",
+          30.5
+        ],
+        [
+          "45 s (Peak T_max)",
+          30.7
+        ],
+        [
+          "60 s",
+          30.6
+        ],
+        [
+          "120 s",
+          30.4
+        ],
+        [
+          "180 s",
+          30.1
+        ]
+      ]
+    },
+    "views": 1903,
+    "likes": 792,
+    "rating": 4.9
   },
   {
     "id": "abe9f719-a49e-4734-b52b-0bc08a4506c8",
-    "title": "Temporary Mount of Onion Peel Epidermal Cells",
     "slug": "onion-peel-cell-microscopy",
+    "title": "Temporary Mount of Onion Peel Epidermal Cells",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 9",
     "difficulty": "Beginner",
+    "duration": "35 Mins",
     "duration_minutes": 35,
     "description": "Prepare a temporary stained mount of onion bulb epidermal peel and observe the structural organization of plant cells (cell wall, nucleus, cytoplasm, and vacuole) under a compound microscope.",
     "outcome": "Clear rectangular epidermal plant cells observed with distinct cell walls, prominent darkly-stained peripheral nuclei, and large central vacuoles.",
     "materials": [
-      "Fresh Onion Bulb × 1",
-      "Methylene Blue / Safranin Stain Solution (0.5%) × 1 dropper bottle",
-      "Glycerine (pure laboratory grade) × 1 dropper bottle",
-      "Compound Light Microscope (10x, 40x objectives) × 1",
-      "Glass Microscope Slides & Cover Slips (No. 1 thickness) × 1 box",
-      "Watch Glass, Forceps, Dissecting Needle, and Camel Hair Brush × 1 set",
-      "Filter Paper / Blotting Paper strips × 1 pack"
+      {
+        "id": "mat-0",
+        "name": "Fresh Onion Bulb",
+        "qty": 1,
+        "price": 50,
+        "about": "Compound binocular biological laboratory microscope with LED sub-stage illumination.",
+        "specs": [
+          [
+            "Magnification",
+            "40×, 100×, 400×, 1000×"
+          ],
+          [
+            "Objectives",
+            "Achromatic 4×, 10×, 40× spring, 100× oil"
+          ],
+          [
+            "Eyepieces",
+            "WF10× / 18 mm field of view"
+          ],
+          [
+            "Condenser",
+            "Abbe 1.25 NA with iris diaphragm"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Methylene Blue / Safranin Stain Solution (0.5%)  dropper bottle",
+        "qty": 1,
+        "price": 95,
+        "about": "Safranin O biological histological nuclear stain (0.5% aqueous solution).",
+        "specs": [
+          [
+            "Dye Content",
+            "≥ 85% certified biological stain"
+          ],
+          [
+            "Solvent",
+            "50% ethanol / 50% distilled water"
+          ],
+          [
+            "Target",
+            "Binds nucleic acids (red) and lignified cell walls"
+          ],
+          [
+            "Bottle",
+            "100 mL dropper bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Glycerine (pure laboratory grade)  dropper bottle",
+        "qty": 1,
+        "price": 140,
+        "about": "Pure analytical grade Glycerine (Glycerol) mounting medium and cover slips.",
+        "specs": [
+          [
+            "Refractive Index",
+            "nD = 1.474 (ideal match for glass)"
+          ],
+          [
+            "Purity",
+            "≥ 99.5% AR grade"
+          ],
+          [
+            "Coverslips",
+            "No. 1 thickness (0.13 – 0.17 mm), 22 mm × 22 mm"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Compound Light Microscope (10x, 40x objectives)",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Temporary Mount of Onion Peel Epidermal Cells.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Glass Microscope Slides & Cover Slips (No. 1 thickness)  box",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Temporary Mount of Onion Peel Epidermal Cells.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Watch Glass, Forceps, Dissecting Needle, and Camel Hair Brush  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Temporary Mount of Onion Peel Epidermal Cells.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Filter Paper / Blotting Paper strips  pack",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Temporary Mount of Onion Peel Epidermal Cells.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Cut a fresh onion bulb and peel off a fleshy scale leaf.",
@@ -1218,16 +6458,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Place the stained peel flat in the center of a clean glass slide and add a single drop of glycerine.",
       "Lower a clean coverslip gently at a 45° angle using a needle to prevent air bubble formation. Blot excess fluid and examine under 10x, then 40x."
     ],
+    "steps": [
+      {
+        "instruction": "Cut a fresh onion bulb and peel off a fleshy scale leaf.",
+        "text": "Cut a fresh onion bulb and peel off a fleshy scale leaf.",
+        "observe": "Peel a thin, transparent epidermal layer from the concave inner surface of an onion fleshy scale leaf.",
+        "safety": "Use fine forceps gently to avoid tearing or wrinkling the delicate epidermal membrane."
+      },
+      {
+        "instruction": "Bend the leaf inward until it snaps, then use fine forceps to gently peel off the thin, transparent inner epidermal membrane.",
+        "text": "Bend the leaf inward until it snaps, then use fine forceps to gently peel off the thin, transparent inner epidermal membrane.",
+        "observe": "Place peel immediately in a watch glass containing water to prevent desiccation and cell shrinkage.",
+        "safety": "Keep specimen submerged; dehydrated cells collapse and distort."
+      },
+      {
+        "instruction": "Immediately transfer the epidermal peel into a watch glass containing water using a camel hair brush to prevent folding or drying.",
+        "text": "Immediately transfer the epidermal peel into a watch glass containing water using a camel hair brush to prevent folding or drying.",
+        "observe": "Transfer to watch glass containing dilute Safranin stain for 2 to 3 minutes; rinse excess stain in fresh water.",
+        "safety": "Safranin stains skin and clothing intensely; use forceps and wash brushes."
+      },
+      {
+        "instruction": "Add 2-3 drops of Safranin stain to the watch glass and let the peel stain for 2 minutes.",
+        "text": "Add 2-3 drops of Safranin stain to the watch glass and let the peel stain for 2 minutes.",
+        "observe": "Mount peel in center of clean glass slide in a drop of pure glycerine; lower coverslip at 45° using needle.",
+        "safety": "Lower coverslip slowly with mounting needle to prevent trapping air bubbles."
+      },
+      {
+        "instruction": "Transfer peel to another watch glass of clean water to rinse off excess stain.",
+        "text": "Transfer peel to another watch glass of clean water to rinse off excess stain.",
+        "observe": "Blot excess glycerine with filter paper; examine under 10× low power, then switch to 40× high power.",
+        "safety": "When focusing 40× high power, only use fine adjustment knob to prevent crashing objective into glass slide."
+      },
+      {
+        "instruction": "Place the stained peel flat in the center of a clean glass slide and add a single drop of glycerine.",
+        "text": "Place the stained peel flat in the center of a clean glass slide and add a single drop of glycerine.",
+        "observe": "Observe crisp rectangular brick-like cells with distinct dark red stained nuclei and cell walls.",
+        "safety": "Clean microscope stage and oil immersion lenses with lens tissue after viewing."
+      },
+      {
+        "instruction": "Lower a clean coverslip gently at a 45° angle using a needle to prevent air bubble formation. Blot excess fluid and examine under 10x, then 40x.",
+        "text": "Lower a clean coverslip gently at a 45° angle using a needle to prevent air bubble formation. Blot excess fluid and examine under 10x, then 40x."
+      }
+    ],
     "precautions": [
       "Always use a camel hair brush to transfer delicate peels; forceps can tear or crush cell walls.",
       "Do not let the peel dry out at any stage of preparation.",
       "Lower the coverslip slowly to avoid trapping air bubbles (air bubbles appear as thick black-rimmed rings).",
       "Wipe off excess glycerine with blotting paper so microscope stage remains clean."
     ],
-    "learning_objectives": [
-      "Master the technique of preparing thin temporary mounts for biological microscopy.",
-      "Identify core plant cell organelles: rigid cellulose cell wall, plasma membrane, nucleus, and central vacuole.",
-      "Operate compound light microscopes with proper stage illumination."
+    "thumbnail_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Cell Biology",
@@ -1236,36 +6517,236 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 9 Biology",
       "NEP 2020 Experiential"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80"
+    "formula": "Cell Dimension = Field of View Diameter / Cell Count = 1500 μm / 6 = 250 μm length",
+    "obsCols": [
+      "Magnification Objective",
+      "Observed Cell Feature",
+      "Visibility & Description",
+      "Organelles Visible"
     ],
-    "popularity": 98,
-    "status": "published",
-    "duration": "35 Mins",
-    "views": 1176,
-    "likes": 784,
-    "rating": 5
+    "obsRows": [
+      [
+        "Low Power (10×)",
+        "Cell arrangement & shape",
+        "Rectangular, brick-like cells packed tightly in sheets",
+        "Cell walls, prominent boundaries"
+      ],
+      [
+        "High Power (40×)",
+        "Cell Wall & Cytoplasm",
+        "Distinct double-line cellulose cell wall, granular cytoplasm",
+        "Cell wall, thin peripheral cytoplasm"
+      ],
+      [
+        "High Power (40×)",
+        "Nucleus",
+        "Dense, spherical, darkly stained body pushed to one side",
+        "Nucleus, prominent nucleolus visible"
+      ],
+      [
+        "High Power (40×)",
+        "Central Vacuole",
+        "Large transparent central vacuole occupying >80% volume",
+        "Large central sap vacuole, tonoplast boundary"
+      ]
+    ],
+    "interp": [
+      [
+        "Typical Plant Cell Architecture",
+        "Cells display classic rigid cellulose cell wall, large central sap vacuole, and peripheral cytoplasm."
+      ],
+      [
+        "Nucleus Eccentric Position",
+        "The huge central vacuole pushes the nucleus and cytoplasm against the peripheral cell boundary."
+      ],
+      [
+        "Absence of Chloroplasts",
+        "Because onion bulbs grow underground as storage organs, epidermal cells contain zero chloroplasts (non-photosynthetic)."
+      ],
+      [
+        "Staining Specificity",
+        "Safranin or acetocarmine binds preferentially to nucleic acids and cell wall polysaccharides, giving high optical contrast."
+      ]
+    ],
+    "graph": {
+      "title": "Cell Length vs Cell Width Distribution in Onion Epidermis",
+      "xLabel": "Observed Cell Sample #",
+      "yLabel": "Dimension (μm)",
+      "points": [
+        [
+          "Cell 1",
+          245
+        ],
+        [
+          "Cell 2",
+          260
+        ],
+        [
+          "Cell 3",
+          255
+        ],
+        [
+          "Cell 4",
+          270
+        ],
+        [
+          "Cell 5",
+          240
+        ],
+        [
+          "Cell 6",
+          250
+        ]
+      ]
+    },
+    "views": 1940,
+    "likes": 810,
+    "rating": 4.9
   },
   {
     "id": "da207a82-ac24-4d67-9e57-6216fde56260",
-    "title": "Mitosis in Onion Root Tip Cells via Squash Method",
     "slug": "mitosis-onion-root-tip-squash",
+    "title": "Mitosis in Onion Root Tip Cells via Squash Method",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 12",
     "difficulty": "Advanced",
+    "duration": "55 Mins",
     "duration_minutes": 55,
     "description": "Prepare temporary root tip squashes of Allium cepa to study and identify distinct stages of mitotic cell division (prophase, metaphase, anaphase, telophase).",
     "outcome": "Distinct mitotic stages clearly observed: condensed chromosome threads (Prophase), equatorial plate alignment (Metaphase), sister chromatid poleward separation (Anaphase), and nuclear reorganization (Telophase).",
     "materials": [
-      "Freshly germinated Onion Root Tips (1-2 cm long) fixed in Carnoy's fluid (1:3 acetic alcohol) × 1 vial",
-      "1N Hydrochloric Acid (HCl) × 20 mL",
-      "Acetocarmine / Aceto-orcein Stain (2%) × 1 dropper bottle",
-      "Compound Research Microscope (100x oil immersion objective) × 1",
-      "Spirit Lamp / Bunsen Burner & Test Tube Holder × 1",
-      "Glass Slides, Coverslips, Razor Blade, and Dissecting Needle × 1 set",
-      "Blotting paper strips × 1 pack"
+      {
+        "id": "mat-0",
+        "name": "Freshly germinated Onion Root Tips (1-2 cm long) fixed in Carnoy's fluid (1:3 acetic alcohol)  vial",
+        "qty": 1,
+        "price": 50,
+        "about": "Acetocarmine 2% histological nuclear chromosome stain.",
+        "specs": [
+          [
+            "Composition",
+            "2% carmine dye dissolved in 45% boiling acetic acid"
+          ],
+          [
+            "pH",
+            "Acidic fixative-stain"
+          ],
+          [
+            "Specific Target",
+            "Chromatin DNA and histone complexes"
+          ],
+          [
+            "Bottle",
+            "100 mL dropper bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "1N Hydrochloric Acid (HCl)  mL",
+        "qty": 20,
+        "price": 95,
+        "about": "Fresh Allium cepa (onion) root tips grown in aerated hydroponic culture.",
+        "specs": [
+          [
+            "Harvest Time",
+            "10:00 – 11:30 AM (maximum mitotic activity)"
+          ],
+          [
+            "Length",
+            "10 – 15 mm healthy white rootlets"
+          ],
+          [
+            "Fixation",
+            "Carnoy's fluid (3:1 ethanol : glacial acetic acid)"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Acetocarmine / Aceto-orcein Stain (2%)  dropper bottle",
+        "qty": 1,
+        "price": 140,
+        "about": "1.0 N Hydrochloric Acid (HCl) for pectinase-equivalent chemical maceration.",
+        "specs": [
+          [
+            "Concentration",
+            "1.0 N standardized"
+          ],
+          [
+            "Function",
+            "Dissolves calcium pectate middle lamella cement"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Compound Research Microscope (100x oil immersion objective)",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Mitosis in Onion Root Tip Cells via Squash Method.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Spirit Lamp / Bunsen Burner & Test Tube Holder",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Mitosis in Onion Root Tip Cells via Squash Method.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Glass Slides, Coverslips, Razor Blade, and Dissecting Needle  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Mitosis in Onion Root Tip Cells via Squash Method.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Blotting paper strips  pack",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Mitosis in Onion Root Tip Cells via Squash Method.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Cut 2-3 mm of the terminal actively growing apical meristem tip of the onion root.",
@@ -1276,16 +6757,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Cover the slide with a folded piece of blotting paper and press down firmly and vertically with the thumb to squash the meristem cells into a single monolayer.",
       "Observe under low power (10x) to locate dividing zones, then switch to high power (40x and 100x) to document mitotic stages."
     ],
+    "steps": [
+      {
+        "instruction": "Cut 2-3 mm of the terminal actively growing apical meristem tip of the onion root.",
+        "text": "Cut 2-3 mm of the terminal actively growing apical meristem tip of the onion root.",
+        "observe": "Grow fresh root tips on onion bulbs in water; harvest terminal 2-3 mm root tips at 10:00 AM (peak mitotic window).",
+        "safety": "Fix root tips immediately in Carnoy's fixative (ethanol : glacial acetic acid 3:1) for at least 2 hours."
+      },
+      {
+        "instruction": "Place root tips in a watch glass containing 1N HCl and warm gently over a spirit lamp for 2 minutes to hydrolyze the pectin middle lamella.",
+        "text": "Place root tips in a watch glass containing 1N HCl and warm gently over a spirit lamp for 2 minutes to hydrolyze the pectin middle lamella.",
+        "observe": "Hydrolyze fixed root tips in 1N HCl at 60°C for 5 minutes in a water bath to dissolve middle lamella pectin.",
+        "safety": "Control water bath temperature strictly at 60°C; over-hydrolysis destroys chromosome morphology."
+      },
+      {
+        "instruction": "Discard acid, wash tips with water, and place on a clean glass slide.",
+        "text": "Discard acid, wash tips with water, and place on a clean glass slide.",
+        "observe": "Rinse root tips thoroughly in cold water; transfer to watch glass and add 2% Acetocarmine or Aceto-orcein stain.",
+        "safety": "Warm stain gently over spirit lamp without boiling to intensify DNA dye binding."
+      },
+      {
+        "instruction": "Add 1 drop of 2% acetocarmine stain, warm gently over flame without boiling, and allow to stain for 5 minutes.",
+        "text": "Add 1 drop of 2% acetocarmine stain, warm gently over flame without boiling, and allow to stain for 5 minutes.",
+        "observe": "Cut and retain only the deeply stained terminal 1 mm meristematic tip on a clean glass slide.",
+        "safety": "Discard the non-dividing elongating root zone above 1 mm."
+      },
+      {
+        "instruction": "Add a small drop of 45% acetic acid, place a coverslip over the tissue.",
+        "text": "Add a small drop of 45% acetic acid, place a coverslip over the tissue.",
+        "observe": "Place coverslip; apply firm, vertical thumb pressure through folded bibulous paper to squash cells into a single monolayer.",
+        "safety": "Squash strictly vertically; do not allow coverslip to slip sideways, which breaks chromosomes into debris."
+      },
+      {
+        "instruction": "Cover the slide with a folded piece of blotting paper and press down firmly and vertically with the thumb to squash the meristem cells into a single monolayer.",
+        "text": "Cover the slide with a folded piece of blotting paper and press down firmly and vertically with the thumb to squash the meristem cells into a single monolayer.",
+        "observe": "Examine under 400× oil/high-dry magnification; tally cells across all four mitotic phases to calculate Mitotic Index.",
+        "safety": "Seal coverslip edges with clear nail polish if keeping slide for long-term study."
+      },
+      {
+        "instruction": "Observe under low power (10x) to locate dividing zones, then switch to high power (40x and 100x) to document mitotic stages.",
+        "text": "Observe under low power (10x) to locate dividing zones, then switch to high power (40x and 100x) to document mitotic stages."
+      }
+    ],
     "precautions": [
       "Do not boil the root tips during acid hydrolysis or staining (boiling destroys chromosome morphology).",
       "Apply thumb pressure strictly vertically during squashing; avoid sideways slipping which twists and shears cells.",
       "Harvest root tips between 9:00 AM and 10:30 AM when mitotic index peaks in Allium cepa.",
       "Use only the terminal 2 mm apical tip containing active dividing meristem."
     ],
-    "learning_objectives": [
-      "Understand eukaryotic somatic cell cycle and chromosome segregation mechanics.",
-      "Differentiate between interphase and the four sequential stages of mitosis.",
-      "Master acid maceration and cytological staining squashes."
+    "thumbnail_url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Mitosis",
@@ -1294,35 +6816,217 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Biology",
       "Chromosomes"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=800&q=80"
+    "formula": "Mitotic Index (%) = (Number of cells in mitosis / Total number of cells observed) × 100 = (38 / 250) × 100 = 15.2%",
+    "obsCols": [
+      "Mitotic Phase Observed",
+      "Chromosome Morphology & Location",
+      "Cell Count in Field",
+      "Phase Percentage (%)"
     ],
-    "popularity": 96,
-    "status": "published",
-    "duration": "55 Mins",
-    "views": 1152,
-    "likes": 768,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Interphase",
+        "Chromatin diffuse, intact nuclear membrane, dark nucleolus",
+        "212 cells",
+        "84.8% (Resting/Replication)"
+      ],
+      [
+        "Prophase",
+        "Chromatin condenses into distinct thick visible chromatid pairs",
+        "18 cells",
+        "7.2%"
+      ],
+      [
+        "Metaphase",
+        "Chromosomes aligned strictly along equatorial metaphase plate",
+        "8 cells",
+        "3.2%"
+      ],
+      [
+        "Anaphase",
+        "Sister chromatids separated, V-shaped moving to opposite poles",
+        "6 cells",
+        "2.4%"
+      ],
+      [
+        "Telophase & Cytokinesis",
+        "Chromosomes at poles, nuclear membranes reform, cell plate forms",
+        "6 cells",
+        "2.4%"
+      ]
+    ],
+    "interp": [
+      [
+        "Meristematic Mitotic Activity",
+        "Onion root tips contain active apical meristem where cells divide rapidly to facilitate root elongation."
+      ],
+      [
+        "Interphase Dominance",
+        "Over 84% of cells are in interphase, demonstrating that DNA replication and cell growth occupy the vast majority of cell cycle duration."
+      ],
+      [
+        "Equatorial Metaphase Alignment",
+        "Metaphase shows classic equatorial plate alignment with centromeres attached to spindle fibers."
+      ],
+      [
+        "V-Shaped Anaphase Centromeres",
+        "Metacentric chromosomes pull toward poles with centromeres leading, assuming characteristic V and J shapes."
+      ]
+    ],
+    "graph": {
+      "title": "Cell Cycle Phase Distribution in Meristematic Root Tip Cells",
+      "xLabel": "Cell Cycle Phase",
+      "yLabel": "Observed Cell Count",
+      "points": [
+        [
+          "Interphase",
+          212
+        ],
+        [
+          "Prophase",
+          18
+        ],
+        [
+          "Metaphase",
+          8
+        ],
+        [
+          "Anaphase",
+          6
+        ],
+        [
+          "Telophase",
+          6
+        ]
+      ]
+    },
+    "views": 1977,
+    "likes": 828,
+    "rating": 4.9
   },
   {
     "id": "28a79657-42ed-45a3-82ef-8e791357cf9f",
-    "title": "Demonstration of Osmosis using Potato Osmoscope",
     "slug": "osmosis-potato-osmoscope-demonstration",
+    "title": "Demonstration of Osmosis using Potato Osmoscope",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Demonstrate endosmosis through living plant tissue using a potato tuber osmoscope containing concentrated sucrose solution placed in water.",
     "outcome": "Liquid level in the potato cavity rises significantly above the initial pin mark due to water entering from the petri dish (hypotonic) into the sucrose solution (hypertonic) across selectively permeable potato membranes.",
     "materials": [
-      "Large healthy Potato Tuber × 1",
-      "Concentrated Sucrose / Sugar Solution (20% w/v) colored with eosin/food coloring × 50 mL",
-      "Petri Dish with distilled water × 1",
-      "Scalpel / Kitchen Knife & Potato Corer × 1",
-      "All-metal common pins × 2",
-      "Petri dish and ruler × 1"
+      {
+        "id": "mat-0",
+        "name": "Large healthy Potato Tuber",
+        "qty": 1,
+        "price": 50,
+        "about": "Large firm unsprouted potato tuber (Solanum tuberosum).",
+        "specs": [
+          [
+            "Freshness",
+            "Fresh harvested turgid tuber"
+          ],
+          [
+            "Dimensions",
+            "Approx 80 mm × 50 mm"
+          ],
+          [
+            "Condition",
+            "Free of greening or mechanical damage"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Concentrated Sucrose / Sugar Solution (20% w/v) colored with eosin/food coloring  mL",
+        "qty": 50,
+        "price": 95,
+        "about": "20% (w/v) Analytical grade Sucrose solution with Eosin dye marker.",
+        "specs": [
+          [
+            "Concentration",
+            "20.0 g sucrose per 100 mL distilled water"
+          ],
+          [
+            "Osmotic Pressure",
+            "Approx 1.5 MPa hypertonic"
+          ],
+          [
+            "Color Marker",
+            "0.01% Eosin red dye for high visibility"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Petri Dish with distilled water",
+        "qty": 1,
+        "price": 140,
+        "about": "Heavy glass Petri dish and stainless steel entomological marking pins.",
+        "specs": [
+          [
+            "Petri Dish",
+            "100 mm diameter × 20 mm depth borosilicate glass"
+          ],
+          [
+            "Pins",
+            "30 mm rust-proof surgical steel indicator pins"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Scalpel / Kitchen Knife & Potato Corer",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Demonstration of Osmosis using Potato Osmoscope.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "All-metal common pins",
+        "qty": 2,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Demonstration of Osmosis using Potato Osmoscope.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Petri dish and ruler",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Demonstration of Osmosis using Potato Osmoscope.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Peel the skin from the base and sides of a large fresh potato tuber.",
@@ -1333,16 +7037,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Place the potato osmoscope upright into a petri dish containing clean distilled water (water level below cavity brim).",
       "Leave the setup undisturbed for 2 hours, then observe and mark the final sugar solution level with a second pin."
     ],
+    "steps": [
+      {
+        "instruction": "Peel the skin from the base and sides of a large fresh potato tuber.",
+        "text": "Peel the skin from the base and sides of a large fresh potato tuber.",
+        "observe": "Peel large fresh potato tuber; slice flat base so it stands upright; carve deep central rectangular cavity leaving 5 mm thin walls.",
+        "safety": "Use sharp scalpel with care; cut away from fingers on a cutting board."
+      },
+      {
+        "instruction": "Slice the base flat so the potato stands upright steadily in the petri dish.",
+        "text": "Slice the base flat so the potato stands upright steadily in the petri dish.",
+        "observe": "Fill cavity half-full with 20% sucrose solution colored with a trace of eosin red dye.",
+        "safety": "Do not spill sugar solution onto outer potato walls."
+      },
+      {
+        "instruction": "Scoop out a deep rectangular cavity from the top with a scalpel, leaving a thin base wall (~5 mm thick).",
+        "text": "Scoop out a deep rectangular cavity from the top with a scalpel, leaving a thin base wall (~5 mm thick).",
+        "observe": "Insert a fine stainless steel pin horizontally into inside cavity wall exactly marking initial meniscus level.",
+        "safety": "Align pin tip precisely with lowest point of colored sucrose meniscus."
+      },
+      {
+        "instruction": "Fill the cavity halfway with colored 20% sucrose solution.",
+        "text": "Fill the cavity halfway with colored 20% sucrose solution.",
+        "observe": "Place potato osmoscope in a petri dish filled with distilled water up to one-third of potato height.",
+        "safety": "Ensure water level in petri dish is strictly lower than cavity sugar level."
+      },
+      {
+        "instruction": "Insert a common pin horizontally into the inner wall of the potato cavity to mark the initial liquid level.",
+        "text": "Insert a common pin horizontally into the inner wall of the potato cavity to mark the initial liquid level.",
+        "observe": "Leave undisturbed for 4 hours; observe marked rise in cavity fluid level above reference pin.",
+        "safety": "Keep apparatus covered with bell jar to minimize surface evaporation."
+      },
+      {
+        "instruction": "Place the potato osmoscope upright into a petri dish containing clean distilled water (water level below cavity brim).",
+        "text": "Place the potato osmoscope upright into a petri dish containing clean distilled water (water level below cavity brim).",
+        "observe": "Mark final level with second pin; measure 15.5 mm rise confirming endo-osmosis across living plant cell membranes.",
+        "safety": "Set up boiled potato control in parallel to prove necessity of living cell membrane."
+      },
+      {
+        "instruction": "Leave the setup undisturbed for 2 hours, then observe and mark the final sugar solution level with a second pin.",
+        "text": "Leave the setup undisturbed for 2 hours, then observe and mark the final sugar solution level with a second pin."
+      }
+    ],
     "precautions": [
       "The bottom wall of the potato cavity must be kept thin (3-5 mm) to facilitate measurable osmotic flux.",
       "Ensure the sucrose solution level inside the cavity is higher than the outside water level to prevent hydrostatic backpressure.",
       "Use living, fresh potato cells; boiled potatoes fail because boiling denatures plasma membranes.",
       "Color the sugar solution with a drop of dye to ensure clear visual tracking."
     ],
-    "learning_objectives": [
-      "Understand osmosis as the passive net movement of water across a selectively permeable membrane.",
-      "Distinguish between hypotonic, isotonic, and hypertonic cellular environments.",
-      "Recognize the role of turgor pressure and cell membrane integrity in plant water relations."
+    "thumbnail_url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Osmosis",
@@ -1351,35 +7096,227 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Biology",
       "Hands-on Biology"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80"
+    "formula": "Water Potential Gradient: Ψ_w(Hypotonic outer water = 0) > Ψ_w(Hypertonic cavity sucrose = -1.2 MPa) => Net Endo-osmosis",
+    "obsCols": [
+      "Time Interval (Hours)",
+      "Osmoscope Initial Level (mm)",
+      "Current Liquid Level (mm)",
+      "Net Rise in Level Δh (mm)",
+      "State of Cavity Liquid"
     ],
-    "popularity": 92,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1104,
-    "likes": 736,
-    "rating": 5
+    "obsRows": [
+      [
+        "0 Hours (Initial)",
+        "10.0 mm (Pin mark)",
+        "10.0 mm",
+        "0.0 mm",
+        "Clear hypertonic 20% sucrose"
+      ],
+      [
+        "1 Hour",
+        "10.0 mm",
+        "14.5 mm",
+        "+4.5 mm",
+        "Gradual upward fluid rise"
+      ],
+      [
+        "2 Hours",
+        "10.0 mm",
+        "19.0 mm",
+        "+9.0 mm",
+        "Steady endo-osmotic inflow"
+      ],
+      [
+        "3 Hours",
+        "10.0 mm",
+        "23.0 mm",
+        "+13.0 mm",
+        "Level well above initial pin"
+      ],
+      [
+        "4 Hours (Equilibrium)",
+        "10.0 mm",
+        "25.5 mm",
+        "+15.5 mm",
+        "Steady osmotic hydrostatic equilibrium"
+      ]
+    ],
+    "interp": [
+      [
+        "Living Semi-Permeable Membrane",
+        "Living potato tuber cell protoplasm acts as a selectively permeable membrane permitting water molecules while blocking sucrose."
+      ],
+      [
+        "Direction of Endo-Osmosis",
+        "Water molecules move along water potential gradient from high potential (pure water petri dish) to low potential (sugar cavity)."
+      ],
+      [
+        "Hydrostatic Turgor Head",
+        "Fluid rise in cavity (+15.5 mm) generates hydrostatic pressure head balancing osmotic draw at dynamic equilibrium."
+      ],
+      [
+        "Boiled Control Verification",
+        "A boiled potato tuber control shows zero rise in liquid level because heat denatures cell membranes, destroying semi-permeability."
+      ]
+    ],
+    "graph": {
+      "title": "Endo-Osmotic Liquid Level Rise in Potato Cavity vs Time",
+      "xLabel": "Elapsed Time (Hours)",
+      "yLabel": "Liquid Column Rise (mm)",
+      "points": [
+        [
+          "0 hr",
+          0
+        ],
+        [
+          "1 hr",
+          4.5
+        ],
+        [
+          "2 hr",
+          9
+        ],
+        [
+          "3 hr",
+          13
+        ],
+        [
+          "4 hr",
+          15.5
+        ]
+      ]
+    },
+    "views": 2014,
+    "likes": 846,
+    "rating": 4.9
   },
   {
     "id": "39513e7c-504f-4c80-8bcb-1604e53825e5",
-    "title": "Measurement of Transpiration Rate using Ganong's Potometer",
     "slug": "transpiration-rate-ganongs-potometer",
+    "title": "Measurement of Transpiration Rate using Ganong's Potometer",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 11",
     "difficulty": "Intermediate",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Measure the rate of water absorption and transpiration in a leafy shoot using Ganong's Potometer under varying environmental conditions (still air, fan wind, bright sunlight).",
     "outcome": "Bubble travel velocity is fastest under bright light and breeze (0.85 cm/min) and slowest in humid shade (0.15 cm/min), demonstrating stomatal transpiration dynamics.",
     "materials": [
-      "Ganong's Potometer apparatus with graduated capillary tube and water reservoir × 1",
-      "Fresh leafy shoot (Coleus / Hibiscus / Nerium) cut underwater × 1",
-      "Colored water / beaker with water × 1",
-      "Stopwatch × 1",
-      "Electric Table Fan & 100W Incandescent Lamp (for variable testing) × 1 set",
-      "Vaseline / Petroleum jelly (for airtight seals) × 1 tub"
+      {
+        "id": "mat-0",
+        "name": "Ganong's Potometer apparatus with graduated capillary tube and water reservoir",
+        "qty": 1,
+        "price": 50,
+        "about": "Ganong's glass potometer apparatus with graduated capillary tube and water reservoir.",
+        "specs": [
+          [
+            "Capillary Bore",
+            "1.0 mm internal diameter precision bore"
+          ],
+          [
+            "Scale",
+            "0 – 20 cm graduated in 1 mm"
+          ],
+          [
+            "Reservoir",
+            "Integral glass reservoir with ground glass stopcock"
+          ],
+          [
+            "Mounting",
+            "Mounted on polished wooden base with spring clips"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Fresh leafy shoot (Coleus / Hibiscus / Nerium) cut underwater",
+        "qty": 1,
+        "price": 95,
+        "about": "Freshly harvested leafy twig of Hibiscus rosa-sinensis or Coleus blumei.",
+        "specs": [
+          [
+            "Shoot Type",
+            "Woody stem with 15 – 20 broad healthy leaves"
+          ],
+          [
+            "Preparation",
+            "Harvested under boiled cooled water at 45° angle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Colored water / beaker with water",
+        "qty": 1,
+        "price": 140,
+        "about": "Environmental simulation accessories: table fan, 100W incandescent lamp, clear polythene hood.",
+        "specs": [
+          [
+            "Electric Fan",
+            "3-speed adjustable laboratory table fan"
+          ],
+          [
+            "Lamp",
+            "100 W tungsten incandescent spotlight"
+          ],
+          [
+            "Stopwatch",
+            "Digital 0.01s stopwatch"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Stopwatch",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Measurement of Transpiration Rate using Ganong's Potometer.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Electric Table Fan & 100W Incandescent Lamp (for variable testing)  set",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Measurement of Transpiration Rate using Ganong's Potometer.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Vaseline / Petroleum jelly (for airtight seals)  tub",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Measurement of Transpiration Rate using Ganong's Potometer.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Fill the entire Ganong's potometer apparatus with water, ensuring zero trapped air bubbles in the capillary.",
@@ -1390,16 +7327,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Record the time taken by the air bubble to travel 5 cm along the graduated capillary in normal room conditions.",
       "Reset the bubble using the reservoir stopcock and measure bubble movement under fan breeze and lamp illumination."
     ],
+    "steps": [
+      {
+        "instruction": "Fill the entire Ganong's potometer apparatus with water, ensuring zero trapped air bubbles in the capillary.",
+        "text": "Fill the entire Ganong's potometer apparatus with water, ensuring zero trapped air bubbles in the capillary.",
+        "observe": "Cut healthy leafy shoot of Coleus or Hibiscus under water with sharp razor to prevent air entry into xylem vessels.",
+        "safety": "Always cut shoot under water to prevent xylem cavitation / air embolism."
+      },
+      {
+        "instruction": "Cut the base of a leafy shoot underwater at a slant with a sharp razor blade to prevent air embolism in xylem vessels.",
+        "text": "Cut the base of a leafy shoot underwater at a slant with a sharp razor blade to prevent air embolism in xylem vessels.",
+        "observe": "Fit shoot tightly into potometer rubber stopper under water; seal joint with molten paraffin wax or vaseline.",
+        "safety": "Apparatus must be 100% airtight; any tiny air leak halts bubble movement."
+      },
+      {
+        "instruction": "Insert the cut shoot tightly into the vertical rubber cork of the potometer.",
+        "text": "Insert the cut shoot tightly into the vertical rubber cork of the potometer.",
+        "observe": "Introduce single air bubble into capillary tube by briefly lifting bent end out of water beaker for 2 seconds.",
+        "safety": "Control air bubble size to approximately 2-3 mm length."
+      },
+      {
+        "instruction": "Apply petroleum jelly around all cork joints to ensure the entire apparatus is 100% airtight.",
+        "text": "Apply petroleum jelly around all cork joints to ensure the entire apparatus is 100% airtight.",
+        "observe": "Record bubble movement across calibrated capillary scale for 10 minutes under normal room conditions.",
+        "safety": "Ensure bubble moves smoothly without sticking to tube glass walls."
+      },
+      {
+        "instruction": "Dip the bent end of the capillary into a beaker of colored water. Lift it briefly for a few seconds to introduce a single air bubble, then re-immerse.",
+        "text": "Dip the bent end of the capillary into a beaker of colored water. Lift it briefly for a few seconds to introduce a single air bubble, then re-immerse.",
+        "observe": "Reset bubble to zero using reservoir stopcock; expose shoot to electric fan breeze and record increased rate.",
+        "safety": "Keep water reservoir stopcock tightly closed during measurement intervals."
+      },
+      {
+        "instruction": "Record the time taken by the air bubble to travel 5 cm along the graduated capillary in normal room conditions.",
+        "text": "Record the time taken by the air bubble to travel 5 cm along the graduated capillary in normal room conditions.",
+        "observe": "Compare rates across wind, light, humidity, and dark; graph comparative transpiration dynamics.",
+        "safety": "Keep lamp at least 30 cm from shoot to prevent thermal scorching of leaves."
+      },
+      {
+        "instruction": "Reset the bubble using the reservoir stopcock and measure bubble movement under fan breeze and lamp illumination.",
+        "text": "Reset the bubble using the reservoir stopcock and measure bubble movement under fan breeze and lamp illumination."
+      }
+    ],
     "precautions": [
       "Cut the shoot underwater at a 45° angle to prevent air entering xylem vessels and blocking water uptake.",
       "The entire apparatus must be completely airtight; any leakage prevents bubble movement.",
       "Introduce only a single, compact air bubble into the capillary tube.",
       "Ensure leaves are dry before commencing measurements."
     ],
-    "learning_objectives": [
-      "Understand the transpiration pull mechanism and xylem sap ascent.",
-      "Evaluate environmental factors influencing transpiration rates: humidity, temperature, air movement, and light.",
-      "Operate volumetric potometer measurement systems."
+    "thumbnail_url": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Transpiration",
@@ -1408,36 +7386,244 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 11 Biology",
       "CBSE Biology"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80"
+    "formula": "Transpiration Rate R = (π · r² · d) / t = (3.1416 × 0.5² mm² × 60 mm) / 10 min = 4.71 mm³/min",
+    "obsCols": [
+      "Environmental Condition Tested",
+      "Bubble Travel in 10 mins (cm)",
+      "Rate of Bubble Travel (cm/min)",
+      "Transpiration Rate (mm³/min)",
+      "Physiological Response"
     ],
-    "popularity": 91,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1092,
-    "likes": 728,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Normal Lab (Still air, 24°C)",
+        "3.5 cm",
+        "0.35 cm/min",
+        "2.75 mm³/min",
+        "Baseline stomatal transpiration"
+      ],
+      [
+        "High Wind (Electric fan at 1m)",
+        "7.8 cm",
+        "0.78 cm/min",
+        "6.13 mm³/min",
+        "Wind sweeps boundary vapor layer away; rapid rate"
+      ],
+      [
+        "Bright Light (100W lamp at 30cm)",
+        "6.2 cm",
+        "0.62 cm/min",
+        "4.87 mm³/min",
+        "Light triggers stomatal opening; increased transpiration"
+      ],
+      [
+        "High Humidity (Polythene cover)",
+        "0.8 cm",
+        "0.08 cm/min",
+        "0.63 mm³/min",
+        "Vapor pressure deficit drops; transpiration stalls"
+      ],
+      [
+        "Darkness (Dark room box)",
+        "1.2 cm",
+        "0.12 cm/min",
+        "0.94 mm³/min",
+        "Stomata close in darkness; cuticular transpiration only"
+      ]
+    ],
+    "interp": [
+      [
+        "Water Absorption Couples Transpiration",
+        "Potometer measures rate of water absorption by cut leafy shoot, which closely parallels foliar transpiration rate."
+      ],
+      [
+        "Wind Velocity Acceleration",
+        "Air movement over leaf surfaces blows away stagnant humid boundary layers, steepening vapor pressure gradient (2.2× rate increase)."
+      ],
+      [
+        "Light-Dependent Stomatal Response",
+        "Bright light stimulates guard cell proton pumps, opening stomata and increasing water loss by 77% over baseline."
+      ],
+      [
+        "Humidity Suppression",
+        "Enclosing shoot in a humid polythene bag lowers vapor gradient between leaf mesophyll and air, reducing transpiration by 77%."
+      ]
+    ],
+    "graph": {
+      "title": "Transpiration Rate under Diverse Environmental Regimes",
+      "xLabel": "Environmental Treatment",
+      "yLabel": "Transpiration Rate (mm³/min)",
+      "points": [
+        [
+          "High Humidity",
+          0.63
+        ],
+        [
+          "Darkness",
+          0.94
+        ],
+        [
+          "Normal Lab",
+          2.75
+        ],
+        [
+          "Bright Light",
+          4.87
+        ],
+        [
+          "High Wind",
+          6.13
+        ]
+      ]
+    },
+    "views": 2051,
+    "likes": 864,
+    "rating": 4.9
   },
   {
     "id": "e64e76ca-2898-48fd-8f7c-9a1bdc25decc",
-    "title": "Carbon Dioxide Release during Cellular Respiration in Seeds",
     "slug": "carbon-dioxide-release-seed-respiration",
+    "title": "Carbon Dioxide Release during Cellular Respiration in Seeds",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Demonstrate that germinating gram/pea seeds release carbon dioxide (CO2) during aerobic respiration using an airtight conical flask with potassium hydroxide (KOH).",
     "outcome": "Water level in the bent delivery tube rises by 6.2 cm. KOH absorbs exhaled CO2, creating a partial vacuum inside the flask that draws water upward from the beaker.",
     "materials": [
-      "Germinating Gram (Chana) / Moong Seeds × 50 g",
-      "Conical Flask (250 mL) with single-bore rubber stopper × 1",
-      "Small suspended test tube with thread × 1",
-      "Potassium Hydroxide (KOH) 20% solution / pellets × 10 mL",
-      "Bent Glass Delivery Tube (U-shaped) × 1",
-      "Beaker with colored water × 1",
-      "Petroleum jelly (Vaseline) for sealing × 1 tub"
+      {
+        "id": "mat-0",
+        "name": "Germinating Gram (Chana) / Moong Seeds  g",
+        "qty": 50,
+        "price": 50,
+        "about": "Germinating Bengal Gram seeds (Cicer arietinum) with actively protruding radicles.",
+        "specs": [
+          [
+            "Seed Quantity",
+            "50 grams soaked germinated seeds"
+          ],
+          [
+            "Radicle Length",
+            "5 – 10 mm emergent white radicle"
+          ],
+          [
+            "Viability",
+            "≥ 95% germination vigor"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Conical Flask (250 mL) with single-bore rubber stopper",
+        "qty": 1,
+        "price": 95,
+        "about": "Fresh 20% Potassium Hydroxide (KOH) analytical reagent pellets and solution.",
+        "specs": [
+          [
+            "Concentration",
+            "20 g KOH pellets dissolved in 100 mL water"
+          ],
+          [
+            "Purity",
+            "≥ 85% AR grade"
+          ],
+          [
+            "Function",
+            "Rapid quantitative chemical absorption of CO2 gas"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Small suspended test tube with thread",
+        "qty": 1,
+        "price": 140,
+        "about": "Airtight respiration apparatus: conical flask, bent glass delivery tube, and suspended tube.",
+        "specs": [
+          [
+            "Conical Flask",
+            "250 mL borosilicate glass"
+          ],
+          [
+            "Delivery Tube",
+            "6 mm OD glass tubing bent at two right angles"
+          ],
+          [
+            "Suspension Tube",
+            "10 mm × 75 mm miniature test tube"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Potassium Hydroxide (KOH) 20% solution / pellets  mL",
+        "qty": 10,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Carbon Dioxide Release during Cellular Respiration in Seeds.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Bent Glass Delivery Tube (U-shaped)",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Carbon Dioxide Release during Cellular Respiration in Seeds.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Beaker with colored water",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Carbon Dioxide Release during Cellular Respiration in Seeds.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Petroleum jelly (Vaseline) for sealing  tub",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Carbon Dioxide Release during Cellular Respiration in Seeds.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Soak gram seeds in water overnight and keep in moist cloth for 24-48 hours to initiate active germination.",
@@ -1448,16 +7634,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Seal all stopper joints thoroughly with petroleum jelly to make the apparatus completely airtight.",
       "Mark the initial water level in the delivery tube and leave the setup undisturbed for 2 hours. Note the water rise."
     ],
+    "steps": [
+      {
+        "instruction": "Soak gram seeds in water overnight and keep in moist cloth for 24-48 hours to initiate active germination.",
+        "text": "Soak gram seeds in water overnight and keep in moist cloth for 24-48 hours to initiate active germination.",
+        "observe": "Soak 30 g gram or pea seeds in water overnight; allow to germinate on moist cotton for 24 hours until radicles emerge.",
+        "safety": "Select healthy mould-free seeds with active vigor."
+      },
+      {
+        "instruction": "Place 30-40 germinating seeds in a 250 mL conical flask.",
+        "text": "Place 30-40 germinating seeds in a 250 mL conical flask.",
+        "observe": "Place germinating seeds in 250 mL conical flask; suspend small test tube containing fresh 20% KOH solution using thread.",
+        "safety": "Handle KOH with forceps; highly caustic chemical causes severe burns if spilled."
+      },
+      {
+        "instruction": "Suspend a small test tube containing freshly prepared 20% KOH solution inside the flask using a thread secured by the stopper.",
+        "text": "Suspend a small test tube containing freshly prepared 20% KOH solution inside the flask using a thread secured by the stopper.",
+        "observe": "Fit tight rubber stopper with single-bore hole carrying bent glass delivery tube into flask; seal with vaseline.",
+        "safety": "Ensure flask connection is completely airtight; coat stopper joint with petroleum jelly."
+      },
+      {
+        "instruction": "Insert a bent glass delivery tube through the airtight rubber stopper.",
+        "text": "Insert a bent glass delivery tube through the airtight rubber stopper.",
+        "observe": "Dip free end of delivery tube into beaker containing colored water; note initial water level at tube tip.",
+        "safety": "Keep colored water beaker stable on bench."
+      },
+      {
+        "instruction": "Place the other open end of the delivery tube into a beaker containing colored water.",
+        "text": "Place the other open end of the delivery tube into a beaker containing colored water.",
+        "observe": "Set up identical control flask using boiled seeds soaked in 1% formalin to prevent bacterial decomposition.",
+        "safety": "Formalin is toxic; handle in ventilated area."
+      },
+      {
+        "instruction": "Seal all stopper joints thoroughly with petroleum jelly to make the apparatus completely airtight.",
+        "text": "Seal all stopper joints thoroughly with petroleum jelly to make the apparatus completely airtight.",
+        "observe": "Record water column rising to 8.5 cm after 4 hours in live seed flask, with 0.0 cm rise in boiled seed control.",
+        "safety": "Wash hands thoroughly after handling seeds and chemicals."
+      },
+      {
+        "instruction": "Mark the initial water level in the delivery tube and leave the setup undisturbed for 2 hours. Note the water rise.",
+        "text": "Mark the initial water level in the delivery tube and leave the setup undisturbed for 2 hours. Note the water rise."
+      }
+    ],
     "precautions": [
       "Apparatus must be strictly airtight; any air leak will prevent the water column from rising.",
       "KOH solution must not spill onto the germinating seeds.",
       "Use actively germinating seeds with emerging radicles for high metabolic respiration rates.",
       "Ensure the delivery tube end is submerged well below the beaker water surface."
     ],
-    "learning_objectives": [
-      "Formulate the aerobic cellular respiration equation: C6H12O6 + 6 O2 -> 6 CO2 + 6 H2O + ATP.",
-      "Explain the chemical role of KOH as a selective carbon dioxide absorbent (2 KOH + CO2 -> K2CO3 + H2O).",
-      "Demonstrate gas volume pressure differentials in biological respiration experiments."
+    "thumbnail_url": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Respiration",
@@ -1466,36 +7693,236 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Biology",
       "NCERT Practicals"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=800&q=80"
+    "formula": "C6H12O6 + 6 O2 -> 6 CO2↑ + 6 H2O + 38 ATP; 2 KOH + CO2 -> K2CO3 + H2O (Vacuum creation)",
+    "obsCols": [
+      "Time Interval (Hours)",
+      "Water Level in Delivery Tube (cm)",
+      "Net Rise in Water Column Δh (cm)",
+      "Control Flask Level (Boiled seeds)",
+      "Respiration State"
     ],
-    "popularity": 94,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1128,
-    "likes": 752,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "0 Hours (Initial)",
+        "0.0 cm (Beaker baseline)",
+        "0.0 cm",
+        "0.0 cm",
+        "Setup assembled, zero net draw"
+      ],
+      [
+        "1 Hour",
+        "1.5 cm",
+        "+1.5 cm",
+        "0.0 cm",
+        "Active cellular respiration begins"
+      ],
+      [
+        "2 Hours",
+        "3.8 cm",
+        "+3.8 cm",
+        "0.0 cm",
+        "Continuous CO2 absorption by KOH"
+      ],
+      [
+        "3 Hours",
+        "6.2 cm",
+        "+6.2 cm",
+        "0.0 cm",
+        "Steady vacuum suction head"
+      ],
+      [
+        "4 Hours (Final)",
+        "8.5 cm",
+        "+8.5 cm",
+        "0.0 cm (No rise in dead seeds)",
+        "Conclusive proof of aerobic respiration"
+      ]
+    ],
+    "interp": [
+      [
+        "Respiratory CO2 Absorption",
+        "Germinating seeds consume O2 and release CO2; KOH solution in suspended tube absorbs CO2 forming soluble K2CO3."
+      ],
+      [
+        "Partial Vacuum Formation",
+        "Because released CO2 is chemically trapped while O2 is consumed, gas pressure inside sealed conical flask drops."
+      ],
+      [
+        "Hydrostatic Water Column Rise",
+        "Atmospheric pressure pushes beaker water up bent delivery tube by 8.5 cm, directly proportional to absorbed gas volume."
+      ],
+      [
+        "Boiled Control Inactivity",
+        "Boiled dead seeds treated with formalin show zero water rise, confirming respiration is an exclusive property of living germinating tissue."
+      ]
+    ],
+    "graph": {
+      "title": "Water Column Rise in Delivery Tube vs Germination Respiration Time",
+      "xLabel": "Incubation Time (Hours)",
+      "yLabel": "Water Rise in Tube (cm)",
+      "points": [
+        [
+          "0 hr",
+          0
+        ],
+        [
+          "1 hr",
+          1.5
+        ],
+        [
+          "2 hr",
+          3.8
+        ],
+        [
+          "3 hr",
+          6.2
+        ],
+        [
+          "4 hr",
+          8.5
+        ]
+      ]
+    },
+    "views": 2088,
+    "likes": 882,
+    "rating": 4.9
   },
   {
     "id": "27df9539-946e-4b23-82e9-f0d45ed688a9",
-    "title": "Light & Starch Test for Photosynthesis in Variegated Leaves",
     "slug": "photosynthesis-starch-test-iodine",
+    "title": "Light & Starch Test for Photosynthesis in Variegated Leaves",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Demonstrate that sunlight and chlorophyll are essential for photosynthesis using a destarched variegated Croton/Coleus leaf and the iodine-starch test.",
     "outcome": "Only green chlorophyll-bearing regions exposed to light turn blue-black with iodine; white and light-blocked areas remain pale yellow/brown, proving light and chlorophyll are essential.",
     "materials": [
-      "Potted plant with variegated leaves (Croton / Coleus / Money Plant) × 1",
-      "Ethanol / Methylated Spirit (95%) × 100 mL",
-      "Lugol's Iodine Solution (1% I2 in KI) × 1 dropper bottle",
-      "Black opaque paper strip and paper clips × 1 set",
-      "Water Bath (500 mL beaker with boiling water) × 1",
-      "Petri Dish and Forceps × 1 set",
-      "Bunsen Burner, Tripod, and Wire Gauze × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Potted plant with variegated leaves (Croton / Coleus / Money Plant)",
+        "qty": 1,
+        "price": 50,
+        "about": "Lugol's Iodine biological reagent solution (I2 in aqueous Potassium Iodide KI).",
+        "specs": [
+          [
+            "Composition",
+            "1 g Iodine + 2 g KI dissolved in 100 mL distilled water"
+          ],
+          [
+            "Target",
+            "Specific starch amylose helical inclusion test (blue-black)"
+          ],
+          [
+            "Bottle",
+            "Amber glass dropper bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Ethanol / Methylated Spirit (95%)  mL",
+        "qty": 100,
+        "price": 95,
+        "about": "Potted Coleus or Money plant (Epipremnum aureum) with healthy variegated leaves.",
+        "specs": [
+          [
+            "Plant Condition",
+            "Vigorous destarched potted foliage plant"
+          ],
+          [
+            "Leaf Type",
+            "Variegated leaves with green chlorophyll center and white margin"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Lugol's Iodine Solution (1% I2 in KI)  dropper bottle",
+        "qty": 1,
+        "price": 140,
+        "about": "Laboratory water bath setup: 250 mL beaker, boiling tubes, 90% ethanol, and black paper masks.",
+        "specs": [
+          [
+            "Solvent",
+            "90% Denatured ethyl alcohol AR"
+          ],
+          [
+            "Paper Mask",
+            "Opaque black stencil paper with brass clips"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Black opaque paper strip and paper clips  set",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Light & Starch Test for Photosynthesis in Variegated Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Water Bath (500 mL beaker with boiling water)",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Light & Starch Test for Photosynthesis in Variegated Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Petri Dish and Forceps  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Light & Starch Test for Photosynthesis in Variegated Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Bunsen Burner, Tripod, and Wire Gauze  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Light & Starch Test for Photosynthesis in Variegated Leaves.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Destarch the potted variegated plant by keeping it in a dark room for 72 hours (respiration consumes stored leaf starch).",
@@ -1506,16 +7933,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Transfer the leaf into a beaker of ethanol placed inside the boiling water bath until all green chlorophyll dissolves and the leaf turns chalky white.",
       "Wash leaf in warm water to soften it, spread in a petri dish, add dilute iodine solution, and observe blue-black color development."
     ],
+    "steps": [
+      {
+        "instruction": "Destarch the potted variegated plant by keeping it in a dark room for 72 hours (respiration consumes stored leaf starch).",
+        "text": "Destarch the potted variegated plant by keeping it in a dark room for 72 hours (respiration consumes stored leaf starch).",
+        "observe": "Destarch potted plant by keeping in complete dark room for 48 hours to exhaust all stored starch from leaves.",
+        "safety": "Confirm destarching on a test leaf before proceeding with experimental setup."
+      },
+      {
+        "instruction": "Clip a strip of black paper across a healthy leaf to block light in that region.",
+        "text": "Clip a strip of black paper across a healthy leaf to block light in that region.",
+        "observe": "Attach black paper strip with paper clips across middle of an intact attached leaf; expose plant to bright sunlight for 6 hours.",
+        "safety": "Ensure paper clips hold black mask tightly on both top and bottom surfaces to block stray light."
+      },
+      {
+        "instruction": "Place the plant in bright direct sunlight for 6 hours to allow photosynthesis to proceed.",
+        "text": "Place the plant in bright direct sunlight for 6 hours to allow photosynthesis to proceed.",
+        "observe": "Pluck leaf, remove paper strip, and boil leaf in water beaker for 2 minutes to kill protoplasm and rupture cell walls.",
+        "safety": "Use forceps to handle boiling leaves."
+      },
+      {
+        "instruction": "Pluck the test leaf and sketch its green and non-green patterns on paper for reference.",
+        "text": "Pluck the test leaf and sketch its green and non-green patterns on paper for reference.",
+        "observe": "Transfer leaf into test tube containing 90% ethanol; heat in water bath until leaf is completely decolored and bleached white.",
+        "safety": "NEVER heat ethanol test tube directly over flame; alcohol vapors ignite violently! Always use boiling water bath."
+      },
+      {
+        "instruction": "Boil the leaf in water for 2 minutes to soften cell walls and denature enzymes.",
+        "text": "Boil the leaf in water for 2 minutes to soften cell walls and denature enzymes.",
+        "observe": "Dip brittle bleached leaf in warm water to soften; spread flat in petri dish and flood with Lugol's iodine solution for 3 minutes.",
+        "safety": "Iodine stains skin and benches brown; wear disposable gloves."
+      },
+      {
+        "instruction": "Transfer the leaf into a beaker of ethanol placed inside the boiling water bath until all green chlorophyll dissolves and the leaf turns chalky white.",
+        "text": "Transfer the leaf into a beaker of ethanol placed inside the boiling water bath until all green chlorophyll dissolves and the leaf turns chalky white.",
+        "observe": "Rinse with tap water: exposed parts turn deep blue-black while masked strip remains pale brown, proving light is essential.",
+        "safety": "Dispose of waste ethanol into dedicated organic waste carboy."
+      },
+      {
+        "instruction": "Wash leaf in warm water to soften it, spread in a petri dish, add dilute iodine solution, and observe blue-black color development.",
+        "text": "Wash leaf in warm water to soften it, spread in a petri dish, add dilute iodine solution, and observe blue-black color development."
+      }
+    ],
     "precautions": [
       "Never heat ethanol directly over an open flame; always use a water bath (ethanol is highly flammable).",
       "Destarching in complete darkness for a full 48-72 hours is crucial to ensure baseline negative starch.",
       "Boil leaf thoroughly in alcohol until completely bleached so green pigment does not obscure iodine results.",
       "Handle hot glassware with beaker tongs."
     ],
-    "learning_objectives": [
-      "Understand autotrophic photosynthetic carbon fixation: 6 CO2 + 6 H2O -> C6H12O6 + 6 O2.",
-      "Relate chlorophyll pigment distribution with primary starch synthesis locations.",
-      "Apply iodine testing for macromolecular polysaccharide detection."
+    "thumbnail_url": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Photosynthesis",
@@ -1524,36 +7992,225 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Biology",
       "Plant Metabolism"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80"
+    "formula": "6 CO2 + 12 H2O + Light -> C6H12O6 + 6 O2 + 6 H2O; Amylose + I2/KI -> Polyiodide Inclusion Complex (Blue-Black)",
+    "obsCols": [
+      "Leaf Area Sample",
+      "Condition during Light Exposure",
+      "Color after Ethanol Decoloration",
+      "Color after Iodine Staining",
+      "Starch Presence"
     ],
-    "popularity": 97,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1164,
-    "likes": 776,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Unmasked Green Area",
+        "Directly exposed to sunlight (6 hrs)",
+        "Pale creamy white / bleached",
+        "Intense Blue-Black coloration",
+        "Starch present (Photosynthesis occurred)"
+      ],
+      [
+        "Black Paper Masked Strip",
+        "Completely shielded from sunlight",
+        "Pale creamy white / bleached",
+        "Pale Yellowish-Brown (Iodine color)",
+        "Starch absent (No light, no photosynthesis)"
+      ],
+      [
+        "Variegated White Margin",
+        "Exposed to light but lacks chlorophyll",
+        "Naturally white / non-pigmented",
+        "Pale Yellowish-Brown (Iodine color)",
+        "Starch absent (Chlorophyll essential)"
+      ],
+      [
+        "Variegated Green Center",
+        "Exposed to light and has chlorophyll",
+        "Pale creamy white / bleached",
+        "Intense Blue-Black coloration",
+        "Starch present (Photosynthesis occurred)"
+      ]
+    ],
+    "interp": [
+      [
+        "Light Essentiality Proved",
+        "Area covered by black paper strip fails to form starch, proving sunlight is strictly necessary for photosynthesis."
+      ],
+      [
+        "Chlorophyll Requirement Proved",
+        "White margins of variegated Money Plant/Croton leaf produce zero starch despite full sunlight, proving chlorophyll is indispensable."
+      ],
+      [
+        "Decoloration by Boiling Alcohol",
+        "Ethanol extracts green chlorophyll into solution, unmasking pale leaf mesophyll so blue-black starch reaction is cleanly visible."
+      ],
+      [
+        "Amylose Iodine Inclusion Complex",
+        "Iodine slips into helical coils of amylose starch polysaccharide chains, yielding diagnostic deep blue-black charge-transfer color."
+      ]
+    ],
+    "graph": {
+      "title": "Starch Density Percentage across Differentially Exposed Leaf Sectors",
+      "xLabel": "Leaf Sector Condition",
+      "yLabel": "Relative Starch Density (%)",
+      "points": [
+        [
+          "Masked (Dark)",
+          0
+        ],
+        [
+          "White Margin (No Chl)",
+          0
+        ],
+        [
+          "Diffused Light",
+          38
+        ],
+        [
+          "Green Sunlit Area",
+          100
+        ]
+      ]
+    },
+    "views": 2125,
+    "likes": 900,
+    "rating": 4.9
   },
   {
     "id": "3a6c5e9b-1665-46f4-8fa0-3bab2b14ee83",
-    "title": "Isolation of Genomic DNA from Plant Material (Banana/Papaya)",
     "slug": "dna-isolation-plant-material",
+    "title": "Isolation of Genomic DNA from Plant Material (Banana/Papaya)",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Extract and isolate genomic DNA from ripe banana or papaya fruit tissue through mechanical disruption, detergent cell lysis, protein digestion, and ice-cold ethanol spooling.",
     "outcome": "Visible white fibrous threads of aggregated genomic DNA precipitated at the ice-cold alcohol interface and successfully spooled onto a clean glass rod.",
     "materials": [
-      "Ripe Banana / Papaya / Green Peas × 50 g",
-      "Lysis Buffer: Liquid Dishwashing Detergent (10 mL) + Non-iodized Table Salt (3 g) + Distilled Water (90 mL) × 100 mL",
-      "Ice-cold 95% Ethanol or Isopropanol (stored at -20°C) × 50 mL",
-      "Mortar and Pestle / Zip-lock bag × 1",
-      "Meat tenderizer / Papain / Pineapple juice (protease source) × 5 mL",
-      "Cheesecloth / Fine tea strainer × 1",
-      "Test tubes and Glass Spooling Rod × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Ripe Banana / Papaya / Green Peas  g",
+        "qty": 50,
+        "price": 50,
+        "about": "DNA Extraction Lysis Buffer: 10% SDS / dishwashing liquid, 2M Sodium Chloride (NaCl) in distilled water.",
+        "specs": [
+          [
+            "Buffer Formula",
+            "50 mL liquid detergent + 15 g non-iodized NaCl in 450 mL H2O"
+          ],
+          [
+            "Function",
+            "Membrane lipid solubilization and DNA phosphate charge neutralization"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Lysis Buffer: Liquid Dishwashing Detergent (10 mL) + Non-iodized Table Salt (3 g) + Distilled Water (90 mL)  mL",
+        "qty": 100,
+        "price": 95,
+        "about": "Ice-cold 95% Ethanol or Isopropanol chilled to -20°C in laboratory freezer.",
+        "specs": [
+          [
+            "Grade",
+            "Molecular biology / Analytical grade 95%"
+          ],
+          [
+            "Temperature",
+            "-20 °C chilled prior to experiment"
+          ],
+          [
+            "Volume",
+            "200 mL"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Ice-cold 95% Ethanol or Isopropanol (stored at -20°C)  mL",
+        "qty": 50,
+        "price": 140,
+        "about": "Ripe Banana (Musa acuminata - triploid genome) or ripe Papaya fruit pulp.",
+        "specs": [
+          [
+            "Tissue Type",
+            "Triploid/Octoploid high-copy plant tissue rich in DNA"
+          ],
+          [
+            "Enzyme Source",
+            "Fresh pineapple juice (bromelain protease)"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Mortar and Pestle / Zip-lock bag",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Isolation of Genomic DNA from Plant Material (Banana/Papaya).",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Meat tenderizer / Papain / Pineapple juice (protease source)  mL",
+        "qty": 5,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Isolation of Genomic DNA from Plant Material (Banana/Papaya).",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Cheesecloth / Fine tea strainer",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Isolation of Genomic DNA from Plant Material (Banana/Papaya).",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Test tubes and Glass Spooling Rod  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Isolation of Genomic DNA from Plant Material (Banana/Papaya).",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Mash 50 g of peeled banana thoroughly in a zip-lock bag or mortar to break down plant cell walls mechanically.",
@@ -1564,16 +8221,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Tilt a test tube containing 10 mL filtrate at a 45° angle. Slowly trickle 10 mL of ice-cold ethanol down the tube wall to form an unmixed top layer.",
       "Watch white translucent mucous-like DNA precipitate at the water-alcohol interface. Spool the DNA fibers onto a clean glass rod by rotating gently."
     ],
+    "steps": [
+      {
+        "instruction": "Mash 50 g of peeled banana thoroughly in a zip-lock bag or mortar to break down plant cell walls mechanically.",
+        "text": "Mash 50 g of peeled banana thoroughly in a zip-lock bag or mortar to break down plant cell walls mechanically.",
+        "observe": "Peel ripe banana; weigh 20 g and mash thoroughly in mortar with 50 mL extraction buffer (detergent + salt).",
+        "safety": "Mash gently to avoid excessive foaming."
+      },
+      {
+        "instruction": "Add 50 mL of prepared lysis buffer (detergent disrupts phospholipid cell and nuclear membranes; salt shields negatively charged phosphate DNA backbones).",
+        "text": "Add 50 mL of prepared lysis buffer (detergent disrupts phospholipid cell and nuclear membranes; salt shields negatively charged phosphate DNA backbones).",
+        "observe": "Incubate banana slurry in 60°C water bath for 15 minutes to facilitate cell lysis and inactivate endogenous DNases.",
+        "safety": "Do not exceed 60°C to prevent thermal denaturation of genomic DNA strands."
+      },
+      {
+        "instruction": "Mix gently for 10 minutes to avoid excess froth formation.",
+        "text": "Mix gently for 10 minutes to avoid excess froth formation.",
+        "observe": "Cool mixture in ice bath for 5 minutes; filter through cheesecloth into clean beaker to remove fibrous cell debris.",
+        "safety": "Do not squeeze cheesecloth forcefully to avoid pushing particulate starch into filtrate."
+      },
+      {
+        "instruction": "Filter the homogenate through double-layered cheesecloth into a clean beaker to collect cellular filtrate.",
+        "text": "Filter the homogenate through double-layered cheesecloth into a clean beaker to collect cellular filtrate.",
+        "observe": "Add 5 mL fresh pineapple juice (bromelain enzyme); swirl gently and incubate 5 minutes to digest histone proteins.",
+        "safety": "Swirl gently; vigorous shaking causes mechanical shear breaking DNA into tiny fragments."
+      },
+      {
+        "instruction": "Add 5 mL pineapple juice or meat tenderizer (proteases digest histones and cellular proteins associated with DNA) and swirl for 5 minutes.",
+        "text": "Add 5 mL pineapple juice or meat tenderizer (proteases digest histones and cellular proteins associated with DNA) and swirl for 5 minutes.",
+        "observe": "Tilt beaker at 45°; slowly pour 30 mL ice-cold 95% ethanol down the inside wall to form a distinct clear upper layer.",
+        "safety": "Ethanol must be ice-cold (-20°C freezer) for rapid precipitation; pour very slowly to avoid mixing layers."
+      },
+      {
+        "instruction": "Tilt a test tube containing 10 mL filtrate at a 45° angle. Slowly trickle 10 mL of ice-cold ethanol down the tube wall to form an unmixed top layer.",
+        "text": "Tilt a test tube containing 10 mL filtrate at a 45° angle. Slowly trickle 10 mL of ice-cold ethanol down the tube wall to form an unmixed top layer.",
+        "observe": "Watch translucent white cottony fibers of DNA precipitate at interface; twirl glass rod to spool intact DNA threads.",
+        "safety": "Lift spooled DNA gently and transfer into microcentrifuge tube containing 70% ethanol."
+      },
+      {
+        "instruction": "Watch white translucent mucous-like DNA precipitate at the water-alcohol interface. Spool the DNA fibers onto a clean glass rod by rotating gently.",
+        "text": "Watch white translucent mucous-like DNA precipitate at the water-alcohol interface. Spool the DNA fibers onto a clean glass rod by rotating gently."
+      }
+    ],
     "precautions": [
       "Ethanol must be ice-cold (-20°C freezer chilled); warm ethanol will not precipitate DNA effectively.",
       "Pour ethanol very slowly along the tube side to form two distinct stratified layers.",
       "Do not whip or shake vigorously after adding detergent to prevent shearing long DNA strands into fragments.",
       "Use fresh fruit for highest nucleic acid yield."
     ],
-    "learning_objectives": [
-      "Understand the molecular basis of cell lysis, membrane dissolution, and protein deproteinization.",
-      "Explain the chemical mechanism of nucleic acid precipitation in cold alcohol via dielectric constant reduction.",
-      "Experience fundamental biotechnology and molecular biology techniques firsthand."
+    "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Biotechnology",
@@ -1582,36 +8280,234 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Biology",
       "Genetics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
+    "formula": "Yield of Genomic DNA = Spooled Mass / Tissue Fresh Weight = 1.25 mg DNA / 20.0 g Banana = 0.0625 mg DNA / g fresh tissue",
+    "obsCols": [
+      "Isolation Protocol Step",
+      "Reagent Added & Action",
+      "Visual Observation",
+      "Biological Mechanism"
     ],
-    "popularity": 96,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1152,
-    "likes": 768,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Mechanical Maceration",
+        "Mortar and pestle grinding",
+        "Homogeneous yellow fruit pulp",
+        "Breaks rigid plant cellulose cell walls"
+      ],
+      [
+        "Cell Lysis",
+        "Detergent + Salt extraction buffer (60°C)",
+        "Viscous foaming suspension",
+        "SDS detergent dissolves lipid bilayer membranes; salt shields phosphate backbone"
+      ],
+      [
+        "Protease Digestion",
+        "Meat tenderizer / Papain / Pineapple juice",
+        "Reduced slurry viscosity",
+        "Enzymatic cleavage of histone proteins packaging chromatin"
+      ],
+      [
+        "Cold Ethanol Precipitation",
+        "Ice-cold 95% ethanol layered slowly",
+        "Cloudy white mucous-like precipitates at interface",
+        "DNA is completely insoluble in cold ethanol; precipitates instantly"
+      ],
+      [
+        "Glass Rod Spooling",
+        "Twirling glass rod at interface",
+        "Fibrous translucent white threads spooling around rod",
+        "High-molecular-weight genomic DNA strands wound into visible spool"
+      ]
+    ],
+    "interp": [
+      [
+        "Detergent Membrane Solubilization",
+        "Liquid detergent amphiphilic molecules break apart the phospholipid bilayer of plasma membrane and nuclear envelope."
+      ],
+      [
+        "Sodium Ion Charge Shielding",
+        "NaCl provides Na⁺ cations that neutralize negative charges on DNA phosphate backbones, allowing strands to aggregate."
+      ],
+      [
+        "Differential Ethanol Solubility",
+        "DNA is soluble in polar water but completely insoluble in cold ethanol; low dielectric constant triggers precipitation."
+      ],
+      [
+        "Macromolecular Fiber Spooling",
+        "Long intact genomic DNA double helices tangle together, forming spooled fibrous white threads visible to naked eye."
+      ]
+    ],
+    "graph": {
+      "title": "Genomic DNA Yield per 20g Tissue across Different Plant Sources",
+      "xLabel": "Plant Tissue Source",
+      "yLabel": "Spooled DNA Yield (mg)",
+      "points": [
+        [
+          "Onion Bulb",
+          0.85
+        ],
+        [
+          "Spinach Leaf",
+          1.05
+        ],
+        [
+          "Banana Pulp",
+          1.25
+        ],
+        [
+          "Papaya Fruit",
+          1.4
+        ],
+        [
+          "Wheat Germ",
+          2.1
+        ]
+      ]
+    },
+    "views": 2162,
+    "likes": 918,
+    "rating": 4.9
   },
   {
     "id": "5dff7235-948c-411f-8535-4ddaa0b83791",
-    "title": "Identification of Human Blood Cells in Peripheral Smear",
     "slug": "human-blood-smear-wbc-identification",
+    "title": "Identification of Human Blood Cells in Peripheral Smear",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 12",
     "difficulty": "Advanced",
+    "duration": "50 Mins",
     "duration_minutes": 50,
     "description": "Prepare and stain a thin peripheral blood film using Leishman's stain to identify erythrocytes, platelets, and differential leukocytes (Neutrophils, Lymphocytes, Monocytes, Eosinophils, Basophils).",
     "outcome": "High magnification examination reveals non-nucleated biconcave RBCs, multi-lobed pinkish-purple Neutrophils (~65%), large-nucleus Lymphocytes (~25%), and kidney-shaped Monocytes.",
     "materials": [
-      "Prepared sterile human blood smear slide or fresh finger-prick blood via sterile lancet × 1",
-      "Leishman's Stain powder dissolved in absolute methanol (0.15% w/v) × 1 bottle",
-      "Distilled water / Sorensen's Phosphate buffer (pH 6.8) × 100 mL",
-      "Grease-free microscope slides with smooth polished spreader slide × 2",
-      "Compound Microscope with 100x Oil Immersion lens & Cedarwood oil × 1",
-      "70% Isopropanol alcohol swabs & sterile disposable lancets × 1 set",
-      "Staining rack and timer × 1"
+      {
+        "id": "mat-0",
+        "name": "Prepared sterile human blood smear slide or fresh finger-prick blood via sterile lancet",
+        "qty": 1,
+        "price": 50,
+        "about": "Leishman's Hematological Stain solution (0.15% in pure acetone-free methyl alcohol).",
+        "specs": [
+          [
+            "Dye Composition",
+            "Methylene blue and eosin Y in pure absolute methanol"
+          ],
+          [
+            "Solvent",
+            "Acetone-free methanol (serves as fixative and solvent)"
+          ],
+          [
+            "Bottle",
+            "100 mL amber dropper bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Leishman's Stain powder dissolved in absolute methanol (0.15% w/v)  bottle",
+        "qty": 1,
+        "price": 95,
+        "about": "Certified professionally prepared human peripheral blood smear reference slides.",
+        "specs": [
+          [
+            "Preparation",
+            "Thin blood film, Leishman stained, mounted in DPX under glass coverslip"
+          ],
+          [
+            "Quality",
+            "Class A hematological teaching slide showing crisp morphology"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Distilled water / Sorensen's Phosphate buffer (pH 6.8)  mL",
+        "qty": 100,
+        "price": 140,
+        "about": "Synthetic non-drying microscope immersion oil (ISO 8036).",
+        "specs": [
+          [
+            "Refractive Index",
+            "nD = 1.515 at 23°C (matches glass)"
+          ],
+          [
+            "Viscosity",
+            "Low viscosity non-drying formula"
+          ],
+          [
+            "Volume",
+            "30 mL dropper bottle"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Grease-free microscope slides with smooth polished spreader slide",
+        "qty": 2,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Identification of Human Blood Cells in Peripheral Smear.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Compound Microscope with 100x Oil Immersion lens & Cedarwood oil",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Identification of Human Blood Cells in Peripheral Smear.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "70% Isopropanol alcohol swabs & sterile disposable lancets  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Identification of Human Blood Cells in Peripheral Smear.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Staining rack and timer",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Identification of Human Blood Cells in Peripheral Smear.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Clean fingertip with alcohol swab, let dry, and make a quick prick with a sterile lancet.",
@@ -1622,16 +8518,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Add 20 drops of distilled water/buffer, blow gently to mix until a metallic golden scum forms, and let stain for 10 minutes.",
       "Wash gently under running tap water, air dry, add cedarwood oil, and examine under the 100x oil immersion objective."
     ],
+    "steps": [
+      {
+        "instruction": "Clean fingertip with alcohol swab, let dry, and make a quick prick with a sterile lancet.",
+        "text": "Clean fingertip with alcohol swab, let dry, and make a quick prick with a sterile lancet.",
+        "observe": "Place single drop of prepared blood 1 cm from end of clean grease-free glass slide.",
+        "safety": "In school labs, use commercially prepared fixed certified human peripheral blood smear slides."
+      },
+      {
+        "instruction": "Place a small drop of blood 1 cm from the frosted end of a clean slide.",
+        "text": "Place a small drop of blood 1 cm from the frosted end of a clean slide.",
+        "observe": "Place spreader slide at 30° to 45° angle in front of drop; draw back until blood spreads across width; push forward smoothly.",
+        "safety": "Make smear in a single continuous rapid stroke without stopping to produce ideal feather edge."
+      },
+      {
+        "instruction": "Hold a spreader slide at a 30°-45° angle, pull back until it contacts the blood drop spreading it along the edge, then push smoothly forward in one stroke to form a thin feathered tail.",
+        "text": "Hold a spreader slide at a 30°-45° angle, pull back until it contacts the blood drop spreading it along the edge, then push smoothly forward in one stroke to form a thin feathered tail.",
+        "observe": "Air-dry smear completely within 30 seconds; fix and stain by covering with Leishman's stain for 2 minutes.",
+        "safety": "Cover slide to prevent stain evaporation and precipitation of dye crystals."
+      },
+      {
+        "instruction": "Air dry the blood film completely for 2 minutes.",
+        "text": "Air dry the blood film completely for 2 minutes.",
+        "observe": "Add double volume of buffered distilled water (pH 6.8); mix by gentle blowing; incubate 10 minutes.",
+        "safety": "Buffered water pH is critical; acidic water causes red smear, alkaline causes dark blue smear."
+      },
+      {
+        "instruction": "Place slide on staining rack. Cover film with 10 drops of Leishman's stain for 2 minutes (methanol fixes cells).",
+        "text": "Place slide on staining rack. Cover film with 10 drops of Leishman's stain for 2 minutes (methanol fixes cells).",
+        "observe": "Wash under gentle stream of tap water; air-dry vertically; examine under 100× oil immersion objective.",
+        "safety": "Apply single drop of synthetic cedarwood immersion oil directly onto dried smear."
+      },
+      {
+        "instruction": "Add 20 drops of distilled water/buffer, blow gently to mix until a metallic golden scum forms, and let stain for 10 minutes.",
+        "text": "Add 20 drops of distilled water/buffer, blow gently to mix until a metallic golden scum forms, and let stain for 10 minutes.",
+        "observe": "Perform systematic zigzag battlement count across feather edge until exactly 100 white blood cells are classified.",
+        "safety": "Wipe oil immersion lens clean with xylene lens paper immediately after use."
+      },
+      {
+        "instruction": "Wash gently under running tap water, air dry, add cedarwood oil, and examine under the 100x oil immersion objective.",
+        "text": "Wash gently under running tap water, air dry, add cedarwood oil, and examine under the 100x oil immersion objective."
+      }
+    ],
     "precautions": [
       "Strict aseptic precautions: use disposable lancets once and discard immediately in a sharp-safe container.",
       "The blood smear must have a smooth monolayer 'feathered edge' without ridges or holes.",
       "Buffer pH must be maintained at 6.8 for optimal differential differentiation of granules.",
       "Do not touch slide surface with fingers to prevent lipid smudging."
     ],
-    "learning_objectives": [
-      "Master hematology smear spreading and polychromatic Romanowsky-type staining.",
-      "Identify morphological characteristics of granulocytes and agranulocytes.",
-      "Perform differential leukocyte counting (DLC) and relate to immune status."
+    "thumbnail_url": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Hematology",
@@ -1640,36 +8577,234 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Biology",
       "Microscopic Anatomy"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=800&q=80"
+    "formula": "Differential Leukocyte Count (DLC %): Neutrophils 60-70%, Lymphocytes 20-30%, Monocytes 2-8%, Eosinophils 1-4%, Basophils 0.5-1%",
+    "obsCols": [
+      "Leukocyte (WBC) Type",
+      "Nuclear Morphology",
+      "Cytoplasmic Granules & Staining",
+      "Observed Percentage (%) in 100 WBCs"
     ],
-    "popularity": 93,
-    "status": "published",
-    "duration": "50 Mins",
-    "views": 1116,
-    "likes": 744,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Neutrophil (PMN)",
+        "Multilobed nucleus (3 – 5 connected lobes)",
+        "Fine lilac / pale pink neutral granules",
+        "64% (Most abundant phagocyte)"
+      ],
+      [
+        "Lymphocyte (Small/Large)",
+        "Large round darkly stained nucleus filling >90% cell",
+        "Scanty rim of clear sky-blue cytoplasm, agranular",
+        "26% (Adaptive immune cells)"
+      ],
+      [
+        "Monocyte",
+        "Large kidney / horseshoe-shaped indented nucleus",
+        "Abundant pale grayish-blue cytoplasm, agranular",
+        "6% (Precursor to macrophage)"
+      ],
+      [
+        "Eosinophil",
+        "Bilobed spectacle-shaped nucleus",
+        "Coarse bright reddish-orange refractile granules",
+        "3% (Allergic / parasitic response)"
+      ],
+      [
+        "Basophil",
+        "S-shaped bilobed nucleus obscured by granules",
+        "Coarse dark purple / blue-black granules",
+        "1% (Histamine releasing rare cell)"
+      ]
+    ],
+    "interp": [
+      [
+        "Normal Differential Leukocyte Profile",
+        "Observed WBC distribution falls squarely within physiological healthy human reference ranges."
+      ],
+      [
+        "Neutrophil Polymorphism",
+        "Neutrophils display segmented polymorphonuclear lobes (3-5 lobes) diagnostic of mature active microphages."
+      ],
+      [
+        "Leishman / Wright Stain Chemistry",
+        "Methylene blue stains acidic nuclear DNA dark violet; Eosin stains basic cytoplasmic hemoglobin and granules bright pink/red."
+      ],
+      [
+        "Absence of Pathological Blasts",
+        "Smooth mature nuclear chromatin and absence of immature leukemic myeloblasts confirm normal peripheral hematopoiesis."
+      ]
+    ],
+    "graph": {
+      "title": "Differential Leukocyte Count (DLC) Percentage Distribution",
+      "xLabel": "White Blood Cell Type",
+      "yLabel": "Percentage (%) in Peripheral Blood",
+      "points": [
+        [
+          "Basophil",
+          1
+        ],
+        [
+          "Eosinophil",
+          3
+        ],
+        [
+          "Monocyte",
+          6
+        ],
+        [
+          "Lymphocyte",
+          26
+        ],
+        [
+          "Neutrophil",
+          64
+        ]
+      ]
+    },
+    "views": 2199,
+    "likes": 936,
+    "rating": 4.9
   },
   {
     "id": "6c28c2b0-f2aa-42bb-878d-a82eb4d8306d",
-    "title": "Enzyme Kinetics: Action of Salivary Amylase on Starch",
     "slug": "salivary-amylase-starch-digestion",
+    "title": "Enzyme Kinetics: Action of Salivary Amylase on Starch",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 12",
     "difficulty": "Intermediate",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Investigate the digestive enzymatic action of human salivary amylase (ptyalin) on starch and determine the achromic point (time required for complete hydrolysis) at 37°C.",
     "outcome": "Blue-black iodine response gradually lightens through violet and red-brown to reach the achromic point (colorless) at 6.5 minutes at body temperature (37°C), proving complete enzyme breakdown to maltose.",
     "materials": [
-      "1% Soluble Starch solution (freshly prepared) × 50 mL",
-      "Dilute Salivary Amylase solution (1:10 filtered human saliva in distilled water) × 20 mL",
-      "Lugol's Dilute Iodine Solution × 1 dropper bottle",
-      "Porcelain Spotting Tile with multiple depression cavities × 1",
-      "Water Bath maintained at 37°C (human body temperature) × 1",
-      "Digital Stopwatch and Pipettes (1 mL and 5 mL) × 1 set",
-      "Test tubes and test tube rack × 1 set"
+      {
+        "id": "mat-0",
+        "name": "1% Soluble Starch solution (freshly prepared)  mL",
+        "qty": 50,
+        "price": 50,
+        "about": "Soluble Potato Starch (Amylum solubile) analytical reagent grade.",
+        "specs": [
+          [
+            "Purity",
+            "High purity soluble indicator starch"
+          ],
+          [
+            "Solubility",
+            "Dissolves clear in boiling water"
+          ],
+          [
+            "Concentration",
+            "1.0% w/v freshly prepared"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Dilute Salivary Amylase solution (1:10 filtered human saliva in distilled water)  mL",
+        "qty": 20,
+        "price": 95,
+        "about": "White porcelain 12-cavity testing spot plate for sequential achromic point timing.",
+        "specs": [
+          [
+            "Wells",
+            "12 numbered circular depressions"
+          ],
+          [
+            "Glaze",
+            "Acid-proof white glazed ceramic"
+          ],
+          [
+            "Contrast",
+            "Pure white background for iodine color transition"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Lugol's Dilute Iodine Solution  dropper bottle",
+        "qty": 1,
+        "price": 140,
+        "about": "Thermostatic 37°C laboratory biological water bath incubator.",
+        "specs": [
+          [
+            "Temperature",
+            "Pre-set to 37.0 °C physiological body temperature"
+          ],
+          [
+            "Stability",
+            "± 0.2 °C microprocessor control"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Porcelain Spotting Tile with multiple depression cavities",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Enzyme Kinetics: Action of Salivary Amylase on Starch.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Water Bath maintained at 37°C (human body temperature)",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Enzyme Kinetics: Action of Salivary Amylase on Starch.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Digital Stopwatch and Pipettes (1 mL and 5 mL)  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Enzyme Kinetics: Action of Salivary Amylase on Starch.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Test tubes and test tube rack  set",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Enzyme Kinetics: Action of Salivary Amylase on Starch.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Rinse mouth with lukewarm water. Collect 2 mL saliva in a beaker and dilute with 18 mL distilled water to obtain 1:10 enzyme solution.",
@@ -1680,16 +8815,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Observe the color progression: initially dark blue-black (starch present), fading to violet (erythrodextrin), brownish-yellow (achroodextrin), and finally no color change (maltose).",
       "Record the exact time when no blue color develops; this is the achromic point (complete starch digestion)."
     ],
+    "steps": [
+      {
+        "instruction": "Rinse mouth with lukewarm water. Collect 2 mL saliva in a beaker and dilute with 18 mL distilled water to obtain 1:10 enzyme solution.",
+        "text": "Rinse mouth with lukewarm water. Collect 2 mL saliva in a beaker and dilute with 18 mL distilled water to obtain 1:10 enzyme solution.",
+        "observe": "Rinse mouth with warm water; collect 2 mL clean saliva in beaker; dilute with 18 mL distilled water to make 10% salivary enzyme solution.",
+        "safety": "Only use student's own saliva; wear gloves and dispose of saliva tubes in disinfectant."
+      },
+      {
+        "instruction": "Place 1 drop of dilute iodine solution in each depression well of the porcelain spotting tile.",
+        "text": "Place 1 drop of dilute iodine solution in each depression well of the porcelain spotting tile.",
+        "observe": "Prepare 1% soluble starch solution by dissolving 1 g starch in 100 mL boiling distilled water; cool to 37°C.",
+        "safety": "Stir boiling starch solution continuously to prevent bottom scorching."
+      },
+      {
+        "instruction": "In a test tube, take 5 mL of 1% starch solution and incubate in a 37°C water bath for 5 minutes.",
+        "text": "In a test tube, take 5 mL of 1% starch solution and incubate in a 37°C water bath for 5 minutes.",
+        "observe": "Place drops of dilute Lugol's iodine in all cavities of a white glazed porcelain spot plate.",
+        "safety": "Arrange spot plate cavities in a numbered grid corresponding to 1-minute intervals."
+      },
+      {
+        "instruction": "Add 1 mL of dilute salivary amylase solution to the starch tube, mix quickly, and start the stopwatch immediately.",
+        "text": "Add 1 mL of dilute salivary amylase solution to the starch tube, mix quickly, and start the stopwatch immediately.",
+        "observe": "Mix 5 mL starch solution with 1 mL diluted saliva in 37°C water bath; start stopwatch immediately.",
+        "safety": "Maintain 37°C physiological temperature using water bath incubator."
+      },
+      {
+        "instruction": "At 1-minute intervals, withdraw 1 drop from the reaction mixture using a clean dropper and add to an iodine depression well.",
+        "text": "At 1-minute intervals, withdraw 1 drop from the reaction mixture using a clean dropper and add to an iodine depression well.",
+        "observe": "Every 60 seconds, transfer 1 drop of reaction mixture into an iodine cavity; note progressive color shift.",
+        "safety": "Color progresses: Blue-Black -> Purple -> Red-Brown -> Yellow-Brown -> Yellow (Achromic Point)."
+      },
+      {
+        "instruction": "Observe the color progression: initially dark blue-black (starch present), fading to violet (erythrodextrin), brownish-yellow (achroodextrin), and finally no color change (maltose).",
+        "text": "Observe the color progression: initially dark blue-black (starch present), fading to violet (erythrodextrin), brownish-yellow (achroodextrin), and finally no color change (maltose).",
+        "observe": "Record achromic point at 8.0 minutes at 37°C; compare with boiled enzyme (remains blue-black permanently).",
+        "safety": "Decontaminate all glassware with 1% sodium hypochlorite bleach after practical."
+      },
+      {
+        "instruction": "Record the exact time when no blue color develops; this is the achromic point (complete starch digestion).",
+        "text": "Record the exact time when no blue color develops; this is the achromic point (complete starch digestion)."
+      }
+    ],
     "precautions": [
       "Maintain the water bath temperature strictly around 37°C (higher temperatures denature the amylase enzyme).",
       "Ensure starch solution is completely free from reducing sugars before the test.",
       "Rinse the sampling dropper between minute intervals to prevent early transfer of enzyme.",
       "Dilute saliva appropriately so the reaction takes between 5 to 10 minutes for measurable tracking."
     ],
-    "learning_objectives": [
-      "Understand enzyme biocatalysis, substrate specificity, and hydrolytic cleavage of α-1,4-glycosidic bonds.",
-      "Track enzymatic substrate depletion over time using colorimetric indicator progression.",
-      "Analyze the effect of temperature and pH on enzyme kinetic activity."
+    "thumbnail_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Enzymes",
@@ -1698,35 +8874,230 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 12 Biology",
       "Biochemistry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
+    "formula": "Starch (Amylose/Amylopectin) + Salivary α-Amylase (Ptyalin) -> Maltose + Maltotriose + Dextrins; Achromic Point reached",
+    "obsCols": [
+      "Time Interval (Minutes)",
+      "Tile Spot Color (Room Temp 37°C)",
+      "Tile Spot Color (Boiled Amylase 100°C)",
+      "Tile Spot Color (Ice Cold 0°C)",
+      "Starch Digestion State"
     ],
-    "popularity": 95,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1140,
-    "likes": 760,
-    "rating": 5
+    "obsRows": [
+      [
+        "0 Minutes (Initial)",
+        "Deep Blue-Black",
+        "Deep Blue-Black",
+        "Deep Blue-Black",
+        "100% Undigested starch present"
+      ],
+      [
+        "2 Minutes",
+        "Blue-Violet",
+        "Deep Blue-Black",
+        "Deep Blue-Black",
+        "Partial hydrolysis to amylodextrin"
+      ],
+      [
+        "4 Minutes",
+        "Reddish-Brown (Erythrodextrin)",
+        "Deep Blue-Black",
+        "Deep Blue-Black",
+        "Erythrodextrins formed"
+      ],
+      [
+        "6 Minutes",
+        "Yellowish-Brown (Achroodextrin)",
+        "Deep Blue-Black",
+        "Deep Blue-Black",
+        "Achroodextrins formed"
+      ],
+      [
+        "8 Minutes (Achromic Point)",
+        "Pale Yellow (Iodine color unchanged)",
+        "Deep Blue-Black",
+        "Blue-Violet",
+        "Complete hydrolysis to Maltose; Achromic Point"
+      ],
+      [
+        "10 Minutes",
+        "Pale Yellow (No starch)",
+        "Deep Blue-Black (Permanent)",
+        "Blue-Violet",
+        "Enzyme fully active at 37°C; denatured at 100°C"
+      ]
+    ],
+    "interp": [
+      [
+        "Enzymatic Starch Breakdown",
+        "Salivary α-amylase hydrolyzes α(1->4) glycosidic bonds in starch, degrading it step-wise into maltose disaccharides."
+      ],
+      [
+        "Achromic Point Concept",
+        "The time taken (8.0 min at 37°C) for starch to stop giving blue/violet/brown iodine color is termed the achromic point."
+      ],
+      [
+        "Thermal Denaturation at 100°C",
+        "Boiling salivary amylase permanently denatures its tertiary protein structure, completely abolishing catalytic activity."
+      ],
+      [
+        "Kinetic Inactivation at 0°C",
+        "At 0°C ice temperature, enzyme is kinetically dormant due to low molecular kinetic energy, delaying the achromic point beyond 40 mins."
+      ]
+    ],
+    "graph": {
+      "title": "Salivary Amylase Reaction Rate (1/t) vs Temperature (°C)",
+      "xLabel": "Temperature (°C)",
+      "yLabel": "Relative Amylase Activity (1/t Achromic min⁻¹)",
+      "points": [
+        [
+          "0 °C (Ice)",
+          0.02
+        ],
+        [
+          "20 °C (Room)",
+          0.08
+        ],
+        [
+          "37 °C (Optimum)",
+          0.125
+        ],
+        [
+          "50 °C",
+          0.06
+        ],
+        [
+          "70 °C",
+          0.01
+        ],
+        [
+          "100 °C (Boiled)",
+          0
+        ]
+      ]
+    },
+    "views": 2236,
+    "likes": 954,
+    "rating": 4.9
   },
   {
     "id": "cffa990c-dff3-413d-b9c4-df4ab669496d",
-    "title": "Distribution and Density of Stomata on Leaf Surfaces",
     "slug": "stomata-distribution-density-leaf-epidermis",
+    "title": "Distribution and Density of Stomata on Leaf Surfaces",
     "subject": "Biology",
     "subject_slug": "biology",
     "class": "Class 11",
     "difficulty": "Beginner",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Compare the distribution, frequency, and density of stomata on the upper (adaxial) and lower (abaxial) epidermis of a dorsiventral leaf (Hibiscus / Petunia) and an isobilateral leaf (Grass / Maize).",
     "outcome": "Dorsiventral leaves exhibit significantly higher stomatal frequency on the lower surface (abaxial, ~185 stomata/mm²) than the upper surface (adaxial, ~20 stomata/mm²), minimizing transpirational water loss.",
     "materials": [
-      "Fresh leaves: Hibiscus / Nerium (dorsiventral) and Grass / Zea mays (isobilateral) × 2 each",
-      "Colorless clear nail polish or quick-drying collodion × 1 bottle",
-      "Clear transparent cellophane tape (Scotch tape) × 1 roll",
-      "Clean glass microscope slides and cover slips × 1 box",
-      "Compound Microscope with calibrated ocular micrometer grid × 1",
-      "Fine Forceps and Scissors × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Fresh leaves: Hibiscus / Nerium (dorsiventral) and Grass / Zea mays (isobilateral)  each",
+        "qty": 2,
+        "price": 50,
+        "about": "Fresh leaves of Tradescantia / Rhoeo discolor and Hibiscus rosa-sinensis.",
+        "specs": [
+          [
+            "Rhoeo discolor",
+            "Features purple lower epidermis giving natural high-contrast stomatal viewing"
+          ],
+          [
+            "Condition",
+            "Fresh turgid leaves harvested in morning with open stomata"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Colorless clear nail polish or quick-drying collodion  bottle",
+        "qty": 1,
+        "price": 95,
+        "about": "Calibrated Glass Stage Micrometer and Eyepiece Reticle.",
+        "specs": [
+          [
+            "Scale Length",
+            "1.0 mm total scale"
+          ],
+          [
+            "Divisions",
+            "100 divisions (1 division = 0.01 mm = 10 μm)"
+          ],
+          [
+            "Accuracy",
+            "Class A optical calibration standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Clear transparent cellophane tape (Scotch tape)  roll",
+        "qty": 1,
+        "price": 140,
+        "about": "Safranin O biological stain (1% aqueous) and analytical mountant.",
+        "specs": [
+          [
+            "Stain",
+            "1.0% certified Safranin O in distilled water"
+          ],
+          [
+            "Mountant",
+            "50% glycerol in distilled water"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Clean glass microscope slides and cover slips  box",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Distribution and Density of Stomata on Leaf Surfaces.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Compound Microscope with calibrated ocular micrometer grid",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Distribution and Density of Stomata on Leaf Surfaces.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Fine Forceps and Scissors  set",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Distribution and Density of Stomata on Leaf Surfaces.",
+        "specs": [
+          [
+            "Category",
+            "Biology Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Select a clean, turgid leaf and dry the surface with tissue paper.",
@@ -1737,16 +9108,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Peel the tape away smoothly; the leaf impression (epidermal imprint showing guard cells and stomatal pores) adheres to the tape.",
       "Mount the tape onto a clean glass slide and count the number of stomata per microscopic field under 40x on both surfaces."
     ],
+    "steps": [
+      {
+        "instruction": "Select a clean, turgid leaf and dry the surface with tissue paper.",
+        "text": "Select a clean, turgid leaf and dry the surface with tissue paper.",
+        "observe": "Tear fresh dorsiventral leaf (Hibiscus / Tradescantia) obliquely with a quick jerk to expose thin lower transparent epidermis.",
+        "safety": "Select healthy, turgid leaves from well-watered sunlit plants."
+      },
+      {
+        "instruction": "Paint a thin, uniform patch (~1 cm²) of clear nail polish on the upper epidermis of the leaf.",
+        "text": "Paint a thin, uniform patch (~1 cm²) of clear nail polish on the upper epidermis of the leaf.",
+        "observe": "Peel lower epidermal strip with fine forceps; mount in drop of water on clean slide; repeat for upper epidermis.",
+        "safety": "Keep peels completely submerged in water to prevent guard cell plasmolysis."
+      },
+      {
+        "instruction": "Paint a similar patch on the lower epidermis.",
+        "text": "Paint a similar patch on the lower epidermis.",
+        "observe": "Stain peel lightly with 1% Safranin for 1 minute; wash excess stain; mount in drop of 50% glycerine with coverslip.",
+        "safety": "Lower coverslip gently with needle to avoid trapping distracting air bubbles."
+      },
+      {
+        "instruction": "Allow the nail polish to dry completely for 10-15 minutes into a tough, clear peel.",
+        "text": "Allow the nail polish to dry completely for 10-15 minutes into a tough, clear peel.",
+        "observe": "Calibrate microscope field of view under 400× using stage micrometer (Field diameter = 0.50 mm => Area = 0.196 mm²).",
+        "safety": "Do not scratch stage micrometer glass scale."
+      },
+      {
+        "instruction": "Press a piece of clear cellophane tape firmly over the dried polish patch.",
+        "text": "Press a piece of clear cellophane tape firmly over the dried polish patch.",
+        "observe": "Count total number of stomata (S) and epidermal cells (E) across 5 random microscopic fields for both surfaces.",
+        "safety": "Count cells overlapping top and right border; ignore cells overlapping bottom and left border."
+      },
+      {
+        "instruction": "Peel the tape away smoothly; the leaf impression (epidermal imprint showing guard cells and stomatal pores) adheres to the tape.",
+        "text": "Peel the tape away smoothly; the leaf impression (epidermal imprint showing guard cells and stomatal pores) adheres to the tape.",
+        "observe": "Calculate Stomatal Index I = [S / (E+S)] × 100; observe dramatic 10× difference between upper and lower surfaces.",
+        "safety": "Record high quality photomicrograph or clear pencil camera-lucida drawing."
+      },
+      {
+        "instruction": "Mount the tape onto a clean glass slide and count the number of stomata per microscopic field under 40x on both surfaces.",
+        "text": "Mount the tape onto a clean glass slide and count the number of stomata per microscopic field under 40x on both surfaces."
+      }
+    ],
     "precautions": [
       "Apply a thin, even coat of nail polish; thick coats take too long to dry and produce blurred optical impressions.",
       "Allow polish to dry thoroughly before peeling with tape to avoid smudging.",
       "Count multiple microscopic fields (at least 5 fields) and average to obtain statistically reliable stomatal counts.",
       "Avoid leaf veins when counting stomatal density."
     ],
-    "learning_objectives": [
-      "Compare anatomical adaptations of dorsiventral and isobilateral leaves.",
-      "Calculate stomatal index: SI = [S / (E + S)] × 100, where S = stomata count and E = epidermal cells count.",
-      "Explain the evolutionary significance of hypostomatic leaf organization in terrestrial plants."
+    "thumbnail_url": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Stomata",
@@ -1755,34 +9167,194 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 11 Biology",
       "Epidermal Cells"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80"
+    "formula": "Stomatal Index (I) = [S / (E + S)] × 100 = [28 / (112 + 28)] × 100 = 20.0%; Density = Stomata Count / Field Area",
+    "obsCols": [
+      "Leaf Epidermal Surface",
+      "Average Stomata Count per Field",
+      "Average Epidermal Cells per Field",
+      "Field Area (mm² at 400×)",
+      "Stomatal Density (per mm²)"
     ],
-    "popularity": 92,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1104,
-    "likes": 736,
-    "rating": 5
+    "obsRows": [
+      [
+        "Lower Epidermis (Abaxial - Dorsiventral)",
+        "28 stomata",
+        "112 epidermal cells",
+        "0.196 mm²",
+        "142.8 stomata / mm²"
+      ],
+      [
+        "Upper Epidermis (Adaxial - Dorsiventral)",
+        "3 stomata",
+        "135 epidermal cells",
+        "0.196 mm²",
+        "15.3 stomata / mm²"
+      ],
+      [
+        "Isobilateral Leaf (Monocot - Grass/Oat)",
+        "18 stomata",
+        "88 epidermal cells",
+        "0.196 mm²",
+        "91.8 stomata / mm²"
+      ],
+      [
+        "Upper vs Lower Ratio (Dorsiventral)",
+        "1 : 9.3 Ratio",
+        "Stomata predominantly restricted to lower shaded surface",
+        "Adaptation to minimize transpiration loss"
+      ]
+    ],
+    "interp": [
+      [
+        "Hypostomatic Dorsiventral Leaf",
+        "Dicot leaves (like Betel/Hibiscus) concentrate >90% of stomata on lower shaded epidermis to avoid direct evaporative solar heating."
+      ],
+      [
+        "Amphistomatic Isobilateral Leaf",
+        "Monocot leaves (like grass/wheat) held vertically have nearly equal stomatal densities on both leaf surfaces."
+      ],
+      [
+        "Stomatal Index Stability",
+        "Stomatal index I = S/(E+S) = 20.0% is a constant taxonomic parameter unaffected by environmental leaf enlargement."
+      ],
+      [
+        "Guard Cell Kidney Morphology",
+        "Dicot stomata feature reniform (bean-shaped) guard cells with thick inner walls, while monocots have dumbbell-shaped guard cells."
+      ]
+    ],
+    "graph": {
+      "title": "Stomatal Density Comparison: Upper vs Lower Leaf Epidermis",
+      "xLabel": "Leaf Specimen & Surface",
+      "yLabel": "Stomatal Density (stomata / mm²)",
+      "points": [
+        [
+          "Dicot Upper Surface",
+          15.3
+        ],
+        [
+          "Monocot Upper Surface",
+          88.5
+        ],
+        [
+          "Monocot Lower Surface",
+          91.8
+        ],
+        [
+          "Dicot Lower Surface",
+          142.8
+        ]
+      ]
+    },
+    "views": 2273,
+    "likes": 972,
+    "rating": 4.9
   },
   {
     "id": "eb685add-e2b6-49ab-b72a-2a770d0c1f3c",
-    "title": "Geometric Verification of Pythagoras Theorem",
     "slug": "pythagoras-theorem-geometric-verification",
+    "title": "Geometric Verification of Pythagoras Theorem",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "35 Mins",
     "duration_minutes": 35,
     "description": "Verify the Pythagorean Theorem (a² + b² = c²) for a right-angled triangle by cutting and rearranging unit squares and algebraic dissection puzzles on graph board.",
     "outcome": "Area of the square on the hypotenuse (c²) exactly equals the combined sum of the areas of squares constructed on the base (a²) and perpendicular (b²) through geometric congruence.",
     "materials": [
-      "Cardboard base sheet (30 cm × 30 cm) × 1",
-      "Colored construction paper (red, blue, yellow) × 3 sheets",
-      "Geometry Box (Ruler, Right-angle Set Squares, Pencil) × 1",
-      "Pair of Scissors, Glue Stick, and Acrylic Board × 1 set",
-      "Square grid graph sheet (1 cm × 1 cm) × 2"
+      {
+        "id": "mat-0",
+        "name": "Cardboard base sheet (30 cm  cm) × 1",
+        "qty": 30,
+        "price": 50,
+        "about": "Modular acrylic Pythagoras theorem dissection puzzle board with interlocking colored tiles.",
+        "specs": [
+          [
+            "Base Board",
+            "300 mm × 300 mm engraved acrylic board"
+          ],
+          [
+            "Tile Materials",
+            "Laser-cut 3 mm colored cast acrylic"
+          ],
+          [
+            "Triples Included",
+            "3-4-5 and 5-12-13 tile sets"
+          ],
+          [
+            "Precision",
+            "± 0.05 mm CNC laser cut"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Colored construction paper (red, blue, yellow)  sheets",
+        "qty": 3,
+        "price": 95,
+        "about": "Set of precision drafting tools: stainless steel ruler, right-angle set squares, circular protractor.",
+        "specs": [
+          [
+            "Ruler",
+            "30 cm stainless steel with metric graduations"
+          ],
+          [
+            "Set Squares",
+            "45° and 60° optical acrylic set squares"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Geometry Box (Ruler, Right-angle Set Squares, Pencil)",
+        "qty": 1,
+        "price": 140,
+        "about": "Graph paper sheets and contrasting color craft foam mounting sheets.",
+        "specs": [
+          [
+            "Grid",
+            "1 mm precision printed millimeter grid"
+          ],
+          [
+            "Foam Sheets",
+            "2 mm high-density EVA craft foam"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Pair of Scissors, Glue Stick, and Acrylic Board  set",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Geometric Verification of Pythagoras Theorem.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Square grid graph sheet (1 cm  cm) × 2",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Geometric Verification of Pythagoras Theorem.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Draw a right-angled triangle with sides a = 6 cm, b = 8 cm, and hypotenuse c = 10 cm on cardboard.",
@@ -1793,16 +9365,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Cut and rearrange the 36 blue unit squares and 64 red unit squares onto the yellow square C.",
       "Observe that the 100 unit squares from A and B completely and precisely cover square C without any gap or overlap: 36 + 64 = 100."
     ],
+    "steps": [
+      {
+        "instruction": "Draw a right-angled triangle with sides a = 6 cm, b = 8 cm, and hypotenuse c = 10 cm on cardboard.",
+        "text": "Draw a right-angled triangle with sides a = 6 cm, b = 8 cm, and hypotenuse c = 10 cm on cardboard.",
+        "observe": "Cut 4 congruent right-angled triangles with legs a = 3 cm, b = 4 cm, hypotenuse c = 5 cm from colored acrylic card.",
+        "safety": "Use steel safety ruler and cutting mat when trimming acrylic card."
+      },
+      {
+        "instruction": "Construct square A of dimensions 6 cm × 6 cm (area = 36 cm²) on the base using blue paper.",
+        "text": "Construct square A of dimensions 6 cm × 6 cm (area = 36 cm²) on the base using blue paper.",
+        "observe": "Construct square of side (a + b) = 7 cm; total area equals (a+b)² = 49 cm².",
+        "safety": "Verify all corners are precise 90° angles using set square."
+      },
+      {
+        "instruction": "Construct square B of dimensions 8 cm × 8 cm (area = 64 cm²) on the perpendicular using red paper.",
+        "text": "Construct square B of dimensions 8 cm × 8 cm (area = 64 cm²) on the perpendicular using red paper.",
+        "observe": "Arrange the 4 triangles in corners of the 7×7 cm square; observe central untilted square formed of side c = 5 cm.",
+        "safety": "Ensure triangle vertices touch without overlapping."
+      },
+      {
+        "instruction": "Construct square C of dimensions 10 cm × 10 cm (area = 100 cm²) on the hypotenuse using yellow paper.",
+        "text": "Construct square C of dimensions 10 cm × 10 cm (area = 100 cm²) on the hypotenuse using yellow paper.",
+        "observe": "Central square area equals c² = 25 cm²; remaining area equals 4 × (1/2·a·b) = 24 cm²; total = 49 cm².",
+        "safety": "Record measurements in millimeter grid notebook."
+      },
+      {
+        "instruction": "Divide square A into 36 unit squares of 1 cm² and square B into 64 unit squares of 1 cm².",
+        "text": "Divide square A into 36 unit squares of 1 cm² and square B into 64 unit squares of 1 cm².",
+        "observe": "Rearrange the same 4 triangles into two rectangles of dimensions a × b; empty spaces form two squares of a² (9 cm²) and b² (16 cm²).",
+        "safety": "Handle paper cutouts gently to prevent folding edges."
+      },
+      {
+        "instruction": "Cut and rearrange the 36 blue unit squares and 64 red unit squares onto the yellow square C.",
+        "text": "Cut and rearrange the 36 blue unit squares and 64 red unit squares onto the yellow square C.",
+        "observe": "Since total area is identical, c² = a² + b² is visually and mathematically demonstrated.",
+        "safety": "Glue components onto presentation chart board for permanent record."
+      },
+      {
+        "instruction": "Observe that the 100 unit squares from A and B completely and precisely cover square C without any gap or overlap: 36 + 64 = 100.",
+        "text": "Observe that the 100 unit squares from A and B completely and precisely cover square C without any gap or overlap: 36 + 64 = 100."
+      }
+    ],
     "precautions": [
       "Ensure all triangle angles are drawn with 90° precision using set squares.",
       "Cut unit squares strictly along grid lines to ensure edge-to-edge alignment.",
       "Measure hypotenuse length with high accuracy before cutting the target square.",
       "Avoid adhesive warping by smoothing paper firmly onto cardboard."
     ],
-    "learning_objectives": [
-      "Understand the geometric visual proof of Pythagoras Theorem: a² + b² = c².",
-      "Connect algebraic identities with physical geometric surface areas.",
-      "Apply Pythagorean triplets (3-4-5, 6-8-10, 5-12-13) in practical problem-solving."
+    "thumbnail_url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Pythagoras Theorem",
@@ -1811,34 +9424,226 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Maths",
       "NEP 2020 Hands-on"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80"
+    "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
+    "obsCols": [
+      "Right Triangle Trial",
+      "Leg a (cm)",
+      "Leg b (cm)",
+      "Calculated c = √(a²+b²) (cm)",
+      "Measured c (cm)",
+      "Area a² + b² (cm²)",
+      "Area c² (cm²)"
     ],
-    "popularity": 98,
-    "status": "published",
-    "duration": "35 Mins",
-    "views": 1176,
-    "likes": 784,
-    "rating": 5
+    "obsRows": [
+      [
+        "Triangle 1 (3-4-5 Primitive)",
+        "3.0 cm",
+        "4.0 cm",
+        "5.00 cm",
+        "5.00 cm",
+        "9 + 16 = 25.0 cm²",
+        "25.0 cm² (Exact match)"
+      ],
+      [
+        "Triangle 2 (5-12-13 Primitive)",
+        "5.0 cm",
+        "12.0 cm",
+        "13.00 cm",
+        "13.00 cm",
+        "25 + 144 = 169.0 cm²",
+        "169.0 cm² (Exact match)"
+      ],
+      [
+        "Triangle 3 (6-8-10 Scaled)",
+        "6.0 cm",
+        "8.0 cm",
+        "10.00 cm",
+        "10.00 cm",
+        "36 + 64 = 100.0 cm²",
+        "100.0 cm² (Exact match)"
+      ],
+      [
+        "Triangle 4 (8-15-17 Primitive)",
+        "8.0 cm",
+        "15.0 cm",
+        "17.00 cm",
+        "17.00 cm",
+        "64 + 225 = 289.0 cm²",
+        "289.0 cm² (Exact match)"
+      ],
+      [
+        "Triangle 5 (7-24-25 Primitive)",
+        "7.0 cm",
+        "24.0 cm",
+        "25.00 cm",
+        "25.00 cm",
+        "49 + 576 = 625.0 cm²",
+        "625.0 cm² (Exact match)"
+      ]
+    ],
+    "interp": [
+      [
+        "Rigid Geometric Conservation",
+        "Cutting four identical right triangles (legs a, b) and rearranging them inside an (a+b)×(a+b) square proves c² = a² + b² by Bhaskara dissection."
+      ],
+      [
+        "Zero Area Discrepancy",
+        "Physical rearrangement of acrylic unit square tiles shows 100% area congruence with zero gaps or overlaps."
+      ],
+      [
+        "Pythagorean Triples Verification",
+        "Integer triples (3,4,5), (5,12,13), (6,8,10), (8,15,17), (7,24,25) all fulfill the fundamental quadratic metric."
+      ],
+      [
+        "Universal Euclidean Validity",
+        "Applies universally to any right-angled triangle on a flat Euclidean two-dimensional plane."
+      ]
+    ],
+    "graph": {
+      "title": "Leg Sum Area (a² + b²) vs Hypotenuse Square Area (c²)",
+      "xLabel": "Sum of Leg Squares a² + b² (cm²)",
+      "yLabel": "Area of Hypotenuse Square c² (cm²)",
+      "points": [
+        [
+          "0 cm²",
+          0
+        ],
+        [
+          "25 cm²",
+          25
+        ],
+        [
+          "100 cm²",
+          100
+        ],
+        [
+          "169 cm²",
+          169
+        ],
+        [
+          "289 cm²",
+          289
+        ],
+        [
+          "625 cm²",
+          625
+        ]
+      ]
+    },
+    "views": 2310,
+    "likes": 990,
+    "rating": 4.9
   },
   {
     "id": "7e695f1c-6454-47d2-8b46-ee19cb14917e",
-    "title": "Area of a Circle Formula via Sector Partitioning",
     "slug": "area-of-circle-sector-partitioning",
+    "title": "Area of a Circle Formula via Sector Partitioning",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "35 Mins",
     "duration_minutes": 35,
     "description": "Derive and verify the formula for the area of a circle (Area = π·r²) by partitioning a circle into 16 and 32 congruent sectors and rearranging into an approximate rectangle.",
     "outcome": "As the number of circular sectors increases, the rearranged shape approaches a rectangle of base length π·r (half circumference) and height r. Area = base × height = π·r × r = π·r².",
     "materials": [
-      "Cardboard sheet with pre-printed circular disc of radius r = 7 cm × 1",
-      "Protractor for measuring 11.25° and 22.5° sector angles × 1",
-      "Two contrasting colored glaze papers (blue and white) × 1 each",
-      "Scissors and Craft Glue Stick × 1",
-      "Geometry Compass and 30 cm ruler × 1"
+      {
+        "id": "mat-0",
+        "name": "Cardboard sheet with pre-printed circular disc of radius r = 7 cm",
+        "qty": 1,
+        "price": 50,
+        "about": "Laser-cut acrylic circle sector partitioning demonstration kit (16 and 32 sectors).",
+        "specs": [
+          [
+            "Diameter",
+            "140 mm (radius r = 70 mm)"
+          ],
+          [
+            "Material",
+            "3 mm two-tone acrylic (red/yellow)"
+          ],
+          [
+            "Sectors",
+            "16 sectors + 32 sectors matching kits"
+          ],
+          [
+            "Tray",
+            "Rectangular alignment boundary tray"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Protractor for measuring 11.25° and 22.5° sector angles",
+        "qty": 1,
+        "price": 95,
+        "about": "Precision geometric drafting instrument box.",
+        "specs": [
+          [
+            "Compass",
+            "Self-centering geared mechanical compass"
+          ],
+          [
+            "Divider",
+            "Hardened steel needle points divider"
+          ],
+          [
+            "Protractor",
+            "360° full circular protractor"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Two contrasting colored glaze papers (blue and white)  each",
+        "qty": 1,
+        "price": 140,
+        "about": "Heavy 300 GSM duplex art card and color-fast adhesive.",
+        "specs": [
+          [
+            "Weight",
+            "300 GSM smooth white art board"
+          ],
+          [
+            "Adhesive",
+            "Acid-free solventless PVA glue stick"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Scissors and Craft Glue Stick",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Area of a Circle Formula via Sector Partitioning.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Geometry Compass and 30 cm ruler",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Area of a Circle Formula via Sector Partitioning.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Draw a circle of radius r = 7 cm on colored cardboard.",
@@ -1849,16 +9654,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Arrange the sectors side by side alternating up and down in interlocking fashion on a display board.",
       "Measure the dimensions of the formed parallelogram/rectangle: length = half circumference = (2πr)/2 = π·r, and breadth = radius r. Area = π·r × r = π·r²."
     ],
+    "steps": [
+      {
+        "instruction": "Draw a circle of radius r = 7 cm on colored cardboard.",
+        "text": "Draw a circle of radius r = 7 cm on colored cardboard.",
+        "observe": "Draw a circle of radius r = 7.0 cm on heavy card paper using compass; area = π·r² = 153.94 cm².",
+        "safety": "Tighten compass hinge so radius does not drift during drawing."
+      },
+      {
+        "instruction": "Using a protractor, divide the circle into 16 congruent sectors, each with central angle θ = 360° / 16 = 22.5°.",
+        "text": "Using a protractor, divide the circle into 16 congruent sectors, each with central angle θ = 360° / 16 = 22.5°.",
+        "observe": "Divide circle into 16 equal sectors using protractor (each angle = 360°/16 = 22.5°); color half red and half yellow.",
+        "safety": "Mark radial lines with fine 0.3 mm pen."
+      },
+      {
+        "instruction": "Shade 8 alternate sectors in blue and the remaining 8 sectors in white.",
+        "text": "Shade 8 alternate sectors in blue and the remaining 8 sectors in white.",
+        "observe": "Cut out all 16 sectors using scissors; cut one sector in half (11.25° each) to form end pieces.",
+        "safety": "Use blunt-ended safety scissors when cutting sector curves."
+      },
+      {
+        "instruction": "Cut out all 16 sectors carefully along the radial radii lines.",
+        "text": "Cut out all 16 sectors carefully along the radial radii lines.",
+        "observe": "Arrange the 16 sectors alternating up and down in an intermeshing strip; place half-sectors at both ends.",
+        "safety": "Align sector tip vertices strictly along straight reference line."
+      },
+      {
+        "instruction": "Cut one end sector into two equal half-sectors of 11.25° to form vertical borders.",
+        "text": "Cut one end sector into two equal half-sectors of 11.25° to form vertical borders.",
+        "observe": "Observe that the intermeshing sectors form an approximate rectangle of length π·r (22.0 cm) and breadth r (7.0 cm).",
+        "safety": "Measure rectangular dimensions with precision millimeter ruler."
+      },
+      {
+        "instruction": "Arrange the sectors side by side alternating up and down in interlocking fashion on a display board.",
+        "text": "Arrange the sectors side by side alternating up and down in interlocking fashion on a display board.",
+        "observe": "Repeat mentally or with 32 sectors; sectors become narrower and edges straighten, proving Area = πr².",
+        "safety": "Mount rearranged sectors on chart paper with glue stick for laboratory record."
+      },
+      {
+        "instruction": "Measure the dimensions of the formed parallelogram/rectangle: length = half circumference = (2πr)/2 = π·r, and breadth = radius r. Area = π·r × r = π·r².",
+        "text": "Measure the dimensions of the formed parallelogram/rectangle: length = half circumference = (2πr)/2 = π·r, and breadth = radius r. Area = π·r × r = π·r²."
+      }
+    ],
     "precautions": [
       "Cut strictly along circular arcs and radial radii lines without tearing paper edges.",
       "Ensure alternate up/down sector placement is tight without overlapping.",
       "Keep sector radius r constant throughout circle division.",
       "Handle sharp scissors with care."
     ],
-    "learning_objectives": [
-      "Understand the calculus limit concept: circular sector dissection converging to a rectangle.",
-      "Derive the relationship between circle circumference (2πr) and circular area (πr²).",
-      "Visualize how partitioning curved geometries resolves into familiar rectangular calculations."
+    "thumbnail_url": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Circle Area",
@@ -1867,34 +9713,214 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Mathematics",
       "Hands-on Math"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&w=800&q=80"
+    "formula": "Area of Circle = lim (n -> ∞) [n × Sector Area] = Base × Height = (π · r) × r = π · r² = 3.1416 × 7.0² = 153.94 cm²",
+    "obsCols": [
+      "Sector Partitions (n)",
+      "Base Length of Rearranged Shape (cm)",
+      "Height of Shape (cm)",
+      "Shape Approximated",
+      "Computed Area (cm²)"
     ],
-    "popularity": 94,
-    "status": "published",
-    "duration": "35 Mins",
-    "views": 1128,
-    "likes": 752,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "4 Sectors",
+        "18.2 cm (Curved lobes)",
+        "6.1 cm",
+        "Rough parallelogram (Wavy)",
+        "111.0 cm² (Crude estimate)"
+      ],
+      [
+        "8 Sectors",
+        "20.6 cm",
+        "6.6 cm",
+        "Moderate parallelogram",
+        "136.0 cm²"
+      ],
+      [
+        "16 Sectors",
+        "21.6 cm",
+        "6.9 cm",
+        "Near-flat parallelogram",
+        "149.0 cm²"
+      ],
+      [
+        "32 Sectors",
+        "21.9 cm (approaching π·r = 21.99 cm)",
+        "7.0 cm (approaching r)",
+        "Almost perfect rectangle",
+        "153.3 cm²"
+      ],
+      [
+        "64 Sectors (Limit)",
+        "21.99 cm (= π · r)",
+        "7.00 cm (= r)",
+        "Perfect Rectangle: Area = (πr) × r = πr²",
+        "153.94 cm² (Exact π·r²)"
+      ]
+    ],
+    "interp": [
+      [
+        "Calculus Method of Exhaustion",
+        "As sector count n approaches infinity, the curved outer circular arc sectors flatten into microscopic straight segments."
+      ],
+      [
+        "Dimensions of Limiting Rectangle",
+        "Length of rectangle equals half the circular circumference (L = 1/2 × 2πr = πr = 21.99 cm); Width equals radius (W = r = 7.0 cm)."
+      ],
+      [
+        "Geometric Area Derivation",
+        "Area of rectangle = Length × Width = (π·r) × r = π·r² = 153.94 cm²."
+      ],
+      [
+        "Conservation of Area",
+        "Because the rearranged sectors have identical area to the original circle, the formula A = πr² is incontrovertibly verified."
+      ]
+    ],
+    "graph": {
+      "title": "Number of Sectors (n) vs Approximated Area of Circle (cm²)",
+      "xLabel": "Sector Partitions (n)",
+      "yLabel": "Calculated Approximated Area (cm²)",
+      "points": [
+        [
+          "4 sectors",
+          111
+        ],
+        [
+          "8 sectors",
+          136
+        ],
+        [
+          "16 sectors",
+          149
+        ],
+        [
+          "32 sectors",
+          153.3
+        ],
+        [
+          "64 sectors (Limit)",
+          153.94
+        ]
+      ]
+    },
+    "views": 2347,
+    "likes": 1008,
+    "rating": 4.9
   },
   {
     "id": "021190c5-fe94-4fad-8572-84112536cfcb",
-    "title": "Surface Area & Volume Relationships: Sphere, Cone, and Cylinder",
     "slug": "surface-area-volume-sphere-cone-cylinder",
+    "title": "Surface Area & Volume Relationships: Sphere, Cone, and Cylinder",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Intermediate",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Verify Archimedes' ratio of volumes and surface areas between a cone, a sphere, and a cylinder having identical radius (r) and height (h = 2r) using dry fine sand displacement.",
     "outcome": "Empirically verified that Volume of Cone : Volume of Sphere : Volume of Cylinder = 1 : 2 : 3. Sand from one cone and one sphere exactly fills the circumscribed cylinder without spill.",
     "materials": [
-      "Hollow transparent acrylic geometric models: Cylinder (radius r = 5 cm, height h = 10 cm), Sphere (radius r = 5 cm with top aperture), Cone (radius r = 5 cm, height h = 10 cm) × 1 set",
-      "Fine dry colored sand or water × 1 kg",
-      "Measuring Flask (1000 mL) × 1",
-      "Plastic funnel and collection tray × 1",
-      "Leveling straightedge ruler × 1"
+      {
+        "id": "mat-0",
+        "name": "Hollow transparent acrylic geometric models: Cylinder (radius r = 5 cm, height h = 10 cm), Sphere (radius r = 5 cm with top aperture), Cone (radius r = 5 cm, height h = 10 cm)  set",
+        "qty": 1,
+        "price": 50,
+        "about": "Set of hollow transparent acrylic geometric solids sharing identical radius r = 50 mm and height h = 100 mm.",
+        "specs": [
+          [
+            "Solids Included",
+            "Right circular cone, cylinder, full sphere, hemisphere"
+          ],
+          [
+            "Wall Thickness",
+            "2.5 mm optical clear acrylic"
+          ],
+          [
+            "Lid Openings",
+            "Removable fill caps on all bases"
+          ],
+          [
+            "Calibration",
+            "Exact 1:2:3 volumetric ratio matched"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Fine dry colored sand or water  kg",
+        "qty": 1,
+        "price": 95,
+        "about": "Fine dry quartz test sand (graded mesh 50-70) colored with non-toxic pigment.",
+        "specs": [
+          [
+            "Particle Size",
+            "0.2 – 0.3 mm uniform quartz grains"
+          ],
+          [
+            "Flowability",
+            "Free-flowing dry granular bulk density 1.55 g/cm³"
+          ],
+          [
+            "Quantity",
+            "2.0 kg in plastic pour container"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Measuring Flask (1000 mL)",
+        "qty": 1,
+        "price": 140,
+        "about": "Graduated 1000 mL Class A measuring cylinder for volumetric liquid cross-check.",
+        "specs": [
+          [
+            "Capacity",
+            "1000 mL"
+          ],
+          [
+            "Graduation",
+            "10 mL subdivisions"
+          ],
+          [
+            "Material",
+            "Polypropylene chemical/shatter resistant"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Plastic funnel and collection tray",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Surface Area & Volume Relationships: Sphere, Cone, and Cylinder.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Leveling straightedge ruler",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Surface Area & Volume Relationships: Sphere, Cone, and Cylinder.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Verify dimensions of acrylic solids: cylinder height h = 10 cm, radius r = 5 cm; cone height h = 10 cm, radius r = 5 cm; sphere diameter 2r = 10 cm.",
@@ -1905,16 +9931,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Pour the sphere's sand into the empty cylinder: it fills exactly 2/3 of the cylinder (V_sphere = 2/3 V_cylinder = 4/3 πr³).",
       "Combine one full cone of sand and one full sphere of sand: together they fill the cylinder 100% full."
     ],
+    "steps": [
+      {
+        "instruction": "Verify dimensions of acrylic solids: cylinder height h = 10 cm, radius r = 5 cm; cone height h = 10 cm, radius r = 5 cm; sphere diameter 2r = 10 cm.",
+        "text": "Verify dimensions of acrylic solids: cylinder height h = 10 cm, radius r = 5 cm; cone height h = 10 cm, radius r = 5 cm; sphere diameter 2r = 10 cm.",
+        "observe": "Inspect hollow transparent plastic shapes: cone, hemisphere, sphere, and cylinder sharing identical radius r = 5.0 cm and height h = 10.0 cm.",
+        "safety": "Check plastic shapes for cracks or leaks before filling with liquid/sand."
+      },
+      {
+        "instruction": "Fill the hollow cone completely with fine sand and level off flush with the rim using a straightedge.",
+        "text": "Fill the hollow cone completely with fine sand and level off flush with the rim using a straightedge.",
+        "observe": "Fill hollow cone to the brim with fine colored dry sand; level top surface with a straight ruler edge.",
+        "safety": "Pour sand over plastic tray to catch any spills."
+      },
+      {
+        "instruction": "Pour the sand from the cone into the empty cylinder. Observe that it fills exactly 1/3 of the cylinder's volume.",
+        "text": "Pour the sand from the cone into the empty cylinder. Observe that it fills exactly 1/3 of the cylinder's volume.",
+        "observe": "Pour sand from cone into cylinder: exactly one-third of cylinder is filled.",
+        "safety": "Tap cylinder base lightly to settle sand evenly."
+      },
+      {
+        "instruction": "Fill the cone two more times into the cylinder: three full cones exactly fill the cylinder (V_cylinder = 3 × V_cone = 3 × (1/3 πr²h) = πr²h).",
+        "text": "Fill the cone two more times into the cylinder: three full cones exactly fill the cylinder (V_cylinder = 3 × V_cone = 3 × (1/3 πr²h) = πr²h).",
+        "observe": "Pour second full cone of sand into cylinder: cylinder is now two-thirds full.",
+        "safety": "Ensure cone is filled completely flush with brim each time."
+      },
+      {
+        "instruction": "Now empty the cylinder. Fill the hollow sphere model with fine sand.",
+        "text": "Now empty the cylinder. Fill the hollow sphere model with fine sand.",
+        "observe": "Pour third cone of sand into cylinder: sand reaches the absolute brim of the cylinder, proving V(Cylinder) = 3 × V(Cone).",
+        "safety": "Zero sand remains left over; cylinder is filled to 100% capacity."
+      },
+      {
+        "instruction": "Pour the sphere's sand into the empty cylinder: it fills exactly 2/3 of the cylinder (V_sphere = 2/3 V_cylinder = 4/3 πr³).",
+        "text": "Pour the sphere's sand into the empty cylinder: it fills exactly 2/3 of the cylinder (V_sphere = 2/3 V_cylinder = 4/3 πr³).",
+        "observe": "Fill hollow sphere with 2 full measures of the cone, proving V(Sphere) = 2/3 V(Cylinder) = 4/3 πr³.",
+        "safety": "Return dry sand to storage hopper and wipe transparent models with microfiber cloth."
+      },
+      {
+        "instruction": "Combine one full cone of sand and one full sphere of sand: together they fill the cylinder 100% full.",
+        "text": "Combine one full cone of sand and one full sphere of sand: together they fill the cylinder 100% full."
+      }
+    ],
     "precautions": [
       "Ensure sand is completely dry and free of clumps to ensure uniform packing density.",
       "Always level the sand rim with a flat straightedge; avoid packing or shaking vigorously between fills.",
       "Pour sand through a funnel slowly into the models to avoid spilling outside the measurement rim.",
       "Wipe acrylic models with anti-static cloth to prevent sand grains sticking to walls."
     ],
-    "learning_objectives": [
-      "Verify Archimedes' famous theorem: V_cone + V_sphere = V_cylinder for equal radius and height.",
-      "Master standard mensuration volume formulas: V_cone = 1/3 πr²h, V_sphere = 4/3 πr³, V_cylinder = πr²h.",
-      "Develop strong 3D spatial reasoning through tactile volume comparison."
+    "thumbnail_url": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Mensuration",
@@ -1923,34 +9990,188 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Mathematics",
       "3D Geometry"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1516383717472-9904703a00e0?auto=format&fit=crop&w=800&q=80"
+    "formula": "V(Cone) : V(Sphere) : V(Cylinder) = (1/3 · πr²h) : (4/3 · πr³) : (πr²h) = 1 : 2 : 3 (for h = 2r)",
+    "obsCols": [
+      "Geometric Solid Body",
+      "Theoretical Formula (h = 2r = 10 cm)",
+      "Volume Calculated (cm³)",
+      "Sand Filling Measure (Scoops)",
+      "Volume Ratio to Cylinder"
     ],
-    "popularity": 96,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1152,
-    "likes": 768,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Cone (r = 5 cm, h = 10 cm)",
+        "V = 1/3 · π · r² · h = 1/3 × π × 25 × 10",
+        "261.80 cm³",
+        "1 scoop (Base unit 1.0)",
+        "1 / 3 (33.3% of cylinder)"
+      ],
+      [
+        "Sphere (r = 5 cm, d = 10 cm)",
+        "V = 4/3 · π · r³ = 4/3 × π × 125",
+        "523.60 cm³",
+        "2 scoops (Exactly 2× cone)",
+        "2 / 3 (66.7% of cylinder)"
+      ],
+      [
+        "Cylinder (r = 5 cm, h = 10 cm)",
+        "V = π · r² · h = π × 25 × 10",
+        "785.40 cm³",
+        "3 scoops (Exactly 3× cone)",
+        "3 / 3 (100% full capacity)"
+      ]
+    ],
+    "interp": [
+      [
+        "Archimedes Epitaph Ratio 1:2:3",
+        "Archimedes regarded this discovery as his crowning triumph: for a cylinder circumscribed around a sphere and cone (h = 2r), their volumes are strictly 1 : 2 : 3."
+      ],
+      [
+        "Experimental Volumetric Proof",
+        "Exactly 3 full measures of the cone fill the cylinder to the brim (V_cyl = 3 · V_cone)."
+      ],
+      [
+        "Sphere to Cone Equivalence",
+        "Pouring 2 full measures of the cone fills the hollow sphere completely (V_sphere = 2 · V_cone = 4/3 πr³)."
+      ],
+      [
+        "Surface Area Relationship",
+        "Total surface area of sphere (4πr²) equals the curved surface area of the circumscribed cylinder (2πr·h = 2πr·2r = 4πr²)."
+      ]
+    ],
+    "graph": {
+      "title": "Volumetric Relationship: Cone vs Sphere vs Circumscribed Cylinder",
+      "xLabel": "Geometric Solid Type",
+      "yLabel": "Volume (cm³)",
+      "points": [
+        [
+          "Empty Baseline",
+          0
+        ],
+        [
+          "Right Circular Cone",
+          261.8
+        ],
+        [
+          "Sphere (Hollow)",
+          523.6
+        ],
+        [
+          "Cylinder (Circumscribed)",
+          785.4
+        ]
+      ]
+    },
+    "views": 2384,
+    "likes": 1026,
+    "rating": 4.9
   },
   {
     "id": "f6b7bed3-1fb8-4f19-a540-895e28ad8cca",
-    "title": "Angle Subtended by an Arc at the Center vs Circumference",
     "slug": "angle-subtended-by-arc-circle-theorem",
+    "title": "Angle Subtended by an Arc at the Center vs Circumference",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 9",
     "difficulty": "Beginner",
+    "duration": "35 Mins",
     "duration_minutes": 35,
     "description": "Verify that the angle subtended by an arc at the center of a circle is double the angle subtended by it at any point on the remaining part of the circle (Angle at Center Theorem).",
     "outcome": "For any chosen arc AB, angle ∠AOB at center measured 80° while inscribed angle ∠APB at circumference measured exactly 40°. Verified ∠AOB = 2 · ∠APB across all arc lengths.",
     "materials": [
-      "Circular Geoboard with 36-peg graduated circumference × 1",
-      "Colored elastic rubber bands (red, blue, yellow) × 1 pack",
-      "360° Circular Full Protractor × 1",
-      "Tracing paper and Drawing Compass × 1 set",
-      "Cardboard sheet with pins × 1"
+      {
+        "id": "mat-0",
+        "name": "Circular Geoboard with 36-peg graduated circumference",
+        "qty": 1,
+        "price": 50,
+        "about": "Circular geometry pegboard with elastic cord runners and revolving degree protractor.",
+        "specs": [
+          [
+            "Diameter",
+            "300 mm circular wooden base"
+          ],
+          [
+            "Pegs",
+            "36 boundary pegs at 10° intervals + center peg O"
+          ],
+          [
+            "Cords",
+            "Color-coded elastic cords for forming inscribed rays"
+          ],
+          [
+            "Protractor",
+            "Integrated 360° rotating pointer protractor"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Colored elastic rubber bands (red, blue, yellow)  pack",
+        "qty": 1,
+        "price": 95,
+        "about": "Set of clear transparent acrylic angle replicas (35°, 70°, 90°) for direct superimposition.",
+        "specs": [
+          [
+            "Material",
+            "3 mm laser-cut transparent neon acrylic"
+          ],
+          [
+            "Angles",
+            "35.0° and 70.0° matched angle templates"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "360° Circular Full Protractor",
+        "qty": 1,
+        "price": 140,
+        "about": "White drawing card and heavy compass with micron drafting pen.",
+        "specs": [
+          [
+            "Card",
+            "A3 size 250 GSM smooth Bristol board"
+          ],
+          [
+            "Pen",
+            "0.3 mm pigment technical drawing pen"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Tracing paper and Drawing Compass  set",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Angle Subtended by an Arc at the Center vs Circumference.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Cardboard sheet with pins",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Angle Subtended by an Arc at the Center vs Circumference.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Draw a circle of radius 10 cm on white cardboard and mark center O.",
@@ -1961,16 +10182,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Measure angle ∠APB with the protractor (measured ∠APB = 40°).",
       "Trace angle ∠APB onto transparent tracing paper twice. Place both traced angles side by side over ∠AOB to demonstrate that 2 × ∠APB fits perfectly over ∠AOB."
     ],
+    "steps": [
+      {
+        "instruction": "Draw a circle of radius 10 cm on white cardboard and mark center O.",
+        "text": "Draw a circle of radius 10 cm on white cardboard and mark center O.",
+        "observe": "Draw a circle of radius r = 8.0 cm with center O on white drawing sheet; mark arc AB subtending angle at center.",
+        "safety": "Ensure compass point is firmly anchored at center point O."
+      },
+      {
+        "instruction": "Mark two points A and B on the circumference to define arc AB.",
+        "text": "Mark two points A and B on the circumference to define arc AB.",
+        "observe": "Join OA and OB to form central angle ∠AOB; measure ∠AOB = 70.0° using circular protractor.",
+        "safety": "Align 0° baseline of protractor exactly along radius OA."
+      },
+      {
+        "instruction": "Join radius OA and radius OB to form central angle ∠AOB.",
+        "text": "Join radius OA and radius OB to form central angle ∠AOB.",
+        "observe": "Select point P1 on major arc; join AP1 and BP1 to form inscribed angle ∠AP1B; measure ∠AP1B = 35.0°.",
+        "safety": "Use sharp 2H pencil for razor-sharp geometric ray lines."
+      },
+      {
+        "instruction": "Mark any point P on the remaining major arc circumference and join PA and PB to form inscribed angle ∠APB.",
+        "text": "Mark any point P on the remaining major arc circumference and join PA and PB to form inscribed angle ∠APB.",
+        "observe": "Calculate ratio ∠AOB / ∠AP1B = 70.0° / 35.0° = 2.00, verifying the 2 : 1 theorem.",
+        "safety": "Record readings in laboratory measurement table."
+      },
+      {
+        "instruction": "Measure central angle ∠AOB accurately with the 360° protractor (e.g. ∠AOB = 80°).",
+        "text": "Measure central angle ∠AOB accurately with the 360° protractor (e.g. ∠AOB = 80°).",
+        "observe": "Choose alternative points P2 and P3 on arc; all measure exactly 35.0°, confirming angles in same segment are equal.",
+        "safety": "Verify that P does not cross into minor arc AB."
+      },
+      {
+        "instruction": "Measure angle ∠APB with the protractor (measured ∠APB = 40°).",
+        "text": "Measure angle ∠APB with the protractor (measured ∠APB = 40°).",
+        "observe": "Test semicircle case where AB is diameter (∠AOB = 180°); inscribed angle ∠APB measures exactly 90.0°.",
+        "safety": "Mount tracing cutouts of angles to physically verify superimposition."
+      },
+      {
+        "instruction": "Trace angle ∠APB onto transparent tracing paper twice. Place both traced angles side by side over ∠AOB to demonstrate that 2 × ∠APB fits perfectly over ∠AOB.",
+        "text": "Trace angle ∠APB onto transparent tracing paper twice. Place both traced angles side by side over ∠AOB to demonstrate that 2 × ∠APB fits perfectly over ∠AOB."
+      }
+    ],
     "precautions": [
       "Ensure center point O is accurately positioned before drawing radii.",
       "Point P must lie strictly on the remaining circumference, not on arc AB itself.",
       "Use sharp pencils and fine rubber bands on the geoboard to prevent angular reading errors.",
       "Verify the theorem across both minor arcs, major arcs, and semicircles (angle in a semicircle = 90°)."
     ],
-    "learning_objectives": [
-      "Understand circle geometry theorems and cyclic angle properties.",
-      "Deduce corollary that angles in the same segment of a circle are equal.",
-      "Prove that the angle in a semicircle is a right angle (90°)."
+    "thumbnail_url": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Circle Theorems",
@@ -1979,33 +10241,189 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 9 Maths",
       "CBSE Mathematics"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80"
+    "formula": "Central Angle = 2 × Inscribed Angle (∠AOB = 2 · ∠APB for any point P on alternating arc)",
+    "obsCols": [
+      "Circle Trial",
+      "Position of Point P on Arc",
+      "Inscribed Angle ∠APB (°)",
+      "Central Angle ∠AOB (°)",
+      "Ratio ∠AOB / ∠APB"
     ],
-    "popularity": 93,
-    "status": "published",
-    "duration": "35 Mins",
-    "views": 1116,
-    "likes": 744,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Trial 1",
+        "P1 (Left upper circumference)",
+        "35.0°",
+        "70.0°",
+        "2.00 (Exact 2 : 1)"
+      ],
+      [
+        "Trial 2",
+        "P2 (Center upper circumference)",
+        "35.0°",
+        "70.0°",
+        "2.00 (Angles in same segment equal)"
+      ],
+      [
+        "Trial 3",
+        "P3 (Right upper circumference)",
+        "35.0°",
+        "70.0°",
+        "2.00 (Angles in same segment equal)"
+      ],
+      [
+        "Trial 4 (Larger Arc)",
+        "Arc AB subtending 110° at center",
+        "55.0°",
+        "110.0°",
+        "2.00 (Exact 2 : 1)"
+      ],
+      [
+        "Trial 5 (Semicircle)",
+        "Arc AB diameter (180° at center)",
+        "90.0° (Right angle in semicircle)",
+        "180.0°",
+        "2.00 (Exact 2 : 1)"
+      ]
+    ],
+    "interp": [
+      [
+        "Fundamental Central Angle Theorem",
+        "The angle subtended by an arc at the center of a circle is strictly double the angle subtended by it at any point on the remaining part of the circle."
+      ],
+      [
+        "Invariance of Inscribed Angle",
+        "As point P slides along the major arc (P1 -> P2 -> P3), the inscribed angle ∠APB remains invariant at 35.0°, proving angles in the same segment of a circle are equal."
+      ],
+      [
+        "Thales Theorem as Special Case",
+        "When central angle is a straight line (180° diameter), inscribed angle ∠APB = 180°/2 = 90°, proving the angle in a semicircle is a right angle."
+      ],
+      [
+        "Cyclic Quadrilateral Connection",
+        "Opposite angles in cyclic quadrilaterals naturally sum to 180° as a direct consequence of this central angle theorem."
+      ]
+    ],
+    "graph": {
+      "title": "Central Angle (∠AOB) vs Inscribed Angle (∠APB) Linear Relationship",
+      "xLabel": "Inscribed Angle ∠APB (°)",
+      "yLabel": "Central Angle ∠AOB (°)",
+      "points": [
+        [
+          "0°",
+          0
+        ],
+        [
+          "20°",
+          40
+        ],
+        [
+          "35°",
+          70
+        ],
+        [
+          "45°",
+          90
+        ],
+        [
+          "55°",
+          110
+        ],
+        [
+          "90° (Semicircle)",
+          180
+        ]
+      ]
+    },
+    "views": 2421,
+    "likes": 1044,
+    "rating": 4.9
   },
   {
     "id": "c19950ec-c9c0-4ec3-a9a1-b6b42ce917d4",
-    "title": "Equality of Tangents Drawn from an External Point to a Circle",
     "slug": "circle-tangents-external-point-construction",
+    "title": "Equality of Tangents Drawn from an External Point to a Circle",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "35 Mins",
     "duration_minutes": 35,
     "description": "Verify that the lengths of tangents drawn from an external point to a circle are equal (Theorem 10.2) through paper folding, Euclidean geometric construction, and RHS congruency.",
     "outcome": "Tangents PT1 and PT2 from point P measure exactly 12.0 cm each. Triangle OPT1 is congruent to Triangle OPT2 by RHS criterion, proving PT1 = PT2.",
     "materials": [
-      "Drawing sheet (white chart paper) × 1",
-      "Geometry Box (Compass, 30 cm Metric Ruler, Protractor) × 1",
-      "Tracing paper and colored pencils × 1 set",
-      "Fine craft paper-creasing tool × 1"
+      {
+        "id": "mat-0",
+        "name": "Drawing sheet (white chart paper)",
+        "qty": 1,
+        "price": 50,
+        "about": "Tangent construction geometric acrylic kit with pre-drilled pivot holes and tangent rulers.",
+        "specs": [
+          [
+            "Base Plate",
+            "250 mm × 250 mm engraved millimeter grid board"
+          ],
+          [
+            "Rods",
+            "Two slotted acrylic tangent arms with pivot pins"
+          ],
+          [
+            "Accuracy",
+            "± 0.1 mm mechanical tolerances"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Geometry Box (Compass, 30 cm Metric Ruler, Protractor)",
+        "qty": 1,
+        "price": 95,
+        "about": "Heavy-duty steel drafting compass and ruling pens.",
+        "specs": [
+          [
+            "Compass Length",
+            "160 mm with extension arm"
+          ],
+          [
+            "Divider",
+            "8-inch proportional divider"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Tracing paper and colored pencils  set",
+        "qty": 1,
+        "price": 140,
+        "about": "Precision steel ruler with metric 0.5 mm divisions.",
+        "specs": [
+          [
+            "Length",
+            "300 mm stainless steel rule"
+          ],
+          [
+            "Graduation",
+            "0.5 mm and 1.0 mm etched scales"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Fine craft paper-creasing tool",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Equality of Tangents Drawn from an External Point to a Circle.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Draw a circle of radius r = 5 cm with center O on white chart paper.",
@@ -2016,16 +10434,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Measure lengths PT1 and PT2 with a precision metric ruler (both measure exactly 12.0 cm: √(13² - 5²) = √(169 - 25) = √144 = 12 cm).",
       "Fold the paper along line OP: observe that ray PT1 superimposes precisely on PT2, verifying equality."
     ],
+    "steps": [
+      {
+        "instruction": "Draw a circle of radius r = 5 cm with center O on white chart paper.",
+        "text": "Draw a circle of radius r = 5 cm with center O on white chart paper.",
+        "observe": "Draw a circle of radius r = 5.0 cm with center O on white drawing board; mark external point P at OP = 13.0 cm.",
+        "safety": "Ensure straight line OP is measured accurately with steel rule."
+      },
+      {
+        "instruction": "Choose a point P outside the circle such that distance OP = 13 cm.",
+        "text": "Choose a point P outside the circle such that distance OP = 13 cm.",
+        "observe": "Find midpoint M of line OP by constructing its perpendicular bisector using compass arcs.",
+        "safety": "Open compass to radius > half of OP to draw intersecting bisector arcs."
+      },
+      {
+        "instruction": "Join OP and draw the perpendicular bisector of OP to find midpoint M.",
+        "text": "Join OP and draw the perpendicular bisector of OP to find midpoint M.",
+        "observe": "With center M and radius MP = MO = 6.5 cm, draw a circle intersecting original circle at points T1 and T2.",
+        "safety": "Anchor compass point firmly at M to prevent center slip."
+      },
+      {
+        "instruction": "With M as center and radius MO = MP, draw a second circle intersecting the original circle at points T1 and T2.",
+        "text": "With M as center and radius MO = MP, draw a second circle intersecting the original circle at points T1 and T2.",
+        "observe": "Join PT1 and PT2; draw radii OT1 and OT2; verify angles ∠OT1P and ∠OT2P are exactly 90.0° using set square.",
+        "safety": "A tangent to a circle is perpendicular to the radius through the point of contact."
+      },
+      {
+        "instruction": "Join PT1 and PT2: these are the two tangents from external point P to the circle.",
+        "text": "Join PT1 and PT2: these are the two tangents from external point P to the circle.",
+        "observe": "Measure tangent lengths PT1 and PT2 with vernier / divider; both measure exactly 12.00 cm.",
+        "safety": "Use fine dividers to transfer lengths directly onto steel rule scale."
+      },
+      {
+        "instruction": "Measure lengths PT1 and PT2 with a precision metric ruler (both measure exactly 12.0 cm: √(13² - 5²) = √(169 - 25) = √144 = 12 cm).",
+        "text": "Measure lengths PT1 and PT2 with a precision metric ruler (both measure exactly 12.0 cm: √(13² - 5²) = √(169 - 25) = √144 = 12 cm).",
+        "observe": "Cut along PT1, PT2 and fold along OP: triangle ΔOPT1 superimposes perfectly onto ΔOPT2, confirming equality.",
+        "safety": "Fold precisely along axis of symmetry OP."
+      },
+      {
+        "instruction": "Fold the paper along line OP: observe that ray PT1 superimposes precisely on PT2, verifying equality.",
+        "text": "Fold the paper along line OP: observe that ray PT1 superimposes precisely on PT2, verifying equality."
+      }
+    ],
     "precautions": [
       "Compass pivot must be sharp and tightened to prevent slipping during arc construction.",
       "The tangent must touch the circle at exactly one point (radius OT is strictly perpendicular to PT: ∠OTP = 90°).",
       "Align the ruler with hairline accuracy along the points of tangency.",
       "Crease paper cleanly along axis of symmetry OP for folding verification."
     ],
-    "learning_objectives": [
-      "Understand the geometric properties of circle tangents and points of contact.",
-      "Apply the Right-Hypotenuse-Side (RHS) triangle congruency condition.",
-      "Calculate tangent lengths using the Pythagorean theorem: Length = √(d² - r²)."
+    "thumbnail_url": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Tangents to Circles",
@@ -2034,34 +10493,218 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Congruence",
       "Hands-on Math"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1580584126903-c17d41830450?auto=format&fit=crop&w=800&q=80"
+    "formula": "PT1 = PT2 = √(OP² - r²) = √(13.0² - 5.0²) = √(169 - 25) = √144 = 12.0 cm (Tangents from external point are equal)",
+    "obsCols": [
+      "Construction Trial",
+      "Circle Radius r (cm)",
+      "Distance OP from Center (cm)",
+      "Calculated Tangent √(OP²-r²) (cm)",
+      "Measured PT1 (cm)",
+      "Measured PT2 (cm)",
+      "Difference |PT1 - PT2| (cm)"
     ],
-    "popularity": 95,
-    "status": "published",
-    "duration": "35 Mins",
-    "views": 1140,
-    "likes": 760,
-    "rating": 5
+    "obsRows": [
+      [
+        "Trial 1",
+        "5.0 cm",
+        "13.0 cm",
+        "12.00 cm",
+        "12.00 cm",
+        "12.00 cm",
+        "0.00 cm (Exact equality)"
+      ],
+      [
+        "Trial 2",
+        "3.0 cm",
+        "5.0 cm",
+        "4.00 cm",
+        "4.00 cm",
+        "4.00 cm",
+        "0.00 cm (Exact equality)"
+      ],
+      [
+        "Trial 3",
+        "6.0 cm",
+        "10.0 cm",
+        "8.00 cm",
+        "8.00 cm",
+        "8.00 cm",
+        "0.00 cm (Exact equality)"
+      ],
+      [
+        "Trial 4",
+        "8.0 cm",
+        "17.0 cm",
+        "15.00 cm",
+        "15.00 cm",
+        "15.00 cm",
+        "0.00 cm (Exact equality)"
+      ],
+      [
+        "Trial 5",
+        "7.0 cm",
+        "25.0 cm",
+        "24.00 cm",
+        "24.00 cm",
+        "24.00 cm",
+        "0.00 cm (Exact equality)"
+      ]
+    ],
+    "interp": [
+      [
+        "Congruence of Right Triangles",
+        "Right triangles ΔOPT1 and ΔOPT2 are congruent by RHS criterion (OT1 = OT2 = r, OP common hypotenuse, ∠OT1P = ∠OT2P = 90°)."
+      ],
+      [
+        "Equal Tangent Lengths Verified",
+        "Congruence directly implies PT1 = PT2 = 12.0 cm, confirming that lengths of tangents drawn from an external point are strictly equal."
+      ],
+      [
+        "Angle Subtension Equality",
+        "The tangents subtend equal angles at the circle center (∠T1OP = ∠T2OP = 67.38°)."
+      ],
+      [
+        "Line of Centers Bisects Tangent Angle",
+        "Line segment OP bisects the angle between the two tangents (∠T1PO = ∠T2PO = 22.62°)."
+      ]
+    ],
+    "graph": {
+      "title": "Distance OP from Center vs Resulting Tangent Length (PT)",
+      "xLabel": "External Distance OP (cm)",
+      "yLabel": "Tangent Length PT (cm) [for r = 5.0 cm]",
+      "points": [
+        [
+          "5.0 cm (Point on circle)",
+          0
+        ],
+        [
+          "7.0 cm",
+          4.9
+        ],
+        [
+          "10.0 cm",
+          8.66
+        ],
+        [
+          "13.0 cm",
+          12
+        ],
+        [
+          "15.0 cm",
+          14.14
+        ],
+        [
+          "20.0 cm",
+          19.36
+        ]
+      ]
+    },
+    "views": 2458,
+    "likes": 1062,
+    "rating": 4.9
   },
   {
     "id": "a82d8ea4-52e8-4cc4-ba99-a30fd90fcf0d",
-    "title": "Basic Proportionality Theorem (Thales' Theorem) Verification",
     "slug": "basic-proportionality-thales-theorem",
+    "title": "Basic Proportionality Theorem (Thales' Theorem) Verification",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Intermediate",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Verify Thales' Basic Proportionality Theorem: If a line is drawn parallel to one side of a triangle to intersect the other two sides in distinct points, the other two sides are divided in the same ratio (AD/DB = AE/EC).",
     "outcome": "Measured segments AD = 4.0 cm, DB = 6.0 cm (ratio = 0.667) and AE = 4.8 cm, EC = 7.2 cm (ratio = 0.667). Ratios AD/DB = AE/EC verified across scalene, isosceles, and right triangles.",
     "materials": [
-      "Cardboard sheet with parallel ruled line grid (spaced 1 cm apart) × 1",
-      "Colored construction paper triangles of varying shapes × 3",
-      "30 cm Metric Ruler (millimeter divisions) × 1",
-      "Protractor and Pair of Set Squares × 1 set",
-      "Push pins and colored thread × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Cardboard sheet with parallel ruled line grid (spaced 1 cm apart)",
+        "qty": 1,
+        "price": 50,
+        "about": "Thales theorem acrylic model board with parallel sliding runner bar and engraved scales.",
+        "specs": [
+          [
+            "Base Triangle",
+            "Scalene triangle board AB = 240 mm, AC = 300 mm, BC = 360 mm"
+          ],
+          [
+            "Parallel Slider",
+            "Brass runner guided in twin parallel slots"
+          ],
+          [
+            "Graduation",
+            "Direct read millimeter scales along both legs"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Colored construction paper triangles of varying shapes",
+        "qty": 3,
+        "price": 95,
+        "about": "Pair of large 30 cm technical drafting set squares (45° and 60°/30°).",
+        "specs": [
+          [
+            "Material",
+            "Optical acrylic with bevelled inking edge"
+          ],
+          [
+            "Size",
+            "300 mm hypotenuse"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "30 cm Metric Ruler (millimeter divisions)",
+        "qty": 1,
+        "price": 140,
+        "about": "Engineering drawing paper and precision mechanical pencil.",
+        "specs": [
+          [
+            "Paper",
+            "Cartridge paper 200 GSM"
+          ],
+          [
+            "Pencil",
+            "0.5 mm Pentel drafting pencil with 2H lead"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Protractor and Pair of Set Squares  set",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Basic Proportionality Theorem (Thales' Theorem) Verification.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Push pins and colored thread  set",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Basic Proportionality Theorem (Thales' Theorem) Verification.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Draw any scalene triangle ABC on paper with sides AB = 10 cm, AC = 12 cm, BC = 14 cm.",
@@ -2072,16 +10715,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Compute ratio 2: R2 = AE / EC.",
       "Compare R1 and R2 to confirm AD/DB = AE/EC. Draw two other parallel lines at different heights to verify constancy of ratio."
     ],
+    "steps": [
+      {
+        "instruction": "Draw any scalene triangle ABC on paper with sides AB = 10 cm, AC = 12 cm, BC = 14 cm.",
+        "text": "Draw any scalene triangle ABC on paper with sides AB = 10 cm, AC = 12 cm, BC = 14 cm.",
+        "observe": "Draw arbitrary acute triangle ΔABC on drawing paper (AB = 8 cm, AC = 10 cm, BC = 12 cm).",
+        "safety": "Mark triangle vertices A, B, C clearly with fine drafting pen."
+      },
+      {
+        "instruction": "Using set squares, draw line segment DE parallel to side BC, intersecting AB at point D and AC at point E.",
+        "text": "Using set squares, draw line segment DE parallel to side BC, intersecting AB at point D and AC at point E.",
+        "observe": "Draw line DE parallel to base BC using set squares and ruler sliding technique.",
+        "safety": "Keep base ruler firmly pressed while sliding set square to maintain strict parallelism."
+      },
+      {
+        "instruction": "Measure the lengths of segments AD and DB with a precision ruler.",
+        "text": "Measure the lengths of segments AD and DB with a precision ruler.",
+        "observe": "Measure segments AD = 3.0 cm and DB = 5.0 cm on left side; compute ratio AD/DB = 3.0/5.0 = 0.600.",
+        "safety": "Take readings to nearest 0.5 mm on fine metric scale."
+      },
+      {
+        "instruction": "Compute ratio 1: R1 = AD / DB.",
+        "text": "Compute ratio 1: R1 = AD / DB.",
+        "observe": "Measure segments AE = 3.75 cm and EC = 6.25 cm on right side; compute ratio AE/EC = 3.75/6.25 = 0.600.",
+        "safety": "Verify that segment sums AD + DB = AB and AE + EC = AC."
+      },
+      {
+        "instruction": "Measure the lengths of segments AE and EC with the ruler.",
+        "text": "Measure the lengths of segments AE and EC with the ruler.",
+        "observe": "Ratios match to 3 decimal places (0.600 = 0.600), verifying Thales' Basic Proportionality Theorem.",
+        "safety": "Repeat with alternative parallel lines across different heights."
+      },
+      {
+        "instruction": "Compute ratio 2: R2 = AE / EC.",
+        "text": "Compute ratio 2: R2 = AE / EC.",
+        "observe": "Demonstrate via paper cutouts that triangles ΔBDE and ΔCDE have equal area on common base DE between parallel lines.",
+        "safety": "Paste cutouts onto laboratory report sheet."
+      },
+      {
+        "instruction": "Compare R1 and R2 to confirm AD/DB = AE/EC. Draw two other parallel lines at different heights to verify constancy of ratio.",
+        "text": "Compare R1 and R2 to confirm AD/DB = AE/EC. Draw two other parallel lines at different heights to verify constancy of ratio."
+      }
+    ],
     "precautions": [
       "Line DE must be strictly parallel to base BC; use paired set squares to ensure zero angular error.",
       "Measure segment lengths with a sharp pencil and millimeter scale at eye level.",
       "Avoid using tiny triangles where measurement errors become significant percentages.",
       "Check that points D and E lie strictly on the respective sides."
     ],
-    "learning_objectives": [
-      "Master the fundamental foundation theorem for triangle similarity.",
-      "Relate triangle area ratios with proportional base segments sharing a common vertex.",
-      "Apply Thales' theorem to solve geometric height and distance division problems."
+    "thumbnail_url": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Thales Theorem",
@@ -2090,33 +10774,201 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Maths",
       "CBSE Syllabus"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1509869175650-a1c978349568?auto=format&fit=crop&w=800&q=80"
+    "formula": "AD / DB = AE / EC (If DE ∥ BC in ΔABC, then DE divides AB and AC in the same ratio)",
+    "obsCols": [
+      "Triangle Configuration",
+      "Segment AD (cm)",
+      "Segment DB (cm)",
+      "Ratio AD / DB",
+      "Segment AE (cm)",
+      "Segment EC (cm)",
+      "Ratio AE / EC"
     ],
-    "popularity": 97,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1164,
-    "likes": 776,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "Position 1 (Midline DE)",
+        "4.0 cm",
+        "4.0 cm",
+        "1.000",
+        "5.0 cm",
+        "5.0 cm",
+        "1.000 (Exact match)"
+      ],
+      [
+        "Position 2 (1 : 2 Division)",
+        "3.0 cm",
+        "6.0 cm",
+        "0.500",
+        "3.5 cm",
+        "7.0 cm",
+        "0.500 (Exact match)"
+      ],
+      [
+        "Position 3 (2 : 1 Division)",
+        "6.0 cm",
+        "3.0 cm",
+        "2.000",
+        "7.0 cm",
+        "3.5 cm",
+        "2.000 (Exact match)"
+      ],
+      [
+        "Position 4 (3 : 5 Division)",
+        "3.0 cm",
+        "5.0 cm",
+        "0.600",
+        "4.5 cm",
+        "7.5 cm",
+        "0.600 (Exact match)"
+      ],
+      [
+        "Position 5 (Arbitrary DE ∥ BC)",
+        "2.4 cm",
+        "5.6 cm",
+        "0.428",
+        "3.0 cm",
+        "7.0 cm",
+        "0.428 (Exact match)"
+      ]
+    ],
+    "interp": [
+      [
+        "Parallel Line Section Ratio Equality",
+        "Line DE parallel to side BC divides sides AB and AC in strictly identical proportional ratios (AD/DB = AE/EC)."
+      ],
+      [
+        "Area-Ratio Method Proof",
+        "Area(ΔADE) / Area(ΔBDE) = AD / DB (same height); Area(ΔADE) / Area(ΔCDE) = AE / EC; since Area(ΔBDE) = Area(ΔCDE) on same base DE, ratios are identical."
+      ],
+      [
+        "Converse of Thales Theorem",
+        "If a line divides two sides of a triangle in the same ratio, the line is strictly parallel to the third side."
+      ],
+      [
+        "Foundation of Similar Triangles",
+        "Establishes the fundamental AAA similarity criterion ΔADE ~ ΔABC with proportional side ratios AD/AB = AE/AC = DE/BC."
+      ]
+    ],
+    "graph": {
+      "title": "Left Segment Ratio (AD/DB) vs Right Segment Ratio (AE/EC)",
+      "xLabel": "Left Side Ratio AD / DB",
+      "yLabel": "Right Side Ratio AE / EC",
+      "points": [
+        [
+          "0.0",
+          0
+        ],
+        [
+          "0.428",
+          0.428
+        ],
+        [
+          "0.500",
+          0.5
+        ],
+        [
+          "0.600",
+          0.6
+        ],
+        [
+          "1.000",
+          1
+        ],
+        [
+          "2.000",
+          2
+        ]
+      ]
+    },
+    "views": 2495,
+    "likes": 1080,
+    "rating": 4.9
   },
   {
     "id": "51e20d48-b921-4f37-ab52-8ff2da1a21b4",
-    "title": "Sum of First n Natural Numbers via Staircase Model",
     "slug": "sum-of-natural-numbers-staircase-model",
+    "title": "Sum of First n Natural Numbers via Staircase Model",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "30 Mins",
     "duration_minutes": 30,
     "description": "Derive and verify the arithmetic progression formula for the sum of the first n natural numbers (S_n = n(n+1)/2) using a physical 2D staircase model of unit square tiles.",
     "outcome": "Two identical staircases of n = 6 steps (1+2+3+4+5+6 = 21 tiles each) fit together to form a rectangle of dimensions n × (n+1) = 6 × 7 = 42 tiles. Hence S_n = 42 / 2 = 21.",
     "materials": [
-      "Cardboard sheet (30 cm × 30 cm) with 1 cm × 1 cm grid × 1",
-      "Unit wooden / plastic square tiles (1 cm × 1 cm) × 50",
-      "Colored chart paper (red and yellow) × 1 each",
-      "Scissors, Glue stick, and marker pen × 1 set"
+      {
+        "id": "mat-0",
+        "name": "Cardboard sheet (30 cm  cm) with 1 cm × 1 cm grid × 1",
+        "qty": 30,
+        "price": 50,
+        "about": "Wooden interlocking arithmetic progression staircase model with 110 magnetic unit cubes.",
+        "specs": [
+          [
+            "Base Size",
+            "200 mm × 220 mm magnetic display board"
+          ],
+          [
+            "Cubes Included",
+            "55 red magnetic cubes + 55 yellow magnetic cubes (15 mm edge)"
+          ],
+          [
+            "Storage",
+            "Fitted wooden tray with sliding lid"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Unit wooden / plastic square tiles (1 cm  cm) × 50",
+        "qty": 1,
+        "price": 95,
+        "about": "Square grid millimeter graph sheets (1 cm × 1 cm printed unit squares).",
+        "specs": [
+          [
+            "Grid Size",
+            "10 mm × 10 mm bold grid squares"
+          ],
+          [
+            "Paper",
+            "120 GSM colored craft paper (red and yellow)"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Colored chart paper (red and yellow)  each",
+        "qty": 1,
+        "price": 140,
+        "about": "Safety guillotine paper trimmer and non-toxic adhesive stick.",
+        "specs": [
+          [
+            "Trimmer",
+            "Steel blade safety paper trimmer with alignment grid"
+          ],
+          [
+            "Glue",
+            "PVA acid-free non-staining stick"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Scissors, Glue stick, and marker pen  set",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Sum of First n Natural Numbers via Staircase Model.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Choose n = 6 as the target natural number.",
@@ -2127,16 +10979,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Count the dimensions of the rectangle: breadth = n = 6 rows, length = n + 1 = 7 columns.",
       "Total area of rectangle = n × (n+1) = 6 × 7 = 42 tiles. Since it comprises two identical staircases, the sum of one staircase is S_n = n(n+1)/2 = 42/2 = 21."
     ],
+    "steps": [
+      {
+        "instruction": "Choose n = 6 as the target natural number.",
+        "text": "Choose n = 6 as the target natural number.",
+        "observe": "Cut 55 unit squares (1 cm × 1 cm) from red squared paper and 55 identical unit squares from yellow squared paper.",
+        "safety": "Use guillotine paper trimmer with safety guard for cutting identical unit squares."
+      },
+      {
+        "instruction": "Construct a staircase of red unit squares: 1 square in column 1, 2 in column 2, 3 in column 3, up to 6 in column 6. Total red tiles = 1 + 2 + 3 + 4 + 5 + 6 = 21.",
+        "text": "Construct a staircase of red unit squares: 1 square in column 1, 2 in column 2, 3 in column 3, up to 6 in column 6. Total red tiles = 1 + 2 + 3 + 4 + 5 + 6 = 21.",
+        "observe": "Arrange red squares into 10 columns of heights 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 to build a stepped staircase shape.",
+        "safety": "Keep rows and columns aligned with square grid lines."
+      },
+      {
+        "instruction": "Construct an identical second staircase using yellow unit squares (total 21 yellow tiles).",
+        "text": "Construct an identical second staircase using yellow unit squares (total 21 yellow tiles).",
+        "observe": "Assemble the 55 yellow squares into an identical inverted staircase shape.",
+        "safety": "Verify that both staircases contain exactly 55 squares each."
+      },
+      {
+        "instruction": "Invert the yellow staircase and interlock it with the red staircase.",
+        "text": "Invert the yellow staircase and interlock it with the red staircase.",
+        "observe": "Interlock the yellow staircase upside-down with the red staircase: they mesh seamlessly into a single rectangle.",
+        "safety": "Observe that the stepped profiles fit together with zero gaps."
+      },
+      {
+        "instruction": "Observe that the two interlocked staircases form a perfect solid rectangle.",
+        "text": "Observe that the two interlocked staircases form a perfect solid rectangle.",
+        "observe": "Measure dimensions of resulting rectangle: height has 10 squares, base has (10 + 1) = 11 squares.",
+        "safety": "Total squares in combined rectangle = 10 × 11 = 110 unit squares."
+      },
+      {
+        "instruction": "Count the dimensions of the rectangle: breadth = n = 6 rows, length = n + 1 = 7 columns.",
+        "text": "Count the dimensions of the rectangle: breadth = n = 6 rows, length = n + 1 = 7 columns.",
+        "observe": "Since the rectangle comprises two equal staircases, each staircase contains 110 / 2 = 55 squares, verifying Sn = n(n+1)/2.",
+        "safety": "Paste completed composite rectangle onto laboratory folder chart."
+      },
+      {
+        "instruction": "Total area of rectangle = n × (n+1) = 6 × 7 = 42 tiles. Since it comprises two identical staircases, the sum of one staircase is S_n = n(n+1)/2 = 42/2 = 21.",
+        "text": "Total area of rectangle = n × (n+1) = 6 × 7 = 42 tiles. Since it comprises two identical staircases, the sum of one staircase is S_n = n(n+1)/2 = 42/2 = 21."
+      }
+    ],
     "precautions": [
       "All unit tiles must have identical square dimensions (1 cm × 1 cm) for gapless interlocking.",
       "Align tiles strictly along rectangular grid lines.",
       "Ensure student clearly distinguishes between the two contrasting colored staircases.",
       "Test with multiple values of n (n = 4, n = 5, n = 10) to confirm generalizability."
     ],
-    "learning_objectives": [
-      "Understand Arithmetic Progressions (AP) with first term a = 1 and common difference d = 1.",
-      "Visualize Gauss's pairing trick for finite series summation geometrically.",
-      "Connect discrete arithmetic sequences with 2D geometric array areas."
+    "thumbnail_url": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Arithmetic Progression",
@@ -2145,36 +11038,260 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Mathematics",
       "Experiential Math"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=80"
+    "formula": "Sn = 1 + 2 + 3 + ... + n = n · (n + 1) / 2 = 10 · 11 / 2 = 55 (Area of Staircase Shape)",
+    "obsCols": [
+      "Number of Terms (n)",
+      "Staircase Sum Expression",
+      "Theoretical Formula n(n+1)/2",
+      "Physical Unit Squares Counted",
+      "Rectangle Dimensions (n × (n+1))"
     ],
-    "popularity": 91,
-    "status": "published",
-    "duration": "30 Mins",
-    "views": 1092,
-    "likes": 728,
-    "rating": 4.8999999999999995
+    "obsRows": [
+      [
+        "n = 1",
+        "1",
+        "1 × 2 / 2 = 1",
+        "1 unit square",
+        "1 × 2 = 2 (Half = 1)"
+      ],
+      [
+        "n = 3",
+        "1 + 2 + 3",
+        "3 × 4 / 2 = 6",
+        "6 unit squares",
+        "3 × 4 = 12 (Half = 6)"
+      ],
+      [
+        "n = 5",
+        "1 + 2 + 3 + 4 + 5",
+        "5 × 6 / 2 = 15",
+        "15 unit squares",
+        "5 × 6 = 30 (Half = 15)"
+      ],
+      [
+        "n = 8",
+        "1 + 2 + ... + 8",
+        "8 × 9 / 2 = 36",
+        "36 unit squares",
+        "8 × 9 = 72 (Half = 36)"
+      ],
+      [
+        "n = 10",
+        "1 + 2 + 3 + ... + 10",
+        "10 × 11 / 2 = 55",
+        "55 unit squares",
+        "10 × 11 = 110 (Half = 55)"
+      ]
+    ],
+    "interp": [
+      [
+        "Geometric Staircase Representation",
+        "Summing consecutive integers 1 to n corresponds to stacking columns of unit squares of heights 1, 2, ..., n into a stepped staircase."
+      ],
+      [
+        "Interlocking Rectangular Pairing",
+        "Two identical n-step staircases (colored blue and yellow) interlock perfectly to form an n × (n + 1) rectangle."
+      ],
+      [
+        "Algebraic Formula Derivation",
+        "Total area of rectangle = n × (n + 1); therefore, area of single staircase = 1/2 · n(n + 1), proving Gauss' formula geometrically."
+      ],
+      [
+        "Arithmetic Progression Foundation",
+        "Provides the visual and geometric bedrock for standard arithmetic progression AP sum Sn = n/2 [2a + (n-1)d] with a=1, d=1."
+      ]
+    ],
+    "graph": {
+      "title": "Number of Natural Terms (n) vs Cumulative Sum Sn",
+      "xLabel": "Number of Terms n",
+      "yLabel": "Sum of First n Numbers (Sn)",
+      "points": [
+        [
+          "1",
+          1
+        ],
+        [
+          "2",
+          3
+        ],
+        [
+          "3",
+          6
+        ],
+        [
+          "4",
+          10
+        ],
+        [
+          "5",
+          15
+        ],
+        [
+          "6",
+          21
+        ],
+        [
+          "7",
+          28
+        ],
+        [
+          "8",
+          36
+        ],
+        [
+          "9",
+          45
+        ],
+        [
+          "10",
+          55
+        ]
+      ]
+    },
+    "views": 2532,
+    "likes": 1098,
+    "rating": 4.9
   },
   {
     "id": "0239d714-599b-4a85-811b-80dd124eff6d",
-    "title": "Algebraic Identity (a + b)³ 3D Dissection Model",
     "slug": "algebraic-identity-cube-of-binomial-3d",
+    "title": "Algebraic Identity (a + b)³ 3D Dissection Model",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 9",
     "difficulty": "Intermediate",
+    "duration": "40 Mins",
     "duration_minutes": 40,
     "description": "Verify the algebraic identity (a + b)³ = a³ + 3a²b + 3ab² + b³ geometrically using a set of 8 physical 3D volumetric acrylic blocks of dimensions a and b.",
     "outcome": "An assembled cube of side (a + b) decomposes into exactly 8 geometric solid pieces: 1 cube of a³, 3 cuboids of a²b, 3 cuboids of ab², and 1 cube of b³, verifying the identity.",
     "materials": [
-      "3D Acrylic / Wooden mathematical model set for binomial cube: a = 4 cm, b = 2 cm × 1 set",
-      "- Cube of side a (4 × 4 × 4 = 64 cm³) × 1",
-      "- Cube of side b (2 × 2 × 2 = 8 cm³) × 1",
-      "- Cuboids of dimension a × a × b (4 × 4 × 2 = 32 cm³) × 3",
-      "- Cuboids of dimension a × b × b (4 × 2 × 2 = 16 cm³) × 3",
-      "Display tray with base 6 cm × 6 cm × 1",
-      "Metric Vernier Caliper / Ruler × 1"
+      {
+        "id": "mat-0",
+        "name": "3D Acrylic / Wooden mathematical model set for binomial cube: a = 4 cm, b = 2 cm  set",
+        "qty": 1,
+        "price": 50,
+        "about": "Montessori / CBSE standard 8-piece wooden Binomial Cube apparatus in hinged wooden box.",
+        "specs": [
+          [
+            "Material",
+            "Fine grain seasoned beechwood"
+          ],
+          [
+            "Dimensions",
+            "a = 50 mm, b = 20 mm; assembled cube = 70 mm × 70 mm × 70 mm"
+          ],
+          [
+            "Color Coding",
+            "Red (a³), Black with yellow edge (3a²b), Black with blue edge (3ab²), Blue (b³)"
+          ],
+          [
+            "Box",
+            "Hinged wooden storage box with printed lid diagram"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "- Cube of side a (4  × 4 = 64 cm³) × 1",
+        "qty": 4,
+        "price": 95,
+        "about": "Digital Vernier Caliper for verifying block face dimensions.",
+        "specs": [
+          [
+            "Resolution",
+            "0.01 mm"
+          ],
+          [
+            "Accuracy",
+            "± 0.02 mm"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "- Cube of side b (2  × 2 = 8 cm³) × 1",
+        "qty": 2,
+        "price": 140,
+        "about": "Standard laboratory apparatus used in Algebraic Identity (a + b)³ 3D Dissection Model.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "- Cuboids of dimension a × a × b (4  × 2 = 32 cm³) × 3",
+        "qty": 4,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Algebraic Identity (a + b)³ 3D Dissection Model.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "- Cuboids of dimension a × b × b (4  × 2 = 16 cm³) × 3",
+        "qty": 2,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Algebraic Identity (a + b)³ 3D Dissection Model.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Display tray with base 6 cm  cm × 1",
+        "qty": 6,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Algebraic Identity (a + b)³ 3D Dissection Model.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-6",
+        "name": "Metric Vernier Caliper / Ruler",
+        "qty": 1,
+        "price": 320,
+        "about": "Standard laboratory apparatus used in Algebraic Identity (a + b)³ 3D Dissection Model.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Measure dimensions of each block using a ruler: confirm a = 4 cm and b = 2 cm.",
@@ -2185,16 +11302,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "1 cube of a³ (volume = 64 cm³), 3 cuboids of a²b (volume = 3 × 32 = 96 cm³), 3 cuboids of ab² (volume = 3 × 16 = 48 cm³), 1 cube of b³ (volume = 8 cm³).",
       "Sum the volumes of all 8 components: 64 + 96 + 48 + 8 = 216 cm³. Confirm (a + b)³ = a³ + 3a²b + 3ab² + b³."
     ],
+    "steps": [
+      {
+        "instruction": "Measure dimensions of each block using a ruler: confirm a = 4 cm and b = 2 cm.",
+        "text": "Measure dimensions of each block using a ruler: confirm a = 4 cm and b = 2 cm.",
+        "observe": "Unpack the 8 polished wooden sub-blocks of the binomial cube kit; identify distinct dimensions a = 5 cm and b = 2 cm.",
+        "safety": "Inspect wooden blocks for smooth polished corners without splinters."
+      },
+      {
+        "instruction": "Assemble all 8 blocks together inside the tray to form a large single solid cube.",
+        "text": "Assemble all 8 blocks together inside the tray to form a large single solid cube.",
+        "observe": "Measure Block A (cube of side a = 5 cm); compute volume V = a³ = 5³ = 125 cm³.",
+        "safety": "Verify dimensions with Vernier caliper or metric ruler."
+      },
+      {
+        "instruction": "Measure the edge of the large assembled cube: edge = a + b = 4 + 2 = 6 cm.",
+        "text": "Measure the edge of the large assembled cube: edge = a + b = 4 + 2 = 6 cm.",
+        "observe": "Identify the 3 identical square prisms of base a × a (5×5 cm) and height b (2 cm); combined volume = 3a²b = 3 × 50 = 150 cm³.",
+        "safety": "Group blocks into matching sets by shape and color."
+      },
+      {
+        "instruction": "Calculate total volume of assembled cube: V = (a + b)³ = 6³ = 216 cm³.",
+        "text": "Calculate total volume of assembled cube: V = (a + b)³ = 6³ = 216 cm³.",
+        "observe": "Identify the 3 identical square prisms of base b × b (2×2 cm) and height a (5 cm); combined volume = 3ab² = 3 × 20 = 60 cm³.",
+        "safety": "Check that cross-sections align flush."
+      },
+      {
+        "instruction": "Disassemble the cube and separate into 4 component categories:",
+        "text": "Disassemble the cube and separate into 4 component categories:",
+        "observe": "Measure Block D (small cube of side b = 2 cm); compute volume V = b³ = 2³ = 8 cm³.",
+        "safety": "Ensure all 8 components are accounted for."
+      },
+      {
+        "instruction": "1 cube of a³ (volume = 64 cm³), 3 cuboids of a²b (volume = 3 × 32 = 96 cm³), 3 cuboids of ab² (volume = 3 × 16 = 48 cm³), 1 cube of b³ (volume = 8 cm³).",
+        "text": "1 cube of a³ (volume = 64 cm³), 3 cuboids of a²b (volume = 3 × 32 = 96 cm³), 3 cuboids of ab² (volume = 3 × 16 = 48 cm³), 1 cube of b³ (volume = 8 cm³).",
+        "observe": "Assemble all 8 blocks inside the 7 cm cubic wooden box; they pack seamlessly into a single solid cube of side (a+b) = 7 cm (volume 343 cm³).",
+        "safety": "Close box lid to verify perfect flush fit without rattling or protruding."
+      },
+      {
+        "instruction": "Sum the volumes of all 8 components: 64 + 96 + 48 + 8 = 216 cm³. Confirm (a + b)³ = a³ + 3a²b + 3ab² + b³.",
+        "text": "Sum the volumes of all 8 components: 64 + 96 + 48 + 8 = 216 cm³. Confirm (a + b)³ = a³ + 3a²b + 3ab² + b³."
+      }
+    ],
     "precautions": [
       "Handle precision acrylic blocks carefully to avoid chipping corners and edges.",
       "Ensure all 8 blocks fit together flush without gaps when building the main cube.",
       "Label dimensions a and b clearly on each block face to facilitate spatial tracking.",
       "Store blocks in labeled compartments to prevent losing components."
     ],
-    "learning_objectives": [
-      "Bridge abstract algebraic expansion formulas with concrete 3D volumetric space.",
-      "Master combinatorial binomial expansions for polynomial degree 3.",
-      "Develop spatial assembly and decomposition reasoning."
+    "thumbnail_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Algebraic Identities",
@@ -2203,35 +11361,231 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 9 Maths",
       "Experiential Learning"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=800&q=80"
+    "formula": "(a + b)³ = a³ + 3a²b + 3ab² + b³ (Volume of Large Cube = Sum of Volumes of 8 Dissected Sub-Blocks)",
+    "obsCols": [
+      "Component Block Identity",
+      "Quantity in Set",
+      "Algebraic Dimensions",
+      "Volume per Block (cm³)",
+      "Total Sub-Volume (cm³)"
     ],
-    "popularity": 92,
-    "status": "published",
-    "duration": "40 Mins",
-    "views": 1104,
-    "likes": 736,
-    "rating": 5
+    "obsRows": [
+      [
+        "Block A (Large Cube)",
+        "1 block",
+        "a × a × a (5 cm × 5 cm × 5 cm)",
+        "a³ = 125.0 cm³",
+        "125.0 cm³"
+      ],
+      [
+        "Block B (Square Prism A)",
+        "3 blocks",
+        "a × a × b (5 cm × 5 cm × 2 cm)",
+        "a²b = 50.0 cm³",
+        "3 × 50.0 = 150.0 cm³"
+      ],
+      [
+        "Block C (Square Prism B)",
+        "3 blocks",
+        "a × b × b (5 cm × 2 cm × 2 cm)",
+        "ab² = 20.0 cm³",
+        "3 × 20.0 = 60.0 cm³"
+      ],
+      [
+        "Block D (Small Cube)",
+        "1 block",
+        "b × b × b (2 cm × 2 cm × 2 cm)",
+        "b³ = 8.0 cm³",
+        "8.0 cm³"
+      ],
+      [
+        "Total Composite Cube",
+        "8 blocks total",
+        "(a + b)³ = (5 + 2)³ = 7³ cm³",
+        "(a + b)³ = 343.0 cm³",
+        "125 + 150 + 60 + 8 = 343.0 cm³ (Exact match)"
+      ]
+    ],
+    "interp": [
+      [
+        "Exact Spatial Volume Conservation",
+        "Sum of volumes of the 8 sub-blocks (125 + 150 + 60 + 8 = 343 cm³) exactly equals volume of assembled cube (7³ = 343 cm³)."
+      ],
+      [
+        "Algebraic Binomial Expansion Verified",
+        "Physical assembly provides an unforgettable three-dimensional tactile proof of (a + b)³ = a³ + 3a²b + 3ab² + b³."
+      ],
+      [
+        "Geometric Significance of Coefficients",
+        "The binomial coefficients 1, 3, 3, 1 directly represent the physical count of each distinct block shape in the expansion."
+      ],
+      [
+        "Extension to Polynomials",
+        "Generalizes spatial thinking from 2D area expansion (a + b)² = a² + 2ab + b² to three-dimensional Euclidean volumes."
+      ]
+    ],
+    "graph": {
+      "title": "Volume Breakdown of the 8 Sub-Blocks Comprising (a + b)³",
+      "xLabel": "Algebraic Component Term",
+      "yLabel": "Total Volume Contribution (cm³)",
+      "points": [
+        [
+          "b³ (Small Cube)",
+          8
+        ],
+        [
+          "3ab² (3 Slender Prisms)",
+          60
+        ],
+        [
+          "a³ (Large Cube)",
+          125
+        ],
+        [
+          "3a²b (3 Flat Prisms)",
+          150
+        ],
+        [
+          "Total (a+b)³ Assembly",
+          343
+        ]
+      ]
+    },
+    "views": 2569,
+    "likes": 1116,
+    "rating": 4.9
   },
   {
     "id": "0c762953-3ac1-4dc3-8507-387d93881286",
-    "title": "Trigonometric Height Estimation using a Handmade Clinometer",
     "slug": "clinometer-trigonometric-height-estimation",
+    "title": "Trigonometric Height Estimation using a Handmade Clinometer",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 10",
     "difficulty": "Beginner",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Construct an optical clinometer and determine the height of an inaccessible tall object (school building, tree, or flagpole) using the trigonometric tangent ratio (tan θ = opposite / adjacent).",
     "outcome": "Measured elevation angle θ = 35° at distance d = 15.0 m with eye height h1 = 1.45 m. Computed height H = h1 + d · tan(35°) = 1.45 + 15.0 · (0.700) = 11.95 m (true height = 12.0 m).",
     "materials": [
-      "180° Plastic Protractor with center hole × 1",
-      "Straight drinking straw / hollow tube (optical sight) × 1",
-      "Fine cotton thread (25 cm) with metallic plumb weight / nut × 1",
-      "Heavy 30-meter Measuring Tape × 1",
-      "Double-sided tape / craft glue × 1",
-      "Scientific Calculator (for tan θ) × 1"
+      {
+        "id": "mat-0",
+        "name": "180° Plastic Protractor with center hole",
+        "qty": 1,
+        "price": 50,
+        "about": "Surveyor's manual optical clinometer with weighted gravity pendulum and telescopic sight.",
+        "specs": [
+          [
+            "Protractor Scale",
+            "180° semi-circular dial with 1° graduations"
+          ],
+          [
+            "Sight Tube",
+            "150 mm brass optical sight with crosshair"
+          ],
+          [
+            "Plumb Bob",
+            "Machined brass pointer bob on fine braided nylon line"
+          ],
+          [
+            "Handle",
+            "Ergonomic wooden pistol grip"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Straight drinking straw / hollow tube (optical sight)",
+        "qty": 1,
+        "price": 95,
+        "about": "Heavy-duty 30-meter fiberglass field surveyor's tape measure.",
+        "specs": [
+          [
+            "Length",
+            "30.0 meters (100 feet)"
+          ],
+          [
+            "Tape Material",
+            "Non-stretch vinyl coated fiberglass"
+          ],
+          [
+            "Graduations",
+            "Millimeter and centimeter dual markings"
+          ],
+          [
+            "Housing",
+            "Impact-resistant ABS case with rapid rewind crank"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Fine cotton thread (25 cm) with metallic plumb weight / nut",
+        "qty": 1,
+        "price": 140,
+        "about": "Scientific calculator with trigonometric functions (tan, sin, cos).",
+        "specs": [
+          [
+            "Precision",
+            "10-digit floating point arithmetic"
+          ],
+          [
+            "Mode",
+            "DEG (Degree angle mode)"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Heavy 30-meter Measuring Tape",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Trigonometric Height Estimation using a Handmade Clinometer.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Double-sided tape / craft glue",
+        "qty": 1,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Trigonometric Height Estimation using a Handmade Clinometer.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-5",
+        "name": "Scientific Calculator (for tan θ)",
+        "qty": 1,
+        "price": 275,
+        "about": "Standard laboratory apparatus used in Trigonometric Height Estimation using a Handmade Clinometer.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Affix the drinking straw firmly along the flat straight edge (0°-180° line) of the protractor using tape.",
@@ -2243,16 +11597,61 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Measure the observer's eye height from ground level (h1).",
       "Calculate total object height: H = h1 + d · tan(θ)."
     ],
+    "steps": [
+      {
+        "instruction": "Affix the drinking straw firmly along the flat straight edge (0°-180° line) of the protractor using tape.",
+        "text": "Affix the drinking straw firmly along the flat straight edge (0°-180° line) of the protractor using tape.",
+        "observe": "Construct a clinometer by attaching a clear drinking straw sight along straight edge of 180° protractor with plumb line bob suspended from center hole.",
+        "safety": "Ensure plumb line hangs freely without rubbing against protractor face."
+      },
+      {
+        "instruction": "Tie one end of the fine thread through the center hole of the protractor and attach a metallic nut to the other end to act as a vertical plumb line.",
+        "text": "Tie one end of the fine thread through the center hole of the protractor and attach a metallic nut to the other end to act as a vertical plumb line.",
+        "observe": "Measure distance from observer stance to base of flagpole using 30-meter fiberglass surveyor's measuring tape (d = 10.0 m).",
+        "safety": "Keep measuring tape taut and horizontal along level ground."
+      },
+      {
+        "instruction": "Measure the distance (d) from the observer's standing point to the base of the tall building/tree using the measuring tape.",
+        "text": "Measure the distance (d) from the observer's standing point to the base of the tall building/tree using the measuring tape.",
+        "observe": "Measure height of observer's eye from ground using measuring tape (h_eye = 1.50 m).",
+        "safety": "Stand with normal erect posture."
+      },
+      {
+        "instruction": "Look through the straw sight to align the top of the object.",
+        "text": "Look through the straw sight to align the top of the object.",
+        "observe": "Sight flagpole peak through straw tube; clamp plumb string against protractor scale with finger when plumb bob settles.",
+        "safety": "Do not sight near the direct sun; sunlight through tube can cause optical injury."
+      },
+      {
+        "instruction": "Hold the clinometer steady and have a partner read the angle (α) indicated by the plumb line on the curved scale.",
+        "text": "Hold the clinometer steady and have a partner read the angle (α) indicated by the plumb line on the curved scale.",
+        "observe": "Read angle on protractor: plumb line hangs at 52°, so elevation angle θ = 90° - 52° = 38.0°.",
+        "safety": "Double check: horizontal sight line gives 90° plumb reading (θ = 0°)."
+      },
+      {
+        "instruction": "Compute angle of elevation: θ = 90° - α.",
+        "text": "Compute angle of elevation: θ = 90° - α.",
+        "observe": "Calculate height H = 1.50 + 10.0 × tan(38°) = 1.50 + 7.81 = 9.31 meters.",
+        "safety": "Repeat measurement from alternative distance d = 15.0 m to verify concordance."
+      },
+      {
+        "instruction": "Measure the observer's eye height from ground level (h1).",
+        "text": "Measure the observer's eye height from ground level (h1)."
+      },
+      {
+        "instruction": "Calculate total object height: H = h1 + d · tan(θ).",
+        "text": "Calculate total object height: H = h1 + d · tan(θ)."
+      }
+    ],
     "precautions": [
       "Ensure the ground between the observer and the object is reasonably horizontal.",
       "Wait until the plumb line stops swinging and hangs strictly vertical before recording angle α.",
       "Keep straw sight aligned with the exact apex of the target object.",
       "Include observer eye height (h1); omitting it introduces a 1.4-1.7 m systematic error."
     ],
-    "learning_objectives": [
-      "Apply right-triangle trigonometry and tangent function in real-world surveying.",
-      "Understand the difference between angle of elevation and angle of depression.",
-      "Construct precision scientific instrumentation using everyday materials."
+    "thumbnail_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Trigonometry",
@@ -2261,34 +11660,218 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Class 10 Mathematics",
       "Outdoor STEM"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
+    "formula": "Height H = h_eye + d · tan(θ) = 1.50 m + 10.0 m × tan(38.0°) = 1.50 m + 10.0 m × 0.7813 = 1.50 m + 7.81 m = 9.31 meters",
+    "obsCols": [
+      "Target Object Measured",
+      "Horizontal Distance d (m)",
+      "Elevation Angle θ (°)",
+      "tan(θ) Value",
+      "Calculated Height d·tan(θ) (m)",
+      "Observer Eye Level h (m)",
+      "Total Height H = h + d·tan(θ) (m)"
     ],
-    "popularity": 96,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1152,
-    "likes": 768,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "School Flagpole",
+        "10.0 m",
+        "38.0°",
+        "0.7813",
+        "7.81 m",
+        "1.50 m",
+        "9.31 m"
+      ],
+      [
+        "School Main Building Roof",
+        "15.0 m",
+        "35.0°",
+        "0.7002",
+        "10.50 m",
+        "1.50 m",
+        "12.00 m"
+      ],
+      [
+        "Basketball Backboard Hoop",
+        "5.0 m",
+        "17.0°",
+        "0.3057",
+        "1.53 m",
+        "1.50 m",
+        "3.03 m (Official 3.05 m)"
+      ],
+      [
+        "Campus Ashoka Tree Top",
+        "12.0 m",
+        "42.0°",
+        "0.9004",
+        "10.80 m",
+        "1.50 m",
+        "12.30 m"
+      ],
+      [
+        "Light Pole Post",
+        "8.0 m",
+        "32.0°",
+        "0.6249",
+        "5.00 m",
+        "1.50 m",
+        "6.50 m"
+      ]
+    ],
+    "interp": [
+      [
+        "Trigonometric Tangent Ratio",
+        "In right triangle formed by eye, tower top, and horizontal line, tan(θ) = Opposite / Adjacent = (H - h) / d."
+      ],
+      [
+        "Observer Eye Height Adjustment",
+        "Adding observer eye height h_eye = 1.50 m to calculated height d·tan(θ) corrects for ground clearance."
+      ],
+      [
+        "Basketball Hoop Benchmark",
+        "Calculated basketball hoop height of 3.03 m matches official NBA/FIBA standard 3.05 m within 0.7% error, validating method accuracy."
+      ],
+      [
+        "Distance Optimization",
+        "Positioning observer so elevation angle θ is around 30° to 45° minimizes angular reading error sensitivity on the clinometer dial."
+      ]
+    ],
+    "graph": {
+      "title": "Elevation Angle (θ) vs Calculated Target Height for Fixed d = 10m",
+      "xLabel": "Elevation Angle θ (°)",
+      "yLabel": "Total Computed Height H (meters)",
+      "points": [
+        [
+          "0° (Horizon)",
+          1.5
+        ],
+        [
+          "15°",
+          4.18
+        ],
+        [
+          "30°",
+          7.27
+        ],
+        [
+          "38° (Flagpole)",
+          9.31
+        ],
+        [
+          "45°",
+          11.5
+        ],
+        [
+          "60°",
+          18.82
+        ]
+      ]
+    },
+    "views": 2606,
+    "likes": 1134,
+    "rating": 4.9
   },
   {
     "id": "f2a8bf77-9c3b-460a-867d-d3eed54e4ff8",
-    "title": "Galton Board & Experimental Verification of Normal Distribution",
     "slug": "galton-board-normal-distribution-binomial",
+    "title": "Galton Board & Experimental Verification of Normal Distribution",
     "subject": "Mathematics",
     "subject_slug": "mathematics",
     "class": "Class 11",
     "difficulty": "Intermediate",
+    "duration": "45 Mins",
     "duration_minutes": 45,
     "description": "Demonstrate the Central Limit Theorem and normal (Gaussian) distribution curve by dropping 1,000 steel ball bearings through a triangular quincunx pegboard (Galton Board).",
     "outcome": "Steel balls accumulating in bottom bins form a smooth symmetric bell-shaped Gaussian curve, empirically proving the convergence of binomial distribution B(n, 0.5) to normal distribution N(μ, σ²).",
     "materials": [
-      "Acrylic Galton Board apparatus with 12 rows of staggered hexagonal pegs and collection bins × 1",
-      "Steel ball bearings (2 mm diameter) × 1,000",
-      "Millimeter scale for measuring bin fill heights × 1",
-      "Smartphone camera with high-speed video capture × 1",
-      "Graph paper for plotting frequency histogram and bell curve × 2"
+      {
+        "id": "mat-0",
+        "name": "Acrylic Galton Board apparatus with 12 rows of staggered hexagonal pegs and collection bins",
+        "qty": 1,
+        "price": 50,
+        "about": "Desktop demonstration Galton Board (Quincunx) with brass pins and transparent acrylic casing.",
+        "specs": [
+          [
+            "Pin Array",
+            "10 rows of staggered brass pegs (55 pins total)"
+          ],
+          [
+            "Collection Bins",
+            "11 vertical parallel collection channels"
+          ],
+          [
+            "Ball Bearings",
+            "1,000 precision 3.0 mm chrome steel ball bearings"
+          ],
+          [
+            "Casing",
+            "300 mm × 200 mm scratch-resistant optical acrylic"
+          ]
+        ]
+      },
+      {
+        "id": "mat-1",
+        "name": "Steel ball bearings (2 mm diameter) ,000",
+        "qty": 1,
+        "price": 95,
+        "about": "Built-in spirit level and leveling adjustment feet.",
+        "specs": [
+          [
+            "Spirit Level",
+            "Circular bullseye spirit level mounted on frame"
+          ],
+          [
+            "Leveling",
+            "Twin threaded brass leveling thumb screws"
+          ]
+        ]
+      },
+      {
+        "id": "mat-2",
+        "name": "Millimeter scale for measuring bin fill heights",
+        "qty": 1,
+        "price": 140,
+        "about": "Statistical data sheet with pre-calculated Pascal triangle and binomial probability coefficients.",
+        "specs": [
+          [
+            "Format",
+            "Laminated reference card with normal distribution z-table"
+          ]
+        ]
+      },
+      {
+        "id": "mat-3",
+        "name": "Smartphone camera with high-speed video capture",
+        "qty": 1,
+        "price": 185,
+        "about": "Standard laboratory apparatus used in Galton Board & Experimental Verification of Normal Distribution.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      },
+      {
+        "id": "mat-4",
+        "name": "Graph paper for plotting frequency histogram and bell curve",
+        "qty": 2,
+        "price": 230,
+        "about": "Standard laboratory apparatus used in Galton Board & Experimental Verification of Normal Distribution.",
+        "specs": [
+          [
+            "Category",
+            "Mathematics Apparatus"
+          ],
+          [
+            "Grade",
+            "CBSE / NEP 2020 Laboratory Standard"
+          ]
+        ]
+      }
     ],
     "procedure": [
       "Set the Galton Board strictly vertical on a level laboratory table.",
@@ -2299,16 +11882,57 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Measure the height of balls (frequency) in each of the 13 bins from left to right.",
       "Plot the bin number (x-axis) versus ball height (y-axis): draw the smooth envelope curve to demonstrate the classic Gaussian bell-shaped distribution."
     ],
+    "steps": [
+      {
+        "instruction": "Set the Galton Board strictly vertical on a level laboratory table.",
+        "text": "Set the Galton Board strictly vertical on a level laboratory table.",
+        "observe": "Inspect Galton Board apparatus: triangular array of 10 horizontal rows of staggered brass pins leading to 11 collection bins.",
+        "safety": "Ensure board is mounted vertically on level surface; verify with built-in bubble spirit level."
+      },
+      {
+        "instruction": "Inspect that all 1,000 ball bearings are collected in the upper funnel reservoir.",
+        "text": "Inspect that all 1,000 ball bearings are collected in the upper funnel reservoir.",
+        "observe": "Load 1,000 precision steel ball bearings (diameter 3 mm) into top funnel hopper reservoir.",
+        "safety": "Keep clear acrylic cover securely screwed down so steel balls do not bounce onto room floor."
+      },
+      {
+        "instruction": "Release the gate mechanism to allow the balls to drop through the triangular peg array.",
+        "text": "Release the gate mechanism to allow the balls to drop through the triangular peg array.",
+        "observe": "Release gate lever smoothly; watch ball bearings cascade down pin triangle, deflecting randomly 50% left or 50% right at each pin.",
+        "safety": "Release at steady flow rate to prevent ball jamming at funnel neck."
+      },
+      {
+        "instruction": "At each peg collision, a ball has an equal probability p = 0.5 of bouncing left and 1 - p = 0.5 of bouncing right.",
+        "text": "At each peg collision, a ball has an equal probability p = 0.5 of bouncing left and 1 - p = 0.5 of bouncing right.",
+        "observe": "Observe balls collecting in vertical bins at bottom, immediately forming a classic bell-shaped Gaussian distribution curve.",
+        "safety": "Do not shake or tilt apparatus while balls are falling."
+      },
+      {
+        "instruction": "Observe the final accumulation of balls in the graduated bins at the bottom.",
+        "text": "Observe the final accumulation of balls in the graduated bins at the bottom.",
+        "observe": "Read heights of ball columns in each bin against engraved millimeter scale; record counts across all 11 bins.",
+        "safety": "Center bin 6 contains the tallest column (~248 balls), tapering symmetrically toward the outer edges."
+      },
+      {
+        "instruction": "Measure the height of balls (frequency) in each of the 13 bins from left to right.",
+        "text": "Measure the height of balls (frequency) in each of the 13 bins from left to right.",
+        "observe": "Plot frequency histogram and overlay theoretical Binomial(10, 0.5) normal curve: correlation coefficient r > 0.995.",
+        "safety": "Invert board gently to return ball bearings into upper reservoir for repeat trials."
+      },
+      {
+        "instruction": "Plot the bin number (x-axis) versus ball height (y-axis): draw the smooth envelope curve to demonstrate the classic Gaussian bell-shaped distribution.",
+        "text": "Plot the bin number (x-axis) versus ball height (y-axis): draw the smooth envelope curve to demonstrate the classic Gaussian bell-shaped distribution."
+      }
+    ],
     "precautions": [
       "The board must be set strictly perpendicular using a spirit level; tilt causes asymmetric skewness.",
       "Release balls smoothly without shaking the apparatus.",
       "Ensure pegs and balls are clean and dry to minimize electrostatic or frictional bias.",
       "Verify that all bins have uniform internal cross-sectional width."
     ],
-    "learning_objectives": [
-      "Understand the Central Limit Theorem and law of large numbers in probability.",
-      "Connect discrete binomial probability P(X = k) = C(n, k) · p^k · (1-p)^(n-k) with continuous Gaussian curves.",
-      "Analyze mean, variance, standard deviation, and symmetry in statistical distributions."
+    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
     ],
     "tags": [
       "Probability",
@@ -2317,16 +11941,165 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Galton Board",
       "Class 11 Maths"
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
+    "formula": "P(X = k) = (n choose k) · p^k · (1-p)^(n-k); lim (n -> ∞) Binomial(n, 0.5) = Normal Distribution N(μ = np, σ² = np(1-p))",
+    "obsCols": [
+      "Bin Number (Left to Right)",
+      "Theoretical Binomial Probability P(X=k)",
+      "Expected Balls (N = 1000)",
+      "Actual Counted Balls",
+      "Relative Frequency (%)"
     ],
-    "popularity": 90,
-    "status": "published",
-    "duration": "45 Mins",
-    "views": 1080,
-    "likes": 720,
-    "rating": 4.8
+    "obsRows": [
+      [
+        "Bin 1 (Far Left, k=0)",
+        "0.0010",
+        "1 ball",
+        "1 ball",
+        "0.1%"
+      ],
+      [
+        "Bin 2 (k=1)",
+        "0.0098",
+        "10 balls",
+        "8 balls",
+        "0.8%"
+      ],
+      [
+        "Bin 3 (k=2)",
+        "0.0439",
+        "44 balls",
+        "42 balls",
+        "4.2%"
+      ],
+      [
+        "Bin 4 (k=3)",
+        "0.1172",
+        "117 balls",
+        "121 balls",
+        "12.1%"
+      ],
+      [
+        "Bin 5 (k=4)",
+        "0.2051",
+        "205 balls",
+        "210 balls",
+        "21.0%"
+      ],
+      [
+        "Bin 6 (Center Mean, k=5)",
+        "0.2461 (Peak)",
+        "246 balls",
+        "248 balls",
+        "24.8% (Peak modal class)"
+      ],
+      [
+        "Bin 7 (k=6)",
+        "0.2051",
+        "205 balls",
+        "198 balls",
+        "19.8%"
+      ],
+      [
+        "Bin 8 (k=7)",
+        "0.1172",
+        "117 balls",
+        "115 balls",
+        "11.5%"
+      ],
+      [
+        "Bin 9 (k=8)",
+        "0.0439",
+        "44 balls",
+        "43 balls",
+        "4.3%"
+      ],
+      [
+        "Bin 10 (k=9)",
+        "0.0098",
+        "10 balls",
+        "11 balls",
+        "1.1%"
+      ],
+      [
+        "Bin 11 (Far Right, k=10)",
+        "0.0010",
+        "1 ball",
+        "2 balls",
+        "0.2%"
+      ]
+    ],
+    "interp": [
+      [
+        "Central Limit Theorem Physical Realization",
+        "Repeated 50/50 independent binary deflections across 10 peg rows yield a stunning physical bell-shaped normal curve."
+      ],
+      [
+        "Symmetric Binomial Peak at Center",
+        "Peak modal frequency occurs at Bin 6 (μ = n·p = 10 × 0.5 = 5), containing 24.8% of all dropped ball bearings."
+      ],
+      [
+        "Gaussian Bell Curve Emergence",
+        "Experimental ball counts match theoretical Pascal triangle binomial expansion coefficients (1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1) within 1.5% margin."
+      ],
+      [
+        "Randomness Yields Strict Determinism",
+        "While the path of any individual ball bearing is completely unpredictable and random, the collective distribution of 1000 balls is rigorously deterministic."
+      ]
+    ],
+    "graph": {
+      "title": "Ball Count Frequency Distribution vs Bin Position (Gaussian Bell Curve)",
+      "xLabel": "Collection Bin (Left to Right)",
+      "yLabel": "Counted Ball Bearings",
+      "points": [
+        [
+          "Bin 1",
+          1
+        ],
+        [
+          "Bin 2",
+          8
+        ],
+        [
+          "Bin 3",
+          42
+        ],
+        [
+          "Bin 4",
+          121
+        ],
+        [
+          "Bin 5",
+          210
+        ],
+        [
+          "Bin 6 (Center)",
+          248
+        ],
+        [
+          "Bin 7",
+          198
+        ],
+        [
+          "Bin 8",
+          115
+        ],
+        [
+          "Bin 9",
+          43
+        ],
+        [
+          "Bin 10",
+          11
+        ],
+        [
+          "Bin 11",
+          2
+        ]
+      ]
+    },
+    "views": 2643,
+    "likes": 1152,
+    "rating": 4.9
   }
 ];
 

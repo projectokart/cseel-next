@@ -88,14 +88,13 @@ const ALL_SUBJECT_NAV = [
 
 const CLASS_OPTIONS = [
   { label: 'All Classes', value: 'All' },
-  { label: 'Primary (1-5)', value: 'Primary (1-5)' },
-  { label: 'Class 6', value: 'Class 6' },
-  { label: 'Class 7', value: 'Class 7' },
-  { label: 'Class 8', value: 'Class 8' },
-  { label: 'Class 9', value: 'Class 9' },
-  { label: 'Class 10', value: 'Class 10' },
-  { label: 'Class 11', value: 'Class 11' },
-  { label: 'Class 12', value: 'Class 12' },
+  { label: 'Class 6th', value: 'Class 6th' },
+  { label: 'Class 7th', value: 'Class 7th' },
+  { label: 'Class 8th', value: 'Class 8th' },
+  { label: 'Class 9th', value: 'Class 9th' },
+  { label: 'Class 10th', value: 'Class 10th' },
+  { label: 'Class 11th', value: 'Class 11th' },
+  { label: 'Class 12th', value: 'Class 12th' },
 ];
 
 const DIFFICULTY_FILTERS = ['All', 'Beginner', 'Intermediate', 'Advanced'];
@@ -372,42 +371,55 @@ export default function SubjectActivityPage() {
           .ilike('subject', querySubject);
 
         if (!error && data && data.length > 0) {
-          const mapped: ExperimentActivity[] = data.map((row: any) => ({
-            id: row.id,
-            slug: row.slug || row.id,
-            title: row.title,
-            subtitle: row.description || '',
-            description: row.description || '',
-            category: `${row.subject} Practical Laboratory`,
-            gradeLevel:
-              row.class?.includes('11') || row.class?.includes('12')
-                ? 'Senior Sec (11-12)'
-                : row.class?.includes('9') || row.class?.includes('10')
-                ? 'Secondary (9-10)'
-                : 'Middle (6-8)',
-            difficulty: row.difficulty || 'Intermediate',
-            duration: `${row.duration_minutes || 45} Mins`,
-            safetyLevel: 'Standard Educational Lab Grade',
-            scientificPrinciple: row.outcome || row.description || '',
-            materials: Array.isArray(row.materials) ? row.materials : [],
-            steps: Array.isArray(row.procedure) ? row.procedure : [],
-            procedure: Array.isArray(row.procedure) ? row.procedure : [],
-            precautions: Array.isArray(row.precautions) ? row.precautions : [],
-            outcome: row.outcome || '',
-            realWorldApplication: row.outcome || '',
-            tags: Array.isArray(row.tags) ? row.tags : [row.subject],
-            badge: 'NEP 2020 Aligned',
-            image: row.thumbnail_url,
-            thumbnail_url: row.thumbnail_url,
-            colorTheme:
-              row.subject === 'Physics'
-                ? 'from-cyan-500 to-blue-600'
-                : row.subject === 'Chemistry'
-                ? 'from-amber-500 to-orange-600'
-                : row.subject === 'Biology'
-                ? 'from-emerald-500 to-teal-600'
-                : 'from-purple-500 to-indigo-600',
-          }));
+          const mapped: ExperimentActivity[] = data.map((row: any) => {
+            const staticMatch = subject.activities.find(
+              (a) => a.slug === row.slug || a.id === row.id || a.title?.toLowerCase() === row.title?.toLowerCase()
+            );
+
+            // Clean discrete class name: e.g. "Class 10th", "Class 12th"
+            let finalClass = row.class || staticMatch?.gradeLevel || 'Class 10th';
+            if (/^Class\s*\d+$/i.test(finalClass)) {
+              finalClass = `${finalClass}th`.replace('1th', '1st').replace('2th', '2nd').replace('3th', '3rd');
+            }
+
+            return {
+              id: row.id,
+              slug: row.slug || row.id,
+              title: row.title,
+              subtitle: row.description || staticMatch?.subtitle || '',
+              description: row.description || staticMatch?.description || '',
+              category: `${row.subject} Practical Laboratory`,
+              gradeLevel: finalClass,
+              difficulty: row.difficulty || staticMatch?.difficulty || 'Intermediate',
+              duration: `${row.duration_minutes || 45} Mins`,
+              safetyLevel: 'Standard Educational Lab Grade',
+              scientificPrinciple: row.outcome || staticMatch?.scientificPrinciple || row.description || '',
+              materials: Array.isArray(row.materials) && row.materials.length > 0 ? row.materials : (staticMatch?.materials || []),
+              steps: Array.isArray(row.procedure) && row.procedure.length > 0 ? row.procedure : (staticMatch?.steps || []),
+              procedure: Array.isArray(row.procedure) && row.procedure.length > 0 ? row.procedure : (staticMatch?.procedure || []),
+              precautions: Array.isArray(row.precautions) && row.precautions.length > 0 ? row.precautions : (staticMatch?.precautions || []),
+              outcome: row.outcome || staticMatch?.outcome || '',
+              realWorldApplication: row.outcome || staticMatch?.realWorldApplication || '',
+              tags: Array.isArray(row.tags) && row.tags.length > 0 ? row.tags : (staticMatch?.tags || [row.subject]),
+              badge: 'NEP 2020 Aligned',
+              image: row.thumbnail_url || staticMatch?.image,
+              thumbnail_url: row.thumbnail_url || staticMatch?.thumbnail_url,
+              colorTheme: staticMatch?.colorTheme || (
+                row.subject === 'Physics'
+                  ? 'from-cyan-500 to-blue-600'
+                  : row.subject === 'Chemistry'
+                  ? 'from-amber-500 to-orange-600'
+                  : row.subject === 'Biology'
+                  ? 'from-emerald-500 to-teal-600'
+                  : 'from-purple-500 to-indigo-600'
+              ),
+              formula: row.formula || staticMatch?.formula,
+              obsCols: row.obsCols || staticMatch?.obsCols,
+              obsRows: row.obsRows || staticMatch?.obsRows,
+              interp: row.interp || staticMatch?.interp,
+              graph: row.graph || staticMatch?.graph,
+            };
+          });
           setDbActivities(mapped);
         }
       } catch (e) {
@@ -535,12 +547,14 @@ export default function SubjectActivityPage() {
   // Helper to match Class selection to gradeLevel
   const matchClassFilter = (gradeLevel: string, classVal: string) => {
     if (classVal === 'All') return true;
-    if (gradeLevel === 'All Grades') return true;
-    if (classVal === 'Primary (1-5)' && (gradeLevel.includes('Primary') || gradeLevel.includes('1-5'))) return true;
-    if (['Class 6', 'Class 7', 'Class 8'].includes(classVal) && (gradeLevel.includes('Middle') || gradeLevel.includes('6-8'))) return true;
-    if (['Class 9', 'Class 10'].includes(classVal) && (gradeLevel.includes('Secondary') || gradeLevel.includes('9-10'))) return true;
-    if (['Class 11', 'Class 12'].includes(classVal) && (gradeLevel.includes('Senior') || gradeLevel.includes('11-12'))) return true;
-    return gradeLevel.toLowerCase().includes(classVal.toLowerCase());
+    if (!gradeLevel) return false;
+    const cleanG = gradeLevel.toLowerCase();
+    const cleanC = classVal.toLowerCase();
+    if (cleanG === cleanC) return true;
+    const gNum = gradeLevel.match(/\d+/)?.[0];
+    const cNum = classVal.match(/\d+/)?.[0];
+    if (gNum && cNum && gNum === cNum) return true;
+    return cleanG.includes(cleanC) || cleanC.includes(cleanG);
   };
 
   // Helper to match Duration
@@ -1039,12 +1053,12 @@ export default function SubjectActivityPage() {
                 {/* Top Section: Image and Content Side-by-Side */}
                 <div className="flex flex-row items-stretch gap-3 p-3.5">
                   
-                  {/* Image on the Left Side */}
-                  <div className="w-28 sm:w-32 flex-shrink-0 overflow-hidden rounded-xl bg-slate-100 relative self-stretch min-h-[96px]">
+                  {/* Image on the Left Side - Perfectly fitted apparatus preview */}
+                  <div className="w-28 sm:w-36 flex-shrink-0 overflow-hidden rounded-xl bg-slate-900/[0.04] border border-slate-200/80 relative self-stretch min-h-[96px] flex items-center justify-center p-1">
                     <img
                       src={imageSrc}
                       alt={act.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-contain object-center rounded-lg transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
                     

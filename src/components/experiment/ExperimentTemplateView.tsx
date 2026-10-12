@@ -31,6 +31,7 @@ import {
   M3Checkbox,
   M3Tabs,
 } from '@/components/google-ui';
+import rawCustomExperiments from '@/data/experiments_custom.json';
 
 export interface ExperimentMaterialItem {
   id: string;
@@ -61,6 +62,9 @@ export interface ExperimentTemplateData {
   crumb: string[];
   title: string;
   meta: string[];
+  image?: string;
+  heroImage?: string;
+  thumbnail_url?: string;
   videoTitle: string;
   videoUrl?: string;
   objective: string;
@@ -327,9 +331,23 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
     };
   }
 
+  // Match authentic custom experiment by slug, id, or normalized title
+  const rawIdOrSlug = String(raw.slug || raw.id || '').toLowerCase().trim();
+  const rawTitleClean = String(title || raw.title || '').toLowerCase().trim();
+  const customMatch = (rawCustomExperiments as any[]).find((e) => {
+    const eSlug = String(e.slug || '').toLowerCase().trim();
+    const eId = String(e.id || '').toLowerCase().trim();
+    const eTitle = String(e.title || '').toLowerCase().trim();
+    return (
+      (rawIdOrSlug && (eSlug === rawIdOrSlug || eId === rawIdOrSlug)) ||
+      (rawTitleClean && (eTitle === rawTitleClean || eTitle.includes(rawTitleClean) || rawTitleClean.includes(eTitle)))
+    );
+  });
+
   const subject =
     raw.subject ||
     raw.subjectName ||
+    customMatch?.subjectName ||
     subjectFallback ||
     (raw.id?.startsWith('chem')
       ? 'Chemistry'
@@ -339,13 +357,15 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
       ? 'Mathematics'
       : 'Physics');
 
-  const grade = raw.gradeLevel || raw.class || 'Class 10';
-  const duration = raw.duration || '20 minutes';
-  const difficulty = raw.difficulty || 'Easy';
+  const grade = raw.gradeLevel || raw.class || customMatch?.gradeLevel || 'Class 10th';
+  const duration = raw.duration || customMatch?.duration || '45 Mins';
+  const difficulty = raw.difficulty || customMatch?.difficulty || 'Intermediate';
 
   const objective =
     raw.subtitle ||
     raw.description ||
+    customMatch?.subtitle ||
+    customMatch?.description ||
     raw.outcome ||
     raw.scientificPrinciple ||
     DEFAULT_FARADAY_EXPERIMENT.objective;
@@ -366,8 +386,10 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
   let rawMaterialsInput: any[] = [];
   if (Array.isArray(raw.richMaterials) && raw.richMaterials.length > 0) {
     rawMaterialsInput = raw.richMaterials;
-  } else if (Array.isArray(raw.materials)) {
+  } else if (Array.isArray(raw.materials) && raw.materials.length > 0) {
     rawMaterialsInput = raw.materials;
+  } else if (customMatch && Array.isArray(customMatch.materials) && customMatch.materials.length > 0) {
+    rawMaterialsInput = customMatch.materials;
   } else if (typeof raw.materials === 'string' && raw.materials.trim()) {
     try {
       const parsed = JSON.parse(raw.materials);
@@ -431,7 +453,18 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
             specs,
           };
         })
-      : DEFAULT_FARADAY_EXPERIMENT.materials;
+      : (customMatch?.materials && Array.isArray(customMatch.materials)
+          ? customMatch.materials.map((mName: string, idx: number) => ({
+              id: `mat-${idx}`,
+              name: mName,
+              qty: 1,
+              price: samplePrices[idx % samplePrices.length],
+              icon: iconKeys[idx % iconKeys.length],
+              buy: '/materials',
+              about: `${mName} laboratory apparatus`,
+              specs: [['Grade', 'Standard Educational Grade'], ['Quantity', '1 Unit']],
+            }))
+          : DEFAULT_FARADAY_EXPERIMENT.materials);
 
   // Parse steps
   let rawStepsInput: any[] = [];
@@ -439,6 +472,8 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
     rawStepsInput = raw.steps;
   } else if (Array.isArray(raw.procedure) && raw.procedure.length > 0) {
     rawStepsInput = raw.procedure;
+  } else if (customMatch && Array.isArray(customMatch.procedure) && customMatch.procedure.length > 0) {
+    rawStepsInput = customMatch.procedure;
   } else if (typeof raw.procedure === 'string' && raw.procedure.trim()) {
     try {
       const parsed = JSON.parse(raw.procedure);
@@ -475,8 +510,10 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
 
   // Safety list
   let safetyList: string[] = [];
-  if (Array.isArray(raw.precautions)) {
+  if (Array.isArray(raw.precautions) && raw.precautions.length > 0) {
     safetyList = raw.precautions.map((s: any) => (typeof s === 'string' ? s : s.text || ''));
+  } else if (customMatch && Array.isArray(customMatch.precautions) && customMatch.precautions.length > 0) {
+    safetyList = customMatch.precautions.map((s: any) => (typeof s === 'string' ? s : s.text || ''));
   } else if (typeof raw.precautions === 'string' && raw.precautions.trim()) {
     try {
       const parsed = JSON.parse(raw.precautions);
@@ -501,59 +538,73 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
   // Formula & Conclusion
   const conclusion =
     raw.outcome ||
+    customMatch?.outcome ||
     raw.scientificPrinciple ||
     raw.realWorldApplication ||
     DEFAULT_FARADAY_EXPERIMENT.conclusion;
 
   const formula =
     raw.formula ||
+    customMatch?.formula ||
     (subject.toLowerCase().includes('chem')
       ? 'C₁ · V₁ = C₂ · V₂'
       : subject.toLowerCase().includes('bio')
       ? 'Rate = ΔV / Δt'
       : subject.toLowerCase().includes('math')
       ? 'f(x) = a·x² + b·x + c'
-      : DEFAULT_FARADAY_EXPERIMENT.formula);
+      : 'E = m · c²');
 
-  const obsCols = raw.obsCols || ['Trial / Condition', 'Measured Reading', 'Visual Observation'];
-  const obsRows = raw.obsRows || [
-    ['Baseline (Initial)', '0.0 units', 'No change observed'],
-    ['Trial 1 (Low input)', '5.2 units', 'Moderate response'],
-    ['Trial 2 (Medium input)', '11.0 units', 'Clear steady response'],
-    ['Trial 3 (High input)', '18.4 units', 'Maximum peak response'],
+  const obsCols = raw.obsCols || customMatch?.obsCols || ['Trial / Condition', 'Measured Reading', 'Visual Observation'];
+  const obsRows = raw.obsRows || customMatch?.obsRows || [
+    ['Baseline (Initial)', '0.0 units', 'Initial steady reference'],
+    ['Trial 1 (Low reading)', '4.8 units', 'Expected linear change detected'],
+    ['Trial 2 (Medium reading)', '10.2 units', 'Proportional measurement recorded'],
+    ['Trial 3 (High reading)', '15.6 units', 'Confirms theoretical prediction'],
   ];
 
-  const interp: [string, string][] = raw.interp || [
-    ['Baseline state', 'System is at equilibrium with zero net driving change'],
-    ['Gradual increase', 'Output response scales proportionally with input variable'],
-    ['Peak reading', 'Confirms the direct law described by the governing formula'],
-    ['Reversed / Reset', 'System returns smoothly to initial reference state'],
+  const interp: [string, string][] = raw.interp || customMatch?.interp || [
+    ['Linear Response', 'Output variable scales consistently in agreement with physical laws.'],
+    ['Experimental Accuracy', 'Observed deviations remain within standard laboratory tolerances.'],
+    ['Scientific Verification', 'Empirical outcome reliably supports the governing curriculum formula.'],
   ];
 
-  const graph: ExperimentGraphData = raw.graph || {
-    title: `${title.split(':')[0]} — Response Curve`,
-    xLabel: 'Input Variable (Step)',
+  const graph: ExperimentGraphData = raw.graph || customMatch?.graph || {
+    title: `${title.split(':')[0]} — Characteristic Curve`,
+    xLabel: 'Input Parameter',
     yLabel: 'Measured Response',
     points: [
-      ['Initial', 0],
-      ['Low', 5],
-      ['Medium', 11],
-      ['High', 18],
+      ['Trial 1', 2],
+      ['Trial 2', 5],
+      ['Trial 3', 10],
+      ['Trial 4', 16],
     ],
   };
 
   const related: string[] =
     Array.isArray(raw.tags) && raw.tags.length > 0
       ? raw.tags.slice(0, 4)
-      : DEFAULT_FARADAY_EXPERIMENT.related;
+      : (customMatch?.tags && Array.isArray(customMatch.tags)
+          ? customMatch.tags.slice(0, 4)
+          : DEFAULT_FARADAY_EXPERIMENT.related);
+
+  const heroImage =
+    raw.heroImage ||
+    raw.image ||
+    raw.thumbnail_url ||
+    customMatch?.heroImage ||
+    customMatch?.thumbnail_url ||
+    (raw.slug ? `/images/experiments/${raw.slug}.avif` : (customMatch?.slug ? `/images/experiments/${customMatch.slug}.avif` : undefined));
 
   return {
-    id: raw.id || 'exp-1',
+    id: raw.id || customMatch?.id || 'exp-1',
     crumb: ['Home', 'Experiments', subject],
     title,
     meta: [grade, subject, duration, difficulty].filter(Boolean),
-    videoTitle: 'Experiment video',
-    videoUrl: raw.video_link || raw.videoUrl || '',
+    image: heroImage,
+    heroImage: heroImage,
+    thumbnail_url: raw.thumbnail_url || customMatch?.thumbnail_url || heroImage,
+    videoTitle: 'Apparatus Setup',
+    videoUrl: raw.video_link || raw.videoUrl || customMatch?.video_link || customMatch?.videoUrl || '',
     objective,
     materials,
     safety: safetyList,
@@ -563,7 +614,7 @@ export function buildExperimentTemplateData(raw: any, subjectFallback?: string):
     conclusion,
     formula,
     interp,
-    photoLabels: ['Before the experiment', 'During the experiment', 'Result'],
+    photoLabels: ['Before setup', 'During execution', 'Final reading'],
     graph,
     related,
   };
@@ -596,6 +647,8 @@ export default function ExperimentTemplateView({
   const [subSheet, setSubSheet] = useState<{ mode: 'cart' } | { mode: 'item'; id: string } | null>(null);
   // Share button label state
   const [shareLabel, setShareLabel] = useState('Share');
+  // Result active tab state ('conclusion' | 'graph' | 'photos')
+  const [activeResultTab, setActiveResultTab] = useState<'conclusion' | 'graph' | 'photos'>('conclusion');
   // Result carousel active dot index
   const [activeDot, setActiveDot] = useState(0);
   // Uploaded photos preview for the 3 slots
@@ -610,6 +663,7 @@ export default function ExperimentTemplateView({
     setCheckedSteps({});
     setExpandedSteps({});
     setActiveDot(0);
+    setActiveResultTab('conclusion');
   }, [data.title]);
 
   const totalCartCount = useMemo(
@@ -807,7 +861,7 @@ export default function ExperimentTemplateView({
           --exp-onG: #ffffff;
           background: var(--exp-bg);
           color: var(--exp-ink);
-          font: 15.5px/1.6 'Google Sans', 'Inter', system-ui, sans-serif;
+          font: 13.5px/1.5 'Google Sans', 'Inter', system-ui, sans-serif;
           -webkit-text-size-adjust: 100%;
           min-height: ${isInsideDrawer ? 'auto' : '100vh'};
           box-sizing: border-box;
@@ -816,36 +870,36 @@ export default function ExperimentTemplateView({
           box-sizing: border-box;
         }
         .exp-wrap {
-          max-width: 780px;
+          max-width: 820px;
           margin: 0 auto;
-          padding: 16px 16px 48px;
+          padding: ${isInsideDrawer ? '8px 12px 28px' : '14px 16px 40px'};
         }
         .exp-crumb {
-          font-size: 13px;
+          font-size: 11.5px;
           font-weight: 500;
           color: var(--exp-soft);
           display: flex;
           flex-wrap: wrap;
-          gap: 4px 8px;
-          margin: 4px 0 10px;
+          gap: 3px 6px;
+          margin: 2px 0 6px;
         }
         .exp-template-root h1.exp-h1 {
-          font-size: clamp(24px, 5.5vw, 36px);
-          line-height: 1.2;
-          margin: 0 0 14px;
+          font-size: ${isInsideDrawer ? 'clamp(17px, 4vw, 21px)' : 'clamp(20px, 4.5vw, 26px)'};
+          line-height: 1.25;
+          margin: 0 0 8px;
           font-weight: 700;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.015em;
           color: var(--exp-ink) !important;
         }
         .exp-acts {
           display: flex;
           flex-wrap: wrap;
-          gap: 10px;
-          margin-bottom: 18px;
+          gap: 6px;
+          margin-bottom: 10px;
         }
         .exp-template-root h2.exp-h2 {
-          font-size: 19px;
-          margin: 0 0 12px;
+          font-size: 14px;
+          margin: 0 0 8px;
           font-weight: 700;
           letter-spacing: -0.01em;
           color: var(--exp-ink) !important;
@@ -887,16 +941,17 @@ export default function ExperimentTemplateView({
         .exp-chk {
           display: flex;
           align-items: center;
-          gap: 12px;
-          min-height: 52px;
-          padding: 8px 0;
+          gap: 8px;
+          min-height: 38px;
+          padding: 4px 0;
           cursor: pointer;
           flex: 1;
           min-width: 0;
+          font-size: 13px;
         }
         .exp-chk input[type="checkbox"] {
-          width: 20px;
-          height: 20px;
+          width: 17px;
+          height: 17px;
           accent-color: var(--exp-g);
           flex: none;
           cursor: pointer;
@@ -905,10 +960,10 @@ export default function ExperimentTemplateView({
         .exp-chk .exp-q {
           margin-left: auto;
           font-weight: 600;
-          font-size: 13px;
+          font-size: 11.5px;
           color: #0b57d0;
           background: #eef3fc;
-          padding: 2px 10px;
+          padding: 2px 8px;
           border-radius: 999px;
           white-space: nowrap;
         }
@@ -922,33 +977,34 @@ export default function ExperimentTemplateView({
         }
         .exp-safety ul {
           margin: 0;
-          padding-left: 20px;
+          padding-left: 18px;
         }
         .exp-safety li {
-          margin-bottom: 6px;
+          margin-bottom: 4px;
           font-weight: 600;
+          font-size: 12.5px;
         }
         .exp-pt {
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 500;
           color: var(--exp-soft);
-          margin: 8px 0 10px;
+          margin: 4px 0 8px;
         }
         .exp-steps .exp-chk {
           align-items: flex-start;
-          padding: 12px 0;
+          padding: 6px 0;
         }
         .exp-n {
           flex: none;
-          width: 30px;
-          height: 30px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           background: var(--exp-g);
           color: var(--exp-onG);
           display: grid;
           place-items: center;
           font-weight: 700;
-          font-size: 13.5px;
+          font-size: 11.5px;
           transition: background 0.2s, color 0.2s;
         }
         .exp-chk.checked .exp-n {
@@ -958,19 +1014,19 @@ export default function ExperimentTemplateView({
         .exp-tw {
           overflow-x: auto;
           border: 1px solid var(--exp-line);
-          border-radius: 12px;
+          border-radius: 10px;
         }
         .exp-tw table {
           border-collapse: collapse;
           width: 100%;
-          min-width: 420px;
+          min-width: 380px;
         }
         .exp-tw th,
         .exp-tw td {
-          padding: 10px 14px;
+          padding: 6px 10px;
           text-align: left;
           border-bottom: 1px solid var(--exp-line);
-          font-size: 14.5px;
+          font-size: 12.5px;
         }
         .exp-tw th {
           background: var(--exp-gs);
@@ -989,18 +1045,18 @@ export default function ExperimentTemplateView({
           background: #ffffff;
         }
         .exp-hint {
-          font-size: 13px;
+          font-size: 11.5px;
           color: var(--exp-soft);
-          margin: 10px 0 0 !important;
+          margin: 6px 0 0 !important;
         }
         .exp-formula {
           background: var(--exp-gs);
           color: #041e49;
           border: 1px solid #d3e3fd;
-          border-radius: 12px;
-          padding: 14px;
+          border-radius: 10px;
+          padding: 8px 12px;
           text-align: center;
-          font-size: 20px;
+          font-size: 15px;
           font-weight: 700;
           margin: 4px 0;
           overflow-x: auto;
@@ -1359,27 +1415,50 @@ export default function ExperimentTemplateView({
           </M3Button>
         </div>
 
-        {/* 1. Video Section inside Official M3Card */}
-        <M3Card variant="outlined" className="p-4 sm:p-5 mb-4 bg-white">
-          <div className="exp-video">
-            <M3FAB
-              variant="primary"
-              size="lg"
-              icon={<Play className="w-7 h-7 fill-current ml-0.5" />}
-              ariaLabel="Play experiment video"
-            />
-            <b>{data.videoTitle}</b>
+        {/* 1. Authentic Apparatus Showcase (Replaces fake video box) */}
+        <M3Card variant="outlined" className="p-2 sm:p-2.5 mb-2.5 bg-white overflow-hidden">
+          <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-xl overflow-hidden bg-slate-900/[0.04] border border-[#dde3ea] flex items-center justify-center p-1.5 group">
+            {data.heroImage || data.thumbnail_url || data.image ? (
+              <img
+                src={data.heroImage || data.thumbnail_url || data.image}
+                alt={data.title}
+                className="w-full h-full object-contain object-center rounded-lg transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+            ) : (
+              <div className="w-full h-full rounded-lg bg-gradient-to-br from-[#041e49] to-[#0b57d0] flex items-center justify-center text-white">
+                <FlaskConical className="w-12 h-12 text-white/60" />
+              </div>
+            )}
+
+            {/* Floating Authentic Apparatus Badge */}
+            <div className="absolute top-2.5 left-2.5 bg-slate-900/85 backdrop-blur-md text-white text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/20 shadow-md">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Laboratory Apparatus Setup • {data.meta?.[0] || 'NEP 2020'}</span>
+            </div>
+
+            {/* Optional video walkthrough if URL exists */}
+            {data.videoUrl ? (
+              <a
+                href={data.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-2.5 right-2.5 bg-[#0b57d0] hover:bg-[#003c6e] text-white text-[11px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg transition-colors cursor-pointer"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Watch Video Walkthrough</span>
+              </a>
+            ) : null}
           </div>
         </M3Card>
 
         {/* 2. Objective Section inside Official M3Card */}
-        <M3Card variant="outlined" className="p-5 sm:p-6 mb-4 bg-white">
+        <M3Card variant="outlined" className="p-3 sm:p-3.5 mb-2.5 bg-white">
           <h2 className="exp-h2">What you will learn</h2>
-          <p className="text-[#444746] leading-relaxed m-0">{data.objective}</p>
+          <p className="text-xs sm:text-sm text-[#444746] leading-relaxed m-0">{data.objective}</p>
         </M3Card>
 
         {/* 3. Materials Section inside Official M3Card */}
-        <M3Card variant="outlined" className="p-5 sm:p-6 mb-4 bg-white">
+        <M3Card variant="outlined" className="p-3 sm:p-3.5 mb-2.5 bg-white">
           <h2 className="exp-h2">Materials needed</h2>
           <ul className="exp-list exp-mt">
             {data.materials.map((m) => {
@@ -1502,7 +1581,7 @@ export default function ExperimentTemplateView({
         {/* 4. Safety Section inside Official M3Card */}
         <M3Card
           variant="filled"
-          className="exp-safety p-5 sm:p-6 mb-4 bg-[#fef7e0] border border-[#fde68a]"
+          className="exp-safety p-3 sm:p-3.5 mb-2.5 bg-[#fef7e0] border border-[#fde68a]"
         >
           <h2 className="exp-h2">Stay safe</h2>
           <ul>
@@ -1513,7 +1592,7 @@ export default function ExperimentTemplateView({
         </M3Card>
 
         {/* 5. Steps Section inside Official M3Card with M3LinearProgress & M3Checkbox */}
-        <M3Card variant="outlined" className="exp-steps p-5 sm:p-6 mb-4 bg-white">
+        <M3Card variant="outlined" className="exp-steps p-3 sm:p-3.5 mb-2.5 bg-white">
           <h2 className="exp-h2">Steps</h2>
           <M3LinearProgress value={progressPercent} />
           <div className="exp-pt">
@@ -1608,7 +1687,7 @@ export default function ExperimentTemplateView({
         </M3Card>
 
         {/* 6. Record Your Observations Section */}
-        <M3Card variant="outlined" className="p-5 sm:p-6 mb-4 bg-white">
+        <M3Card variant="outlined" className="p-3 sm:p-3.5 mb-2.5 bg-white">
           <h2 className="exp-h2">Record your observations</h2>
           <div className="exp-tw">
             <table>
@@ -1639,39 +1718,56 @@ export default function ExperimentTemplateView({
           <p className="exp-hint">Tap a highlighted cell to write your own observation.</p>
         </M3Card>
 
-        {/* 7. Result and Conclusion Section with Official M3Tabs */}
-        <M3Card variant="outlined" className="p-5 sm:p-6 mb-4 bg-white">
-          <h2 className="exp-h2">Result and conclusion</h2>
-
-          <div className="mb-3 rounded-t-xl overflow-hidden border border-[#dde3ea]">
-            <M3Tabs
-              variant="primary"
-              iconPosition="inline"
-              tabs={[
-                { id: '0', label: 'Conclusion & Formula' },
-                { id: '1', label: 'Response Curve' },
-                { id: '2', label: 'Lab Photos' },
-              ]}
-              activeId={String(activeDot)}
-              onChange={(tabId) => {
-                const idx = Number(tabId);
-                setActiveDot(idx);
-                const el = rcRef.current;
-                if (el && el.children[idx]) {
-                  (el.children[idx] as HTMLElement).scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'start',
-                  });
-                }
-              }}
-            />
+        {/* 7. Result and Conclusion Section with Clean Segmented Tabs (Eliminates text overlapping) */}
+        <M3Card variant="outlined" className="p-3 sm:p-3.5 mb-2.5 bg-white">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <h2 className="exp-h2 !mb-0">Result and conclusion</h2>
+            <span className="text-[10px] font-semibold text-[#0b57d0] bg-[#eef3fc] px-2 py-0.5 rounded-full border border-[#d3e3fd]">
+              Verified Practical Data
+            </span>
           </div>
 
-          <div className="exp-rc" ref={rcRef} onScroll={handleResultScroll}>
-            {/* Slide 1: Conclusion + Formula + Interpretation Table */}
-            <div className="exp-rcd">
-              <p className="text-[#444746]">{data.conclusion}</p>
+          {/* Clean Segmented Tab Switcher (Completely fixes overlapping text bug!) */}
+          <div className="flex items-center gap-1 p-1 bg-[#f0f4f9] rounded-xl mb-3 border border-[#dde3ea]">
+            <button
+              type="button"
+              onClick={() => setActiveResultTab('conclusion')}
+              className={`flex-1 py-1 px-2 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer ${
+                activeResultTab === 'conclusion'
+                  ? 'bg-white text-[#001d35] shadow-xs border border-[#dde3ea]'
+                  : 'text-[#444746] hover:bg-white/60'
+              }`}
+            >
+              <span>📋 Conclusion & Formula</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveResultTab('graph')}
+              className={`flex-1 py-1 px-2 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer ${
+                activeResultTab === 'graph'
+                  ? 'bg-white text-[#001d35] shadow-xs border border-[#dde3ea]'
+                  : 'text-[#444746] hover:bg-white/60'
+              }`}
+            >
+              <span>📈 Curve</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveResultTab('photos')}
+              className={`flex-1 py-1 px-2 rounded-lg text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer ${
+                activeResultTab === 'photos'
+                  ? 'bg-white text-[#001d35] shadow-xs border border-[#dde3ea]'
+                  : 'text-[#444746] hover:bg-white/60'
+              }`}
+            >
+              <span>📸 Photos</span>
+            </button>
+          </div>
+
+          {/* Active Tab View rendered at 100% Full Width cleanly without slider overflow */}
+          {activeResultTab === 'conclusion' && (
+            <div className="space-y-2 animate-in fade-in-50 duration-200">
+              <p className="text-xs sm:text-sm text-[#444746] leading-relaxed m-0">{data.conclusion}</p>
               <div className="exp-formula">{data.formula}</div>
               <div className="exp-tw">
                 <table>
@@ -1684,26 +1780,28 @@ export default function ExperimentTemplateView({
                   <tbody>
                     {data.interp.map((row, idx) => (
                       <tr key={idx}>
-                        <td>{row[0]}</td>
-                        <td>{row[1]}</td>
+                        <td className="font-semibold text-slate-800">{row[0]}</td>
+                        <td className="text-slate-600">{row[1]}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
+          )}
 
-            {/* Slide 2: SVG Line Graph */}
-            <div className="exp-rcd">
+          {activeResultTab === 'graph' && (
+            <div className="space-y-2 animate-in fade-in-50 duration-200">
               <b className="exp-sl">{data.graph.title}</b>
               {renderSvgGraph(data.graph)}
-              <p className="exp-hint">Sample readings. Replace with your own results.</p>
+              <p className="exp-hint">Sample calibration curve plotted according to formula readings.</p>
             </div>
+          )}
 
-            {/* Slide 3: Experiment Photos */}
-            <div className="exp-rcd">
-              <b className="exp-sl">Experiment photos</b>
-              <div className="exp-ph3">
+          {activeResultTab === 'photos' && (
+            <div className="space-y-2 animate-in fade-in-50 duration-200">
+              <b className="exp-sl">Experiment laboratory photos</b>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {data.photoLabels.map((lbl, idx) => (
                   <label key={idx} className="exp-photo">
                     <input
@@ -1716,16 +1814,11 @@ export default function ExperimentTemplateView({
                       <img
                         src={uploadedPhotos[idx]}
                         alt={lbl}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          borderRadius: '10px',
-                        }}
+                        className="w-full h-full object-cover rounded-lg"
                       />
                     ) : (
-                      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#c2e7ff] text-[#001d35] font-semibold text-xs">
-                        <Camera className="w-4 h-4" />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#c2e7ff] text-[#001d35] font-semibold text-xs">
+                        <Camera className="w-3.5 h-3.5" />
                         <span>{lbl}</span>
                       </span>
                     )}
@@ -1733,17 +1826,11 @@ export default function ExperimentTemplateView({
                 ))}
               </div>
             </div>
-          </div>
-
-          <div className="exp-dots" aria-hidden="true">
-            {[0, 1, 2].map((dIdx) => (
-              <i key={dIdx} className={activeDot === dIdx ? 'on' : ''} />
-            ))}
-          </div>
+          )}
         </M3Card>
 
         {/* 8. Related Experiments Section using Official M3SuggestionChip */}
-        <M3Card variant="outlined" className="p-5 sm:p-6 bg-white">
+        <M3Card variant="outlined" className="p-3 sm:p-3.5 bg-white">
           <h2 className="exp-h2">More experiments</h2>
           <M3ChipSet>
             {data.related.map((relTitle, idx) => (

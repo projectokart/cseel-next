@@ -69,7 +69,7 @@ export const ScienceAdminModule: React.FC = () => {
   const [formCategory, setFormCategory] = useState('Inorganic Chemistry & Catalysis');
   const [formTitle, setFormTitle] = useState('');
   const [formSubtitle, setFormSubtitle] = useState('');
-  const [formGrade, setFormGrade] = useState<'Primary (1-5)' | 'Middle (6-8)' | 'Secondary (9-10)' | 'Senior Sec (11-12)' | 'All Grades'>('Middle (6-8)');
+  const [formGrade, setFormGrade] = useState<string>('Class 10th');
   const [formDifficulty, setFormDifficulty] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Beginner');
   const [formDuration, setFormDuration] = useState('30 Mins');
   const [formSafety, setFormSafety] = useState<'Safe for Home' | 'Adult Supervision' | 'Lab Environment Required'>('Safe for Home');

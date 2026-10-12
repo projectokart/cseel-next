@@ -7,7 +7,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Beginner",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -358,7 +358,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/ohms-law-verification-resistance.jpg"
+    "fallbackImage": "/images/experiments/ohms-law-verification-resistance.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "cc00b1af-93b2-411b-b9c4-5e27a219d0bf",
@@ -368,7 +369,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 6th",
     "difficulty": "Intermediate",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -681,7 +682,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/refractive-index-glass-prism.jpg"
+    "fallbackImage": "/images/experiments/refractive-index-glass-prism.jpg",
+    "class": "Class 6th"
   },
   {
     "id": "9a9669d2-b571-44ec-8bcf-d396c473ece5",
@@ -691,7 +693,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Beginner",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -990,7 +992,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/focal-length-convex-lens-uv-method.jpg"
+    "fallbackImage": "/images/experiments/focal-length-convex-lens-uv-method.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "a0ac41ae-1ea8-4276-acf4-fc76201dc144",
@@ -1000,7 +1003,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Intermediate",
     "duration": "55 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -1321,7 +1324,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/meter-bridge-resistance-combination.jpg"
+    "fallbackImage": "/images/experiments/meter-bridge-resistance-combination.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "21e4615d-c572-488b-b237-808561a04293",
@@ -1331,7 +1335,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 7th",
     "difficulty": "Beginner",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -1644,7 +1648,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg"
+    "fallbackImage": "/images/experiments/acceleration-due-to-gravity-simple-pendulum.jpg",
+    "class": "Class 7th"
   },
   {
     "id": "b3884c02-0427-404d-be3a-cf4265de00f7",
@@ -1654,7 +1659,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 11th",
     "difficulty": "Intermediate",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -1937,7 +1942,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/boyles-law-verification-ideal-gas.jpg"
+    "fallbackImage": "/images/experiments/boyles-law-verification-ideal-gas.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "dd3ced12-41c0-4ae1-97ea-3597e8c82941",
@@ -1947,7 +1953,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 11th",
     "difficulty": "Beginner",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -2248,7 +2254,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.jpg"
+    "fallbackImage": "/images/experiments/vernier-caliper-screw-gauge-precision-measurement.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "1b58e6d5-a9ee-475c-b102-10e0ef321418",
@@ -2258,7 +2265,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 9th",
     "difficulty": "Intermediate",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -2555,7 +2562,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/resonance-tube-velocity-of-sound.jpg"
+    "fallbackImage": "/images/experiments/resonance-tube-velocity-of-sound.jpg",
+    "class": "Class 9th"
   },
   {
     "id": "2357c24d-bf7c-4f62-bad3-726dcaadb9f8",
@@ -2565,7 +2573,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Advanced",
     "duration": "60 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -2888,7 +2896,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/internal-resistance-primary-cell-potentiometer.jpg"
+    "fallbackImage": "/images/experiments/internal-resistance-primary-cell-potentiometer.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "707975d7-5803-4976-a257-02e6e9b8f8c4",
@@ -2898,7 +2907,7 @@
     "subjectSlug": "physics",
     "subjectName": "Physics",
     "category": "Physics Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 8th",
     "difficulty": "Intermediate",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -3199,7 +3208,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/faradays-law-electromagnetic-induction-coil.jpg"
+    "fallbackImage": "/images/experiments/faradays-law-electromagnetic-induction-coil.jpg",
+    "class": "Class 8th"
   },
   {
     "id": "84d65ede-a90d-4c29-9ee6-525648c59dd1",
@@ -3209,7 +3219,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 10th",
     "difficulty": "Intermediate",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -3558,7 +3568,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/acid-base-titration-hcl-naoh.jpg"
+    "fallbackImage": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "3ca9eef1-351f-4199-9a32-4654a47142f7",
@@ -3568,7 +3579,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Advanced",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -3895,7 +3906,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg"
+    "fallbackImage": "/images/experiments/redox-titration-kmno4-mohrs-salt.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "0383321d-f48e-46bf-9179-07ed1b46a137",
@@ -3905,7 +3917,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Advanced",
     "duration": "60 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -4214,7 +4226,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/qualitative-salt-analysis-cation-anion.jpg"
+    "fallbackImage": "/images/experiments/qualitative-salt-analysis-cation-anion.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "c8a43713-9ab9-4df3-819f-890ff4a2b7d1",
@@ -4224,7 +4237,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 11th",
     "difficulty": "Beginner",
     "duration": "35 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -4531,7 +4544,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/preparation-standard-oxalic-acid-solution.jpg"
+    "fallbackImage": "/images/experiments/preparation-standard-oxalic-acid-solution.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "5c98dbf7-d5cb-46f0-afaa-badf9e4b58da",
@@ -4541,7 +4555,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 7th",
     "difficulty": "Beginner",
     "duration": "30 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -4827,7 +4841,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/ph-determination-universal-indicator-solutions.jpg"
+    "fallbackImage": "/images/experiments/ph-determination-universal-indicator-solutions.jpg",
+    "class": "Class 7th"
   },
   {
     "id": "910370a2-3579-4c90-8085-6ef4ede209b5",
@@ -4837,7 +4852,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 8th",
     "difficulty": "Intermediate",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -5162,7 +5177,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.jpg"
+    "fallbackImage": "/images/experiments/reaction-kinetics-sodium-thiosulfate-hcl.jpg",
+    "class": "Class 8th"
   },
   {
     "id": "9853b28e-4db9-41f1-a628-e4626badf78a",
@@ -5172,7 +5188,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 9th",
     "difficulty": "Beginner",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -5480,7 +5496,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/paper-chromatography-plant-pigments.jpg"
+    "fallbackImage": "/images/experiments/paper-chromatography-plant-pigments.jpg",
+    "class": "Class 9th"
   },
   {
     "id": "2e9130b9-af62-41fb-ac3d-9aa1abaac8f7",
@@ -5490,7 +5507,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 6th",
     "difficulty": "Intermediate",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -5792,7 +5809,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/preparation-colloidal-sol-tyndall-effect.jpg"
+    "fallbackImage": "/images/experiments/preparation-colloidal-sol-tyndall-effect.jpg",
+    "class": "Class 6th"
   },
   {
     "id": "d9c08be5-2de8-47c6-a493-2f2eab43d285",
@@ -5802,7 +5820,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Intermediate",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -6095,7 +6113,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/organic-functional-group-tests.jpg"
+    "fallbackImage": "/images/experiments/organic-functional-group-tests.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "8d3edf3a-b147-4ea8-8323-c267e5939a8c",
@@ -6105,7 +6124,7 @@
     "subjectSlug": "chemistry",
     "subjectName": "Chemistry",
     "category": "Chemistry Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 11th",
     "difficulty": "Advanced",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -6432,7 +6451,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/enthalpy-of-neutralization-calorimetry.jpg"
+    "fallbackImage": "/images/experiments/enthalpy-of-neutralization-calorimetry.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "abe9f719-a49e-4734-b52b-0bc08a4506c8",
@@ -6442,7 +6462,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 9",
+    "gradeLevel": "Class 8th",
     "difficulty": "Beginner",
     "duration": "35 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -6749,7 +6769,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/onion-peel-cell-microscopy.jpg"
+    "fallbackImage": "/images/experiments/onion-peel-cell-microscopy.jpg",
+    "class": "Class 8th"
   },
   {
     "id": "da207a82-ac24-4d67-9e57-6216fde56260",
@@ -6759,7 +6780,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 11th",
     "difficulty": "Advanced",
     "duration": "55 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -7060,7 +7081,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/mitosis-onion-root-tip-squash.jpg"
+    "fallbackImage": "/images/experiments/mitosis-onion-root-tip-squash.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "28a79657-42ed-45a3-82ef-8e791357cf9f",
@@ -7070,7 +7092,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 9th",
     "difficulty": "Beginner",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -7355,7 +7377,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/osmosis-potato-osmoscope-demonstration.jpg"
+    "fallbackImage": "/images/experiments/osmosis-potato-osmoscope-demonstration.jpg",
+    "class": "Class 9th"
   },
   {
     "id": "39513e7c-504f-4c80-8bcb-1604e53825e5",
@@ -7365,7 +7388,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 11th",
     "difficulty": "Intermediate",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -7654,7 +7677,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/transpiration-rate-ganongs-potometer.jpg"
+    "fallbackImage": "/images/experiments/transpiration-rate-ganongs-potometer.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "e64e76ca-2898-48fd-8f7c-9a1bdc25decc",
@@ -7664,7 +7688,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Beginner",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -7971,7 +7995,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/carbon-dioxide-release-seed-respiration.jpg"
+    "fallbackImage": "/images/experiments/carbon-dioxide-release-seed-respiration.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "27df9539-946e-4b23-82e9-f0d45ed688a9",
@@ -7981,7 +8006,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 6th",
     "difficulty": "Beginner",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -8269,7 +8294,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/photosynthesis-starch-test-iodine.jpg"
+    "fallbackImage": "/images/experiments/photosynthesis-starch-test-iodine.jpg",
+    "class": "Class 6th"
   },
   {
     "id": "3a6c5e9b-1665-46f4-8fa0-3bab2b14ee83",
@@ -8279,7 +8305,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Intermediate",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -8572,7 +8598,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/dna-isolation-plant-material.jpg"
+    "fallbackImage": "/images/experiments/dna-isolation-plant-material.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "5dff7235-948c-411f-8535-4ddaa0b83791",
@@ -8582,7 +8609,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 11th",
     "difficulty": "Advanced",
     "duration": "50 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -8879,7 +8906,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/human-blood-smear-wbc-identification.jpg"
+    "fallbackImage": "/images/experiments/human-blood-smear-wbc-identification.jpg",
+    "class": "Class 11th"
   },
   {
     "id": "6c28c2b0-f2aa-42bb-878d-a82eb4d8306d",
@@ -8889,7 +8917,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 12",
+    "gradeLevel": "Class 12th",
     "difficulty": "Intermediate",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -9203,7 +9231,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/salivary-amylase-starch-digestion.jpg"
+    "fallbackImage": "/images/experiments/salivary-amylase-starch-digestion.jpg",
+    "class": "Class 12th"
   },
   {
     "id": "cffa990c-dff3-413d-b9c4-df4ab669496d",
@@ -9213,7 +9242,7 @@
     "subjectSlug": "biology",
     "subjectName": "Biology",
     "category": "Biology Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 7th",
     "difficulty": "Beginner",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -9482,7 +9511,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/stomata-distribution-density-leaf-epidermis.jpg"
+    "fallbackImage": "/images/experiments/stomata-distribution-density-leaf-epidermis.jpg",
+    "class": "Class 7th"
   },
   {
     "id": "eb685add-e2b6-49ab-b72a-2a770d0c1f3c",
@@ -9492,7 +9522,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 7th",
     "difficulty": "Beginner",
     "duration": "35 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -9775,7 +9805,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/pythagoras-theorem-geometric-verification.jpg"
+    "fallbackImage": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "class": "Class 7th"
   },
   {
     "id": "7e695f1c-6454-47d2-8b46-ee19cb14917e",
@@ -9785,7 +9816,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 7th",
     "difficulty": "Beginner",
     "duration": "35 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -10056,7 +10087,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/area-of-circle-sector-partitioning.jpg"
+    "fallbackImage": "/images/experiments/area-of-circle-sector-partitioning.jpg",
+    "class": "Class 7th"
   },
   {
     "id": "021190c5-fe94-4fad-8572-84112536cfcb",
@@ -10066,7 +10098,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 9th",
     "difficulty": "Intermediate",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -10323,7 +10355,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/surface-area-volume-sphere-cone-cylinder.jpg"
+    "fallbackImage": "/images/experiments/surface-area-volume-sphere-cone-cylinder.jpg",
+    "class": "Class 9th"
   },
   {
     "id": "f6b7bed3-1fb8-4f19-a540-895e28ad8cca",
@@ -10333,7 +10366,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 9",
+    "gradeLevel": "Class 9th",
     "difficulty": "Beginner",
     "duration": "35 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -10604,7 +10637,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/angle-subtended-by-arc-circle-theorem.jpg"
+    "fallbackImage": "/images/experiments/angle-subtended-by-arc-circle-theorem.jpg",
+    "class": "Class 9th"
   },
   {
     "id": "c19950ec-c9c0-4ec3-a9a1-b6b42ce917d4",
@@ -10614,7 +10648,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Beginner",
     "duration": "35 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -10875,7 +10909,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/circle-tangents-external-point-construction.jpg"
+    "fallbackImage": "/images/experiments/circle-tangents-external-point-construction.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "a82d8ea4-52e8-4cc4-ba99-a30fd90fcf0d",
@@ -10885,7 +10920,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Intermediate",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -11164,7 +11199,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/basic-proportionality-thales-theorem.jpg"
+    "fallbackImage": "/images/experiments/basic-proportionality-thales-theorem.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "51e20d48-b921-4f37-ab52-8ff2da1a21b4",
@@ -11174,7 +11210,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Beginner",
     "duration": "30 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -11439,7 +11475,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/sum-of-natural-numbers-staircase-model.jpg"
+    "fallbackImage": "/images/experiments/sum-of-natural-numbers-staircase-model.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "0239d714-599b-4a85-811b-80dd124eff6d",
@@ -11449,7 +11486,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 9",
+    "gradeLevel": "Class 8th",
     "difficulty": "Intermediate",
     "duration": "40 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -11752,7 +11789,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/algebraic-identity-cube-of-binomial-3d.jpg"
+    "fallbackImage": "/images/experiments/algebraic-identity-cube-of-binomial-3d.jpg",
+    "class": "Class 8th"
   },
   {
     "id": "0c762953-3ac1-4dc3-8507-387d93881286",
@@ -11762,7 +11800,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 10",
+    "gradeLevel": "Class 10th",
     "difficulty": "Beginner",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -12076,7 +12114,8 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/clinometer-trigonometric-height-estimation.jpg"
+    "fallbackImage": "/images/experiments/clinometer-trigonometric-height-estimation.jpg",
+    "class": "Class 10th"
   },
   {
     "id": "f2a8bf77-9c3b-460a-867d-d3eed54e4ff8",
@@ -12086,7 +12125,7 @@
     "subjectSlug": "mathematics",
     "subjectName": "Mathematics",
     "category": "Mathematics Practical Lab",
-    "gradeLevel": "Class 11",
+    "gradeLevel": "Class 11th",
     "difficulty": "Intermediate",
     "duration": "45 Mins",
     "safetyLevel": "Standard Educational Lab Grade",
@@ -12415,6 +12454,7 @@
         ]
       }
     ],
-    "fallbackImage": "/images/experiments/galton-board-normal-distribution-binomial.jpg"
+    "fallbackImage": "/images/experiments/galton-board-normal-distribution-binomial.jpg",
+    "class": "Class 11th"
   }
 ]

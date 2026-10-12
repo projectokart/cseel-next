@@ -126,7 +126,7 @@ const TopBar = () => {
   };
 
   return (
-    <div id="site-topbar" className="site-topbar bg-[#023858] text-white text-xs border-b border-white/15 relative z-[600] select-none shadow-xs">
+    <div id="site-topbar" className="site-topbar bg-[#023858] text-white text-xs border-b border-white/15 relative z-[600] shadow-xs pointer-events-auto">
       <div className="container mx-auto px-2.5 sm:px-4 max-w-7xl">
         <div className="flex items-center justify-between py-1 gap-2 min-h-[34px] w-full">
           
@@ -136,16 +136,16 @@ const TopBar = () => {
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white/15 hover:bg-white/25 active:bg-white/35 text-white font-bold text-xs transition-all border border-white/25 shadow-xs shrink-0 cursor-pointer select-none group min-h-[30px]"
+                className="inline-flex items-center gap-1 text-white hover:text-white/80 active:opacity-70 font-semibold text-xs transition-colors shrink-0 cursor-pointer bg-transparent border-0 p-1 touch-manipulation group"
                 title="Go Back to Previous Page"
               >
                 <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform shrink-0" />
-                <span className="text-white font-bold">Back</span>
+                <span className="text-white font-semibold">Back</span>
               </button>
             ) : (
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 text-white hover:text-white/90 font-black text-xs shrink-0 transition-colors py-1 px-1.5 rounded"
+                className="inline-flex items-center gap-1.5 text-white hover:text-white/80 font-bold text-xs shrink-0 transition-colors py-1 px-1 touch-manipulation"
               >
                 <Home className="w-3.5 h-3.5 text-white" />
                 <span className="text-white">CSEEL</span>
@@ -193,7 +193,7 @@ const TopBar = () => {
             <Link
               href="/careers"
               aria-label="Careers at CSEEL"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-white hover:bg-white/15 transition-all shrink-0"
+              className="inline-flex items-center gap-1 py-1 px-1.5 text-white/90 hover:text-white transition-colors shrink-0 touch-manipulation"
               title="Careers at CSEEL"
             >
               <Briefcase className="w-3.5 h-3.5 text-white shrink-0" />
@@ -204,7 +204,7 @@ const TopBar = () => {
             <Link
               href="/get-support"
               aria-label="Student and Teacher Support"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-white hover:bg-white/15 transition-all shrink-0"
+              className="inline-flex items-center gap-1 py-1 px-1.5 text-white/90 hover:text-white transition-colors shrink-0 touch-manipulation"
               title="Helpdesk & Student/Teacher Support"
             >
               <Headphones className="w-3.5 h-3.5 text-white shrink-0" />
@@ -215,7 +215,7 @@ const TopBar = () => {
             <Link
               href="/contact-us"
               aria-label="Contact CSEEL Directorate"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-white hover:bg-white/15 transition-all shrink-0"
+              className="inline-flex items-center gap-1 py-1 px-1.5 text-white/90 hover:text-white transition-colors shrink-0 touch-manipulation"
               title="Contact CSEEL National Directorate"
             >
               <Mail className="w-3.5 h-3.5 text-white shrink-0" />
@@ -321,11 +321,11 @@ const TopBar = () => {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 px-3 py-1 text-white hover:bg-white/20 active:bg-white/30 font-bold text-xs rounded-md border border-white/40 hover:border-white/70 transition-all shrink-0 whitespace-nowrap ml-1 shadow-xs select-none cursor-pointer min-h-[30px]"
+                className="inline-flex items-center gap-1 py-1 px-1.5 text-white/90 hover:text-white active:opacity-70 font-semibold text-xs transition-colors shrink-0 whitespace-nowrap ml-1 cursor-pointer touch-manipulation bg-transparent border-0"
                 title="Sign in to CSEEL Portal"
               >
-                <LogIn className="w-4 h-4 text-white shrink-0" />
-                <span className="text-white font-bold">Login</span>
+                <LogIn className="w-3.5 h-3.5 text-white shrink-0" />
+                <span className="text-white font-semibold">Login</span>
               </Link>
             )}
 

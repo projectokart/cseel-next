@@ -1115,14 +1115,16 @@ export default function ExperimentTemplateView({
         .exp-safety li {
           color: var(--exp-yt) !important;
         }
+        .exp-safety ol,
         .exp-safety ul {
           margin: 0;
-          padding-left: 18px;
+          padding-left: 20px;
         }
         .exp-safety li {
-          margin-bottom: 4px;
+          margin-bottom: 6px;
           font-weight: 600;
-          font-size: 12.5px;
+          font-size: 13px;
+          line-height: 1.5;
         }
         .exp-pt {
           font-size: 12px;
@@ -1242,16 +1244,30 @@ export default function ExperimentTemplateView({
         }
         .exp-bx p {
           margin: 0 !important;
+          font-size: 13px !important;
+          line-height: 1.5 !important;
         }
         .exp-bx.ob {
-          background: var(--exp-gs);
-          color: #041e49;
-          border: 1px solid #d3e3fd;
+          background: #eef3fc !important;
+          color: #041e49 !important;
+          border: 1px solid #c2e7ff !important;
+        }
+        .exp-bx.ob b {
+          color: #041e49 !important;
+        }
+        .exp-bx.ob p {
+          color: #1e293b !important;
         }
         .exp-bx.sa {
-          background: var(--exp-ys);
-          color: var(--exp-yt);
-          border: 1px solid #fde68a;
+          background: #fef7e0 !important;
+          color: #78350f !important;
+          border: 1px solid #fde68a !important;
+        }
+        .exp-bx.sa b {
+          color: #78350f !important;
+        }
+        .exp-bx.sa p {
+          color: #451a03 !important;
         }
         .exp-pdt {
           display: flex;
@@ -1732,11 +1748,11 @@ export default function ExperimentTemplateView({
           className="exp-safety p-3 sm:p-3.5 mb-2.5 bg-[#fef7e0] border border-[#fde68a]"
         >
           <h2 className="exp-h2">Stay safe</h2>
-          <ul>
+          <ol className="list-decimal pl-5 space-y-1.5">
             {data.safety.map((s, idx) => (
               <li key={idx}>{s}</li>
             ))}
-          </ul>
+          </ol>
         </M3Card>
 
         {/* 5. Steps Section inside Official M3Card */}
@@ -1968,23 +1984,6 @@ export default function ExperimentTemplateView({
           )}
         </M3Card>
 
-        {/* 8. Related Experiments Section using Official M3SuggestionChip */}
-        <M3Card variant="outlined" className="p-3 sm:p-3.5 bg-white">
-          <h2 className="exp-h2">More experiments</h2>
-          <M3ChipSet>
-            {data.related.map((relTitle, idx) => (
-              <M3SuggestionChip
-                key={idx}
-                label={relTitle}
-                onClick={() => {
-                  if (onSelectRelated) {
-                    onSelectRelated(relTitle);
-                  }
-                }}
-              />
-            ))}
-          </M3ChipSet>
-        </M3Card>
       </div>
 
       {/* Cart / Material Sub-Sheet Overlay */}

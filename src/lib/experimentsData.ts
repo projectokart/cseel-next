@@ -300,9 +300,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Voltmeter must always be connected in parallel and ammeter in series.",
       "Check that zero errors of both meters are accounted for before taking readings."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/ohms-law-verification-resistance.jpg"
     ],
     "tags": [
       "Ohm's Law",
@@ -608,9 +608,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Align pin pricks viewing their feet/bases, not the bent tops.",
       "Do not disturb the prism position while sighting pins."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/refractive-index-glass-prism.jpg"
     ],
     "tags": [
       "Ray Optics",
@@ -3397,9 +3397,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Do not blow out the last drop remaining in the pipette tip; it is calibrated for retention.",
       "Use only 2-3 drops of indicator; excessive indicator consumes titrant and skews the endpoint."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/acid-base-titration-hcl-naoh.jpg"
     ],
     "tags": [
       "Titration",
@@ -6506,9 +6506,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Lower the coverslip slowly to avoid trapping air bubbles (air bubbles appear as thick black-rimmed rings).",
       "Wipe off excess glycerine with blotting paper so microscope stage remains clean."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/onion-peel-cell-microscopy.jpg"
     ],
     "tags": [
       "Cell Biology",
@@ -9413,9 +9413,9 @@ export const ALL_EXPERIMENTS: ExperimentItem[] = [
       "Measure hypotenuse length with high accuracy before cutting the target square.",
       "Avoid adhesive warping by smoothing paper firmly onto cardboard."
     ],
-    "thumbnail_url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
     "images": [
-      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80"
+      "/images/experiments/pythagoras-theorem-geometric-verification.jpg"
     ],
     "tags": [
       "Pythagoras Theorem",

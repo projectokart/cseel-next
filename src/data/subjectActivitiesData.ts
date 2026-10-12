@@ -342,8 +342,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Physical Chemistry"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
+    "thumbnail_url": "/images/experiments/acid-base-titration-hcl-naoh.jpg",
     "colorTheme": "from-amber-500 to-orange-600",
     "formula": "M(HCl) · V(HCl) = M(NaOH) · V(NaOH) => M(HCl) = (0.100 M × 19.60 mL) / 20.00 mL = 0.0980 M",
     "obsCols": [
@@ -3817,8 +3817,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/ohms-law-verification-resistance.jpg",
+    "thumbnail_url": "/images/experiments/ohms-law-verification-resistance.jpg",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "R = V / I = 5.00 Ω (Constant slope of V-I graph)",
     "obsCols": [
@@ -4157,8 +4157,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "Optics Lab"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1507668077129-56e32842fceb?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/refractive-index-glass-prism.jpg",
+    "thumbnail_url": "/images/experiments/refractive-index-glass-prism.jpg",
     "colorTheme": "from-cyan-500 to-blue-600",
     "formula": "μ = sin((A + Dm)/2) / sin(A/2) = sin((60° + 39.5°)/2) / sin(30°) = 1.524",
     "obsCols": [
@@ -7226,8 +7226,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020 Experiential"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/onion-peel-cell-microscopy.jpg",
+    "thumbnail_url": "/images/experiments/onion-peel-cell-microscopy.jpg",
     "colorTheme": "from-emerald-500 to-teal-600",
     "formula": "Cell Dimension = Field of View Diameter / Cell Count = 1500 μm / 6 = 250 μm length",
     "obsCols": [
@@ -10470,8 +10470,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020 Hands-on"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
     "obsCols": [
@@ -13662,8 +13662,8 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
       "NEP 2020 Hands-on"
     ],
     "badge": "NEP 2020 Aligned",
-    "image": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
-    "thumbnail_url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80",
+    "image": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
+    "thumbnail_url": "/images/experiments/pythagoras-theorem-geometric-verification.jpg",
     "colorTheme": "from-purple-500 to-indigo-600",
     "formula": "a² + b² = c² (Area of Square on Hypotenuse = Sum of Areas of Squares on Legs)",
     "obsCols": [

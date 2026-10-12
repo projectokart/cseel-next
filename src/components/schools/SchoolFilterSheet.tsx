@@ -1029,23 +1029,22 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
           </div>
 
           {/* Sticky Bottom CTA Bar */}
-          <div className="p-3.5 border-t border-gray-200 bg-white flex items-center gap-3 shadow-lg shrink-0">
+          <div className="p-3 border-t border-gray-200 bg-white flex items-center gap-2 shadow-lg shrink-0">
             <button
               type="button"
               onClick={onResetAll}
-              className="px-4 py-2.5 rounded-full text-xs font-medium text-blue-600 hover:bg-blue-50 transition border border-gray-300 cursor-pointer"
+              className="px-3.5 py-2.5 rounded-full text-xs font-semibold text-gray-700 hover:bg-gray-100 transition border border-gray-300 cursor-pointer whitespace-nowrap shrink-0"
             >
               Clear all
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 px-5 rounded-full text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
+              className="flex-1 py-2.5 px-4 rounded-full text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-1.5 shadow-sm transition active:scale-98 cursor-pointer whitespace-nowrap overflow-hidden"
             >
-              <span>Apply Filters</span>
-              <span className="w-1 h-1 rounded-full bg-white/70" />
-              <span>{displayedCount} Schools</span>
-              <ArrowRight size={14} />
+              <span>Apply</span>
+              <span className="opacity-80 font-normal">({displayedCount} Schools)</span>
+              <ArrowRight size={14} className="shrink-0 ml-0.5" />
             </button>
           </div>
         </div>

@@ -232,14 +232,23 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   
   // View mode supports 2 Cols, 3 Cols, Compact, and Map
+  // Initialized synchronously from URL param or localStorage to eliminate flash/layout shift on refresh
   const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>(() => {
     if (typeof window !== 'undefined') {
-      const paramView = new URLSearchParams(window.location.search).get('view');
-      if (paramView === 'map' || paramView === 'grid' || paramView === 'grid3' || paramView === 'compact') {
-        return paramView as 'grid' | 'grid3' | 'compact' | 'map';
+      try {
+        const paramView = new URLSearchParams(window.location.search).get('view');
+        if (paramView === 'map' || paramView === 'grid' || paramView === 'grid3' || paramView === 'compact') {
+          return paramView as 'grid' | 'grid3' | 'compact' | 'map';
+        }
+        const savedMode = localStorage.getItem('cseel_school_view_mode') as 'grid' | 'grid3' | 'compact' | 'map' | null;
+        if (savedMode === 'map' || savedMode === 'grid' || savedMode === 'grid3' || savedMode === 'compact') {
+          return savedMode;
+        }
+      } catch {
+        // Ignore storage errors in restricted contexts
       }
     }
-    return 'grid3';
+    return 'compact';
   });
 
   // Map state
@@ -1578,7 +1587,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               href={profileUrl}
               className="h-9 px-3.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] hover:shadow-[0_1px_3px_1px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] whitespace-nowrap min-w-0 flex-1"
             >
-              <span className="truncate">Details</span>
+              <span className="truncate">View</span>
               <ArrowRight size={13} className="shrink-0" />
             </Link>
           </div>
@@ -1772,15 +1781,15 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             title="Claim this school profile"
           >
             <ShieldCheck size={13} className="text-[#001d35]" />
-            <span className="hidden sm:inline text-[11px]">Claim</span>
+            <span className="text-[11px]">Claim</span>
           </button>
           
-          {/* View Details CTA — Official M3 Filled Pill (Guaranteed no overflow) */}
+          {/* View CTA — Official M3 Filled Pill (Guaranteed no overflow) */}
           <Link
             href={profileUrl}
-            className="h-8 px-3.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-xs whitespace-nowrap"
+            className="h-8 px-3 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-xs whitespace-nowrap"
           >
-            <span>View Details</span>
+            <span>View</span>
           </Link>
         </div>
       </div>
@@ -2009,9 +2018,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </button>
             <Link
               href={profileUrl}
-              className="h-8.5 px-2.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0"
+              className="h-8.5 px-3 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0"
             >
-              <span className="truncate">View Details</span>
+              <span className="truncate">View</span>
               <ArrowRight size={12} className="shrink-0" />
             </Link>
           </div>

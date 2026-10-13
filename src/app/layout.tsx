@@ -46,9 +46,11 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://www.cseel.org/images/cseel-social-preview.jpg",
+        secureUrl: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Experiential Science Learning & live labs India",
+        type: "image/jpeg",
       },
     ],
     locale: "en_IN",
@@ -112,11 +114,30 @@ export default function RootLayout({
         <meta name="msapplication-navbutton-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-        {/* WhatsApp & Social Media Link Preview Meta Tags */}
+        {/* Canonical Open Graph & Social Preview Tags for WhatsApp, Telegram, LinkedIn, Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="CSEEL - Center for Scientific Exploration &amp; Experiential Learning" />
+        <meta property="og:title" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
+        <meta property="og:description" content="CSEEL offers hands-on science experiments, virtual lab simulations, STEM education, teacher training, and national science exhibitions for students and educators across India." />
+        <meta property="og:url" content="https://www.cseel.org" />
+        <meta property="og:image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
         <meta property="og:image:secure_url" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="CSEEL - Experiential Science Learning &amp; Live STEM Labs India" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@cseel_org" />
+        <meta name="twitter:title" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
+        <meta name="twitter:description" content="CSEEL offers hands-on science experiments, virtual lab simulations, STEM education, teacher training, and national science exhibitions for students and educators across India." />
+        <meta name="twitter:image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
+
+        {/* Schema.org Microdata Fallback for WhatsApp */}
+        <meta itemProp="name" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
+        <meta itemProp="description" content="CSEEL offers hands-on science experiments, virtual lab simulations, STEM education, teacher training, and national science exhibitions for students and educators across India." />
+        <meta itemProp="image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
 
         {/* Favicon Direct Links (Google Search Central 48px Multiple & Vector Standard with v=3 cache bust) */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />

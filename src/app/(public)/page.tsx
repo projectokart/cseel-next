@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://www.cseel.org/images/cseel-social-preview.jpg",
+        secureUrl: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Center for Scientific Exploration & Experiential Learning",

@@ -12,24 +12,26 @@ export const metadata: Metadata = {
     title: "Science Teacher Training Programs India | CSEEL Professional Development",
     description: "Join CSEEL's science teacher training programs in India. Online and offline workshops, certifications, and professional development for school and college science educators.",
     url: "https://www.cseel.org/teacher-training",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-teachers.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
+        alt: "NEP 2020 Science Teacher Training & Certification - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Science Teacher Training Programs India | CSEEL Professional Development",
     description: "Join CSEEL's science teacher training programs in India. Online and offline workshops, certifications, and professional development for school and college science educators.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-teachers.jpg"],
   },
 };
 

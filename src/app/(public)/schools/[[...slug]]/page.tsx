@@ -10,11 +10,13 @@ export async function generateMetadata({
   params,
   searchParams
 }: {
-  params?: { slug?: string[] };
-  searchParams?: Record<string, string | string[] | undefined>;
+  params?: Promise<{ slug?: string[] }> | { slug?: string[] };
+  searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
 }): Promise<Metadata> {
-  const segments = params?.slug || [];
-  const parsed = parseSchoolsSeoQuery(segments, searchParams);
+  const resolvedParams = params ? await Promise.resolve(params) : {};
+  const resolvedSearchParams = searchParams ? await Promise.resolve(searchParams) : {};
+  const segments = resolvedParams?.slug || [];
+  const parsed = parseSchoolsSeoQuery(segments, resolvedSearchParams);
 
   return {
     title: parsed.pageTitle,
@@ -26,10 +28,27 @@ export async function generateMetadata({
       title: parsed.pageTitle,
       description: parsed.metaDescription,
       url: parsed.canonicalUrl,
-      siteName: 'CSEEL Schools Directory',
+      siteName: 'CSEEL - Center for Scientific Exploration & Experiential Learning',
       locale: 'en_IN',
-      type: 'website'
-    }
+      type: 'website',
+      images: [
+        {
+          url: 'https://www.cseel.org/images/og-schools.jpg',
+          width: 1200,
+          height: 630,
+          alt: parsed.pageTitle,
+          type: 'image/jpeg',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: parsed.pageTitle,
+      description: parsed.metaDescription,
+      images: ['https://www.cseel.org/images/og-schools.jpg'],
+      creator: '@cseel_org',
+      site: '@cseel_org',
+    },
   };
 }
 
@@ -37,11 +56,13 @@ export default async function SchoolsDirectoryPage({
   params,
   searchParams
 }: {
-  params?: { slug?: string[] };
-  searchParams?: Record<string, string | string[] | undefined>;
+  params?: Promise<{ slug?: string[] }> | { slug?: string[] };
+  searchParams?: Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
 }) {
-  const segments = params?.slug || [];
-  const parsedQuery = parseSchoolsSeoQuery(segments, searchParams);
+  const resolvedParams = params ? await Promise.resolve(params) : {};
+  const resolvedSearchParams = searchParams ? await Promise.resolve(searchParams) : {};
+  const segments = resolvedParams?.slug || [];
+  const parsedQuery = parseSchoolsSeoQuery(segments, resolvedSearchParams);
   const directoryData = await fetchSchoolsForDirectory(parsedQuery);
 
   return <SchoolsDirectoryClient initialData={directoryData} />;

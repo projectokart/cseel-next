@@ -12,24 +12,26 @@ export const metadata: Metadata = {
     title: "Science Programs for Schools & Colleges India | CSEEL Institutional Plans",
     description: "CSEEL offers institutional plans for schools and colleges in India. Get access to experiential science labs, experiment kits, teacher training, and curriculum mapping services.",
     url: "https://www.cseel.org/for-institutions",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-institutions.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
+        alt: "Science Lab Setup for Schools & Colleges - CSEEL Institutional Plans",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Science Programs for Schools & Colleges India | CSEEL Institutional Plans",
     description: "CSEEL offers institutional plans for schools and colleges in India. Get access to experiential science labs, experiment kits, teacher training, and curriculum mapping services.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-institutions.jpg"],
   },
 };
 

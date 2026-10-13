@@ -22,17 +22,26 @@ export const metadata: Metadata = {
     description:
       "Join live research keynotes and interactive STEM webinars with premier national scientists. Register online with CSEEL.",
     url: "https://www.cseel.org/seminars",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     images: [
       {
-        url: "/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-events.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL National Science Seminars",
+        alt: "CSEEL National Science Seminars & Interactive Keynotes",
+        type: "image/jpeg",
       },
     ],
     locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "National Science Seminars & Webinars 2026 | CSEEL",
+    description: "Join live research keynotes and interactive STEM webinars with premier national scientists. Register online with CSEEL.",
+    images: ["https://www.cseel.org/images/og-events.jpg"],
+    site: "@cseel_org",
+    creator: "@cseel_org",
   },
 };
 

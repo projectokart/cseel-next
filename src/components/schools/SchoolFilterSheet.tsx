@@ -372,6 +372,7 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
               if (val !== 'distance_asc' && val !== 'distance_desc') {
                 setSearchMode('text');
               }
+              handleFilterChange({ sort: val });
             }}
             className="w-full text-xs text-gray-800 font-medium bg-gray-50/80 border border-gray-200 rounded-lg px-3 py-2 pr-8 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none cursor-pointer transition appearance-none"
           >
@@ -445,7 +446,10 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
           {selectedBoard !== 'all' && (
             <button
               type="button"
-              onClick={() => setSelectedBoard('all')}
+              onClick={() => {
+                setSelectedBoard('all');
+                handleFilterChange({ board: undefined });
+              }}
               className="text-[11px] font-medium text-blue-600 hover:underline cursor-pointer"
             >
               Clear
@@ -460,7 +464,11 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
             return (
               <div
                 key={board.name}
-                onClick={() => setSelectedBoard(isSelected ? 'all' : board.name)}
+                onClick={() => {
+                  const nextBoard = isSelected ? 'all' : board.name;
+                  setSelectedBoard(nextBoard);
+                  handleFilterChange({ board: nextBoard === 'all' ? undefined : nextBoard });
+                }}
                 className={`flex items-center justify-between p-2 rounded-xl border transition cursor-pointer select-none ${
                   isSelected
                     ? 'bg-blue-50/80 border-blue-500 text-blue-900 shadow-2xs'
@@ -579,7 +587,10 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
           {selectedResidential !== 'all' && (
             <button
               type="button"
-              onClick={() => setSelectedResidential('all')}
+              onClick={() => {
+                setSelectedResidential('all');
+                handleFilterChange({ residential: undefined });
+              }}
               className="text-[11px] font-medium text-blue-600 hover:underline cursor-pointer"
             >
               Clear
@@ -596,7 +607,10 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
             <button
               key={fmt.id}
               type="button"
-              onClick={() => setSelectedResidential(fmt.id)}
+              onClick={() => {
+                setSelectedResidential(fmt.id);
+                handleFilterChange({ residential: fmt.id === 'all' ? undefined : fmt.id });
+              }}
               className={`py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                 selectedResidential === fmt.id
                   ? 'bg-white text-blue-700 shadow-xs font-semibold'

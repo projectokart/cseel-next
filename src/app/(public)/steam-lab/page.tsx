@@ -30,19 +30,21 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-steam-lab.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL STEAM & Atal Tinkering Lab Setup India",
+        alt: "Atal Tinkering Lab (ATL) & STEAM Lab Setup - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Atal Tinkering Lab (ATL) & STEAM Lab Setup for Schools India | CSEEL",
     description: "Turnkey Atal Tinkering Labs, AI & Robotics Super-Labs, and NEP 2020 Experiential STEAM Labs for K-12 Indian Schools.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-steam-lab.jpg"],
   },
 };
 

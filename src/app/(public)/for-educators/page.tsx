@@ -12,24 +12,26 @@ export const metadata: Metadata = {
     title: "Science Platform for Educators & Teachers India | CSEEL",
     description: "CSEEL empowers science teachers in India with live lab tools, curriculum-aligned experiments, and professional development. Trusted by 1000+ educators across India.",
     url: "https://www.cseel.org/for-educators",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-teachers.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
+        alt: "Science Platform for Educators & Teachers - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Science Platform for Educators & Teachers India | CSEEL",
     description: "CSEEL empowers science teachers in India with live lab tools, curriculum-aligned experiments, and professional development. Trusted by 1000+ educators across India.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-teachers.jpg"],
   },
 };
 

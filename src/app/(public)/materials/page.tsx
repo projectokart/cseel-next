@@ -12,24 +12,26 @@ export const metadata: Metadata = {
     title: "Science Lab Materials & Equipment Store | CSEEL India",
     description: "Purchase high-quality science lab apparatus, chemical reagents, glassware, and DIY STEM kits for schools, teachers, and student science experiments.",
     url: "https://www.cseel.org/materials",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-materials.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
+        alt: "Science Lab Materials, Apparatus & STEM Kits - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Science Lab Materials & Equipment Store | CSEEL India",
     description: "Purchase high-quality science lab apparatus, chemical reagents, glassware, and DIY STEM kits for schools, teachers, and student science experiments.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-materials.jpg"],
   },
 };
 

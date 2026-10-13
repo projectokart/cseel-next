@@ -996,7 +996,16 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     setSearchMode('text');
     setMapRadiusKm(10);
     setSortBy('popularity_desc');
-    handleFilterChange({ board: undefined, residential: undefined, facility: undefined, q: undefined });
+    handleFilterChange({
+      board: undefined,
+      residential: undefined,
+      facility: undefined,
+      q: undefined,
+      search: undefined,
+      district: undefined,
+      state: undefined,
+      sort: undefined,
+    });
   }, [handleFilterChange]);
 
   const handleSelectCity = useCallback((city: { name: string; query?: string }) => {
@@ -1059,6 +1068,11 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     setCurrentPage(newPage);
     try {
       const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
+      if (selectedBoard && selectedBoard !== 'all') params.set('board', selectedBoard);
+      if (selectedResidential && selectedResidential !== 'all') params.set('residential', selectedResidential);
+      if (selectedLocation) params.set('district', selectedLocation);
+      if (searchTerm.trim() && searchMode === 'text') params.set('q', searchTerm.trim());
+      if (sortBy && sortBy !== 'popularity_desc') params.set('sort', sortBy);
       params.set('page', String(newPage));
       params.set('limit', '25');
       const res = await fetch(`/api/schools-directory?${params.toString()}`);
@@ -1066,11 +1080,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       if (data.success && Array.isArray(data.schools)) {
         const pageBatch = data.schools.slice(0, 25);
         setAllLoadedSchools(pageBatch);
-        const resolvedPage = data.currentPage || newPage;
-        const resolvedTotalPages = data.totalPages || Math.max(1, Math.ceil((data.totalCount || totalSchoolsCount) / 25));
+        const resolvedPage = Number(data.currentPage) || newPage;
+        const resolvedTotalCount = typeof data.totalCount === 'number' ? data.totalCount : totalSchoolsCount;
+        const resolvedTotalPages = Number(data.totalPages) || Math.max(1, Math.ceil(resolvedTotalCount / 25));
         setCurrentPage(resolvedPage);
         setTotalPages(resolvedTotalPages);
-        if (data.totalCount) setTotalSchoolsCount(data.totalCount);
+        setTotalSchoolsCount(resolvedTotalCount);
+        setHasMoreSchools(resolvedPage < resolvedTotalPages);
         setAccumulatedSchools((prev) => {
           const existingKeys = new Set(prev.map((s) => String(s.udise_code || s.school_id || s.id)));
           const uniqueNew = pageBatch.filter((s: any) => !existingKeys.has(String(s.udise_code || s.school_id || s.id)));
@@ -1087,7 +1103,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     } finally {
       setIsLoadingMore(false);
     }
-  }, [totalPages, currentPage, isLoadingMore, searchParams, pathname, router, totalSchoolsCount]);
+  }, [totalPages, currentPage, isLoadingMore, searchParams, pathname, router, totalSchoolsCount, selectedBoard, selectedResidential, selectedLocation, searchTerm, searchMode, sortBy]);
 
   // Smart page numbers array for pagination
   const paginationPages = useMemo(() => {
@@ -1096,22 +1112,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     if (total <= 7) {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
-    const pages: (number | string)[] = [1];
-    const left = Math.max(2, current - 1);
-    const right = Math.min(total - 1, current + 1);
-
-    if (left > 2) pages.push('...');
-    for (let p = left; p <= right; p++) {
-      pages.push(p);
+    if (current <= 4) {
+      return [1, 2, 3, 4, 5, '...', total];
     }
-    if (right < total - 1) pages.push('...');
-    pages.push(total);
-    return pages;
+    if (current >= total - 3) {
+      return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+    }
+    return [1, '...', current - 1, current, current + 1, '...', total];
   }, [totalPages, currentPage]);
 
   // Reusable Top & Bottom Pagination Bar (Strictly max 25 schools per page)
   const renderPaginationBar = (position: 'top' | 'bottom') => {
-    const pageCount = Math.min(displayedSchools.length, 25);
+    const pageCount = displayedSchools.length;
     const startItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : (currentPage - 1) * 25 + 1;
     const endItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : Math.min((currentPage - 1) * 25 + pageCount, totalSchoolsCount);
 
@@ -1131,7 +1143,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <strong className="text-[#1f1f1f] font-bold">{totalSchoolsCount}</strong> Schools
           </span>
           <span className="hidden md:inline text-[11px] text-[#747775]">
-            (Max 25 / page)
+            (25 / page)
           </span>
           {isLoadingMore && (
             <Loader2 size={14} className="animate-spin text-[#0b57d0] ml-1" />
@@ -1260,9 +1272,19 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   };
 
   const getSchoolUrl = (s: SchoolRecord) => {
-    const stateSlug = s.state_name?.toLowerCase().replace(/\s+/g, '-') || 'haryana';
-    const districtSlug = s.district_name?.toLowerCase().replace(/\s+/g, '-') || 'palwal';
-    const villageSlug = s.village_ward?.toLowerCase().replace(/\s+/g, '-') || 'main';
+    const rawUdise = String(s.udise_code || s.udiseCode || s.id || '');
+    let derivedState = s.state_name || s.state || '';
+    let derivedDistrict = s.district_name || s.city || '';
+    if (!derivedState && rawUdise.startsWith('07')) {
+      derivedState = 'Delhi';
+      derivedDistrict = derivedDistrict || (rawUdise.startsWith('0704') ? 'East Delhi' : (rawUdise.startsWith('0705') ? 'Central Delhi' : 'Delhi'));
+    } else if (!derivedState && rawUdise.startsWith('06')) {
+      derivedState = 'Haryana';
+      derivedDistrict = derivedDistrict || 'Gurugram';
+    }
+    const stateSlug = (derivedState || 'delhi').toLowerCase().replace(/\s+/g, '-');
+    const districtSlug = (derivedDistrict || 'delhi').toLowerCase().replace(/\s+/g, '-');
+    const villageSlug = (s.village_ward || s.locality || 'main').toLowerCase().replace(/\s+/g, '-');
     return `/school/${stateSlug}/${districtSlug}/${villageSlug}/${s.udise_code || s.id}`;
   };
 
@@ -2940,7 +2962,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 {viewMode !== 'map' && (
                   <div className="flex items-center justify-between text-[11px] text-gray-500 px-0.5 gap-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span><strong className="text-gray-900">{Math.min(displayedSchools.length, 25)}</strong> of <strong className="text-gray-900">{totalSchoolsCount}</strong> Schools</span>
+                      <span>
+                        <strong className="text-gray-900">
+                          {totalSchoolsCount === 0 || displayedSchools.length === 0
+                            ? '0'
+                            : `${(currentPage - 1) * 25 + 1}–${Math.min((currentPage - 1) * 25 + displayedSchools.length, totalSchoolsCount)}`}
+                        </strong> of <strong className="text-gray-900">{totalSchoolsCount}</strong> Schools
+                      </span>
                       {selectedLocation && (
                         <span className="inline-flex items-center gap-0.5 text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded font-medium text-[10px]">
                           <MapPin size={9} />
@@ -2959,7 +2987,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
                     {/* Result count */}
                     <h2 className="text-xs sm:text-[13px] font-bold text-gray-800 whitespace-nowrap mr-0.5">
-                      {Math.min(displayedSchools.length, 25)} / {totalSchoolsCount} Schools
+                      {totalSchoolsCount === 0 || displayedSchools.length === 0
+                        ? '0 Schools'
+                        : `${(currentPage - 1) * 25 + 1}–${Math.min((currentPage - 1) * 25 + displayedSchools.length, totalSchoolsCount)} of ${totalSchoolsCount} Schools`}
                     </h2>
                     
                     {/* View Mode Switcher (Pure Iconic Form with Rich Hover Tooltips) */}
@@ -3141,7 +3171,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
 
 
-              <Link href="/about-experiential-lab" className="text-blue-500 hover:text-blue-700 hover:underline text-[11px] sm:text-xs font-semibold transition-colors inline-block w-fit">
+              <Link href="/about" className="text-blue-500 hover:text-blue-700 hover:underline text-[11px] sm:text-xs font-semibold transition-colors inline-block w-fit">
                 What is Experiential Science Lab?
               </Link>
             </div>

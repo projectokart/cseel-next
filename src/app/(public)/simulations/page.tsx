@@ -12,24 +12,26 @@ export const metadata: Metadata = {
     title: "hands-on science experiments & live labs India | Chemistry, Biology, Physics | CSEEL",
     description: "Explore 200+ hands-on science experiments & live labs for Chemistry, Biology, Physics, Engineering & Mathematics. Aligned with CBSE, ICSE, NCERT. Free demo available. CSEEL India.",
     url: "https://www.cseel.org/simulations",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-simulations.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
+        alt: "Interactive Science Practical Simulations & Live Labs - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
-    title: "hands-on science experiments & live labs India | Chemistry, Biology, Physics | CSEEL",
+    creator: "@cseel_org",
+    title: "Hands-on Science Experiments & Live Labs India | Chemistry, Biology, Physics | CSEEL",
     description: "Explore 200+ hands-on science experiments & live labs for Chemistry, Biology, Physics, Engineering & Mathematics. Aligned with CBSE, ICSE, NCERT. Free demo available. CSEEL India.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-simulations.jpg"],
   },
 };
 

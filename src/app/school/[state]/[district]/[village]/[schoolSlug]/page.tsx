@@ -74,12 +74,45 @@ function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
     const targetCode = (udiseCode || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
     const cleanSlugNorm = cleanSlug.replace(/[^a-z0-9]/gi, '').toLowerCase();
 
+    const mergeRecord = (rec: any) => {
+      if (!rec) return null;
+      const pd = rec.profileData || {};
+      const udiseStr = String(pd.udiseCode || pd.schoolIdentity?.udiseCode || rec.schoolId || '').trim();
+      const rawSchoolName = pd.schoolName || pd.schoolIdentity?.schoolName || rec.schoolName || '';
+
+      // Derive state & district from UDISE code prefix if missing or mistakenly set to Palwal
+      let derivedState = pd.state || pd.contact?.campusLocation?.state || rec.state || '';
+      let derivedDistrict = pd.district || pd.contact?.campusLocation?.district || rec.district || '';
+      if (udiseStr.startsWith('07')) {
+        derivedState = 'Delhi';
+        if (!derivedDistrict || derivedDistrict.toLowerCase() === 'palwal') {
+          if (udiseStr.startsWith('0704')) derivedDistrict = 'East Delhi';
+          else if (udiseStr.startsWith('0705')) derivedDistrict = 'Central Delhi';
+          else if (udiseStr.startsWith('0710')) derivedDistrict = 'South West Delhi';
+          else derivedDistrict = 'Delhi';
+        }
+      }
+
+      return {
+        ...pd,
+        schoolName: rawSchoolName,
+        udiseCode: udiseStr,
+        schoolId: rec.schoolId || pd.schoolId || udiseStr,
+        state: derivedState,
+        district: derivedDistrict,
+        village: pd.village || pd.contact?.campusLocation?.village || rec.village || '',
+      };
+    };
+
     // Check exact UDISE magic token first
-    if (targetCode && tokens[`csl_ai_magic_${targetCode}`]?.profileData) {
-      return tokens[`csl_ai_magic_${targetCode}`].profileData;
+    if (targetCode && tokens[`csl_ai_magic_${targetCode}`]) {
+      return mergeRecord(tokens[`csl_ai_magic_${targetCode}`]);
     }
-    if (targetCode && tokens[`csl_ai_magic_${targetCode.toUpperCase()}`]?.profileData) {
-      return tokens[`csl_ai_magic_${targetCode.toUpperCase()}`].profileData;
+    if (targetCode && tokens[`csl_ai_magic_${targetCode.toUpperCase()}`]) {
+      return mergeRecord(tokens[`csl_ai_magic_${targetCode.toUpperCase()}`]);
+    }
+    if (targetCode && tokens[`sync_${targetCode}`]) {
+      return mergeRecord(tokens[`sync_${targetCode}`]);
     }
 
     for (const tKey of Object.keys(tokens)) {
@@ -91,7 +124,7 @@ function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
         (targetCode && targetCode.length >= 6 && (recSchoolId === targetCode || recUdise === targetCode)) ||
         (cleanSlugNorm && tKey.toLowerCase().includes(cleanSlugNorm))
       ) {
-        return rec.profileData || null;
+        return mergeRecord(rec);
       }
     }
   } catch (err) {
@@ -183,12 +216,24 @@ async function fetchSchoolRecord(state: string, district: string, village: strin
   if (syncedData) {
     const ident = syncedData.schoolIdentity || {};
     const loc = syncedData.contact?.campusLocation || {};
-    const name = ident.schoolName || syncedData.schoolName || rawClean.replace(/[-_]/g, ' ');
-    const st = loc.state || syncedData.state || state;
-    const dist = loc.district || syncedData.district || district;
+    const udise = ident.udiseCode || syncedData.udiseCode || digitsOnly;
+    const rawSchoolName = ident.schoolName || syncedData.schoolName || '';
+    const isCodeLike = /^\d+[a-z0-9]*$/i.test(rawSchoolName.trim()) && rawSchoolName.length <= 15;
+    const name = (!rawSchoolName || isCodeLike)
+      ? rawClean.replace(/[-_]/g, ' ').split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+      : rawSchoolName;
+
+    let st = loc.state || syncedData.state || state;
+    let dist = loc.district || syncedData.district || district;
     const vill = loc.village || syncedData.village || village;
     const addr = loc.streetAddress || syncedData.address || `${vill}, ${dist}, ${st}`;
-    const udise = ident.udiseCode || syncedData.udiseCode || digitsOnly;
+    if (udise.startsWith('07') && (st.toLowerCase() === 'haryana' || dist.toLowerCase() === 'palwal')) {
+      st = 'Delhi';
+      if (udise.startsWith('0704')) dist = 'East Delhi';
+      else if (udise.startsWith('0705')) dist = 'Central Delhi';
+      else if (udise.startsWith('0710')) dist = 'South West Delhi';
+      else dist = 'Delhi';
+    }
     const board = ident.board || syncedData.board || 'CBSE';
     const totalStudents = Number(syncedData.totalStudents || ident.totalStudents || syncedData.home?.statisticsBar?.find((s: any) => s.id === 'stat_students')?.value?.replace(/\D/g, '') || 0);
     const totalTeachers = Number(syncedData.totalTeachers || syncedData.home?.statisticsBar?.find((s: any) => s.id === 'stat_faculty')?.value?.replace(/\D/g, '') || 0);
@@ -380,12 +425,15 @@ async function fetchSchoolRecord(state: string, district: string, village: strin
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const state = decodeURIComponent(resolvedParams.state || 'Haryana');
-  const district = decodeURIComponent(resolvedParams.district || 'District');
-  const village = decodeURIComponent(resolvedParams.village || 'Village');
   const cleanSlug = decodeURIComponent(resolvedParams.schoolSlug || 'school').replace(/\.html$/i, '');
   const digitsOnly = cleanSlug.replace(/\D/g, '');
-  const fallbackSchoolName = cleanSlug.replace(/[-_]/g, ' ');
+  let defaultStateParam = 'Delhi';
+  if (digitsOnly.startsWith('06')) defaultStateParam = 'Haryana';
+  else if (digitsOnly.startsWith('09')) defaultStateParam = 'Uttar Pradesh';
+
+  const state = decodeURIComponent(resolvedParams.state || defaultStateParam);
+  const district = decodeURIComponent(resolvedParams.district || 'District');
+  const village = decodeURIComponent(resolvedParams.village || 'Village');
 
   // Fast path: Check local sync store first (0ms)
   const synced = getSyncedProfileData(digitsOnly, cleanSlug);
@@ -396,7 +444,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const udise = synced?.schoolIdentity?.udiseCode || synced?.udiseCode || dbSchool?.udise_code || '';
   const finalSynced = synced || getSyncedProfileData(udise, cleanSlug);
 
-  const displayName = finalSynced?.schoolIdentity?.schoolName || finalSynced?.schoolName || dbSchool?.school_name || fallbackSchoolName;
+  const rawName = finalSynced?.schoolIdentity?.schoolName || finalSynced?.schoolName || dbSchool?.school_name || '';
+  const isCodeName = /^\d+[a-z0-9_-]*$/i.test(rawName.trim()) && rawName.trim().length <= 15 && /\d{5}/.test(rawName);
+  const displayName = (!rawName || isCodeName) ? 'School Profile' : rawName;
   const displayVillage = finalSynced?.contact?.campusLocation?.village || finalSynced?.village || dbSchool?.village_name || village;
   const displayDistrict = finalSynced?.contact?.campusLocation?.district || finalSynced?.district || dbSchool?.district_name || district;
   const displayState = finalSynced?.contact?.campusLocation?.state || finalSynced?.state || dbSchool?.state_name || state;
@@ -411,7 +461,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Rich, Objective Google Snippet Description (No superlative claims)
   const metaDesc = `${displayName} in ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (${pincode})` : ''}. UDISE: ${udise || 'Verified'}. Affiliated with ${board}. Check fee structure, admission guidelines, curriculum, facilities & verified contact details.`;
   
-  const metaImage = synced?.heroImage || synced?.logoImage || dbSchool?.image_url || 'https://schoolsearch.cseel.org/images/cseel-science-slide-1.jpg';
+  const candidateImage = synced?.heroImage || synced?.logoImage || dbSchool?.image_url;
+  const metaImage = (candidateImage && isValidSchoolImage(candidateImage)) ? candidateImage : 'https://www.cseel.org/images/og-schools.jpg';
 
   // Parents' High-Intent Google Search Query Keywords
   const keywordsList = [
@@ -497,17 +548,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function SchoolPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const rawState = decodeURIComponent(resolvedParams.state || 'Haryana');
+  const rawSlug = decodeURIComponent(resolvedParams.schoolSlug || 'school');
+  const cleanSlug = rawSlug.replace(/\.html$/i, '');
+  const cleanDigits = (cleanSlug || '').replace(/\D/g, '');
+  let defaultStateParam = 'Delhi';
+  if (cleanDigits.startsWith('06')) defaultStateParam = 'Haryana';
+  else if (cleanDigits.startsWith('09')) defaultStateParam = 'Uttar Pradesh';
+
+  const rawState = decodeURIComponent(resolvedParams.state || defaultStateParam);
   const rawDistrict = decodeURIComponent(resolvedParams.district || 'District');
   const rawVillage = decodeURIComponent(resolvedParams.village || 'Village');
-  const rawSlug = decodeURIComponent(resolvedParams.schoolSlug || 'school');
-
-  const cleanSlug = rawSlug.replace(/\.html$/i, '');
   const fallbackSchoolName = cleanSlug.replace(/[-_]/g, ' ');
 
   // Format variables strictly from Supabase record or template mode
   const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
-  const cleanDigits = (cleanSlug || '').replace(/\D/g, '');
   const rawCleanCode = (cleanSlug || '').replace(/\.html$/i, '').trim();
   const preliminaryUdise = cleanDigits || rawCleanCode;
   const canonicalUdise = preliminaryUdise.length === 10 ? '0' + preliminaryUdise : preliminaryUdise;

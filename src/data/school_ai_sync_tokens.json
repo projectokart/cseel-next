@@ -1,33 +1,5 @@
 {
   "tokens": {
-    "sync_070507nd105": {
-      "token": "sync_070507nd105",
-      "schoolId": "070507ND105",
-      "schoolName": "Atal Adarsh Prathmik Vidyalaya",
-      "createdAt": 1791623985881,
-      "expiresAt": 0,
-      "isPermanent": true,
-      "lastUpdatedAt": 1791624705542,
-      "lastUpdatedSource": "Section API [faqs - DELETE]",
-      "profileData": {
-        "contentOverrides": {},
-        "imageOverrides": {},
-        "principalName": "RAMA JOSHI",
-        "sectionVisibility": {
-          "stats": true
-        },
-        "totalStudents": 563,
-        "totalBoys": 336,
-        "totalGirls": 227,
-        "totalTeachers": 24,
-        "maleTeachers": 9,
-        "femaleTeachers": 15,
-        "classroomsCount": 24,
-        "workingSmartBoards": 0,
-        "residentialSchool": "Day School",
-        "faqs": []
-      }
-    },
     "sync_07040622303": {
       "token": "sync_07040622303",
       "schoolId": "07040622303",

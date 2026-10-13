@@ -266,14 +266,28 @@ export function mapSupabaseToSchoolRecord(row: any, searchCenter?: { lat: number
   // ── Format District & State to clean Title Case (e.g. "EAST" -> "East Delhi", "PALWAL" -> "Palwal") ──
   const rawDistrict = String(row.district_name || '').trim();
   const rawState = String(row.state_name || '').trim();
+  const rowUdise = String(row.udise_code || '');
+
+  let defaultState = 'Delhi';
+  let defaultDistrict = 'Delhi';
+  if (rowUdise.startsWith('06')) {
+    defaultState = 'Haryana';
+    defaultDistrict = 'Gurugram';
+  } else if (rowUdise.startsWith('07')) {
+    defaultState = 'Delhi';
+    defaultDistrict = rowUdise.startsWith('0704') ? 'East Delhi' : (rowUdise.startsWith('0705') ? 'Central Delhi' : (rowUdise.startsWith('0710') ? 'South West Delhi' : 'Delhi'));
+  } else if (rowUdise.startsWith('09')) {
+    defaultState = 'Uttar Pradesh';
+    defaultDistrict = 'Noida';
+  }
 
   let cleanDistrict = rawDistrict
     ? rawDistrict.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-    : 'Palwal';
+    : defaultDistrict;
 
   let cleanState = rawState
     ? rawState.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-    : 'Haryana';
+    : defaultState;
 
   if (cleanDistrict.toLowerCase() === 'east' && cleanState.toLowerCase().includes('delhi')) {
     cleanDistrict = 'East Delhi';

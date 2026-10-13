@@ -12,24 +12,26 @@ export const metadata: Metadata = {
     title: "Hands-On Science Experiments | Practical Learning Kits India | CSEEL",
     description: "Explore curriculum-aligned hands-on science experiments and DIY kits for physics, chemistry, biology, and STEM across CBSE and ICSE boards.",
     url: "https://www.cseel.org/hands-on-experiments",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-experiments.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
+        alt: "Hands-on Science Practical Experiments & Labs - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Hands-On Science Experiments | Practical Learning Kits India | CSEEL",
     description: "Explore curriculum-aligned hands-on science experiments and DIY kits for physics, chemistry, biology, and STEM across CBSE and ICSE boards.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-experiments.jpg"],
   },
 };
 

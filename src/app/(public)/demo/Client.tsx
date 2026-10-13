@@ -175,7 +175,7 @@ const Demo = () => {
                   >
                     {/* VIDEO CONTAINER WITH OVERLAY BUTTON */}
                     <div className="relative aspect-video rounded-[2rem] overflow-hidden mb-5 shadow-lg border border-slate-50 bg-slate-50">
-                      <img src={v.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" />
+                      <img src={v.thumbnail} alt={v.title || "CSEEL Demo Video Thumbnail"} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" />
                       
                       {/* OVERLAY WITH "WATCH DEMO" BUTTON */}
                       <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/60 transition-all duration-500 flex items-center justify-center px-6">

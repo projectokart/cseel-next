@@ -45,7 +45,9 @@ scripts/*.js
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
-
 scratch/
-.env*
+
+# temp test files & root screenshots
+/*.png
+/sample_output.html
+/check_school.js

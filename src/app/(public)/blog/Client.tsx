@@ -293,7 +293,7 @@ export default function BlogClient() {
                     </p>
 
                     <Link 
-                      href="/match-your-syllabus" 
+                      href="/materials" 
                       className="button_primary w-button inline-flex items-center justify-center bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-[15px] px-7 py-3.5 rounded-[12px] shadow-[0_4px_14px_rgba(0,111,204,0.28)] hover:shadow-[0_6px_20px_rgba(0,111,204,0.38)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
                     >
                       Match Your Syllabus
@@ -723,7 +723,7 @@ export default function BlogClient() {
 
                 <div className="cta_wrap flex flex-wrap gap-4">
                   <Link 
-                    href="/contact"
+                    href="/contact-us"
                     className="button_primary w-button inline-flex items-center justify-center bg-[#006FCC] hover:bg-[#007ee8] text-white font-bold text-[15px] px-8 py-4 rounded-[12px] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
                     Learn About Pricing

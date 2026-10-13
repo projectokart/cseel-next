@@ -488,7 +488,7 @@ export default function SchoolProfileView({
     ? (templateData?.schoolName || 'School Name')
     : (isTemplate
       ? 'School Name'
-      : ((!schoolName || /^\d+$/.test(schoolName.trim()))
+      : ((!schoolName || /^\d+$/.test(schoolName.trim()) || (/^\d+[a-z0-9_-]*$/i.test(schoolName.trim()) && schoolName.trim().length <= 15 && /\d{5}/.test(schoolName)))
         ? 'School Profile'
         : schoolName));
 

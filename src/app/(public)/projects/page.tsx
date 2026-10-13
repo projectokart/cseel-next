@@ -24,24 +24,26 @@ export const metadata: Metadata = {
     title: "Top Science Working Models & Projects for Class 6-12 | CBSE & ICSE | CSEEL",
     description: "Browse 500+ student science innovations, working models, and DIY experiments from across India.",
     url: "https://www.cseel.org/projects",
-    siteName: "CSEEL",
+    siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/og-experiments.jpg",
         width: 1200,
         height: 630,
-        alt: "CSEEL - Top Student Science Working Models India",
+        alt: "Top Student Science Working Models & Projects - CSEEL",
+        type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     site: "@cseel_org",
+    creator: "@cseel_org",
     title: "Top Science Working Models & Projects for Class 6-12 | CSEEL",
     description: "Browse 500+ student science innovations, working models, and DIY experiments from across India.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/og-experiments.jpg"],
   },
 };
 

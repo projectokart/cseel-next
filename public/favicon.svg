@@ -1,30 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 848 848" width="848" height="848">
-  <rect x="403" y="10" width="42" height="828" fill="#FFFFFF" />
-  <rect x="10" y="403" width="828" height="42" fill="#FFFFFF" />
-  <rect x="157" y="157" width="534" height="534" rx="165" fill="#FFFFFF" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Round White Background Disc (corners are 100% transparent) -->
+  <circle cx="256" cy="256" r="256" fill="#FFFFFF" />
 
-  <!-- white border (one outline around whole logo, no dip at gaps) -->
-  <rect x="10" y="10" width="828" height="828" rx="226" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="16" />
+  <defs>
+    <!-- Cross mask to create the 4 separated circular quadrant arcs with rounded gaps -->
+    <mask id="arc-gap-mask">
+      <rect width="512" height="512" fill="#FFFFFF" />
+      <!-- Vertical slit with rounded ends -->
+      <rect x="244" y="32" width="24" height="448" rx="12" fill="#000000" />
+      <!-- Horizontal slit with rounded ends -->
+      <rect x="32" y="244" width="448" height="24" rx="12" fill="#000000" />
+    </mask>
+  </defs>
 
-  <!-- brackets -->
-  <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#0A4B69" />
-  <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#0A4B69" />
-  <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#0A4B69" />
-  <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#0A4B69" />
+  <!-- Circular Ring Arcs (Enlarged 84% diameter: 430px, Safe margin inside 512px circle: 41px) -->
+  <path d="M 256 41 A 215 215 0 1 1 255.9 41 Z M 256 94 A 162 162 0 1 0 256.1 94 Z" fill="#06556C" mask="url(#arc-gap-mask)" />
 
-  <circle cx="424" cy="424" r="64" fill="#F8A130" />
+  <!-- Central Vibrant Orange Nucleus -->
+  <circle cx="256" cy="256" r="34" fill="#F9A421" />
 
-  <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#0A4B69" stroke-width="16">
-    <ellipse rx="225" ry="100" transform="rotate(30)" />
-    <ellipse rx="225" ry="100" transform="rotate(90)" />
-    <ellipse rx="225" ry="100" transform="rotate(150)" />
+  <!-- Atomic Orbits (3 ellipses rotated at 30, 90, 150 deg) -->
+  <g id="orbits" transform="translate(256, 256)" fill="none" stroke="#06556C" stroke-width="12">
+    <ellipse rx="121" ry="54" transform="rotate(30)" />
+    <ellipse rx="121" ry="54" transform="rotate(90)" />
+    <ellipse rx="121" ry="54" transform="rotate(150)" />
   </g>
+
+  <!-- Electrons (3 dots at orbit vertices with white borders) -->
   <g id="electrons">
-    <circle cx="424.0" cy="199.0" r="26" fill="#FFFFFF" />
-    <circle cx="424.0" cy="199.0" r="20" fill="#0A4B69" />
-    <circle cx="229.1" cy="536.5" r="26" fill="#FFFFFF" />
-    <circle cx="229.1" cy="536.5" r="20" fill="#0A4B69" />
-    <circle cx="618.9" cy="536.5" r="26" fill="#FFFFFF" />
-    <circle cx="618.9" cy="536.5" r="20" fill="#0A4B69" />
+    <!-- Top electron -->
+    <circle cx="256" cy="135" r="14" fill="#FFFFFF" />
+    <circle cx="256" cy="135" r="10.5" fill="#06556C" />
+
+    <!-- Bottom-left electron -->
+    <circle cx="151.2" cy="316.5" r="14" fill="#FFFFFF" />
+    <circle cx="151.2" cy="316.5" r="10.5" fill="#06556C" />
+
+    <!-- Bottom-right electron -->
+    <circle cx="360.8" cy="316.5" r="14" fill="#FFFFFF" />
+    <circle cx="360.8" cy="316.5" r="10.5" fill="#06556C" />
   </g>
 </svg>

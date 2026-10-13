@@ -84,6 +84,9 @@ const nextConfig = {
       { source: '/projectokart', destination: 'https://projectokart.com', permanent: true },
       { source: '/projectocart', destination: 'https://projectokart.com', permanent: true },
       { source: '/subject', destination: '/domain/science', permanent: false },
+      { source: '/contact', destination: '/contact-us', permanent: true },
+      { source: '/about-experiential-lab', destination: '/about', permanent: true },
+      { source: '/match-your-syllabus', destination: '/materials', permanent: true },
     ];
   },
   async headers() {

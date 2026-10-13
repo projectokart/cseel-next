@@ -44,15 +44,26 @@ export const metadata: Metadata = {
     title: 'School Search & Finder | Find Best Schools Near You | CSEEL',
     description: 'Explore, search and discover verified CBSE, ICSE, Government, and Private schools near your location with interactive map, real-time distance calculator, and official UDISE data.',
     url: 'https://schoolsearch.cseel.org',
-    siteName: 'CSEEL School Finder',
+    siteName: 'CSEEL - Center for Scientific Exploration & Experiential Learning',
     type: 'website',
     locale: 'en_IN',
+    images: [
+      {
+        url: 'https://www.cseel.org/images/og-schools.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'CSEEL School Search & Directory Across India',
+        type: 'image/jpeg',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'School Search & Finder | Find Best Schools Near You | CSEEL',
     description: 'Find verified CBSE, ICSE, Govt, and Private schools near you with interactive map and UDISE data.',
+    images: ['https://www.cseel.org/images/og-schools.jpg'],
     creator: '@cseel_org',
+    site: '@cseel_org',
   },
 };
 

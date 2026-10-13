@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { materialsRepository } from '@/features/materials/db/materialsRepository';
 import { MaterialCategoryKey } from '@/features/materials/types/materialTypes';

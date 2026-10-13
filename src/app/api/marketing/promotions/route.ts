@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { INITIAL_PROMOTIONS } from '@/features/marketing/data/marketingSeed';
 import { MarketingPromotion } from '@/features/marketing/types';

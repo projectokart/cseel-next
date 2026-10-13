@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
 import {

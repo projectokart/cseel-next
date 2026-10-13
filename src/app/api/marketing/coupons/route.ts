@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 ﻿import { NextRequest, NextResponse } from 'next/server';
 import { INITIAL_COUPONS } from '@/features/marketing/data/marketingSeed';
 import { CouponVoucher } from '@/features/marketing/types';

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { INITIAL_HOMEPAGE_SECTIONS } from '@/features/homepage-cms/data/homepageSeed';
 import { HomepageSectionConfig, HomepageVersion } from '@/features/homepage-cms/types';

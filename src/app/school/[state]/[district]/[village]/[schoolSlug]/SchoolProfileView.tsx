@@ -26,7 +26,9 @@ import {
   Save,
   Check,
   Menu,
-  Briefcase
+  Briefcase,
+  PlusCircle,
+  Clock
 } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,6 +36,8 @@ import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolT
 import dynamic from 'next/dynamic';
 import VerifiedBadge from '@/components/schools/template/VerifiedBadge';
 import { cleanBoardName } from '@/integrations/supabase/schoolSearchClient';
+
+const AddSchoolModal = dynamic(() => import('@/components/schools/AddSchoolModal'), { ssr: false });
 
 // Critical Above-The-Fold Component (Instant Hydration)
 import SchoolHeroSection from '@/components/schools/profile/SchoolHeroSection';
@@ -373,6 +377,24 @@ export default function SchoolProfileView({
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
+
+  // School Authorization & RBAC State (Zero-Bypass)
+  const userEmailClean = user?.email?.toLowerCase().trim() || '';
+  const isSuperAdminUser = Boolean(
+    userEmailClean && (
+      userEmailClean === 'ptdevkaushik101@gmail.com' ||
+      userEmailClean === 'ptdevkaushik104@gmail.com' ||
+      userEmailClean.endsWith('@cseel.org')
+    )
+  );
+
+  const [canEditSchool, setCanEditSchool] = useState(isSuperAdminUser);
+  const [authRole, setAuthRole] = useState<'admin' | 'owner' | 'magic_link' | 'unauthorized'>(
+    isSuperAdminUser ? 'admin' : 'unauthorized'
+  );
+  const [userSchoolClaim, setUserSchoolClaim] = useState<any | null>(null);
+  const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
 
   // Interactive Live Template Context
   const templateCtx = useOptionalSchoolTemplate();
@@ -380,6 +402,83 @@ export default function SchoolProfileView({
   const isLiveTemplate = (isTemplate && !!templateCtx) || Boolean(initialProfileData);
   const isAdmissionsOpen = Boolean(templateData?.admissionsOpen);
   const isEditMode = templateCtx ? templateCtx.isEditMode : false;
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    // Super Admin gets instant full editing privileges
+    if (isSuperAdminUser) {
+      setCanEditSchool(true);
+      setAuthRole('admin');
+      const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      if (searchParams?.get('edit') === 'true' && templateCtx) {
+        templateCtx.setIsEditMode(true);
+      }
+    }
+
+    async function checkAuthorization() {
+      try {
+        const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+        const magicKey = searchParams?.get('magicKey') || searchParams?.get('token') || '';
+        const cleanUdise = String(udiseCode || '').replace(/\D/g, '');
+
+        const queryParams = new URLSearchParams({
+          udise: cleanUdise,
+          user_id: user?.id || '',
+          email: user?.email || '',
+          magicKey: magicKey,
+        });
+
+        const res = await fetch(`/api/school-claim/auth-status?${queryParams.toString()}`);
+        if (!res.ok) throw new Error('Auth check failed');
+        const authData = await res.json();
+
+        if (!isCancelled) {
+          const isAllowed = isSuperAdminUser || Boolean(authData.canEditCurrentSchool);
+          setCanEditSchool(isAllowed);
+          setAuthRole(isSuperAdminUser ? 'admin' : (authData.role || 'unauthorized'));
+          setUserSchoolClaim(authData.primarySchool || null);
+
+          // If authorized and URL has edit=true, auto-enable edit mode
+          if (isAllowed && searchParams?.get('edit') === 'true' && templateCtx) {
+            templateCtx.setIsEditMode(true);
+          } else if (!isAllowed && templateCtx && templateCtx.isEditMode) {
+            // Strictly enforce lock down if user is unauthorized
+            templateCtx.setIsEditMode(false);
+          }
+        }
+      } catch (err) {
+        if (!isCancelled) {
+          if (isSuperAdminUser) {
+            setCanEditSchool(true);
+            setAuthRole('admin');
+          } else {
+            setCanEditSchool(false);
+            setAuthRole('unauthorized');
+            if (templateCtx && templateCtx.isEditMode) {
+              templateCtx.setIsEditMode(false);
+            }
+          }
+        }
+      }
+    }
+
+    checkAuthorization();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user?.id, user?.email, udiseCode, isSuperAdminUser]);
+
+  const handleSaveDraft = () => {
+    if (templateCtx) {
+      try {
+        localStorage.setItem(`cseel_school_draft_${udiseCode}`, JSON.stringify(templateCtx.data));
+      } catch (_) {}
+      setDraftSaved(true);
+      setTimeout(() => setDraftSaved(false), 2500);
+    }
+  };
 
   const handleSaveUpdates = async () => {
     setIsUpdating(true);
@@ -618,10 +717,10 @@ export default function SchoolProfileView({
                  lowerMgmt.includes('kendriya');
 
   const displayManagementLabel = typeof templateData?.management === 'string' && templateData.management
-    ? templateData.management
+    ? (lowerMgmt.includes('govt') ? 'Govt' : lowerMgmt.includes('private') ? 'Private' : templateData.management)
     : (typeof management === 'string' && management
-        ? management
-        : (isGovt ? 'Dept. of School Education, Govt.' : 'Private Unaided (Recognized)'));
+        ? (lowerMgmt.includes('govt') ? 'Govt' : lowerMgmt.includes('private') ? 'Private' : management)
+        : (isGovt ? 'Govt' : 'Private'));
 
   const rawBoardStr = isLiveTemplate ? (templateData?.board || displayBoard) : (board || displayBoard);
   const boardStr = typeof rawBoardStr === 'string' ? rawBoardStr : (typeof displayBoard === 'string' ? displayBoard : 'CBSE');
@@ -822,42 +921,87 @@ export default function SchoolProfileView({
 
           {/* Desktop Actions (Hidden on Mobile View): Claim School, Admission, Login/User, Update */}
           <div className="hidden md:flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Small Update Button (in edit mode) */}
-            {isEditMode && (
+            {/* Edit Mode Active: Provide Save Draft & Publish to Live */}
+            {isEditMode && canEditSchool && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleSaveDraft}
+                  className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white/15 hover:bg-white/25 text-white border border-white/30 transition-all cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap"
+                  title="Save working draft locally"
+                >
+                  <Save className="w-3 h-3" />
+                  <span>{draftSaved ? 'Draft Saved!' : 'Save Draft'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSaveUpdates}
+                  disabled={isUpdating}
+                  className={`inline-flex items-center justify-center gap-1 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap ${
+                    updateSuccess
+                      ? 'bg-emerald-600 text-white'
+                      : isUpdating
+                      ? 'bg-slate-400 text-white cursor-wait'
+                      : 'bg-[#FBBC04] hover:bg-amber-400 text-slate-950'
+                  }`}
+                  title="Publish verified updates permanently to Supabase database"
+                >
+                  {updateSuccess ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      <span>Published!</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{isUpdating ? 'Publishing...' : 'Publish'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* If Authorized but not currently in Edit Mode: Quick Edit Details Button */}
+            {!isEditMode && (canEditSchool || isSuperAdminUser) && (
               <button
                 type="button"
-                onClick={handleSaveUpdates}
-                disabled={isUpdating}
-                className={`inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap ${
-                  updateSuccess
-                    ? 'bg-emerald-600 text-white'
-                    : isUpdating
-                    ? 'bg-slate-400 text-white cursor-wait'
-                    : 'bg-[#FBBC04] hover:bg-amber-400 text-slate-950'
-                }`}
-                title="Save changes to school profile"
+                onClick={() => templateCtx?.setIsEditMode(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-950 bg-[#FBBC04] hover:bg-amber-400 shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                title="Open School Profile in Edit Mode"
               >
-                {updateSuccess ? (
-                  <>
-                    <Check className="w-3 h-3 stroke-[3]" />
-                    <span>Saved!</span>
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-3 h-3" />
-                    <span>{isUpdating ? 'Saving...' : 'Update'}</span>
-                  </>
-                )}
+                <Edit3 className="w-3.5 h-3.5 stroke-[2.2]" />
+                <span>Edit Details</span>
               </button>
             )}
 
-            {/* Claim School Pill Button */}
-            {!isTemplate && !isEditMode && (
+            {/* Super Admin Quick "+ Add School" Button in Desktop Header */}
+            {isSuperAdminUser && (
               <button
                 type="button"
-                onClick={() => setIsClaimModalOpen(true)}
+                onClick={() => setIsAddSchoolModalOpen(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                title="Add and verify a new school profile instantly as Super Admin"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>+ Add School</span>
+              </button>
+            )}
+
+            {/* Claim School / Add School Pill Button (For unverified visitors) */}
+            {!isTemplate && !isEditMode && !canEditSchool && !isSuperAdminUser && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!user) {
+                    const ret = typeof window !== 'undefined' ? window.location.pathname : '/schools';
+                    window.location.href = `/login?returnUrl=${encodeURIComponent(ret)}`;
+                  } else {
+                    setIsAddSchoolModalOpen(true);
+                  }
+                }}
                 className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs font-bold text-white bg-emerald-600/90 hover:bg-emerald-600 border border-emerald-400/50 shadow-2xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
-                title="Official Representative? Claim this school profile."
+                title="Are you an official representative? Register or claim management of this school profile."
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-200 stroke-[2.4]" />
                 <span>Claim School</span>
@@ -905,7 +1049,7 @@ export default function SchoolProfileView({
 
                 {/* Dropdown Menu */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-56 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 px-2.5 z-50 animate-in fade-in zoom-in-95 duration-100">
+                  <div className="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 px-2.5 z-50 animate-in fade-in zoom-in-95 duration-100">
                     <div className="px-2 py-1.5 border-b border-slate-100 mb-1.5">
                       <p className="text-xs font-bold text-slate-900 truncate">
                         {user.user_metadata?.full_name || 'Signed In'}
@@ -913,34 +1057,97 @@ export default function SchoolProfileView({
                       <p className="text-[10px] text-slate-500 font-mono truncate">
                         {user.email}
                       </p>
+                      {(canEditSchool || isSuperAdminUser) && (
+                        <span className={`inline-flex items-center gap-1 text-[9.5px] font-bold px-2 py-0.5 rounded-full mt-1 ${
+                          authRole === 'admin' || isSuperAdminUser
+                            ? 'text-amber-800 bg-amber-50 border border-amber-300'
+                            : 'text-emerald-700 bg-emerald-50 border border-emerald-200'
+                        }`}>
+                          <CheckCircle2 className="w-2.5 h-2.5 text-amber-600" />
+                          <span>{authRole === 'admin' || isSuperAdminUser ? 'Verified Super Admin' : 'Verified School Owner'}</span>
+                        </span>
+                      )}
                     </div>
 
-                    {/* Edit Mode Toggle Switch */}
-                    <div className="px-2 py-1.5 bg-[#FEFBF3] border border-[#F4EBD9] rounded-xl flex items-center justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-1.5">
-                        <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
-                        <span className="text-xs font-bold text-slate-800">Edit Mode</span>
+                    {/* RBAC Action 1: If authorized for THIS school or Super Admin, show Edit Mode Toggle */}
+                    {(canEditSchool || isSuperAdminUser) ? (
+                      <div className="px-2 py-1.5 bg-[#FEFBF3] border border-[#F4EBD9] rounded-xl flex items-center justify-between gap-2 mb-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
+                          <span className="text-xs font-bold text-slate-800">Edit Mode</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (templateCtx) {
+                              templateCtx.setIsEditMode(!isEditMode);
+                            }
+                          }}
+                          className={`w-10 h-5 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-200 ${
+                            isEditMode ? 'bg-[#005689]' : 'bg-slate-300'
+                          }`}
+                          title={isEditMode ? 'Disable Edit Mode' : 'Enable Edit Mode'}
+                        >
+                          <div
+                            className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
+                              isEditMode ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
                       </div>
+                    ) : null}
+
+                    {/* RBAC Action 2: Dynamic Button: Super Admin can always add school; owners can edit/claim */}
+                    {isSuperAdminUser ? (
                       <button
                         type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (templateCtx) {
-                            templateCtx.setIsEditMode(!isEditMode);
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          setIsAddSchoolModalOpen(true);
+                        }}
+                        className="w-full px-2 py-1.5 text-left text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex items-center gap-2 transition-colors cursor-pointer mb-1.5"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                        <span className="truncate">+ Add New School Profile</span>
+                      </button>
+                    ) : userSchoolClaim && userSchoolClaim.isApproved ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          if (userSchoolClaim.udise_code === displayUdise) {
+                            templateCtx?.setIsEditMode(true);
+                          } else if (userSchoolClaim.profile_path) {
+                            window.location.href = `${userSchoolClaim.profile_path}?edit=true`;
                           }
                         }}
-                        className={`w-10 h-5 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-200 ${
-                          isEditMode ? 'bg-[#005689]' : 'bg-slate-300'
-                        }`}
-                        title={isEditMode ? 'Disable Edit Mode' : 'Enable Edit Mode'}
+                        className="w-full px-2 py-1.5 text-left text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#D6EDFF] rounded-xl flex items-center gap-2 transition-colors cursor-pointer mb-1.5"
                       >
-                        <div
-                          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
-                            isEditMode ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        />
+                        <Edit3 className="w-3.5 h-3.5 text-[#005689] shrink-0" />
+                        <span className="truncate">Edit Your School Details</span>
                       </button>
-                    </div>
+                    ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
+                      <div className="px-2 py-1.5 text-left text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200/80 rounded-xl flex items-center gap-2 mb-1.5">
+                        <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        <div className="min-w-0">
+                          <p className="truncate text-[11px] font-black">Registration Pending</p>
+                          <p className="text-[9.5px] font-medium text-amber-700 truncate">{userSchoolClaim.school_name || 'Admin verification in progress'}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          setIsAddSchoolModalOpen(true);
+                        }}
+                        className="w-full px-2 py-1.5 text-left text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex items-center gap-2 transition-colors cursor-pointer mb-1.5"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                        <span className="truncate">Add Your School Profile</span>
+                      </button>
+                    )}
 
                     {/* Log Out Button */}
                     <button
@@ -1099,8 +1306,26 @@ export default function SchoolProfileView({
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
 
+            {/* Super Admin Add School Button in Quick Actions */}
+            {isSuperAdminUser && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsAddSchoolModalOpen(true);
+                }}
+                className="w-full py-2.5 px-3 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-between shadow-xs transition-all cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <PlusCircle className="w-4 h-4 text-emerald-100 stroke-[2.4]" />
+                  <span>+ Add New School Profile</span>
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-emerald-100" />
+              </button>
+            )}
+
             {/* Claim School Button */}
-            {!isTemplate && !isEditMode && (
+            {!isTemplate && !isEditMode && !canEditSchool && !isSuperAdminUser && (
               <button
                 type="button"
                 onClick={() => {
@@ -1190,31 +1415,107 @@ export default function SchoolProfileView({
                 </div>
               </div>
 
-              {/* Edit Mode Toggle Switch */}
-              <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
-                  Edit Mode
-                </span>
+              {/* Role Badge for Authorized School Owner or Super Admin */}
+              {(canEditSchool || isSuperAdminUser) && (
+                <div className="px-1">
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    authRole === 'admin' || isSuperAdminUser
+                      ? 'text-amber-800 bg-amber-50 border border-amber-300'
+                      : 'text-emerald-700 bg-emerald-50 border border-emerald-200'
+                  }`}>
+                    <CheckCircle2 className="w-2.5 h-2.5 text-amber-600" />
+                    <span>{authRole === 'admin' || isSuperAdminUser ? 'Verified Super Admin' : 'Verified School Owner'}</span>
+                  </span>
+                </div>
+              )}
+
+              {/* Edit Mode Toggle Switch (Strictly for Authorized Users Only) */}
+              {(canEditSchool || isSuperAdminUser) && (
+                <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
+                    Edit Mode
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (templateCtx) {
+                        templateCtx.setIsEditMode(!isEditMode);
+                      }
+                    }}
+                    className={`w-9 h-5 flex items-center rounded-full p-0.5 cursor-pointer transition-colors ${
+                      isEditMode ? 'bg-[#005689]' : 'bg-slate-300'
+                    }`}
+                  >
+                    <div
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
+                        isEditMode ? 'translate-x-4' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+              )}
+
+              {/* Dynamic Button: Super Admin can always add school; owners can edit/claim */}
+              {isSuperAdminUser ? (
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (templateCtx) {
-                      templateCtx.setIsEditMode(!isEditMode);
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAddSchoolModalOpen(true);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <PlusCircle className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>+ Add New School Profile</span>
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-700" />
+                </button>
+              ) : userSchoolClaim && userSchoolClaim.isApproved ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    if (userSchoolClaim.udise_code === displayUdise) {
+                      templateCtx?.setIsEditMode(true);
+                    } else if (userSchoolClaim.profile_path) {
+                      window.location.href = `${userSchoolClaim.profile_path}?edit=true`;
                     }
                   }}
-                  className={`w-9 h-5 flex items-center rounded-full p-0.5 cursor-pointer transition-colors ${
-                    isEditMode ? 'bg-[#005689]' : 'bg-slate-300'
-                  }`}
+                  className="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#D6EDFF] border border-[#D6EDFF] flex items-center justify-between transition-colors cursor-pointer"
                 >
-                  <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                      isEditMode ? 'translate-x-4' : 'translate-x-0'
-                    }`}
-                  />
+                  <span className="flex items-center gap-2">
+                    <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
+                    <span>Edit Your School Details</span>
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[#005689]" />
                 </button>
-              </div>
+              ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
+                <div className="p-2.5 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-black">Registration Pending Approval</p>
+                    <p className="text-[10px] font-medium text-amber-700 truncate">{userSchoolClaim.school_name || 'Admin verification in progress'}</p>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsAddSchoolModalOpen(true);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-between transition-colors cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <PlusCircle className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>Add Your School Profile</span>
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-700" />
+                </button>
+              )}
 
               {/* Log Out Button */}
               <button
@@ -2046,6 +2347,14 @@ export default function SchoolProfileView({
         onClose={() => setIsClaimModalOpen(false)}
         schoolName={displayName}
         udiseCode={displayUdise}
+      />
+
+      {/* Add / Register School Profile Modal */}
+      <AddSchoolModal
+        isOpen={isAddSchoolModalOpen}
+        onClose={() => setIsAddSchoolModalOpen(false)}
+        defaultUdise={displayUdise}
+        defaultSchoolName={displayName}
       />
 
     </div>

@@ -9,9 +9,10 @@ import {
   sanitizePayloadDeep,
   generate16CharMixedMagicKey,
   isAdminRequest,
+  isSuperAdminEmail,
 } from '@/lib/security/apiSecurityGuard';
 
-const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik104@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik101@gmail.com';
 const CLAIMS_FILE = path.join(process.cwd(), 'src', 'data', 'school_claims.json');
 
 export interface SchoolClaimRecord {
@@ -33,11 +34,19 @@ export interface SchoolClaimRecord {
   created_at: string;
   updated_at?: string;
   approved_at?: string;
+  approved_by?: string;
   user_id?: string;
   state?: string;
   district?: string;
   city?: string;
   pincode?: string;
+  affiliation_number?: string;
+  board?: string;
+  management?: string;
+  grades_level?: string;
+  principal_name?: string;
+  established_year?: string;
+  profile_path?: string;
 }
 
 function readClaimsStore(): { claims: SchoolClaimRecord[] } {
@@ -335,30 +344,76 @@ export async function POST(req: NextRequest) {
     const sanitizedDesignation = sanitizeInput(designation || 'School Representative');
     const sanitizedNote = sanitizeInput(note);
 
-    // ── STRICT DUPLICATE REQUEST CHECK (ONE SCHOOL ADD REQUEST PER USER) ──
+    // ── STRICT DUPLICATE REQUEST CHECK ──
     const existingStore = readClaimsStore();
-    const duplicateClaim = existingStore.claims.find((c) => {
-      const matchUser = user_id && String(c.user_id) === String(user_id);
-      const matchEmail = c.claimant_email && c.claimant_email.toLowerCase() === sanitizedEmail;
-      return (matchUser || matchEmail) && (c.status === 'pending' || c.status === 'approved');
-    });
+    const sanitizedAffiliation = sanitizeInput(body.affiliation_number || '');
+    const isSuperAdminSubmit = isSuperAdminEmail(sanitizedEmail) || isAdminRequest(req, { adminEmail: sanitizedEmail });
 
-    if (duplicateClaim) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'ALREADY_REQUESTED',
-          message: `A school registration request (${duplicateClaim.school_name}) has already been submitted from this account. Each user can submit one request at a time.`,
-          existing_claim: {
-            id: duplicateClaim.id,
-            school_name: duplicateClaim.school_name,
-            status: duplicateClaim.status,
-            created_at: duplicateClaim.created_at,
+    // 1. One school add/claim request per user account (Super Admin exempt)
+    if (!isSuperAdminSubmit) {
+      const duplicateUserClaim = existingStore.claims.find((c) => {
+        const matchUser = user_id && String(c.user_id) === String(user_id);
+        const matchEmail = c.claimant_email && c.claimant_email.toLowerCase() === sanitizedEmail;
+        return (matchUser || matchEmail) && (c.status === 'pending' || c.status === 'approved');
+      });
+
+      if (duplicateUserClaim) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'ALREADY_REQUESTED',
+            message: `A school profile (${duplicateUserClaim.school_name}) is already associated with this account. Status: ${duplicateUserClaim.status.toUpperCase()}.`,
+            existing_claim: {
+              id: duplicateUserClaim.id,
+              school_name: duplicateUserClaim.school_name,
+              udise_code: duplicateUserClaim.udise_code,
+              status: duplicateUserClaim.status,
+              created_at: duplicateUserClaim.created_at,
+              profile_path: duplicateUserClaim.profile_path,
+            },
           },
-        },
-        { status: 409 }
-      );
+          { status: 409 }
+        );
+      }
     }
+
+    // 2. Prevent duplicate entries for the same 11-digit UDISE code
+    if (cleanUdise && cleanUdise.length === 11 && !cleanUdise.startsWith('SCH')) {
+      const existingUdiseClaim = existingStore.claims.find(
+        (c) => c.udise_code === cleanUdise && (c.status === 'pending' || c.status === 'approved')
+      );
+      if (existingUdiseClaim) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'UDISE_ALREADY_REGISTERED',
+            message: `A school with UDISE code ${cleanUdise} (${existingUdiseClaim.school_name}) is already registered on CSEEL. If you represent this institution, please contact administrator support for ownership verification.`,
+          },
+          { status: 409 }
+        );
+      }
+    }
+
+    // 3. Prevent duplicate entries for the same Board Affiliation Number
+    if (sanitizedAffiliation) {
+      const existingAffilClaim = existingStore.claims.find(
+        (c) =>
+          c.affiliation_number &&
+          c.affiliation_number.toLowerCase() === sanitizedAffiliation.toLowerCase() &&
+          (c.status === 'pending' || c.status === 'approved')
+      );
+      if (existingAffilClaim) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'AFFILIATION_ALREADY_REGISTERED',
+            message: `A school with Board Affiliation Number "${sanitizedAffiliation}" (${existingAffilClaim.school_name}) is already registered on CSEEL. Duplicate registrations with the same affiliation number are not permitted.`,
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     const resolvedSchoolName = sanitizeInput(
       school_name || verified_udise_data?.schoolName || 'School Profile'
     );
@@ -370,10 +425,24 @@ export async function POST(req: NextRequest) {
     const resolvedPincode = sanitizeInput(pincode || verified_udise_data?.pincode || '');
     const resolvedBoard = sanitizeInput(board || verified_udise_data?.board || 'CBSE');
     const resolvedType = sanitizeInput(school_type || verified_udise_data?.nature || 'Day School');
+    const resolvedManagement = sanitizeInput(body.management || 'Private');
+    const resolvedGrades = sanitizeInput(body.grades_level || '');
+    const resolvedPrincipal = sanitizeInput(body.principal_name || '');
+    const resolvedYear = sanitizeInput(body.established_year || '');
+
+    const resolvedProfilePath = await resolveSchoolProfilePath(
+      cleanUdise,
+      resolvedSchoolName,
+      resolvedState,
+      resolvedDistrict,
+      resolvedCity
+    );
 
     const claimId = `claim_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
-    // CRITICAL SECURITY RULE: Magic Link is NOT created until Admin verifies & approves!
+    const adminDirectMagicKey = isSuperAdminSubmit ? generate16CharMixedMagicKey() : '';
+
+    // CRITICAL SECURITY RULE: Regular claims require Admin approval. Super Admin gets instant provisioning!
     const newClaim: SchoolClaimRecord = {
       id: claimId,
       udise_code: cleanUdise,
@@ -385,16 +454,25 @@ export async function POST(req: NextRequest) {
       designation: sanitizedDesignation,
       note: sanitizedNote,
       request_type: request_type === 'add_school' || sanitizedNote.includes('[ADD SCHOOL') ? 'add_school' : 'claim',
-      status: 'pending',
-      magic_key: '', // Strictly empty until Admin approves
-      visual_edit_token: '', // Strictly empty until Admin approves
-      visual_edit_url: '', // Strictly empty until Admin approves
+      status: isSuperAdminSubmit ? 'approved' : 'pending',
+      magic_key: adminDirectMagicKey,
+      visual_edit_token: adminDirectMagicKey,
+      visual_edit_url: adminDirectMagicKey ? `${resolvedProfilePath}?edit=true&magicKey=${adminDirectMagicKey}` : '',
       created_at: new Date().toISOString(),
+      approved_at: isSuperAdminSubmit ? new Date().toISOString() : undefined,
+      approved_by: isSuperAdminSubmit ? 'Super Administrator (Direct Provisioning)' : undefined,
       user_id: String(user_id),
       state: resolvedState,
       district: resolvedDistrict,
       city: resolvedCity,
       pincode: resolvedPincode,
+      affiliation_number: sanitizedAffiliation,
+      board: resolvedBoard,
+      management: resolvedManagement,
+      grades_level: resolvedGrades,
+      principal_name: resolvedPrincipal,
+      established_year: resolvedYear,
+      profile_path: resolvedProfilePath,
     };
 
     // 1. Ensure school exists in udise_private_schools if this is an Add School request
@@ -421,7 +499,7 @@ export async function POST(req: NextRequest) {
           residential_school: resolvedType,
           phone: sanitizedPhone,
           email: sanitizedEmail,
-          is_verified: false,
+          is_verified: isSuperAdminSubmit ? true : false,
           admissions_open: false,
           updated_at: new Date().toISOString(),
         },
@@ -429,11 +507,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Store pending claim permanently in Supabase school_profiles
+    // 2. Store claim in Supabase school_profiles
     try {
       const { data: profRow } = await schoolSearchSupabase
         .from('school_profiles')
-        .select('profile_data, is_claimed')
+        .select('profile_data, is_claimed, claimed_by')
         .eq('udise_code', cleanUdise)
         .maybeSingle();
 
@@ -451,13 +529,24 @@ export async function POST(req: NextRequest) {
         udiseCode: cleanUdise,
         schoolName: existingProfData.schoolName || resolvedSchoolName,
         claimRequests: [newClaim, ...prevRequests.filter((r: any) => r.id !== newClaim.id)],
-        latestClaimStatus: 'pending',
+        latestClaimStatus: isSuperAdminSubmit ? 'approved' : 'pending',
+        magicAuth: isSuperAdminSubmit
+          ? {
+              isApproved: true,
+              status: 'approved',
+              magicKey: adminDirectMagicKey,
+              claimantEmail: sanitizedEmail,
+              approvedAt: new Date().toISOString(),
+            }
+          : existingProfData.magicAuth,
       };
 
       await schoolSearchSupabase.from('school_profiles').upsert(
         {
           udise_code: cleanUdise,
           profile_data: updatedProfData,
+          is_claimed: isSuperAdminSubmit ? true : Boolean(profRow?.is_claimed),
+          claimed_by: isSuperAdminSubmit ? sanitizedEmail : ((profRow as any)?.claimed_by || null),
           updated_at: new Date().toISOString(),
         },
         { onConflict: 'udise_code' }
@@ -473,6 +562,21 @@ export async function POST(req: NextRequest) {
 
     // 4. Send email to admin
     await sendAdminNotificationEmail(newClaim);
+
+    if (isSuperAdminSubmit) {
+      return NextResponse.json({
+        success: true,
+        status: 'approved',
+        isAdminDirect: true,
+        message: `School profile "${resolvedSchoolName}" created and activated with Super Admin privileges! Opening edit mode...`,
+        claim_id: newClaim.id,
+        udise_code: cleanUdise,
+        profile_path: resolvedProfilePath,
+        magic_key: adminDirectMagicKey,
+        edit_url: `${resolvedProfilePath}?edit=true&magicKey=${adminDirectMagicKey}`,
+        claim: newClaim,
+      });
+    }
 
     return NextResponse.json({
       success: true,
@@ -543,10 +647,15 @@ export async function GET(req: NextRequest) {
       results = results.filter((c) => c.udise_code === clean);
     }
 
-    // Privacy & Security: Mask PII and strip Magic Link keys for non-admin callers
-    const safeResults = callerIsAdmin
-      ? results
-      : results.map((c) => ({
+    // Privacy & Security: Return complete info to Admin or Claim Owner, mask PII for others
+    const safeResults = results.map((c) => {
+      const isOwner =
+        callerIsAdmin ||
+        (queryUserId && String(c.user_id) === String(queryUserId)) ||
+        (queryEmail && c.claimant_email && c.claimant_email.toLowerCase() === queryEmail.toLowerCase());
+
+      if (isOwner) {
+        return {
           id: c.id,
           udise_code: c.udise_code,
           school_name: c.school_name,
@@ -555,12 +664,35 @@ export async function GET(req: NextRequest) {
           request_type: c.request_type || 'claim',
           created_at: c.created_at,
           updated_at: c.updated_at,
-          claimant_name: c.claimant_name ? `${c.claimant_name.slice(0, 2)}***` : 'Representative',
-          claimant_email: c.claimant_email
-            ? c.claimant_email.replace(/(.{2})(.*)(@.*)/, '$1***$3')
-            : '***',
-          whatsapp_number: 'Protected',
-        }));
+          approved_at: c.approved_at,
+          claimant_name: c.claimant_name,
+          claimant_email: c.claimant_email,
+          whatsapp_number: c.whatsapp_number,
+          affiliation_number: c.affiliation_number,
+          board: c.board,
+          profile_path: c.profile_path,
+          visual_edit_url: c.status === 'approved' ? c.visual_edit_url : undefined,
+          magic_key: c.status === 'approved' ? c.magic_key : undefined,
+          is_owner: true,
+        };
+      }
+
+      return {
+        id: c.id,
+        udise_code: c.udise_code,
+        school_name: c.school_name,
+        designation: c.designation,
+        status: c.status,
+        request_type: c.request_type || 'claim',
+        created_at: c.created_at,
+        updated_at: c.updated_at,
+        claimant_name: c.claimant_name ? `${c.claimant_name.slice(0, 2)}***` : 'Representative',
+        claimant_email: c.claimant_email
+          ? c.claimant_email.replace(/(.{2})(.*)(@.*)/, '$1***$3')
+          : '***',
+        whatsapp_number: 'Protected',
+      };
+    });
 
     return NextResponse.json({
       success: true,
@@ -674,6 +806,7 @@ export async function PATCH(req: NextRequest) {
       claim.magic_key = generatedMagicKey;
       claim.visual_edit_token = generatedMagicKey;
       claim.visual_edit_url = generatedMagicLinkUrl;
+      claim.profile_path = profilePath;
       claim.approved_at = new Date().toISOString();
 
       verificationMessage = `✅ CSEEL Official Verification Approved for ${claim.school_name} (UDISE: ${claim.udise_code}).\n\n🔑 Your 16-Character Security Key: ${generatedMagicKey}\n🔗 Direct Profile Edit Magic Link: ${generatedMagicLinkUrl}\n\nClick the link above to open your school profile directly in Edit Mode and save updates to Supabase.`;

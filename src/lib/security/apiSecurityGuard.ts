@@ -197,18 +197,36 @@ export function isValid16CharMagicKeyFormat(key: string | null | undefined): boo
 export const MASTER_ADMIN_KEY = process.env.ADMIN_SECRET_KEY || 'cseel_master_admin_2026';
 export const MASTER_ADMIN_MAGIC_TOKEN = 'csl_admin_master_magic_key';
 export const ADMIN_EMAILS = new Set([
-  (process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik104@gmail.com').toLowerCase(),
+  'ptdevkaushik101@gmail.com',
+  'ptdevkaushik104@gmail.com',
+  (process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik101@gmail.com').toLowerCase(),
   'admin@cseel.org',
   'super@cseel.org',
   'school@cseel.org',
   'admin@123',
 ]);
 
+export function isSuperAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  const clean = String(email).trim().toLowerCase();
+  return (
+    clean === 'ptdevkaushik101@gmail.com' ||
+    clean === 'ptdevkaushik104@gmail.com' ||
+    ADMIN_EMAILS.has(clean) ||
+    clean.endsWith('@cseel.org')
+  );
+}
+
 export function isAdminRequest(req: NextRequest | Request, bodyAdminCheck?: { adminKey?: string; adminEmail?: string }): boolean {
   const adminKeyHeader = req.headers.get('x-admin-key') || '';
   const authHeader = req.headers.get('authorization') || '';
   const cookieHeader = req.headers.get('cookie') || '';
-  const adminEmailHeader = (req.headers.get('x-admin-email') || bodyAdminCheck?.adminEmail || '').toLowerCase().trim();
+  const adminEmailHeader = (
+    req.headers.get('x-admin-email') ||
+    req.headers.get('x-user-email') ||
+    bodyAdminCheck?.adminEmail ||
+    ''
+  ).toLowerCase().trim();
   const bodyKey = bodyAdminCheck?.adminKey || '';
 
   if (
@@ -224,7 +242,7 @@ export function isAdminRequest(req: NextRequest | Request, bodyAdminCheck?: { ad
     return true;
   }
 
-  if (adminEmailHeader && (ADMIN_EMAILS.has(adminEmailHeader) || adminEmailHeader.endsWith('@cseel.org'))) {
+  if (adminEmailHeader && isSuperAdminEmail(adminEmailHeader)) {
     return true;
   }
 
@@ -234,10 +252,29 @@ export function isAdminRequest(req: NextRequest | Request, bodyAdminCheck?: { ad
 export async function verifySchoolWriteAuth(
   req: NextRequest | Request,
   udiseCode: string,
-  extra?: { magicKey?: string; adminKey?: string; adminEmail?: string }
-): Promise<{ authorized: boolean; mode?: 'admin' | 'magic_link'; reason?: string }> {
+  extra?: {
+    magicKey?: string;
+    adminKey?: string;
+    adminEmail?: string;
+    userId?: string;
+    userEmail?: string;
+  }
+): Promise<{ authorized: boolean; mode?: 'admin' | 'magic_link' | 'owner'; reason?: string }> {
+  const queryUserEmail = (
+    extra?.userEmail ||
+    extra?.adminEmail ||
+    req.headers.get('x-user-email') ||
+    req.headers.get('x-admin-email') ||
+    ''
+  ).trim().toLowerCase();
+
+  // Root Super Admin check: ptdevkaushik101@gmail.com has instant full edit access to any school
+  if (isSuperAdminEmail(queryUserEmail)) {
+    return { authorized: true, mode: 'admin' };
+  }
+
   // 1. Check Admin Authorization first
-  if (isAdminRequest(req, { adminKey: extra?.adminKey, adminEmail: extra?.adminEmail })) {
+  if (isAdminRequest(req, { adminKey: extra?.adminKey, adminEmail: extra?.adminEmail || queryUserEmail })) {
     return { authorized: true, mode: 'admin' };
   }
 
@@ -251,33 +288,57 @@ export async function verifySchoolWriteAuth(
     ''
   ).trim();
 
-  if (!candidateKey) {
-    return {
-      authorized: false,
-      reason: 'Unauthorized: Only an Administrator or a verified School with an Admin-approved 16-character Magic Link key can modify school profile data.',
-    };
-  }
-
   if (candidateKey === MASTER_ADMIN_MAGIC_TOKEN || candidateKey === MASTER_ADMIN_KEY) {
     return { authorized: true, mode: 'admin' };
   }
 
-  // 2. Verify candidateKey against Supabase school_profiles (Permanent Storage)
+  const queryUserId = (extra?.userId || req.headers.get('x-user-id') || '').trim();
+
+  // 2. Check Owner Authorization via local school_claims.json (Fast & Authoritative)
+  if (cleanUdise) {
+    try {
+      const claimsFile = path.join(process.cwd(), 'src', 'data', 'school_claims.json');
+      if (fs.existsSync(claimsFile)) {
+        const store = JSON.parse(fs.readFileSync(claimsFile, 'utf8'));
+        const matchedClaim = (store.claims || []).find((c: any) => {
+          if (c.udise_code !== cleanUdise || c.status !== 'approved') return false;
+          const matchKey = candidateKey && (c.magic_key === candidateKey || c.visual_edit_token === candidateKey);
+          const matchUser = queryUserId && c.user_id && String(c.user_id) === String(queryUserId);
+          const matchEmail = queryUserEmail && c.claimant_email && c.claimant_email.toLowerCase() === queryUserEmail;
+          return matchKey || matchUser || matchEmail;
+        });
+
+        if (matchedClaim) {
+          return {
+            authorized: true,
+            mode: candidateKey ? 'magic_link' : 'owner',
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('Error reading school_claims.json in verifySchoolWriteAuth:', err);
+    }
+  }
+
+  // 3. Verify against Supabase school_profiles (Permanent Storage)
   if (cleanUdise) {
     try {
       const { data: profRow } = await schoolSearchSupabase
         .from('school_profiles')
-        .select('profile_data, is_claimed')
+        .select('profile_data, is_claimed, claimed_by')
         .eq('udise_code', cleanUdise)
         .maybeSingle();
 
       if (profRow) {
-        const pData = typeof profRow.profile_data === 'string'
-          ? JSON.parse(profRow.profile_data)
-          : (profRow.profile_data || {});
+        const pData =
+          typeof profRow.profile_data === 'string'
+            ? JSON.parse(profRow.profile_data)
+            : profRow.profile_data || {};
 
+        // A. Magic Key Check
         const magicAuth = pData?.magicAuth;
         if (
+          candidateKey &&
           magicAuth &&
           magicAuth.status === 'approved' &&
           magicAuth.isApproved === true &&
@@ -286,31 +347,44 @@ export async function verifySchoolWriteAuth(
         ) {
           return { authorized: true, mode: 'magic_link' };
         }
+
+        // B. User Identity / Email Check for Claimed School
+        if (profRow.is_claimed) {
+          if (queryUserEmail && profRow.claimed_by && profRow.claimed_by.toLowerCase() === queryUserEmail) {
+            return { authorized: true, mode: 'owner' };
+          }
+          if (magicAuth && queryUserEmail && magicAuth.claimantEmail && magicAuth.claimantEmail.toLowerCase() === queryUserEmail) {
+            return { authorized: true, mode: 'owner' };
+          }
+        }
+
+        // C. Check approved claimRequests in profile_data
+        if (Array.isArray(pData.claimRequests)) {
+          const approvedReq = pData.claimRequests.find(
+            (cr: any) =>
+              cr.status === 'approved' &&
+              ((queryUserId && cr.user_id && String(cr.user_id) === String(queryUserId)) ||
+                (queryUserEmail && cr.claimant_email && cr.claimant_email.toLowerCase() === queryUserEmail))
+          );
+          if (approvedReq) {
+            return { authorized: true, mode: 'owner' };
+          }
+        }
       }
     } catch (err) {
       console.warn('Error checking magicAuth in Supabase school_profiles:', err);
     }
   }
 
-  // 3. Fallback check in local claims/sync store (only if status === 'approved' AND isApproved === true)
-  try {
-    const claimsFile = path.join(process.cwd(), 'src', 'data', 'school_claims.json');
-    if (fs.existsSync(claimsFile)) {
-      const store = JSON.parse(fs.readFileSync(claimsFile, 'utf8'));
-      const matched = (store.claims || []).find(
-        (c: any) =>
-          c.udise_code === cleanUdise &&
-          c.status === 'approved' &&
-          (c.magic_key === candidateKey || c.visual_edit_token === candidateKey)
-      );
-      if (matched) {
-        return { authorized: true, mode: 'magic_link' };
-      }
-    }
-  } catch {}
+  if (!candidateKey && !queryUserId && !queryUserEmail) {
+    return {
+      authorized: false,
+      reason: 'Unauthorized: Only an Administrator or a verified School Owner can modify school profile data.',
+    };
+  }
 
   return {
     authorized: false,
-    reason: 'Invalid or unapproved Magic Link key. A Magic Link is only activated after Admin verification.',
+    reason: 'Access Denied: You are not authorized to edit this school profile. Only verified institutional owners or administrators have edit access.',
   };
 }

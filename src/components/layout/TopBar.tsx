@@ -5,13 +5,17 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from "@/contexts/AuthContext";
 import {
   User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard,
-  ArrowLeft, Home, Headphones, Mail, LogIn, Users, Briefcase
+  ArrowLeft, Home, Headphones, Mail, LogIn, Users, Briefcase,
+  Edit3, PlusCircle, Clock
 } from "lucide-react";
+import dynamic from 'next/dynamic';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const AddSchoolModal = dynamic(() => import('@/components/schools/AddSchoolModal'), { ssr: false });
 
 const ROLE_COLORS: Record<string, string> = {
   organisation: "bg-purple-100 text-purple-700",
@@ -32,10 +36,32 @@ const TopBar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [userSchoolClaim, setUserSchoolClaim] = useState<any | null>(null);
+  const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setUserSchoolClaim(null);
+      return;
+    }
+    let isCancelled = false;
+    async function checkSchool() {
+      try {
+        const res = await fetch(`/api/school-claim/auth-status?user_id=${encodeURIComponent(user.id)}&email=${encodeURIComponent(user.email || '')}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!isCancelled && data.success) {
+          setUserSchoolClaim(data.primarySchool || null);
+        }
+      } catch (_) {}
+    }
+    checkSchool();
+    return () => { isCancelled = true; };
+  }, [user]);
 
   const meta = user?.user_metadata;
   const avatarUrl = meta?.avatar_url || meta?.picture || "";
@@ -289,6 +315,43 @@ const TopBar = () => {
                         <User className="mr-2.5 h-4 w-4 text-[#023858]" />
                         Profile
                       </button>
+
+                      {/* School Profile Management Action */}
+                      {userSchoolClaim && userSchoolClaim.isApproved ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            if (userSchoolClaim.profile_path) {
+                              router.push(`${userSchoolClaim.profile_path}?edit=true`);
+                            } else {
+                              router.push('/schools');
+                            }
+                          }}
+                          className="w-full flex items-center px-3 py-2 text-xs font-semibold text-[#005689] bg-[#EDF5FA] hover:bg-[#D6EDFF] cursor-pointer transition-colors"
+                        >
+                          <Edit3 className="mr-2.5 h-4 w-4 text-[#005689]" />
+                          <span className="truncate">Edit Your School Details</span>
+                        </button>
+                      ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
+                        <div className="px-3 py-2 text-xs font-medium text-amber-800 bg-amber-50 border-y border-amber-100 flex items-center">
+                          <Clock className="mr-2 h-3.5 w-3.5 text-amber-600 shrink-0" />
+                          <span className="truncate text-[11px]">School Verification Pending</span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            setIsAddSchoolModalOpen(true);
+                          }}
+                          className="w-full flex items-center px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 cursor-pointer transition-colors"
+                        >
+                          <PlusCircle className="mr-2.5 h-4 w-4 text-emerald-600" />
+                          <span className="truncate">Add Your School Profile</span>
+                        </button>
+                      )}
+
                       <button
                         type="button"
                         onClick={() => {
@@ -333,6 +396,12 @@ const TopBar = () => {
 
         </div>
       </div>
+
+      {/* Structured School Registration / Claim Modal */}
+      <AddSchoolModal
+        isOpen={isAddSchoolModalOpen}
+        onClose={() => setIsAddSchoolModalOpen(false)}
+      />
     </div>
   );
 };

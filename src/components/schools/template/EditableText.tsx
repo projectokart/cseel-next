@@ -15,6 +15,7 @@ interface EditableTextProps {
   maxLength?: number;
   tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
   showVerificationBadge?: boolean;
+  formatDisplay?: (val: string) => string;
 }
 
 export default function EditableText({
@@ -28,6 +29,7 @@ export default function EditableText({
   maxLength,
   tag = 'span',
   showVerificationBadge = false,
+  formatDisplay,
 }: EditableTextProps) {
   const ctx = useOptionalSchoolTemplate();
   const isEditMode = ctx?.isEditMode ?? false;
@@ -43,6 +45,8 @@ export default function EditableText({
   const effectiveValue = contentKey
     ? getContent(contentKey, String(value ?? ''))
     : String(value ?? '');
+
+  const displayValue = formatDisplay ? formatDisplay(effectiveValue) : effectiveValue;
 
   const [tempValue, setTempValue] = useState<string>(effectiveValue);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
@@ -86,7 +90,7 @@ export default function EditableText({
     const TagComponent = tag as any;
     return (
       <TagComponent className={className}>
-        <span>{effectiveValue || placeholder}</span>
+        <span>{displayValue || placeholder}</span>
       </TagComponent>
     );
   }
@@ -166,7 +170,7 @@ export default function EditableText({
       title="Click to edit this text"
       className={`group/editable relative inline-block cursor-pointer transition-all rounded px-1.5 py-0.5 border border-dashed border-[#005689]/40 hover:border-[#005689] bg-[#005689]/[0.03] hover:bg-[#EDF5FA] ${className}`}
     >
-      <span>{effectiveValue || <span className="italic text-slate-400">{placeholder}</span>}</span>
+      <span>{displayValue || <span className="italic text-slate-400">{placeholder}</span>}</span>
       <span className="opacity-0 group-hover/editable:opacity-100 transition-opacity ml-1.5 inline-flex items-center gap-0.5 text-[10px] font-bold bg-[#005689] text-white px-1.5 py-0.5 rounded shadow-xs align-middle">
         <Edit2 className="w-2.5 h-2.5" />
         <span>Edit</span>

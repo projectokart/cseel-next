@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useOptionalSchoolTemplate } from './SchoolTemplateContext';
 import { ICON_MAP } from './AddCardModal';
 import { SCHOOL_ICONS_COLLECTION } from './SchoolAssetLibrary';
@@ -28,6 +29,11 @@ export default function EditableIcon({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const categories = ['All', 'Labs & Tech', 'Academics & Arts', 'Sports & Fitness', 'Campus Safety & Security', 'Campus Infrastructure'];
 
@@ -62,14 +68,14 @@ export default function EditableIcon({
         </button>
       )}
 
-      {/* Icon Selector Modal */}
-      {isModalOpen && (
+      {/* Icon Selector Modal Portalled to document.body */}
+      {isModalOpen && mounted && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[99999] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150"
+            className="bg-white rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -141,7 +147,8 @@ export default function EditableIcon({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

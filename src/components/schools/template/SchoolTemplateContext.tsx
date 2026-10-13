@@ -299,6 +299,8 @@ interface SchoolTemplateContextType {
   data: SchoolTemplateState;
   isEditMode: boolean;
   setIsEditMode: (val: boolean) => void;
+  canEdit: boolean;
+  authRole: 'admin' | 'owner' | 'magic_link' | 'unauthorized';
   isSaving: boolean;
   lastSavedAt: string | null;
   updateField: <K extends keyof SchoolTemplateState>(key: K, value: SchoolTemplateState[K]) => void;
@@ -355,11 +357,17 @@ const SchoolTemplateContext = createContext<SchoolTemplateContextType | null>(nu
 export function SchoolTemplateProvider({
   children,
   initialData,
-  initialEditMode = true,
+  initialEditMode = false,
+  canEdit = true,
+  authRole = 'unauthorized',
+  currentUser,
 }: {
   children: React.ReactNode;
   initialData?: Partial<SchoolTemplateState>;
   initialEditMode?: boolean;
+  canEdit?: boolean;
+  authRole?: 'admin' | 'owner' | 'magic_link' | 'unauthorized';
+  currentUser?: { id?: string; email?: string } | null;
 }) {
   const [data, setData] = useState<SchoolTemplateState>(() => ({
     ...DEFAULT_TEMPLATE_DATA,
@@ -373,12 +381,24 @@ export function SchoolTemplateProvider({
       ...(initialData?.tabVisibility || {}),
     },
   }));
-  const [isEditMode, setIsEditMode] = useState<boolean>(initialEditMode);
+  const [isEditMode, setIsEditMode] = useState<boolean>(initialEditMode && canEdit);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [isUdiseLoading, setIsUdiseLoading] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
+
+  const handleSetIsEditMode = useCallback((val: boolean) => {
+    if (val && !canEdit) {
+      setNotification({
+        type: 'error',
+        message: '🔒 Access Denied: You are not authorized to edit this school profile. Only verified institutional owners or administrators have edit access.',
+      });
+      setTimeout(() => setNotification(null), 5000);
+      return;
+    }
+    setIsEditMode(val);
+  }, [canEdit]);
 
   // Load draft from initialData, URL token, or localStorage upon client mount
   useEffect(() => {
@@ -1031,56 +1051,63 @@ export function SchoolTemplateProvider({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
 
-      const payload = {
-        school_id: data.udiseCode || String(Date.now()),
-        school_name: data.schoolName,
-        udise_code: data.udiseCode || 'CUSTOM',
-        district_name: data.district,
-        state_name: data.state,
-        block_name: data.blockName,
-        village_name: data.village,
-        pincode: data.pincode,
-        address: data.address,
-        phone: data.phone,
-        email: data.email,
-        website: data.website,
-        total_students: data.totalStudents,
-        total_teachers: data.totalTeachers,
-        principal_name: data.principalName,
-        class_from: data.classFrom,
-        class_to: data.classTo,
-        gender_type: data.genderType,
-        board_10th: data.board,
-        board_12th: data.board,
-        management_desc: data.management,
-        school_status: 'Published_By_School',
-        about_text: data.aboutText,
-        facilities_json: data.facilities,
-        admissions_json: data.admissions,
-        updated_at: new Date().toISOString(),
-      };
+      // Retrieve any magicKey from query or storage
+      const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const magicKey =
+        searchParams?.get('magicKey') ||
+        searchParams?.get('token') ||
+        (typeof localStorage !== 'undefined' ? localStorage.getItem(`magic_key_${cleanUdise}`) : null) ||
+        '';
 
-      const { data: res, error } = await schoolSearchSupabase
-        .from('udise_private_schools')
-        .upsert(payload, { onConflict: 'school_id' })
-        .select()
-        .single();
+      // Secure Backend API Call - Authenticates Caller and Enforces RBAC
+      const res = await fetch('/api/school-profile-save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          udiseCode: cleanUdise,
+          data: {
+            ...data,
+            lastSavedAt: new Date().toISOString(),
+          },
+          magicKey,
+          userId: currentUser?.id,
+          userEmail: currentUser?.email,
+        }),
+      });
 
-      if (error) {
-        console.warn('Direct publish notice (persisting locally & logging):', error);
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok || !resJson.success) {
+        const errorMsg =
+          resJson.message ||
+          resJson.error ||
+          (res.status === 403
+            ? 'Access Denied: You are not authorized to publish changes to this school profile.'
+            : 'Failed to publish changes to Supabase.');
+        setNotification({
+          type: 'error',
+          message: `🔒 ${errorMsg}`,
+        });
+        setTimeout(() => setNotification(null), 7000);
+        return { success: false, message: errorMsg };
       }
 
+      setLastSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       setNotification({
         type: 'success',
-        message: '🎉 School Profile Successfully Published! Data stored in Supabase database.',
+        message: '🎉 School Profile Successfully Published! Changes saved permanently in Supabase.',
       });
       setTimeout(() => setNotification(null), 6000);
       return { success: true, message: 'Profile published successfully', recordId: slug };
     } catch (err: any) {
       console.error('Publish error:', err);
+      setNotification({
+        type: 'error',
+        message: `Failed to publish: ${err.message || 'Network error'}`,
+      });
+      setTimeout(() => setNotification(null), 6000);
       return { success: false, message: err.message || 'Failed to submit' };
     }
-  }, [data]);
+  }, [data, currentUser]);
 
   const importSchoolDataFromJson = useCallback((rawJson: any) => {
     const res = parseSchoolJsonToState(rawJson, data);
@@ -1121,7 +1148,9 @@ export function SchoolTemplateProvider({
       value={{
         data,
         isEditMode,
-        setIsEditMode,
+        setIsEditMode: handleSetIsEditMode,
+        canEdit,
+        authRole,
         isSaving,
         lastSavedAt,
         updateField,

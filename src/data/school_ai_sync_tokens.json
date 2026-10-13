@@ -33824,8 +33824,8 @@
           "hero_cta_video_pill": "Watch Virtual Tour",
           "hero_stat_val_1": "CBSE",
           "hero_stat_val_2": "1:15",
-          "hero_stat_val_3": "45+ Labs & Rooms",
-          "hero_stat_val_4": "Nursery - Class 12",
+          "hero_stat_val_3": "45+ Rooms",
+          "hero_stat_val_4": "Nursery - 12th",
           "about_eyebrow": "ABOUT OUR INSTITUTION",
           "about_heading_l1": "More Than Just",
           "about_heading_l2": "An Education..",
@@ -35946,6 +35946,27 @@
         "reviewsCount": 0,
         "averageRating": 5,
         "updated_at": "2026-10-11T12:22:18.829Z"
+      }
+    },
+    "sync_10101010101": {
+      "token": "sync_10101010101",
+      "schoolId": "10101010101",
+      "schoolName": "UMS RANYAPUR WEST",
+      "isPermanent": true,
+      "isApproved": true,
+      "status": "approved",
+      "lastUpdatedAt": 1791875010583,
+      "lastUpdatedSource": "Supabase Profile Save (owner)",
+      "profileData": {
+        "principalName": "Dr. Devansh Kaushik",
+        "management": "Private",
+        "schoolName": "UMS RANYAPUR WEST",
+        "board": "CBSE",
+        "udiseCode": "10101010101",
+        "lastSavedAt": "2026-10-13T07:03:27.460Z",
+        "lastSavedByMode": "owner",
+        "logoImage": "",
+        "heroImage": ""
       }
     }
   }

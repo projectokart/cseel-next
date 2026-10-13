@@ -43,11 +43,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Strict Authorization: Only Admin OR Verified 16-character Magic Link key can save
+    // Strict Authorization: Only Admin OR Verified School Owner OR Verified Magic Link key can save
     const authResult = await verifySchoolWriteAuth(req, udiseCode, {
       magicKey: body.magicKey || body.token || body.syncToken,
       adminKey: body.adminKey,
       adminEmail: body.adminEmail,
+      userId: body.userId || body.user_id,
+      userEmail: body.userEmail || body.user_email || body.email,
     });
 
     if (!authResult.authorized) {

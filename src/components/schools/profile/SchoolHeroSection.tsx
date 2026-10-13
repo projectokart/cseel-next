@@ -290,13 +290,9 @@ export default function SchoolHeroSection({
         {/* TOP PILL BADGE (Replaces duplicate inner navbar)           */}
         {/* ═══════════════════════════════════════════════════════════ */}
         <div className="flex items-center justify-between gap-2.5 pb-3 sm:pb-4 w-full">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 border border-[#EADBBD] shadow-2xs text-[#005689] text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis max-w-[calc(100%-140px)] sm:max-w-none">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 border border-[#EADBBD] shadow-2xs text-[#005689] text-xs font-semibold whitespace-nowrap shrink-0">
             <span className="w-2 h-2 rounded-full bg-[#FBBC04] animate-pulse shrink-0" />
             <span className="text-slate-700 font-mono text-[11px] font-bold shrink-0">UDISE: {displayUdise || 'Verified'}</span>
-            <span className="text-slate-300 shrink-0">•</span>
-            <span className="text-blue-800 bg-blue-50/90 border border-blue-200/80 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 truncate">
-              {templateData?.residentialSchool || residentialSchool || templateData?.schoolFormat || 'Day School'}
-            </span>
           </div>
 
           {/* Quick Helpline on Top Right & Edit Mode Section Toggle */}

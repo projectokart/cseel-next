@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "The Vision & Story Behind CSEEL - Experiential STEM Learning",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     creator: "@cseel_org",
     title: "Our Story | The Vision Behind CSEEL Science Learning",
     description: "Discover the journey and vision behind CSEEL — empowering the next generation of Indian scientists and innovators through hands-on experimental learning.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };
 

@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       siteName: 'CSEEL EduNetwork',
       images: [
         {
-          url: student.avatar || '/images/og-cover.jpg',
+          url: student.avatar || '/images/cseel-social-preview.jpg',
           width: 1200,
           height: 630,
           alt: `${student.name} Portfolio`,
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: 'summary_large_image',
       title: `${student.name} (${student.classGrade}) | STEM Inventions`,
       description: `Built '${student.topProject}' at ${student.schoolCollege}. Explore research files & hardware schematics.`,
-      images: [student.avatar || '/images/og-cover.jpg'],
+      images: [student.avatar || '/images/cseel-social-preview.jpg'],
     },
   };
 }

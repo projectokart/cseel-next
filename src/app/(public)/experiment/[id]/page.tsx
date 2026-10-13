@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   if (exp) {
     const title = `${exp.title} (${exp.subject}) | CSEEL Experiential Science & Live Lab`;
     const description = exp.description.slice(0, 160);
-    const image = exp.thumbnail_url || 'https://www.cseel.org/images/og-cover.jpg';
+    const image = exp.thumbnail_url || 'https://www.cseel.org/images/cseel-social-preview.jpg';
 
     return {
       title,

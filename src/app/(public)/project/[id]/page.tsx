@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   if (proj) {
     const title = `${proj.title} | Student Science Projects India | CSEEL`;
     const description = proj.desc.slice(0, 160);
-    const image = proj.img || 'https://www.cseel.org/images/og-cover.jpg';
+    const image = proj.img || 'https://www.cseel.org/images/cseel-social-preview.jpg';
 
     return {
       title,

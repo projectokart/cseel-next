@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     site: "@cseel_org",
     title: "CSEEL Plans & Pricing | Science Lab Subscription India",
     description: "Compare CSEEL subscription plans for schools, colleges, and individual learners. Affordable pricing for experiential science labs and hands-on experiment kits in India.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };
 

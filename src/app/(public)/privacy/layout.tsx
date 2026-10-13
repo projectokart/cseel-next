@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://www.cseel.org/images/og-cover.jpg',
+        url: 'https://www.cseel.org/images/cseel-social-preview.jpg',
         width: 1200,
         height: 630,
         alt: 'CSEEL Privacy Policy and Data Protection',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     creator: '@cseel_org',
     title: 'Privacy Policy | CSEEL',
     description: 'CSEEL data privacy and DPDP Act 2023 compliance.',
-    images: ['https://www.cseel.org/images/og-cover.jpg'],
+    images: ['https://www.cseel.org/images/cseel-social-preview.jpg'],
   },
 };
 

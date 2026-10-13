@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     site: "@cseel_org",
     title: "Past Science Events & Exhibition Highlights | CSEEL India",
     description: "Review highlights, winning projects, and photos from past CSEEL national science fairs, workshops, and student science symposiums.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };
 

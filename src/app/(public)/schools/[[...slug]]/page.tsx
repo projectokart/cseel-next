@@ -33,7 +33,7 @@ export async function generateMetadata({
       type: 'website',
       images: [
         {
-          url: 'https://www.cseel.org/images/og-schools.jpg',
+          url: 'https://www.cseel.org/images/cseel-schools-preview.jpg',
           width: 1200,
           height: 630,
           alt: parsed.pageTitle,
@@ -45,7 +45,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: parsed.pageTitle,
       description: parsed.metaDescription,
-      images: ['https://www.cseel.org/images/og-schools.jpg'],
+      images: ['https://www.cseel.org/images/cseel-schools-preview.jpg'],
       creator: '@cseel_org',
       site: '@cseel_org',
     },

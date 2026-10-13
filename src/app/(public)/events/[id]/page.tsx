@@ -16,14 +16,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
         description,
         url: `https://www.cseel.org/events/${params.id}`,
         type: "website",
-        images: [{ url: "https://www.cseel.org/images/og-cover.jpg" }],
+        images: [{ url: "https://www.cseel.org/images/cseel-social-preview.jpg" }],
       },
       twitter: {
         card: "summary_large_image",
         site: "@cseel_org",
         title,
         description,
-        images: ["https://www.cseel.org/images/og-cover.jpg"],
+        images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
       },
     };
   }

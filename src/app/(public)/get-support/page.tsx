@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     site: "@cseel_org",
     title: "Customer & Technical Support | CSEEL Platform India",
     description: "Need help with your CSEEL account, hands-on science lab, or kit order? Reach our dedicated support team for quick assistance.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };
 

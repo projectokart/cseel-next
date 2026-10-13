@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Center for Scientific Exploration & Experimental Learning",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     site: "@cseel_org",
     title: "Science Workshops for Students & Schools India | CSEEL",
     description: "CSEEL conducts hands-on science workshops for students, schools, and colleges across India. Chemistry, Biology, Physics, Robotics, and STEM workshops available.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };
 

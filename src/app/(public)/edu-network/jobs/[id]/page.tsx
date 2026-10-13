@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       siteName: 'CSEEL EduNetwork',
       images: [
         {
-          url: job.orgLogo || '/images/og-cover.jpg',
+          url: job.orgLogo || '/images/cseel-social-preview.jpg',
           width: 1200,
           height: 630,
           alt: `${job.title} at ${job.orgName}`,
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: 'summary_large_image',
       title: `${job.title} in ${job.city} - ${job.salary} | CSEEL`,
       description: `Urgent opening for ${job.title} at ${job.orgName}, ${job.city}. Salary: ${job.salary}. Apply directly.`,
-      images: [job.orgLogo || '/images/og-cover.jpg'],
+      images: [job.orgLogo || '/images/cseel-social-preview.jpg'],
     },
   };
 }

@@ -462,7 +462,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const metaDesc = `${displayName} in ${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` (${pincode})` : ''}. UDISE: ${udise || 'Verified'}. Affiliated with ${board}. Check fee structure, admission guidelines, curriculum, facilities & verified contact details.`;
   
   const candidateImage = synced?.heroImage || synced?.logoImage || dbSchool?.image_url;
-  const metaImage = (candidateImage && isValidSchoolImage(candidateImage)) ? candidateImage : 'https://www.cseel.org/images/og-schools.jpg';
+  const metaImage = (candidateImage && isValidSchoolImage(candidateImage)) ? candidateImage : 'https://www.cseel.org/images/cseel-schools-preview.jpg';
 
   // Parents' High-Intent Google Search Query Keywords
   const keywordsList = [

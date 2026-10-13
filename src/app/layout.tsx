@@ -45,7 +45,7 @@ export const metadata: Metadata = {
       "Transforming Indian education through NEP 2020 experiential learning: 1,000+ hands-on science experiments in Chemistry, Biology, Mathematics, Physics & Robotics, virtual lab simulations, school working models, teacher training & STEM career network.",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "CSEEL - Experiential Science Learning & live labs India",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     title: "CSEEL | India's #1 Experiential Science & STEM Learning Platform",
     description:
       "Hands-on science experiments, hands-on experiments & live labs, science fairs, school STEM kits & teacher workshops aligned with NEP 2020.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
   icons: {
     icon: [
@@ -111,6 +111,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <meta name="msapplication-navbutton-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+        {/* WhatsApp & Social Media Link Preview Meta Tags */}
+        <meta property="og:image:secure_url" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
 
         {/* Favicon Direct Links (Google Search Central 48px Multiple & Vector Standard with v=3 cache bust) */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
@@ -194,7 +200,7 @@ export default function RootLayout({
                   "image": {
                     "@type": "ImageObject",
                     "@id": "https://www.cseel.org/#primaryimage",
-                    "url": "https://www.cseel.org/images/og-cover.jpg",
+                    "url": "https://www.cseel.org/images/cseel-social-preview.jpg",
                     "width": 1200,
                     "height": 630
                   },

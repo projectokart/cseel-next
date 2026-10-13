@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   if (local) {
     const title = `${local.title} | CSEEL Science Blog`;
     const description = local.summary.slice(0, 160);
-    const image = local.coverImage || 'https://www.cseel.org/images/og-cover.jpg';
+    const image = local.coverImage || 'https://www.cseel.org/images/cseel-social-preview.jpg';
     return {
       title,
       description,
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     if (data) {
       const title = `${data.title} | CSEEL Science Blog`;
       const description = data.excerpt?.slice(0, 160) || 'Read this post on CSEEL Science Blog.';
-      const image = data.cover_image_url || 'https://www.cseel.org/images/og-cover.jpg';
+      const image = data.cover_image_url || 'https://www.cseel.org/images/cseel-social-preview.jpg';
 
       return {
         title,

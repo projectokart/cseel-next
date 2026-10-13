@@ -12,14 +12,14 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       description: "Join the discussion on CSEEL's Science Community.",
       url: `https://www.cseel.org/feed/${params.id}`,
       type: "website",
-      images: [{ url: "https://www.cseel.org/images/og-cover.jpg" }],
+      images: [{ url: "https://www.cseel.org/images/cseel-social-preview.jpg" }],
     },
     twitter: {
       card: "summary_large_image",
       site: "@cseel_org",
       title,
       description: "Join the discussion on CSEEL's Science Community.",
-      images: ["https://www.cseel.org/images/og-cover.jpg"],
+      images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
     },
   };
 }

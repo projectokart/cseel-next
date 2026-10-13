@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       siteName: "CSEEL EduNetwork",
       images: [
         {
-          url: org.bannerImage || org.logo || "/images/og-cover.jpg",
+          url: org.bannerImage || org.logo || "/images/cseel-social-preview.jpg",
           width: 1200,
           height: 630,
           alt: org.name,
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: "summary_large_image",
       title: `${org.name} (${org.city}) | CSEEL`,
       description: `${org.name} in ${org.city}. Rating ${org.rating}/5. ${org.stemLabsCount} STEM Labs.`,
-      images: [org.bannerImage || org.logo || "/images/og-cover.jpg"],
+      images: [org.bannerImage || org.logo || "/images/cseel-social-preview.jpg"],
     },
   };
 }

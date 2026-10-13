@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       siteName: "CSEEL EduNetwork",
       images: [
         {
-          url: teacher.avatar || "/images/og-cover.jpg",
+          url: teacher.avatar || "/images/cseel-social-preview.jpg",
           width: 1200,
           height: 630,
           alt: `${teacher.name} Profile`,
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
       card: "summary_large_image",
       title: `${teacher.name} | Verified ${teacher.subject} Faculty (${teacher.city})`,
       description: `${teacher.name} (${teacher.qualification}, ${teacher.experienceYears}+ yrs exp). Rating: ${teacher.rating}/5.`,
-      images: [teacher.avatar || "/images/og-cover.jpg"],
+      images: [teacher.avatar || "/images/cseel-social-preview.jpg"],
     },
   };
 }

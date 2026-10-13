@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   if (local) {
     const title = `${local.name} | Lab Equipment & Science Materials India | CSEEL`;
     const description = local.description.slice(0, 160);
-    const image = local.image_url || "https://www.cseel.org/images/og-cover.jpg";
+    const image = local.image_url || "https://www.cseel.org/images/cseel-social-preview.jpg";
 
     return {
       title,

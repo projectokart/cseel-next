@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/og-cover.jpg",
+        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
         width: 1200,
         height: 630,
         alt: "Why Choose CSEEL - India's Leading Experiential Science Lab",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     creator: "@cseel_org",
     title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
     description: "Discover why 500+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
-    images: ["https://www.cseel.org/images/og-cover.jpg"],
+    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };
 

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://www.cseel.org/images/og-cover.jpg',
+        url: 'https://www.cseel.org/images/cseel-social-preview.jpg',
         width: 1200,
         height: 630,
         alt: 'CSEEL Terms of Service and Institutional Usage Agreements',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     creator: '@cseel_org',
     title: 'Terms of Service | CSEEL',
     description: 'Terms and conditions for utilizing CSEEL educational services.',
-    images: ['https://www.cseel.org/images/og-cover.jpg'],
+    images: ['https://www.cseel.org/images/cseel-social-preview.jpg'],
   },
 };
 

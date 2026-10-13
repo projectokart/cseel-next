@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     images: [
       {
-        url: 'https://www.cseel.org/images/og-schools.jpg',
+        url: 'https://www.cseel.org/images/cseel-schools-preview.jpg',
         width: 1200,
         height: 630,
         alt: 'CSEEL School Search & Directory Across India',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'School Search & Finder | Find Best Schools Near You | CSEEL',
     description: 'Find verified CBSE, ICSE, Govt, and Private schools near you with interactive map and UDISE data.',
-    images: ['https://www.cseel.org/images/og-schools.jpg'],
+    images: ['https://www.cseel.org/images/cseel-schools-preview.jpg'],
     creator: '@cseel_org',
     site: '@cseel_org',
   },

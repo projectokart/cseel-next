@@ -323,7 +323,7 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
       return true;
     });
 
-    const runWithTimeout = async <T>(promise: Promise<T>, timeoutMs = 4500): Promise<T> => {
+    const runWithTimeout = async <T>(promise: Promise<T>, timeoutMs = 1000): Promise<T> => {
       return Promise.race([
         promise,
         new Promise<T>((_, reject) => setTimeout(() => reject(new Error('Supabase query timeout')), timeoutMs))

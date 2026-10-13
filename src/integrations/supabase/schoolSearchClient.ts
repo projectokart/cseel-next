@@ -7,7 +7,47 @@ const NEW_SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJh
 export const schoolSearchSupabase = createClient(NEW_SUPABASE_URL, NEW_SUPABASE_ANON_KEY, {
   auth: { persistSession: false },
   global: {
-    fetch: (url, options = {}) => fetch(url, { ...options, cache: 'no-store' }),
+    fetch: async (url, options: any = {}) => {
+      const method = (options.method || 'GET').toUpperCase();
+      // Fast timeout: 800ms for GET reads, 2500ms for POST/mutations
+      const timeoutMs = method === 'GET' ? 800 : 2500;
+      const controller = new AbortController();
+      let timedOut = false;
+      const timer = setTimeout(() => {
+        timedOut = true;
+        controller.abort();
+      }, timeoutMs);
+
+      if (options.signal) {
+        try {
+          options.signal.addEventListener('abort', () => controller.abort());
+        } catch {}
+      }
+
+      try {
+        const res = await fetch(url, {
+          ...options,
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+        return res;
+      } catch (err: any) {
+        clearTimeout(timer);
+        // When timed out or aborted, return synthetic empty 200 response with [].
+        // This stops PostgREST's executeWithRetry from doing 4 retries, allowing instant fallback!
+        if (timedOut || controller.signal.aborted || err?.name === 'AbortError' || err?.message?.includes('aborted')) {
+          return new Response(JSON.stringify([]), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              'content-range': '0-0/0',
+            },
+          });
+        }
+        throw err;
+      }
+    },
   },
 });
 

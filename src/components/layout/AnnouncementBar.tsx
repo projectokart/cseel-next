@@ -16,6 +16,17 @@ interface PromoItem {
   accent_color: string;
 }
 
+function sanitizeHtml(html: string): string {
+  if (!html) return '';
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript:[^"']*/gi, '');
+}
+
 const AnnouncementBar = () => {
   const { isSectionEnabled } = useHomepageCms();
   const [item, setItem] = useState<PromoItem | null>(null);
@@ -69,7 +80,7 @@ const AnnouncementBar = () => {
       position: "relative",
       zIndex: 300,
     }}>
-      <span dangerouslySetInnerHTML={{ __html: item.content }} />
+      <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }} />
       {item.cta_text && item.cta_link && (
         <a
           href={item.cta_link}

@@ -69,10 +69,6 @@ export default function EditorToolbar({ editor, contentType = 'document', onAppl
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
-  if (!editor) return null;
-
-  const config = CONTENT_TYPE_CONFIGS[contentType] || CONTENT_TYPE_CONFIGS.document;
-
   // ── Close all dropdowns when clicking outside ──
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -90,6 +86,10 @@ export default function EditorToolbar({ editor, contentType = 'document', onAppl
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  if (!editor) return null;
+
+  const config = CONTENT_TYPE_CONFIGS[contentType] || CONTENT_TYPE_CONFIGS.document;
 
   // ── Link Handler ──
   const handleSetLink = () => {

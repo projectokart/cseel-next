@@ -96,8 +96,16 @@ let MEMORY_LOGS: DailyAuditLogRecord[] = [
   }
 ];
 
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
+
 export async function GET(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized. Admin authorization required to access audit logs.' },
+        { status: 401 }
+      );
+    }
     const { searchParams } = new URL(req.url);
     const dateParam = searchParams.get('date'); // YYYY-MM-DD
     const departmentParam = searchParams.get('department');

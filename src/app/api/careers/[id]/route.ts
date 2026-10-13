@@ -13,8 +13,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 }
 
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
+
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!isAuthorizedAdmin(request)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized. Admin authorization required.' }, { status: 401 });
+    }
     const { id } = await params;
     const updates = await request.json();
     const updated = await careersRepository.update(id, updates);
@@ -27,6 +32,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    if (!isAuthorizedAdmin(request)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized. Admin authorization required.' }, { status: 401 });
+    }
     const { id } = await params;
     const deleted = await careersRepository.delete(id);
     if (!deleted) return NextResponse.json({ success: false, error: 'Job not found' }, { status: 404 });

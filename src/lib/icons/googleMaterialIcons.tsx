@@ -609,7 +609,7 @@ export const Siren = createGoogleMaterialIcon('Siren');
 export const Sliders = createGoogleMaterialIcon('Sliders');
 export const SlidersHorizontal = createGoogleMaterialIcon('SlidersHorizontal');
 export const Smartphone = createGoogleMaterialIcon('Smartphone');
-export const Sparkles: LucideIcon = React.forwardRef<SVGSVGElement, LucideProps>(() => null);
+export const Sparkles = createGoogleMaterialIcon('Sparkles');
 export const Star = createGoogleMaterialIcon('Star');
 export const Stethoscope = createGoogleMaterialIcon('Stethoscope');
 export const Strikethrough = createGoogleMaterialIcon('Strikethrough');

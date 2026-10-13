@@ -183,8 +183,16 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
+
+export async function GET(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized. Admin authorization required to view leads.' },
+        { status: 401 }
+      );
+    }
     const store = readDemoLeads();
     return NextResponse.json({ success: true, count: store.leads.length, leads: store.leads });
   } catch (err: any) {

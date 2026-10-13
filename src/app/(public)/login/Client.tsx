@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label";
 import { M3Button, M3IconButton, M3AssistChip, M3Card } from "@/components/google-ui";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ALL_PORTAL_CREDENTIALS, downloadPortalCredentialsCSVFile } from "@/lib/portalCredentialsData";
 
 // ── Pincode API ───────────────────────────────────────────────────────────────
 const fetchPincodeData = async (pincode: string) => {

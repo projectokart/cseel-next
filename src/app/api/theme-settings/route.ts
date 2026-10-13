@@ -50,8 +50,14 @@ export async function GET() {
   return NextResponse.json({ success: true, data: currentTheme });
 }
 
-export async function POST(req: Request) {
+import { NextRequest } from 'next/server';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
+
+export async function POST(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized. Admin authorization required.' }, { status: 401 });
+    }
     const body = await req.json();
     if (!body || typeof body !== 'object') {
       return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 });

@@ -92,8 +92,13 @@ export async function GET(req: NextRequest) {
   }
 }
 
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
+
 export async function POST(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized. Admin authorization required.' }, { status: 401 });
+    }
     const body = await req.json();
     if (!body || !body.title) {
       return NextResponse.json({ success: false, error: 'Page title is required' }, { status: 400 });
@@ -133,6 +138,9 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized. Admin authorization required.' }, { status: 401 });
+    }
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
     if (!slug) {

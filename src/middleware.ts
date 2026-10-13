@@ -225,5 +225,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // 8. Direct support for Google-indexed Vidya Vihar URLs
+  if (pathname.toLowerCase().includes('vidya-vihar')) {
+    url.pathname = '/edu-network/org/vidya-vihar-international-school-bangalore';
+    return NextResponse.rewrite(url);
+  }
+
+  // 9. Single-segment /school/[slug] fallback (e.g. /school/some-school-name)
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments.length === 2 && segments[0] === 'school' && segments[1] !== 'india') {
+    url.pathname = '/schools';
+    url.searchParams.set('q', segments[1].replace(/\.html$/i, '').replace(/[-_]/g, ' '));
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }

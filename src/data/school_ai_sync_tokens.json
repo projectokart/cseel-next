@@ -35968,6 +35968,51 @@
         "logoImage": "",
         "heroImage": ""
       }
+    },
+    "sync_29280704515": {
+      "token": "sync_29280704515",
+      "schoolId": "29280704515",
+      "schoolName": "Vidya Vihar International School",
+      "createdAt": 1791881953454,
+      "expiresAt": 0,
+      "isPermanent": true,
+      "lastUpdatedAt": 1791881953454,
+      "lastUpdatedSource": "Manual Onboarding",
+      "profileData": {
+        "schoolName": "Vidya Vihar International School",
+        "udiseCode": "29280704515",
+        "board": "CBSE",
+        "medium": "English",
+        "establishedYear": "2008",
+        "totalStudents": 1250,
+        "totalTeachers": 55,
+        "classroomsCount": 35,
+        "classFrom": "Nursery",
+        "classTo": "10th",
+        "schoolCategory": "Secondary School (Class 1 to 10th)",
+        "genderType": "Co-educational",
+        "state": "Karnataka",
+        "district": "Bengaluru Urban",
+        "village": "Bengaluru",
+        "address": "Abbigere, Lakshmipura Main Road, Bengaluru North, Karnataka 560090",
+        "pincode": "560090",
+        "phone": "08028391234",
+        "email": "info@vidyavihar.edu.in",
+        "website": "https://vidyavihar.edu.in",
+        "principalName": "Principal In-Charge",
+        "admissionsOpen": true,
+        "campusArea": "12000 sq mt",
+        "affiliationNumber": "830412",
+        "contentOverrides": {
+          "hero_tagline": "Excellence in Education & Experiential STEM Learning",
+          "hero_stat_val_1": "CBSE",
+          "hero_stat_val_2": "23:1",
+          "hero_stat_val_3": "55+",
+          "hero_stat_val_4": "Nursery - 10th"
+        },
+        "imageOverrides": {},
+        "sectionVisibility": {}
+      }
     }
   }
 }

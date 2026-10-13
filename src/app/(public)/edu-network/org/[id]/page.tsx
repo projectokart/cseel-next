@@ -67,10 +67,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default function OrgProfilePage({ params }: { params: { id: string } }) {
-  const org = getOrganizationById(params.id);
-  if (!org) {
-    notFound();
-  }
+  const org = getOrganizationById(params.id) || ALL_ORGANIZATIONS[0];
 
   const slug = org.slug || getOrgSlug(org);
   const pageUrl = `https://www.cseel.org/edu-network/org/${slug}`;

@@ -18,14 +18,14 @@ const testimonials = [
   {
     name: "Rakesh Sharma",
     title: "Associate Professor, Delhi University",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQasrbD4o8y03QK0ogqw8jJtrRMkApA8HLtDw&s",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop",
     quote: "My goal is for students to have experiences that simulate the hands-on labs they would encounter if they were in person. CSEEL makes that completely seamless.",
     badge: "Higher Education",
   },
   {
     name: "Vivek Sharma",
     title: "STEM Coordinator, Korean Embassy School",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQihhZf7her-3KOsNQwuB3q9IwxNcWbGGGxkQ&s",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop",
     quote: "Fortunately for us, instructors found everything they needed in CSEEL. It just worked perfectly for our international experiential curriculum.",
     badge: "International STEM",
   },

@@ -89,7 +89,10 @@ export class DepartmentDbAdapter {
         q = q.limit(options.limit);
       }
 
-      const { data, error } = await q;
+      const timeoutPromise = new Promise<{ data: null; error: any }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error('Query timeout') }), 2000)
+      );
+      const { data, error } = await Promise.race([q, timeoutPromise]);
 
       if (error || !data || data.length === 0) {
         return { data: fallbackData, isFromDb: false };

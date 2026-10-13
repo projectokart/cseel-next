@@ -467,5 +467,13 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-12T19:05:18.878Z",
     "updatedBy": "Auto Init"
+  },
+  "hands-on-experiments": {
+    "pageKey": "hands-on-experiments",
+    "title": "Hands On Experiments",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-13T04:32:16.180Z",
+    "updatedBy": "Auto Init"
   }
 }

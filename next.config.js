@@ -37,7 +37,7 @@ const securityHeaders = [
       img-src 'self' data: blob: https: https://ukazkxthavxphibdbspd.supabase.co https://cdn.sanity.io https://images.unsplash.com https://cdn.prod.website-files.com https://www.cseel.org https://i.ytimg.com;
       font-src 'self' data: https://fonts.gstatic.com;
       frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
-      connect-src 'self' https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com;
+      connect-src 'self' https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org;
     `.replace(/\s{2,}/g, ' ').trim(),
   },
 ];

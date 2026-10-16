@@ -87,6 +87,12 @@ const Footer = () => {
               <Link href="/steam-lab" className={getLinkClass('/steam-lab')}>
                 STEAM & ATL Labs
               </Link>
+              <Link href="/makerspace" className={getLinkClass('/makerspace')}>
+                Junior Makerspace
+              </Link>
+              <Link href="/composite-lab" className={getLinkClass('/composite-lab')}>
+                Composite Science Lab
+              </Link>
               <Link href="/simulations" className={getLinkClass('/simulations')}>
                 Simulations Catalog
               </Link>

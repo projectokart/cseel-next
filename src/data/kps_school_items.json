@@ -1,0 +1,105 @@
+[
+  {
+    "excel_name": "electricity-grade-1",
+    "product_title": "Snap Circuits Beginner Electronics Kit",
+    "price": 2100,
+    "source_image": "/images/makerspace/kps/image1.png",
+    "mapped_keys": [
+      "robotics-coding-10",
+      "electronics-circuits-1"
+    ]
+  },
+  {
+    "excel_name": "Optics Explorer grade-1",
+    "product_title": "Optics Explorer Light & Reflection Science Kit",
+    "price": 750,
+    "source_image": "/images/makerspace/kps/image2.png",
+    "mapped_keys": [
+      "science-exploration-5",
+      "science-exploration-6"
+    ]
+  },
+  {
+    "excel_name": "Sound and light for grade-1",
+    "product_title": "Sound & Light Discovery Exploration Kit",
+    "price": 2000,
+    "source_image": "/images/makerspace/kps/image3.png",
+    "mapped_keys": [
+      "science-exploration-39"
+    ]
+  },
+  {
+    "excel_name": "Drawing pad",
+    "product_title": "Portronics Digital LCD Drawing & Writing Tablet",
+    "price": 150,
+    "source_image": "/images/makerspace/kps/image4.png",
+    "mapped_keys": [
+      "advanced-creative-6"
+    ]
+  },
+  {
+    "excel_name": "Coding Cards",
+    "product_title": "ScratchJr Coding Cards (75 Creative Coding Activities)",
+    "price": 1150,
+    "source_image": "/images/makerspace/kps/image5.png",
+    "mapped_keys": [
+      "robotics-coding-3"
+    ]
+  },
+  {
+    "excel_name": "Coding for Kids, Coding Games",
+    "product_title": "Let's Go Code! Activity Set & Coding Grid Mats",
+    "price": 3500,
+    "source_image": "/images/makerspace/kps/image6.png",
+    "mapped_keys": [
+      "robotics-coding-2"
+    ]
+  },
+  {
+    "excel_name": "Coding Critters Go Pets Scrambles The Fox, Early Coding Toy, Ages 5+",
+    "product_title": "Coding Critters Go-Pets Scrambles The Fox Floor Robot",
+    "price": 4500,
+    "source_image": "/images/makerspace/kps/image7.png",
+    "mapped_keys": [
+      "robotics-coding-1"
+    ]
+  },
+  {
+    "excel_name": "360 Telescope",
+    "product_title": "Omega 360 Newtonian Astronomical Reflector Telescope",
+    "price": 12000,
+    "source_image": "/images/makerspace/kps/image8.jpeg",
+    "mapped_keys": [
+      "science-exploration-4"
+    ]
+  },
+  {
+    "excel_name": "Magnifier",
+    "product_title": "GeoSafari Jr. Kidnoculars Extreme View Magnifier",
+    "price": 3500,
+    "source_image": "/images/makerspace/kps/image9.png",
+    "mapped_keys": [
+      "science-exploration-1",
+      "basic-tools-27"
+    ]
+  },
+  {
+    "excel_name": "First Microscope",
+    "product_title": "GeoSafari Jr. My First Microscope for Early Learners",
+    "price": 4200,
+    "source_image": "/images/makerspace/kps/image10.png",
+    "mapped_keys": [
+      "science-exploration-2"
+    ]
+  },
+  {
+    "excel_name": "mental blox",
+    "product_title": "Learning Resources Mental Blox Spatial Reasoning Game",
+    "price": 3200,
+    "source_image": "/images/makerspace/kps/image11.png",
+    "mapped_keys": [
+      "math-logic-12",
+      "math-logic-10"
+    ]
+  }
+]

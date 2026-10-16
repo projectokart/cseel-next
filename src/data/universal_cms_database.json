@@ -475,5 +475,13 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-13T04:32:16.180Z",
     "updatedBy": "Auto Init"
+  },
+  "makerspace": {
+    "pageKey": "makerspace",
+    "title": "Makerspace",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-15T15:18:37.711Z",
+    "updatedBy": "Auto Init"
   }
 }

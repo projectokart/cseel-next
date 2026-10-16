@@ -138,6 +138,18 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
             ],
           },
           {
+            id: 'item-makerspace',
+            label: 'Junior Makerspace (Prayogi)',
+            to: '/makerspace',
+            desc: 'Complete 325+ material & equipment setup for 40-student primary innovation labs.',
+            badge: '325+ Items',
+            subItems: [
+              { label: 'Complete 325+ Material & Equipment List', to: '/makerspace', badge: 'Full BOQ' },
+              { label: 'Furniture, Tools & Electronics Setup', to: '/makerspace' },
+              { label: 'Download Official Makerspace PDF', to: '/documents/Prayogi_Junior_Makerspace_Complete_Material_List.pdf' },
+            ],
+          },
+          {
             id: 'item-robotics',
             label: 'AI, IoT & Robotics Lab',
             to: '/steam-lab/ai-robotics-lab',

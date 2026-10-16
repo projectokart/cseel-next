@@ -1,0 +1,466 @@
+{
+  "teacher-facilitator-table": {
+    "itemName": "Teacher / facilitator table",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-3.jpg"
+  },
+  "low-temperature-glue-guns": {
+    "itemName": "Low-temperature glue guns",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/low-temperature-glue-guns.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:26.487Z"
+  },
+  "micro-bit": {
+    "itemName": "Micro:bit",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/micro-bit.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:34.305Z"
+  },
+  "arduino-uno": {
+    "itemName": "Arduino Uno",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/arduino-uno.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:34.305Z"
+  },
+  "servo-motors": {
+    "itemName": "Servo motors",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/servo-motors.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:34.305Z"
+  },
+  "ultrasonic-sensors": {
+    "itemName": "Ultrasonic sensors",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/ultrasonic-sensors.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:34.305Z"
+  },
+  "breadboards": {
+    "itemName": "Breadboards",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/breadboards.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:34.306Z"
+  },
+  "leds-in-multiple-colours": {
+    "itemName": "LEDs in multiple colours",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/leds-in-multiple-colours.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:38.008Z"
+  },
+  "9v-batteries": {
+    "itemName": "9V batteries",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/9v-batteries.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:39.141Z"
+  },
+  "acrylic-paints": {
+    "itemName": "Acrylic paints",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/acrylic-paints.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:47.904Z"
+  },
+  "digital-microscopes": {
+    "itemName": "Digital microscopes",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/digital-microscopes.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:07.979Z"
+  },
+  "optical-glass-prism": {
+    "itemName": "Optical glass prism",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/optical-glass-prism.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:14.739Z"
+  },
+  "wooden-building-blocks": {
+    "itemName": "Wooden building blocks",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/wooden-building-blocks.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:15.770Z"
+  },
+  "first-aid-kit": {
+    "itemName": "First-aid kit",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/first-aid-kit.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:21.707Z"
+  },
+  "safety-goggles": {
+    "itemName": "Safety goggles",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/safety-goggles.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:21.708Z"
+  },
+  "junior-height-chairs-stools": {
+    "itemName": "Junior-height chairs / stools",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-2.jpg"
+  },
+  "storage-bins": {
+    "itemName": "Storage bins",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/storage-bins.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "child-safe-scissors": {
+    "itemName": "Child-safe scissors",
+    "verified": true,
+    "sourceTitle": "File:2scissors-clean.jpg",
+    "publicUrl": "/images/makerspace/verified-products/child-safe-scissors.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:15.766Z"
+  },
+  "rulers-30-cm": {
+    "itemName": "Rulers, 30 cm",
+    "verified": true,
+    "sourceTitle": "File:M3 screw and 6-32 UTS screw with ruler thread pitch.png",
+    "publicUrl": "/images/makerspace/verified-products/rulers-30-cm.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:18.075Z"
+  },
+  "measuring-tapes": {
+    "itemName": "Measuring tapes",
+    "verified": true,
+    "sourceTitle": "File:Stanley PowerLock tape measure on tool box.jpg",
+    "publicUrl": "/images/makerspace/verified-products/measuring-tapes.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:23.453Z"
+  },
+  "resistor-assortments": {
+    "itemName": "Resistor assortments",
+    "verified": true,
+    "sourceTitle": "File:Resistor 1.0 MOhm 0.167 Watt PTH.jpg",
+    "publicUrl": "/images/makerspace/verified-products/resistor-assortments.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:37.103Z"
+  },
+  "digital-multimeters": {
+    "itemName": "Digital multimeters",
+    "verified": true,
+    "sourceTitle": "File:Digital Multimeter Aka.jpg",
+    "publicUrl": "/images/makerspace/verified-products/digital-multimeters.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:41.207Z"
+  },
+  "coloured-paper-and-origami-paper": {
+    "itemName": "Coloured paper and origami paper",
+    "verified": true,
+    "sourceTitle": "File:Works of basic type of kiriorigami paper crafts.JPG",
+    "publicUrl": "/images/makerspace/verified-products/coloured-paper-and-origami-paper.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:43.761Z"
+  },
+  "3d-printing-pens": {
+    "itemName": "3D printing pens",
+    "verified": true,
+    "sourceTitle": "File:Person using 3D printing pen at exhibition.jpg",
+    "publicUrl": "/images/makerspace/verified-products/3d-printing-pens.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:53.091Z"
+  },
+  "enclosed-fdm-3d-printer": {
+    "itemName": "Enclosed FDM 3D printer",
+    "verified": true,
+    "sourceTitle": "File:Prusa i3 3D Printer - Reprap - Completed.jpg",
+    "publicUrl": "/images/makerspace/verified-products/enclosed-fdm-3d-printer.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:10:58.331Z"
+  },
+  "hand-magnifiers": {
+    "itemName": "Hand magnifiers",
+    "verified": true,
+    "sourceTitle": "File:Magnifying glass2.jpg",
+    "publicUrl": "/images/makerspace/verified-products/hand-magnifiers.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:03.870Z"
+  },
+  "student-microscopes": {
+    "itemName": "Student microscopes",
+    "verified": true,
+    "sourceTitle": "File:The microscope and its revelations (1901) (14786821523).jpg",
+    "publicUrl": "/images/makerspace/verified-products/student-microscopes.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:07.074Z"
+  },
+  "binoculars-for-nature-observation": {
+    "itemName": "Binoculars for nature observation",
+    "verified": true,
+    "sourceTitle": "File:Binocular Eschenbach Derby Compact 8x40 Ww.jpg",
+    "publicUrl": "/images/makerspace/verified-products/binoculars-for-nature-observation.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:11.808Z"
+  },
+  "bar-and-horseshoe-magnets": {
+    "itemName": "Bar and horseshoe magnets",
+    "verified": true,
+    "sourceTitle": "File:Openstax college-physics 22.3 various-magnets.jpg",
+    "publicUrl": "/images/makerspace/verified-products/bar-and-horseshoe-magnets.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:13.836Z"
+  },
+  "tangrams": {
+    "itemName": "Tangrams",
+    "verified": true,
+    "sourceTitle": "File:Tangrams at Discovery Day in Laos.jpg",
+    "publicUrl": "/images/makerspace/verified-products/tangrams.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:17.589Z"
+  },
+  "digital-vernier-caliper": {
+    "itemName": "Digital vernier caliper",
+    "verified": true,
+    "sourceTitle": "File:Messschieber.jpg",
+    "publicUrl": "/images/makerspace/verified-products/digital-vernier-caliper.jpg",
+    "confidence": 0.96,
+    "verifiedAt": "2026-10-15T17:11:20.799Z"
+  },
+  "open-wooden-material-shelves": {
+    "itemName": "Open wooden material shelves",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/shelves.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.910Z"
+  },
+  "transparent-storage-bins": {
+    "itemName": "Transparent storage bins",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/storage-bins.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "wall-mounted-pegboards": {
+    "itemName": "Wall-mounted pegboards",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/pegboard.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "tool-hooks-and-pegboard-accessories": {
+    "itemName": "Tool hooks and pegboard accessories",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/pegboard-hooks.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "cave-cushions-and-backrest-cushions": {
+    "itemName": "Cave cushions and backrest cushions",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-6.jpg"
+  },
+  "floor-poufs-soft-seating": {
+    "itemName": "Floor poufs / soft seating",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/cushions.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "small-wooden-cave-quiet-nooks": {
+    "itemName": "Small wooden Cave / quiet nooks",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/cushions.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "round-modular-discussion-table": {
+    "itemName": "Round / modular discussion table",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-8.jpg"
+  },
+  "mobile-tool-trolley-with-drawers": {
+    "itemName": "Mobile tool trolley with drawers",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/tool-trolley.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "locking-storage-cabinet-for-electronics-delicate-items": {
+    "itemName": "Locking storage cabinet for electronics & delicate items",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/locking-cabinet.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "charging-station-multi-plug-hub": {
+    "itemName": "Charging station / multi-plug hub",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/charging-station.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "whiteboard-on-wheels-double-sided": {
+    "itemName": "Whiteboard on wheels (double-sided)",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/whiteboard.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "magnetic-bulletin-board-display-wall": {
+    "itemName": "Magnetic bulletin board / display wall",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/whiteboard.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "project-showcase-shelves-cubbies": {
+    "itemName": "Project showcase shelves / cubbies",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/shelves.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "drying-rack-for-art-paint-projects": {
+    "itemName": "Drying rack for art & paint projects",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/shelves.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "step-stool-junior-safety": {
+    "itemName": "Step stool (junior safety)",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/step-stool.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "wall-clock-large-child-readable": {
+    "itemName": "Wall clock (large, child-readable)",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/wall-clock.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "dustbin-with-pedal-segregated-wet-dry": {
+    "itemName": "Dustbin with pedal (segregated: wet / dry)",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/dustbin.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "paper-recycling-collection-bin": {
+    "itemName": "Paper recycling collection bin",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/dustbin.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "e-waste-collection-bin": {
+    "itemName": "E-waste collection bin",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/dustbin.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "combination-pliers": {
+    "itemName": "Combination pliers",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/pliers.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "long-nose-pliers": {
+    "itemName": "Long-nose pliers",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/pliers.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "side-cutters-wire-cutters-facilitator-controlled": {
+    "itemName": "Side cutters / wire cutters (facilitator-controlled)",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/pliers.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "screwdriver-sets": {
+    "itemName": "Screwdriver sets",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/screwdrivers.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "small-screwdrivers-for-supervised-projects": {
+    "itemName": "Small screwdrivers for supervised projects",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/screwdrivers.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "small-hand-clamps": {
+    "itemName": "Small hand clamps",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/clamps.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "spring-clamps": {
+    "itemName": "Spring clamps",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/clamps.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "small-hammers-lightweight-mallets": {
+    "itemName": "Small hammers / lightweight mallets",
+    "verified": true,
+    "publicUrl": "/images/makerspace/items/hammer.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-15T18:46:26.916Z"
+  },
+  "child-friendly-collaborative-worktables": {
+    "itemName": "Child-friendly collaborative worktables",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-1.jpg"
+  },
+  "individual-group-storage-lockers": {
+    "itemName": "Individual / group storage lockers",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-15.jpg"
+  },
+  "mobile-utility-trolley": {
+    "itemName": "Mobile utility trolley",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/furniture-interior-17.jpg"
+  },
+  "aprons": {
+    "itemName": "Aprons",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/art-craft-37.jpg"
+  },
+  "silicone-moulds-shapes-and-textures": {
+    "itemName": "Silicone moulds, shapes and textures",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/art-craft-19.jpg"
+  },
+  "googly-eyes": {
+    "itemName": "Googly eyes",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/art-craft-27.jpg"
+  },
+  "glue-sticks": {
+    "itemName": "Glue sticks",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/art-craft-32.jpg"
+  },
+  "micro-woodturning-lathe-machine": {
+    "itemName": "Micro woodturning lathe machine (Proxxon DB 250)",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/optional-advanced-15.avif"
+  },
+  "two-trees-ttc-450-pro-cnc-router": {
+    "itemName": "Two Trees TTC 450 Pro CNC router & carving machine",
+    "verified": true,
+    "publicUrl": "/images/makerspace/catalog/optional-advanced-16.avif"
+  }
+}

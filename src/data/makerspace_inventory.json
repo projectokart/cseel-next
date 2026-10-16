@@ -1,0 +1,1777 @@
+[
+  {
+    "id": "furniture-interior",
+    "title": "1. Furniture & Interior Infrastructure",
+    "badge": "Interior & Ergonomics",
+    "icon": "Sparkles",
+    "color": "#9656d9",
+    "description": "Ergonomic, modular workbenches, collaborative cave pods, and mobile storage systems designed for primary and middle school learners.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Child-friendly collaborative worktables",
+        "quantity": "5\u20136"
+      },
+      {
+        "sno": "2",
+        "name": "Junior-height chairs / stools",
+        "quantity": "40\u201344"
+      },
+      {
+        "sno": "3",
+        "name": "Teacher / facilitator table",
+        "quantity": "1"
+      },
+      {
+        "sno": "4",
+        "name": "Teacher chair",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "5",
+        "name": "Small wooden Cave / quiet nooks",
+        "quantity": "2\u20133"
+      },
+      {
+        "sno": "6",
+        "name": "Cave cushions and backrest cushions",
+        "quantity": "12\u201318"
+      },
+      {
+        "sno": "7",
+        "name": "Floor poufs / soft seating",
+        "quantity": "8\u201312"
+      },
+      {
+        "sno": "8",
+        "name": "Round / modular discussion table",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "9",
+        "name": "Open wooden material shelves",
+        "quantity": "6\u201310"
+      },
+      {
+        "sno": "10",
+        "name": "Transparent storage bins",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "11",
+        "name": "Wall-mounted pegboards",
+        "quantity": "3\u20135 panels"
+      },
+      {
+        "sno": "12",
+        "name": "Tool hooks and pegboard accessories",
+        "quantity": "1 set"
+      },
+      {
+        "sno": "13",
+        "name": "Project display shelves",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "14",
+        "name": "Student project display boards",
+        "quantity": "2\u20133"
+      },
+      {
+        "sno": "15",
+        "name": "Individual / group storage lockers",
+        "quantity": "20\u201340 compartments"
+      },
+      {
+        "sno": "16",
+        "name": "Circular book or activity carousel",
+        "quantity": "1"
+      },
+      {
+        "sno": "17",
+        "name": "Mobile utility trolley",
+        "quantity": "2\u20133"
+      },
+      {
+        "sno": "18",
+        "name": "Waste and recycling bins",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "19",
+        "name": "Whiteboard / writable wall",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "20",
+        "name": "Pin-up boards and noticeboards",
+        "quantity": "2\u20133"
+      },
+      {
+        "sno": "21",
+        "name": "Wooden wall cladding / decorative panels",
+        "quantity": "As per design"
+      },
+      {
+        "sno": "22",
+        "name": "Acoustic ceiling panels / baffles",
+        "quantity": "As per acoustic design"
+      },
+      {
+        "sno": "23",
+        "name": "LED general and task lighting",
+        "quantity": "As per layout"
+      },
+      {
+        "sno": "24",
+        "name": "Power sockets and protected cable management",
+        "quantity": "As per electrical plan"
+      },
+      {
+        "sno": "25",
+        "name": "Curtains / blinds, if required",
+        "quantity": "As per windows"
+      },
+      {
+        "sno": "26",
+        "name": "Plants and child-safe planters",
+        "quantity": "6\u201310"
+      },
+      {
+        "sno": "27",
+        "name": "Zone labels and learning signage",
+        "quantity": "1 complete set"
+      },
+      {
+        "sno": "28",
+        "name": "Anti-slip floor mats for selected workstations",
+        "quantity": "4\u20136"
+      }
+    ]
+  },
+  {
+    "id": "basic-tools",
+    "title": "2. Basic Tools for Making & Construction",
+    "badge": "Hand Tools & Fasteners",
+    "icon": "Wrench",
+    "color": "#2a7cb7",
+    "description": "Child-safe scissors, low-temperature glue guns, hand drills, precision tweezers, cutting mats, and safe fastening supplies.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Child-safe scissors",
+        "quantity": "40"
+      },
+      {
+        "sno": "2",
+        "name": "Adult / facilitator scissors",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "3",
+        "name": "Rulers, 30 cm",
+        "quantity": "40"
+      },
+      {
+        "sno": "4",
+        "name": "Measuring tapes",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "5",
+        "name": "Set squares and protractors",
+        "quantity": "20 sets"
+      },
+      {
+        "sno": "6",
+        "name": "Pencils and erasers",
+        "quantity": "40\u201350 sets"
+      },
+      {
+        "sno": "7",
+        "name": "Screwdriver sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "8",
+        "name": "Small screwdrivers for supervised projects",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "9",
+        "name": "Combination pliers",
+        "quantity": "6"
+      },
+      {
+        "sno": "10",
+        "name": "Long-nose pliers",
+        "quantity": "6"
+      },
+      {
+        "sno": "11",
+        "name": "Side cutters / wire cutters (facilitator-controlled)",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "12",
+        "name": "Child-safe hand drills / manual pin drills (supervised)",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "13",
+        "name": "Small hand clamps",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "14",
+        "name": "Spring clamps",
+        "quantity": "12\u201316"
+      },
+      {
+        "sno": "15",
+        "name": "Small hammers / lightweight mallets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "16",
+        "name": "Hole punches",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "17",
+        "name": "Tweezers",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "18",
+        "name": "Blunt-tip craft awls (supervised)",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "19",
+        "name": "Sanding blocks",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "20",
+        "name": "Safety goggles",
+        "quantity": "20\u201340, activity-dependent"
+      },
+      {
+        "sno": "21",
+        "name": "Reusable cutting mats",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "22",
+        "name": "Glue sticks and glue applicators",
+        "quantity": "40+"
+      },
+      {
+        "sno": "23",
+        "name": "Double-sided tape dispensers",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "24",
+        "name": "Low-temperature glue guns (adult-controlled)",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "25",
+        "name": "Utility knives / craft blades (adult-only)",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "26",
+        "name": "Digital weighing scales",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "27",
+        "name": "Handheld magnifiers",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "28",
+        "name": "Hand-operated mini vice, securely mounted",
+        "quantity": "2\u20134"
+      }
+    ]
+  },
+  {
+    "id": "robotics-coding",
+    "title": "3. Robotics, Coding & Technology",
+    "badge": "Robotics & AI",
+    "icon": "Cpu",
+    "color": "#358645",
+    "description": "Programmable floor robots, Micro:bit kits, modular snap-together robotics, microcontrollers, and tablet coding setups.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Bee-Bot / beginner programmable floor robots",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "2",
+        "name": "Coding grid mats",
+        "quantity": "4"
+      },
+      {
+        "sno": "3",
+        "name": "Coding direction and challenge cards",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "4",
+        "name": "Beginner robotics construction kits",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "5",
+        "name": "Gears, axles and wheels (LEGO-compatible or equivalent)",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "6",
+        "name": "Building blocks / engineering construction sets",
+        "quantity": "10\u201312 sets"
+      },
+      {
+        "sno": "7",
+        "name": "Battery-powered educational motor kits",
+        "quantity": "10\u201312 sets"
+      },
+      {
+        "sno": "8",
+        "name": "Gear and pulley construction models",
+        "quantity": "6\u20138 sets"
+      },
+      {
+        "sno": "9",
+        "name": "Simple hydraulic / pneumatic construction kits",
+        "quantity": "4\u20136 sets"
+      },
+      {
+        "sno": "10",
+        "name": "Snap Circuits or equivalent safe circuit kits",
+        "quantity": "10\u201312 sets"
+      },
+      {
+        "sno": "11",
+        "name": "Beginner microcontroller kits (e.g., micro:bit)",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "12",
+        "name": "Sensor modules for coding projects",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "13",
+        "name": "Ultrasonic distance sensors",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "14",
+        "name": "Light sensors",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "15",
+        "name": "Temperature and humidity sensors",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "16",
+        "name": "LED modules and indicator lights",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "17",
+        "name": "Buzzer modules",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "18",
+        "name": "Servo motors",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "19",
+        "name": "Small DC motors",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "20",
+        "name": "Motor wheels and suitable project propellers",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "21",
+        "name": "Low-voltage battery holders and battery packs",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "22",
+        "name": "Rechargeable AA/AAA batteries and chargers",
+        "quantity": "1\u20132 charging stations"
+      },
+      {
+        "sno": "23",
+        "name": "USB cables and data cables",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "24",
+        "name": "Component sorting boxes",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "25",
+        "name": "Laptops / computers for coding",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "26",
+        "name": "Projector or interactive display",
+        "quantity": "1"
+      },
+      {
+        "sno": "27",
+        "name": "USB / digital microscopes",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "28",
+        "name": "Beginner drone education set (optional)",
+        "quantity": "1\u20132, supervised"
+      }
+    ]
+  },
+  {
+    "id": "electronics-circuits",
+    "title": "4. Electronics & Circuit-Making Materials",
+    "badge": "Circuits & Hardware",
+    "icon": "Zap",
+    "color": "#b5600c",
+    "description": "Breadboards, LEDs, buzzers, hobby DC motors, copper tape, multimeters, and safe regulated power experiment boards.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Breadboards",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "2",
+        "name": "Compatible jumper-wire sets",
+        "quantity": "10\u201315 assorted sets"
+      },
+      {
+        "sno": "3",
+        "name": "Resistor assortments",
+        "quantity": "10 boxes"
+      },
+      {
+        "sno": "4",
+        "name": "LEDs in multiple colours",
+        "quantity": "20\u201330 assorted packs"
+      },
+      {
+        "sno": "5",
+        "name": "Push buttons and switches",
+        "quantity": "10 assorted sets"
+      },
+      {
+        "sno": "6",
+        "name": "Buzzers",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "7",
+        "name": "Low-voltage DC motors",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "8",
+        "name": "Small hobby fans",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "9",
+        "name": "Alligator-clip leads",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "10",
+        "name": "Battery holders",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "11",
+        "name": "AA/AAA batteries",
+        "quantity": "Initial stock plus replenishment"
+      },
+      {
+        "sno": "12",
+        "name": "Insulated wires",
+        "quantity": "10\u201315 assorted rolls"
+      },
+      {
+        "sno": "13",
+        "name": "Copper tape",
+        "quantity": "10 rolls"
+      },
+      {
+        "sno": "14",
+        "name": "Conductive fabric / thread (optional)",
+        "quantity": "4\u20136 packs"
+      },
+      {
+        "sno": "15",
+        "name": "Aluminium foil and conductive craft materials",
+        "quantity": "1 bulk set"
+      },
+      {
+        "sno": "16",
+        "name": "Multimeters",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "17",
+        "name": "Low-voltage regulated DC power supplies",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "18",
+        "name": "All-in-one circuit experiment boards",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "19",
+        "name": "Component organizers with labels",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "20",
+        "name": "Electrical insulation tape",
+        "quantity": "10 rolls"
+      }
+    ]
+  },
+  {
+    "id": "art-craft",
+    "title": "5. Art, Craft & Creative Prototyping",
+    "badge": "Creative Prototyping",
+    "icon": "Palette",
+    "color": "#ea6421",
+    "description": "Drawing sheets, poster paints, air-dry clay, wooden rolling pins, silicone moulds, foam sheets, and craft supplies.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Drawing sheets, A4 and A3",
+        "quantity": "1,000 sheets to start"
+      },
+      {
+        "sno": "2",
+        "name": "Coloured paper and origami paper",
+        "quantity": "500\u20131,000 sheets"
+      },
+      {
+        "sno": "3",
+        "name": "Cardboard sheets",
+        "quantity": "100\u2013150"
+      },
+      {
+        "sno": "4",
+        "name": "Corrugated cardboard",
+        "quantity": "50\u2013100 sheets"
+      },
+      {
+        "sno": "5",
+        "name": "Cardboard tubes and paper rolls",
+        "quantity": "100\u2013200"
+      },
+      {
+        "sno": "6",
+        "name": "Reusable cardboard offcuts",
+        "quantity": "2\u20134 storage boxes"
+      },
+      {
+        "sno": "7",
+        "name": "Coloured chart paper",
+        "quantity": "100 sheets"
+      },
+      {
+        "sno": "8",
+        "name": "Construction paper",
+        "quantity": "100\u2013200 sheets"
+      },
+      {
+        "sno": "9",
+        "name": "Poster paints",
+        "quantity": "20\u201330 assorted bottles"
+      },
+      {
+        "sno": "10",
+        "name": "Watercolour sets",
+        "quantity": "20\u201340 sets"
+      },
+      {
+        "sno": "11",
+        "name": "Paintbrushes, assorted sizes",
+        "quantity": "80\u2013100"
+      },
+      {
+        "sno": "12",
+        "name": "Paint palettes",
+        "quantity": "20"
+      },
+      {
+        "sno": "13",
+        "name": "Washable markers",
+        "quantity": "40\u201350 sets"
+      },
+      {
+        "sno": "14",
+        "name": "Crayons / oil pastels",
+        "quantity": "40\u201350 sets"
+      },
+      {
+        "sno": "15",
+        "name": "Coloured pencils",
+        "quantity": "40 sets"
+      },
+      {
+        "sno": "16",
+        "name": "Air-dry clay",
+        "quantity": "20\u201330 kg initial stock"
+      },
+      {
+        "sno": "17",
+        "name": "Reusable modelling dough",
+        "quantity": "20\u201330 sets"
+      },
+      {
+        "sno": "18",
+        "name": "Wooden rolling pins",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "19",
+        "name": "Silicone moulds, shapes and textures",
+        "quantity": "20\u201330"
+      },
+      {
+        "sno": "20",
+        "name": "Child-safe clay modelling tools",
+        "quantity": "20\u201330 sets"
+      },
+      {
+        "sno": "21",
+        "name": "Foam sheets / EVA craft foam",
+        "quantity": "100\u2013150 sheets"
+      },
+      {
+        "sno": "22",
+        "name": "Felt sheets",
+        "quantity": "100"
+      },
+      {
+        "sno": "23",
+        "name": "Pipe cleaners / chenille stems",
+        "quantity": "500 pieces"
+      },
+      {
+        "sno": "24",
+        "name": "Ice-cream sticks and craft sticks",
+        "quantity": "1,000 pieces"
+      },
+      {
+        "sno": "25",
+        "name": "Wooden dowels and craft rods",
+        "quantity": "200\u2013300"
+      },
+      {
+        "sno": "26",
+        "name": "Coloured pom-poms",
+        "quantity": "500 pieces"
+      },
+      {
+        "sno": "27",
+        "name": "Googly eyes",
+        "quantity": "500 pieces"
+      },
+      {
+        "sno": "28",
+        "name": "Feathers, ribbons, yarn and wool",
+        "quantity": "Assorted packs"
+      },
+      {
+        "sno": "29",
+        "name": "Buttons, beads and sequins",
+        "quantity": "10\u201315 assorted boxes"
+      },
+      {
+        "sno": "30",
+        "name": "Blunt-ended craft sticks / suitable skewers",
+        "quantity": "Assorted packs"
+      },
+      {
+        "sno": "31",
+        "name": "Non-toxic PVA craft glue",
+        "quantity": "10\u201315 litres initially"
+      },
+      {
+        "sno": "32",
+        "name": "Glue sticks",
+        "quantity": "100\u2013150"
+      },
+      {
+        "sno": "33",
+        "name": "Washable adhesive tape",
+        "quantity": "20\u201330 rolls"
+      },
+      {
+        "sno": "34",
+        "name": "Masking tape",
+        "quantity": "20 rolls"
+      },
+      {
+        "sno": "35",
+        "name": "Double-sided tape",
+        "quantity": "10\u201315 rolls"
+      },
+      {
+        "sno": "36",
+        "name": "Reusable plastic / silicone work mats",
+        "quantity": "20"
+      },
+      {
+        "sno": "37",
+        "name": "Aprons",
+        "quantity": "40"
+      },
+      {
+        "sno": "38",
+        "name": "Water cups / washable paint containers",
+        "quantity": "20\u201340"
+      },
+      {
+        "sno": "39",
+        "name": "Reusable mixing bowls and trays",
+        "quantity": "20\u201330"
+      },
+      {
+        "sno": "40",
+        "name": "Artwork drying racks",
+        "quantity": "2\u20134"
+      }
+    ]
+  },
+  {
+    "id": "advanced-creative",
+    "title": "6. Advanced Creative Equipment",
+    "badge": "Digital Fabrication",
+    "icon": "Layers",
+    "color": "#038392",
+    "description": "3D printing pens, enclosed FDM 3D printers, vinyl cutting machines, digital drawing tablets, and paper crafting equipment.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "3D printing pens",
+        "quantity": "8\u201310, optional"
+      },
+      {
+        "sno": "2",
+        "name": "Compatible low-temperature / manufacturer-approved filament",
+        "quantity": "Stock to suit pens"
+      },
+      {
+        "sno": "3",
+        "name": "Enclosed FDM 3D printer",
+        "quantity": "1\u20132, advanced"
+      },
+      {
+        "sno": "4",
+        "name": "3D-printer filament",
+        "quantity": "5\u201310 rolls initially"
+      },
+      {
+        "sno": "5",
+        "name": "Vinyl cutting machine",
+        "quantity": "1, optional"
+      },
+      {
+        "sno": "6",
+        "name": "Digital drawing tablets",
+        "quantity": "4\u20136, optional"
+      },
+      {
+        "sno": "7",
+        "name": "Craft punch sets",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "8",
+        "name": "Hand-operated paper cutter (adult-controlled)",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "9",
+        "name": "Sewing cards and blunt plastic needles",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "10",
+        "name": "Child-safe weaving looms",
+        "quantity": "8\u201310"
+      }
+    ]
+  },
+  {
+    "id": "science-exploration",
+    "title": "7. Science Exploration & Experiment Materials",
+    "badge": "Experiential Science",
+    "icon": "Microscope",
+    "color": "#3294da",
+    "description": "Magnifiers, student & digital microscopes, optical prisms, bar/horseshoe magnets, light boxes, and force meters.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Hand magnifiers",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "2",
+        "name": "Student microscopes",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "3",
+        "name": "Digital microscopes",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "4",
+        "name": "Binoculars for nature observation",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "5",
+        "name": "Prisms and safe optical blocks",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "6",
+        "name": "Mirrors and reflection experiment sets",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "7",
+        "name": "Magnets, bar and horseshoe types",
+        "quantity": "15\u201320 sets"
+      },
+      {
+        "sno": "8",
+        "name": "Magnetic / non-magnetic sample sets",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "9",
+        "name": "Compasses",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "10",
+        "name": "Light boxes / illuminated light tables",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "11",
+        "name": "Translucent geometric shapes",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "12",
+        "name": "Transparent / translucent / opaque sample sets",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "13",
+        "name": "Colour-mixing discs and filters",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "14",
+        "name": "School-suitable thermometers",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "15",
+        "name": "Digital stopwatches",
+        "quantity": "10"
+      },
+      {
+        "sno": "16",
+        "name": "Plastic measuring cylinders",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "17",
+        "name": "Plastic droppers and pipettes",
+        "quantity": "40\u201350"
+      },
+      {
+        "sno": "18",
+        "name": "Plastic beakers and measuring cups",
+        "quantity": "30\u201340"
+      },
+      {
+        "sno": "19",
+        "name": "Funnels",
+        "quantity": "20"
+      },
+      {
+        "sno": "20",
+        "name": "Trays and spill-resistant tubs",
+        "quantity": "20"
+      },
+      {
+        "sno": "21",
+        "name": "Digital weighing scales",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "22",
+        "name": "Spring balances / force meters",
+        "quantity": "10"
+      },
+      {
+        "sno": "23",
+        "name": "Pulley experiment sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "24",
+        "name": "Simple machines demonstration sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "25",
+        "name": "Balance scales",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "26",
+        "name": "Water wheels / flow experiment models",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "27",
+        "name": "Weather station / rain gauge",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "28",
+        "name": "Wind vanes and anemometers",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "29",
+        "name": "Globe and solar-system model sets",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "30",
+        "name": "Human skeleton model",
+        "quantity": "1"
+      },
+      {
+        "sno": "31",
+        "name": "Human torso model",
+        "quantity": "1"
+      },
+      {
+        "sno": "32",
+        "name": "Plant, flower and leaf specimen sets",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "33",
+        "name": "Rocks, minerals and fossils collections",
+        "quantity": "4\u20136 sets"
+      },
+      {
+        "sno": "34",
+        "name": "Ventilated insect observation containers",
+        "quantity": "10"
+      },
+      {
+        "sno": "35",
+        "name": "Bird, animal and habitat model sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "36",
+        "name": "Electric motor / generator demonstration models",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "37",
+        "name": "Solar-powered educational model sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "38",
+        "name": "Wind turbine model sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "39",
+        "name": "Sound and vibration experiment sets",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "40",
+        "name": "STEM experiment trays and sorting boxes",
+        "quantity": "15\u201320"
+      }
+    ]
+  },
+  {
+    "id": "engineering-structures",
+    "title": "8. Engineering, Structures & Model-Making",
+    "badge": "Mechanisms & Civil",
+    "icon": "Boxes",
+    "color": "#829632",
+    "description": "Wooden blocks, magnetic tiles, straw kits, bridge challenge materials, gears, pulleys, and lightweight foam/balsa wood.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Wooden building blocks",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "2",
+        "name": "Interlocking construction blocks",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "3",
+        "name": "Magnetic construction tiles",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "4",
+        "name": "Straw construction kits",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "5",
+        "name": "Straw structure connectors",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "6",
+        "name": "Cardboard engineering kits",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "7",
+        "name": "Bridge-building challenge materials",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "8",
+        "name": "Paper tower challenge materials",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "9",
+        "name": "Gears, axles and wheel assemblies",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "10",
+        "name": "Pulley and lever components",
+        "quantity": "6\u20138 sets"
+      },
+      {
+        "sno": "11",
+        "name": "Reusable rods and joint construction sets",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "12",
+        "name": "Rubber bands, assorted sizes",
+        "quantity": "500 pieces"
+      },
+      {
+        "sno": "13",
+        "name": "String, cotton thread and twine",
+        "quantity": "10\u201315 rolls"
+      },
+      {
+        "sno": "14",
+        "name": "Yarn and wool",
+        "quantity": "10\u201315 assorted rolls"
+      },
+      {
+        "sno": "15",
+        "name": "Wooden dowels",
+        "quantity": "200\u2013300"
+      },
+      {
+        "sno": "16",
+        "name": "Lightweight foam blocks",
+        "quantity": "100\u2013200 pieces"
+      },
+      {
+        "sno": "17",
+        "name": "Foam-board sheets",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "18",
+        "name": "Balsa / soft craft wood",
+        "quantity": "30\u201350 strips"
+      },
+      {
+        "sno": "19",
+        "name": "Corrugated plastic sheets",
+        "quantity": "10\u201320"
+      },
+      {
+        "sno": "20",
+        "name": "Recycled cartons and packaging boxes",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "21",
+        "name": "Plastic gears and linkage components",
+        "quantity": "8\u201310 sets"
+      },
+      {
+        "sno": "22",
+        "name": "Small model wheels / caster wheels",
+        "quantity": "100 assorted pieces"
+      },
+      {
+        "sno": "23",
+        "name": "Nuts, bolts and washers for supervised assembly",
+        "quantity": "10\u201315 sorted boxes"
+      },
+      {
+        "sno": "24",
+        "name": "Reusable fasteners, clips and cable ties",
+        "quantity": "Assorted stock"
+      },
+      {
+        "sno": "25",
+        "name": "Small hand clamps",
+        "quantity": "10\u201312"
+      },
+      {
+        "sno": "26",
+        "name": "Reusable prototyping bases",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "27",
+        "name": "Modelling wire with safe ends",
+        "quantity": "10\u201315 rolls"
+      },
+      {
+        "sno": "28",
+        "name": "Aluminium craft foil",
+        "quantity": "10 rolls"
+      },
+      {
+        "sno": "29",
+        "name": "Modelling clay for structures",
+        "quantity": "10\u201315 kg"
+      },
+      {
+        "sno": "30",
+        "name": "Project labels and measurement cards",
+        "quantity": "10\u201315 sets"
+      }
+    ]
+  },
+  {
+    "id": "math-logic",
+    "title": "9. Mathematics, Logic & Spatial Reasoning",
+    "badge": "Spatial & Math Labs",
+    "icon": "Compass",
+    "color": "#9656d9",
+    "description": "Pattern blocks, tangrams, geoboards, 3D geometric solids, fraction tiles, linking cubes, abacus, and logic puzzles.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Pattern blocks",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "2",
+        "name": "Tangrams",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "3",
+        "name": "Geoboards and elastic bands",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "4",
+        "name": "2D and 3D geometric solids",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "5",
+        "name": "Fraction tiles and fraction circles",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "6",
+        "name": "Counting cubes and linking cubes",
+        "quantity": "20 sets"
+      },
+      {
+        "sno": "7",
+        "name": "Number lines and number cards",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "8",
+        "name": "Abacus",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "9",
+        "name": "Dice and probability experiment sets",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "10",
+        "name": "Logic puzzles",
+        "quantity": "15\u201320"
+      },
+      {
+        "sno": "11",
+        "name": "Sudoku / sequencing / pattern cards",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "12",
+        "name": "Spatial reasoning puzzles",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "13",
+        "name": "Balance scales and weights",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "14",
+        "name": "Fraction and measurement games",
+        "quantity": "10 sets"
+      },
+      {
+        "sno": "15",
+        "name": "Symmetry mirrors",
+        "quantity": "10"
+      },
+      {
+        "sno": "16",
+        "name": "Graph paper and coordinate grids",
+        "quantity": "100\u2013200 sheets"
+      },
+      {
+        "sno": "17",
+        "name": "Clock models",
+        "quantity": "6\u20138"
+      },
+      {
+        "sno": "18",
+        "name": "Shape construction sticks and connectors",
+        "quantity": "10\u201315 sets"
+      },
+      {
+        "sno": "19",
+        "name": "Math challenge and activity cards",
+        "quantity": "20\u201330 sets"
+      }
+    ]
+  },
+  {
+    "id": "recycled-materials",
+    "title": "10. Recycled, Natural & Sustainable Materials",
+    "badge": "Eco & Sustainability",
+    "icon": "Leaf",
+    "color": "#358645",
+    "description": "Clean cartons, bottle caps, fabric scraps, wooden slices, pebbles, seed pods, paper-making screens, and sorting trays.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Clean cardboard cartons",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "2",
+        "name": "Paper rolls and tubes",
+        "quantity": "100\u2013200"
+      },
+      {
+        "sno": "3",
+        "name": "Clean plastic bottle caps",
+        "quantity": "500\u20131,000"
+      },
+      {
+        "sno": "4",
+        "name": "Clean plastic bottles / containers",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "5",
+        "name": "Clean paper cups and trays",
+        "quantity": "100\u2013200"
+      },
+      {
+        "sno": "6",
+        "name": "Egg cartons",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "7",
+        "name": "Fabric scraps",
+        "quantity": "5\u201310 kg"
+      },
+      {
+        "sno": "8",
+        "name": "Yarn and textile offcuts",
+        "quantity": "5\u201310 assorted boxes"
+      },
+      {
+        "sno": "9",
+        "name": "Clean corks",
+        "quantity": "100\u2013200"
+      },
+      {
+        "sno": "10",
+        "name": "Ice-cream sticks",
+        "quantity": "1,000"
+      },
+      {
+        "sno": "11",
+        "name": "Pine cones, seed pods and dry leaves",
+        "quantity": "5\u201310 collection boxes"
+      },
+      {
+        "sno": "12",
+        "name": "Smooth wood slices and twigs",
+        "quantity": "100\u2013200 assorted pieces"
+      },
+      {
+        "sno": "13",
+        "name": "Pebbles and smooth stones",
+        "quantity": "10\u201315 kg"
+      },
+      {
+        "sno": "14",
+        "name": "Shells and natural texture samples",
+        "quantity": "4\u20136 sets"
+      },
+      {
+        "sno": "15",
+        "name": "Coconut shells / clean natural craft materials",
+        "quantity": "Assorted"
+      },
+      {
+        "sno": "16",
+        "name": "Woven baskets",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "17",
+        "name": "Reusable sorting trays",
+        "quantity": "20"
+      },
+      {
+        "sno": "18",
+        "name": "Recycled-paper making frames and screens",
+        "quantity": "4\u20136 sets"
+      },
+      {
+        "sno": "19",
+        "name": "Soil, sand and gravel for contained investigations",
+        "quantity": "4\u20136 sets"
+      },
+      {
+        "sno": "20",
+        "name": "Reusable material-collection containers",
+        "quantity": "20\u201330"
+      }
+    ]
+  },
+  {
+    "id": "storage-management",
+    "title": "11. Storage, Labelling & Material Management",
+    "badge": "Lab Organization",
+    "icon": "Archive",
+    "color": "#2a7cb7",
+    "description": "Transparent stackable bins, component organizers, drawer cabinets, wall tool racks, project trays, and charging cabinets.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Transparent stackable storage bins",
+        "quantity": "30\u201350"
+      },
+      {
+        "sno": "2",
+        "name": "Small component organizers",
+        "quantity": "10\u201315"
+      },
+      {
+        "sno": "3",
+        "name": "Drawer cabinets for electronics",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "4",
+        "name": "Mobile material trolley",
+        "quantity": "2\u20133"
+      },
+      {
+        "sno": "5",
+        "name": "Wall-mounted tool racks",
+        "quantity": "3\u20135"
+      },
+      {
+        "sno": "6",
+        "name": "Lidded containers for consumables",
+        "quantity": "20\u201330"
+      },
+      {
+        "sno": "7",
+        "name": "Colour-coded trays",
+        "quantity": "20\u201330"
+      },
+      {
+        "sno": "8",
+        "name": "Label holders and printed labels",
+        "quantity": "100\u2013150"
+      },
+      {
+        "sno": "9",
+        "name": "Student project trays",
+        "quantity": "40"
+      },
+      {
+        "sno": "10",
+        "name": "Work-in-progress project shelves",
+        "quantity": "2\u20134 units"
+      },
+      {
+        "sno": "11",
+        "name": "Finished-project display shelves",
+        "quantity": "2\u20134 units"
+      },
+      {
+        "sno": "12",
+        "name": "Books / activity-resource shelves",
+        "quantity": "2\u20134 units"
+      },
+      {
+        "sno": "13",
+        "name": "Charging cabinet for rechargeable devices",
+        "quantity": "1"
+      },
+      {
+        "sno": "14",
+        "name": "Lockable cabinet for restricted tools",
+        "quantity": "2"
+      },
+      {
+        "sno": "15",
+        "name": "Teacher inventory register / stock system",
+        "quantity": "1"
+      },
+      {
+        "sno": "16",
+        "name": "Material checkout / return cards",
+        "quantity": "40\u201350"
+      },
+      {
+        "sno": "17",
+        "name": "Recycling and waste-sorting stations",
+        "quantity": "3\u20134"
+      },
+      {
+        "sno": "18",
+        "name": "Artwork drying racks",
+        "quantity": "2\u20134"
+      }
+    ]
+  },
+  {
+    "id": "safety-firstaid",
+    "title": "12. Safety & First-Aid Materials",
+    "badge": "Safety Protocols",
+    "icon": "ShieldAlert",
+    "color": "#b5600c",
+    "description": "First-aid kits, child safety goggles, heat-resistant mats, aprons, spill containment trays, eyewash, and fire extinguishers.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "First-aid kit",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "2",
+        "name": "Child-sized protective aprons",
+        "quantity": "40"
+      },
+      {
+        "sno": "3",
+        "name": "Safety goggles",
+        "quantity": "20\u201340"
+      },
+      {
+        "sno": "4",
+        "name": "Suitable dust masks for dusty activities",
+        "quantity": "As required"
+      },
+      {
+        "sno": "5",
+        "name": "Protective gloves",
+        "quantity": "Activity-dependent stock"
+      },
+      {
+        "sno": "6",
+        "name": "Handwashing station with soap",
+        "quantity": "1"
+      },
+      {
+        "sno": "7",
+        "name": "Paper towels and cleaning cloths",
+        "quantity": "Initial stock"
+      },
+      {
+        "sno": "8",
+        "name": "Spill-cleaning kit",
+        "quantity": "1"
+      },
+      {
+        "sno": "9",
+        "name": "Covered waste bins",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "10",
+        "name": "Fire extinguisher suitable for assessed hazards",
+        "quantity": "As per safety assessment"
+      },
+      {
+        "sno": "11",
+        "name": "Smoke detection and alarm provisions",
+        "quantity": "As per building requirements"
+      },
+      {
+        "sno": "12",
+        "name": "Emergency exit signage",
+        "quantity": "As required"
+      },
+      {
+        "sno": "13",
+        "name": "Electrical isolation / protected outlets",
+        "quantity": "As per electrical plan"
+      },
+      {
+        "sno": "14",
+        "name": "Rounded furniture-edge protection",
+        "quantity": "As required"
+      },
+      {
+        "sno": "15",
+        "name": "Anti-slip floor mats for wet / messy activities",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "16",
+        "name": "Safety rules and emergency instructions",
+        "quantity": "2\u20134 display boards"
+      },
+      {
+        "sno": "17",
+        "name": "Tool-use and supervision charts",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "18",
+        "name": "Lockable restricted-material storage, if applicable",
+        "quantity": "1"
+      }
+    ]
+  },
+  {
+    "id": "branding-displays",
+    "title": "13. Prayogi Branding & Learning Displays",
+    "badge": "Branding & Aesthetics",
+    "icon": "Award",
+    "color": "#ea6421",
+    "description": "Wordmark wall signage, vision & maker manifesto wall art, safety guidelines boards, learning journey charts, and directional markers.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "PRAYOGI wordmark wall signage (without icon)",
+        "quantity": "1"
+      },
+      {
+        "sno": "2",
+        "name": "Explore \u00b7 Experiment \u00b7 Innovate tagline",
+        "quantity": "1"
+      },
+      {
+        "sno": "3",
+        "name": "Design-thinking wall: Define \u2192 Ideate \u2192 Prototype \u2192 Test",
+        "quantity": "1"
+      },
+      {
+        "sno": "4",
+        "name": "STEAM zone signs (Science, Technology, Engineering, Art, Math)",
+        "quantity": "1 set"
+      },
+      {
+        "sno": "5",
+        "name": "I AM A MAKER student display wall",
+        "quantity": "1"
+      },
+      {
+        "sno": "6",
+        "name": "Student project gallery",
+        "quantity": "1\u20132 areas"
+      },
+      {
+        "sno": "7",
+        "name": "Idea / brainstorming wall",
+        "quantity": "1"
+      },
+      {
+        "sno": "8",
+        "name": "Project documentation boards",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "9",
+        "name": "Learning-resource / challenge-card display",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "10",
+        "name": "Cave zone signage",
+        "quantity": "2\u20133"
+      },
+      {
+        "sno": "11",
+        "name": "Recycling and sustainability display",
+        "quantity": "1"
+      },
+      {
+        "sno": "12",
+        "name": "Rules and safety signage",
+        "quantity": "1 complete set"
+      }
+    ]
+  },
+  {
+    "id": "optional-advanced",
+    "title": "14. Optional Advanced Equipment",
+    "badge": "Next-Gen Upgrades",
+    "icon": "Rocket",
+    "color": "#038392",
+    "description": "Enclosed 3D printers, laser cutters, programmable drone kits, interactive smart displays, VR headsets, and green screen studios.",
+    "items": [
+      {
+        "sno": "1",
+        "name": "Enclosed 3D printer",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "2",
+        "name": "Vinyl cutting machine",
+        "quantity": "1"
+      },
+      {
+        "sno": "3",
+        "name": "Digital microscope",
+        "quantity": "2\u20134"
+      },
+      {
+        "sno": "4",
+        "name": "Educational drone set",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "5",
+        "name": "Advanced robotics kits",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "6",
+        "name": "Electronics development boards",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "7",
+        "name": "Interactive display / projector",
+        "quantity": "1"
+      },
+      {
+        "sno": "8",
+        "name": "Portable document camera",
+        "quantity": "1"
+      },
+      {
+        "sno": "9",
+        "name": "Digital camera for project documentation",
+        "quantity": "1\u20132"
+      },
+      {
+        "sno": "10",
+        "name": "Weather station",
+        "quantity": "1"
+      },
+      {
+        "sno": "11",
+        "name": "Solar-energy demonstration kits",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "12",
+        "name": "Advanced engineering construction kits",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "13",
+        "name": "Sound / vibration experiment kits",
+        "quantity": "4\u20136"
+      },
+      {
+        "sno": "14",
+        "name": "Digital design computers",
+        "quantity": "8\u201310"
+      },
+      {
+        "sno": "15",
+        "name": "Micro woodturning lathe machine (Proxxon DB 250)",
+        "quantity": "1"
+      },
+      {
+        "sno": "16",
+        "name": "Two Trees TTC 450 Pro CNC router & carving machine",
+        "quantity": "1"
+      }
+    ]
+  }
+]

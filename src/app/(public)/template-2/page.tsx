@@ -37,7 +37,7 @@ export default function Template2Page() {
           Demos:
         </span>
         <a 
-          href="/" 
+          href="https://design.cseel.org" 
           style={{
             background: '#1e293b',
             color: '#cbd5e1',
@@ -53,7 +53,7 @@ export default function Template2Page() {
           }}
         >
           <span>🎨</span>
-          Template 1 (Design Portal)
+          Template 1 (Design Studio)
         </a>
         <a 
           href="/template-2" 
@@ -73,6 +73,25 @@ export default function Template2Page() {
         >
           <span style={{ width: '7px', height: '7px', background: '#38bdf8', borderRadius: '50%' }}></span>
           Template 2 (CSEEL Academic)
+        </a>
+        <a 
+          href="https://design.cseel.org/#contact" 
+          style={{
+            background: 'linear-gradient(135deg, #00AF90 0%, #008770 100%)',
+            color: '#ffffff',
+            padding: '6px 14px',
+            borderRadius: '30px',
+            fontSize: '12px',
+            fontWeight: 700,
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 8px rgba(0,175,144,0.4)',
+          }}
+        >
+          <span>✨</span>
+          Get This Website For Your School
         </a>
       </div>
 

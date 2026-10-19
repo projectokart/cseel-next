@@ -123,6 +123,10 @@ export function middleware(request: NextRequest) {
 
   // 2. Dedicated Design Subdomain: design.cseel.org
   if (currentHost === 'design') {
+    if (pathname === '/template-2' || pathname === '/template-2/') {
+      url.pathname = '/template-2';
+      return NextResponse.rewrite(url);
+    }
     if (pathname === '/' || pathname === '') {
       url.pathname = '/design';
       return NextResponse.rewrite(url);

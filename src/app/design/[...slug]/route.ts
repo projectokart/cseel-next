@@ -233,6 +233,11 @@ export async function GET(
     });
   }
 
+  // Handle template-2
+  if (slugPath.toLowerCase() === 'template-2' || slugPath.toLowerCase() === 'template-2/') {
+    return Response.redirect(new URL('/template-2', request.url), 307);
+  }
+
   const key = slugPath.toLowerCase().replace(/^\/+|\/+$/g, '');
   const search = request.nextUrl.search || '';
   const targetUrl = `https://morweb.org/${slugPath}${search}`;

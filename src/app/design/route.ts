@@ -17,6 +17,23 @@ const WHATSAPP_WIDGET = `
     </svg>
   </a>
 </div>
+`;
+
+const DEMO_SWITCHER_BAR = `
+<!-- Template Switcher Bar -->
+<div id="cseel-template-switcher" style="position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 9999999; display: flex; align-items: center; gap: 8px; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 6px 10px; border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.18); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <span style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding-left: 8px;">Demos:</span>
+  <a href="/" style="background: #0284c7; color: #ffffff; padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(2,132,199,0.4);">
+    <span style="width: 7px; height: 7px; background: #38bdf8; border-radius: 50%;"></span>
+    Template 1 (Design Portal)
+  </a>
+  <a href="/template-2" style="background: #1e293b; color: #cbd5e1; padding: 6px 14px; border-radius: 30px; font-size: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onmouseover="this.style.background='#334155';this.style.color='#ffffff';" onmouseout="this.style.background='#1e293b';this.style.color='#cbd5e1';">
+    <span>🏫</span>
+    Template 2 (CSEEL Academic)
+  </a>
+</div>
+`;
+
 const GOOGLE_VERIFICATION_META = `
 <meta name="google-site-verification" content="-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA" />
 <meta name="google-site-verification" content="google-site-verification=-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA" />
@@ -28,6 +45,12 @@ export async function GET(request: NextRequest) {
     html = html.replace('<head>', `<head>\n${GOOGLE_VERIFICATION_META}`);
   } else if (html.includes('<head ')) {
     html = html.replace(/<head([^>]*)>/, `<head$1>\n${GOOGLE_VERIFICATION_META}`);
+  }
+
+  if (html.includes('</body>')) {
+    html = html.replace('</body>', `${DEMO_SWITCHER_BAR}\n${WHATSAPP_WIDGET}\n</body>`);
+  } else {
+    html += `${DEMO_SWITCHER_BAR}\n${WHATSAPP_WIDGET}`;
   }
 
   return new Response(html, {

@@ -81,7 +81,11 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest?v=3",
   verification: {
-    google: "google986da09e210cb549",
+    google: [
+      "google986da09e210cb549",
+      "-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA",
+      "google-site-verification=-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA"
+    ],
   },
   other: {
     "theme-color": "#ffffff",

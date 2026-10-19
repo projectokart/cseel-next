@@ -17,10 +17,20 @@ const WHATSAPP_WIDGET = `
     </svg>
   </a>
 </div>
+const GOOGLE_VERIFICATION_META = `
+<meta name="google-site-verification" content="-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA" />
+<meta name="google-site-verification" content="google-site-verification=-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA" />
 `;
 
 export async function GET(request: NextRequest) {
-  return new Response(MORWEB_HTML, {
+  let html = MORWEB_HTML;
+  if (html.includes('<head>')) {
+    html = html.replace('<head>', `<head>\n${GOOGLE_VERIFICATION_META}`);
+  } else if (html.includes('<head ')) {
+    html = html.replace(/<head([^>]*)>/, `<head$1>\n${GOOGLE_VERIFICATION_META}`);
+  }
+
+  return new Response(html, {
     status: 200,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',

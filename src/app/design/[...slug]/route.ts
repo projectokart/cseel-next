@@ -202,6 +202,16 @@ function transformHtml(html: string): string {
     }
   }
 
+  const googleMeta = `
+<meta name="google-site-verification" content="-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA" />
+<meta name="google-site-verification" content="google-site-verification=-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA" />
+  `;
+  if (html.includes('<head>')) {
+    html = html.replace('<head>', `<head>\n${googleMeta}`);
+  } else if (html.includes('<head ')) {
+    html = html.replace(/<head([^>]*)>/, `<head$1>\n${googleMeta}`);
+  }
+
   return html;
 }
 
@@ -211,6 +221,18 @@ export async function GET(
 ) {
   const slugArray = params.slug || [];
   const slugPath = slugArray.join('/');
+
+  // Google Search Console file verification check
+  if (slugPath.includes('google-site-verification') || slugPath.includes('-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA')) {
+    return new Response('google-site-verification: google-site-verification=-ZgEj0G-0B2nnGgkSs1CiVLYeE7p9Is5oH7t7sFA8DA', {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400',
+      },
+    });
+  }
+
   const key = slugPath.toLowerCase().replace(/^\/+|\/+$/g, '');
   const search = request.nextUrl.search || '';
   const targetUrl = `https://morweb.org/${slugPath}${search}`;

@@ -5,11 +5,6 @@
   </defs>
 
   <!-- side lines -->
-  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-
   <!-- light blue blob + globe (top right) -->
   <circle cx="378" cy="58" r="28" fill="#a8c7fa"/>
   <circle cx="378" cy="58" r="12" fill="none" stroke="#202124" stroke-width="2.8"/>

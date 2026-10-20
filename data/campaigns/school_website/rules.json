@@ -1,0 +1,86 @@
+[
+  {
+    "rule_id": "dead_inactive",
+    "name": "01. Dead / Inactive Website",
+    "conditions": [
+      "inactive",
+      "dead",
+      "dns error",
+      "timeout",
+      "expired",
+      "refused",
+      "server error",
+      "suspended",
+      "blocked"
+    ],
+    "template_file": "01_dead_or_inactive_website.html",
+    "subject": "Urgent: Official website for {{school_name}} is currently unreachable",
+    "badge": "🔴 01. Dead Site"
+  },
+  {
+    "rule_id": "no_website",
+    "name": "02. No Website Exists",
+    "conditions": [
+      "no website",
+      "none",
+      "nan",
+      "null",
+      ""
+    ],
+    "template_file": "02_no_website_exists.html",
+    "subject": "Official CBSE website proposal for {{school_name}}",
+    "badge": "⚪ 02. No Website"
+  },
+  {
+    "rule_id": "social_only",
+    "name": "03. Social Media Only",
+    "conditions": [
+      "social",
+      "facebook",
+      "instagram",
+      "facebook.com",
+      "instagram.com"
+    ],
+    "template_file": "03_social_media_only.html",
+    "subject": "Upgrading {{school_name}}'s Facebook presence into an Official CBSE Web Portal",
+    "badge": "📱 03. Social Only"
+  },
+  {
+    "rule_id": "unsecure_http",
+    "name": "04. Unsecure HTTP / No SSL",
+    "conditions": [
+      "unsecure",
+      "http://",
+      "ssl",
+      "unsecure_http"
+    ],
+    "template_file": "04_unsecure_http_no_ssl.html",
+    "subject": "Important Security Notice: {{school_name}} official website lacks SSL protection",
+    "badge": "⚠️ 04. Unsecure HTTP"
+  },
+  {
+    "rule_id": "single_page",
+    "name": "05. Single-Page Redesign",
+    "conditions": [
+      "single page",
+      "single-page",
+      "spa"
+    ],
+    "template_file": "05_single_page_to_multipage_redesign.html",
+    "subject": "Modernizing {{school_name}} into a complete multi-page CBSE portal",
+    "badge": "📄 05. Single Page"
+  },
+  {
+    "rule_id": "active_portal",
+    "name": "06. Rapid Circulars and AMC",
+    "conditions": [
+      "active",
+      "https://",
+      "live",
+      "cloned"
+    ],
+    "template_file": "06_rapid_circulars_and_amc.html",
+    "subject": "Instant 30-min circular updates and affordable web maintenance for {{school_name}}",
+    "badge": "⚡ 06. Rapid AMC"
+  }
+]

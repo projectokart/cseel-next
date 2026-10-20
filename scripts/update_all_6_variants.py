@@ -1,0 +1,731 @@
+import os
+import re
+
+# CDN Base for verified images (commit d84928e has the verified illustrations with crisp Google text)
+CDN_BASE = "https://cdn.jsdelivr.net/gh/projectokart/cseel-next@4dcfc46/public/email_assets/school_template"
+
+MASTER_HTML = f"""<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+<title>{{{{TITLE}}}}</title>
+<!--[if mso]>
+<style>
+* {{ font-family: Arial, sans-serif !important; }}
+</style>
+<![endif]-->
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html, body {{
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  background-color: transparent !important;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}}
+table.wrap {{
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid #c4c7c5 !important;
+  border-radius: 24px !important;
+  background-color: #ffffff !important;
+}}
+img {{ border: 0; outline: none; text-decoration: none; }}
+a {{ text-decoration: none; }}
+@media only screen and (max-width: 600px) {{
+  .wrap {{ width: 92% !important; margin: 16px auto !important; border-radius: 20px !important; border: 1px solid #c4c7c5 !important; }}
+  .px {{ padding-left: 14px !important; padding-right: 14px !important; }}
+  .h1-title {{ font-size: 21px !important; line-height: 28px !important; margin-bottom: 8px !important; }}
+  .subhead {{ font-size: 13.5px !important; line-height: 20px !important; margin-bottom: 12px !important; }}
+  .btn-pill {{ width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }}
+  .btn-pill-sec {{ width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }}
+}}
+</style>
+</head>
+<body style="background-color: transparent; margin: 0; padding: 0; font-family: 'Google Sans', Roboto, Arial, sans-serif; color: #1f1f1f;">
+
+<div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent;">
+{{{{PREHEADER}}}}
+</div>
+
+<div style="padding: 16px 0;">
+
+  <!-- Primary Google Card with Crisp Thin Rounded Border -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 24px; border: 1px solid #c4c7c5; overflow: hidden; background-color: #ffffff;">
+    <tbody>
+
+      <!-- BRAND HEADER -->
+      <tr>
+        <td align="center" style="padding: 26px 20px 14px 20px; background-color: #ffffff;">
+          <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.2px;">
+            <span style="color: #4285f4;">Web</span> <span style="color: #34a853;">Freelancer</span>
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 10.5px; font-weight: 500; color: #5f6368; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px;">
+            Official web portals &bull; CBSE Compliance
+          </div>
+        </td>
+      </tr>
+
+      <!-- SUBTLE DIVIDER -->
+      <tr>
+        <td style="padding: 0 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #dadce0; height: 1px; line-height: 1px;"></div>
+        </td>
+      </tr>
+
+      <!-- HERO INTRO -->
+      <tr>
+        <td class="px" align="center" style="padding: 22px 24px 12px 24px; background-color: #ffffff;">
+          
+          <!-- Category Alert Chip -->
+          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom: 12px;">
+            <tr>
+              <td style="background-color: {{{{CHIP_BG}}}}; color: {{{{CHIP_COLOR}}}}; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px; padding: 4px 14px; border-radius: 50px;">
+                {{{{CHIP_TEXT}}}}
+              </td>
+            </tr>
+          </table>
+
+          <!-- Main Heading -->
+          <div class="h1-title" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 21px; font-weight: 400; line-height: 1.32; text-align: center; color: #1f1f1f; max-width: 440px; margin: 0 auto 10px auto;">
+            {{{{HEADLINE}}}}
+          </div>
+
+          <!-- Subheading / Paragraph -->
+          <div class="subhead" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 1.55; text-align: center; color: #444746; max-width: 420px; margin: 0 auto 14px auto;">
+            {{{{SUBHEADING}}}}
+          </div>
+        </td>
+      </tr>
+
+      <!-- 1. HERO ERROR ILLUSTRATION (CUSTOMIZED PER VARIANT ERROR) -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 4px 20px 8px 20px; background-color: #ffffff;" align="center">
+          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}" target="_blank" style="text-decoration: none; display: block; line-height: 0; font-size: 0;">
+            <img src="{{{{HERO_ILLUSTRATION}}}}" width="460" alt="Website status illustration" style="display: block; width: 100%; max-width: 460px; height: auto; margin: 0 auto;" />
+          </a>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- GREETING + GOOGLE INFO CALLOUT -->
+      <tr>
+        <td class="px" style="padding: 16px 24px 14px 24px; background-color: #ffffff;">
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14.5px; line-height: 22px; color: #1f1f1f; padding-bottom: 12px;">
+            Dear {{{{principal}}}} (Principal &amp; Management Committee),
+          </div>
+
+          <!-- Google Signature Blue Info Box -->
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #d3e3fd; border-radius: 16px;">
+            <tr>
+              <td width="40" valign="top" style="padding: 14px 0 14px 14px;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #0b57d0; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                      i
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td valign="top" style="padding: 14px 14px 14px 10px; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #041e49;">
+                {{{{CALLOUT_TEXT}}}}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- IMPACT CARD (COMPARISON STYLE) -->
+      <tr>
+        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
+            <tr>
+              <td style="padding: 16px 18px 10px 18px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 20px; font-weight: 600; color: #1f1f1f; padding-bottom: 6px;">
+                  {{{{CARD_TITLE}}}}
+                </div>
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  {{{{BULLET_ROWS}}}}
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- PROMISE TEXT -->
+      <tr>
+        <td class="px" style="padding: 2px 24px 10px 24px; background-color: #ffffff;">
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 22px; color: #444746; text-align: center;">
+            {{{{PROMISE_TEXT}}}}
+          </div>
+        </td>
+      </tr>
+
+      <!-- 2. RESTORE & LAUNCH ILLUSTRATION: restore-live.png -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 0 20px 14px 20px; background-color: #ffffff;" align="center">
+          <img src="{CDN_BASE}/restore-live.png" width="440" alt="Live restored portal preview" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- BUMPER OFFER -->
+      <tr>
+        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; border: 1px solid #dadce0; border-radius: 16px; background-color: #ffffff;">
+            <tr>
+              <td width="40" valign="top" style="padding: 16px 0 16px 16px;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e8f0fe; color: #0b57d0; font-family: Arial, sans-serif; font-size: 15px; line-height: 28px; font-weight: 700;">
+                      &#8377;
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td valign="top" style="padding: 16px 16px 16px 10px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11px; line-height: 16px; font-weight: 600; color: #0b57d0; letter-spacing: 0.8px; text-transform: uppercase;">
+                  Bumper offer
+                </div>
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 17px; line-height: 24px; font-weight: 500; color: #1f1f1f; padding-top: 2px;">
+                  Pay after work first
+                </div>
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13px; line-height: 19px; color: #5f6368; padding-top: 3px;">
+                  No agency charges &middot; Zero advance. See your working website first. Pay only if you are satisfied.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- 3. AGENCY COST OVERHEAD: agency-cost.png -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 0 20px 8px 20px; background-color: #ffffff;" align="center">
+          <img src="{CDN_BASE}/agency-cost.png" width="440" alt="Agency overhead breakdown" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- WHY AGENCIES CHARGE SO MUCH -->
+      <tr>
+        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
+            <tr>
+              <td style="padding: 16px 18px 10px 18px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 20px; font-weight: 600; color: #1f1f1f; padding-bottom: 6px;">
+                  Why agencies charge so much
+                </div>
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10005;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Office rent &amp; bills</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Added to your quote</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10005;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Sales, manager, designer, developer, all paid from your fee</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10005;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Middlemen</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">You never speak to the person who builds your site</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10005;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Advance payment &amp; hidden renewals</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Costs that keep coming every year</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- 4. DIRECT BENEFITS: direct-benefits.png -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 0 20px 8px 20px; background-color: #ffffff;" align="center">
+          <img src="{CDN_BASE}/direct-benefits.png" width="440" alt="Direct benefits" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- WHAT YOU GET WITH ME -->
+      <tr>
+        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
+            <tr>
+              <td style="padding: 16px 18px 10px 18px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 20px; font-weight: 600; color: #1f1f1f; padding-bottom: 6px;">
+                  What you get with me
+                </div>
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Work first, payment later</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Zero risk for the school</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">No agency charges</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Save roughly &#8377;80,000 to &#8377;1,50,000</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Live in 7 to 10 days</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Admission season has started</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Direct WhatsApp / call with the developer</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">No middlemen</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">CBSE disclosure ready</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Mobile-fast, domain &amp; SSL included</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- 5. CBSE MANDATORY DISCLOSURE & AUDIT: cbse-compliance.png -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 0 20px 8px 20px; background-color: #ffffff;" align="center">
+          <img src="{CDN_BASE}/cbse-compliance.png" width="440" alt="CBSE compliance certification" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- CBSE DISCLOSURE HIGHLIGHT CARD -->
+      <tr>
+        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #e6f4ea; border: 1px solid #ceead6; border-radius: 16px;">
+            <tr>
+              <td style="padding: 14px 18px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; font-weight: 600; color: #137333;">
+                  &check; 100% CBSE Mandatory Public Disclosure Ready
+                </div>
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 18px; color: #1e8e3e; padding-top: 4px;">
+                  All statutory tabs pre-formatted: Affiliation Bye-Laws, Society NOC, Fire Safety, Fee Structure, and Faculty list. Audit-proof for affiliation inspection.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- 6. VIRTUAL 360 TOUR: virtual-tour-360.png -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 4px 20px 8px 20px; background-color: #ffffff;" align="center">
+          <img src="{CDN_BASE}/virtual-tour-360.png" width="440" alt="Virtual 360 tour" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- SAMPLE WORK CALLOUT -->
+      <tr>
+        <td class="px" align="center" style="padding: 10px 20px 8px 20px; background-color: #ffffff;">
+          <div class="h2-title" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 20px; line-height: 28px; font-weight: 400; color: #1f1f1f; padding-bottom: 6px;">
+            Some sample of our work
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #5f6368; padding-bottom: 14px; max-width: 440px; margin: 0 auto;">
+            Open a sample school website we have built, with a 360&deg; virtual campus tour.
+          </div>
+          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}#projects" class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 11px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
+            View Sample Website &rarr;
+          </a>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- 7. ZERO RISK GUARANTEE: zero-risk-guarantee.png -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 14px 20px 8px 20px; background-color: #ffffff;" align="center">
+          <img src="{CDN_BASE}/zero-risk-guarantee.png" width="440" alt="Zero risk guarantee" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- FINAL CALL TO ACTION -->
+      <tr>
+        <td class="px" style="padding: 12px 24px 28px 24px; background-color: #ffffff;">
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 21px; color: #444746; padding-bottom: 14px; text-align: center;">
+            Every day, parents are choosing another school&rsquo;s website. Message Dev Sharma today. Work first, pay later.
+          </div>
+          <div align="center">
+            <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma,%20we%20reviewed%20the%20website%20proposal%20for%20{{{{school_name_url}}}}." class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 11px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
+              WhatsApp Now
+            </a>
+            <a href="tel:+918683979659" class="btn-pill-sec" style="display: inline-block; background-color: transparent; color: #0b57d0; border: 1px solid #dadce0; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 10px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box; margin-left: 6px;">
+              Call Now
+            </a>
+          </div>
+        </td>
+      </tr>
+
+      <!-- THIN GOOGLE SECTION DIVIDER -->
+      <tr>
+        <td style="padding: 8px 24px; background-color: #ffffff;">
+          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        </td>
+      </tr>
+
+      <!-- GOOGLE STYLE FOOTER -->
+      <tr>
+        <td class="px" align="center" style="background-color: #f1f3f4; padding: 22px 20px 28px 20px; border-radius: 0 0 24px 24px;">
+          <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 13.5px; line-height: 20px; font-weight: 500; color: #1f1f1f;">
+            Dev Sharma &middot; Independent Web Freelancer
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 17px; color: #5f6368; padding-top: 8px; max-width: 440px; margin: 0 auto;">
+            You are receiving this email regarding online discoverability and digital compliance for {{{{school_name}}}}. We build fast, CBSE-compliant school websites directly, without agency charges.
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12.5px; line-height: 18px; font-weight: 500; padding-top: 14px;">
+            <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma,%20we%20reviewed%20the%20website%20proposal%20for%20{{{{school_name_url}}}}." target="_blank" style="color: #0b57d0; text-decoration: none;">WhatsApp</a>
+            <span style="color: #bdc1c6;">&nbsp;|&nbsp;</span>
+            <a href="tel:+918683979659" style="color: #0b57d0; text-decoration: none;">Call</a>
+            <span style="color: #bdc1c6;">&nbsp;|&nbsp;</span>
+            <a href="mailto:dev@mailer.cseel.org?subject=Website%20Proposal%20Discussion%20-%20{{{{school_name_url}}}}" target="_blank" style="color: #0b57d0; text-decoration: none;">Email</a>
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 17px; color: #5f6368; padding-top: 12px;">
+            <a href="https://design.cseel.org/#contact" target="_blank" style="color: #5f6368; text-decoration: underline;">Preferences</a>
+            &nbsp;&middot;&nbsp;
+            <a href="mailto:dev@mailer.cseel.org?subject=Unsubscribe%20{{{{school_name_url}}}}" target="_blank" style="color: #5f6368; text-decoration: underline;">Unsubscribe</a>
+            &nbsp;&middot;&nbsp;
+            <a href="https://cseel.org/privacy" target="_blank" style="color: #5f6368; text-decoration: underline;">Privacy policy</a>
+          </div>
+          <!-- POWERED BY CSEEL LOGO -->
+          <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 10.5px; line-height: 15px; font-weight: 500; color: #80868b; text-transform: uppercase; letter-spacing: 0.8px; padding-top: 18px;">
+            Powered by
+          </div>
+          <a href="https://www.cseel.org/" target="_blank" style="text-decoration: none; display: inline-block; padding-top: 6px;">
+            <img src="https://www.cseel.org/logo.png" alt="CSEEL" width="110" style="display: block; width: 110px; max-width: 100%; height: auto; border: 0; margin: 0 auto;" />
+          </a>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 16px; padding-top: 4px;">
+            <a href="https://www.cseel.org/" target="_blank" style="color: #5f6368; text-decoration: none;">www.cseel.org</a>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+  <!-- End Primary Google Card -->
+
+  <!-- SEE OUR WORK (SECOND FLOATING CARD WITH THIN BORDER & ROUNDED CORNERS) -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 16px auto; border-radius: 24px; border: 1px solid #c4c7c5; overflow: hidden; background-color: #ffffff;">
+    <tbody>
+      <tr>
+        <td class="px" align="center" style="padding: 24px 20px 8px 20px; background-color: #ffffff;">
+          <div class="h2-title" style="font-family: 'Google Sans', Arial, sans-serif; font-size: 20px; line-height: 28px; font-weight: 400; color: #1f1f1f; padding-bottom: 6px;">
+            See our work
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #5f6368; padding-bottom: 14px; max-width: 440px; margin: 0 auto;">
+            A school website we have built. Tap the preview to open the full website.
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="px" align="center" style="padding: 0 20px; background-color: #ffffff;">
+          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}#projects" target="_blank" style="display: block; text-decoration: none;">
+            <div style="max-height: 520px; overflow: hidden; border: 1px solid #dadce0; border-radius: 16px;">
+              <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@main/public/email_assets/school_template/web-600.jpg" alt="Sample school website" width="540" style="display: block; width: 100%; max-width: 540px; height: auto; border: 0;" />
+            </div>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td class="px" align="center" style="padding: 18px 20px 24px 20px; background-color: #ffffff;">
+          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}#projects" class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; font-weight: 500; line-height: 1.5; padding: 12px 32px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
+            View Full Website &rarr;
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- End See Our Work Card -->
+
+</div>
+
+</body>
+</html>"""
+
+VARIANTS = {
+    "01_dead_or_inactive_website.html": {
+        "TITLE": "Urgent: {{school_name}} official website is currently unreachable",
+        "PREHEADER": "{{school_name}}'s website is currently offline. Bumper offer: pay after work, no agency charges. Live in 7 to 10 days.",
+        "CHIP_BG": "#fce8e6",
+        "CHIP_COLOR": "#c5221f",
+        "CHIP_TEXT": "&#9888;&#65039; Urgent: Website Inaccessible &amp; Offline",
+        "HEADLINE": "&#9888;&#65039; Urgent: {{school_name}} official website is currently unreachable",
+        "SUBHEADING": "Today&rsquo;s parent Googles your school before visiting. When they click your link, they are greeted with an error screen &mdash; and choose another school.",
+        "HERO_ILLUSTRATION": f"{CDN_BASE}/hero-offline.png",
+        "CALLOUT_TEXT": "During our technical web audit of CBSE schools in your district, we noticed that <strong style=\"font-weight: 600;\">{{school_name}}&rsquo;s official website is currently DOWN and unreachable</strong> (Domain / DNS / Server Error).",
+        "CARD_TITLE": "A school with an inactive or broken website:",
+        "BULLETS": [
+            ("cross", "Loses admission enquiries to competing schools who show up online first"),
+            ("cross", "Gives parents the impression that the school is unmanaged or closed"),
+            ("cross", "Violates CBSE Mandatory Public Disclosure norms requiring a live, accessible portal")
+        ],
+        "PROMISE_TEXT": "We can completely restore, modernize, and re-launch your school portal in <strong style=\"font-weight: 600; color: #1f1f1f;\">7 to 10 working days</strong> on ultra-fast cloud servers."
+    },
+    "02_no_website_exists.html": {
+        "TITLE": "Parents are searching for {{school_name}}. What do they find?",
+        "PREHEADER": "Parents Google a school before they visit. Here is what they find for {{school_name}}, and how to launch your official portal in 7 to 10 days.",
+        "CHIP_BG": "#e8f0fe",
+        "CHIP_COLOR": "#0b57d0",
+        "CHIP_TEXT": "&#128269; Admission Season 2027-28 &bull; Search Notice",
+        "HEADLINE": "Parents are searching for {{school_name}} on Google",
+        "SUBHEADING": "When parents search your school online, having no official portal sends admissions directly to other nearby schools.",
+        "HERO_ILLUSTRATION": f"{CDN_BASE}/error-02-not-found.png",
+        "CALLOUT_TEXT": "During our district web review, we observed that <strong style=\"font-weight: 600;\">{{school_name}} does not currently have an active official web portal</strong> on Google.",
+        "CARD_TITLE": "Without an official website:",
+        "BULLETS": [
+            ("cross", "Parents cannot view your campus, faculty, fees structure, or achievements"),
+            ("cross", "Third-party listing sites show outdated or incorrect contact details"),
+            ("cross", "Missing CBSE Mandatory Public Disclosure compliance requirement")
+        ],
+        "PROMISE_TEXT": "We can design, set up domain/SSL, and launch your school portal in <strong style=\"font-weight: 600; color: #1f1f1f;\">7 to 10 working days</strong>."
+    },
+    "03_social_media_only.html": {
+        "TITLE": "Can a Facebook page replace {{school_name}}'s official school portal?",
+        "PREHEADER": "While social media is great for photos, discerning parents and CBSE expect an official school website. Here is how to upgrade in 7 days.",
+        "CHIP_BG": "#e8f0fe",
+        "CHIP_COLOR": "#0b57d0",
+        "CHIP_TEXT": "&#128241; Social Media vs Official School Portal",
+        "HEADLINE": "Can social media replace {{school_name}}'s official website?",
+        "SUBHEADING": "Social media accounts are great for daily event photos, but serious parents expect an authoritative official portal for admissions.",
+        "HERO_ILLUSTRATION": f"{CDN_BASE}/error-03-social-only.png",
+        "CALLOUT_TEXT": "We noticed that while <strong style=\"font-weight: 600;\">{{school_name}} is active on Facebook/Instagram</strong>, there is no verified official website linked for admissions and compliance.",
+        "CARD_TITLE": "Why a standalone official portal is vital:",
+        "BULLETS": [
+            ("cross", "Social media shows ads of competitor schools alongside your posts"),
+            ("cross", "Parents cannot download circulars, fee slips, or syllabus documents easily"),
+            ("cross", "CBSE affiliation inspection requires an independent domain-hosted portal")
+        ],
+        "PROMISE_TEXT": "We can build an official, high-speed school portal linked to your social channels in <strong style=\"font-weight: 600; color: #1f1f1f;\">7 to 10 working days</strong>."
+    },
+    "04_unsecure_http_no_ssl.html": {
+        "TITLE": "Security Notice: {{school_name}}'s portal shows 'Not Secure' in Google Chrome",
+        "PREHEADER": "Parents visiting {{school_name}} on mobile are warned that the connection is unsecure. Here is how we upgrade your portal to HTTPS and CBSE compliance.",
+        "CHIP_BG": "#fce8e6",
+        "CHIP_COLOR": "#c5221f",
+        "CHIP_TEXT": "&#9888;&#65039; Security Warning &bull; Unencrypted HTTP",
+        "HEADLINE": "{{school_name}}'s website displays 'Not Secure' warning",
+        "SUBHEADING": "When parents tap on your website link from mobile or PC, Google Chrome warns them with a red security screen.",
+        "HERO_ILLUSTRATION": f"{CDN_BASE}/error-04-no-ssl.png",
+        "CALLOUT_TEXT": "During our automated security check, we detected that <strong style=\"font-weight: 600;\">{{school_name}}'s website is missing modern SSL/HTTPS encryption</strong>.",
+        "CARD_TITLE": "Impact of an unsecure connection:",
+        "BULLETS": [
+            ("cross", "Chrome shows a prominent red warning banner that frightens parents"),
+            ("cross", "Google algorithm downgrades unsecure sites in local search rankings"),
+            ("cross", "Parent data submitted in online enquiry forms can be intercepted")
+        ],
+        "PROMISE_TEXT": "We can migrate your school portal to SSL/HTTPS encryption and modern cloud infrastructure in <strong style=\"font-weight: 600; color: #1f1f1f;\">7 to 10 working days</strong>."
+    },
+    "05_single_page_to_multipage_redesign.html": {
+        "TITLE": "Upgrade {{school_name}} from a basic single page to a full CBSE multi-page portal",
+        "PREHEADER": "Your campus has labs, sports, faculty, and facilities. Here is how we expand {{school_name}} from a single scrolling page into an enterprise multi-page portal.",
+        "CHIP_BG": "#e8f0fe",
+        "CHIP_COLOR": "#0b57d0",
+        "CHIP_TEXT": "&#128196; Modernization &bull; Single Page to Multi-Page",
+        "HEADLINE": "Upgrade {{school_name}} to a modern multi-page school portal",
+        "SUBHEADING": "Your school offers vibrant sports, STEM labs, and dedicated faculty. A single static page cannot showcase the full depth of your institution.",
+        "HERO_ILLUSTRATION": f"{CDN_BASE}/error-05-single-page.png",
+        "CALLOUT_TEXT": "We reviewed <strong style=\"font-weight: 600;\">{{school_name}}'s current online portal</strong> and noticed it is limited to a single scrolling landing page.",
+        "CARD_TITLE": "What a modern multi-page portal gives your school:",
+        "BULLETS": [
+            ("check", "Dedicated tabs for Academics, Infrastructure, Gallery, Mandatory Disclosures"),
+            ("check", "Interactive 360&deg; virtual campus tour that impresses out-of-district parents"),
+            ("check", "Mobile-first responsive architecture loading in under 1.5 seconds")
+        ],
+        "PROMISE_TEXT": "We can transform your school website into a comprehensive multi-page portal in <strong style=\"font-weight: 600; color: #1f1f1f;\">7 to 10 working days</strong>."
+    },
+    "06_rapid_circulars_and_amc.html": {
+        "TITLE": "Is {{school_name}}'s website updating as fast as your school needs?",
+        "PREHEADER": "Tired of waiting days for an agency to upload a single circular? Switch to Rapid Instant School Web Service with direct WhatsApp updates in 30 minutes.",
+        "CHIP_BG": "#e8f0fe",
+        "CHIP_COLOR": "#0b57d0",
+        "CHIP_TEXT": "&#9889; Rapid School Web Service &bull; 30-Min Updates",
+        "HEADLINE": "Tired of waiting days for agency website updates?",
+        "SUBHEADING": "School circulars, date sheets, holiday notices, and results need to be posted within minutes, not after weeks of emailing an agency.",
+        "HERO_ILLUSTRATION": f"{CDN_BASE}/error-06-slow-updates.png",
+        "CALLOUT_TEXT": "Many school managements complain that <strong style=\"font-weight: 600;\">updating their current portal takes 3 to 7 days</strong> because web agencies operate on ticketing queues.",
+        "CARD_TITLE": "With Rapid Instant Support:",
+        "BULLETS": [
+            ("check", "Send circular PDF or photo on WhatsApp &rarr; live on portal within 30 minutes"),
+            ("check", "Direct hotline with the developer &mdash; no tickets, no account managers"),
+            ("check", "Flat yearly maintenance at 50% lower cost than traditional agencies")
+        ],
+        "PROMISE_TEXT": "Get daily active updates and immediate circular publishing for {{school_name}} with zero delay."
+    }
+}
+
+def generate_bullet_rows(bullets):
+    rows = []
+    for icon_type, text in bullets:
+        if icon_type == "cross":
+            bg = "#fce8e6"
+            color = "#c5221f"
+            sym = "&#10005;"
+        else:
+            bg = "#e6f4ea"
+            color = "#137333"
+            sym = "&#10003;"
+        row = f'''<tr>
+  <td width="38" valign="top" style="padding: 8px 0;">
+    <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+      <tr>
+        <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: {bg}; color: {color}; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+          {sym}
+        </td>
+      </tr>
+    </table>
+  </td>
+  <td valign="middle" style="padding: 8px 0;">
+    <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #202124;">
+      {text}
+    </div>
+  </td>
+</tr>'''
+        rows.append(row)
+    return "\n".join(rows)
+
+target_dirs = [
+    'd:/Projects/cseel_next/cseel-next/data/email_templates/school_website_templates',
+    'd:/Projects/cseel_next/cseel-next/data/templates/school_website_email_templates',
+    'C:/Users/DEVENDER/Desktop/school_website_email_templates'
+]
+
+for d in target_dirs:
+    os.makedirs(d, exist_ok=True)
+
+for filename, var_data in VARIANTS.items():
+    html_content = MASTER_HTML
+    bullets_html = generate_bullet_rows(var_data["BULLETS"])
+    
+    html_content = html_content.replace("{{TITLE}}", var_data["TITLE"])
+    html_content = html_content.replace("{{PREHEADER}}", var_data["PREHEADER"])
+    html_content = html_content.replace("{{CHIP_BG}}", var_data["CHIP_BG"])
+    html_content = html_content.replace("{{CHIP_COLOR}}", var_data["CHIP_COLOR"])
+    html_content = html_content.replace("{{CHIP_TEXT}}", var_data["CHIP_TEXT"])
+    html_content = html_content.replace("{{HEADLINE}}", var_data["HEADLINE"])
+    html_content = html_content.replace("{{SUBHEADING}}", var_data["SUBHEADING"])
+    html_content = html_content.replace("{{HERO_ILLUSTRATION}}", var_data["HERO_ILLUSTRATION"])
+    html_content = html_content.replace("{{CALLOUT_TEXT}}", var_data["CALLOUT_TEXT"])
+    html_content = html_content.replace("{{CARD_TITLE}}", var_data["CARD_TITLE"])
+    html_content = html_content.replace("{{BULLET_ROWS}}", bullets_html)
+    html_content = html_content.replace("{{PROMISE_TEXT}}", var_data["PROMISE_TEXT"])
+    
+    for t_dir in target_dirs:
+        out_path = os.path.join(t_dir, filename)
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Generated {filename} in {t_dir}")
+
+# Also update the primary outreach files
+primary_files = [
+    'd:/Projects/cseel_next/cseel-next/data/email_templates/school_website_outreach.html',
+    'd:/Projects/cseel_next/cseel-next/data/school-website-email-template.html',
+    'd:/Projects/cseel_next/cseel-next/public/school-website-email-template.html'
+]
+
+# We use variant 01 for the default primary outreach
+var01_html = MASTER_HTML
+bullets01 = generate_bullet_rows(VARIANTS["01_dead_or_inactive_website.html"]["BULLETS"])
+var01_html = var01_html.replace("{{TITLE}}", VARIANTS["01_dead_or_inactive_website.html"]["TITLE"])
+var01_html = var01_html.replace("{{PREHEADER}}", VARIANTS["01_dead_or_inactive_website.html"]["PREHEADER"])
+var01_html = var01_html.replace("{{CHIP_BG}}", VARIANTS["01_dead_or_inactive_website.html"]["CHIP_BG"])
+var01_html = var01_html.replace("{{CHIP_COLOR}}", VARIANTS["01_dead_or_inactive_website.html"]["CHIP_COLOR"])
+var01_html = var01_html.replace("{{CHIP_TEXT}}", VARIANTS["01_dead_or_inactive_website.html"]["CHIP_TEXT"])
+var01_html = var01_html.replace("{{HEADLINE}}", VARIANTS["01_dead_or_inactive_website.html"]["HEADLINE"])
+var01_html = var01_html.replace("{{SUBHEADING}}", VARIANTS["01_dead_or_inactive_website.html"]["SUBHEADING"])
+var01_html = var01_html.replace("{{HERO_ILLUSTRATION}}", VARIANTS["01_dead_or_inactive_website.html"]["HERO_ILLUSTRATION"])
+var01_html = var01_html.replace("{{CALLOUT_TEXT}}", VARIANTS["01_dead_or_inactive_website.html"]["CALLOUT_TEXT"])
+var01_html = var01_html.replace("{{CARD_TITLE}}", VARIANTS["01_dead_or_inactive_website.html"]["CARD_TITLE"])
+var01_html = var01_html.replace("{{BULLET_ROWS}}", bullets01)
+var01_html = var01_html.replace("{{PROMISE_TEXT}}", VARIANTS["01_dead_or_inactive_website.html"]["PROMISE_TEXT"])
+
+for pf in primary_files:
+    os.makedirs(os.path.dirname(pf), exist_ok=True)
+    with open(pf, "w", encoding="utf-8") as f:
+        f.write(var01_html)
+    print(f"Updated primary file: {pf}")

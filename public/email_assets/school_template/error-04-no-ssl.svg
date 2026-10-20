@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
+  <style>
+    text { font-family: 'Google Sans', Roboto, -apple-system, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  </style>
   <!-- side lines -->
   <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
   <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
@@ -16,39 +19,40 @@
   <circle cx="186" cy="52" r="4.5" fill="#fbbc04"/>
   <circle cx="202" cy="52" r="4.5" fill="#34a853"/>
   
-  <!-- Red "Not Secure" Address Bar -->
-  <rect x="220" y="44" width="134" height="18" rx="9" fill="#fce8e6" stroke="#ea4335" stroke-width="2"/>
-  <path d="M232 50 v-3 a3.5 3.5 0 0 1 7 0 v1" fill="none" stroke="#c5221f" stroke-width="2.2" stroke-linecap="round"/>
-  <rect x="229" y="50" width="10" height="8" rx="2" fill="#c5221f"/>
-  <rect x="244" y="49" width="46" height="5" rx="2.5" fill="#c5221f"/>
-  <rect x="294" y="49" width="48" height="5" rx="2.5" fill="#ea4335" opacity="0.6"/>
+  <!-- Red "Not Secure" Address Bar with crisp readable text -->
+  <rect x="216" y="44" width="142" height="18" rx="9" fill="#fce8e6" stroke="#ea4335" stroke-width="1.8"/>
+  <path d="M226 50 v-3 a3 3 0 0 1 6 0 v1" fill="none" stroke="#c5221f" stroke-width="1.8" stroke-linecap="round"/>
+  <rect x="224" y="50" width="8" height="6" rx="1.5" fill="#c5221f"/>
+  <text x="236" y="56.5" font-size="8.5" font-weight="700" fill="#c5221f">Not Secure | http://</text>
 
   <!-- Big Red Open Padlock in Center -->
-  <circle cx="260" cy="132" r="38" fill="#fce8e6"/>
-  <circle cx="260" cy="132" r="26" fill="#fff" stroke="#202124" stroke-width="3"/>
-  <rect x="246" y="126" width="28" height="22" rx="5" fill="#ea4335"/>
-  <circle cx="260" cy="135" r="2.5" fill="#ffffff"/>
-  <path d="M260 138 v3" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="260" cy="128" r="34" fill="#fce8e6"/>
+  <circle cx="260" cy="128" r="24" fill="#fff" stroke="#202124" stroke-width="2.6"/>
+  <rect x="248" y="123" width="24" height="18" rx="4" fill="#ea4335"/>
+  <circle cx="260" cy="130" r="2" fill="#ffffff"/>
+  <path d="M260 132 v3" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
   <!-- Swung open shackle -->
-  <path d="M251 126 v-8 a9 9 0 0 1 18 0 v2" fill="none" stroke="#202124" stroke-width="3" stroke-linecap="round"/>
+  <path d="M252 123 v-7 a8 8 0 0 1 16 0 v2" fill="none" stroke="#202124" stroke-width="2.8" stroke-linecap="round"/>
 
-  <!-- Warning wireframe lines below -->
-  <rect x="200" y="184" width="120" height="8" rx="4" fill="#fce8e6"/>
-  <rect x="222" y="200" width="76" height="8" rx="4" fill="#e8eaed"/>
+  <!-- Warning text message below padlock -->
+  <rect x="180" y="174" width="160" height="22" rx="11" fill="#fce8e6"/>
+  <text x="260" y="188.5" font-size="9" font-weight="700" fill="#c5221f" text-anchor="middle">&#9888; Connection Not Private</text>
 
   <!-- Top Left Satellite: Red Alert Circle with Exclamation -->
-  <circle cx="132" cy="100" r="26" fill="#ea4335"/>
-  <path d="M132 88 v14" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"/>
-  <circle cx="132" cy="110" r="2.8" fill="#ffffff"/>
+  <circle cx="132" cy="95" r="26" fill="#ea4335"/>
+  <path d="M132 83 v14" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="132" cy="105" r="2.8" fill="#ffffff"/>
 
   <!-- Bottom Left Satellite: Yellow Caution Triangle Card -->
-  <rect x="100" y="164" width="60" height="60" rx="14" fill="#fff" stroke="#202124" stroke-width="3"/>
-  <polygon points="130,174 150,206 110,206" fill="#fef7e0" stroke="#fbbc04" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M130 184 v10" stroke="#b06000" stroke-width="2.4" stroke-linecap="round"/>
-  <circle cx="130" cy="199" r="1.5" fill="#b06000"/>
+  <rect x="94" y="160" width="76" height="66" rx="14" fill="#fff" stroke="#202124" stroke-width="3"/>
+  <polygon points="132,170 148,198 116,198" fill="#fef7e0" stroke="#fbbc04" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M132 178 v9" stroke="#b06000" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="132" cy="192" r="1.4" fill="#b06000"/>
+  <text x="132" y="214" font-size="9" font-weight="700" fill="#b06000" text-anchor="middle">SSL Missing</text>
 
   <!-- Bottom Right Satellite: Green HTTPS Shield Upgrade -->
-  <rect x="366" y="164" width="60" height="60" rx="14" fill="#e6f4ea" stroke="#202124" stroke-width="3"/>
-  <path d="M396 174 l16 6 v12 c0 12 -16 18 -16 18 s-16 -6 -16 -18 v-12z" fill="#34a853"/>
-  <path d="M390 192 l4 4 l8 -8" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="360" y="164" width="76" height="66" rx="14" fill="#e6f4ea" stroke="#202124" stroke-width="3"/>
+  <path d="M398 174 l14 5 v10 c0 10 -14 15 -14 15 s-14 -5 -14 -15 v-10z" fill="#34a853"/>
+  <path d="M393 189 l3 3 l7 -7" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+  <text x="398" y="218" font-size="9" font-weight="700" fill="#137333" text-anchor="middle">HTTPS 100%</text>
 </svg>

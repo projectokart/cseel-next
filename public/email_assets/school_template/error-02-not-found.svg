@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
+  <style>
+    text { font-family: 'Google Sans', Roboto, -apple-system, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+  </style>
   <!-- side lines -->
   <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
   <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
@@ -17,33 +20,38 @@
   <circle cx="202" cy="52" r="4.5" fill="#34a853"/>
   
   <!-- Search query pill in address bar with Google 'G' -->
-  <rect x="220" y="44" width="134" height="16" rx="8" fill="#e8eaed"/>
-  <circle cx="230" cy="52" r="4.5" fill="#4285f4"/>
-  <rect x="240" y="50" width="60" height="4" rx="2" fill="#9aa0a6"/>
+  <rect x="218" y="44" width="138" height="18" rx="9" fill="#f1f3f4"/>
+  <circle cx="228" cy="53" r="5" fill="#4285f4"/>
+  <text x="238" y="56" font-size="8.5" font-weight="500" fill="#5f6368">google.com/search</text>
 
   <!-- Inside Browser: Dotted empty frame for missing site -->
-  <rect x="174" y="88" width="172" height="116" rx="12" fill="#f8fafd" stroke="#bdc1c6" stroke-width="2.4" stroke-dasharray="8 6"/>
+  <rect x="172" y="86" width="176" height="118" rx="12" fill="#f8fafd" stroke="#bdc1c6" stroke-width="2" stroke-dasharray="6 4"/>
 
   <!-- Big Red Question Mark in Center -->
-  <circle cx="260" cy="140" r="32" fill="#fce8e6"/>
-  <circle cx="260" cy="140" r="22" fill="#fff" stroke="#202124" stroke-width="3"/>
-  <path d="M255 132 a5 5 0 0 1 10 0 c0 3.5 -5 5 -5 8.5" fill="none" stroke="#ea4335" stroke-width="3.2" stroke-linecap="round"/>
-  <circle cx="260" cy="146" r="1.8" fill="#ea4335"/>
+  <circle cx="260" cy="132" r="28" fill="#fce8e6"/>
+  <circle cx="260" cy="132" r="18" fill="#fff" stroke="#202124" stroke-width="2.6"/>
+  <text x="260" y="139" font-size="20" font-weight="700" fill="#ea4335" text-anchor="middle">?</text>
+
+  <!-- Clear text notice inside empty browser: "No Website Found" -->
+  <rect x="200" y="170" width="120" height="20" rx="10" fill="#fce8e6"/>
+  <text x="260" y="183.5" font-size="9.5" font-weight="700" fill="#c5221f" text-anchor="middle">&#9888; 0 Websites Found</text>
 
   <!-- Top Left Satellite: Blue circle with Graduation Cap -->
-  <circle cx="132" cy="100" r="26" fill="#1a73e8"/>
-  <path d="M116 98 L132 90 L148 98 L132 106Z" fill="#ffffff"/>
-  <path d="M123 103 v7 q9 6 18 0 v-7" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M148 98 v10" stroke="#fbbc04" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="132" cy="95" r="26" fill="#1a73e8"/>
+  <path d="M116 93 L132 85 L148 93 L132 101Z" fill="#ffffff"/>
+  <path d="M123 98 v7 q9 6 18 0 v-7" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M148 93 v10" stroke="#fbbc04" stroke-width="2.6" stroke-linecap="round"/>
 
-  <!-- Bottom Left Satellite: Red alert card with cross -->
-  <rect x="104" y="166" width="60" height="60" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
-  <circle cx="134" cy="196" r="16" fill="#fce8e6"/>
-  <path d="M127 189 l14 14 M141 189 l-14 14" stroke="#c5221f" stroke-width="3.2" stroke-linecap="round"/>
+  <!-- Bottom Left Satellite: Red alert card with "No Portal" -->
+  <rect x="94" y="160" width="76" height="66" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <circle cx="132" cy="182" r="13" fill="#fce8e6"/>
+  <path d="M126 176 l12 12 M138 176 l-12 12" stroke="#c5221f" stroke-width="2.8" stroke-linecap="round"/>
+  <text x="132" y="213" font-size="9" font-weight="700" fill="#c5221f" text-anchor="middle">No Portal</text>
 
-  <!-- Bottom Right Satellite: School house in green card -->
-  <rect x="370" y="174" width="56" height="56" rx="12" fill="#e6f4ea" stroke="#202124" stroke-width="3"/>
-  <path d="M384 196 l14 -10 l14 10z" fill="#34a853" stroke="#202124" stroke-width="2.4" stroke-linejoin="round"/>
-  <rect x="388" y="196" width="20" height="18" fill="#fff" stroke="#202124" stroke-width="2.4"/>
-  <rect x="394" y="203" width="8" height="11" fill="#1a73e8"/>
+  <!-- Bottom Right Satellite: School house in green card with "CBSE" -->
+  <rect x="360" y="164" width="76" height="66" rx="14" fill="#e6f4ea" stroke="#202124" stroke-width="3"/>
+  <path d="M384 186 l14 -10 l14 10z" fill="#34a853" stroke="#202124" stroke-width="2.4" stroke-linejoin="round"/>
+  <rect x="388" y="186" width="20" height="16" fill="#fff" stroke="#202124" stroke-width="2.4"/>
+  <rect x="394" y="192" width="8" height="10" fill="#1a73e8"/>
+  <text x="398" y="218" font-size="9" font-weight="700" fill="#137333" text-anchor="middle">CBSE Norms</text>
 </svg>

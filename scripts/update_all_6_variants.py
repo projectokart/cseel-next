@@ -2,65 +2,64 @@ import os
 import re
 
 # CDN Base for verified images (commit d84928e has the verified illustrations with crisp Google text)
-CDN_BASE = "https://cdn.jsdelivr.net/gh/projectokart/cseel-next@4dcfc46/public/email_assets/school_template"
+CDN_BASE = "https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template"
 
-MASTER_HTML = f"""<!DOCTYPE html>
+MASTER_HTML = """<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-<title>{{{{TITLE}}}}</title>
+<title>{{TITLE}}</title>
 <!--[if mso]>
 <style>
-* {{ font-family: Arial, sans-serif !important; }}
+* { font-family: Arial, sans-serif !important; }
 </style>
 <![endif]-->
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-html, body {{
+html, body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
   background-color: transparent !important;
   font-family: 'Google Sans', Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-}}
-table.wrap {{
+}
+table.wrap {
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border: 1px solid #c4c7c5 !important;
-  border-radius: 24px !important;
-  background-color: #ffffff !important;
-}}
-img {{ border: 0; outline: none; text-decoration: none; }}
-a {{ text-decoration: none; }}
-@media only screen and (max-width: 600px) {{
-  .wrap {{ width: 92% !important; margin: 16px auto !important; border-radius: 20px !important; border: 1px solid #c4c7c5 !important; }}
-  .px {{ padding-left: 14px !important; padding-right: 14px !important; }}
-  .h1-title {{ font-size: 21px !important; line-height: 28px !important; margin-bottom: 8px !important; }}
-  .subhead {{ font-size: 13.5px !important; line-height: 20px !important; margin-bottom: 12px !important; }}
-  .btn-pill {{ width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }}
-  .btn-pill-sec {{ width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }}
-}}
+  border: 1px solid #d3d8e0 !important;
+  background-color: #fbfaf7 !important;
+}
+img { border: 0; outline: none; text-decoration: none; }
+a { text-decoration: none; }
+@media only screen and (max-width: 600px) {
+  .wrap { width: 100% !important; margin: 0 auto !important; border: 1px solid #d3d8e0 !important; }
+  .px { padding-left: 14px !important; padding-right: 14px !important; }
+  .h1-title { font-size: 21px !important; line-height: 28px !important; margin-bottom: 8px !important; }
+  .subhead { font-size: 13.5px !important; line-height: 20px !important; margin-bottom: 12px !important; }
+  .btn-pill { width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }
+  .btn-pill-sec { width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }
+}
 </style>
 </head>
 <body style="background-color: transparent; margin: 0; padding: 0; font-family: 'Google Sans', Roboto, Arial, sans-serif; color: #1f1f1f;">
 
 <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent;">
-{{{{PREHEADER}}}}
+{{PREHEADER}}
 </div>
 
-<div style="padding: 16px 0;">
+<div style="padding: 12px 8px;">
 
   <!-- Primary Google Card with Crisp Thin Rounded Border -->
-  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 24px; border: 1px solid #c4c7c5; overflow: hidden; background-color: #ffffff;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 24px 24px 0 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
     <tbody>
 
       <!-- BRAND HEADER -->
       <tr>
-        <td align="center" style="padding: 26px 20px 14px 20px; background-color: #ffffff;">
+        <td align="center" style="padding: 18px 20px 8px 20px; background-color: #fbfaf7;">
           <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.2px;">
             <span style="color: #4285f4;">Web</span> <span style="color: #34a853;">Freelancer</span>
           </div>
@@ -72,57 +71,53 @@ a {{ text-decoration: none; }}
 
       <!-- SUBTLE DIVIDER -->
       <tr>
-        <td style="padding: 0 24px; background-color: #ffffff;">
+        <td style="padding: 0 24px; background-color: #fbfaf7;">
           <div style="border-top: 1px solid #dadce0; height: 1px; line-height: 1px;"></div>
         </td>
       </tr>
 
       <!-- HERO INTRO -->
       <tr>
-        <td class="px" align="center" style="padding: 22px 24px 12px 24px; background-color: #ffffff;">
+        <td class="px" align="center" style="padding: 14px 24px 4px 24px; background-color: #fbfaf7;">
           
           <!-- Category Alert Chip -->
           <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom: 12px;">
             <tr>
-              <td style="background-color: {{{{CHIP_BG}}}}; color: {{{{CHIP_COLOR}}}}; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px; padding: 4px 14px; border-radius: 50px;">
-                {{{{CHIP_TEXT}}}}
+              <td style="background-color: {{CHIP_BG}}; color: {{CHIP_COLOR}}; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px; padding: 4px 14px; border-radius: 50px;">
+                {{CHIP_TEXT}}
               </td>
             </tr>
           </table>
 
           <!-- Main Heading -->
           <div class="h1-title" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 21px; font-weight: 400; line-height: 1.32; text-align: center; color: #1f1f1f; max-width: 440px; margin: 0 auto 10px auto;">
-            {{{{HEADLINE}}}}
+            {{HEADLINE}}
           </div>
 
           <!-- Subheading / Paragraph -->
           <div class="subhead" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 1.55; text-align: center; color: #444746; max-width: 420px; margin: 0 auto 14px auto;">
-            {{{{SUBHEADING}}}}
+            {{SUBHEADING}}
           </div>
         </td>
       </tr>
 
       <!-- 1. HERO ERROR ILLUSTRATION (CUSTOMIZED PER VARIANT ERROR) -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 4px 20px 8px 20px; background-color: #ffffff;" align="center">
-          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}" target="_blank" style="text-decoration: none; display: block; line-height: 0; font-size: 0;">
-            <img src="{{{{HERO_ILLUSTRATION}}}}" width="460" alt="Website status illustration" style="display: block; width: 100%; max-width: 460px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 0 16px 8px 16px; background-color: #fbfaf7;" align="center">
+          <a href="https://design.cseel.org/?school={{school_name_url}}" target="_blank" style="text-decoration: none; display: block; line-height: 0; font-size: 0;">
+            <img src="{{HERO_ILLUSTRATION}}" width="460" alt="Website status illustration" style="display: block; width: 100%; max-width: 460px; height: auto; margin: 0 auto;" />
           </a>
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
-      <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
-        </td>
-      </tr>
-
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- GREETING + GOOGLE INFO CALLOUT -->
       <tr>
-        <td class="px" style="padding: 16px 24px 14px 24px; background-color: #ffffff;">
+        <td class="px" style="padding: 14px 24px 8px 24px; background-color: #fbfaf7;">
           <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14.5px; line-height: 22px; color: #1f1f1f; padding-bottom: 12px;">
-            Dear {{{{principal}}}} (Principal &amp; Management Committee),
+            Dear {{principal}} (Principal &amp; Management Committee),
           </div>
 
           <!-- Google Signature Blue Info Box -->
@@ -138,7 +133,7 @@ a {{ text-decoration: none; }}
                 </table>
               </td>
               <td valign="top" style="padding: 14px 14px 14px 10px; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #041e49;">
-                {{{{CALLOUT_TEXT}}}}
+                {{CALLOUT_TEXT}}
               </td>
             </tr>
           </table>
@@ -147,15 +142,15 @@ a {{ text-decoration: none; }}
 
       <!-- IMPACT CARD (COMPARISON STYLE) -->
       <tr>
-        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+        <td class="px" style="padding: 0 20px 10px 20px; background-color: #fbfaf7;">
           <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
             <tr>
               <td style="padding: 16px 18px 10px 18px;">
                 <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 20px; font-weight: 600; color: #1f1f1f; padding-bottom: 6px;">
-                  {{{{CARD_TITLE}}}}
+                  {{CARD_TITLE}}
                 </div>
                 <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-                  {{{{BULLET_ROWS}}}}
+{{BULLET_ROWS}}
                 </table>
               </td>
             </tr>
@@ -163,26 +158,29 @@ a {{ text-decoration: none; }}
         </td>
       </tr>
 
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- PROMISE TEXT -->
       <tr>
-        <td class="px" style="padding: 2px 24px 10px 24px; background-color: #ffffff;">
+        <td class="px" style="padding: 14px 24px 2px 24px; background-color: #fbfaf7;">
           <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 22px; color: #444746; text-align: center;">
-            {{{{PROMISE_TEXT}}}}
+            {{PROMISE_TEXT}}
           </div>
         </td>
       </tr>
 
       <!-- 2. RESTORE & LAUNCH ILLUSTRATION: restore-live.png -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 0 20px 14px 20px; background-color: #ffffff;" align="center">
-          <img src="{CDN_BASE}/restore-live.png" width="440" alt="Live restored portal preview" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 0 16px 6px 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/restore-live.png" width="440" alt="Live restored portal preview" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
         </td>
       </tr>
 
       <!-- BUMPER OFFER -->
       <tr>
-        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
-          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; border: 1px solid #dadce0; border-radius: 16px; background-color: #ffffff;">
+        <td class="px" style="padding: 0 20px 10px 20px; background-color: #fbfaf7;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; border: 1px solid #dadce0; border-radius: 16px; background-color: #fbfaf7;">
             <tr>
               <td width="40" valign="top" style="padding: 16px 0 16px 16px;">
                 <table border="0" cellpadding="0" cellspacing="0" role="presentation">
@@ -209,23 +207,19 @@ a {{ text-decoration: none; }}
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
-      <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
-        </td>
-      </tr>
-
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- 3. AGENCY COST OVERHEAD: agency-cost.png -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 0 20px 8px 20px; background-color: #ffffff;" align="center">
-          <img src="{CDN_BASE}/agency-cost.png" width="440" alt="Agency overhead breakdown" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 8px 16px 0 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/agency-cost.png" width="440" alt="Agency overhead breakdown" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
         </td>
       </tr>
 
       <!-- WHY AGENCIES CHARGE SO MUCH -->
       <tr>
-        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+        <td class="px" style="padding: 0 20px 10px 20px; background-color: #fbfaf7;">
           <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
             <tr>
               <td style="padding: 16px 18px 10px 18px;">
@@ -275,23 +269,19 @@ a {{ text-decoration: none; }}
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
-      <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
-        </td>
-      </tr>
-
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- 4. DIRECT BENEFITS: direct-benefits.png -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 0 20px 8px 20px; background-color: #ffffff;" align="center">
-          <img src="{CDN_BASE}/direct-benefits.png" width="440" alt="Direct benefits" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 8px 16px 0 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/direct-benefits.png" width="440" alt="Direct benefits" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
         </td>
       </tr>
 
       <!-- WHAT YOU GET WITH ME -->
       <tr>
-        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+        <td class="px" style="padding: 0 20px 10px 20px; background-color: #fbfaf7;">
           <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
             <tr>
               <td style="padding: 16px 18px 10px 18px;">
@@ -351,23 +341,19 @@ a {{ text-decoration: none; }}
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
-      <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
-        </td>
-      </tr>
-
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- 5. CBSE MANDATORY DISCLOSURE & AUDIT: cbse-compliance.png -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 0 20px 8px 20px; background-color: #ffffff;" align="center">
-          <img src="{CDN_BASE}/cbse-compliance.png" width="440" alt="CBSE compliance certification" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 8px 16px 0 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/cbse-compliance.png" width="440" alt="CBSE compliance certification" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
         </td>
       </tr>
 
       <!-- CBSE DISCLOSURE HIGHLIGHT CARD -->
       <tr>
-        <td class="px" style="padding: 0 20px 16px 20px; background-color: #ffffff;">
+        <td class="px" style="padding: 0 20px 10px 20px; background-color: #fbfaf7;">
           <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #e6f4ea; border: 1px solid #ceead6; border-radius: 16px;">
             <tr>
               <td style="padding: 14px 18px;">
@@ -383,57 +369,43 @@ a {{ text-decoration: none; }}
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
-      <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
-        </td>
-      </tr>
-
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- 6. VIRTUAL 360 TOUR: virtual-tour-360.png -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 4px 20px 8px 20px; background-color: #ffffff;" align="center">
-          <img src="{CDN_BASE}/virtual-tour-360.png" width="440" alt="Virtual 360 tour" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 8px 16px 0 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/virtual-tour-360.png" width="440" alt="Virtual 360 tour" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
         </td>
       </tr>
 
-      <!-- SAMPLE WORK CALLOUT -->
+      <!-- VIRTUAL TOUR CAPTION -->
       <tr>
-        <td class="px" align="center" style="padding: 10px 20px 8px 20px; background-color: #ffffff;">
-          <div class="h2-title" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 20px; line-height: 28px; font-weight: 400; color: #1f1f1f; padding-bottom: 6px;">
-            Some sample of our work
+        <td class="px" align="center" style="padding: 0 20px 14px 20px; background-color: #fbfaf7;">
+          <div class="h2-title" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 20px; line-height: 28px; font-weight: 400; color: #1f1f1f;">
+            Virtual tour of your campus
           </div>
-          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #5f6368; padding-bottom: 14px; max-width: 440px; margin: 0 auto;">
-            Open a sample school website we have built, with a 360&deg; virtual campus tour.
-          </div>
-          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}#projects" class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 11px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
-            View Sample Website &rarr;
-          </a>
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
-      <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
-        </td>
-      </tr>
-
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- 7. ZERO RISK GUARANTEE: zero-risk-guarantee.png -->
       <tr>
-        <td style="line-height: 0; font-size: 0; padding: 14px 20px 8px 20px; background-color: #ffffff;" align="center">
-          <img src="{CDN_BASE}/zero-risk-guarantee.png" width="440" alt="Zero risk guarantee" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        <td style="line-height: 0; font-size: 0; padding: 8px 16px 0 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/zero-risk-guarantee.png" width="440" alt="Zero risk guarantee" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
         </td>
       </tr>
 
       <!-- FINAL CALL TO ACTION -->
       <tr>
-        <td class="px" style="padding: 12px 24px 28px 24px; background-color: #ffffff;">
+        <td class="px" style="padding: 4px 24px 20px 24px; background-color: #fbfaf7;">
           <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 21px; color: #444746; padding-bottom: 14px; text-align: center;">
             Every day, parents are choosing another school&rsquo;s website. Message Dev Sharma today. Work first, pay later.
           </div>
           <div align="center">
-            <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma,%20we%20reviewed%20the%20website%20proposal%20for%20{{{{school_name_url}}}}." class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 11px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
+            <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma,%20we%20reviewed%20the%20website%20proposal%20for%20{{school_name_url}}." class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 11px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
               WhatsApp Now
             </a>
             <a href="tel:+918683979659" class="btn-pill-sec" style="display: inline-block; background-color: transparent; color: #0b57d0; border: 1px solid #dadce0; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 10px 28px; border-radius: 50px; text-decoration: none; box-sizing: border-box; margin-left: 6px;">
@@ -443,13 +415,40 @@ a {{ text-decoration: none; }}
         </td>
       </tr>
 
-      <!-- THIN GOOGLE SECTION DIVIDER -->
+      </tbody></table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
+    <tbody>
       <tr>
-        <td style="padding: 8px 24px; background-color: #ffffff;">
-          <div style="border-top: 1px solid #e8eaed; height: 1px; line-height: 1px; font-size: 1px;">&nbsp;</div>
+        <td class="px" align="center" style="padding: 16px 20px 2px 20px; background-color: #fbfaf7;">
+          <div class="h2-title" style="font-family: 'Google Sans', Arial, sans-serif; font-size: 20px; line-height: 28px; font-weight: 400; color: #1f1f1f; padding-bottom: 6px;">
+            See our work
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #5f6368; padding-bottom: 14px; max-width: 440px; margin: 0 auto;">
+            A school website we have built. Tap the preview to open the full website.
+          </div>
         </td>
       </tr>
-
+      <tr>
+        <td class="px" align="center" style="padding: 0 20px; background-color: #fbfaf7;">
+          <a href="https://design.cseel.org/?school={{school_name_url}}#projects" target="_blank" style="display: block; text-decoration: none;">
+            <div style="max-height: 520px; overflow: hidden; border: 1px solid #dadce0; border-radius: 16px;">
+              <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@main/public/email_assets/school_template/web-600.jpg" alt="Sample school website" width="540" style="display: block; width: 100%; max-width: 540px; height: auto; border: 0;" />
+            </div>
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td class="px" align="center" style="padding: 12px 20px 16px 20px; background-color: #fbfaf7;">
+          <a href="https://design.cseel.org/?school={{school_name_url}}#projects" class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; font-weight: 500; line-height: 1.5; padding: 12px 32px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
+            View Full Website &rarr;
+          </a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0 0 24px 24px; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;"><tbody>
       <!-- GOOGLE STYLE FOOTER -->
       <tr>
         <td class="px" align="center" style="background-color: #f1f3f4; padding: 22px 20px 28px 20px; border-radius: 0 0 24px 24px;">
@@ -457,19 +456,19 @@ a {{ text-decoration: none; }}
             Dev Sharma &middot; Independent Web Freelancer
           </div>
           <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 17px; color: #5f6368; padding-top: 8px; max-width: 440px; margin: 0 auto;">
-            You are receiving this email regarding online discoverability and digital compliance for {{{{school_name}}}}. We build fast, CBSE-compliant school websites directly, without agency charges.
+            You are receiving this email regarding online discoverability and digital compliance for {{school_name}}. We build fast, CBSE-compliant school websites directly, without agency charges.
           </div>
           <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12.5px; line-height: 18px; font-weight: 500; padding-top: 14px;">
-            <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma,%20we%20reviewed%20the%20website%20proposal%20for%20{{{{school_name_url}}}}." target="_blank" style="color: #0b57d0; text-decoration: none;">WhatsApp</a>
+            <a href="https://wa.me/918683979659?text=Hello%20Dev%20Sharma,%20we%20reviewed%20the%20website%20proposal%20for%20{{school_name_url}}." target="_blank" style="color: #0b57d0; text-decoration: none;">WhatsApp</a>
             <span style="color: #bdc1c6;">&nbsp;|&nbsp;</span>
             <a href="tel:+918683979659" style="color: #0b57d0; text-decoration: none;">Call</a>
             <span style="color: #bdc1c6;">&nbsp;|&nbsp;</span>
-            <a href="mailto:dev@mailer.cseel.org?subject=Website%20Proposal%20Discussion%20-%20{{{{school_name_url}}}}" target="_blank" style="color: #0b57d0; text-decoration: none;">Email</a>
+            <a href="mailto:dev@mailer.cseel.org?subject=Website%20Proposal%20Discussion%20-%20{{school_name_url}}" target="_blank" style="color: #0b57d0; text-decoration: none;">Email</a>
           </div>
           <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 17px; color: #5f6368; padding-top: 12px;">
             <a href="https://design.cseel.org/#contact" target="_blank" style="color: #5f6368; text-decoration: underline;">Preferences</a>
             &nbsp;&middot;&nbsp;
-            <a href="mailto:dev@mailer.cseel.org?subject=Unsubscribe%20{{{{school_name_url}}}}" target="_blank" style="color: #5f6368; text-decoration: underline;">Unsubscribe</a>
+            <a href="mailto:dev@mailer.cseel.org?subject=Unsubscribe%20{{school_name_url}}" target="_blank" style="color: #5f6368; text-decoration: underline;">Unsubscribe</a>
             &nbsp;&middot;&nbsp;
             <a href="https://cseel.org/privacy" target="_blank" style="color: #5f6368; text-decoration: underline;">Privacy policy</a>
           </div>
@@ -488,45 +487,13 @@ a {{ text-decoration: none; }}
 
     </tbody>
   </table>
-  <!-- End Primary Google Card -->
-
-  <!-- SEE OUR WORK (SECOND FLOATING CARD WITH THIN BORDER & ROUNDED CORNERS) -->
-  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 16px auto; border-radius: 24px; border: 1px solid #c4c7c5; overflow: hidden; background-color: #ffffff;">
-    <tbody>
-      <tr>
-        <td class="px" align="center" style="padding: 24px 20px 8px 20px; background-color: #ffffff;">
-          <div class="h2-title" style="font-family: 'Google Sans', Arial, sans-serif; font-size: 20px; line-height: 28px; font-weight: 400; color: #1f1f1f; padding-bottom: 6px;">
-            See our work
-          </div>
-          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #5f6368; padding-bottom: 14px; max-width: 440px; margin: 0 auto;">
-            A school website we have built. Tap the preview to open the full website.
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td class="px" align="center" style="padding: 0 20px; background-color: #ffffff;">
-          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}#projects" target="_blank" style="display: block; text-decoration: none;">
-            <div style="max-height: 520px; overflow: hidden; border: 1px solid #dadce0; border-radius: 16px;">
-              <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@main/public/email_assets/school_template/web-600.jpg" alt="Sample school website" width="540" style="display: block; width: 100%; max-width: 540px; height: auto; border: 0;" />
-            </div>
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td class="px" align="center" style="padding: 18px 20px 24px 20px; background-color: #ffffff;">
-          <a href="https://design.cseel.org/?school={{{{school_name_url}}}}#projects" class="btn-pill" target="_blank" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; font-weight: 500; line-height: 1.5; padding: 12px 32px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
-            View Full Website &rarr;
-          </a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
   <!-- End See Our Work Card -->
 
 </div>
 
 </body>
-</html>"""
+</html>
+"""
 
 VARIANTS = {
     "01_dead_or_inactive_website.html": {

@@ -1,56 +1,60 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
-  <!-- side framing curves -->
+  <defs>
+    <clipPath id="wa-screen"><rect x="198" y="11" width="124" height="238" rx="19"/></clipPath>
+  </defs>
+  <!-- side lines -->
   <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
   <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
   <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
   <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+  <!-- Top Right Satellite: Green Rocket Circle -->
+  <circle cx="388" cy="64" r="28" fill="#a8d5b5"/>
+  <path d="M388 48 c4 0 10 6 10 16 l-4 4 l-3 -3 l-3 3 l3 3 l-4 4 c-10 0 -16 -6 -16 -10 c0 -8 9 -17 17 -17z" fill="#202124"/>
+  <circle cx="391" cy="56" r="2.5" fill="#ffffff"/>
 
-  <!-- Left: Slow Agency Ticket Queue (7 Days Delay) -->
-  <g transform="translate(95, 42)">
-    <rect x="0" y="0" width="140" height="180" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
-    <rect x="12" y="14" width="116" height="26" rx="8" fill="#fce8e6"/>
-    <text x="70" y="31" font-family="'Google Sans', Arial" font-size="11" font-weight="700" fill="#c5221f" text-anchor="middle">Agency Ticket #410</text>
+  <!-- Central Smartphone (WhatsApp 30-Min Rapid Updates) -->
+  <rect x="195" y="8" width="130" height="244" rx="22" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <g clip-path="url(#wa-screen)">
+    <!-- Top notch -->
+    <rect x="237" y="16" width="46" height="9" rx="4.5" fill="#202124"/>
     
-    <!-- Clock with slow 7 days indicator -->
-    <circle cx="70" cy="80" r="26" fill="#f8f9fa" stroke="#202124" stroke-width="2.6"/>
-    <path d="M70 62 v18 l12 8" stroke="#ea4335" stroke-width="3" stroke-linecap="round"/>
-    
-    <!-- Status: 7 Days Waiting -->
-    <rect x="15" y="118" width="110" height="22" rx="6" fill="#fce8e6"/>
-    <text x="70" y="133" font-family="'Google Sans', Arial" font-size="10" font-weight="700" fill="#c5221f" text-anchor="middle">&#10005; Delayed 7 Days</text>
-    <rect x="25" y="148" width="90" height="8" rx="4" fill="#e8eaed"/>
+    <!-- WhatsApp Green Header Bar -->
+    <rect x="203" y="32" width="114" height="30" rx="8" fill="#25d366"/>
+    <circle cx="218" cy="47" r="8" fill="#ffffff"/>
+    <path d="M216 43 q3 0 5 5 l-1.5 1.5 q-1.5 0 -3 -1.5 q-1.5 -1.5 -1.5 -3z" fill="#25d366"/>
+    <rect x="232" y="43" width="60" height="8" rx="4" fill="#ffffff"/>
+
+    <!-- Circular PDF Upload Chat Bubble -->
+    <rect x="203" y="72" width="114" height="52" rx="8" fill="#e6f4ea" stroke="#81c995" stroke-width="1.8"/>
+    <!-- Red PDF File Icon -->
+    <rect x="211" y="80" width="22" height="28" rx="4" fill="#ea4335"/>
+    <rect x="215" y="85" width="14" height="3" rx="1.5" fill="#ffffff"/>
+    <rect x="215" y="91" width="10" height="3" rx="1.5" fill="#ffffff"/>
+    <rect x="240" y="85" width="64" height="7" rx="3.5" fill="#1f1f1f"/>
+    <rect x="240" y="96" width="48" height="6" rx="3" fill="#137333"/>
+
+    <!-- Downward Publishing Arrow -->
+    <path d="M260 134 v12 M255 140 l5 6 l5 -6" stroke="#25d366" stroke-width="2.6" stroke-linecap="round"/>
+
+    <!-- Live in 30 Mins Result Box -->
+    <rect x="203" y="156" width="114" height="42" rx="10" fill="#e6f4ea" stroke="#137333" stroke-width="2"/>
+    <circle cx="220" cy="177" r="8" fill="#137333"/>
+    <path d="M217 177 l2 2 l4 -4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <rect x="234" y="170" width="68" height="6" rx="3" fill="#137333"/>
+    <rect x="234" y="180" width="46" height="5" rx="2.5" fill="#5f6368"/>
   </g>
 
-  <!-- Center Lightning Bolt (Instant Speed) -->
-  <g transform="translate(242, 105)">
-    <circle cx="20" cy="24" r="24" fill="#fef7e0" stroke="#fbbc04" stroke-width="3"/>
-    <path d="M22 6 l-10 18 h10 l-4 16 l14 -20 h-10z" fill="#fbbc04" stroke="#202124" stroke-width="1.8" stroke-linejoin="round"/>
-  </g>
+  <!-- Top Left Satellite: Yellow Lightning Speed Circle -->
+  <circle cx="140" cy="76" r="26" fill="#fef7e0" stroke="#fbbc04" stroke-width="2.4"/>
+  <path d="M142 58 l-8 15 h8 l-3 14 l11 -17 h-8z" fill="#fbbc04" stroke="#202124" stroke-width="1.8" stroke-linejoin="round"/>
 
-  <!-- Right: 30-Minute WhatsApp Instant Publishing -->
-  <g transform="translate(285, 36)">
-    <rect x="0" y="0" width="145" height="190" rx="16" fill="#ffffff" stroke="#202124" stroke-width="3"/>
-    
-    <!-- WhatsApp Green Header -->
-    <rect x="10" y="12" width="125" height="34" rx="10" fill="#25d366"/>
-    <circle cx="28" cy="29" r="10" fill="#ffffff"/>
-    <!-- phone icon -->
-    <path d="M25 24 q4 0 7 7 l-2 2 q-2 0 -4 -2 q-2 -2 -2 -4z" fill="#25d366"/>
-    <text x="78" y="33" font-family="'Google Sans', Arial" font-size="12" font-weight="700" fill="#ffffff">WhatsApp</text>
+  <!-- Bottom Left Satellite: Slow Agency Ticket Clock Card -->
+  <rect x="100" y="154" width="64" height="74" rx="14" fill="#fff" stroke="#202124" stroke-width="3"/>
+  <rect x="108" y="162" width="48" height="12" rx="4" fill="#fce8e6"/>
+  <circle cx="132" cy="196" r="16" fill="#f8f9fa" stroke="#202124" stroke-width="2.2"/>
+  <path d="M132 186 v10 l7 5" stroke="#ea4335" stroke-width="2.6" stroke-linecap="round"/>
 
-    <!-- PDF Circular Message Bubble -->
-    <rect x="12" y="58" width="120" height="50" rx="8" fill="#e6f4ea" stroke="#81c995" stroke-width="1.6"/>
-    <rect x="20" y="66" width="22" height="26" rx="4" fill="#ea4335"/>
-    <text x="31" y="82" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#ffffff" text-anchor="middle">PDF</text>
-    <text x="48" y="76" font-family="'Google Sans', Arial" font-size="9" font-weight="700" fill="#1f1f1f">Exam_Date.pdf</text>
-    <text x="48" y="88" font-family="'Google Sans', Arial" font-size="8" font-weight="500" fill="#137333">Upload to website</text>
-
-    <!-- Arrow down to live site -->
-    <path d="M72 112 v12 M66 120 l6 6 l6 -6" stroke="#25d366" stroke-width="2.6" stroke-linecap="round"/>
-
-    <!-- Green Result Pill: Live in 30 Mins -->
-    <rect x="10" y="138" width="125" height="34" rx="10" fill="#e6f4ea" stroke="#137333" stroke-width="2"/>
-    <text x="72" y="154" font-family="'Google Sans', Arial" font-size="11" font-weight="700" fill="#137333" text-anchor="middle">&check; Live in 30 Mins</text>
-    <text x="72" y="166" font-family="'Google Sans', Arial" font-size="8" font-weight="500" fill="#5f6368" text-anchor="middle">Direct with Developer</text>
-  </g>
+  <!-- Bottom Right Satellite: Verified Green Check Badge -->
+  <rect x="366" y="174" width="56" height="56" rx="12" fill="#e6f4ea" stroke="#202124" stroke-width="3"/>
+  <path d="M378 202 l8 8 l16 -16" fill="none" stroke="#34a853" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

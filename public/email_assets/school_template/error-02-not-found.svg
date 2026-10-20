@@ -1,54 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
-  <!-- side framing curves -->
+  <!-- side lines -->
   <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
   <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
   <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
   <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+  <!-- Top Right Satellite: Light blue circle with Magnifying Glass -->
+  <circle cx="394" cy="58" r="28" fill="#a8c7fa"/>
+  <circle cx="391" cy="55" r="9" fill="none" stroke="#202124" stroke-width="3"/>
+  <path d="M398 62 l9 9" stroke="#202124" stroke-width="3" stroke-linecap="round"/>
 
-  <!-- Google Search Box (Top Center) -->
-  <rect x="135" y="30" width="250" height="42" rx="21" fill="#ffffff" stroke="#202124" stroke-width="3"/>
-  <!-- Google Multi-color G -->
-  <circle cx="160" cy="51" r="11" fill="#4285f4"/>
-  <path d="M160 44 a7 7 0 1 1 -5 11.9" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M160 51 h7" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
-  <!-- Search text query -->
-  <rect x="180" y="46" width="130" height="10" rx="5" fill="#e8eaed"/>
-  <!-- Magnifying glass on right -->
-  <circle cx="358" cy="49" r="7" fill="none" stroke="#ea4335" stroke-width="2.6"/>
-  <path d="M363 54 l6 6" stroke="#ea4335" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- Central Browser Window -->
+  <rect x="150" y="34" width="220" height="190" rx="16" fill="#fff" stroke="#202124" stroke-width="3"/>
+  <path d="M150 70 H370" stroke="#202124" stroke-width="3"/>
+  <circle cx="170" cy="52" r="4.5" fill="#ea4335"/>
+  <circle cx="186" cy="52" r="4.5" fill="#fbbc04"/>
+  <circle cx="202" cy="52" r="4.5" fill="#34a853"/>
+  
+  <!-- Search query pill in address bar with Google 'G' -->
+  <rect x="220" y="44" width="134" height="16" rx="8" fill="#e8eaed"/>
+  <circle cx="230" cy="52" r="4.5" fill="#4285f4"/>
+  <rect x="240" y="50" width="60" height="4" rx="2" fill="#9aa0a6"/>
 
-  <!-- Central Canvas: Empty Website Outline with Dashed Line -->
-  <rect x="160" y="90" width="200" height="135" rx="14" fill="#ffffff" stroke="#9aa0a6" stroke-width="3" stroke-dasharray="8 6"/>
-  <!-- Browser dots -->
-  <circle cx="180" cy="106" r="4" fill="#ea4335"/>
-  <circle cx="194" cy="106" r="4" fill="#fbbc04"/>
-  <circle cx="208" cy="106" r="4" fill="#34a853"/>
-  <path d="M160 118 h200" stroke="#dadce0" stroke-width="2"/>
+  <!-- Inside Browser: Dotted empty frame for missing site -->
+  <rect x="174" y="88" width="172" height="116" rx="12" fill="#f8fafd" stroke="#bdc1c6" stroke-width="2.4" stroke-dasharray="8 6"/>
 
-  <!-- Big Question Mark / Missing Page in Center -->
-  <circle cx="260" cy="160" r="26" fill="#fce8e6"/>
-  <text x="260" y="172" font-family="'Google Sans', Roboto, Arial" font-size="34" font-weight="700" fill="#ea4335" text-anchor="middle">?</text>
-  <rect x="210" y="198" width="100" height="8" rx="4" fill="#e8eaed"/>
+  <!-- Big Red Question Mark in Center -->
+  <circle cx="260" cy="140" r="32" fill="#fce8e6"/>
+  <circle cx="260" cy="140" r="22" fill="#fff" stroke="#202124" stroke-width="3"/>
+  <path d="M255 132 a5 5 0 0 1 10 0 c0 3.5 -5 5 -5 8.5" fill="none" stroke="#ea4335" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="260" cy="146" r="1.8" fill="#ea4335"/>
 
-  <!-- Floating Left Badge: "0 Results Found" Alert -->
-  <rect x="88" y="100" width="86" height="52" rx="12" fill="#fff" stroke="#202124" stroke-width="3"/>
-  <circle cx="110" cy="126" r="12" fill="#fce8e6"/>
-  <path d="M106 122 l8 8 M114 122 l-8 8" stroke="#c5221f" stroke-width="2.8" stroke-linecap="round"/>
-  <rect x="130" y="118" width="34" height="6" rx="3" fill="#ea4335"/>
-  <rect x="130" y="128" width="24" height="5" rx="2.5" fill="#bdc1c6"/>
+  <!-- Top Left Satellite: Blue circle with Graduation Cap -->
+  <circle cx="132" cy="100" r="26" fill="#1a73e8"/>
+  <path d="M116 98 L132 90 L148 98 L132 106Z" fill="#ffffff"/>
+  <path d="M123 103 v7 q9 6 18 0 v-7" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M148 98 v10" stroke="#fbbc04" stroke-width="2.6" stroke-linecap="round"/>
 
-  <!-- Floating Right Badge: Lost Admissions / Parents Pin -->
-  <rect x="348" y="140" width="94" height="54" rx="12" fill="#fff" stroke="#202124" stroke-width="3"/>
-  <circle cx="370" cy="167" r="12" fill="#e8f0fe"/>
-  <!-- Graduation cap icon -->
-  <path d="M362 166 l8 -4 l8 4 l-8 4z" fill="#1a73e8"/>
-  <path d="M365 168 v4 q5 3 10 0 v-4" fill="none" stroke="#1a73e8" stroke-width="1.8"/>
-  <!-- Missing badge red cross -->
-  <circle cx="378" cy="160" r="4" fill="#ea4335"/>
-  <rect x="390" y="159" width="42" height="6" rx="3" fill="#1f1f1f"/>
-  <rect x="390" y="169" width="30" height="5" rx="2.5" fill="#ea4335"/>
+  <!-- Bottom Left Satellite: Red alert card with cross -->
+  <rect x="104" y="166" width="60" height="60" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <circle cx="134" cy="196" r="16" fill="#fce8e6"/>
+  <path d="M127 189 l14 14 M141 189 l-14 14" stroke="#c5221f" stroke-width="3.2" stroke-linecap="round"/>
 
-  <!-- Small top left decorative sparkle -->
-  <circle cx="120" cy="65" r="16" fill="#fef7e0"/>
-  <path d="M120 56 v18 M111 65 h18" stroke="#fbbc04" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Bottom Right Satellite: School house in green card -->
+  <rect x="370" y="174" width="56" height="56" rx="12" fill="#e6f4ea" stroke="#202124" stroke-width="3"/>
+  <path d="M384 196 l14 -10 l14 10z" fill="#34a853" stroke="#202124" stroke-width="2.4" stroke-linejoin="round"/>
+  <rect x="388" y="196" width="20" height="18" fill="#fff" stroke="#202124" stroke-width="2.4"/>
+  <rect x="394" y="203" width="8" height="11" fill="#1a73e8"/>
 </svg>

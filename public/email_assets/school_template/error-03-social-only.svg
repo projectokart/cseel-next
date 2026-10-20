@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
+  <!-- side framing curves -->
+  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Central Mobile Phone: Social Media Feed with Ads -->
+  <rect x="185" y="24" width="150" height="212" rx="18" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <!-- Top notch -->
+  <rect x="235" y="32" width="50" height="6" rx="3" fill="#202124"/>
+  
+  <!-- Social Feed Header -->
+  <circle cx="206" cy="54" r="10" fill="#1877f2"/>
+  <text x="206" y="59" font-family="Arial, sans-serif" font-weight="700" font-size="14" fill="#ffffff" text-anchor="middle">f</text>
+  <rect x="224" y="50" width="70" height="7" rx="3.5" fill="#202124"/>
+
+  <!-- Post Image with Heart -->
+  <rect x="198" y="70" width="124" height="70" rx="8" fill="#fce8e6"/>
+  <path d="M260 100 q-10 -15 -20 0 q10 15 20 20 q10 -5 20 -20 q-10 -15 -20 0z" fill="#ea4335"/>
+
+  <!-- Competitor Ad Banner in Feed (The Pain Point) -->
+  <rect x="198" y="148" width="124" height="42" rx="6" fill="#fef7e0" stroke="#fbbc04" stroke-width="1.8"/>
+  <rect x="205" y="154" width="40" height="5" rx="2.5" fill="#b06000"/>
+  <rect x="205" y="163" width="90" height="5" rx="2.5" fill="#70757a"/>
+  <rect x="205" y="172" width="55" height="11" rx="5.5" fill="#ea4335"/>
+  <text x="232" y="180" font-family="'Google Sans', Arial" font-size="7" font-weight="700" fill="#fff" text-anchor="middle">ADMISSION AD</text>
+
+  <!-- Left Floating Badge: Missing Official Domain (.edu/.org) -->
+  <rect x="85" y="80" width="92" height="70" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <circle cx="112" cy="106" r="13" fill="#fce8e6"/>
+  <path d="M107 101 l10 10 M117 101 l-10 10" stroke="#ea4335" stroke-width="2.8" stroke-linecap="round"/>
+  <rect x="132" y="102" width="36" height="8" rx="4" fill="#ea4335"/>
+  <text x="131" y="132" font-family="'Google Sans', Arial" font-size="11" font-weight="700" fill="#202124" text-anchor="middle">No .org</text>
+
+  <!-- Right Floating Badge: CBSE Compliance Violation Warning -->
+  <rect x="345" y="125" width="95" height="68" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <circle cx="372" cy="151" r="13" fill="#fef7e0"/>
+  <path d="M372 144 v8" stroke="#b06000" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="372" cy="157" r="1.6" fill="#b06000"/>
+  <rect x="392" y="147" width="38" height="7" rx="3.5" fill="#202124"/>
+  <text x="392" y="174" font-family="'Google Sans', Arial" font-size="9" font-weight="700" fill="#c5221f" text-anchor="middle">CBSE Alert</text>
+
+  <!-- Top Right Insta Camera Icon -->
+  <rect x="375" y="45" width="46" height="46" rx="14" fill="#a8c7fa" stroke="#202124" stroke-width="2.6"/>
+  <circle cx="398" cy="68" r="9" fill="none" stroke="#202124" stroke-width="2.6"/>
+  <circle cx="410" cy="56" r="2.5" fill="#202124"/>
+</svg>

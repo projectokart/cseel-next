@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
+  <!-- side framing curves -->
+  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Center: CBSE Compliance Certificate Card -->
+  <rect x="160" y="30" width="200" height="200" rx="16" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  
+  <!-- Header with official seal -->
+  <rect x="180" y="44" width="160" height="30" rx="8" fill="#e8f0fe"/>
+  <circle cx="200" cy="59" r="10" fill="#1a73e8"/>
+  <path d="M196 59 l3 3 l6 -6" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+  <text x="260" y="64" font-family="'Google Sans', Roboto, Arial" font-size="11" font-weight="700" fill="#1a73e8" text-anchor="middle">CBSE COMPLIANCE</text>
+
+  <!-- 3 Checkpoints inside certificate -->
+  <!-- Item 1: Mandatory Public Disclosure -->
+  <g transform="translate(178, 88)">
+    <circle cx="10" cy="10" r="9" fill="#e6f4ea"/>
+    <path d="M6 10 l3 3 l6 -6" stroke="#137333" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <rect x="26" y="6" width="116" height="8" rx="4" fill="#202124"/>
+  </g>
+  <!-- Item 2: Fee Structure & Affiliation NOC -->
+  <g transform="translate(178, 116)">
+    <circle cx="10" cy="10" r="9" fill="#e6f4ea"/>
+    <path d="M6 10 l3 3 l6 -6" stroke="#137333" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <rect x="26" y="6" width="98" height="8" rx="4" fill="#202124"/>
+  </g>
+  <!-- Item 3: Faculty List & Academic Calendar -->
+  <g transform="translate(178, 144)">
+    <circle cx="10" cy="10" r="9" fill="#e6f4ea"/>
+    <path d="M6 10 l3 3 l6 -6" stroke="#137333" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <rect x="26" y="6" width="108" height="8" rx="4" fill="#202124"/>
+  </g>
+
+  <!-- Verified Stamp Seal Bottom Center -->
+  <circle cx="260" cy="192" r="18" fill="#e6f4ea" stroke="#137333" stroke-width="2.4"/>
+  <text x="260" y="196" font-family="'Google Sans', Arial" font-size="9" font-weight="700" fill="#137333" text-anchor="middle">100% OK</text>
+
+  <!-- Left Floating Badge: Trust Shield -->
+  <rect x="80" y="90" width="96" height="70" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <path d="M128 106 l18 7 v12 c0 14 -18 20 -18 20 s-18 -6 -18 -20 v-12z" fill="#34a853"/>
+  <path d="M121 123 l5 5 l10 -10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <text x="128" y="152" font-family="'Google Sans', Arial" font-size="9" font-weight="700" fill="#1f1f1f" text-anchor="middle">Audit Proof</text>
+
+  <!-- Right Floating Badge: Fast Inspection Approval -->
+  <rect x="345" y="125" width="96" height="66" rx="14" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+  <circle cx="372" cy="151" r="14" fill="#fef7e0"/>
+  <path d="M372 143 v10 M367 148 h10" stroke="#fbbc04" stroke-width="2.6" stroke-linecap="round"/>
+  <rect x="392" y="145" width="40" height="7" rx="3.5" fill="#202124"/>
+  <text x="392" y="172" font-family="'Google Sans', Arial" font-size="9" font-weight="700" fill="#137333" text-anchor="middle">Bye-Laws Ready</text>
+</svg>

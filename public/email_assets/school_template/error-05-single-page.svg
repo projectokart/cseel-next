@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260">
+  <!-- side framing curves -->
+  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Left: Cramped 1-Page Static Site (Old) -->
+  <g transform="translate(110, 48)">
+    <rect x="0" y="0" width="110" height="165" rx="10" fill="#ffffff" stroke="#9aa0a6" stroke-width="2.6"/>
+    <rect x="10" y="12" width="90" height="12" rx="4" fill="#dadce0"/>
+    <rect x="10" y="32" width="90" height="28" rx="4" fill="#e8eaed"/>
+    <rect x="10" y="68" width="90" height="8" rx="3" fill="#bdc1c6"/>
+    <rect x="10" y="82" width="70" height="8" rx="3" fill="#bdc1c6"/>
+    <rect x="10" y="96" width="85" height="8" rx="3" fill="#bdc1c6"/>
+    <!-- Red End of Page Tag -->
+    <rect x="15" y="125" width="80" height="22" rx="6" fill="#fce8e6"/>
+    <text x="55" y="139" font-family="'Google Sans', Arial" font-size="9" font-weight="700" fill="#c5221f" text-anchor="middle">1 Page Only</text>
+  </g>
+
+  <!-- Big Forward Transformation Arrow in Center -->
+  <g transform="translate(236, 110)">
+    <circle cx="24" cy="20" r="22" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2.6"/>
+    <path d="M14 20 h18 M26 14 l6 6 l-6 6" fill="none" stroke="#1a73e8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Right: Modern Multi-Page Layered CBSE Portal (New) -->
+  <g transform="translate(295, 36)">
+    <!-- Back card 2: Disclosures -->
+    <rect x="26" y="0" width="124" height="180" rx="12" fill="#e6f4ea" stroke="#202124" stroke-width="2.4"/>
+    <!-- Back card 1: Academics -->
+    <rect x="14" y="8" width="124" height="180" rx="12" fill="#fef7e0" stroke="#202124" stroke-width="2.6"/>
+    <!-- Front card: Main Interactive Portal -->
+    <rect x="0" y="16" width="128" height="180" rx="12" fill="#ffffff" stroke="#202124" stroke-width="3"/>
+    
+    <!-- Top Nav Tabs on Portal -->
+    <rect x="8" y="26" width="22" height="6" rx="3" fill="#1a73e8"/>
+    <rect x="34" y="26" width="22" height="6" rx="3" fill="#34a853"/>
+    <rect x="60" y="26" width="22" height="6" rx="3" fill="#fbbc04"/>
+    <rect x="86" y="26" width="22" height="6" rx="3" fill="#ea4335"/>
+
+    <!-- Hero Banner with 360 tour button -->
+    <rect x="8" y="40" width="112" height="50" rx="6" fill="#a8c7fa"/>
+    <circle cx="64" cy="65" r="14" fill="#ffffff" stroke="#1a73e8" stroke-width="2"/>
+    <text x="64" y="69" font-family="'Google Sans', Arial" font-size="8" font-weight="700" fill="#1a73e8" text-anchor="middle">360&deg;</text>
+
+    <!-- Content Blocks -->
+    <rect x="8" y="98" width="52" height="40" rx="5" fill="#f8fafd" stroke="#dadce0" stroke-width="1.6"/>
+    <rect x="68" y="98" width="52" height="40" rx="5" fill="#f8fafd" stroke="#dadce0" stroke-width="1.6"/>
+    
+    <!-- Green Live Multi-Page Badge -->
+    <rect x="8" y="148" width="112" height="24" rx="8" fill="#e6f4ea"/>
+    <text x="64" y="164" font-family="'Google Sans', Arial" font-size="10" font-weight="700" fill="#137333" text-anchor="middle">&check; Full CBSE Portal</text>
+  </g>
+</svg>

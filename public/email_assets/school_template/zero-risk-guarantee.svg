@@ -2,11 +2,7 @@
   <style>
     text { font-family: 'Google Sans', Roboto, -apple-system, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   </style>
-  <!-- side lines -->
-  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+
   <!-- Top Right Satellite: Mint Green Star of Excellence Circle -->
   <circle cx="390" cy="66" r="28" fill="#a8d5b5"/>
   <path d="M390 52 l4 9 l10 1 l-7 7 l2 10 l-9 -5 l-9 5 l2 -10 l-7 -7 l10 -1z" fill="#202124"/>

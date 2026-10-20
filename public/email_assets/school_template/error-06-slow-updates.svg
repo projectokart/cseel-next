@@ -5,11 +5,7 @@
   <style>
     text { font-family: 'Google Sans', Roboto, -apple-system, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   </style>
-  <!-- side lines -->
-  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+
   <!-- Top Right Satellite: Green Rocket Launch Circle -->
   <circle cx="388" cy="64" r="28" fill="#a8d5b5"/>
   <path d="M388 48 c4 0 10 6 10 16 l-4 4 l-3 -3 l-3 3 l3 3 l-4 4 c-10 0 -16 -6 -16 -10 c0 -8 9 -17 17 -17z" fill="#202124"/>

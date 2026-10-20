@@ -2,11 +2,7 @@
   <style>
     text { font-family: 'Google Sans', Roboto, -apple-system, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
   </style>
-  <!-- side lines -->
-  <path d="M70 120 q-14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M450 120 q14 18 0 40" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M60 110 q-22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
-  <path d="M460 110 q22 28 0 60" fill="none" stroke="#bdc1c6" stroke-width="2" stroke-linecap="round"/>
+
   <!-- Top Right Satellite: Gold Star Circle -->
   <circle cx="388" cy="64" r="28" fill="#fef7e0" stroke="#fbbc04" stroke-width="2.4"/>
   <path d="M388 48 l4 10 l11 1 l-8 8 l2 11 l-9 -5 l-9 5 l2 -11 l-8 -8 l11 -1z" fill="#fbbc04"/>

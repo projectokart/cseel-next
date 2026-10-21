@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 168" width="500" height="168">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&amp;display=swap');
+      .brand-title {
+        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-weight: 800;
+        font-size: 68px;
+        letter-spacing: 13.5px;
+        fill: #023858;
+      }
+      .brand-divider {
+        stroke: #023858;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+      }
+      .brand-sub {
+        font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-weight: 600;
+        font-size: 18.5px;
+        letter-spacing: 0.25px;
+        fill: #023858;
+      }
+    </style>
+  </defs>
+
+  <!-- Left: Rectangular Emblem in Exact #023858 & Google Red (Centered vertically at y=12, x=8) -->
+  <g transform="translate(8, 12) scale(0.169811)">
+    <!-- White backing frame & gaps -->
+    <rect x="403" y="10" width="42" height="828" fill="#FFFFFF" />
+    <rect x="10" y="403" width="828" height="42" fill="#FFFFFF" />
+    <rect x="157" y="157" width="534" height="534" rx="165" fill="#FFFFFF" />
+
+    <!-- White outer border -->
+    <rect x="10" y="10" width="828" height="828" rx="226" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="16" />
+
+    <!-- 4 Brackets in Prussian Navy #023858 -->
+    <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#023858" />
+    <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#023858" />
+    <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#023858" />
+    <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#023858" />
+
+    <!-- Central Google Red Nucleus -->
+    <circle cx="424" cy="424" r="76" fill="#EA4335" />
+
+    <!-- Orbits in #023858 -->
+    <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#023858" stroke-width="26">
+      <ellipse rx="232" ry="106" transform="rotate(30)" />
+      <ellipse rx="232" ry="106" transform="rotate(90)" />
+      <ellipse rx="232" ry="106" transform="rotate(150)" />
+    </g>
+
+    <!-- Electrons in #023858 with White Borders -->
+    <g id="electrons">
+      <circle cx="424.0" cy="192.0" r="28" fill="#FFFFFF" />
+      <circle cx="424.0" cy="192.0" r="20" fill="#023858" />
+      <circle cx="223.1" cy="540.0" r="28" fill="#FFFFFF" />
+      <circle cx="223.1" cy="540.0" r="20" fill="#023858" />
+      <circle cx="624.9" cy="540.0" r="28" fill="#FFFFFF" />
+      <circle cx="624.9" cy="540.0" r="20" fill="#023858" />
+    </g>
+  </g>
+
+  <!-- Right: Typography in Unified Brand Color #023858 -->
+  <!-- Main Wordmark -->
+  <text x="170" y="80" class="brand-title">CSEEL</text>
+
+  <!-- Divider Line -->
+  <line x1="170" y1="98" x2="478" y2="98" class="brand-divider" />
+
+  <!-- Tagline Line 1 -->
+  <text x="170" y="124" class="brand-sub">Centre for Scientific Exploration</text>
+  <!-- Tagline Line 2 -->
+  <text x="170" y="149" class="brand-sub">&amp; Experiential Learning</text>
+</svg>

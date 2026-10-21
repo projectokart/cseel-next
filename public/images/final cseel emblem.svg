@@ -6,23 +6,23 @@
   <!-- white border (one outline around whole logo, no dip at gaps) -->
   <rect x="10" y="10" width="828" height="828" rx="226" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="16" />
 
-  <!-- 4 Brackets in 4 Google Brand Colors -->
-  <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#4285F4" />
-  <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#EA4335" />
-  <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#FBBC04" />
-  <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#34A853" />
+  <!-- 4 Brackets in SINGLE Deep Navy Blue #023858 -->
+  <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#023858" />
+  <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#023858" />
+  <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#023858" />
+  <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#023858" />
 
   <!-- Central Vibrant Google Red Nucleus -->
   <circle cx="424" cy="424" r="76" fill="#EA4335" />
 
-  <!-- Atomic Orbits (Exact Color #023858 and 26px Bold Stroke) -->
+  <!-- Atomic Orbits (Exact Same #023858 Color and 26px Bold Stroke) -->
   <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#023858" stroke-width="26">
     <ellipse rx="232" ry="106" transform="rotate(30)" />
     <ellipse rx="232" ry="106" transform="rotate(90)" />
     <ellipse rx="232" ry="106" transform="rotate(150)" />
   </g>
 
-  <!-- Electrons (BALANCED RADIUS: r=30 inner, r=40 white border) -->
+  <!-- Electrons (Google Red with White Protective Ring) -->
   <g id="electrons">
     <!-- Top electron -->
     <circle cx="424.0" cy="192.0" r="40" fill="#FFFFFF" />

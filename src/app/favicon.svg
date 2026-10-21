@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Solid White Disc background so icon pops on dark browser tabs -->
+  <circle cx="256" cy="256" r="256" fill="#FFFFFF" />
+
+  <!-- Single Deep Navy Blue #023858 Outer Quadrant Ring (Bold 38px stroke) -->
+  <g transform="translate(256, 256)" fill="none" stroke="#023858" stroke-width="38" stroke-linecap="round">
+    <path id="q" d="M 235 -48 A 236 236 0 0 0 48 -235" />
+    <use href="#q" transform="scale(1,-1)" />
+    <use href="#q" transform="scale(-1,1)" />
+    <use href="#q" transform="scale(-1,-1)" />
+  </g>
+
+  <!-- Central Vibrant Google Red Nucleus -->
+  <circle cx="256" cy="256" r="62" fill="#EA4335" />
+
+  <!-- BOLD Atomic Orbits (34px stroke for optical clarity at 16x16) -->
+  <g id="orbits" transform="translate(256, 256)" fill="none" stroke="#023858" stroke-width="34">
+    <ellipse rx="180" ry="82" transform="rotate(90)" />
+    <ellipse rx="180" ry="82" transform="rotate(30)" />
+    <ellipse rx="180" ry="82" transform="rotate(150)" />
+  </g>
+
+  <!-- Electrons in Google Red -->
+  <g id="electrons">
+    <circle cx="256" cy="76" r="26" fill="#FFFFFF" />
+    <circle cx="256" cy="76" r="18" fill="#EA4335" />
+    <circle cx="412" cy="346" r="26" fill="#FFFFFF" />
+    <circle cx="412" cy="346" r="18" fill="#EA4335" />
+    <circle cx="100" cy="346" r="26" fill="#FFFFFF" />
+    <circle cx="100" cy="346" r="18" fill="#EA4335" />
+  </g>
+</svg>

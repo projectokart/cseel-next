@@ -2,31 +2,31 @@
   <!-- Round White Background Disc (corners are 100% transparent) -->
   <circle cx="256" cy="256" r="256" fill="#FFFFFF" />
 
-  <!-- Central Vibrant Google Yellow Nucleus -->
-  <circle cx="256" cy="256" r="62" fill="#FBBC04" />
+  <!-- Central Vibrant Google Yellow Nucleus (Enlarged) -->
+  <circle cx="256" cy="256" r="68" fill="#FBBC04" />
 
-  <!-- Atomic Orbits (MAX SIZE - No Outer Ring, Bold 24px Stroke) -->
-  <g id="orbits" transform="translate(256, 256)" fill="none" stroke-width="24">
+  <!-- Atomic Orbits (MAXIMUM EXPANDED: rx=232, ry=106, Bold 26px Stroke) -->
+  <g id="orbits" transform="translate(256, 256)" fill="none" stroke-width="26">
     <!-- Orbit 1: Google Blue (Vertical 90 deg) -->
-    <ellipse rx="212" ry="95" transform="rotate(90)" stroke="#1A73E8" />
+    <ellipse rx="232" ry="106" transform="rotate(90)" stroke="#1A73E8" />
     <!-- Orbit 2: Google Red (30 deg) -->
-    <ellipse rx="212" ry="95" transform="rotate(30)" stroke="#EA4335" />
+    <ellipse rx="232" ry="106" transform="rotate(30)" stroke="#EA4335" />
     <!-- Orbit 3: Google Green (150 deg) -->
-    <ellipse rx="212" ry="95" transform="rotate(150)" stroke="#34A853" />
+    <ellipse rx="232" ry="106" transform="rotate(150)" stroke="#34A853" />
   </g>
 
   <!-- Electrons (3 large dots at orbit vertices matching Google orbit colors) -->
   <g id="electrons">
     <!-- Top electron (Google Blue on Orbit 1) -->
-    <circle cx="256" cy="44" r="34" fill="#FFFFFF" />
-    <circle cx="256" cy="44" r="26" fill="#1A73E8" />
+    <circle cx="256" cy="24" r="26" fill="#FFFFFF" />
+    <circle cx="256" cy="24" r="20" fill="#1A73E8" />
 
     <!-- Bottom-right electron (Google Red on Orbit 2) -->
-    <circle cx="439.6" cy="362" r="34" fill="#FFFFFF" />
-    <circle cx="439.6" cy="362" r="26" fill="#EA4335" />
+    <circle cx="456.9" cy="372" r="26" fill="#FFFFFF" />
+    <circle cx="456.9" cy="372" r="20" fill="#EA4335" />
 
     <!-- Bottom-left electron (Google Green on Orbit 3) -->
-    <circle cx="72.4" cy="362" r="34" fill="#FFFFFF" />
-    <circle cx="72.4" cy="362" r="26" fill="#34A853" />
+    <circle cx="55.1" cy="372" r="26" fill="#FFFFFF" />
+    <circle cx="55.1" cy="372" r="20" fill="#34A853" />
   </g>
 </svg>

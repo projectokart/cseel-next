@@ -2,36 +2,36 @@
   <!-- Round White Background Disc (corners are 100% transparent) -->
   <circle cx="256" cy="256" r="256" fill="#FFFFFF" />
 
-  <!-- Circular Ring Arcs (4 rounded quadrant arcs (3X gap: 72px)) -->
-  <g transform="translate(256, 256)" fill="#06556C" stroke="#06556C" stroke-width="20" stroke-linejoin="round">
-    <path id="q" d="M 46 -229.13 A 233.70 233.70 0 0 1 229.13 -46 L 206.64 -46 A 211.70 211.70 0 0 0 46 -206.64 Z" />
+  <!-- Circular Ring Arcs (4 rounded quadrant arcs (3X gap: 72px), outer white border = 1% [2.56px]) -->
+  <g transform="translate(256, 256)" fill="#06556C" stroke="#06556C" stroke-width="20.8" stroke-linejoin="round">
+    <path id="q" d="M 47.84 -238.29 A 243.04 243.04 0 0 1 238.29 -47.84 L 214.90 -47.84 A 220.16 220.16 0 0 0 47.84 -214.90 Z" />
     <use href="#q" transform="scale(1,-1)" />
     <use href="#q" transform="scale(-1,1)" />
     <use href="#q" transform="scale(-1,-1)" />
   </g>
 
   <!-- Central Vibrant Orange Nucleus -->
-  <circle cx="256" cy="256" r="48.96" fill="#F9A421" />
+  <circle cx="256" cy="256" r="50.9" fill="#F9A421" />
 
   <!-- Atomic Orbits (3 ellipses rotated at 30, 90, 150 deg) -->
-  <g id="orbits" transform="translate(256, 256)" fill="none" stroke="#06556C" stroke-width="10">
-    <ellipse rx="171.6" ry="77" transform="rotate(30)" />
-    <ellipse rx="171.6" ry="77" transform="rotate(90)" />
-    <ellipse rx="171.6" ry="77" transform="rotate(150)" />
+  <g id="orbits" transform="translate(256, 256)" fill="none" stroke="#06556C" stroke-width="10.4">
+    <ellipse rx="178.5" ry="80.1" transform="rotate(30)" />
+    <ellipse rx="178.5" ry="80.1" transform="rotate(90)" />
+    <ellipse rx="178.5" ry="80.1" transform="rotate(150)" />
   </g>
 
   <!-- Electrons (3 dots at orbit vertices with white borders) -->
   <g id="electrons">
     <!-- Top electron -->
-    <circle cx="256" cy="84.4" r="27.6" fill="#FFFFFF" />
-    <circle cx="256" cy="84.4" r="21.6" fill="#06556C" />
+    <circle cx="256" cy="77.5" r="28.7" fill="#FFFFFF" />
+    <circle cx="256" cy="77.5" r="22.5" fill="#06556C" />
 
     <!-- Bottom-left electron -->
-    <circle cx="107.4" cy="341.8" r="27.6" fill="#FFFFFF" />
-    <circle cx="107.4" cy="341.8" r="21.6" fill="#06556C" />
+    <circle cx="101.5" cy="345.2" r="28.7" fill="#FFFFFF" />
+    <circle cx="101.5" cy="345.2" r="22.5" fill="#06556C" />
 
     <!-- Bottom-right electron -->
-    <circle cx="404.6" cy="341.8" r="27.6" fill="#FFFFFF" />
-    <circle cx="404.6" cy="341.8" r="21.6" fill="#06556C" />
+    <circle cx="410.5" cy="345.2" r="28.7" fill="#FFFFFF" />
+    <circle cx="410.5" cy="345.2" r="22.5" fill="#06556C" />
   </g>
 </svg>

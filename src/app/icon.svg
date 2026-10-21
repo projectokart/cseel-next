@@ -2,8 +2,8 @@
   <!-- Round White Background Disc (corners are 100% transparent) -->
   <circle cx="256" cy="256" r="256" fill="#FFFFFF" />
 
-  <!-- Central Vibrant Google Yellow Nucleus -->
-  <circle cx="256" cy="256" r="68" fill="#FBBC04" />
+  <!-- Central Vibrant Google Red Nucleus (#EA4335) -->
+  <circle cx="256" cy="256" r="74" fill="#EA4335" />
 
   <!-- Atomic Orbits (Exact User Color: rgb(2, 56, 88) / #023858 - 26px Bold Stroke) -->
   <g id="orbits" transform="translate(256, 256)" fill="none" stroke="#023858" stroke-width="26">

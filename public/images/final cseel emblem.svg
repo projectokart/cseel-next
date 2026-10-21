@@ -12,26 +12,26 @@
   <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#023858" />
   <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#023858" />
 
-  <!-- Central Vibrant Google Red Nucleus -->
-  <circle cx="424" cy="424" r="76" fill="#EA4335" />
+  <!-- Central Vibrant Original Orange Nucleus #F8A130 -->
+  <circle cx="424" cy="424" r="76" fill="#F8A130" />
 
-  <!-- Atomic Orbits (Exact Same #023858 Color and 26px Bold Stroke) -->
+  <!-- Atomic Orbits (Exact Color #023858 and 26px Bold Stroke) -->
   <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#023858" stroke-width="26">
     <ellipse rx="232" ry="106" transform="rotate(30)" />
     <ellipse rx="232" ry="106" transform="rotate(90)" />
     <ellipse rx="232" ry="106" transform="rotate(150)" />
   </g>
 
-  <!-- Electrons (Google Red with White Protective Ring) -->
+  <!-- Electrons (Original Orange #F8A130 with White Protective Ring) -->
   <g id="electrons">
     <!-- Top electron -->
     <circle cx="424.0" cy="192.0" r="40" fill="#FFFFFF" />
-    <circle cx="424.0" cy="192.0" r="30" fill="#EA4335" />
+    <circle cx="424.0" cy="192.0" r="30" fill="#F8A130" />
     <!-- Bottom-left electron -->
     <circle cx="223.1" cy="540.0" r="40" fill="#FFFFFF" />
-    <circle cx="223.1" cy="540.0" r="30" fill="#EA4335" />
+    <circle cx="223.1" cy="540.0" r="30" fill="#F8A130" />
     <!-- Bottom-right electron -->
     <circle cx="624.9" cy="540.0" r="40" fill="#FFFFFF" />
-    <circle cx="624.9" cy="540.0" r="30" fill="#EA4335" />
+    <circle cx="624.9" cy="540.0" r="30" fill="#F8A130" />
   </g>
 </svg>

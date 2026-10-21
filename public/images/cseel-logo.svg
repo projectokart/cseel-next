@@ -10,14 +10,14 @@
     <!-- Top-Left: Google Blue -->
     <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#023858" />
     <!-- Top-Right: Google Red -->
-    <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#EA4335" />
+    <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#F8A130" />
     <!-- Bottom-Left: Google Yellow -->
     <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#023858" />
     <!-- Bottom-Right: Google Green -->
     <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#023858" />
 
     <!-- Central Google Red Nucleus -->
-    <circle cx="424" cy="424" r="76" fill="#EA4335" />
+    <circle cx="424" cy="424" r="76" fill="#F8A130" />
 
     <!-- Orbits in #023858 -->
     <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#023858" stroke-width="26">
@@ -29,11 +29,11 @@
     <!-- Electrons in Google Red -->
     <g id="electrons">
       <circle cx="424.0" cy="192.0" r="30" fill="#FFFFFF" />
-      <circle cx="424.0" cy="192.0" r="30" fill="#EA4335" />
+      <circle cx="424.0" cy="192.0" r="30" fill="#F8A130" />
       <circle cx="223.1" cy="540.0" r="30" fill="#FFFFFF" />
-      <circle cx="223.1" cy="540.0" r="30" fill="#EA4335" />
+      <circle cx="223.1" cy="540.0" r="30" fill="#F8A130" />
       <circle cx="624.9" cy="540.0" r="30" fill="#FFFFFF" />
-      <circle cx="624.9" cy="540.0" r="30" fill="#EA4335" />
+      <circle cx="624.9" cy="540.0" r="30" fill="#F8A130" />
     </g>
   </g>
 

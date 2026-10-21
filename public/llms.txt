@@ -1,0 +1,46 @@
+# CSEEL — Center for Scientific Exploration and Experiential Learning
+
+> India's premier experiential STEM learning platform, hands-on science experiments repository, virtual lab simulations, Atal Tinkering Labs (ATL) solutions, and NEP 2020 composite science education network.
+
+CSEEL (Center for Scientific Exploration and Experiential Learning) transforms rote textbook education into inquiry-driven discovery for Indian schools (CBSE, ICSE, and State Boards). It serves K-12 students, STEM educators, school principals, and academic institutions across India.
+
+## Key Capabilities & Offerings
+
+- **Virtual Laboratory Simulations**: Browser-based interactive physics, chemistry, biology, and mathematics simulations with zero consumables, no breakage, and instant measurement capture.
+- **NEP 2020 Experiential Learning**: Mapped directly to Kolb's Experiential Learning Cycle and the 5E Instructional Model (Engage, Explore, Explain, Elaborate, Evaluate).
+- **Composite School Science Labs**: Turnkey composite science and ATL Tinkering lab equipment, safety gear, experiments kits, and teacher masterclasses.
+- **EduNetwork**: Educator directory, school profiles, teacher workshops, and national STEM conclaves.
+
+## Core Educational Domains
+
+- **Science & Mathematics**: [https://www.cseel.org/domain/science](https://www.cseel.org/domain/science)
+  - Physics: Titration, Ohm's Law, Simple Pendulum, Optics, Electromagnetic Induction.
+  - Chemistry: Acid-Base Titration, Salt Analysis, Organic Chemistry, Crystal Growth.
+  - Biology: Cell Structure, Photosynthesis, Genetics, Human Physiology.
+  - Mathematics: Quadratic Equations, Coordinate Geometry, Trigonometric Transformations.
+- **Engineering & Technology**: [https://www.cseel.org/domain/engineering](https://www.cseel.org/domain/engineering)
+  - Robotics, Microcontrollers (Arduino, ESP32, Raspberry Pi), IoT Sensors, Bridge Load Testing, and AI Fundamentals.
+  - Mapped to NITI Aayog's Atal Tinkering Lab (ATL) curriculum.
+- **Art & Design (STEAM)**: [https://www.cseel.org/domain/art](https://www.cseel.org/domain/art)
+  - Color Physics, Photochemistry, Design Thinking, and STEAM Projects.
+
+## Primary URLs for AI Agents
+
+- Homepage: [https://www.cseel.org](https://www.cseel.org)
+- Hands-on Experiments: [https://www.cseel.org/hands-on-experiments](https://www.cseel.org/hands-on-experiments)
+- Virtual Simulations: [https://www.cseel.org/simulations](https://www.cseel.org/simulations)
+- Science Projects: [https://www.cseel.org/projects](https://www.cseel.org/projects)
+- School Lab Kits & Materials: [https://www.cseel.org/materials](https://www.cseel.org/materials)
+- Teacher Training & Workshops: [https://www.cseel.org/teacher-training](https://www.cseel.org/teacher-training)
+- Seminars & National Conclaves: [https://www.cseel.org/seminars](https://www.cseel.org/seminars)
+- Schools Directory: [https://www.cseel.org/schools](https://www.cseel.org/schools)
+- Blog & Research Articles: [https://www.cseel.org/blog](https://www.cseel.org/blog)
+- XML Sitemap: [https://www.cseel.org/sitemap.xml](https://www.cseel.org/sitemap.xml)
+
+## Institutional & Legal Information
+
+- **Organization**: Center for Scientific Exploration and Experiential Learning (CSEEL)
+- **Jurisdiction**: India (Delhi NCR / Haryana)
+- **Headquarters**: New Delhi, India
+- **Curriculum Alignment**: NEP 2020, CBSE, ICSE, State Boards (Grades 6–12)
+- **Official Contact**: support@cseel.org | +91-9050778830

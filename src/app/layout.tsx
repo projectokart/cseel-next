@@ -11,6 +11,27 @@ export const metadata: Metadata = {
   },
   description:
     "CSEEL (Center for Scientific Exploration and Experiential Learning) is India's leading STEM education & experiential science platform. Offering hands-on science experiments, hands-on science labs & live practicals, school STEM projects, science kits, teacher training workshops, educational conclaves, and nationwide science educator jobs aligned with NEP 2020.",
+  keywords: [
+    "CSEEL",
+    "Center for Scientific Exploration and Experiential Learning",
+    "STEM Education India",
+    "Experiential Learning NEP 2020",
+    "Virtual Labs India",
+    "Hands-on Science Practicals",
+    "Physics Lab Experiments Class 9 10 11 12",
+    "Chemistry Titration Virtual Lab",
+    "Biology Cell Structure Simulations",
+    "Mathematics Geometry Algebra Labs",
+    "Atal Tinkering Labs ATL Turnkey Setup",
+    "Composite Science Lab CBSE Byelaws",
+    "School DIY Science Project Kits",
+    "Teacher Development Workshops STEM",
+    "Robotics AI IoT School Labs",
+    "Kolb Experiential Learning Cycle",
+    "5E Instructional Model Science",
+    "Science Fair Projects India",
+    "CBSE ICSE State Board Experiments",
+  ],
   authors: [{ name: "CSEEL National Directorate - Center for Scientific Exploration and Experiential Learning", url: "https://www.cseel.org" }],
   creator: "CSEEL",
   publisher: "CSEEL National STEM Directorate",
@@ -94,6 +115,18 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-title": "CSEEL",
     "msapplication-TileColor": "#ffffff",
     "msapplication-navbutton-color": "#ffffff",
+    "ai-content-declaration": "human-curated educational science platform and virtual lab simulations",
+    "ai-search-indexing": "allowed",
+    "llm-access": "allowed",
+    "gptbot": "index, follow",
+    "oai-searchbot": "index, follow",
+    "google-extended": "index, follow",
+    "anthropic-ai": "index, follow",
+    "claudebot": "index, follow",
+    "perplexitybot": "index, follow",
+    "applebot-extended": "index, follow",
+    "meta-externalagent": "index, follow",
+    "cohere-ai": "index, follow",
     "geo.region": "IN",
     "geo.country": "India",
   },
@@ -117,6 +150,41 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <meta name="msapplication-navbutton-color" content="#ffffff" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+                {/* Comprehensive AI Search & LLM Grounding Directives (ChatGPT, Gemini, Claude, Perplexity, Apple Intelligence) */}
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="gptbot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+        <meta name="oai-searchbot" content="index, follow, max-snippet:-1, max-image-preview:large" />
+        <meta name="chatgpt-user" content="index, follow" />
+        <meta name="google-extended" content="index, follow" />
+        <meta name="anthropic-ai" content="index, follow" />
+        <meta name="claudebot" content="index, follow" />
+        <meta name="claude-web" content="index, follow" />
+        <meta name="perplexitybot" content="index, follow, max-snippet:-1" />
+        <meta name="applebot" content="index, follow" />
+        <meta name="applebot-extended" content="index, follow" />
+        <meta name="meta-externalagent" content="index, follow" />
+        <meta name="cohere-ai" content="index, follow" />
+        <meta name="diffbot" content="index, follow" />
+        <meta name="bytespider" content="index, follow" />
+        <meta name="ai-content-declaration" content="human-curated educational science platform and virtual lab simulations" />
+        <meta name="ai-search-indexing" content="allowed" />
+        <meta name="llm-access" content="allowed" />
+
+        {/* Dublin Core Metadata for Academic & AI Knowledge Graph Ingestion */}
+        <meta name="DC.title" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
+        <meta name="DC.creator" content="Center for Scientific Exploration and Experiential Learning" />
+        <meta name="DC.description" content="India's leading experiential science and STEM education platform aligned with NEP 2020. 1,000+ curriculum-mapped practicals, virtual labs, ATL tinkering models, teacher masterclasses and school science kits." />
+        <meta name="DC.publisher" content="CSEEL National Directorate" />
+        <meta name="DC.language" content="en-IN" />
+        <meta name="DC.subject" content="STEM Education, Experiential Learning, Virtual Labs, NEP 2020, CBSE Science Labs, ICSE Practical Experiments, Physics, Chemistry, Biology, Mathematics, Robotics, AI, IoT, Atal Tinkering Labs" />
+        <meta name="DC.coverage" content="India" />
+
+        {/* Links for AI Model Discovery (llmstxt.org Standard) */}
+        <link rel="llms-txt" href="/llms.txt" type="text/markdown" />
+        <link rel="help" href="/llms-full.txt" type="text/markdown" title="CSEEL LLM Knowledge Guide" />
 
         {/* Canonical Open Graph & Social Preview Tags for WhatsApp, Telegram, LinkedIn, Facebook */}
         <meta property="og:type" content="website" />

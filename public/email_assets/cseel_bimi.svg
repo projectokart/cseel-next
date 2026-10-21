@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <circle cx="250" cy="250" r="240" fill="#ffffff" stroke="#d3d8e0" stroke-width="4"/>
+  <!-- Arcs -->
+  <path d="M 140 70 A 180 180 0 0 1 360 70" fill="none" stroke="#044e68" stroke-width="36" stroke-linecap="round"/>
+  <path d="M 430 140 A 180 180 0 0 1 430 360" fill="none" stroke="#044e68" stroke-width="36" stroke-linecap="round"/>
+  <path d="M 360 430 A 180 180 0 0 1 140 430" fill="none" stroke="#044e68" stroke-width="36" stroke-linecap="round"/>
+  <path d="M 70 360 A 180 180 0 0 1 70 140" fill="none" stroke="#044e68" stroke-width="36" stroke-linecap="round"/>
+  <!-- Center Nucleus -->
+  <circle cx="250" cy="250" r="38" fill="#ea8600"/>
+  <!-- Electron Orbits -->
+  <ellipse cx="250" cy="250" rx="80" ry="32" fill="none" stroke="#044e68" stroke-width="9" transform="rotate(-30 250 250)"/>
+  <ellipse cx="250" cy="250" rx="80" ry="32" fill="none" stroke="#044e68" stroke-width="9" transform="rotate(30 250 250)"/>
+  <ellipse cx="250" cy="250" rx="80" ry="32" fill="none" stroke="#044e68" stroke-width="9" transform="rotate(90 250 250)"/>
+  <!-- Orbit Electrons -->
+  <circle cx="190" cy="150" r="11" fill="#044e68"/>
+  <circle cx="310" cy="350" r="11" fill="#044e68"/>
+  <circle cx="335" cy="200" r="11" fill="#044e68"/>
+</svg>

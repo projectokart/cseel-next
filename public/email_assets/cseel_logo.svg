@@ -28,11 +28,11 @@
 
     <!-- Electrons in Google Red -->
     <g id="electrons">
-      <circle cx="424.0" cy="192.0" r="30" fill="#FFFFFF" />
+      <circle cx="424.0" cy="192.0" r="40" fill="#FFFFFF" />
       <circle cx="424.0" cy="192.0" r="30" fill="#F8A130" />
-      <circle cx="223.1" cy="540.0" r="30" fill="#FFFFFF" />
+      <circle cx="223.1" cy="540.0" r="40" fill="#FFFFFF" />
       <circle cx="223.1" cy="540.0" r="30" fill="#F8A130" />
-      <circle cx="624.9" cy="540.0" r="30" fill="#FFFFFF" />
+      <circle cx="624.9" cy="540.0" r="40" fill="#FFFFFF" />
       <circle cx="624.9" cy="540.0" r="30" fill="#F8A130" />
     </g>
   </g>

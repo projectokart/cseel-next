@@ -1,27 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- CSEEL Pure Atom Favicon (Transparent Background) -->
-  <!-- Central Vibrant Orange Nucleus (#F8A130) -->
-  <circle cx="256" cy="256" r="68" fill="#F8A130" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="144 144 560 560" width="560" height="560">
+  <!-- Central Nucleus (#F8A130) -->
+  <circle cx="424" cy="424" r="76" fill="#F8A130" />
 
-  <!-- 3 Bold Atomic Orbits in Deep Navy Blue (#023858) -->
-  <g id="orbits" transform="translate(256, 256)" fill="none" stroke="#023858" stroke-width="34">
-    <ellipse rx="205" ry="94" transform="rotate(90)" />
-    <ellipse rx="205" ry="94" transform="rotate(30)" />
-    <ellipse rx="205" ry="94" transform="rotate(150)" />
+  <!-- Orbits in #023858 -->
+  <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#023858" stroke-width="26">
+    <ellipse rx="232" ry="106" transform="rotate(30)" />
+    <ellipse rx="232" ry="106" transform="rotate(90)" />
+    <ellipse rx="232" ry="106" transform="rotate(150)" />
   </g>
 
-  <!-- 3 Vibrant Orange Electrons with Protective White Rings -->
+  <!-- Electrons in Original Orange (#F8A130) with Protective White Rings -->
   <g id="electrons">
-    <!-- Top electron (90 deg orbit) -->
-    <circle cx="256" cy="51" r="30" fill="#FFFFFF" />
-    <circle cx="256" cy="51" r="22" fill="#F8A130" />
-
-    <!-- Bottom-Right electron (30 deg orbit) -->
-    <circle cx="433.5" cy="358.5" r="30" fill="#FFFFFF" />
-    <circle cx="433.5" cy="358.5" r="22" fill="#F8A130" />
-
-    <!-- Bottom-Left electron (150 deg orbit) -->
-    <circle cx="78.5" cy="358.5" r="30" fill="#FFFFFF" />
-    <circle cx="78.5" cy="358.5" r="22" fill="#F8A130" />
+    <circle cx="424.0" cy="192.0" r="40" fill="#FFFFFF" />
+    <circle cx="424.0" cy="192.0" r="30" fill="#F8A130" />
+    <circle cx="223.1" cy="540.0" r="40" fill="#FFFFFF" />
+    <circle cx="223.1" cy="540.0" r="30" fill="#F8A130" />
+    <circle cx="624.9" cy="540.0" r="40" fill="#FFFFFF" />
+    <circle cx="624.9" cy="540.0" r="30" fill="#F8A130" />
   </g>
 </svg>

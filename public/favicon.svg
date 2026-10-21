@@ -1,4 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="144 144 560 560" width="560" height="560">
+  <!-- Crisp White Circular Disc Background (r=280 fits 560x560 perfectly) -->
+  <circle cx="424" cy="424" r="280" fill="#FFFFFF" />
+
   <!-- Central Nucleus (#F8A130) -->
   <circle cx="424" cy="424" r="76" fill="#F8A130" />
 

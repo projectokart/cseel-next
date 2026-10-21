@@ -3,26 +3,30 @@
   <rect x="10" y="403" width="828" height="42" fill="#FFFFFF" />
   <rect x="157" y="157" width="534" height="534" rx="165" fill="#FFFFFF" />
 
-  <!-- white border (one outline around whole logo, no dip at gaps) -->
+  <!-- white border (one outline around whole logo) -->
   <rect x="10" y="10" width="828" height="828" rx="226" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="16" />
 
-  <!-- brackets (Rectangle Navy Blue Ring in Exact Color #023858) -->
-  <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#023858" />
-  <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#023858" />
-  <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#023858" />
-  <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#023858" />
+  <!-- 4 Brackets with 4 Different Colors -->
+  <!-- 1. Top-Left Bracket -->
+  <path d="M 403 10 L 236 10 A 226 226 0 0 0 10 236 L 10 403 L 157 403 L 157 322 A 165 165 0 0 1 322 157 L 403 157 Z" fill="#4285F4" />
+  <!-- 2. Top-Right Bracket -->
+  <path d="M 445 10 L 612 10 A 226 226 0 0 1 838 236 L 838 403 L 691 403 L 691 322 A 165 165 0 0 0 526 157 L 445 157 Z" fill="#EA4335" />
+  <!-- 3. Bottom-Left Bracket -->
+  <path d="M 10 445 L 10 612 A 226 226 0 0 0 236 838 L 403 838 L 403 691 L 322 691 A 165 165 0 0 1 157 526 L 157 445 Z" fill="#FBBC04" />
+  <!-- 4. Bottom-Right Bracket -->
+  <path d="M 838 445 L 838 612 A 226 226 0 0 1 612 838 L 445 838 L 445 691 L 526 691 A 165 165 0 0 0 691 526 L 691 445 Z" fill="#34A853" />
 
-  <!-- Central Vibrant Google Red Nucleus -->
+  <!-- Central Nucleus -->
   <circle cx="424" cy="424" r="76" fill="#EA4335" />
 
-  <!-- Atomic Orbits (Exact Color #023858 and 26px Bold Stroke) -->
+  <!-- Orbits -->
   <g id="orbits" transform="translate(424, 424)" fill="none" stroke="#023858" stroke-width="26">
     <ellipse rx="232" ry="106" transform="rotate(30)" />
     <ellipse rx="232" ry="106" transform="rotate(90)" />
     <ellipse rx="232" ry="106" transform="rotate(150)" />
   </g>
 
-  <!-- Electrons (Option 4: Google Red #EA4335 with White Borders) -->
+  <!-- Electrons -->
   <g id="electrons">
     <!-- Top electron -->
     <circle cx="424.0" cy="192.0" r="28" fill="#FFFFFF" />

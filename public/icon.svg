@@ -2,39 +2,31 @@
   <!-- Round White Background Disc (corners are 100% transparent) -->
   <circle cx="256" cy="256" r="256" fill="#FFFFFF" />
 
-  <!-- Circular Ring Arcs (4 rounded quadrant arcs (3X gap: 72px), outer white border = 1% [2.56px]) -->
-  <g transform="translate(256, 256)" fill="#06556C" stroke="#06556C" stroke-width="20.8" stroke-linejoin="round">
-    <path id="q" d="M 47.84 -238.29 A 243.04 243.04 0 0 1 238.29 -47.84 L 214.90 -47.84 A 220.16 220.16 0 0 0 47.84 -214.90 Z" />
-    <use href="#q" transform="scale(1,-1)" />
-    <use href="#q" transform="scale(-1,1)" />
-    <use href="#q" transform="scale(-1,-1)" />
-  </g>
-
   <!-- Central Vibrant Google Yellow Nucleus -->
-  <circle cx="256" cy="256" r="50.9" fill="#FBBC04" />
+  <circle cx="256" cy="256" r="62" fill="#FBBC04" />
 
-  <!-- Atomic Orbits (3 Google Brand Colors: Google Blue, Google Red, Google Green - Bold 20px Stroke) -->
-  <g id="orbits" transform="translate(256, 256)" fill="none" stroke-width="20">
+  <!-- Atomic Orbits (MAX SIZE - No Outer Ring, Bold 24px Stroke) -->
+  <g id="orbits" transform="translate(256, 256)" fill="none" stroke-width="24">
     <!-- Orbit 1: Google Blue (Vertical 90 deg) -->
-    <ellipse rx="178.5" ry="80.1" transform="rotate(90)" stroke="#1A73E8" />
+    <ellipse rx="212" ry="95" transform="rotate(90)" stroke="#1A73E8" />
     <!-- Orbit 2: Google Red (30 deg) -->
-    <ellipse rx="178.5" ry="80.1" transform="rotate(30)" stroke="#EA4335" />
+    <ellipse rx="212" ry="95" transform="rotate(30)" stroke="#EA4335" />
     <!-- Orbit 3: Google Green (150 deg) -->
-    <ellipse rx="178.5" ry="80.1" transform="rotate(150)" stroke="#34A853" />
+    <ellipse rx="212" ry="95" transform="rotate(150)" stroke="#34A853" />
   </g>
 
-  <!-- Electrons (3 dots at orbit vertices matching Google orbit colors) -->
+  <!-- Electrons (3 large dots at orbit vertices matching Google orbit colors) -->
   <g id="electrons">
     <!-- Top electron (Google Blue on Orbit 1) -->
-    <circle cx="256" cy="77.5" r="28.7" fill="#FFFFFF" />
-    <circle cx="256" cy="77.5" r="22.5" fill="#1A73E8" />
+    <circle cx="256" cy="44" r="34" fill="#FFFFFF" />
+    <circle cx="256" cy="44" r="26" fill="#1A73E8" />
 
     <!-- Bottom-right electron (Google Red on Orbit 2) -->
-    <circle cx="410.5" cy="345.2" r="28.7" fill="#FFFFFF" />
-    <circle cx="410.5" cy="345.2" r="22.5" fill="#EA4335" />
+    <circle cx="439.6" cy="362" r="34" fill="#FFFFFF" />
+    <circle cx="439.6" cy="362" r="26" fill="#EA4335" />
 
     <!-- Bottom-left electron (Google Green on Orbit 3) -->
-    <circle cx="101.5" cy="345.2" r="28.7" fill="#FFFFFF" />
-    <circle cx="101.5" cy="345.2" r="22.5" fill="#34A853" />
+    <circle cx="72.4" cy="362" r="34" fill="#FFFFFF" />
+    <circle cx="72.4" cy="362" r="26" fill="#34A853" />
   </g>
 </svg>

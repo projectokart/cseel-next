@@ -87,20 +87,20 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.svg?v=27", type: "image/svg+xml" },
-      { url: "/favicon-48x48.png?v=27", sizes: "48x48", type: "image/png" },
-      { url: "/favicon-96x96.png?v=27", sizes: "96x96", type: "image/png" },
-      { url: "/icon-192x192.png?v=27", sizes: "192x192", type: "image/png" },
-      { url: "/favicon-32x32.png?v=27", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png?v=27", sizes: "16x16", type: "image/png" },
-      { url: "/icon.png?v=27", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.svg?v=28", type: "image/svg+xml" },
+      { url: "/favicon-48x48.png?v=28", sizes: "48x48", type: "image/png" },
+      { url: "/favicon-96x96.png?v=28", sizes: "96x96", type: "image/png" },
+      { url: "/icon-192x192.png?v=28", sizes: "192x192", type: "image/png" },
+      { url: "/favicon-32x32.png?v=28", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png?v=28", sizes: "16x16", type: "image/png" },
+      { url: "/icon.png?v=28", sizes: "512x512", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png?v=27", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=28", sizes: "180x180", type: "image/png" },
     ],
-    shortcut: "/favicon.ico?v=27",
+    shortcut: "/favicon.ico?v=28",
   },
-  manifest: "/site.webmanifest?v=27",
+  manifest: "/site.webmanifest?v=28",
   verification: {
     google: [
       "google986da09e210cb549",
@@ -212,14 +212,14 @@ export default function RootLayout({
         <meta itemProp="image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
 
         {/* Favicon Direct Links (Google Search Central 48px Multiple & Vector Standard with v=3 cache bust) */}
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=27" />
-        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=27" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=27" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png?v=27" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=27" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=27" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=27" />
-        <link rel="manifest" href="/site.webmanifest?v=27" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=28" />
+        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=28" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=28" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png?v=28" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=28" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=28" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=28" />
+        <link rel="manifest" href="/site.webmanifest?v=28" />
 
         {/* Resource Hints: Preconnect and DNS-Prefetch for zero-latency origin handshakes */}
         <link rel="preconnect" href="https://ukazkxthavxphibdbspd.supabase.co" crossOrigin="anonymous" />

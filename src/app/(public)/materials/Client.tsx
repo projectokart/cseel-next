@@ -63,6 +63,7 @@ export default function MaterialsClient() {
     displayed,
     hasMore,
     sentinelRef,
+    loadMore,
   } = useMaterialsFilter(products);
 
   const toggleWishlist = (id: string) => {
@@ -91,6 +92,7 @@ export default function MaterialsClient() {
           quickChapters={quickChapters}
           totalProductsCount={products.length}
           filteredCount={filtered.length}
+          displayedCount={displayed.length}
           activeSort={activeSort}
           onApplySort={setActiveSort}
           onOpenFilterDrawer={() => setIsFilterSheetOpen(true)}
@@ -144,15 +146,24 @@ export default function MaterialsClient() {
               </div>
             )}
 
-            {/* Infinite Scroll Sentinel */}
-            <div ref={sentinelRef} className="py-8 flex justify-center">
+            {/* Infinite Scroll Sentinel & Load More */}
+            <div ref={sentinelRef} className="py-8 flex flex-col items-center justify-center gap-3">
               {hasMore && (
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-[#005689] border-t-transparent rounded-full animate-spin" />
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                    Loading more apparatuses...
-                  </span>
-                </div>
+                <>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-[#006FCC] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs font-bold text-slate-500 font-['Montserrat',sans-serif]">
+                      Loading next 25 apparatuses... ({displayed.length} of {filtered.length})
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={loadMore}
+                    className="px-5 py-2 text-xs font-bold text-[#006FCC] bg-white border border-[#006FCC]/30 hover:bg-[#EDF5FA] rounded-xl shadow-2xs transition active:scale-95 cursor-pointer"
+                  >
+                    Load Next 25 Apparatuses
+                  </button>
+                </>
               )}
             </div>
           </div>

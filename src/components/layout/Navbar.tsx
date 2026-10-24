@@ -44,6 +44,29 @@ export interface NavItem {
   featuredPanel?: FeaturedPanel;
 }
 
+const getSubmenuHeading = (label: string = '') => {
+  const l = label.toLowerCase();
+  if (l.includes('blog') || l.includes('article') || l.includes('insight')) {
+    return 'Articles, Blogs & Guides';
+  }
+  if (l.includes('scheme') || l.includes('grant')) {
+    return 'Government Schemes & Grants';
+  }
+  if (l.includes('material') || l.includes('catalog') || l.includes('equipment') || l.includes('apparatus')) {
+    return 'Materials & Apparatus Lists';
+  }
+  if (l.includes('project') || l.includes('maker')) {
+    return 'Student Projects & Schematics';
+  }
+  if (l.includes('tour') || l.includes('media') || l.includes('gallery')) {
+    return 'Media & Visual Walkthroughs';
+  }
+  if (l.includes('school') || l.includes('directory')) {
+    return 'School Directory & Categories';
+  }
+  return 'Related Pages & Subcategories';
+};
+
 /* ─── Minimal, High-Impact Experiential Learning Menus with Subcategories ─── */
 const navItems: NavItem[] = [
   {
@@ -412,8 +435,12 @@ const navItems: NavItem[] = [
           {
             label: 'Academic Blog & Articles',
             to: '/blog',
-            desc: 'Pedagogical research, CBSE practical guidelines, and NEP 2020 insights.',
+            desc: 'Pedagogical research, empirical studies, CBSE practical guidelines, and NEP 2020 insights.',
+            badge: 'Articles & Blog',
             subItems: [
+              { label: 'Research Article: The Confidence Effect', to: '/online-stem-retention-research-preview', badge: 'Article' },
+              { label: 'Academic STEM Blog (All Posts)', to: '/blog', badge: 'Blog' },
+              { label: 'STEM Research & Whitepapers', to: '/research', badge: 'Research' },
               { label: 'Experiential Learning Pedagogy', to: '/blog' },
               { label: 'CBSE Practical Exam Guidelines', to: '/blog' },
               { label: 'Lab Safety & Emergency SOPs', to: '/safety' },
@@ -754,7 +781,7 @@ const Navbar = () => {
                                   {hasSub && isSubExpanded && (
                                     <div className="mt-2 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F7F8F8] p-2.5 rounded-r-xl border border-l-0 border-[#E8E9E9] animate-in fade-in slide-in-from-top-1 duration-150">
                                       <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5 font-['Montserrat',sans-serif]">
-                                        Subcategories & Material Lists
+                                        {getSubmenuHeading(sub.label)}
                                       </div>
                                       {sub.subItems!.map((child, cIdx) => (
                                         <Link
@@ -845,7 +872,7 @@ const Navbar = () => {
                                   {hasSub && isSubExpanded && (
                                     <div className="mt-2 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F7F8F8] p-2.5 rounded-r-xl border border-l-0 border-[#E8E9E9] animate-in fade-in slide-in-from-top-1 duration-150">
                                       <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5 font-['Montserrat',sans-serif]">
-                                        Subcategories & Material Lists
+                                        {getSubmenuHeading(sub.label)}
                                       </div>
                                       {sub.subItems!.map((child, cIdx) => (
                                         <Link
@@ -1050,8 +1077,8 @@ const Navbar = () => {
                                         >
                                           <div className="overflow-hidden min-h-0">
                                             <div className="mt-2.5 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-white p-2.5 rounded-r-xl shadow-xs">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] mb-1">
-                                                Subcategories:
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] mb-1 font-['Montserrat',sans-serif]">
+                                                {getSubmenuHeading(sub.label)}
                                               </div>
                                               {sub.subItems!.map((child: any, cIdx: number) => (
                                                 <Link

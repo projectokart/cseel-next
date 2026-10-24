@@ -28,6 +28,7 @@ export interface MaterialsFilterBarProps {
   quickChapters: [string, number][];
   totalProductsCount: number;
   filteredCount: number;
+  displayedCount?: number;
   activeSort: MaterialSortOption;
   onApplySort: (sort: MaterialSortOption) => void;
   onOpenFilterDrawer: () => void;
@@ -43,6 +44,7 @@ export const MaterialsFilterBar: React.FC<MaterialsFilterBarProps> = ({
   quickChapters,
   totalProductsCount,
   filteredCount,
+  displayedCount,
   activeSort,
   onApplySort,
   onOpenFilterDrawer,
@@ -264,8 +266,11 @@ export const MaterialsFilterBar: React.FC<MaterialsFilterBarProps> = ({
             Popular Physics Apparatuses
           </h2>
           <p className="text-xs text-[#656773] mt-0.5 font-normal font-['Google_Sans',Roboto,sans-serif]">
-            Showing <span className="text-[#1a73e8] font-bold">{filteredCount}</span> of{' '}
-            {totalProductsCount} scientific instruments &bull; CBSE &amp; NCERT Syllabus
+            Showing{' '}
+            <span className="text-[#1a73e8] font-bold">
+              {displayedCount !== undefined ? displayedCount : filteredCount}
+            </span>{' '}
+            of {filteredCount} scientific instruments &bull; CBSE &amp; NCERT Syllabus
           </p>
         </div>
         <span className="text-xs text-[#656773] font-medium hidden sm:inline font-['Google_Sans',Roboto,sans-serif]">

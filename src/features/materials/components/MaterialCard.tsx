@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Check, Heart, Plus, Atom } from 'lucide-react';
 import { ApparatusItem } from '../types';
@@ -24,6 +24,21 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
   onToggleWishlist,
 }) => {
   const isSelected = quantity > 0;
+  const [imgSrc, setImgSrc] = useState<string>(product.image_url);
+  const [imgFailed, setImgFailed] = useState<boolean>(false);
+
+  useEffect(() => {
+    setImgSrc(product.image_url);
+    setImgFailed(false);
+  }, [product.image_url]);
+
+  const handleImageError = () => {
+    if (product.cdn_image_url && imgSrc !== product.cdn_image_url) {
+      setImgSrc(product.cdn_image_url);
+    } else {
+      setImgFailed(true);
+    }
+  };
 
   return (
     <div
@@ -36,19 +51,29 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
       {/* Image Container (Google Shopping Style with Soft #f8f9fa background) */}
       <Link
         href={`/materials/${product.slug}`}
-        className="relative aspect-square bg-[#f8f9fa] group-hover:bg-[#f1f3f4] rounded-xl m-2.5 overflow-hidden flex items-center justify-center p-4 transition-colors block"
+        className="relative aspect-square bg-[#f8f9fa] group-hover:bg-[#f1f3f4] rounded-xl m-2.5 overflow-hidden flex items-center justify-center p-3 transition-colors block"
       >
-        <img
-          src={product.image_url}
-          alt={product.name}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            if (product.cdn_image_url && target.src !== product.cdn_image_url) {
-              target.src = product.cdn_image_url;
-            }
-          }}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-        />
+        {!imgFailed ? (
+          <img
+            src={imgSrc}
+            alt={product.name}
+            onError={handleImageError}
+            loading="lazy"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-center p-3 bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-xl">
+            <div className="w-12 h-12 rounded-2xl bg-white border border-[#006FCC]/20 shadow-2xs flex items-center justify-center text-[#006FCC] mb-2">
+              <Atom className="w-6 h-6 text-[#006FCC]" />
+            </div>
+            <span className="text-[11px] font-bold text-[#003C6E] line-clamp-1">
+              {product.name}
+            </span>
+            <span className="text-[10px] text-slate-400 font-mono mt-0.5">
+              {product.sku}
+            </span>
+          </div>
+        )}
 
         {/* Google Style Pill Badge on Bottom-Left */}
         <div className="absolute bottom-2 left-2 px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/95 text-[#656773] shadow-xs border border-[#dadce0] flex items-center gap-1.5 backdrop-blur-xs font-['Google_Sans',Roboto,sans-serif]">

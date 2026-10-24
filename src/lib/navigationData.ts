@@ -470,8 +470,12 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
             id: 'item-academic-blog',
             label: 'Academic Blog & Articles',
             to: '/blog',
-            desc: 'Pedagogical research, CBSE practical guidelines, and NEP 2020 insights.',
+            desc: 'Pedagogical research, empirical studies, CBSE practical guidelines, and NEP 2020 insights.',
+            badge: 'Articles & Blog',
             subItems: [
+              { label: 'Research Article: The Confidence Effect', to: '/online-stem-retention-research-preview', badge: 'Article' },
+              { label: 'Academic STEM Blog (All Posts)', to: '/blog', badge: 'Blog' },
+              { label: 'STEM Research & Whitepapers', to: '/research', badge: 'Research' },
               { label: 'Experiential Learning Pedagogy', to: '/blog' },
               { label: 'CBSE Practical Exam Guidelines', to: '/blog' },
               { label: 'Lab Safety & Emergency SOPs', to: '/safety' },

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { ApparatusItem, MaterialSortOption } from '../types';
 
-export const PAGE_SIZE = 24;
+export const PAGE_SIZE = 25;
 
 export const SORT_OPTIONS: { label: string; value: MaterialSortOption }[] = [
   { label: 'Default Order', value: 'default' },
@@ -89,6 +89,10 @@ export function useMaterialsFilter(allProducts: ApparatusItem[]) {
 
   const hasMore = visibleCount < filtered.length;
 
+  const loadMore = () => {
+    setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filtered.length));
+  };
+
   return {
     search,
     setSearch,
@@ -102,5 +106,7 @@ export function useMaterialsFilter(allProducts: ApparatusItem[]) {
     displayed,
     hasMore,
     sentinelRef,
+    loadMore,
+    visibleCount,
   };
 }

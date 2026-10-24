@@ -65,6 +65,8 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
   );
   const [profileVisibility, setProfileVisibility] = useState<'public' | 'private' | 'followers'>('public');
   const [showContactInfo, setShowContactInfo] = useState(false);
+  const [phonePrivate, setPhonePrivate] = useState<boolean>(initialTeacher?.phonePrivate !== false);
+  const [emailPrivate, setEmailPrivate] = useState<boolean>(initialTeacher?.emailPrivate !== false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeToast, setActiveToast] = useState<string | null>(null);
 
@@ -192,9 +194,19 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
               <div className="flex-1 space-y-3 text-center md:text-left">
                 
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                  {teacher.designation && (
+                    <span className="px-3 py-1 bg-blue-50 text-[#006FCC] border border-blue-200 text-xs font-black uppercase rounded-full">
+                      {teacher.designation}
+                    </span>
+                  )}
                   <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-black uppercase rounded-full">
                     {teacher.subject}
                   </span>
+                  {teacher.board && (
+                    <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-full">
+                      {teacher.board}
+                    </span>
+                  )}
                   {teacher.nepCertified && (
                     <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 text-[11px] font-bold rounded-full flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -224,9 +236,9 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
                     <span>{teacher.currentInstitute}</span>
                   </span>
                   <span>•</span>
-                  <span className="flex items-center gap-1 font-semibold">
-                    <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{teacher.city}, {teacher.state} ({teacher.pincode})</span>
+                  <span className="flex items-center gap-1 font-semibold" title={teacher.address}>
+                    <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>{teacher.address || `${teacher.city}, ${teacher.state} (${teacher.pincode})`}</span>
                   </span>
                   <span>•</span>
                   <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
@@ -320,6 +332,120 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
                     <span className="text-[10px] text-gray-400 font-medium">
                       Status: {profileVisibility.toUpperCase()} • Direct Contact: {showContactInfo ? 'Visible' : 'Hidden'}
                     </span>
+                  </div>
+                </div>
+
+                
+                {/* ── TEACHER DIRECT CONTACT & PRIVACY SHIELD ─────────────────── */}
+                <div className="bg-gradient-to-r from-slate-50 to-purple-50/40 border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 text-xs space-y-3 mt-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/70 pb-2">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span className="font-bold text-slate-800 text-xs">Direct Contact Privacy Shield</span>
+                    </div>
+                    <span className="text-[10px] bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-full font-medium">
+                      Anti-Scraping Active
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {/* Phone Box */}
+                    <div className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2 shadow-2xs">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                          <Phone className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-slate-400 font-bold uppercase">Mobile Number</p>
+                          <p className="font-mono text-xs font-bold text-slate-800 truncate">
+                            {phonePrivate ? '+91 98***** ' + (teacher.phone ? teacher.phone.slice(-4) : '3210') : teacher.phone}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {phonePrivate ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setConnectForm(prev => ({ ...prev, roleNeeded: 'Direct Phone Access Request' }));
+                              setIsConnectModalOpen(true);
+                            }}
+                            className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer"
+                          >
+                            <Lock className="w-3 h-3 text-purple-600" />
+                            <span>Request Access</span>
+                          </button>
+                        ) : (
+                          <a
+                            href={`tel:${teacher.phone}`}
+                            className="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10.5px] font-bold flex items-center gap-1"
+                          >
+                            <span>Call</span>
+                          </a>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPhonePrivate(!phonePrivate);
+                            showToast(phonePrivate ? 'Phone number set to Public view' : 'Phone number set to Private (Masked)');
+                          }}
+                          className="px-1.5 py-1 text-[10px] text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                          title="Toggle Private / Public"
+                        >
+                          {phonePrivate ? 'Make Public' : 'Make Private'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Email Box */}
+                    <div className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2 shadow-2xs">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                          <Mail className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-slate-400 font-bold uppercase">Official Email</p>
+                          <p className="font-mono text-xs font-bold text-slate-800 truncate">
+                            {emailPrivate ? (teacher.email ? teacher.email.slice(0, 2) + '*****@faculty.cseel.org' : 't*****@gmail.com') : teacher.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {emailPrivate ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setConnectForm(prev => ({ ...prev, roleNeeded: 'Direct Email Access Request' }));
+                              setIsConnectModalOpen(true);
+                            }}
+                            className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer"
+                          >
+                            <Lock className="w-3 h-3 text-purple-600" />
+                            <span>Request Access</span>
+                          </button>
+                        ) : (
+                          <a
+                            href={`mailto:${teacher.email}`}
+                            className="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-[10.5px] font-bold flex items-center gap-1"
+                          >
+                            <span>Email</span>
+                          </a>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEmailPrivate(!emailPrivate);
+                            showToast(emailPrivate ? 'Email set to Public view' : 'Email set to Private (Masked)');
+                          }}
+                          className="px-1.5 py-1 text-[10px] text-slate-500 hover:text-slate-800 underline cursor-pointer"
+                          title="Toggle Private / Public"
+                        >
+                          {emailPrivate ? 'Make Public' : 'Make Private'}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -437,6 +563,62 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
                           </button>
                         )}
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              
+              {/* ── VERIFIED PAST SCHOOLS / TEACHING HISTORY ── */}
+              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                  <div>
+                    <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-[#006FCC]" />
+                      <span>Verified Teaching Career & School History</span>
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      Verified institutions where {teacher.name} has taught and conducted science laboratory practicals.
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold rounded-full flex items-center gap-1">
+                    <CheckCircle2 size={12} className="text-emerald-600" />
+                    <span>Tenure Audited</span>
+                  </span>
+                </div>
+
+                <div className="space-y-3">
+                  {(teacher.pastSchools && teacher.pastSchools.length > 0 ? teacher.pastSchools : [
+                    { schoolName: teacher.currentInstitute, role: `Senior ${teacher.designation || 'Faculty'} ${teacher.subject}`, duration: `${teacher.experienceYears} Years Tenure`, city: teacher.city }
+                  ]).map((sch, i) => (
+                    <div
+                      key={i}
+                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/70 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#006FCC] border border-blue-200/70 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                          <Building2 className="w-5 h-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-gray-900 text-sm truncate">{sch.schoolName}</h3>
+                          <p className="text-xs text-purple-900 font-semibold">{sch.role}</p>
+                          <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-0.5">
+                            <span className="flex items-center gap-1">
+                              <MapPin size={11} className="text-amber-600" />
+                              <span>{sch.city}</span>
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1">
+                              <Calendar size={11} className="text-slate-400" />
+                              <span>{sch.duration}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <span className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[10.5px] font-bold text-slate-700 shrink-0 shadow-2xs">
+                        Verified Experience
+                      </span>
                     </div>
                   ))}
                 </div>

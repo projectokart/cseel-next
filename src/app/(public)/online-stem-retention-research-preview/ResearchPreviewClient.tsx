@@ -4,30 +4,38 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   FileText,
-  Download,
   Share2,
   CheckCircle2,
   ArrowRight,
-  TrendingUp,
-  Award,
   Sparkles,
   Users,
-  Compass,
   Check,
   BookOpen,
   Calendar,
   Layers,
   GraduationCap,
   Clock,
-  Briefcase
+  Briefcase,
+  HelpCircle,
+  Building2,
+  Mail,
+  User,
+  Phone
 } from 'lucide-react';
 
 export default function ResearchPreviewClient() {
   const [copied, setCopied] = useState(false);
-  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
-  const [downloadEmail, setDownloadEmail] = useState('');
-  const [downloadName, setDownloadName] = useState('');
-  const [downloaded, setDownloaded] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    institution: '',
+    institutionType: 'Secondary School',
+    position: 'Professor/Instructor'
+  });
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -37,34 +45,24 @@ export default function ResearchPreviewClient() {
     }
   };
 
-  const handleDownloadSubmit = (e: React.FormEvent) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!downloadEmail) return;
-    setDownloaded(true);
-    setTimeout(() => {
-      // Simulate download trigger
-      const link = document.createElement('a');
-      link.href = '#';
-      link.setAttribute('download', 'CSEEL-Confidence-Effect-Research-Report.pdf');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }, 800);
+    if (!formData.email) return;
+    setFormSubmitted(true);
   };
 
   return (
     <article className="min-h-screen bg-white text-slate-800 selection:bg-[#D6EDFF] selection:text-[#003C6E]">
       
       {/* ═════════════════════════════════════════════════════════════════════════
-          1. HERO HEADER SECTION (Midnight Navy Deep Gradient matching Editorial Research Style)
+          1. HERO HEADER SECTION (Exact Webflow / Image Layout & Deep Navy #003C6E)
           ═════════════════════════════════════════════════════════════════════════ */}
-      <header className="relative bg-[#001C33] text-white pt-10 sm:pt-14 pb-16 sm:pb-24 overflow-hidden border-b border-white/10">
-        
-        {/* Subtle Background Glow & Radial Accents */}
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[#006FCC]/20 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-gradient-to-tr from-sky-600/15 to-transparent rounded-full blur-2xl pointer-events-none" />
-
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="bg-[#003C6E] text-white pt-8 sm:pt-12 pb-12 sm:pb-16 overflow-hidden border-b border-white/10">
+        <div className="max-w-[1160px] mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Breadcrumb strip */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-[#CCE2F5]/80 mb-6 font-medium">
@@ -75,66 +73,57 @@ export default function ResearchPreviewClient() {
             <span className="text-white font-semibold truncate">The Confidence Effect</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
-            {/* Left 7 Columns: Titles, Lead, Metadata & CTAs */}
-            <div className="lg:col-span-7 space-y-5">
+            {/* Left Column: Eyebrow, Heading, Subtitle & Single CTA Button */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-5">
               
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[#85C4F7] text-xs font-bold tracking-wider uppercase font-['Montserrat',sans-serif]">
-                <FileText className="w-3.5 h-3.5 text-sky-400" />
-                <span>Research Report • Empirical Study</span>
+              <div className="text-[#FAB40E] uppercase text-xs sm:text-[13px] font-extrabold tracking-[0.14em] font-['Montserrat',sans-serif]">
+                THE CONFIDENCE EFFECT
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-[44px] font-black text-white leading-[1.15] tracking-tight font-['Montserrat',sans-serif]">
-                The #1 Predictor of STEM Retention Isn’t Flexibility. <br className="hidden sm:inline" />
-                <span className="text-[#66A9E0]">It’s Confidence.</span>
+              <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-white leading-[1.14] tracking-tight font-['Montserrat',sans-serif]">
+                The #1 Predictor of STEM Retention Isn’t Flexibility.<br className="hidden sm:inline" />
+                It’s Confidence.
               </h1>
 
-              <p className="text-base sm:text-lg text-[#CCE2F5] leading-relaxed font-normal font-['Lato',sans-serif]">
-                Why Experiential Learning Has Become Essential to Student Retention, Career Readiness, &amp; the Future of STEM Education.
+              <p className="text-base sm:text-lg text-[#F7F8F8]/90 font-normal leading-relaxed font-['Lato',sans-serif] max-w-xl">
+                Why Experiential Learning Has Become Essential to Student Retention &amp; the Future of STEM Education
               </p>
 
-              {/* Research Chips */}
-              <div className="flex flex-wrap items-center gap-4 py-2 text-xs text-[#CCE2F5]/90 border-y border-white/10 font-medium">
+              {/* Research Metrics Strip */}
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 py-2 text-xs text-[#CCE2F5]/85 border-y border-white/15 font-medium">
                 <div className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-sky-400 shrink-0" />
+                  <Users className="w-3.5 h-3.5 text-sky-300 shrink-0" />
                   <span><strong>411</strong> STEM Students Surveyed</span>
                 </div>
                 <span className="text-white/30 hidden sm:inline">•</span>
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-sky-400 shrink-0" />
-                  <span>April – June 2026 Study</span>
+                  <Calendar className="w-3.5 h-3.5 text-sky-300 shrink-0" />
+                  <span>Empirical Investigation</span>
                 </div>
                 <span className="text-white/30 hidden sm:inline">•</span>
                 <div className="flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-sky-400 shrink-0" />
-                  <span>13-Page Investigation</span>
+                  <Layers className="w-3.5 h-3.5 text-sky-300 shrink-0" />
+                  <span>13-Page Comprehensive Report</span>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <a
-                  href="#report-content"
-                  className="px-5 py-3 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-sm font-bold font-['Montserrat',sans-serif] shadow-md transition-all active:scale-[0.98] inline-flex items-center gap-2"
-                >
-                  <span>Read Full Report Below</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-
+              {/* ONLY ONE BUTTON: Book Free Demo */}
+              <div className="pt-2 flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setDownloadModalOpen(true)}
-                  className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 text-sm font-bold font-['Montserrat',sans-serif] transition-all active:scale-[0.98] inline-flex items-center gap-2 cursor-pointer"
+                  onClick={() => setDemoModalOpen(true)}
+                  className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-sm sm:text-base font-['Montserrat',sans-serif] shadow-lg shadow-black/20 transition-all active:scale-[0.98] cursor-pointer"
                 >
-                  <Download className="w-4 h-4 text-sky-400" />
-                  <span>Download Report (PDF)</span>
+                  <span>Book Free Demo</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="p-3 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 transition-all cursor-pointer"
+                  className="p-3.5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 transition-all cursor-pointer"
                   title="Share Article"
                   aria-label="Share Article"
                 >
@@ -144,44 +133,25 @@ export default function ResearchPreviewClient() {
 
             </div>
 
-            {/* Right 5 Columns: 3D Booklet Cover Graphic */}
+            {/* Right Column: Hero Graphic Illustration (Person standing on blue blocks reaching for star) */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="relative group max-w-[340px] sm:max-w-[380px] w-full">
-                
-                {/* Glow ring under card */}
-                <div className="absolute -inset-1.5 bg-gradient-to-r from-sky-400/40 via-blue-600/30 to-indigo-500/40 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-500" />
-                
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-[#002244] border border-white/20">
-                  <img
-                    src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75ff0972d096cdd6372596_Thumbnail.jpg"
-                    alt="The Confidence Effect Research Report Cover"
-                    className="w-full h-auto object-cover transform group-hover:scale-[1.02] transition-transform duration-500"
-                  />
-                  <div className="p-4 bg-[#00182E] border-t border-white/10 flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-bold text-white font-['Montserrat',sans-serif]">RESEARCH BRIEF</div>
-                      <div className="text-[11px] text-[#CCE2F5]/70">The Confidence Effect • 13 Pages</div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setDownloadModalOpen(true)}
-                      className="px-3 py-1.5 rounded-lg bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold font-['Montserrat',sans-serif] transition"
-                    >
-                      Download
-                    </button>
-                  </div>
-                </div>
-
+              <div className="relative max-w-[500px] w-full rounded-2xl overflow-hidden">
+                <img
+                  src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75ff0972d096cdd6372596_Thumbnail.jpg"
+                  alt="The Confidence Effect - STEM Retention and Experiential Learning"
+                  className="w-full h-auto object-cover rounded-xl"
+                  loading="eager"
+                />
               </div>
             </div>
 
           </div>
 
         </div>
-      </header>
+      </section>
 
       {/* ═════════════════════════════════════════════════════════════════════════
-          2. MAIN REPORT BODY AREA
+          2. MAIN REPORT BODY AREA (Clean Editorial Style)
           ═════════════════════════════════════════════════════════════════════════ */}
       <main id="report-content" className="py-12 sm:py-20">
         <div className="max-w-[880px] mx-auto px-4 sm:px-6">
@@ -200,31 +170,19 @@ export default function ResearchPreviewClient() {
               For these learners, online and hybrid education is not simply a matter of convenience. It is often the only path to earning a degree. This shift presents an extraordinary opportunity for colleges and universities. Online and hybrid STEM programs have opened doors for students who may never have considered science education possible. It has long been established that flexible scheduling has expanded access, diversified enrollment, and helped institutions reach learners whose lives extend far beyond the classroom.
             </p>
 
-            {/* Editorial Pull Quote Banner */}
-            <div className="my-8 p-6 sm:p-8 rounded-2xl bg-[#EDF5FA] border-l-4 border-[#006FCC] shadow-xs">
-              <blockquote className="text-lg sm:text-xl font-bold text-[#003C6E] italic leading-snug font-['Montserrat',sans-serif]">
-                “Today’s students are extraordinarily motivated, but they need learning experiences that fit the realities of their lives without compromising the quality of their education.”
-              </blockquote>
-              <div className="mt-3 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                — CSEEL National STEM Retention Investigation (2026)
-              </div>
-            </div>
-
-            {/* Image 1: Motivated student at computer */}
-            <figure className="my-8 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+            {/* Motivated Student Image */}
+            <figure className="my-8 rounded-2xl overflow-hidden border border-slate-200 shadow-xs">
               <img
                 src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75e847ef54c09f8d196334_extraordinarily%20motivated.jpg"
-                alt="Motivated student working remotely with headphones and digital lab modules"
+                alt="Motivated student working remotely with digital lab simulations"
                 className="w-full h-auto object-cover"
+                loading="lazy"
               />
-              <figcaption className="p-3 bg-slate-50 text-xs text-slate-500 text-center font-medium">
-                Figure 1: Today’s remote and hybrid STEM learners balance demanding coursework with professional work shifts.
-              </figcaption>
             </figure>
           </section>
 
           {/* ── Section 2: The New Challenge ─────────────────────────────────── */}
-          <section className="mt-14 space-y-6">
+          <section className="mt-12 space-y-6">
             <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
               Yet expanding access introduces a new challenge.
             </h2>
@@ -237,48 +195,52 @@ export default function ResearchPreviewClient() {
               To better understand what today’s online and hybrid STEM learners need to succeed, researchers surveyed <strong>411 students</strong> enrolled in four-year undergraduate and graduate online and hybrid STEM programs across universities. Conducted between April and June 2026, the study explored how learners choose programs, what keeps them engaged, what threatens persistence, what improves retention, and how experiential learning shapes confidence and career readiness.
             </p>
 
-            {/* Central Institutional Question Box */}
-            <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-[#002244] to-[#003C6E] text-white shadow-lg my-8">
-              <div className="text-xs font-bold uppercase tracking-wider text-sky-300 font-['Montserrat',sans-serif] mb-2">
-                The Central Question for Higher Education
-              </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white leading-snug font-['Montserrat',sans-serif]">
-                How do we preserve the flexibility learners need while delivering the hands-on experiences they expect and require?
-              </h3>
-            </div>
+            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
+              The findings reveal a story that extends well beyond online education. They show that learners expect both flexibility and rigor. More importantly, the data reveal that meaningful experiential learning builds the confidence students need to persist in their programs, prepare for the workforce, graduate, and pursue careers in STEM.
+            </p>
 
-            {/* Image 2: Student working on inquiry questions */}
-            <figure className="my-8 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+            {/* Important Question Image */}
+            <figure className="my-8 rounded-2xl overflow-hidden border border-slate-200 shadow-xs">
               <img
                 src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75e99261df5a0d9a3f98e9_important%20question.jpg"
-                alt="Student analyzing interactive telemetry"
+                alt="An important question facing STEM higher education"
                 className="w-full h-auto object-cover"
+                loading="lazy"
               />
-              <figcaption className="p-3 bg-slate-50 text-xs text-slate-500 text-center font-medium">
-                Figure 2: Preserving educational flexibility without sacrificing practical scientific rigor.
-              </figcaption>
             </figure>
           </section>
 
           {/* ── Section 3: Students Are Investing in Their Future ─────────────── */}
-          <section className="mt-14 space-y-6">
+          <section className="mt-12 space-y-6">
             <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
               Students Are Investing in Their Future
             </h2>
 
             <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              Career advancement has become the primary driver behind STEM enrollment decisions. Nearly every student surveyed <strong>(94%)</strong> said they selected an online or hybrid STEM program because they believed it would help advance their career. At the same time, flexibility remains essential, with more than 4 in 5 students saying the ability to balance education around their lives influenced their decision. Personal passion for STEM also remains remarkably strong <strong>(70%)</strong>, suggesting learners are motivated by both professional aspirations and genuine curiosity.
+              For years, institutions have recognized that flexible online and hybrid scheduling removes geographic barriers, accommodates working adults, and expands enrollment opportunities for learners whose lives cannot fit a traditional academic calendar. That remains true. What has changed is why students are making the choice to a STEM pathway.
             </p>
 
             <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              Students willingly accept demanding coursework because they believe a STEM degree represents higher earning potential <strong>(67%)</strong>, career advancement <strong>(69%)</strong>, and job stability <strong>(63%)</strong>. They are investing significant time, money, and effort because they expect the experience to prepare them for the workforce.
+              Career advancement has become the primary driver behind STEM enrollment decisions. Nearly every student surveyed (<strong>94%</strong>) said they selected an online or hybrid STEM program because they believed it would help advance their career. At the same time, flexibility remains essential, with more than 4 in 5 students saying the ability to balance education around their lives influenced their decision. Personal passion for STEM also remains remarkably strong (<strong>70%</strong>), suggesting learners are motivated by both professional aspirations and genuine curiosity.
             </p>
 
-            {/* Four Donut Stat Rings ("What Students Are Up Against") */}
-            <div className="my-10 p-6 sm:p-8 rounded-2xl bg-[#F7F8F8] border border-slate-200">
-              <div className="text-center max-w-xl mx-auto mb-8">
-                <span className="text-xs font-bold text-[#006FCC] uppercase tracking-wider font-['Montserrat',sans-serif]">Survey Findings</span>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#003C6E] mt-1 font-['Montserrat',sans-serif]">
+            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
+              Students willingly accept demanding coursework because they believe a STEM degree represents higher earning potential (<strong>67%</strong>), career advancement (<strong>69%</strong>), and job stability (<strong>63%</strong>). They are investing significant time, money, and effort because they expect the experience to prepare them for the workforce.
+            </p>
+
+            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
+              Taken together, these findings paint a clear picture: today’s students are not looking for an easier education. They are looking for an education they can realistically complete and that will prepare them for a future career. They need institutions to show them a path forward.
+            </p>
+
+            {/* Blockquote in Deep Navy */}
+            <blockquote className="my-8 p-6 sm:p-7 rounded-2xl bg-[#EDF5FA] border-l-4 border-[#006FCC] text-lg sm:text-xl font-bold text-[#003C6E] leading-relaxed font-['Montserrat',sans-serif]">
+              “Programs that successfully combine flexibility with meaningful experiential learning are positioned to attract a growing population of career-focused students who increasingly evaluate schools not only on reputation, but on whether graduates leave feeling capable, confident, and prepared to succeed.”
+            </blockquote>
+
+            {/* What Students Are Up Against Card (with exact Webflow donut PNGs) */}
+            <div className="my-10 p-6 sm:p-8 rounded-2xl bg-[#EDF5FA] border border-[#CCE2F5]">
+              <div className="mb-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-[#003C6E] font-['Montserrat',sans-serif]">
                   What Students Are Up Against
                 </h3>
                 <p className="text-sm text-slate-600 mt-1">
@@ -286,448 +248,308 @@ export default function ResearchPreviewClient() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {/* 2x2 Grid with Donut Chart Icons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                 
-                {/* 81% Card */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full border-4 border-[#006FCC] flex items-center justify-center font-black text-xl text-[#003C6E] mb-3">
-                    81%
+                {/* 81% Stat Card */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+                  <img
+                    src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75f330ef08c7a8148e2485_81-percent.png"
+                    alt="81 percent"
+                    className="w-14 h-14 shrink-0 object-contain"
+                  />
+                  <div className="text-sm text-slate-800 font-bold leading-snug">
+                    81% struggle balancing coursework with work and personal responsibilities
                   </div>
-                  <p className="text-xs text-slate-700 font-semibold leading-snug">
-                    struggle balancing coursework with work &amp; personal responsibilities
-                  </p>
                 </div>
 
-                {/* 73% Card 1 */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full border-4 border-[#006FCC] flex items-center justify-center font-black text-xl text-[#003C6E] mb-3">
-                    73%
+                {/* 73% Stat Card 1 */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+                  <img
+                    src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75f37c2837182dfa74eff0_73-percent.png"
+                    alt="73 percent"
+                    className="w-14 h-14 shrink-0 object-contain"
+                  />
+                  <div className="text-sm text-slate-800 font-bold leading-snug">
+                    73% entered their program concerned it would be less engaging
                   </div>
-                  <p className="text-xs text-slate-700 font-semibold leading-snug">
-                    continue working while earning their degree
-                  </p>
                 </div>
 
-                {/* 73% Card 2 */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full border-4 border-amber-600 flex items-center justify-center font-black text-xl text-[#003C6E] mb-3">
-                    73%
+                {/* 73% Stat Card 2 */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+                  <img
+                    src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75f37c2837182dfa74eff0_73-percent.png"
+                    alt="73 percent"
+                    className="w-14 h-14 shrink-0 object-contain"
+                  />
+                  <div className="text-sm text-slate-800 font-bold leading-snug">
+                    73% continue working while earning their degree
                   </div>
-                  <p className="text-xs text-slate-700 font-semibold leading-snug">
-                    entered their program concerned it would be less engaging
-                  </p>
                 </div>
 
-                {/* 71% Card */}
-                <div className="p-4 rounded-xl bg-white border border-slate-200/80 shadow-xs flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full border-4 border-amber-600 flex items-center justify-center font-black text-xl text-[#003C6E] mb-3">
-                    71%
+                {/* 71% Stat Card */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+                  <img
+                    src="https://cdn.prod.website-files.com/63105b5082760e06eb992f00/6a75f3919c0b8581b9dc4491_71-percent.png"
+                    alt="71 percent"
+                    className="w-14 h-14 shrink-0 object-contain"
+                  />
+                  <div className="text-sm text-slate-800 font-bold leading-snug">
+                    71% worried it would be less effective than traditional learning
                   </div>
-                  <p className="text-xs text-slate-700 font-semibold leading-snug">
-                    worried it would be less effective than traditional learning
-                  </p>
                 </div>
 
               </div>
-            </div>
 
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              Taken together, these findings paint a clear picture: today’s students are not looking for an easier education. They are looking for an education they can realistically complete and that will prepare them for a future career. They need institutions to show them a path forward.
-            </p>
+              <p className="text-xs sm:text-sm text-slate-600 mt-6 pt-4 border-t border-slate-200/60 font-medium">
+                The institutions best positioned for the future will deliver the experiences that transform enrollment into confidence and confidence into career readiness.
+              </p>
+            </div>
           </section>
 
           {/* ── Section 4: The Path to a STEM Career Shouldn’t Feel Out of Reach ─── */}
-          <section className="mt-14 space-y-6">
+          <section className="mt-12 space-y-6">
             <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
               The Path to a STEM Career Shouldn’t Feel Out of Reach
             </h2>
 
-            {/* Maya's Narrative Container */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-amber-50/70 border border-amber-200/80">
-              <div className="flex items-center gap-2 text-amber-800 text-xs font-bold uppercase tracking-wider font-['Montserrat',sans-serif] mb-2">
-                <BookOpen className="w-4 h-4 text-amber-600" />
-                <span>Learner Profile: Maya, 34</span>
-              </div>
-              <p className="text-slate-800 text-[15.5px] leading-relaxed font-['Lato',sans-serif]">
-                Maya is 34 years old, works full time, and is pursuing an online biology degree after years away from school. She studies after her children go to bed, completes assignments during lunch breaks, and spends weekends catching up on coursework. She is exactly the type of student online STEM programs were designed to serve. But when laboratory experiences require travel to campus or are limited to a fixed schedule, the balance she has worked so hard to achieve begins to unravel. Missing a lab is more than missing a class. It can mean falling behind in an entire course.
-              </p>
-            </div>
-
             <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              Maya’s story is fictional, but the challenges she faces are not. More than four in five students <strong>(81%)</strong> say balancing coursework with work and personal responsibilities is difficult. Among fully online STEM students, <strong>40%</strong> have questioned whether it is realistic to continue their program because of outside responsibilities. More than half <strong>(54%)</strong> of those considering leaving cite work-life balance as a primary reason.
+              Meet Maya. She is 34 years old, works full time, and is pursuing an online biology degree after years away from school. She studies after her children go to bed, completes assignments during lunch breaks, and spends weekends catching up on coursework. She is exactly the type of student online STEM programs were designed to serve. But when laboratory experiences require travel to campus or are limited to a fixed schedule, the balance she has worked so hard to achieve begins to unravel. Missing a lab is more than missing a class. It can mean falling behind in an entire course.
             </p>
 
-            <div className="p-6 rounded-2xl bg-[#EDF5FA] border-l-4 border-[#006FCC] italic text-lg font-bold text-[#003C6E] font-['Montserrat',sans-serif]">
+            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
+              Maya’s story is fictional, but the challenges she faces are not. More than four in five students (<strong>81%</strong>) say balancing coursework with work and personal responsibilities is difficult. Among fully online STEM students, <strong>40%</strong> have questioned whether it is realistic to continue their program because of outside responsibilities. More than half (<strong>54%</strong>) of those considering leaving cite work-life balance as a primary reason.
+            </p>
+
+            <blockquote className="my-8 p-6 sm:p-7 rounded-2xl bg-[#EDF5FA] border-l-4 border-[#006FCC] text-lg sm:text-xl font-bold text-[#003C6E] leading-relaxed font-['Montserrat',sans-serif]">
               “Students rarely lose motivation overnight. More often, they lose confidence gradually when they no longer feel prepared to succeed.”
-            </div>
+            </blockquote>
           </section>
 
-          {/* ── Section 5: What’s Driving Student Persistence? ───────────────── */}
-          <section className="mt-14 space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
-              Yet Time Is Only Part of the Challenge
-            </h2>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              STEM education depends on experience. When students have limited opportunities to practice laboratory techniques, apply scientific concepts, or revisit complex procedures, confidence begins to erode. More than one-third of students say their program does not provide enough experiential learning opportunities. <strong>41% report that the lack of experiential learning has made them question whether they want to finish their program.</strong> Nearly eight in ten <strong>(78%)</strong> say that without experiential learning experiences, they feel less prepared for their future careers.
-            </p>
-
-            {/* 5 Persistence Metrics Horizontal Grid */}
-            <div className="my-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-              
-              <div className="p-4 rounded-xl bg-white border border-slate-200 text-center shadow-2xs">
-                <div className="text-2xl font-black text-[#006FCC]">79%</div>
-                <div className="text-[11.5px] text-slate-600 mt-1 leading-snug">
-                  judge program quality based on meaningful hands-on experiences
-                </div>
+          {/* ═════════════════════════════════════════════════════════════════════
+              EMBEDDED "BOOK FREE DEMO" SECTION
+              ═════════════════════════════════════════════════════════════════════ */}
+          <section id="book-demo-section" className="my-14 p-6 sm:p-10 rounded-3xl bg-gradient-to-br from-[#002244] to-[#003C6E] text-white shadow-xl border border-white/10">
+            <div className="max-w-2xl mx-auto text-center space-y-3 mb-8">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[#FAB40E] text-xs font-bold tracking-wider uppercase font-['Montserrat',sans-serif]">
+                <Sparkles className="w-3.5 h-3.5 text-[#FAB40E]" />
+                <span>Live Interactive Experience</span>
               </div>
-
-              <div className="p-4 rounded-xl bg-white border border-slate-200 text-center shadow-2xs">
-                <div className="text-2xl font-black text-amber-600">41%</div>
-                <div className="text-[11.5px] text-slate-600 mt-1 leading-snug">
-                  questioned finishing because of insufficient experiential learning
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white border border-slate-200 text-center shadow-2xs">
-                <div className="text-2xl font-black text-slate-700">40%</div>
-                <div className="text-[11.5px] text-slate-600 mt-1 leading-snug">
-                  questioned continuing because of outside responsibilities
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white border border-slate-200 text-center shadow-2xs">
-                <div className="text-2xl font-black text-rose-600">54%</div>
-                <div className="text-[11.5px] text-slate-600 mt-1 leading-snug">
-                  cite work-life balance as a primary reason for considering leaving
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-white border border-slate-200 text-center shadow-2xs">
-                <div className="text-2xl font-black text-indigo-600">31%</div>
-                <div className="text-[11.5px] text-slate-600 mt-1 leading-snug">
-                  have deep concerns about their workplace career readiness
-                </div>
-              </div>
-
-            </div>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              The consequence is not simply frustration. It is self-doubt. While work-life balance and competing responsibilities are the most visible barriers, the research points to a less obvious challenge: when students begin questioning whether they’re developing the skills needed for future careers, they often begin questioning whether they can succeed in the program itself.
-            </p>
-          </section>
-
-          {/* ── Section 6: What Students Need to Succeed ──────────────────────── */}
-          <section className="mt-14 space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
-              What Students Need to Succeed
-            </h2>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              Throughout this research, students consistently linked meaningful experiential learning with feeling more prepared, more capable, and more confident in their ability to succeed. Students who believe they are developing real-world skills are more likely to stay engaged, remain committed to their program, and feel prepared for the careers they hope to pursue.
-            </p>
-
-            {/* What Matters Most Highlight Grid */}
-            <div className="my-8 p-6 sm:p-8 rounded-2xl bg-[#001C33] text-white">
-              <h3 className="text-xl font-bold text-white mb-6 font-['Montserrat',sans-serif]">
-                What Matters Most to Online &amp; Hybrid STEM Students:
-              </h3>
-
-              <div className="space-y-4">
-                
-                <div className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-emerald-400 shrink-0 w-16">97%</div>
-                  <div className="text-sm text-[#CCE2F5] leading-snug">
-                    are more likely to remain committed to their program when coursework clearly connects to real-world skills.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-sky-400 shrink-0 w-16">93%</div>
-                  <div className="text-sm text-[#CCE2F5] leading-snug">
-                    say experiential learning makes completing a STEM program substantially more valuable to employers.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-sky-400 shrink-0 w-16">91%</div>
-                  <div className="text-sm text-[#CCE2F5] leading-snug">
-                    believe hands-on practice is absolutely vital for preparing for a modern STEM career.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-amber-400 shrink-0 w-16">84%</div>
-                  <div className="text-sm text-[#CCE2F5] leading-snug">
-                    say more experiential learning opportunities would increase their motivation to pursue a STEM profession.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-2xl font-black text-amber-400 shrink-0 w-16">74%</div>
-                  <div className="text-sm text-[#CCE2F5] leading-snug">
-                    say access to virtual labs would directly increase their motivation to complete their STEM degree.
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </section>
-
-          {/* ── Section 7: The Future of Online & Hybrid STEM Learning ─────────── */}
-          <section className="mt-14 space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
-              The Future of Online &amp; Hybrid STEM Learning
-            </h2>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              The strongest STEM programs won’t simply be more flexible. They’ll provide more opportunities for students to practice, make mistakes, and apply what they’ve learned. Virtual labs are one example of how institutions are responding to that challenge. In hybrid programs, virtual labs complement traditional laboratory instruction with interactive digital experiences. They allow students to prepare before entering a physical lab, reinforce concepts afterward, and revisit complex procedures whenever they need additional practice. Rather than replacing physical labs, they help extend learning beyond the limited time students spend in them.
-            </p>
-
-            {/* 4 Pillars of Future STEM Learning */}
-            <div className="my-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
-              <div className="p-6 rounded-2xl bg-[#EDF5FA] border border-[#d3e3fd]">
-                <div className="text-3xl font-black text-[#006FCC] mb-2 font-['Montserrat',sans-serif]">93%</div>
-                <h4 className="font-bold text-slate-800 text-sm mb-1">Employer Valuation</h4>
-                <p className="text-xs text-slate-600">
-                  Hands-on practice makes completing a STEM program more valuable to hiring managers and industry employers.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-[#EDF5FA] border border-[#d3e3fd]">
-                <div className="text-3xl font-black text-[#006FCC] mb-2 font-['Montserrat',sans-serif]">92%</div>
-                <h4 className="font-bold text-slate-800 text-sm mb-1">Safe Failure &amp; Mastery</h4>
-                <p className="text-xs text-slate-600">
-                  Virtual labs provide a zero-risk environment to test hypotheses and fail safely before real-world physical bench work.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-[#EDF5FA] border border-[#d3e3fd]">
-                <div className="text-3xl font-black text-[#006FCC] mb-2 font-['Montserrat',sans-serif]">83%</div>
-                <h4 className="font-bold text-slate-800 text-sm mb-1">Repeatable Practice</h4>
-                <p className="text-xs text-slate-600">
-                  Students would stay more engaged if they could revisit and repeat learning experiences on their own schedule.
-                </p>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-[#EDF5FA] border border-[#d3e3fd]">
-                <div className="text-3xl font-black text-emerald-600 mb-2 font-['Montserrat',sans-serif]">24% Surge</div>
-                <h4 className="font-bold text-slate-800 text-sm mb-1">Retention Multiplier</h4>
-                <p className="text-xs text-slate-600">
-                  Students who feel confident in their lab practical skills are significantly more likely to persist and complete their degree.
-                </p>
-              </div>
-
-            </div>
-
-            <div className="p-6 sm:p-7 rounded-2xl bg-[#002F56] text-white my-8 text-center">
-              <h3 className="text-lg sm:text-xl font-bold font-['Montserrat',sans-serif] leading-snug">
-                “The future of online and hybrid STEM education isn’t defined by where students learn. It’s defined by how often they have opportunities to practice and apply what they’re learning.”
-              </h3>
-            </div>
-          </section>
-
-          {/* ── Section 8: When the Physical Lab Is Not an Option ──────────────── */}
-          <section className="mt-14 space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
-              When the Physical Lab Is Not an Option
-            </h2>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              For fully online institutions, the challenge is different. Without access to campus laboratory facilities, programs must find ways to provide meaningful experiential learning wherever students are, without creating additional barriers to participation. Historically, many programs relied on at-home lab kits. While kits provide hands-on experiences, they introduce significant logistical hurdles: shipping delays, missing reagents, storage issues, and the safety risks of conducting chemical reactions in home kitchens.
-            </p>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              By providing interactive, experiential learning through digital devices, experiential simulations give students opportunities to investigate scientific concepts, practice techniques, and learn from mistakes without requiring physical consumables. Students can learn on their own time, repeat experiments as often as needed, and arrive at exams thoroughly prepared.
-            </p>
-
-            {/* Stacked Percentage Impact */}
-            <div className="my-8 p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
-              <h4 className="font-bold text-[#003C6E] text-base font-['Montserrat',sans-serif]">
-                Measurable Impact of Experiential Learning on Coursework:
-              </h4>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-700 font-medium">Helps confirm understanding of theoretical material</span>
-                  <span className="font-black text-[#006FCC] ml-2">88%</span>
-                </div>
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#006FCC] h-full rounded-full" style={{ width: '88%' }} />
-                </div>
-
-                <div className="flex items-center justify-between text-sm pt-2">
-                  <span className="text-slate-700 font-medium">Repeating lab exercises improves conceptual understanding</span>
-                  <span className="font-black text-[#006FCC] ml-2">88%</span>
-                </div>
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#006FCC] h-full rounded-full" style={{ width: '88%' }} />
-                </div>
-
-                <div className="flex items-center justify-between text-sm pt-2">
-                  <span className="text-slate-700 font-medium">Repetition builds personal confidence in science</span>
-                  <span className="font-black text-[#006FCC] ml-2">88%</span>
-                </div>
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-[#006FCC] h-full rounded-full" style={{ width: '88%' }} />
-                </div>
-
-                <div className="flex items-center justify-between text-sm pt-2">
-                  <span className="text-slate-700 font-medium">Felt significantly more prepared for graded coursework</span>
-                  <span className="font-black text-emerald-600 ml-2">85%</span>
-                </div>
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-emerald-600 h-full rounded-full" style={{ width: '85%' }} />
-                </div>
-
-                <div className="flex items-center justify-between text-sm pt-2">
-                  <span className="text-slate-700 font-medium">Felt more engaged and motivated during the semester</span>
-                  <span className="font-black text-emerald-600 ml-2">77%</span>
-                </div>
-                <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-emerald-600 h-full rounded-full" style={{ width: '77%' }} />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ── Section 9: The Confidence Effect ──────────────────────────────── */}
-          <section className="mt-14 space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
-              Confidence: The Least Talked About Outcome With the Most Impact
-            </h2>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              Throughout this research, one message has remained remarkably consistent: students want to build practical skills, connect coursework to real-world applications, and graduate with confidence in their ability to succeed. When students have opportunities to practice, revisit concepts, and apply their knowledge in authentic settings, they report feeling more prepared, more confident in their abilities, and more committed to continuing their STEM education.
-            </p>
-
-            {/* The Confidence Matrix Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
-              
-              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#006FCC] flex items-center justify-center shrink-0 font-black text-xl">
-                  60%
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#003C6E] text-sm">Laboratory Competency</h4>
-                  <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                    More likely to report high confidence in their physical laboratory and apparatus skills.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 font-black text-xl">
-                  56%
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#003C6E] text-sm">Career Application</h4>
-                  <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                    More likely to say they feel very confident applying those STEM skills in future industry careers.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 font-black text-xl">
-                  74%
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#003C6E] text-sm">Persistence Motivation</h4>
-                  <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                    Report access to experiential virtual labs directly increased their motivation to persist in STEM.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 font-black text-xl">
-                  84%
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#003C6E] text-sm">Enrollment Magnet</h4>
-                  <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-                    Say knowing a program offers interactive virtual labs makes that institution more appealing.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-            <p className="text-[16.5px] text-slate-700 leading-relaxed font-['Lato',sans-serif]">
-              The future of STEM education is not simply about expanding access. It is about ensuring every student has the opportunity to build the confidence, competence, and practical experience needed to thrive in modern science and technology.
-            </p>
-          </section>
-
-          {/* ── Section 10: Survey Demographics & Methodology (Page 13 of PDF) ─── */}
-          <section className="mt-16 pt-10 border-t border-slate-200">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#003C6E] font-['Montserrat',sans-serif] mb-4">
-              Survey Methodology &amp; Demographics
-            </h2>
-            <p className="text-sm text-slate-600 leading-relaxed mb-6">
-              This report is based on a survey of 411 undergraduate and graduate students enrolled in online or hybrid STEM programs at 4-year universities or graduate schools across North America and international academic partners. Conducted between April 24 and June 9, 2026, the study carries a 95% confidence level with a ±4.8% margin of error.
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
-              <div>
-                <span className="font-bold text-slate-800 block">Respondents</span>
-                <span className="text-slate-600">411 STEM Learners</span>
-                <span className="text-slate-500 block text-[11px] mt-1">74% Undergrad • 26% Grad</span>
-              </div>
-              <div>
-                <span className="font-bold text-slate-800 block">Program Format</span>
-                <span className="text-slate-600">71% Hybrid</span>
-                <span className="text-slate-500 block text-[11px] mt-1">29% Fully Online</span>
-              </div>
-              <div>
-                <span className="font-bold text-slate-800 block">Employment Status</span>
-                <span className="text-slate-600">73% Employed</span>
-                <span className="text-slate-500 block text-[11px] mt-1">37% Full-Time • 36% Part-Time</span>
-              </div>
-              <div>
-                <span className="font-bold text-slate-800 block">Caregiving</span>
-                <span className="text-slate-600">36% Caregivers</span>
-                <span className="text-slate-500 block text-[11px] mt-1">22% Children • 8% Adults</span>
-              </div>
-            </div>
-
-            {/* Academic References */}
-            <div className="mt-8 pt-6 border-t border-slate-100 text-xs text-slate-500 space-y-1.5">
-              <div className="font-bold text-slate-700 uppercase tracking-wider mb-2">Research References:</div>
-              <div>1. What’s Behind the 2026 College Enrollment Surge? Higher Education Insights Report.</div>
-              <div>2. Higher Ed Enrollment Continues Its Comeback: National Student Clearinghouse Research Center (2025-2026).</div>
-              <div>3. Predictions for 2026: What’s Next for Graduate and Online STEM Enrollment, EAB Academic Research.</div>
-              <div>4. Kolb’s Experiential Learning Theory &amp; Virtual Laboratory Integration, CSEEL Empirical Studies.</div>
-            </div>
-          </section>
-
-          {/* ── Section 11: Final Conversion Banner ────────────────────────────── */}
-          <div className="mt-16 p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#001C33] via-[#002F56] to-[#003C6E] text-white shadow-xl text-center relative overflow-hidden">
-            <div className="relative z-10 max-w-xl mx-auto space-y-4">
-              <span className="px-3 py-1 rounded-full bg-white/10 text-sky-300 text-xs font-bold tracking-wider uppercase font-['Montserrat',sans-serif]">
-                Institutional Advisory
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-white font-['Montserrat',sans-serif]">
-                When Students Feel Prepared, Institutions Become Stronger
-              </h3>
-              <p className="text-sm sm:text-base text-[#CCE2F5] leading-relaxed">
-                Discover how CSEEL’s experiential learning labs and curriculum-aligned simulations help schools and universities increase student retention, build genuine scientific confidence, and prepare graduates for future careers.
+              <h2 className="text-2xl sm:text-3xl font-black text-white font-['Montserrat',sans-serif]">
+                Book a Free Institutional Demo
+              </h2>
+              <p className="text-sm sm:text-base text-slate-200">
+                Experience how CSEEL interactive virtual labs enhance STEM retention and student confidence. Schedule a 20-minute tailored walkthrough for your institution.
               </p>
-              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href="/demo"
-                  className="px-6 py-3 rounded-xl bg-white text-[#001C33] hover:bg-slate-100 font-bold text-sm font-['Montserrat',sans-serif] shadow-md transition-all active:scale-[0.98]"
-                >
-                  Book an Institutional Demo
-                </Link>
-                <Link
-                  href="/virtual-lab"
-                  className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-sm font-['Montserrat',sans-serif] transition"
-                >
-                  Explore Virtual Labs
-                </Link>
+            </div>
+
+            {formSubmitted ? (
+              <div className="max-w-md mx-auto text-center py-8 px-6 bg-white/10 rounded-2xl border border-white/15 backdrop-blur-sm space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
+                  <CheckCircle2 className="w-7 h-7" />
+                </div>
+                <h3 className="text-xl font-bold text-white font-['Montserrat',sans-serif]">Demo Request Received!</h3>
+                <p className="text-xs text-slate-200">
+                  Thank you, <strong>{formData.firstName || 'Educator'}</strong>. An academic specialist from CSEEL will contact you at <strong>{formData.email}</strong> to confirm your personalized walkthrough.
+                </p>
               </div>
+            ) : (
+              <form onSubmit={handleDemoSubmit} className="max-w-xl mx-auto space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-slate-200 mb-1.5">First Name *</label>
+                    <input
+                      type="text"
+                      required
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleFormChange}
+                      placeholder="e.g. Ramesh"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm focus:outline-hidden focus:border-[#006FCC] focus:bg-white/15 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-200 mb-1.5">Last Name *</label>
+                    <input
+                      type="text"
+                      required
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleFormChange}
+                      placeholder="e.g. Sharma"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm focus:outline-hidden focus:border-[#006FCC] focus:bg-white/15 transition"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-slate-200 mb-1.5">Institutional Email *</label>
+                    <input
+                      type="email"
+                      required
+                      name="email"
+                      value={formData.email}
+                      onChange={handleFormChange}
+                      placeholder="e.g. educator@school.edu.in"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm focus:outline-hidden focus:border-[#006FCC] focus:bg-white/15 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-200 mb-1.5">Phone Number *</label>
+                    <input
+                      type="tel"
+                      required
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleFormChange}
+                      placeholder="e.g. +91 98765 43210"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm focus:outline-hidden focus:border-[#006FCC] focus:bg-white/15 transition"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-slate-200 mb-1.5">Institution / School *</label>
+                    <input
+                      type="text"
+                      required
+                      name="institution"
+                      value={formData.institution}
+                      onChange={handleFormChange}
+                      placeholder="e.g. Delhi Public School"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm focus:outline-hidden focus:border-[#006FCC] focus:bg-white/15 transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-200 mb-1.5">Position / Role *</label>
+                    <select
+                      name="position"
+                      value={formData.position}
+                      onChange={handleFormChange}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#002B52] border border-white/20 text-white text-sm focus:outline-hidden focus:border-[#006FCC] transition"
+                    >
+                      <option value="Professor/Instructor">Professor / Instructor</option>
+                      <option value="Dean/Director">Dean / Principal / Director</option>
+                      <option value="Laboratory Based Faculty">Lab HOD / Faculty</option>
+                      <option value="Educational Developer">Curriculum Developer</option>
+                      <option value="IT Admin">IT / Academic Admin</option>
+                      <option value="Student">Student / Researcher</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="w-full py-3.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-sm sm:text-base font-['Montserrat',sans-serif] shadow-lg shadow-black/20 transition-all active:scale-[0.98] cursor-pointer"
+                  >
+                    Book Free Demo
+                  </button>
+                </div>
+
+                <p className="text-[11px] text-slate-300/80 text-center pt-1">
+                  By submitting, you agree to receive a tailored STEM demo invite. Zero spam guarantee.
+                </p>
+              </form>
+            )}
+          </section>
+
+          {/* ── Section 5: The Four Pillars of Future STEM Learning ─────────────── */}
+          <section className="mt-14 space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#003C6E] font-['Montserrat',sans-serif] tracking-tight">
+              Four Pillars of Retention-Driven STEM Education
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 my-6">
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center font-bold mb-3">
+                  01
+                </div>
+                <h4 className="text-base font-bold text-[#003C6E] mb-1 font-['Montserrat',sans-serif]">Safe Failure &amp; Iteration</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Allows students to experiment, make errors, and reset without physical hazards or costly reagent waste. Mistakes become learning milestones rather than grade penalties.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center font-bold mb-3">
+                  02
+                </div>
+                <h4 className="text-base font-bold text-[#003C6E] mb-1 font-['Montserrat',sans-serif]">Concept-to-Application Bridging</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Abstract equations come alive when students see molecular kinetics, electromagnetic waves, and chemical equilibria react dynamically to their direct inputs.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center font-bold mb-3">
+                  03
+                </div>
+                <h4 className="text-base font-bold text-[#003C6E] mb-1 font-['Montserrat',sans-serif]">Unrestricted Self-Paced Mastery</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Students can run an experiment once, three times, or ten times until mastery is attained, decoupling practical proficiency from strict 50-minute bell schedules.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center font-bold mb-3">
+                  04
+                </div>
+                <h4 className="text-base font-bold text-[#003C6E] mb-1 font-['Montserrat',sans-serif]">Equity &amp; Equal Bench Access</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Eliminates the common passive spectator phenomenon where three students huddle around one piece of lab gear. Every learner actively conducts every single step.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Section 6: Demographic & Methodology Summary ───────────────────── */}
+          <section className="mt-14 p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200">
+            <h3 className="text-lg font-bold text-[#003C6E] mb-3 font-['Montserrat',sans-serif]">
+              Investigation Methodology &amp; Sample Demographics
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              The survey was fielded between April 14 and June 28, 2026. A total of 411 respondents completed the survey. Eligible respondents were individuals aged 18+ currently enrolled in an online or hybrid degree program in STEM disciplines at an accredited four-year college or university.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80">
+                <div className="text-base font-black text-[#003C6E]">411</div>
+                <div className="text-[11px] text-slate-500 font-medium">Valid Sample</div>
+              </div>
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80">
+                <div className="text-base font-black text-[#003C6E]">84%</div>
+                <div className="text-[11px] text-slate-500 font-medium">Undergraduate</div>
+              </div>
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80">
+                <div className="text-base font-black text-[#003C6E]">16%</div>
+                <div className="text-[11px] text-slate-500 font-medium">Postgraduate</div>
+              </div>
+              <div className="p-3 bg-white rounded-xl border border-slate-200/80">
+                <div className="text-base font-black text-[#003C6E]">95%</div>
+                <div className="text-[11px] text-slate-500 font-medium">Confidence Margin</div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Bottom Section: Final CTA ───────────────────────────────────────── */}
+          <div className="mt-16 text-center space-y-4">
+            <h3 className="text-2xl font-bold text-[#003C6E] font-['Montserrat',sans-serif]">
+              Ready to Transform STEM Retention at Your Institution?
+            </h3>
+            <p className="text-slate-600 text-sm max-w-lg mx-auto">
+              Equip your educators with immersive, experiential virtual laboratories that turn hesitation into confidence.
+            </p>
+            <div>
+              <button
+                type="button"
+                onClick={() => setDemoModalOpen(true)}
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-sm sm:text-base font-['Montserrat',sans-serif] shadow-md transition-all active:scale-[0.98] cursor-pointer"
+              >
+                <span>Book Free Demo</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
@@ -735,91 +557,156 @@ export default function ResearchPreviewClient() {
       </main>
 
       {/* ═════════════════════════════════════════════════════════════════════════
-          3. DOWNLOAD PDF MODAL
+          3. "BOOK FREE DEMO" MODAL (Clean, Instant Modal)
           ═════════════════════════════════════════════════════════════════════════ */}
-      {downloadModalOpen && (
+      {demoModalOpen && (
         <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 max-h-[92vh] overflow-y-auto">
             <button
               type="button"
               onClick={() => {
-                setDownloadModalOpen(false);
-                setDownloaded(false);
+                setDemoModalOpen(false);
+                setFormSubmitted(false);
               }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 cursor-pointer transition"
               aria-label="Close modal"
             >
               ✕
             </button>
 
-            {downloaded ? (
-              <div className="text-center py-6 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
-                  <CheckCircle2 className="w-7 h-7" />
+            {formSubmitted ? (
+              <div className="text-center py-8 space-y-3">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
+                  <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-[#003C6E] font-['Montserrat',sans-serif]">Report Ready!</h3>
-                <p className="text-xs text-slate-600">
-                  Your PDF report download has begun. A copy has also been registered for <strong>{downloadEmail}</strong>.
+                <h3 className="text-xl font-bold text-[#003C6E] font-['Montserrat',sans-serif]">Demo Request Confirmed!</h3>
+                <p className="text-xs text-slate-600 max-w-sm mx-auto">
+                  Thank you, <strong>{formData.firstName || 'Educator'}</strong>. We have received your request. Our STEM academic team will connect with you at <strong>{formData.email}</strong> to schedule your personalized institutional demo.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDownloadModalOpen(false);
-                    setDownloaded(false);
-                  }}
-                  className="mt-4 px-5 py-2.5 rounded-xl bg-[#006FCC] text-white text-xs font-bold font-['Montserrat',sans-serif]"
-                >
-                  Close Window
-                </button>
+                <div className="pt-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDemoModalOpen(false);
+                      setFormSubmitted(false);
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-[#006FCC] text-white text-xs font-bold font-['Montserrat',sans-serif]"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
             ) : (
-              <form onSubmit={handleDownloadSubmit} className="space-y-4">
-                <div className="text-center mb-4">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 text-[#006FCC] text-xs font-bold mb-2">
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Free 13-Page PDF Report</span>
+              <form onSubmit={handleDemoSubmit} className="space-y-4">
+                <div className="text-center mb-5">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#006FCC] text-xs font-bold mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-[#006FCC]" />
+                    <span>Free Institutional STEM Demo</span>
                   </div>
-                  <h3 className="text-xl font-bold text-[#003C6E] font-['Montserrat',sans-serif]">
-                    Download The Confidence Effect
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#003C6E] font-['Montserrat',sans-serif]">
+                    Book Free Demo
                   </h3>
                   <p className="text-xs text-slate-600 mt-1">
-                    Get the complete survey data, statistical charts, and institutional persistence strategies.
+                    See how experiential STEM simulations boost student retention and practical understanding.
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Your Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={downloadName}
-                    onChange={(e) => setDownloadName(e.target.value)}
-                    placeholder="e.g. Dr. Ramesh Sharma"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">First Name *</label>
+                    <input
+                      type="text"
+                      required
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleFormChange}
+                      placeholder="First Name"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Last Name *</label>
+                    <input
+                      type="text"
+                      required
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleFormChange}
+                      placeholder="Last Name"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Institutional Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={downloadEmail}
-                    onChange={(e) => setDownloadEmail(e.target.value)}
-                    placeholder="e.g. educator@school.edu.in"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Institutional Email *</label>
+                    <input
+                      type="email"
+                      required
+                      name="email"
+                      value={formData.email}
+                      onChange={handleFormChange}
+                      placeholder="name@institution.edu"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number *</label>
+                    <input
+                      type="tel"
+                      required
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleFormChange}
+                      placeholder="+91 98765 43210"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
+                    />
+                  </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-sm font-bold font-['Montserrat',sans-serif] shadow-xs transition"
-                >
-                  Download PDF Report Now
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Institution Name *</label>
+                    <input
+                      type="text"
+                      required
+                      name="institution"
+                      value={formData.institution}
+                      onChange={handleFormChange}
+                      placeholder="School / College Name"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Role / Position *</label>
+                    <select
+                      name="position"
+                      value={formData.position}
+                      onChange={handleFormChange}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-hidden focus:border-[#006FCC] bg-white"
+                    >
+                      <option value="Professor/Instructor">Professor / Instructor</option>
+                      <option value="Dean/Director">Dean / Principal / Director</option>
+                      <option value="Laboratory Based Faculty">Lab Faculty / HOD</option>
+                      <option value="Educational Developer">Curriculum Developer</option>
+                      <option value="IT Admin">IT / Academic Admin</option>
+                      <option value="Student">Student / Researcher</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    className="w-full py-3 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-sm font-bold font-['Montserrat',sans-serif] shadow-xs transition cursor-pointer"
+                  >
+                    Book Free Demo
+                  </button>
+                </div>
 
                 <p className="text-[11px] text-slate-400 text-center">
-                  Zero spam. Published under CSEEL Open Academic Research License.
+                  Private &amp; Confidential. Verified institutional demo.
                 </p>
               </form>
             )}

@@ -1,3 +1,6 @@
+// Aggregated Multi-Portal Jobs (Indeed, LinkedIn, Naukri, CBSE/ICSE Direct Portals)
+import aggregatedJobsData from './aggregated_jobs.json';
+
 export interface FacultyJobItem {
   id: string;
   organisationName: string;
@@ -519,7 +522,23 @@ export function getActiveFacultyJobs(nowDateStr: string = "2026-10-24"): Faculty
   const current = new Date(nowDateStr).getTime();
   const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
 
-  return RAW_FACULTY_JOBS.filter((job) => {
+  // Merge seed jobs with multi-portal aggregated vacancies (Indeed, LinkedIn, Naukri, Direct Portals)
+  const portalJobs = (aggregatedJobsData as unknown as FacultyJobItem[]) || [];
+  const combined = [...portalJobs, ...RAW_FACULTY_JOBS];
+
+  // Deduplicate strictly by school + designation + subject + city
+  const seen = new Set<string>();
+  const deduplicated: FacultyJobItem[] = [];
+
+  for (const job of combined) {
+    const key = `${job.organisationName}_${job.designation}_${job.subject}_${job.city}`.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      deduplicated.push(job);
+    }
+  }
+
+  return deduplicated.filter((job) => {
     const jobDate = new Date(job.openingDate).getTime();
     const diff = current - jobDate;
     // Job must be within last 30 days and deadline must not have passed

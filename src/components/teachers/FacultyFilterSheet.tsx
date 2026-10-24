@@ -23,8 +23,12 @@ export interface FacultyFilterSheetProps {
   toggleBoard: (val: string) => void;
   selectedCities: string[];
   toggleCity: (val: string) => void;
-  selectedSources: string[];
-  toggleSource: (val: string) => void;
+  selectedStates: string[];
+  toggleState: (val: string) => void;
+  selectedJobTypes?: string[];
+  toggleJobType?: (val: string) => void;
+  selectedPortals?: string[];
+  togglePortal?: (val: string) => void;
   minSalaryFilter: number;
   setMinSalaryFilter: (val: number) => void;
   urgentOnly: boolean;
@@ -34,7 +38,7 @@ export interface FacultyFilterSheetProps {
     subjects: Record<string, number>;
     boards: Record<string, number>;
     cities: Record<string, number>;
-    sources: Record<string, number>;
+    states: Record<string, number>;
   };
   onResetAll: () => void;
   // Sidebar minimize
@@ -67,6 +71,20 @@ const BOARD_OPTIONS = [
   { id: 'Cambridge / IB', label: 'Cambridge / IB' },
 ];
 
+const JOB_TYPE_OPTIONS = [
+  { id: 'Full-Time', label: 'Full Time' },
+  { id: 'Part-Time', label: 'Part Time' },
+  { id: 'Remote', label: 'Online / Remote' },
+  { id: 'On-site', label: 'Offline / On-site' },
+];
+
+const PORTAL_OPTIONS = [
+  { id: 'Naukri.com', label: 'Naukri.com' },
+  { id: 'Indeed', label: 'Indeed' },
+  { id: 'LinkedIn', label: 'LinkedIn' },
+  { id: 'Direct School Portal', label: 'Direct Portal' },
+];
+
 const CITY_OPTIONS = [
   { id: 'Delhi', label: 'Delhi NCR' },
   { id: 'Gurugram', label: 'Gurugram' },
@@ -88,12 +106,29 @@ const SALARY_OPTIONS = [
   { value: 1200000, label: '₹12+ Lacs PA' },
 ];
 
-const SOURCE_OPTIONS = [
-  { id: 'LinkedIn', label: 'LinkedIn' },
-  { id: 'Naukri.com', label: 'Naukri.com' },
-  { id: 'Indeed', label: 'Indeed' },
-  { id: 'TimesJobs', label: 'TimesJobs' },
-  { id: 'Direct School Portal', label: 'Direct School' },
+const STATE_OPTIONS = [
+  { id: 'Delhi NCR', label: 'Delhi NCR' },
+  { id: 'Uttar Pradesh', label: 'Uttar Pradesh' },
+  { id: 'Haryana', label: 'Haryana' },
+  { id: 'Maharashtra', label: 'Maharashtra' },
+  { id: 'Rajasthan', label: 'Rajasthan' },
+  { id: 'Punjab', label: 'Punjab' },
+  { id: 'Karnataka', label: 'Karnataka' },
+  { id: 'Tamil Nadu', label: 'Tamil Nadu' },
+  { id: 'Telangana', label: 'Telangana' },
+  { id: 'Madhya Pradesh', label: 'Madhya Pradesh' },
+  { id: 'Gujarat', label: 'Gujarat' },
+  { id: 'West Bengal', label: 'West Bengal' },
+  { id: 'Uttarakhand', label: 'Uttarakhand' },
+  { id: 'Bihar', label: 'Bihar' },
+  { id: 'Kerala', label: 'Kerala' },
+  { id: 'Odisha', label: 'Odisha' },
+  { id: 'Chandigarh', label: 'Chandigarh' },
+  { id: 'Andhra Pradesh', label: 'Andhra Pradesh' },
+  { id: 'Jharkhand', label: 'Jharkhand' },
+  { id: 'Himachal Pradesh', label: 'Himachal Pradesh' },
+  { id: 'Assam', label: 'Assam' },
+  { id: 'Goa', label: 'Goa' },
 ];
 
 export default function FacultyFilterSheet({
@@ -111,8 +146,12 @@ export default function FacultyFilterSheet({
   toggleBoard,
   selectedCities,
   toggleCity,
-  selectedSources,
-  toggleSource,
+  selectedStates,
+  toggleState,
+  selectedJobTypes = [],
+  toggleJobType,
+  selectedPortals = [],
+  togglePortal,
   minSalaryFilter,
   setMinSalaryFilter,
   urgentOnly,
@@ -128,9 +167,11 @@ export default function FacultyFilterSheet({
     designation: true,
     subject: true,
     board: true,
+    jobType: true,
+    portal: true,
     salary: true,
     city: true,
-    source: true,
+    state: true,
   });
 
   const toggleSection = (section: string) => {
@@ -142,7 +183,9 @@ export default function FacultyFilterSheet({
     selectedSubjects.length > 0 ||
     selectedBoards.length > 0 ||
     selectedCities.length > 0 ||
-    selectedSources.length > 0 ||
+    selectedStates.length > 0 ||
+    selectedJobTypes.length > 0 ||
+    selectedPortals.length > 0 ||
     minSalaryFilter > 0 ||
     urgentOnly;
 
@@ -376,6 +419,104 @@ export default function FacultyFilterSheet({
           )}
         </div>
 
+        {/* 4. Employment / Job Type (Full Time, Part Time, Remote/Online, Offline) */}
+        {toggleJobType && (
+          <div id="filter-jobtype" className="pt-4 space-y-2.5 scroll-mt-3">
+            <button
+              type="button"
+              onClick={() => toggleSection('jobType')}
+              className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
+            >
+              <span className="flex items-center gap-1.5">
+                <span>Job Type / Work Mode</span>
+                {selectedJobTypes.length > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-blue-600" />
+                )}
+              </span>
+              {openSections.jobType ? (
+                <ChevronUp className="w-4 h-4 text-slate-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              )}
+            </button>
+
+            {openSections.jobType && (
+              <div className="space-y-2 pt-1 animate-in fade-in duration-150">
+                {JOB_TYPE_OPTIONS.map((opt) => {
+                  const isChecked = selectedJobTypes.includes(opt.id);
+                  return (
+                    <label
+                      key={opt.id}
+                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleJobType(opt.id)}
+                          className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                        />
+                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                          {opt.label}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 5. Source Portal (Naukri, Indeed, LinkedIn, Direct Portal) */}
+        {togglePortal && (
+          <div id="filter-portal" className="pt-4 space-y-2.5 scroll-mt-3">
+            <button
+              type="button"
+              onClick={() => toggleSection('portal')}
+              className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
+            >
+              <span className="flex items-center gap-1.5">
+                <span>Source Portal</span>
+                {selectedPortals.length > 0 && (
+                  <span className="w-2 h-2 rounded-full bg-blue-600" />
+                )}
+              </span>
+              {openSections.portal ? (
+                <ChevronUp className="w-4 h-4 text-slate-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+              )}
+            </button>
+
+            {openSections.portal && (
+              <div className="space-y-2 pt-1 animate-in fade-in duration-150">
+                {PORTAL_OPTIONS.map((opt) => {
+                  const isChecked = selectedPortals.includes(opt.id);
+                  return (
+                    <label
+                      key={opt.id}
+                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => togglePortal(opt.id)}
+                          className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                        />
+                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                          {opt.label}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* 4. Salary / Compensation */}
         {activeTab === 'jobs' && (
           <div id="filter-salary" className="pt-4 space-y-2.5 scroll-mt-3">
@@ -479,60 +620,58 @@ export default function FacultyFilterSheet({
           )}
         </div>
 
-        {/* 6. Aggregated Job Portals (Naukri, LinkedIn, etc.) */}
-        {activeTab === 'jobs' && (
-          <div id="filter-source" className="pt-4 space-y-2.5 scroll-mt-3">
-            <button
-              type="button"
-              onClick={() => toggleSection('source')}
-              className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
-            >
-              <span className="flex items-center gap-1.5">
-                <span>Job Source</span>
-                {selectedSources.length > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-blue-600" />
-                )}
-              </span>
-              {openSections.source ? (
-                <ChevronUp className="w-4 h-4 text-slate-400" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-slate-400" />
+        {/* 6. Indian States & Union Territories Filter */}
+        <div id="filter-state" className="pt-4 space-y-2.5 scroll-mt-3">
+          <button
+            type="button"
+            onClick={() => toggleSection('state')}
+            className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
+          >
+            <span className="flex items-center gap-1.5">
+              <span>State / UT</span>
+              {selectedStates.length > 0 && (
+                <span className="w-2 h-2 rounded-full bg-blue-600" />
               )}
-            </button>
-
-            {openSections.source && (
-              <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-                {SOURCE_OPTIONS.map((opt) => {
-                  const count = dynamicCounts.sources[opt.id] || 0;
-                  const isChecked = selectedSources.includes(opt.id);
-                  return (
-                    <label
-                      key={opt.id}
-                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleSource(opt.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
-                        />
-                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
-                          {opt.label}
-                        </span>
-                      </div>
-                      {count > 0 && (
-                        <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
-                          ({count})
-                        </span>
-                      )}
-                    </label>
-                  );
-                })}
-              </div>
+            </span>
+            {openSections.state ? (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
             )}
-          </div>
-        )}
+          </button>
+
+          {openSections.state && (
+            <div className="space-y-2 pt-1 max-h-56 overflow-y-auto custom-scrollbar pr-1 animate-in fade-in duration-150">
+              {STATE_OPTIONS.map((opt) => {
+                const count = dynamicCounts.states[opt.id] || 0;
+                const isChecked = selectedStates.includes(opt.id);
+                return (
+                  <label
+                    key={opt.id}
+                    className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleState(opt.id)}
+                        className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                      />
+                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                        {opt.label}
+                      </span>
+                    </div>
+                    {count > 0 && (
+                      <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
+                        ({count})
+                      </span>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
         {/* 7. Urgency Tag */}
         <div id="filter-urgent" className="pt-4 scroll-mt-3">

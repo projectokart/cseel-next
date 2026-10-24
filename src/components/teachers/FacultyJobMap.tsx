@@ -10,6 +10,7 @@ import {
   Plus, Minus, Maximize2, List, Columns2, ChevronUp, ChevronDown, Bookmark, CheckCircle2, Globe
 } from 'lucide-react';
 import Link from 'next/link';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
 
 interface FacultyJobMapProps {
   activeTab: 'jobs' | 'faculty';
@@ -652,8 +653,12 @@ export default function FacultyJobMap({
       {activeOpportunityIndex !== null && (activeJob || activeFaculty) && (
         <div className="hidden md:block absolute bottom-6 left-6 z-20 w-88 bg-white/98 backdrop-blur-md rounded-2xl border border-slate-200 p-4 shadow-xl space-y-2.5">
           <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EDF5FA] text-[#005689] border border-[#005689]/20 truncate">
-              {activeJob ? `${activeJob.designation} · ${activeJob.subject}` : `${activeFaculty?.designation} · ${activeFaculty?.subject}`}
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border truncate ${
+              activeJob
+                ? getSourceBadgeColor(activeJob.source)
+                : 'bg-[#EDF5FA] text-[#005689] border-[#005689]/20'
+            }`}>
+              {activeJob ? getSourceDisplayName(activeJob.source) : `${activeFaculty?.designation} · ${activeFaculty?.subject}`}
             </span>
             <button
               type="button"
@@ -667,12 +672,12 @@ export default function FacultyJobMap({
           {activeJob && (
             <div className="space-y-1.5">
               <h4 className="text-xs font-bold text-[#003c6e] line-clamp-1">{activeJob.jobPostName}</h4>
-              <div className="text-[11px] font-medium text-slate-700">{activeJob.organisationName}</div>
-              <div className="text-[10.5px] text-slate-500 flex items-center gap-1">
-                <MapPin size={11} className="text-amber-600" />
-                <span>{[activeJob.state, activeJob.city, activeJob.address].filter(Boolean).join(', ')}</span>
+              <div className="text-[11px] font-medium text-slate-700 truncate">{activeJob.organisationName}</div>
+              <div className="text-[10.5px] text-slate-500 flex items-center gap-1 min-w-0">
+                <MapPin size={11} className="text-amber-600 shrink-0" />
+                <span className="truncate">{formatStructuredAddress(activeJob)}</span>
               </div>
-              <div className="text-xs font-bold text-emerald-700 pt-0.5">{activeJob.salary}</div>
+              <div className="text-xs font-bold text-emerald-700 pt-0.5">{formatCleanSalary(activeJob.salary, true)}</div>
               <div className="flex items-center gap-2 pt-1">
                 <a
                   href={activeJob.originalUrl}
@@ -680,7 +685,7 @@ export default function FacultyJobMap({
                   rel="noopener noreferrer"
                   className="flex-1 py-1.5 px-3 bg-[#006FCC] hover:bg-[#005399] text-white rounded-xl text-[11px] font-bold text-center transition flex items-center justify-center gap-1"
                 >
-                  <span>Apply on {activeJob.source}</span>
+                  <span>Apply</span>
                   <ExternalLink size={11} />
                 </a>
                 <Link
@@ -831,81 +836,84 @@ export default function FacultyJobMap({
                 const job = item as FacultyJobItem;
                 const isSaved = savedJobIds.includes(job.id);
                 const isSelected = activeOpportunityIndex === idx;
-                const fullAddress = [job.state, job.city, job.address].filter(Boolean).join(', ');
-                const mapLink = job.mapUrl || (job.coordinates?.lat && job.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.organisationName + ', ' + fullAddress)}` : null);
+                const structuredAddress = formatStructuredAddress(job);
+                const sourceDisplayName = getSourceDisplayName(job.source);
+                const sourceBadgeColor = getSourceBadgeColor(job.source);
+                const cardTags = [job.designation, job.subject, job.board, job.roleType].filter(Boolean);
+                const mapLink = job.mapUrl || (job.coordinates?.lat && job.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.organisationName + ', ' + structuredAddress)}` : null);
                 const websiteLink = job.websiteUrl || job.website;
 
                 return (
                   <div
                     key={job.id}
                     onClick={() => handleSelectCard(idx)}
-                    className={`p-3 bg-white border rounded-xl transition-all shadow-2xs space-y-2 cursor-pointer ${
+                    className={`p-3.5 bg-white border rounded-2xl transition-all shadow-2xs space-y-2.5 cursor-pointer ${
                       isSelected ? 'border-[#006FCC] ring-1 ring-[#006FCC]/40 bg-blue-50/20' : 'border-[#dadce0] hover:border-[#006FCC]'
                     }`}
                   >
                     <div className="flex items-start gap-3 min-w-0">
-                      <div className="w-12 h-12 rounded-xl border border-slate-200 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs">
+                      <div className="w-11 h-11 rounded-xl border border-slate-200 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs">
                         <img
                           src={job.organisationLogo || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80"}
                           alt={job.organisationName}
                           className="w-full h-full object-contain"
                         />
                       </div>
-                      <div className="min-w-0 flex-1 space-y-0.5">
-                        <h4 className="font-['Montserrat',sans-serif] font-bold text-[13.5px] text-[#0A66C2] hover:underline line-clamp-1 block">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <h4 className="font-['Montserrat',sans-serif] font-bold text-[14px] text-slate-900 hover:text-[#0A66C2] line-clamp-1 block">
                           {job.jobPostName}
                         </h4>
-                        {/* Full School Name */}
-                        <div className="text-[12px] font-medium text-slate-800 break-words leading-tight" title={job.organisationName}>
-                          {job.organisationName}
-                        </div>
-                        {/* Full Address: Max 2 lines */}
-                        <div className="text-[11px] text-slate-500 flex items-start gap-1 font-['Montserrat',sans-serif] leading-snug">
-                          <MapPin size={11} className="text-amber-600 shrink-0 mt-0.5" />
-                          <span className="line-clamp-2 break-words">{fullAddress}</span>
-                        </div>
-
-                        {/* Salary (Green) & Subject (Blue) - Clean Inline Text, NO Clunky Boxes */}
-                        <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
-                          <span className="font-bold text-emerald-600 text-[12px] sm:text-[12.5px]">
-                            {job.salary}
+                        
+                        {/* School Name + Very small source tag */}
+                        <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-700">
+                          <span className="font-semibold text-slate-800 truncate" title={job.organisationName}>
+                            {job.organisationName}
                           </span>
-                          <span className="text-slate-300">•</span>
-                          <span className="font-semibold text-[#006FCC] text-[11px] sm:text-[11.5px]">
-                            {job.designation ? `${job.designation} · ` : ''}{job.subject}
+                          <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sourceBadgeColor}`}>
+                            {sourceDisplayName}
                           </span>
-                        </div>
-
-                        {/* Opening Date & Due Date (ALWAYS SHOW BOTH) */}
-                        <div className="text-[9.5px] text-slate-500 font-medium font-mono flex items-center gap-1.5 pt-0.5">
-                          <span>Posted: {job.openingDate}</span>
-                          <span className="text-slate-300">•</span>
-                          <span className="text-amber-700 font-semibold">Due: {job.lastDate}</span>
-                        </div>
-
-                        {/* Tags: Light highlighter tint, NO borders, compact */}
-                        <div className="flex items-center gap-1 flex-wrap pt-0.5">
-                          {/* Requirement / Experience Tags */}
-                          {getJobRequirementTags(job).map((req, rIdx) => (
-                            <span
-                              key={`req-${rIdx}`}
-                              className="text-[9.5px] px-1.5 py-0.5 rounded bg-blue-50/90 text-[#005689] font-medium whitespace-nowrap"
-                            >
-                              {req}
-                            </span>
-                          ))}
-                          {/* School Teacher Facilities / Allowances: Soft Purple Highlighter Tint (NO Green, NO borders) */}
-                          {getJobFacilityTags(job).map((facility, fIdx) => (
-                            <span
-                              key={`fac-${fIdx}`}
-                              className="text-[9.5px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 font-medium whitespace-nowrap"
-                            >
-                              {facility}
-                            </span>
-                          ))}
                         </div>
                       </div>
                     </div>
+
+                    {/* Parameters with Icons & Vertical Lines */}
+                    <div className="flex items-center gap-2 text-slate-600 text-[11.5px] font-medium flex-wrap pt-0.5">
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Briefcase size={12} className="text-slate-400 shrink-0" />
+                        <span>{job.minExperience ? `${job.minExperience}` : '0-3 Yrs'}</span>
+                      </div>
+                      <span className="text-slate-300">|</span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <IndianRupee size={11} className="text-slate-400 shrink-0" />
+                        <span className={job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'font-semibold text-slate-800' : 'text-slate-400'}>
+                          {formatCleanSalary(job.salary, false)}
+                        </span>
+                      </div>
+                      <span className="text-slate-300">|</span>
+                      <div className="flex items-center gap-1 min-w-0 flex-1 truncate">
+                        <MapPin size={12} className="text-slate-400 shrink-0" />
+                        <span className="truncate" title={structuredAddress}>{structuredAddress}</span>
+                      </div>
+                    </div>
+
+                    {/* Short Description */}
+                    {job.shortDescription && (
+                      <div className="flex items-start gap-1.5 text-slate-500 text-[11px] leading-snug line-clamp-1">
+                        <span className="truncate">{job.shortDescription}</span>
+                      </div>
+                    )}
+
+                    {/* Dot-separated clean tags */}
+                    {cardTags.length > 0 && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium flex-wrap">
+                        {cardTags.map((tag, tIdx, arr) => (
+                          <React.Fragment key={tIdx}>
+                            <span>{tag}</span>
+                            {tIdx < arr.length - 1 && <span className="text-slate-300">•</span>}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Action Buttons Row: Like, Share, Map, Website, Details, Apply (NO description) */}
                     <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>

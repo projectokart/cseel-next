@@ -17,8 +17,9 @@
 import fs from 'fs';
 import path from 'path';
 import { FacultyJobItem } from '@/data/facultyJobsData';
+import geoData from '@/data/india_geo_centroids.json';
 
-export type JobSourcePortal = "Indeed" | "LinkedIn" | "Naukri.com" | "TimesJobs" | "Direct School Portal";
+export type JobSourcePortal = "Indeed" | "LinkedIn" | "Naukri.com" | "Apna.co" | "Foundit" | "Shine.com" | "TeacherON" | "EducoHire" | "TimesJobs" | "DAV CMC" | "AWES India" | "KVS / NVS" | "Direct School Portal" | string;
 
 export interface RawJobInput {
   rawTitle: string;
@@ -82,83 +83,94 @@ export const INDIAN_CITIES_GEO: Record<string, { state: string; lat: number; lng
   'karnal': { state: 'Haryana', lat: 29.6857, lng: 76.9905 },
 };
 
-// ── 2. Verified School Group Brand Logos ─────────────────────────────────────
-export const SCHOOL_BRAND_LOGOS: Record<string, string> = {
-  'dps': 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=100&auto=format&fit=crop&q=80',
-  'delhi public school': 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=100&auto=format&fit=crop&q=80',
-  'heritage': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=100&auto=format&fit=crop&q=80',
-  'the heritage school': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=100&auto=format&fit=crop&q=80',
-  'shiv nadar': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&auto=format&fit=crop&q=80',
-  'ryan international': 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=100&auto=format&fit=crop&q=80',
-  'amity': 'https://images.unsplash.com/photo-1562774053-701939374585?w=100&auto=format&fit=crop&q=80',
-  'dav': 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&auto=format&fit=crop&q=80',
-  'army public school': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=100&auto=format&fit=crop&q=80',
-  'kendriya vidyalaya': 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=100&auto=format&fit=crop&q=80',
-  'gd goenka': 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=100&auto=format&fit=crop&q=80',
-  'pathways': 'https://images.unsplash.com/photo-1519452635265-7b1fbfd1e4e0?w=100&auto=format&fit=crop&q=80',
-  'st xavier': 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=100&auto=format&fit=crop&q=80',
-  'default_school': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=100&auto=format&fit=crop&q=80',
-};
+// ── 2. Verified School Group Brand Logos (No fake stock photos) ──────────────
+export const SCHOOL_BRAND_LOGOS: Record<string, string> = {};
 
-// ── 3. Normalization & Card Sanitization Logic ────────────────────────────────
+function anyWordIn(text: string, words: string[]): boolean {
+  const lower = text.toLowerCase();
+  return words.some(w => lower.includes(w));
+}
+
+// ── 3. Normalization & Card Sanitization Logic (Zero Guesswork / Zero Fallback) ─
 export class JobCardExtractor {
 
   /**
-   * Normalizes designation and subject from freeform text
+   * Normalizes designation and subject strictly from freeform text without guessing
    */
   static parseDesignationAndSubject(title: string, desc: string = ''): {
-    designation: FacultyJobItem['designation'];
-    subject: FacultyJobItem['subject'];
-    board: FacultyJobItem['board'];
-    roleType: FacultyJobItem['roleType'];
+    designation?: FacultyJobItem['designation'];
+    subject?: FacultyJobItem['subject'];
+    board?: FacultyJobItem['board'];
+    roleType?: FacultyJobItem['roleType'];
   } {
     const combined = `${title} ${desc}`.toLowerCase();
 
-    // Designation extraction
-    let designation: FacultyJobItem['designation'] = 'TGT';
-    if (/\b(pgt|post\s*graduate\s*teacher|senior\s*secondary|xi|xii|11th|12th)\b/.test(combined)) {
+    // 1. Strict Designation extraction (NEET/JEE & Coaching handled first)
+    let designation: FacultyJobItem['designation'] = undefined;
+    if (/\b(neet|jee|iit\s*-?\s*jee|foundation|coaching|entrance)\b/.test(combined)) {
+      designation = 'NEET & JEE Faculty';
+    } else if (/\b(pgt|post\s*graduate\s*teacher|senior\s*secondary|class\s*(?:11|12|xi|xii))\b/.test(combined)) {
       designation = 'PGT';
-    } else if (/\b(tgt|trained\s*graduate\s*teacher|secondary|middle\s*school|6th|7th|8th|9th|10th)\b/.test(combined)) {
+    } else if (/\b(tgt|trained\s*graduate\s*teacher|middle\s*school|class\s*(?:6|7|8|9|10|vi|vii|viii|ix|x))\b/.test(combined)) {
       designation = 'TGT';
-    } else if (/\b(prt|primary\s*teacher|junior\s*school|primary|foundation|class\s*1\s*to\s*5)\b/.test(combined)) {
+    } else if (/\b(prt|primary\s*teacher|junior\s*wing|primary\s*wing|class\s*(?:1|2|3|4|5|i|ii|iii|iv|v))\b/.test(combined)) {
       designation = 'PRT';
-    } else if (/\b(atl\s*mentor|tinkering|robotics\s*trainer|maker|steam\s*mentor)\b/.test(combined)) {
+    } else if (/\b(nursery|pre[\s-]*primary|ntt|kindergarten|mother\s*teacher)\b/.test(combined)) {
+      designation = 'Pre-Primary / Nursery';
+    } else if (/\b(atl\s*mentor|robotics\s*trainer|stem\s*mentor|tinkering)\b/.test(combined)) {
       designation = 'ATL Mentor';
-    } else if (/\b(lab\s*in-charge|lab\s*assistant|lab\s*attendant|laboratory)\b/.test(combined)) {
+    } else if (/\b(lab\s*assistant|lab\s*in-charge|laboratory\s*assistant)\b/.test(combined)) {
       designation = 'Lab In-Charge';
-    } else if (/\b(coordinator|headmistress|vice\s*principal|principal|hod)\b/.test(combined)) {
-      designation = 'Coordinator';
+    } else if (/\b(principal|vice\s*principal|headmistress|academic\s*coordinator|hod)\b/.test(combined)) {
+      designation = 'Academic Leadership';
     }
 
-    // Subject extraction
-    let subject: FacultyJobItem['subject'] = 'General Science';
-    if (/\b(physic|physics)\b/.test(combined)) {
-      subject = 'Physics';
-    } else if (/\b(chemist|chemistry)\b/.test(combined)) {
-      subject = 'Chemistry';
-    } else if (/\b(biolog|biology|botany|zoology|life\s*science)\b/.test(combined)) {
-      subject = 'Biology';
-    } else if (/\b(math|mathematics|applied\s*math)\b/.test(combined)) {
-      subject = 'Mathematics';
-    } else if (/\b(robot|robotics|artificial\s*intelligence|\bai\b|iot|arduino)\b/.test(combined)) {
-      subject = 'Robotics & AI';
-    } else if (/\b(computer|informatics|python|coding|cs|ip)\b/.test(combined)) {
-      subject = 'Computer Science';
-    } else if (/\b(composite\s*lab|stem|steam|hands-on|tinkerer)\b/.test(combined)) {
-      subject = 'Composite Lab';
+    // 2. Strict Subject extraction
+    const foundSubjs: string[] = [];
+    if (/\b(physic|physics)\b/.test(combined)) foundSubjs.push('Physics');
+    if (/\b(chemist|chemistry)\b/.test(combined)) foundSubjs.push('Chemistry');
+    if (/\b(math|maths|mathematics|calculus)\b/.test(combined)) foundSubjs.push('Mathematics');
+    if (/\b(biolog|biology|botany|zoology)\b/.test(combined)) foundSubjs.push('Biology');
+    if (/\b(english|literature)\b/.test(combined)) foundSubjs.push('English');
+    if (/\b(hindi)\b/.test(combined)) foundSubjs.push('Hindi');
+    if (/\b(sanskrit)\b/.test(combined)) foundSubjs.push('Sanskrit');
+    if (/\b(social\s*studies|social\s*science|sst)\b/.test(combined)) foundSubjs.push('Social Studies (SST)');
+    if (/\b(history)\b/.test(combined)) foundSubjs.push('History');
+    if (/\b(geography)\b/.test(combined)) foundSubjs.push('Geography');
+    if (/\b(political\s*science|civics)\b/.test(combined)) foundSubjs.push('Political Science');
+    if (/\b(economics)\b/.test(combined)) foundSubjs.push('Economics');
+    if (/\b(commerce|accountancy|business\s*studies)\b/.test(combined)) foundSubjs.push('Commerce');
+    if (/\b(computer|informatics|python|coding|\bcs\b|\bit\b|artificial\s*intelligence|\bai\b)\b/.test(combined)) foundSubjs.push('Computer Science & AI');
+
+    let subject: FacultyJobItem['subject'] = undefined;
+    if (foundSubjs.length > 2) {
+      subject = (foundSubjs.includes('Physics') && foundSubjs.includes('Chemistry') && foundSubjs.includes('Mathematics'))
+        ? 'Physics, Chemistry & Math'
+        : foundSubjs.slice(0, 3).join(', ');
+    } else if (foundSubjs.length === 2) {
+      subject = `${foundSubjs[0]} & ${foundSubjs[1]}`;
+    } else if (foundSubjs.length === 1) {
+      subject = foundSubjs[0];
+    } else if (/\b(science|general\s*science)\b/.test(combined)) {
+      subject = 'Science';
     }
 
-    // Board detection
-    let board: FacultyJobItem['board'] = 'CBSE';
+    // 3. Strict Board detection (NEVER default to CBSE)
+    let board: FacultyJobItem['board'] = undefined;
     if (/\b(icse|isc|cisce)\b/.test(combined)) {
       board = 'ICSE';
     } else if (/\b(cambridge|ib|international\s*baccalaureate|igcse)\b/.test(combined)) {
       board = 'Cambridge / IB';
     } else if (/\b(state\s*board|haryana\s*board|up\s*board|maharashtra\s*board)\b/.test(combined)) {
       board = 'State Board';
+    } else if (/\b(cbse)\b/.test(combined)) {
+      // For NEET & JEE roles, only tag CBSE if explicit in school name or title
+      if (designation !== 'NEET & JEE Faculty' || /\bcbse\b/.test(title.toLowerCase())) {
+        board = 'CBSE';
+      }
     }
 
-    // Role type
+    // 4. Role type
     let roleType: FacultyJobItem['roleType'] = 'Full-Time';
     if (/\b(part[\s-]*time|visiting|guest|contractual|hourly)\b/.test(combined)) {
       roleType = 'Part-Time';
@@ -172,60 +184,108 @@ export class JobCardExtractor {
   }
 
   /**
-   * Normalizes salary into clean standard Indian LPA or Monthly format
+   * Normalizes salary strictly into single annual scale for accurate comparison.
+   * Never synthesizes fake numbers! If not disclosed, returns "---".
    */
   static parseSalary(rawSalary?: string, designation?: string): {
     salary: string;
-    salaryMin: number;
-    salaryMax: number;
+    salaryMin?: number;
+    salaryMax?: number;
+    salaryPeriod?: 'monthly' | 'yearly';
   } {
-    if (!rawSalary || rawSalary.toLowerCase().includes('not disclosed') || rawSalary.toLowerCase().includes('competitive') || rawSalary.toLowerCase().includes('best in')) {
-      // Benchmark based on designation
-      if (designation === 'PGT') {
-        return { salary: '₹6.5 - ₹9.5 LPA', salaryMin: 650000, salaryMax: 950000 };
-      } else if (designation === 'TGT') {
-        return { salary: '₹4.8 - ₹7.2 LPA', salaryMin: 480000, salaryMax: 720000 };
-      } else if (designation === 'PRT') {
-        return { salary: '₹3.6 - ₹5.4 LPA', salaryMin: 360000, salaryMax: 540000 };
-      } else if (designation === 'ATL Mentor') {
-        return { salary: '₹5.0 - ₹8.0 LPA', salaryMin: 500000, salaryMax: 800000 };
-      }
-      return { salary: '₹4.5 - ₹7.0 LPA', salaryMin: 450000, salaryMax: 700000 };
+    if (!rawSalary || anyWordIn(rawSalary, ['not disclosed', 'competitive', 'best in', 'as per', 'negotiable', '---'])) {
+      return { salary: '---' };
     }
 
-    const clean = rawSalary.replace(/[,\s]/g, '');
-    const lpaMatch = rawSalary.match(/(\d+(?:\.\d+)?)\s*(?:-|to)\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakh|lac)/i);
+    const clean = rawSalary.replace(/[₹,\s]|rs\.?|inr/gi, '');
+    const isMonthly = /\b(?:month|monthly|mo|p\.m\.|pm)\b/i.test(rawSalary);
+
+    // 1. LPA range e.g. "12.0-18.0lpa" or "4.5to7.5lakhs"
+    const lpaMatch = clean.match(/(\d+(?:\.\d+)?)[-–—to]+(\d+(?:\.\d+)?)(?:lpa|lakhs?|lac)/i);
     if (lpaMatch) {
-      const min = parseFloat(lpaMatch[1]);
-      const max = parseFloat(lpaMatch[2]);
+      const mn = parseFloat(lpaMatch[1]);
+      const mx = parseFloat(lpaMatch[2]);
       return {
-        salary: `₹${min.toFixed(1)} - ₹${max.toFixed(1)} LPA`,
-        salaryMin: Math.round(min * 100000),
-        salaryMax: Math.round(max * 100000)
+        salary: `₹${mn.toFixed(1)} - ₹${mx.toFixed(1)} LPA`,
+        salaryMin: Math.round(mn * 100000),
+        salaryMax: Math.round(mx * 100000),
+        salaryPeriod: 'yearly'
       };
     }
 
-    const monthlyMatch = rawSalary.match(/(\d{2,3})(?:000)?\s*(?:-|to)\s*(\d{2,3})(?:000)?/i);
-    if (monthlyMatch && rawSalary.toLowerCase().includes('month')) {
-      const minK = parseInt(monthlyMatch[1]) * 1000;
-      const maxK = parseInt(monthlyMatch[2]) * 1000;
+    const singleLpa = clean.match(/(\d+(?:\.\d+)?)(?:lpa|lakhs?|lac)/i);
+    if (singleLpa) {
+      const val = parseFloat(singleLpa[1]);
       return {
-        salary: `₹${(minK/1000)}k - ₹${(maxK/1000)}k/mo`,
-        salaryMin: minK * 12,
-        salaryMax: maxK * 12
+        salary: `₹${val.toFixed(1)} LPA`,
+        salaryMin: Math.round(val * 100000),
+        salaryMax: Math.round(val * 100000),
+        salaryPeriod: 'yearly'
       };
     }
 
-    // Default clean output if non-empty
-    return {
-      salary: rawSalary.startsWith('₹') ? rawSalary : `₹${rawSalary}`,
-      salaryMin: 400000,
-      salaryMax: 700000
-    };
+    // 2. Numeric range e.g. "20000-30000" or "25k-45k"
+    const rangeMatch = clean.match(/(\d+(?:\.\d+)?)(k)?[-–—to]+(\d+(?:\.\d+)?)(k)?/i);
+    if (rangeMatch) {
+      const val1 = parseFloat(rangeMatch[1]);
+      const k1 = Boolean(rangeMatch[2]);
+      const val2 = parseFloat(rangeMatch[3]);
+      const k2 = Boolean(rangeMatch[4]);
+
+      const n1 = Math.round(k1 || (val1 < 500 && !isMonthly) ? val1 * 1000 : val1);
+      const n2 = Math.round(k2 || (val2 < 500 && !isMonthly) ? val2 * 1000 : val2);
+
+      if (isMonthly || (n2 <= 150000 && !clean.toLowerCase().includes('lpa') && !clean.toLowerCase().includes('annum'))) {
+        const d1 = n1 >= 1000 ? `${Math.round(n1/1000)}k` : `${n1}`;
+        const d2 = n2 >= 1000 ? `${Math.round(n2/1000)}k` : `${n2}`;
+        return {
+          salary: `₹${d1} - ₹${d2}/mo`,
+          salaryMin: n1 * 12,
+          salaryMax: n2 * 12,
+          salaryPeriod: 'monthly'
+        };
+      } else {
+        const lMin = n1 >= 100000 ? `₹${(n1/100000).toFixed(1)}` : `₹${n1}`;
+        const lMax = n2 >= 100000 ? `₹${(n2/100000).toFixed(1)} LPA` : `₹${n2} P.A.`;
+        return {
+          salary: `${lMin} - ${lMax}`,
+          salaryMin: n1,
+          salaryMax: n2,
+          salaryPeriod: 'yearly'
+        };
+      }
+    }
+
+    // 3. Single numeric figure
+    const singleFig = clean.match(/(\d+(?:\.\d+)?)(k)?/i);
+    if (singleFig) {
+      const val = parseFloat(singleFig[1]);
+      const k = Boolean(singleFig[2]);
+      const n = Math.round(k ? val * 1000 : val);
+      if (isMonthly || (n <= 120000 && !clean.toLowerCase().includes('annum'))) {
+        const d = n >= 1000 ? `${Math.round(n/1000)}k` : `${n}`;
+        return {
+          salary: `₹${d}/mo`,
+          salaryMin: n * 12,
+          salaryMax: n * 12,
+          salaryPeriod: 'monthly'
+        };
+      } else {
+        return {
+          salary: n >= 100000 ? `₹${(n/100000).toFixed(1)} LPA` : `₹${n} P.A.`,
+          salaryMin: n,
+          salaryMax: n,
+          salaryPeriod: 'yearly'
+        };
+      }
+    }
+
+    return { salary: '---' };
   }
 
   /**
-   * Resolves location, city, state, and coordinates for Map button
+   * Resolves location, city, state, and coordinates with zero fallback to Delhi NCR.
+   * Matches 102+ key cities or 37 Indian States/UTs centroids!
    */
   static parseLocation(rawLoc: string = '', rawCity?: string, rawState?: string): {
     city: string;
@@ -233,42 +293,54 @@ export class JobCardExtractor {
     address: string;
     coordinates: { lat: number; lng: number };
   } {
-    const locLower = `${rawLoc} ${rawCity || ''} ${rawState || ''}`.toLowerCase();
+    const combined = `${rawLoc} ${rawCity || ''} ${rawState || ''}`.toLowerCase();
 
-    for (const [cityName, info] of Object.entries(INDIAN_CITIES_GEO)) {
-      if (locLower.includes(cityName)) {
-        const capitalizedCity = cityName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        const cleanAddress = rawLoc.trim() ? rawLoc.trim() : `${capitalizedCity}, ${info.state}`;
+    // 1. Precise City Match from expanded geo database
+    const citiesDict = (geoData as any).cities || {};
+    for (const [cityName, info] of Object.entries(citiesDict)) {
+      if (combined.includes(cityName)) {
+        const capitalizedCity = cityName.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        const itemInfo = info as any;
         return {
           city: capitalizedCity,
-          state: info.state,
-          address: cleanAddress,
+          state: itemInfo.state,
+          address: rawLoc.trim() || `${capitalizedCity}, ${itemInfo.state}`,
+          coordinates: { lat: itemInfo.lat, lng: itemInfo.lng }
+        };
+      }
+    }
+
+    // 2. State Centroid Match from expanded 37 State centroids
+    const statesDict = (geoData as any).state_centroids || {};
+    for (const [stName, stInfo] of Object.entries(statesDict)) {
+      if (combined.includes(stName.toLowerCase())) {
+        const info = stInfo as any;
+        return {
+          city: rawCity || info.capital || stName,
+          state: stName,
+          address: rawLoc.trim() || `${rawCity || info.capital}, ${stName}`,
           coordinates: { lat: info.lat, lng: info.lng }
         };
       }
     }
 
-    // Default to Delhi NCR educational cluster
+    // 3. True All-India Center (Nagpur Geographical Center of India)
     return {
-      city: 'Delhi NCR',
-      state: 'Delhi',
-      address: rawLoc.trim() || 'Delhi NCR, India',
-      coordinates: { lat: 28.6139, lng: 77.2090 }
+      city: rawCity || 'India',
+      state: rawState || 'All India',
+      address: rawLoc.trim() || 'India',
+      coordinates: { lat: 20.5937, lng: 78.9629 }
     };
   }
 
   /**
-   * Resolves school logo with intelligent fallback
+   * Resolves school logo - only keeps authentic URLs, never falls back to stock photos
    */
-  static resolveLogo(schoolName: string, customLogo?: string): string {
-    if (customLogo && customLogo.startsWith('http')) return customLogo;
-    const nameLower = schoolName.toLowerCase();
-    for (const [key, logo] of Object.entries(SCHOOL_BRAND_LOGOS)) {
-      if (nameLower.includes(key)) {
-        return logo;
-      }
+  static resolveLogo(schoolName: string, customLogo?: string): string | undefined {
+    if (customLogo && customLogo.startsWith('http') && !customLogo.includes('unsplash.com')) {
+      return customLogo;
     }
-    return SCHOOL_BRAND_LOGOS['default_school'];
+    return undefined;
   }
 
   /**
@@ -281,7 +353,7 @@ export class JobCardExtractor {
     const organisationLogo = this.resolveLogo(input.rawSchoolName, input.logoUrl);
 
     // Slug generation
-    const slugBase = `${input.portal.toLowerCase()}-${input.rawSchoolName}-${designation}-${subject}`
+    const slugBase = `${input.portal.toLowerCase()}-${input.rawSchoolName}-${designation || 'role'}-${subject || 'faculty'}`
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
@@ -289,31 +361,23 @@ export class JobCardExtractor {
 
     const id = `job-${slugBase}-${Math.random().toString(36).substring(2, 6)}`;
 
-    // Experience parsing
-    let minExperience = "1-3 yrs";
+    // Experience parsing (zero guessing: only if explicitly specified)
+    let minExperience: string | undefined = undefined;
     if (input.rawExperience) {
-      minExperience = String(input.rawExperience).replace(/years?|exp/gi, '').trim();
-      if (!minExperience.includes('yr')) minExperience += ' yrs';
-    } else if (designation === 'PGT') {
-      minExperience = "Min 3 yrs";
-    } else if (designation === 'TGT') {
-      minExperience = "Min 2 yrs";
-    } else {
-      minExperience = "Min 1 yr";
+      const expStr = String(input.rawExperience).replace(/years?|exp/gi, '').trim();
+      if (expStr) {
+        minExperience = expStr.includes('yr') ? expStr : `${expStr} yrs`;
+      }
     }
 
-    // Opening & deadline dates
-    const today = new Date();
-    const openingDate = input.postedDateStr || today.toISOString().split('T')[0];
-    
-    // Default 30-day deadline
-    const deadlineDate = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const lastDate = input.deadlineDateStr || deadlineDate;
+    // Opening & deadline dates (strictly zero-guesswork: only if provided by source)
+    const openingDate = input.postedDateStr || undefined;
+    const lastDate = input.deadlineDateStr || undefined;
 
-    // Concise clean card description (1-2 sentences max)
+    // Clean card description without fake marketing text
     const shortDescription = input.rawDescription
       ? input.rawDescription.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim().slice(0, 180) + '...'
-      : `Reputed ${board} institution inviting applications for ${designation} ${subject}. Excellent teaching environment and competitive benefits.`;
+      : `${input.rawSchoolName.trim()} is hiring for ${input.rawTitle.trim()} in ${city}, ${state}.`;
 
     const cardItem: FacultyJobItem = {
       id,
@@ -343,6 +407,63 @@ export class JobCardExtractor {
 
     return cardItem;
   }
+
+  /**
+   * Transforms raw Naukri v3 API item into strict FacultyJobItem card
+   */
+  static fromNaukri(item: any): FacultyJobItem {
+    let rawSalary = '';
+    let rawExperience = '';
+    let rawLocation = '';
+
+    if (Array.isArray(item.placeholders)) {
+      for (const p of item.placeholders) {
+        if (p.type === 'salary') rawSalary = p.label || '';
+        if (p.type === 'experience') rawExperience = p.label || '';
+        if (p.type === 'location') rawLocation = p.label || '';
+      }
+    }
+
+    let sourceUrl = item.staticUrl || item.jdURL || item.applyUrl || '';
+    if (sourceUrl && !sourceUrl.startsWith('http')) {
+      sourceUrl = `https://www.naukri.com${sourceUrl.startsWith('/') ? '' : '/'}${sourceUrl}`;
+    }
+    if (!sourceUrl) {
+      sourceUrl = 'https://www.naukri.com';
+    }
+
+    const input: RawJobInput = {
+      rawTitle: item.title || item.jobTitle || 'School Faculty',
+      rawSchoolName: item.companyName || item.orgName || 'Reputed Institution',
+      rawLocation,
+      rawSalary,
+      rawExperience,
+      rawDescription: item.jobDescription || '',
+      rawSourceUrl: sourceUrl,
+      portal: 'Naukri.com',
+      logoUrl: item.logoPath || item.logo || '',
+      postedDateStr: item.createdDate ? new Date(item.createdDate).toISOString().split('T')[0] : undefined
+    };
+
+    return this.transformToCardItem(input);
+  }
+
+  /**
+   * Transforms scraped LinkedIn item into strict FacultyJobItem card
+   */
+  static fromLinkedInScraped(item: any): FacultyJobItem {
+    const input: RawJobInput = {
+      rawTitle: item.title || 'Teaching Faculty',
+      rawSchoolName: item.school || item.company || 'School Institution',
+      rawLocation: item.location || 'India',
+      rawSourceUrl: item.url || 'https://www.linkedin.com/jobs',
+      portal: 'LinkedIn',
+      logoUrl: item.logo || '',
+      postedDateStr: item.postedDate || undefined
+    };
+
+    return this.transformToCardItem(input);
+  }
 }
 
 // ── 4. Storage & Persistence Engine ──────────────────────────────────────────
@@ -362,32 +483,115 @@ export class JobAggregatorStorage {
     return [];
   }
 
-  static saveAggregatedJobs(newJobs: FacultyJobItem[]): { total: number; added: number } {
+  static saveAggregatedJobs(newJobs: FacultyJobItem[]): { total: number; added: number; purged: number } {
     try {
       const existing = this.getAggregatedJobs();
-      const existingMap = new Map<string, FacultyJobItem>();
-      
-      // Index by unique key (school + designation + subject + city)
-      for (const j of existing) {
-        const key = `${j.organisationName}_${j.designation}_${j.subject}_${j.city}`.toLowerCase();
-        existingMap.set(key, j);
-      }
+      const combined = [...existing, ...newJobs];
 
+      // 1. Strictly enforce 45-day retention rule (auto-purge expired vacancies)
+      const now = Date.now();
+      const fortyFiveDaysMs = 45 * 24 * 60 * 60 * 1000;
+      let purgedCount = 0;
+
+      const activeList = combined.filter((job) => {
+        const jobTime = new Date(job.openingDate).getTime();
+        const age = now - jobTime;
+        if (age > fortyFiveDaysMs) {
+          purgedCount++;
+          return false;
+        }
+        return true;
+      });
+
+      // 2. Strict 5-Point Deduplication System across all portals
+      const deduplicated: FacultyJobItem[] = [];
       let addedCount = 0;
-      for (const job of newJobs) {
-        const key = `${job.organisationName}_${job.designation}_${job.subject}_${job.city}`.toLowerCase();
-        if (!existingMap.has(key)) {
-          existingMap.set(key, job);
+
+      const normalizeStr = (s: string) => (s || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+
+      const isExactDuplicateJob = (a: FacultyJobItem, b: FacultyJobItem): boolean => {
+        // 1. Same Role & Subject
+        if (a.designation !== b.designation || a.subject !== b.subject) {
+          return false;
+        }
+
+        // 2. Same City & Address Location
+        if (a.city.toLowerCase() !== b.city.toLowerCase()) {
+          return false;
+        }
+        if (a.address && b.address) {
+          const secA = a.address.toLowerCase().match(/sector\s*\d+|phase\s*\d+/i)?.[0];
+          const secB = b.address.toLowerCase().match(/sector\s*\d+|phase\s*\d+/i)?.[0];
+          if (secA && secB && secA !== secB) {
+            return false; // Different branch campus
+          }
+        }
+
+        // 3. Same School Name
+        const normA = normalizeStr(a.organisationName);
+        const normB = normalizeStr(b.organisationName);
+        const nameMatch = normA === normB || normA.includes(normB) || normB.includes(normA);
+        if (!nameMatch) {
+          return false;
+        }
+
+        // 4. Same Close Posting Date Window (within 10 days)
+        const dateA = new Date(a.openingDate).getTime();
+        const dateB = new Date(b.openingDate).getTime();
+        if (!isNaN(dateA) && !isNaN(dateB)) {
+          const diffDays = Math.abs(dateA - dateB) / (1000 * 60 * 60 * 24);
+          if (diffDays > 10) {
+            return false; // Posted months apart -> separate vacancy
+          }
+        }
+
+        // 5. Matching Salary Range (if disclosed on both)
+        if (a.salaryMin && b.salaryMin && a.salaryMax && b.salaryMax) {
+          const maxMin = Math.max(a.salaryMin, b.salaryMin);
+          const minMax = Math.min(a.salaryMax, b.salaryMax);
+          if (maxMin > minMax && Math.abs(a.salaryMin - b.salaryMin) > 150000) {
+            return false; // Different compensation package -> different role
+          }
+        }
+
+        return true;
+      };
+
+      for (const job of activeList) {
+        let existingMatchIndex = -1;
+        for (let i = 0; i < deduplicated.length; i++) {
+          if (isExactDuplicateJob(deduplicated[i], job)) {
+            existingMatchIndex = i;
+            break;
+          }
+        }
+
+        if (existingMatchIndex >= 0) {
+          // Merge duplicate: keep freshest date and link
+          const ex = deduplicated[existingMatchIndex];
+          if (new Date(job.openingDate).getTime() > new Date(ex.openingDate).getTime()) {
+            ex.openingDate = job.openingDate;
+            ex.lastDate = job.lastDate;
+            ex.salary = job.salary;
+            ex.originalUrl = job.originalUrl;
+          }
+          if (job.source && !ex.source.includes(job.source)) {
+            ex.source = `${ex.source} / ${job.source}`;
+            ex.badge = `${ex.source} Verified`;
+          }
+        } else {
+          deduplicated.push(job);
           addedCount++;
         }
       }
 
-      const consolidated = Array.from(existingMap.values());
-      fs.writeFileSync(AGGREGATED_FILE_PATH, JSON.stringify(consolidated, null, 2), 'utf8');
-      return { total: consolidated.length, added: addedCount };
+      fs.writeFileSync(AGGREGATED_FILE_PATH, JSON.stringify(deduplicated, null, 2), 'utf8');
+      return { total: deduplicated.length, added: addedCount, purged: purgedCount };
     } catch (err) {
       console.error('[JobAggregatorStorage] Error saving aggregated jobs:', err);
       throw err;
     }
   }
 }
+
+export { getAnnualSalaryNumber } from '@/lib/salaryUtils';

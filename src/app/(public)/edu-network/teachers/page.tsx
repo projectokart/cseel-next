@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import TeachersClient from './Client';
-import { RAW_FACULTY_JOBS } from '@/data/facultyJobsData';
+import { getActiveFacultyJobs } from '@/data/facultyJobsData';
 import { ALL_TEACHERS } from '@/lib/eduNetworkData';
 
 export const metadata: Metadata = {
@@ -44,6 +44,8 @@ export const metadata: Metadata = {
 };
 
 export default function TeachersPage() {
+  const activeJobs = getActiveFacultyJobs();
+
   // Schema.org CollectionPage & ItemList Structured Data for Google Indexing
   const directorySchema = {
     '@context': 'https://schema.org',
@@ -54,7 +56,7 @@ export default function TeachersPage() {
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: [
-        ...RAW_FACULTY_JOBS.slice(0, 10).map((job, idx) => ({
+        ...activeJobs.slice(0, 10).map((job, idx) => ({
           '@type': 'ListItem',
           position: idx + 1,
           name: `${job.jobPostName} at ${job.organisationName}`,
@@ -62,7 +64,7 @@ export default function TeachersPage() {
         })),
         ...ALL_TEACHERS.slice(0, 10).map((teacher, idx) => ({
           '@type': 'ListItem',
-          position: RAW_FACULTY_JOBS.length + idx + 1,
+          position: Math.min(activeJobs.length, 10) + idx + 1,
           name: `${teacher.name} (${teacher.subject} Educator, ${teacher.city})`,
           url: `https://www.cseel.org/edu-network/teachers/${teacher.slug || teacher.id}`,
         }))

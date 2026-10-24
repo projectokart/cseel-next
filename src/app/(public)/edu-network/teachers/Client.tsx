@@ -23,6 +23,8 @@ import {
   getJobRequirementTags,
   getMinExperience
 } from '@/data/facultyJobsData';
+import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 
 const POPULAR_CITIES = [
@@ -205,7 +207,9 @@ export default function TeachersDirectoryClient() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedBoards, setSelectedBoards] = useState<string[]>([]);
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
-  const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  const [selectedStates, setSelectedStates] = useState<string[]>([]);
+  const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
+  const [selectedPortals, setSelectedPortals] = useState<string[]>([]);
   const [minSalaryFilter, setMinSalaryFilter] = useState<number>(0);
   const [urgentOnly, setUrgentOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'newest' | 'salary' | 'deadline' | 'experience' | 'rating'>('newest');
@@ -215,6 +219,8 @@ export default function TeachersDirectoryClient() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isMobileCityDropdownOpen, setIsMobileCityDropdownOpen] = useState<boolean>(false);
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState<boolean>(false);
+  const [locationTab, setLocationTab] = useState<'districts' | 'states'>('districts');
+  const [locationSearchInput, setLocationSearchInput] = useState<string>('');
 
   // Search popover
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -645,8 +651,20 @@ export default function TeachersDirectoryClient() {
     );
   };
 
-  const toggleSource = (id: string) => {
-    setSelectedSources((prev) =>
+  const toggleState = (id: string) => {
+    setSelectedStates((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleJobType = (id: string) => {
+    setSelectedJobTypes((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const togglePortal = (id: string) => {
+    setSelectedPortals((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
@@ -657,9 +675,18 @@ export default function TeachersDirectoryClient() {
     );
   };
 
-  // Active 30-Day Vacancies
-  const activeJobs = useMemo(() => {
-    return getActiveFacultyJobs();
+  // Active 45-Day Vacancies with real-time Supabase hydration
+  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(() => getActiveFacultyJobs());
+
+  useEffect(() => {
+    fetch('/api/jobs')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.jobs) && data.jobs.length > 0) {
+          setActiveJobs(data.jobs);
+        }
+      })
+      .catch((err) => console.warn('[Client] Jobs fetch error:', err));
   }, []);
 
   // Dynamic filter counts
@@ -668,7 +695,7 @@ export default function TeachersDirectoryClient() {
     const subCounts: Record<string, number> = {};
     const boardCounts: Record<string, number> = {};
     const cityCounts: Record<string, number> = {};
-    const sourceCounts: Record<string, number> = {};
+    const stateCounts: Record<string, number> = {};
 
     if (activeTab === 'jobs') {
       activeJobs.forEach((job) => {
@@ -676,7 +703,7 @@ export default function TeachersDirectoryClient() {
         if (job.subject) subCounts[job.subject] = (subCounts[job.subject] || 0) + 1;
         if (job.board) boardCounts[job.board] = (boardCounts[job.board] || 0) + 1;
         if (job.city) cityCounts[job.city] = (cityCounts[job.city] || 0) + 1;
-        if (job.source) sourceCounts[job.source] = (sourceCounts[job.source] || 0) + 1;
+        if (job.state) stateCounts[job.state] = (stateCounts[job.state] || 0) + 1;
       });
     } else {
       VERIFIED_FACULTY_MEMBERS.forEach((fac) => {
@@ -684,6 +711,7 @@ export default function TeachersDirectoryClient() {
         if (fac.subject) subCounts[fac.subject] = (subCounts[fac.subject] || 0) + 1;
         if (fac.board) boardCounts[fac.board] = (boardCounts[fac.board] || 0) + 1;
         if (fac.city) cityCounts[fac.city] = (cityCounts[fac.city] || 0) + 1;
+        if (fac.state) stateCounts[fac.state] = (stateCounts[fac.state] || 0) + 1;
       });
     }
 
@@ -692,7 +720,7 @@ export default function TeachersDirectoryClient() {
       subjects: subCounts,
       boards: boardCounts,
       cities: cityCounts,
-      sources: sourceCounts,
+      states: stateCounts,
     };
   }, [activeJobs, activeTab]);
 
@@ -703,8 +731,52 @@ export default function TeachersDirectoryClient() {
       if (selectedSubjects.length > 0 && !selectedSubjects.includes(job.subject)) return false;
       if (selectedBoards.length > 0 && !selectedBoards.includes(job.board)) return false;
       if (selectedCities.length > 0 && !selectedCities.some((c) => job.city.toLowerCase().includes(c.toLowerCase()))) return false;
-      if (selectedSources.length > 0 && !selectedSources.includes(job.source)) return false;
-      if (minSalaryFilter > 0 && (job.salaryMin || 0) < minSalaryFilter) return false;
+      if (selectedStates.length > 0 && !selectedStates.some((s) => (job.state || '').toLowerCase().includes(s.toLowerCase()))) return false;
+      
+      // Job Type / Work Mode filter (Full-Time, Part-Time, Remote/Online, Offline/On-site)
+      if (selectedJobTypes.length > 0) {
+        const matchesJobType = selectedJobTypes.some((jt) => {
+          const roleType = (job.roleType || '').toLowerCase();
+          const title = (job.jobPostName || '').toLowerCase();
+          const desc = (job.shortDescription || '').toLowerCase();
+          const fullText = `${roleType} ${title} ${desc}`;
+          if (jt === 'Remote') {
+            return fullText.includes('remote') || fullText.includes('online') || fullText.includes('work from home');
+          }
+          if (jt === 'On-site') {
+            return !fullText.includes('remote') && !fullText.includes('work from home');
+          }
+          if (jt === 'Part-Time') {
+            return fullText.includes('part-time') || fullText.includes('part time') || fullText.includes('visiting');
+          }
+          if (jt === 'Full-Time') {
+            return fullText.includes('full-time') || fullText.includes('full time') || roleType === 'full-time' || !roleType;
+          }
+          return roleType.includes(jt.toLowerCase());
+        });
+        if (!matchesJobType) return false;
+      }
+
+      // Portal Source Filter (Naukri, Indeed, LinkedIn, Direct Portal)
+      if (selectedPortals.length > 0) {
+        const src = (job.source || '').toLowerCase();
+        const matchesPortal = selectedPortals.some((p) => {
+          const pl = p.toLowerCase();
+          if (pl.includes('naukri')) return src.includes('naukri');
+          if (pl.includes('indeed')) return src.includes('indeed');
+          if (pl.includes('linkedin')) return src.includes('linkedin');
+          if (pl.includes('portal') || pl.includes('school') || pl.includes('direct')) {
+            return src.includes('direct') || src.includes('school') || src.includes('portal');
+          }
+          return src.includes(pl);
+        });
+        if (!matchesPortal) return false;
+      }
+
+      if (minSalaryFilter > 0) {
+        const annualMax = getAnnualSalaryNumber(job.salary, job.salaryMax).max;
+        if (annualMax < minSalaryFilter) return false;
+      }
       if (urgentOnly && !job.badge?.includes('🔥')) return false;
 
       if (searchQuery) {
@@ -713,6 +785,8 @@ export default function TeachersDirectoryClient() {
           job.jobPostName.toLowerCase().includes(q) ||
           job.organisationName.toLowerCase().includes(q) ||
           job.city.toLowerCase().includes(q) ||
+          (job.state && job.state.toLowerCase().includes(q)) ||
+          (job.district && job.district.toLowerCase().includes(q)) ||
           job.subject.toLowerCase().includes(q) ||
           job.designation.toLowerCase().includes(q) ||
           job.shortDescription.toLowerCase().includes(q);
@@ -720,11 +794,20 @@ export default function TeachersDirectoryClient() {
       }
       return true;
     }).sort((a, b) => {
-      if (sortBy === 'salary') return (b.salaryMax || 0) - (a.salaryMax || 0);
-      if (sortBy === 'deadline') return new Date(a.lastDate).getTime() - new Date(b.lastDate).getTime();
-      return new Date(b.openingDate).getTime() - new Date(a.openingDate).getTime();
+      if (sortBy === 'salary') {
+        const salA = getAnnualSalaryNumber(a.salary, a.salaryMax).max;
+        const salB = getAnnualSalaryNumber(b.salary, b.salaryMax).max;
+        if (salB !== salA) return salB - salA; // Strictly Highest to Lowest in annual INR!
+        return new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime();
+      }
+      if (sortBy === 'deadline') {
+        const timeA = a.lastDate ? new Date(a.lastDate).getTime() : Infinity;
+        const timeB = b.lastDate ? new Date(b.lastDate).getTime() : Infinity;
+        return timeA - timeB;
+      }
+      return new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime();
     });
-  }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedSources, minSalaryFilter, urgentOnly, searchQuery, sortBy]);
+  }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, selectedJobTypes, selectedPortals, minSalaryFilter, urgentOnly, searchQuery, sortBy]);
 
   // Filtered Verified Faculty
   const filteredFaculty = useMemo(() => {
@@ -770,7 +853,7 @@ export default function TeachersDirectoryClient() {
             subjects: selectedSubjects,
             boards: selectedBoards,
             cities: selectedCities,
-            sources: selectedSources,
+            states: selectedStates,
             minSalaryFilter,
             urgentOnly
           },
@@ -780,7 +863,7 @@ export default function TeachersDirectoryClient() {
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, activeTab, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedSources, minSalaryFilter, urgentOnly, filteredJobs.length, filteredFaculty.length]);
+  }, [searchQuery, activeTab, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, minSalaryFilter, urgentOnly, filteredJobs.length, filteredFaculty.length]);
 
   const resetAllFilters = () => {
     setSearchQuery('');
@@ -788,7 +871,9 @@ export default function TeachersDirectoryClient() {
     setSelectedSubjects([]);
     setSelectedBoards([]);
     setSelectedCities([]);
-    setSelectedSources([]);
+    setSelectedStates([]);
+    setSelectedJobTypes([]);
+    setSelectedPortals([]);
     setMinSalaryFilter(0);
     setUrgentOnly(false);
   };
@@ -799,7 +884,9 @@ export default function TeachersDirectoryClient() {
     selectedSubjects.length > 0 ||
     selectedBoards.length > 0 ||
     selectedCities.length > 0 ||
-    selectedSources.length > 0 ||
+    selectedStates.length > 0 ||
+    selectedJobTypes.length > 0 ||
+    selectedPortals.length > 0 ||
     minSalaryFilter > 0 ||
     urgentOnly;
 
@@ -1080,14 +1167,34 @@ export default function TeachersDirectoryClient() {
     return counts;
   }, [activeTab, activeJobs]);
 
+  const stateCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const currentList = activeTab === 'jobs' ? activeJobs : VERIFIED_FACULTY_MEMBERS;
+    currentList.forEach((item) => {
+      if (item.state) {
+        counts[item.state] = (counts[item.state] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [activeTab, activeJobs]);
+
   const handleSelectCity = (cityName: string) => {
     setSelectedCities([cityName]);
+    setSelectedStates([]);
+    setIsLocationDropdownOpen(false);
+    setIsMobileCityDropdownOpen(false);
+  };
+
+  const handleSelectState = (stateName: string) => {
+    setSelectedStates([stateName]);
+    setSelectedCities([]);
     setIsLocationDropdownOpen(false);
     setIsMobileCityDropdownOpen(false);
   };
 
   const handleResetToAllCities = () => {
     setSelectedCities([]);
+    setSelectedStates([]);
     setIsLocationDropdownOpen(false);
     setIsMobileCityDropdownOpen(false);
   };
@@ -1112,13 +1219,13 @@ export default function TeachersDirectoryClient() {
   // Google M3 Search Bar (Matching School Directory)
   const renderSearchBar = (isCompact: boolean = true) => (
     <div className={`w-full ${isCompact ? 'max-w-2xl' : 'max-w-3xl'} flex flex-row items-center bg-white rounded-full shadow-2xs px-1.5 py-0.5 border border-slate-300 divide-x divide-slate-200 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#005689] focus-within:border-[#005689]`}>
-      {/* City Selector */}
+      {/* State & District Selector */}
       <div className="relative shrink-0 z-50">
         <button
           type="button"
           onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
           className={`flex items-center justify-between gap-1 px-2.5 py-1.5 transition-all duration-200 group rounded-full hover:bg-slate-100 active:scale-95 cursor-pointer text-xs ${
-            isCompact ? 'w-[120px] sm:w-[140px]' : 'w-[135px] sm:w-[160px]'
+            isCompact ? 'w-[125px] sm:w-[150px]' : 'w-[145px] sm:w-[175px]'
           }`}
         >
           <div className="flex items-center gap-1.5 overflow-hidden">
@@ -1126,71 +1233,143 @@ export default function TeachersDirectoryClient() {
               <MapPin size={13} />
             </div>
             <span className="text-[11px] sm:text-xs font-semibold text-slate-900 truncate block">
-              {selectedCities.length === 1 ? selectedCities[0] : (selectedCities.length > 1 ? `${selectedCities.length} Cities` : 'Select City')}
+              {selectedStates.length > 0
+                ? selectedStates[0]
+                : selectedCities.length > 0
+                ? selectedCities[0]
+                : 'All India'}
             </span>
           </div>
           <ChevronDown size={11} className={`text-slate-400 transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        {/* City Dropdown Menu */}
+        {/* Location Dropdown Menu (Districts & States) */}
         {isLocationDropdownOpen && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
-            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[320px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
-              <div className="p-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#003c6e] uppercase tracking-wider">Popular Locations</span>
-                {selectedCities.length > 0 && (
+            <div className="absolute top-full left-0 mt-2 w-[310px] sm:w-[350px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
+              <div className="p-2.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                {/* Tabs: Districts vs States */}
+                <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setLocationTab('districts')}
+                    className={`px-2 py-1 text-[11px] font-bold rounded-md transition-colors cursor-pointer ${
+                      locationTab === 'districts'
+                        ? 'bg-[#005689] text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Districts
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLocationTab('states')}
+                    className={`px-2 py-1 text-[11px] font-bold rounded-md transition-colors cursor-pointer ${
+                      locationTab === 'states'
+                        ? 'bg-[#005689] text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    States
+                  </button>
+                </div>
+
+                {(selectedCities.length > 0 || selectedStates.length > 0) && (
                   <button
                     type="button"
                     onClick={handleResetToAllCities}
                     className="text-[11px] text-[#005689] hover:underline font-bold cursor-pointer"
                   >
-                    Clear City
+                    All India
                   </button>
                 )}
               </div>
-              <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto custom-scrollbar">
-                {POPULAR_CITIES.map((city) => {
-                  const count = cityCounts[city.name] || 0;
-                  const isSelected = selectedCities.includes(city.name);
-                  return (
-                    <button
-                      key={city.name}
-                      type="button"
-                      onClick={() => handleSelectCity(city.name)}
-                      className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl text-xs transition-all duration-200 text-left cursor-pointer active:scale-95 ${
-                        isSelected
-                          ? 'bg-[#EDF5FA] text-[#005689] font-bold border border-[#005689]/20'
-                          : 'text-slate-800 hover:bg-slate-50 font-medium'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <img
-                          src={city.icon}
-                          alt={city.name}
-                          className="w-4 h-4 object-contain shrink-0"
-                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
-                        />
-                        <span className="truncate whitespace-nowrap">{city.name}</span>
-                      </div>
-                      {count > 0 && (
-                        <span className="text-[10px] font-bold text-[#005689] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
-                          {count}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+
+              {/* Search Inside Location Dropdown */}
+              <div className="p-2 border-b border-slate-100">
+                <input
+                  type="text"
+                  placeholder={locationTab === 'districts' ? "Search district or city..." : "Search state..."}
+                  value={locationSearchInput}
+                  onChange={(e) => setLocationSearchInput(e.target.value)}
+                  className="w-full px-2.5 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#005689]"
+                />
               </div>
-              <div className="p-2.5 border-t border-slate-100 bg-slate-50">
+
+              <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-60 overflow-y-auto custom-scrollbar">
+                {locationTab === 'districts' ? (
+                  POPULAR_CITIES
+                    .filter((c) => !locationSearchInput || c.name.toLowerCase().includes(locationSearchInput.toLowerCase()))
+                    .map((city) => {
+                      const count = cityCounts[city.name] || 0;
+                      const isSelected = selectedCities.includes(city.name);
+                      return (
+                        <button
+                          key={city.name}
+                          type="button"
+                          onClick={() => handleSelectCity(city.name)}
+                          className={`flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl text-xs transition-all duration-200 text-left cursor-pointer active:scale-95 ${
+                            isSelected
+                              ? 'bg-[#EDF5FA] text-[#005689] font-bold border border-[#005689]/20'
+                              : 'text-slate-800 hover:bg-slate-50 font-medium'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <img
+                              src={city.icon}
+                              alt={city.name}
+                              className="w-3.5 h-3.5 object-contain shrink-0"
+                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
+                            />
+                            <span className="truncate whitespace-nowrap text-[11px]">{city.name}</span>
+                          </div>
+                          {count > 0 && (
+                            <span className="text-[10px] font-bold text-[#005689] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
+                              {count}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })
+                ) : (
+                  Object.keys(INDIAN_STATES_DISTRICTS)
+                    .filter((s) => !locationSearchInput || s.toLowerCase().includes(locationSearchInput.toLowerCase()))
+                    .map((stateName) => {
+                      const count = stateCounts[stateName] || 0;
+                      const isSelected = selectedStates.includes(stateName);
+                      return (
+                        <button
+                          key={stateName}
+                          type="button"
+                          onClick={() => handleSelectState(stateName)}
+                          className={`flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl text-xs transition-all duration-200 text-left cursor-pointer active:scale-95 ${
+                            isSelected
+                              ? 'bg-[#EDF5FA] text-[#005689] font-bold border border-[#005689]/20'
+                              : 'text-slate-800 hover:bg-slate-50 font-medium'
+                          }`}
+                        >
+                          <span className="truncate whitespace-nowrap text-[11px]">{stateName}</span>
+                          {count > 0 && (
+                            <span className="text-[10px] font-bold text-[#005689] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
+                              {count}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })
+                )}
+              </div>
+
+              <div className="p-2 border-t border-slate-100 bg-slate-50">
                 <button
                   type="button"
                   onClick={handleResetToAllCities}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[#005689] hover:bg-[#EDF5FA] rounded-xl transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold text-[#005689] hover:bg-[#EDF5FA] rounded-xl transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-1.5">
-                    <Globe size={14} className="text-[#005689] shrink-0" />
-                    <span>View All Cities</span>
+                    <Globe size={13} className="text-[#005689] shrink-0" />
+                    <span>Pan-India Search (All Locations)</span>
                   </div>
                   <span className="text-[10px] font-bold bg-[#EDF5FA] text-[#005689] px-2 py-0.5 rounded-full border border-[#005689]/20">
                     {activeTab === 'jobs' ? activeJobs.length : VERIFIED_FACULTY_MEMBERS.length}
@@ -1430,8 +1609,12 @@ export default function TeachersDirectoryClient() {
           toggleBoard={toggleBoard}
           selectedCities={selectedCities}
           toggleCity={toggleCity}
-          selectedSources={selectedSources}
-          toggleSource={toggleSource}
+          selectedStates={selectedStates}
+          toggleState={toggleState}
+          selectedJobTypes={selectedJobTypes}
+          toggleJobType={toggleJobType}
+          selectedPortals={selectedPortals}
+          togglePortal={togglePortal}
           minSalaryFilter={minSalaryFilter}
           setMinSalaryFilter={setMinSalaryFilter}
           urgentOnly={urgentOnly}
@@ -1458,8 +1641,12 @@ export default function TeachersDirectoryClient() {
           toggleBoard={toggleBoard}
           selectedCities={selectedCities}
           toggleCity={toggleCity}
-          selectedSources={selectedSources}
-          toggleSource={toggleSource}
+          selectedStates={selectedStates}
+          toggleState={toggleState}
+          selectedJobTypes={selectedJobTypes}
+          toggleJobType={toggleJobType}
+          selectedPortals={selectedPortals}
+          togglePortal={togglePortal}
           minSalaryFilter={minSalaryFilter}
           setMinSalaryFilter={setMinSalaryFilter}
           urgentOnly={urgentOnly}
@@ -1469,7 +1656,7 @@ export default function TeachersDirectoryClient() {
         />
 
         {/* ── 4. Main Content Area (Offset by fixed sidebar width) ── */}
-        <main className={`flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 pr-2 sm:pr-4 lg:pr-5 ${
+        <main className={`flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 ${
           isSidebarMinimized ? 'md:ml-14' : 'md:ml-[272px] lg:ml-[296px]'
         }`}>
           
@@ -1896,10 +2083,10 @@ export default function TeachersDirectoryClient() {
               {activeTab === 'jobs' && viewMode !== 'map' && (
                 <div className={
                   viewMode === 'grid3'
-                    ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3.5"
+                    ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3.5 w-full mt-2 sm:mt-2.5"
                     : viewMode === 'grid'
-                    ? "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5"
-                    : "space-y-2"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 w-full mt-2 sm:mt-2.5"
+                    : "space-y-3 w-full mt-2 sm:mt-2.5"
                 }>
                   {filteredJobs.length === 0 ? (
                     <div className="bg-white rounded-2xl p-10 text-center border border-slate-200 shadow-2xs space-y-3 col-span-full">
@@ -1923,374 +2110,174 @@ export default function TeachersDirectoryClient() {
                   ) : (
                     filteredJobs.map((job) => {
                       const isSaved = savedJobIds.includes(job.id);
+                      const structuredAddress = formatStructuredAddress(job);
+                      const sourceDisplayName = getSourceDisplayName(job.source);
+                      const sourceBadgeColor = getSourceBadgeColor(job.source);
 
-                      /* ── 1. COMPACT LIST VIEW (LinkedIn SRP Mobile Style) ── */
-                      if (viewMode === 'compact') {
-                        const fullAddress = [job.city, job.state].filter(Boolean).join(', ');
-                        const mapLink = job.mapUrl || (job.coordinates?.lat && job.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.organisationName + ', ' + fullAddress)}` : null);
-                        const websiteLink = job.websiteUrl || job.website;
-
-                        return (
-                          <div
-                            key={job.id}
-                            className="p-3 sm:p-3.5 bg-white border border-slate-200/90 hover:border-[#0A66C2] rounded-2xl transition-all duration-200 shadow-xs hover:shadow-md group relative flex flex-col"
-                          >
-                            {/* Content Area: Image + Details in 2 columns */}
-                            <div className="flex items-start gap-3">
-                              {/* Left: Image Div */}
-                              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border border-slate-200 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs mt-0.5">
-                                <img
-                                  src={job.organisationLogo || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80"}
-                                  alt={job.organisationName}
-                                  className="w-full h-full object-contain"
-                                  onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80"; }}
-                                />
-                              </div>
-
-                              {/* Right: Content Div */}
-                              <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-                                {/* Title + Bookmark */}
-                                <div className="flex items-start justify-between gap-1">
-                                  <h2 className="min-w-0 flex-1">
-                                    <Link
-                                      href={`/edu-network/teachers/job/${job.id}`}
-                                      className="font-['Montserrat',sans-serif] font-bold text-[14.5px] sm:text-[15.5px] text-slate-900 hover:text-[#0A66C2] line-clamp-1 block leading-snug transition-colors"
-                                      title={job.jobPostName}
-                                    >
-                                      {job.jobPostName}
-                                    </Link>
-                                  </h2>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => toggleSaveJob(job.id)}
-                                    className={`shrink-0 w-6 h-6 rounded-md flex items-center justify-center transition cursor-pointer ${
-                                      isSaved
-                                        ? 'bg-blue-50 text-[#0A66C2]'
-                                        : 'text-slate-400 hover:text-red-500 hover:bg-slate-100'
-                                    }`}
-                                    title={isSaved ? "Saved" : "Save Job"}
-                                  >
-                                    <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-[#0A66C2]' : ''}`} />
-                                  </button>
-                                </div>
-
-                                {/* School Name */}
-                                <div className="text-[12px] sm:text-[12.5px] font-bold text-slate-800 truncate" title={job.organisationName}>
-                                  {job.organisationName}
-                                </div>
-
-                                {/* Location */}
-                                <div className="text-[11px] text-slate-500 flex items-center gap-1 leading-tight truncate">
-                                  <MapPin size={11} className="text-amber-600 shrink-0" />
-                                  <span className="truncate">{fullAddress || job.address}</span>
-                                </div>
-
-                                {/* Salary & Subject */}
-                                <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100 flex-wrap">
-                                  <span className="font-extrabold text-emerald-600 text-[13.5px] sm:text-[14.5px]">
-                                    {job.salary}
-                                  </span>
-                                  <span className="text-slate-300">•</span>
-                                  <span className="font-bold text-[#006FCC] text-[11px] bg-[#eef3fc] px-1.5 py-0.5 rounded border border-[#d3e3fd]">
-                                    {job.designation ? `${job.designation} · ` : ''}{job.subject}
-                                  </span>
-                                </div>
-
-                                {/* Dates & Tags (Protected against overflow) */}
-                                <div className="flex items-center justify-between gap-1 text-[10.5px] min-w-0">
-                                  <div className="flex items-center gap-1.5 text-slate-600 font-medium shrink-0">
-                                    <span className="text-slate-400">Posted: {formatJobDisplayDate(job.openingDate)}</span>
-                                    <span className="text-slate-300">•</span>
-                                    <span className="font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
-                                      Due: {formatJobDisplayDate(job.lastDate)}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex items-center gap-1 shrink-0 ml-auto min-w-0">
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-200/70 text-slate-600 font-medium whitespace-nowrap">
-                                      Min {getMinExperience(job)}
-                                    </span>
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-200/70 text-slate-600 font-medium truncate max-w-[75px] sm:max-w-none">
-                                      {job.roleType || 'Full-Time'}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Full-width Footer Strip with Negative Margin */}
-                            <div className="pt-2.5 mt-3 -mx-3 -mb-3 sm:-mx-3.5 sm:-mb-3.5 px-3 sm:px-3.5 pb-2.5 bg-slate-50/60 rounded-b-2xl border-t border-slate-100 flex items-center justify-between gap-2">
-                              {/* Left: Share & Map */}
-                              <div className="flex items-center gap-3">
-                                <button
-                                  type="button"
-                                  onClick={() => handleCopyJobUrl(job)}
-                                  className="text-slate-500 hover:text-[#0A66C2] text-[11.5px] font-medium transition inline-flex items-center gap-1 cursor-pointer"
-                                  title="Share Link"
-                                >
-                                  {copiedJobId === job.id ? (
-                                    <>
-                                      <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
-                                      <span className="text-emerald-600 font-bold">Copied</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Share2 className="w-3.5 h-3.5 text-slate-400" />
-                                      <span>Share</span>
-                                    </>
-                                  )}
-                                </button>
-
-                                {mapLink && (
-                                  <a
-                                    href={mapLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-slate-500 hover:text-amber-700 text-[11.5px] font-medium transition inline-flex items-center gap-1"
-                                    title="View Map"
-                                  >
-                                    <MapPin size={12} className="text-amber-600" />
-                                    <span>Map</span>
-                                  </a>
-                                )}
-                              </div>
-
-                              {/* Right: Detail & Apply */}
-                              <div className="flex items-center gap-3">
-                                <Link
-                                  href={`/edu-network/teachers/job/${job.id}`}
-                                  className="text-xs font-semibold text-slate-600 hover:text-[#0A66C2] hover:underline"
-                                >
-                                  Detail
-                                </Link>
-
-                                <a
-                                  href={job.originalUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="h-7 px-3.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-bold transition inline-flex items-center justify-center gap-1 shadow-xs"
-                                >
-                                  <span>Apply</span>
-                                  <ExternalLink size={11} />
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      /* ── 2. GRID VIEW (2-COL ON MOBILE / 3-COL ON DESKTOP) ── */
-                      const isTwoCol = viewMode === 'grid';
-                      const fullAddress = [job.state, job.city, job.address].filter(Boolean).join(', ');
-                      const mapLink = job.mapUrl || (job.coordinates?.lat && job.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.organisationName + ', ' + fullAddress)}` : null);
-                      const websiteLink = job.websiteUrl || job.website;
+                      // Clean text tags (separated by dots just like Naukri SRP)
+                      const cardTags = [
+                        job.designation,
+                        job.subject,
+                        job.board,
+                        job.roleType
+                      ].filter(Boolean);
 
                       return (
                         <div
                           key={job.id}
-                          className={`relative flex flex-col justify-between border border-[#dadce0] hover:border-[#006FCC] rounded-2xl bg-white w-full select-none overflow-hidden group box-border transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 min-w-0 ${
-                            isTwoCol ? 'p-2.5 sm:p-4 space-y-2 sm:space-y-3' : 'p-4 sm:p-5 space-y-3.5'
-                          }`}
+                          className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
                         >
-                          <div className={`min-w-0 ${isTwoCol ? 'space-y-1.5 sm:space-y-2' : 'space-y-2.5'}`}>
-                            {/* Row 1: Designation Badge, Board, Min Exp, Urgency Badge & Dates */}
-                            <div className="flex items-center justify-between gap-1.5 min-w-0 flex-wrap">
-                              <div className="flex items-center gap-1 min-w-0 flex-wrap">
-                                <span className={`rounded-full font-semibold bg-[#eef3fc] text-[#006FCC] border border-[#d3e3fd] font-['Montserrat',sans-serif] shrink-0 ${
-                                  isTwoCol ? 'px-2 py-0.5 text-[9.5px] sm:text-[10.5px]' : 'px-2.5 py-0.5 text-[10.5px]'
-                                }`}>
-                                  {job.designation || 'Faculty'}
-                                </span>
-                                <span className={`font-bold text-[#006FCC] bg-[#EDF5FA] rounded-full border border-[#DDF0FC] shrink-0 font-['Montserrat',sans-serif] ${
-                                  isTwoCol ? 'px-1.5 py-0.5 text-[9px] sm:text-[10px]' : 'px-2 py-0.5 text-[10px]'
-                                }`}>
-                                  {job.board || 'CBSE'}
-                                </span>
-                                <span className="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/80 shrink-0">
-                                  Min {getMinExperience(job)}
-                                </span>
-                                {(job.badge || job.urgent) && (
-                                  <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-red-50 text-red-600 border border-red-200 shrink-0">
-                                    {job.badge || "🔥 Urgent Need"}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Opening Date & Due Date (ALWAYS SHOW BOTH) */}
-                              <div className="text-[10px] sm:text-[10.5px] text-slate-500 font-medium font-mono flex items-center gap-1.5 shrink-0">
-                                <span>Posted: {job.openingDate}</span>
-                                <span className="text-slate-300">•</span>
-                                <span className="text-amber-700 font-semibold">Due: {job.lastDate}</span>
-                              </div>
-                            </div>
-
-                            {/* Row 2: Title & School Logo */}
-                            <div className="flex items-start justify-between gap-2 min-w-0">
-                              <div className="min-w-0 flex-1 space-y-0.5">
+                          <div className="space-y-2.5 min-w-0">
+                            {/* Row 1: Title & Logo */}
+                            <div className="flex items-start justify-between gap-3 min-w-0">
+                              <div className="min-w-0 flex-1 space-y-1">
                                 <h2>
                                   <Link
                                     href={`/edu-network/teachers/job/${job.id}`}
-                                    className={`font-['Montserrat',sans-serif] font-bold text-[#003C6E] hover:text-[#006FCC] leading-snug tracking-tight line-clamp-1 block transition-colors ${
-                                      isTwoCol ? 'text-[13px] sm:text-[15.5px]' : 'text-[15.5px] sm:text-[16.5px]'
-                                    }`}
-                                    style={{ color: '#003C6E' }}
+                                    className="font-['Montserrat',sans-serif] font-bold text-[15.5px] sm:text-[16.5px] text-slate-900 group-hover:text-[#0A66C2] leading-snug line-clamp-2 block transition-colors break-words"
                                     title={job.jobPostName}
                                   >
                                     {job.jobPostName}
                                   </Link>
                                 </h2>
 
-                                <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-700 min-w-0">
-                                  {/* Full School Name: No truncation */}
-                                  <span className="font-semibold text-slate-800 break-words leading-tight" title={job.organisationName}>
+                                {/* School Name + Very small source tag + Rating */}
+                                <div className="flex items-center gap-2 flex-wrap text-[13px] text-slate-700">
+                                  <span className="font-semibold text-slate-800 truncate" title={job.organisationName}>
                                     {job.organisationName}
                                   </span>
+                                  {/* Very small source tag */}
+                                  <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sourceBadgeColor}`}>
+                                    {sourceDisplayName}
+                                  </span>
+                                  {job.rating && (
+                                    <span className="flex items-center gap-1 text-[11.5px] font-semibold text-slate-600 shrink-0">
+                                      <Star size={11} className="fill-amber-400 text-amber-400" />
+                                      <span>{job.rating}</span>
+                                    </span>
+                                  )}
                                 </div>
                               </div>
 
                               {/* School Logo */}
-                              <div className="w-14 h-14 shrink-0 aspect-square rounded-xl border border-slate-200/90 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs">
-                                <img
-                                  src={job.organisationLogo || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80"}
-                                  alt={job.organisationName}
-                                  className="w-full h-full object-contain"
-                                  onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80"; }}
-                                />
+                              <div className="w-12 h-12 rounded-xl border border-slate-200/80 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs relative">
+                                {job.organisationLogo ? (
+                                  <img
+                                    src={job.organisationLogo}
+                                    alt={job.organisationName}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      (e.target as HTMLElement).style.display = 'none';
+                                      const fb = (e.target as HTMLElement).parentElement?.querySelector('.monogram-fb') as HTMLElement;
+                                      if (fb) fb.style.display = 'flex';
+                                    }}
+                                  />
+                                ) : null}
+                                <div
+                                  className={`monogram-fb w-full h-full rounded-lg bg-blue-50 text-[#006FCC] font-black text-xs items-center justify-center uppercase select-none ${job.organisationLogo ? 'hidden' : 'flex'}`}
+                                >
+                                  {(job.organisationName || 'SC').slice(0, 2)}
+                                </div>
                               </div>
                             </div>
 
-                            {/* Row 3: Parameter Tuple (Full Address max 2 lines | Subject (Blue) | Salary (Green) - NO BOXES) */}
-                            <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-[#656773] font-medium font-['Montserrat',sans-serif] py-1 border-y border-slate-100 ${
-                              isTwoCol ? 'text-[10px] sm:text-xs' : 'text-xs'
-                            }`}>
-                              <span className="flex items-start gap-1 shrink-0 text-slate-700 font-medium">
-                                <MapPin size={12} className="text-[#d97706] shrink-0 mt-0.5" />
-                                <span className="line-clamp-2 break-words">{fullAddress}</span>
-                              </span>
-                              {!isTwoCol && (
-                                <span className="flex items-center gap-1 shrink-0">
-                                  <Briefcase size={12} className="text-[#006FCC]" />
-                                  <span className="font-semibold text-[#006FCC]">{job.subject}</span>
+                            {/* Row 2: Parameters Tuple with Icons & Vertical Lines (Exp | Salary | Location) */}
+                            <div className="flex items-center gap-2 sm:gap-2.5 text-slate-600 text-[12px] sm:text-[12.5px] font-medium flex-wrap pt-0.5">
+                              {/* Experience */}
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <Briefcase size={13} className="text-slate-400 shrink-0" />
+                                <span>{job.minExperience ? `${job.minExperience}` : '0-3 Yrs'}</span>
+                              </div>
+
+                              <span className="text-slate-300">|</span>
+
+                              {/* Salary */}
+                              <div className="flex items-center gap-1 shrink-0">
+                                <IndianRupee size={12} className="text-slate-400 shrink-0" />
+                                <span className={job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'font-semibold text-slate-800' : 'text-slate-400'}>
+                                  {formatCleanSalary(job.salary, false)}
                                 </span>
-                              )}
-                              <span className="flex items-center gap-0.5 font-bold shrink-0 text-emerald-600">
-                                <span>{job.salary}</span>
-                              </span>
+                              </div>
+
+                              <span className="text-slate-300">|</span>
+
+                              {/* Location: State + District + Local Address in District */}
+                              <div className="flex items-center gap-1.5 min-w-0 flex-1 truncate">
+                                <MapPin size={13} className="text-slate-400 shrink-0" />
+                                <span className="truncate" title={structuredAddress}>{structuredAddress}</span>
+                              </div>
                             </div>
 
-                            {/* Row 4: Opening Date & Due Date */}
-                            <div className="text-[10px] text-slate-500 font-medium font-mono flex items-center gap-2 pt-1">
-                              <span>Posted: {job.openingDate}</span>
-                              <span className="text-slate-300">•</span>
-                              <span className="text-amber-700 font-semibold">Due: {job.lastDate}</span>
-                            </div>
+                            {/* Row 3: Short Description (with document icon) */}
+                            {job.shortDescription && (
+                              <div className="flex items-start gap-1.5 text-slate-500 text-[11.5px] sm:text-[12px] leading-relaxed line-clamp-1">
+                                <FileText size={12} className="text-slate-400 shrink-0 mt-0.5" />
+                                <span className="truncate">{job.shortDescription}</span>
+                              </div>
+                            )}
 
-                            {/* Row 5: 2 Compact Low-Contrast Tags (Min Exp & Role Type) Right Aligned */}
-                            <div className="flex items-center justify-end gap-1.5 pt-1">
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium whitespace-nowrap">
-                                Min {getMinExperience(job)}
-                              </span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium whitespace-nowrap">
-                                {job.roleType || 'Full-Time'}
-                              </span>
-                            </div>
+                            {/* Row 4: Clean Text Tags separated by dots (Lesson Planning · Teaching · Physics · TGT) */}
+                            {cardTags.length > 0 && (
+                              <div className="flex items-center gap-1.5 text-[11.5px] text-slate-500 font-medium flex-wrap">
+                                {cardTags.map((tag, tIdx, arr) => (
+                                  <React.Fragment key={tIdx}>
+                                    <span className="hover:text-slate-800 transition-colors">{tag}</span>
+                                    {tIdx < arr.length - 1 && <span className="text-slate-300">•</span>}
+                                  </React.Fragment>
+                                ))}
+                              </div>
+                            )}
                           </div>
 
-                          {/* Row 6: Action Footer with Bookmark, Share, Map Location, Website, Details, Apply */}
-                          <div className="pt-2 sm:pt-3 border-t border-[#E8E9E9] flex items-center justify-between gap-1.5 mt-auto">
-                            <div className="flex items-center gap-1 flex-wrap">
-                              {/* Bookmark Button */}
-                              <button
-                                type="button"
-                                onClick={() => toggleSaveJob(job.id)}
-                                className={`rounded-xl border border-[#E8E9E9] flex items-center justify-center transition-all duration-200 cursor-pointer ${
-                                  isTwoCol ? 'h-7.5 w-7.5 sm:h-9 sm:w-9' : 'h-9 w-9 rounded-[14px]'
-                                } ${
-                                  isSaved
-                                    ? 'bg-[#EDF5FA] text-[#006FCC] border-[#006FCC]/40'
-                                    : 'bg-[#F7F8F8] text-[#003C6E] hover:bg-[#EDF5FA] hover:text-[#006FCC]'
-                                }`}
-                                title={isSaved ? "Saved" : "Save Vacancy"}
-                              >
-                                <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-[#006FCC]' : ''}`} />
-                              </button>
+                          {/* Row 5: Footer (Posted Date on Left, Share + Save + Details + Apply on Right) */}
+                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                            <div className="text-[11px] text-slate-400 font-medium">
+                              {job.openingDate ? formatJobDisplayDate(job.openingDate) : 'Today'}
+                            </div>
 
+                            <div className="flex items-center gap-2">
                               {/* Share Button */}
                               <button
                                 type="button"
                                 onClick={() => handleCopyJobUrl(job)}
-                                className={`rounded-xl border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-slate-600 hover:text-[#006FCC] flex items-center justify-center transition cursor-pointer ${
-                                  isTwoCol ? 'h-7.5 w-7.5 sm:h-9 sm:w-9' : 'h-9 w-9 rounded-[14px]'
-                                }`}
+                                className="flex items-center gap-1 text-[11.5px] text-slate-500 hover:text-[#0A66C2] px-1.5 py-1 rounded-lg hover:bg-slate-50 transition cursor-pointer"
                                 title="Share Vacancy"
                               >
-                                {copiedJobId === job.id ? (
-                                  <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
-                                ) : (
-                                  <Share2 className="w-3.5 h-3.5" />
-                                )}
+                                {copiedJobId === job.id ? <CheckCheck size={13} className="text-emerald-600" /> : <Share2 size={13} className="text-slate-400" />}
+                                <span className="hidden sm:inline">Share</span>
                               </button>
 
-                              {/* Map Location Icon (if map location / coordinates present) */}
-                              {mapLink && (
-                                <a
-                                  href={mapLink}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`rounded-xl border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-amber-50 text-slate-600 hover:text-amber-600 flex items-center justify-center transition cursor-pointer ${
-                                    isTwoCol ? 'h-7.5 w-7.5 sm:h-9 sm:w-9' : 'h-9 w-9 rounded-[14px]'
-                                  }`}
-                                  title="View Map Location"
-                                  aria-label="View Map Location"
-                                >
-                                  <MapPin size={13} className="text-amber-600" />
-                                </a>
-                              )}
+                              {/* Save Button */}
+                              <button
+                                type="button"
+                                onClick={() => toggleSaveJob(job.id)}
+                                className="flex items-center gap-1 text-[11.5px] text-slate-500 hover:text-[#0A66C2] px-2 py-1 rounded-lg hover:bg-slate-50 transition cursor-pointer"
+                                title={isSaved ? "Saved" : "Save Vacancy"}
+                              >
+                                <Bookmark size={13} className={isSaved ? 'fill-[#0A66C2] text-[#0A66C2]' : 'text-slate-400'} />
+                                <span>{isSaved ? 'Saved' : 'Save'}</span>
+                              </button>
 
-                              {/* School Website Icon (if school website present) */}
-                              {websiteLink && (
-                                <a
-                                  href={websiteLink}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className={`rounded-xl border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-slate-600 hover:text-[#006FCC] flex items-center justify-center transition cursor-pointer ${
-                                    isTwoCol ? 'h-7.5 w-7.5 sm:h-9 sm:w-9' : 'h-9 w-9 rounded-[14px]'
-                                  }`}
-                                  title="Visit School Website"
-                                  aria-label="Visit School Website"
-                                >
-                                  <Globe size={13} className="text-[#006FCC]" />
-                                </a>
-                              )}
-                            </div>
-
-                            <div className="flex items-center gap-1.5 shrink-0">
                               {/* Details Button */}
                               <Link
                                 href={`/edu-network/teachers/job/${job.id}`}
-                                className={`rounded-xl border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] hover:border-[#006FCC]/30 text-[#003C6E] hover:text-[#006FCC] font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center transition-all duration-200 active:scale-[0.98] ${
-                                  isTwoCol ? 'h-7.5 px-2 sm:h-9 sm:px-3 text-[10.5px] sm:text-xs' : 'h-9 px-3.5 rounded-[14px] text-xs'
-                                }`}
+                                className="text-[11.5px] font-semibold text-slate-600 hover:text-[#0A66C2] px-2.5 py-1 rounded-lg hover:bg-slate-50 transition"
                               >
-                                <span>Details</span>
+                                Details
                               </Link>
 
-                              {/* Apply Now Primary Button */}
+                              {/* Apply Button */}
                               <a
-                                href={job.originalUrl}
+                                href={job.applyUrl || job.originalUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`bg-[#006FCC] hover:bg-[#005399] text-white font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 shadow-xs hover:shadow transition-all duration-200 active:scale-[0.98] ${
-                                  isTwoCol ? 'h-7.5 px-2.5 sm:h-9 sm:px-4 rounded-xl text-[10.5px] sm:text-xs' : 'h-9 px-4 rounded-[14px] text-xs'
-                                }`}
+                                className="h-7.5 px-3.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-bold transition inline-flex items-center justify-center gap-1 shadow-2xs"
                               >
                                 <span>Apply</span>
-                                <ExternalLink size={11} className="shrink-0" />
+                                <ExternalLink size={10} className="shrink-0" />
                               </a>
                             </div>
                           </div>
-
                         </div>
                       );
                     })
@@ -2302,10 +2289,10 @@ export default function TeachersDirectoryClient() {
               {activeTab === 'faculty' && viewMode !== 'map' && (
                 <div className={
                   viewMode === 'grid3'
-                    ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3.5"
+                    ? "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3.5 w-full mt-2 sm:mt-2.5"
                     : viewMode === 'grid'
-                    ? "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5"
-                    : "space-y-2"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 w-full mt-2 sm:mt-2.5"
+                    : "space-y-3 w-full mt-2 sm:mt-2.5"
                 }>
                   {filteredFaculty.map((f) => {
                     /* ── 1. COMPACT LIST VIEW (LinkedIn SRP Mobile Style) ── */
@@ -2315,22 +2302,22 @@ export default function TeachersDirectoryClient() {
                       return (
                         <div
                           key={f.id}
-                          className="p-3 sm:p-3.5 bg-white border border-[#dadce0] hover:border-[#006FCC] rounded-xl sm:rounded-2xl transition-all shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-sm group relative flex flex-col"
+                          className="p-3 sm:p-3.5 bg-white border border-[#dadce0] hover:border-[#006FCC] rounded-xl sm:rounded-2xl transition-all shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-sm group relative flex flex-col w-full max-w-full overflow-hidden box-border"
                         >
                           {/* Content Area: Avatar + Details in 2 columns */}
-                          <div className="flex items-start gap-3">
+                          <div className="flex items-start gap-3 min-w-0">
                             {/* Left: Avatar Div */}
                             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border border-slate-200 bg-slate-50 shrink-0 overflow-hidden shadow-2xs mt-0.5">
                               <img src={f.avatar} alt={f.name} className="w-full h-full object-cover" />
                             </div>
 
                             {/* Right: Content Div */}
-                            <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                            <div className="flex-1 min-w-0 flex flex-col gap-1.5 overflow-hidden">
                               {/* Name */}
-                              <div className="flex items-start justify-between gap-1">
+                              <div className="flex items-start justify-between gap-1 min-w-0">
                                 <h2 className="min-w-0 flex-1">
                                   <span
-                                    className="font-['Montserrat',sans-serif] font-bold text-[14.5px] sm:text-[15.5px] text-[#0A66C2] hover:underline line-clamp-1 block leading-snug cursor-pointer"
+                                    className="font-['Montserrat',sans-serif] font-bold text-[14.5px] sm:text-[15.5px] text-[#0A66C2] hover:underline line-clamp-2 block leading-snug cursor-pointer break-words"
                                     onClick={() => handleOpenConnect(f)}
                                     title={f.name}
                                   >
@@ -2340,26 +2327,26 @@ export default function TeachersDirectoryClient() {
                               </div>
 
                               {/* Current Institute */}
-                              <div className="text-[12px] sm:text-[12.5px] font-bold text-slate-800 truncate" title={f.currentInstitute}>
+                              <div className="text-[12px] sm:text-[12.5px] font-bold text-slate-800 break-words leading-tight" title={f.currentInstitute}>
                                 {f.currentInstitute}
                               </div>
 
                               {/* Location */}
-                              <div className="text-[11px] text-slate-500 flex items-center gap-1 truncate font-['Montserrat',sans-serif]">
+                              <div className="text-[11px] text-slate-500 flex items-center gap-1 min-w-0 font-['Montserrat',sans-serif]">
                                 <MapPin size={11} className="text-amber-600 shrink-0" />
-                                <span className="truncate">{fullLocation}</span>
+                                <span className="break-words line-clamp-1 min-w-0">{fullLocation}</span>
                               </div>
 
                               {/* Salary & Meta Tags */}
-                              <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100 flex-wrap text-xs">
-                                <span className="font-extrabold text-emerald-600 text-[12.5px] sm:text-[13px]">
+                              <div className="flex items-center gap-2 pt-0.5 border-t border-slate-100 flex-wrap text-xs min-w-0">
+                                <span className="font-extrabold text-emerald-600 text-[12.5px] sm:text-[13px] shrink-0">
                                   Exp: {f.expectedSalary}
                                 </span>
-                                <span className="text-slate-300">•</span>
-                                <span className="px-1.5 py-0.5 rounded text-[10.5px] font-bold bg-[#eef3fc] text-[#006FCC] border border-[#d3e3fd]">
+                                <span className="text-slate-300 shrink-0">•</span>
+                                <span className="px-1.5 py-0.5 rounded text-[10.5px] font-bold bg-[#eef3fc] text-[#006FCC] border border-[#d3e3fd] shrink-0">
                                   {f.designation} · {f.subject}
                                 </span>
-                                <span className="text-[10.5px] text-slate-500 font-medium ml-auto">
+                                <span className="text-[10.5px] text-slate-500 font-medium ml-auto shrink-0">
                                   {f.experienceYears}+ Yrs Exp
                                 </span>
                               </div>
@@ -2402,13 +2389,13 @@ export default function TeachersDirectoryClient() {
                     return (
                       <div
                         key={f.id}
-                        className={`relative flex flex-col justify-between border border-[#dadce0] hover:border-[#006FCC] rounded-2xl bg-white w-full select-none overflow-hidden group box-border transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 min-w-0 ${
-                          isTwoCol ? 'p-2.5 sm:p-4 space-y-2 sm:space-y-3' : 'p-4 sm:p-5 space-y-3.5'
+                        className={`relative flex flex-col justify-between border border-[#dadce0] hover:border-[#006FCC] rounded-2xl bg-white w-full max-w-full select-none overflow-hidden group box-border transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 min-w-0 ${
+                          isTwoCol ? 'p-3 sm:p-4 space-y-2.5 sm:space-y-3' : 'p-4 sm:p-5 space-y-3.5'
                         }`}
                       >
-                        <div className={`min-w-0 ${isTwoCol ? 'space-y-1.5 sm:space-y-2' : 'space-y-2.5'}`}>
+                        <div className={`min-w-0 overflow-hidden ${isTwoCol ? 'space-y-1.5 sm:space-y-2' : 'space-y-2.5'}`}>
                           {/* Row 1: Designation Badge & Accreditation */}
-                          <div className="flex items-center justify-between gap-1.5 min-w-0">
+                          <div className="flex items-center justify-between gap-1.5 min-w-0 flex-wrap">
                             <div className="flex items-center gap-1 min-w-0 flex-wrap">
                               <span className={`rounded-full font-semibold bg-[#eef3fc] text-[#006FCC] border border-[#d3e3fd] font-['Montserrat',sans-serif] shrink-0 ${
                                 isTwoCol ? 'px-2 py-0.5 text-[9.5px] sm:text-[10.5px]' : 'px-2.5 py-0.5 text-[10.5px]'
@@ -2432,11 +2419,11 @@ export default function TeachersDirectoryClient() {
 
                           {/* Row 2: Name & Avatar */}
                           <div className="flex items-start justify-between gap-2 min-w-0">
-                            <div className="min-w-0 flex-1 space-y-0.5">
+                            <div className="min-w-0 flex-1 space-y-0.5 overflow-hidden">
                               <h2>
                                 <Link
                                   href={'/edu-network/teachers/' + f.id}
-                                  className={`font-['Montserrat',sans-serif] font-bold text-[#003C6E] hover:text-[#006FCC] leading-snug tracking-tight block transition-colors truncate ${
+                                  className={`font-['Montserrat',sans-serif] font-bold text-[#003C6E] hover:text-[#006FCC] leading-snug tracking-tight block transition-colors line-clamp-2 break-words ${
                                     isTwoCol ? 'text-[13px] sm:text-[15.5px]' : 'text-[15.5px] sm:text-[16.5px]'
                                   }`}
                                   style={{ color: '#003C6E' }}

@@ -10,6 +10,7 @@ import {
   Sparkles, Award, ArrowLeft, RefreshCw
 } from 'lucide-react';
 import { FacultyJobItem } from '@/data/facultyJobsData';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
 
 const FacultyJobMap = dynamic(() => import('@/components/teachers/FacultyJobMap'), {
   ssr: false,
@@ -81,25 +82,43 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
               
               <div className="flex items-start gap-4 sm:gap-5">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 shadow-sm">
-                  <img
-                    src={job.organisationLogo || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=200&auto=format&fit=crop&q=80"}
-                    alt={job.organisationName}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 shadow-sm relative flex items-center justify-center">
+                  {job.organisationLogo ? (
+                    <img
+                      src={job.organisationLogo}
+                      alt={job.organisationName}
+                      className="w-full h-full object-contain p-1"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = 'none';
+                        const fb = (e.target as HTMLElement).parentElement?.querySelector('.monogram-single') as HTMLElement;
+                        if (fb) fb.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className={`monogram-single w-full h-full bg-blue-50 text-[#006FCC] font-black text-xl sm:text-2xl items-center justify-center uppercase select-none ${job.organisationLogo ? 'hidden' : 'flex'}`}
+                  >
+                    {(job.organisationName || 'SC').slice(0, 2)}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold">
-                      {job.designation}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200 text-xs font-bold">
-                      {job.subject}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-800 border border-cyan-200 text-xs font-bold">
-                      {job.board || 'CBSE'}
-                    </span>
+                    {job.designation && (
+                      <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold">
+                        {job.designation}
+                      </span>
+                    )}
+                    {job.subject && (
+                      <span className="px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200 text-xs font-bold">
+                        {job.subject}
+                      </span>
+                    )}
+                    {job.board && (
+                      <span className="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-800 border border-cyan-200 text-xs font-bold">
+                        {job.board}
+                      </span>
+                    )}
                     <span className={`px-2 py-0.5 rounded-md text-xs font-bold border ${getSourceBadgeColor(job.source)}`}>
                       Indexed via {job.source}
                     </span>
@@ -121,7 +140,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     </span>
                     <span className="flex items-center gap-1 text-slate-500">
                       <MapPin className="w-4 h-4 text-slate-400" />
-                      <span>{job.address}, {job.city}, {job.state}</span>
+                      <span>{formatStructuredAddress(job)}</span>
                     </span>
                   </div>
                 </div>
@@ -131,7 +150,9 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
               <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-3 shrink-0">
                 <div className="text-left md:text-right">
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Offered Compensation</div>
-                  <div className="text-xl sm:text-2xl font-black text-emerald-700">{job.salary}</div>
+                  <div className={`text-xl sm:text-2xl font-black ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-emerald-700' : 'text-slate-700'}`}>
+                    {formatCleanSalary(job.salary, true)}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
@@ -180,11 +201,17 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
               <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs">
                 <div className="flex items-center gap-2 text-[#005689] font-bold">
                   <Clock className="w-4 h-4 shrink-0 text-[#005689]" />
-                  <span>Verified Active Vacancy (Within 30-Day Indexing Window)</span>
+                  <span>Verified Active Vacancy (Within 45-Day Retention Policy)</span>
                 </div>
-                <div className="text-slate-600 font-semibold shrink-0">
-                  Application Deadline: <strong className="text-slate-900">{job.lastDate}</strong>
-                </div>
+                {job.lastDate ? (
+                  <div className="text-slate-600 font-semibold shrink-0">
+                    Application Deadline: <strong className="text-slate-900">{job.lastDate}</strong>
+                  </div>
+                ) : (
+                  <div className="text-slate-500 font-medium shrink-0">
+                    Application Status: <strong className="text-emerald-700">Open & Active</strong>
+                  </div>
+                )}
               </div>
 
               {/* Description Card */}
@@ -277,40 +304,61 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 </h3>
 
                 <div className="space-y-3.5 text-xs">
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span className="text-slate-500">Designation</span>
-                    <span className="font-bold text-slate-900">{job.designation}</span>
-                  </div>
+                  {job.designation && (
+                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                      <span className="text-slate-500">Designation</span>
+                      <span className="font-bold text-slate-900">{job.designation}</span>
+                    </div>
+                  )}
 
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span className="text-slate-500">Subject</span>
-                    <span className="font-bold text-slate-900">{job.subject}</span>
-                  </div>
+                  {job.subject && (
+                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                      <span className="text-slate-500">Subject</span>
+                      <span className="font-bold text-slate-900">{job.subject}</span>
+                    </div>
+                  )}
 
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span className="text-slate-500">Curriculum Board</span>
-                    <span className="font-bold text-slate-900">{job.board || 'CBSE'}</span>
-                  </div>
+                  {job.board && (
+                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                      <span className="text-slate-500">Curriculum Board</span>
+                      <span className="font-bold text-slate-900">{job.board}</span>
+                    </div>
+                  )}
 
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span className="text-slate-500">Employment Type</span>
-                    <span className="font-bold text-slate-900">{job.roleType}</span>
-                  </div>
+                  {job.roleType && (
+                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                      <span className="text-slate-500">Employment Type</span>
+                      <span className="font-bold text-slate-900">{job.roleType}</span>
+                    </div>
+                  )}
+
+                  {job.minExperience && (
+                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                      <span className="text-slate-500">Experience</span>
+                      <span className="font-bold text-slate-900">{job.minExperience}+ Years</span>
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between py-1 border-b border-slate-50">
                     <span className="text-slate-500">Compensation</span>
-                    <span className="font-bold text-emerald-700">{job.salary}</span>
+                    <span className={`font-bold ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-emerald-700' : 'text-slate-700'}`}>
+                      {formatCleanSalary(job.salary, true)}
+                    </span>
                   </div>
 
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span className="text-slate-500">Opening Date</span>
-                    <span className="font-bold text-slate-700">{job.openingDate}</span>
-                  </div>
+                  {job.openingDate && (
+                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                      <span className="text-slate-500">Opening Date</span>
+                      <span className="font-bold text-slate-700">{job.openingDate}</span>
+                    </div>
+                  )}
 
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-slate-500">Application Deadline</span>
-                    <span className="font-bold text-amber-700">{job.lastDate}</span>
-                  </div>
+                  {job.lastDate && (
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-slate-500">Application Deadline</span>
+                      <span className="font-bold text-amber-700">{job.lastDate}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2">
@@ -388,7 +436,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                       </h4>
                       <p className="text-[11px] text-slate-500 truncate">{rj.organisationName}</p>
 
-                      <div className="text-[11px] font-bold text-emerald-700">{rj.salary}</div>
+                      <div className="text-[11px] font-bold text-emerald-700">{formatCleanSalary(rj.salary, false)}</div>
                       <div className="text-[10px] text-slate-400 flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
                         <span>{rj.city}</span>

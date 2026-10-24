@@ -4,19 +4,20 @@ import aggregatedJobsData from './aggregated_jobs.json';
 export interface FacultyJobItem {
   id: string;
   organisationName: string;
-  organisationLogo?: string;
+  organisationLogo?: string | null;
   jobPostName: string;
-  designation: "PGT" | "TGT" | "PRT" | "Lab In-Charge" | "ATL Mentor" | "Coordinator";
-  subject: "Physics" | "Chemistry" | "Biology" | "Mathematics" | "Robotics & AI" | "Computer Science" | "Composite Lab" | "General Science";
-  board: "CBSE" | "ICSE" | "Cambridge / IB" | "State Board";
-  roleType: "Full-Time" | "Part-Time" | "Lab In-Charge" | "ATL Mentor" | "Visiting Faculty";
+  designation?: "PGT" | "TGT" | "PRT" | "Lab In-Charge" | "ATL Mentor" | "Coordinator" | "NEET & JEE Faculty" | "Pre-Primary / Nursery" | "Academic Leadership" | string | null;
+  subject?: "Physics" | "Chemistry" | "Biology" | "Mathematics" | "Robotics & AI" | "Computer Science" | "Composite Lab" | "General Science" | "Science" | "English" | "Hindi" | "Social Studies (SST)" | string | null;
+  board?: "CBSE" | "ICSE" | "Cambridge / IB" | "State Board" | string | null;
+  roleType?: "Full-Time" | "Part-Time" | "Lab In-Charge" | "ATL Mentor" | "Visiting Faculty" | string | null;
   salary: string;
-  salaryMin?: number;
-  salaryMax?: number;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
   shortDescription: string;
   address: string;
   city: string;
   state: string;
+  district?: string;
   coordinates: {
     lat: number;
     lng: number;
@@ -29,8 +30,10 @@ export interface FacultyJobItem {
   urgent?: boolean;
   openingDate: string; // ISO date string (YYYY-MM-DD)
   lastDate: string;    // Application deadline (YYYY-MM-DD)
-  source: "LinkedIn" | "Indeed" | "Naukri.com" | "TimesJobs" | "Direct School Portal";
+  source: "LinkedIn" | "Indeed" | "Naukri.com" | "Apna.co" | "Foundit" | "Shine.com" | "TeacherON" | "EducoHire" | "TimesJobs" | "DAV CMC" | "AWES India" | "KVS / NVS" | "Direct School Portal" | string;
   originalUrl: string;
+  applyUrl?: string;
+  rating?: number | string | null;
   verified: boolean;
   badge?: string;
 }
@@ -54,23 +57,12 @@ export function enforceTagLimits(tags: string[], maxTagLen: number = 20, maxTota
 }
 
 // Helper: Extract school teacher facilities/benefits (max 20 chars each, total <= 60 chars)
+// Zero-guesswork: ONLY return actual facilities provided by the school/posting!
 export function getJobFacilityTags(job: FacultyJobItem): string[] {
-  let candidates: string[] = [];
-  if (job.facilities && job.facilities.length > 0) {
-    candidates = job.facilities;
-  } else {
-    // Standard teacher benefits & allowances offered by institutions (max 20 chars each)
-    const facilitySets: Record<string, string[]> = {
-      'Physics': ['TA + DA', 'Home Allowance', 'PF & Gratuity', 'Medical Cover'],
-      'Chemistry': ['TA Allowance', 'Home Allowance', 'PF & Gratuity', 'Free Meals'],
-      'Biology': ['TA + DA', 'Home Allowance', 'Health Ins.', 'Child Edu Off'],
-      'Mathematics': ['TA Allowance', 'Home Allowance', 'PF & Gratuity', 'Annual Bonus'],
-      'Robotics & AI': ['TA + DA', 'Home Allowance', 'Tech Allowance', 'Health Ins.'],
-      'Computer Science': ['TA Allowance', 'Home Allowance', 'PF & Gratuity', 'Annual Bonus'],
-    };
-    candidates = facilitySets[job.subject] || ['TA + DA', 'Home Allowance', 'PF & Gratuity', 'Health Ins.'];
+  if (job.facilities && Array.isArray(job.facilities) && job.facilities.length > 0) {
+    return enforceTagLimits(job.facilities, 20, 60, 4);
   }
-  return enforceTagLimits(candidates, 20, 60, 4);
+  return [];
 }
 
 // Helper: Get minimum experience requirement (e.g. "1 yr Exp", "3 yrs Exp")
@@ -83,11 +75,7 @@ export function getMinExperience(job: FacultyJobItem): string {
     if (num) return `${num} yrs Exp`;
     return raw;
   }
-  if (job.designation === 'PGT') return '3 yrs Exp';
-  if (job.designation === 'TGT') return '2 yrs Exp';
-  if (job.designation === 'PRT') return '1 yr Exp';
-  if (job.designation === 'Coordinator') return '5 yrs Exp';
-  return '2 yrs Exp';
+  return 'Exp as per school';
 }
 
 // Helper: Extract up to 4 job requirement / info tags (Min Exp, Urgency, Board, Employment Type)
@@ -120,430 +108,142 @@ export function getJobRequirementTags(job: FacultyJobItem): string[] {
   return enforceTagLimits(candidateTags, 20, 60, 4);
 }
 
-// ── Raw Vacancy Records with Recent Dates within Last 30 Days ─────────────────
-// Base reference date is 2026-10-24
-export const RAW_FACULTY_JOBS: FacultyJobItem[] = [
-  {
-    id: "job-dps-rkp-phy",
-    organisationName: "Delhi Public School, R.K. Puram",
-    organisationLogo: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PGT Physics & Experiential Lab Head",
-    designation: "PGT",
-    subject: "Physics",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹10.5 - ₹14.0 LPA",
-    salaryMin: 1050000,
-    salaryMax: 1400000,
-    shortDescription: "Lead senior secondary practicals, optical bench rigs, and CBSE board examination viva preparation in modern composite laboratory.",
-    address: "Sector 12, R.K. Puram",
-    city: "New Delhi",
-    state: "Delhi NCR",
-    coordinates: { lat: 28.5672, lng: 77.1734 },
-    websiteUrl: "https://dpsrkp.net",
-    openingDate: "2026-10-21",
-    lastDate: "2026-11-20",
-    source: "LinkedIn",
-    originalUrl: "https://www.linkedin.com/jobs/search/?keywords=PGT+Physics+Delhi+Public+School",
-    verified: true,
-    badge: "🔥 Urgently Hiring"
-  },
-  {
-    id: "job-modern-chem",
-    organisationName: "Modern School, Barakhamba Road",
-    organisationLogo: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "TGT Chemistry & Chemical Safety Lead",
-    designation: "TGT",
-    subject: "Chemistry",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹7.5 - ₹10.5 LPA",
-    salaryMin: 750000,
-    salaryMax: 1050000,
-    shortDescription: "Conduct volumetric analysis practicals, salt analysis protocols, and maintain CBSE SARAS compliant acid storage SOPs.",
-    address: "Barakhamba Road, Connaught Place",
-    city: "New Delhi",
-    state: "Delhi NCR",
-    coordinates: { lat: 28.6315, lng: 77.2285 },
-    websiteUrl: "https://modernschool.net",
-    openingDate: "2026-10-18",
-    lastDate: "2026-11-15",
-    source: "Naukri.com",
-    originalUrl: "https://www.naukri.com/chemistry-teacher-jobs-in-delhi",
-    verified: true,
-    badge: "⭐ CBSE SARAS Lab"
-  },
-  {
-    id: "job-prt-science-delhi",
-    organisationName: "The Mother's International School",
-    organisationLogo: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PRT Primary Science & Hands-on Discovery Lead",
-    designation: "PRT",
-    subject: "General Science",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹5.5 - ₹7.5 LPA",
-    salaryMin: 550000,
-    salaryMax: 750000,
-    shortDescription: "Engage primary classes (Grades 1-5) in tactile science models, plant germination tracking, simple circuits, and discovery journals.",
-    address: "Sri Aurobindo Ashram, Sri Aurobindo Marg",
-    city: "New Delhi",
-    state: "Delhi NCR",
-    coordinates: { lat: 28.5392, lng: 77.1991 },
-    websiteUrl: "https://themis.in",
-    openingDate: "2026-10-22",
-    lastDate: "2026-11-22",
-    source: "LinkedIn",
-    originalUrl: "https://www.linkedin.com/jobs/search/?keywords=PRT+Science+Delhi",
-    verified: true,
-    badge: "🌱 Primary STEM"
-  },
-  {
-    id: "job-heritage-atl",
-    organisationName: "Heritage Xperiential Learning School",
-    organisationLogo: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "Atal Tinkering Lab (ATL 2.0) Mentor",
-    designation: "ATL Mentor",
-    subject: "Robotics & AI",
-    board: "CBSE",
-    roleType: "ATL Mentor",
-    salary: "₹8.0 - ₹12.0 LPA",
-    salaryMin: 800000,
-    salaryMax: 1200000,
-    shortDescription: "Mentor student teams for ATL Marathon, 3D printing prototyping, Arduino sensor interfacing, and national robotics challenges.",
-    address: "Sector 62",
-    city: "Gurugram",
-    state: "Haryana",
-    coordinates: { lat: 28.4116, lng: 77.0867 },
-    websiteUrl: "https://heritagexperiential.org",
-    openingDate: "2026-10-22",
-    lastDate: "2026-11-25",
-    source: "LinkedIn",
-    originalUrl: "https://www.linkedin.com/jobs/search/?keywords=ATL+Mentor+Gurgaon",
-    verified: true,
-    badge: "🤖 ATL 2.0 Lead"
-  },
-  {
-    id: "job-dais-bio",
-    organisationName: "Dhirubhai Ambani International School",
-    organisationLogo: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PGT Biology & Microscopy Demonstrator",
-    designation: "PGT",
-    subject: "Biology",
-    board: "Cambridge / IB",
-    roleType: "Full-Time",
-    salary: "₹12.0 - ₹18.0 LPA",
-    salaryMin: 1200000,
-    salaryMax: 1800000,
-    shortDescription: "Facilitate IB & CBSE biology practicals: DNA extraction, cytological slide preparation, and student biotechnology research papers.",
-    address: "Bandra Kurla Complex (BKC)",
-    city: "Mumbai",
-    state: "Maharashtra",
-    coordinates: { lat: 19.0662, lng: 72.8687 },
-    websiteUrl: "https://daismumbai.org",
-    openingDate: "2026-10-15",
-    lastDate: "2026-11-18",
-    source: "Indeed",
-    originalUrl: "https://in.indeed.com/jobs?q=Biology+Teacher+Mumbai",
-    verified: true,
-    badge: "🏆 Premier School"
-  },
-  {
-    id: "job-tisb-math",
-    organisationName: "The International School Bangalore (TISB)",
-    organisationLogo: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PGT Mathematics Modeling & 3D Geometry Teacher",
-    designation: "PGT",
-    subject: "Mathematics",
-    board: "Cambridge / IB",
-    roleType: "Full-Time",
-    salary: "₹11.0 - ₹16.0 LPA",
-    salaryMin: 1100000,
-    salaryMax: 1600000,
-    shortDescription: "Teach tactile geometry visualizers, applied calculus, and coordinate geometry simulations aligned with experiential STEM standards.",
-    address: "Sarjapur-Varthur Road",
-    city: "Bengaluru",
-    state: "Karnataka",
-    coordinates: { lat: 12.8797, lng: 77.7478 },
-    openingDate: "2026-10-19",
-    lastDate: "2026-11-22",
-    source: "LinkedIn",
-    originalUrl: "https://www.linkedin.com/jobs/search/?keywords=Math+Teacher+Bangalore",
-    verified: true,
-    badge: "📐 STEM Math"
-  },
-  {
-    id: "job-tgt-math-mumbai",
-    organisationName: "Bombay Scottish School, Mahim",
-    organisationLogo: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "TGT Mathematics (Grades 6-10)",
-    designation: "TGT",
-    subject: "Mathematics",
-    board: "ICSE",
-    roleType: "Full-Time",
-    salary: "₹7.5 - ₹10.0 LPA",
-    salaryMin: 750000,
-    salaryMax: 1000000,
-    shortDescription: "Deliver conceptual algebra, commercial mathematics, and geometry practical constructions with real-world problem sets.",
-    address: "Veer Savarkar Marg, Mahim",
-    city: "Mumbai",
-    state: "Maharashtra",
-    coordinates: { lat: 19.0330, lng: 72.8400 },
-    openingDate: "2026-10-17",
-    lastDate: "2026-11-19",
-    source: "Naukri.com",
-    originalUrl: "https://www.naukri.com/tgt-math-jobs-in-mumbai",
-    verified: true,
-    badge: "📐 ICSE Board"
-  },
-  {
-    id: "job-pune-composite",
-    organisationName: "The Bishop's School, Camp",
-    organisationLogo: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "Composite Science Laboratory In-Charge",
-    designation: "Lab In-Charge",
-    subject: "Composite Lab",
-    board: "CBSE",
-    roleType: "Lab In-Charge",
-    salary: "₹5.5 - ₹8.0 LPA",
-    salaryMin: 550000,
-    salaryMax: 800000,
-    shortDescription: "Manage apparatus calibration, inventory records for mandatory CBSE non-consumables, and safety equipment maintenance.",
-    address: "General Bhagat Marg, Camp",
-    city: "Pune",
-    state: "Maharashtra",
-    coordinates: { lat: 18.5126, lng: 73.8824 },
-    openingDate: "2026-10-12",
-    lastDate: "2026-11-12",
-    source: "Naukri.com",
-    originalUrl: "https://www.naukri.com/lab-assistant-jobs-in-pune",
-    verified: true,
-    badge: "⚙️ Lab In-Charge"
-  },
-  {
-    id: "job-hps-ai",
-    organisationName: "The Hyderabad Public School, Begumpet",
-    organisationLogo: "https://images.unsplash.com/photo-1562774053-701939374585?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PGT Computer Science & Applied AI Educator",
-    designation: "PGT",
-    subject: "Computer Science",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹9.0 - ₹13.5 LPA",
-    salaryMin: 900000,
-    salaryMax: 1350000,
-    shortDescription: "Deliver NEP-2020 Python programming, OpenCV computer vision modules, and algorithmic problem-solving for Grades 9-12.",
-    address: "1-11-87/88, Begumpet",
-    city: "Hyderabad",
-    state: "Telangana",
-    coordinates: { lat: 17.4435, lng: 78.4738 },
-    openingDate: "2026-10-17",
-    lastDate: "2026-11-20",
-    source: "TimesJobs",
-    originalUrl: "https://www.timesjobs.com/candidate/job-search.html?txtKeywords=Computer+Science+Teacher+Hyderabad",
-    verified: true,
-    badge: "💡 AI Specialist"
-  },
-  {
-    id: "job-prt-math-noida",
-    organisationName: "Shiv Nadar School, Sector 168",
-    organisationLogo: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PRT Primary Math & STEAM Tinkerer",
-    designation: "PRT",
-    subject: "Mathematics",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹6.0 - ₹8.5 LPA",
-    salaryMin: 600000,
-    salaryMax: 850000,
-    shortDescription: "Facilitate foundational numeracy through Cuisenaire rods, base-10 blocks, and tactile geometry kits for Grades 2-5.",
-    address: "Expressway, Sector 168",
-    city: "Noida",
-    state: "Delhi NCR",
-    coordinates: { lat: 28.4988, lng: 77.4042 },
-    openingDate: "2026-10-23",
-    lastDate: "2026-11-26",
-    source: "Direct School Portal",
-    originalUrl: "https://shivnadarschool.edu.in/careers",
-    verified: true,
-    badge: "⚡ Immediate Join"
-  },
-  {
-    id: "job-stepby-phy",
-    organisationName: "Step by Step School, Sector 132",
-    organisationLogo: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "TGT Physics Practical Demonstrator",
-    designation: "TGT",
-    subject: "Physics",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹7.0 - ₹9.5 LPA",
-    salaryMin: 700000,
-    salaryMax: 950000,
-    shortDescription: "Conduct hands-on mechanics, ray optics, and electromagnetism experiments with active peer-inquiry scaffolding.",
-    address: "Expressway, Sector 132",
-    city: "Noida",
-    state: "Delhi NCR",
-    coordinates: { lat: 28.5122, lng: 77.3828 },
-    openingDate: "2026-10-20",
-    lastDate: "2026-11-24",
-    source: "Direct School Portal",
-    originalUrl: "https://stepbystep.school/careers",
-    verified: true,
-    badge: "🔬 Hands-On Mentor"
-  },
-  {
-    id: "job-dav-chem",
-    organisationName: "DAV Model School, Sector 15",
-    organisationLogo: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PGT Chemistry & Organic Spectroscopy Mentor",
-    designation: "PGT",
-    subject: "Chemistry",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹8.0 - ₹11.0 LPA",
-    salaryMin: 800000,
-    salaryMax: 1100000,
-    shortDescription: "Guide senior students in qualitative salt analysis, reaction kinetics, and CBSE practical portfolio documentation.",
-    address: "Sector 15-A",
-    city: "Chandigarh",
-    state: "Punjab",
-    coordinates: { lat: 30.7588, lng: 76.7841 },
-    openingDate: "2026-10-14",
-    lastDate: "2026-11-16",
-    source: "Indeed",
-    originalUrl: "https://in.indeed.com/jobs?q=PGT+Chemistry+Chandigarh",
-    verified: true,
-    badge: "⚗️ Chemistry Lab"
-  },
-  {
-    id: "job-jayshree-bio",
-    organisationName: "Jayshree Periwal High School",
-    organisationLogo: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "TGT Biology Practical Teacher & Botany Head",
-    designation: "TGT",
-    subject: "Biology",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹6.5 - ₹9.0 LPA",
-    salaryMin: 650000,
-    salaryMax: 900000,
-    shortDescription: "Conduct plant physiology experiments, human anatomy model demos, and laboratory specimen slide examinations.",
-    address: "Chitrakoot, Vaishali Nagar",
-    city: "Jaipur",
-    state: "Rajasthan",
-    coordinates: { lat: 26.8998, lng: 75.7423 },
-    openingDate: "2026-10-16",
-    lastDate: "2026-11-19",
-    source: "Naukri.com",
-    originalUrl: "https://www.naukri.com/biology-teacher-jobs-in-jaipur",
-    verified: true,
-    badge: "🌿 Botany Lead"
-  },
-  {
-    id: "job-shivnadar-atl",
-    organisationName: "Shiv Nadar School, DLF Phase 1",
-    organisationLogo: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "Robotics & STEAM Workstation In-Charge",
-    designation: "ATL Mentor",
-    subject: "Robotics & AI",
-    board: "CBSE",
-    roleType: "ATL Mentor",
-    salary: "₹9.5 - ₹15.0 LPA",
-    salaryMin: 950000,
-    salaryMax: 1500000,
-    shortDescription: "Supervise digital fabrication studio, laser cutting, drone electronics, and national inter-school maker hackathons.",
-    address: "Paharikhurd, DLF City Phase 1",
-    city: "Gurugram",
-    state: "Haryana",
-    coordinates: { lat: 28.4682, lng: 77.1025 },
-    openingDate: "2026-10-23",
-    lastDate: "2026-11-28",
-    source: "LinkedIn",
-    originalUrl: "https://www.linkedin.com/jobs/search/?keywords=STEAM+Teacher+Shiv+Nadar",
-    verified: true,
-    badge: "🚀 High Growth"
-  },
-  {
-    id: "job-dps-kolkata-math",
-    organisationName: "Delhi Public School, Ruby Park",
-    organisationLogo: "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PGT Mathematics Practicals Coordinator",
-    designation: "PGT",
-    subject: "Mathematics",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹7.5 - ₹10.5 LPA",
-    salaryMin: 750000,
-    salaryMax: 1050000,
-    shortDescription: "Deliver conceptual 3D conics and analytical geometry using experiential modeling sets aligned with CBSE criteria.",
-    address: "Kasba, Shanthipally",
-    city: "Kolkata",
-    state: "West Bengal",
-    coordinates: { lat: 22.5186, lng: 88.3972 },
-    openingDate: "2026-10-10",
-    lastDate: "2026-11-10",
-    source: "Indeed",
-    originalUrl: "https://in.indeed.com/jobs?q=Math+Teacher+Kolkata",
-    verified: true,
-    badge: "📐 High School"
-  },
-  {
-    id: "job-prt-tgt-bengaluru",
-    organisationName: "National Public School (NPS), Indiranagar",
-    organisationLogo: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=100&auto=format&fit=crop&q=80",
-    jobPostName: "PRT / TGT Science & Discovery Bench Mentor",
-    designation: "PRT",
-    subject: "General Science",
-    board: "CBSE",
-    roleType: "Full-Time",
-    salary: "₹6.5 - ₹9.0 LPA",
-    salaryMin: 650000,
-    salaryMax: 900000,
-    shortDescription: "Lead middle & primary school laboratory discovery sessions with interactive physics kits, basic optics, and science club activities.",
-    address: "12th A Main Road, Indiranagar",
-    city: "Bengaluru",
-    state: "Karnataka",
-    coordinates: { lat: 12.9784, lng: 77.6408 },
-    openingDate: "2026-10-21",
-    lastDate: "2026-11-25",
-    source: "Naukri.com",
-    originalUrl: "https://www.naukri.com/science-teacher-jobs-in-bangalore",
-    verified: true,
-    badge: "⭐ NPS Campus"
-  }
-];
+// ── Vacancy Records (Live Portal Aggregated Jobs) ─────────────────────────
+export const RAW_FACULTY_JOBS: FacultyJobItem[] = [];
 
 /**
- * Filter function strictly returning jobs posted within the last 30 days.
- * Any vacancy older than 30 days is automatically purged.
+ * Quick fuzzy similarity
  */
-export function getActiveFacultyJobs(nowDateStr: string = "2026-10-24"): FacultyJobItem[] {
-  const current = new Date(nowDateStr).getTime();
-  const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+export function fuzzyStringSimilarity(s1: string, s2: string): number {
+  const a = (s1 || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+  const b = (s2 || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+  if (a === b) return 1.0;
+  if (!a || !b) return 0.0;
+  if (a.includes(b) || b.includes(a)) return 0.88;
 
-  // Merge seed jobs with multi-portal aggregated vacancies (Indeed, LinkedIn, Naukri, Direct Portals)
-  const portalJobs = (aggregatedJobsData as unknown as FacultyJobItem[]) || [];
-  const combined = [...portalJobs, ...RAW_FACULTY_JOBS];
+  const bg1 = new Set<string>();
+  for (let i = 0; i < a.length - 1; i++) bg1.add(a.substring(i, i + 2));
+  const bg2 = new Set<string>();
+  for (let i = 0; i < b.length - 1; i++) bg2.add(b.substring(i, i + 2));
 
-  // Deduplicate strictly by school + designation + subject + city
-  const seen = new Set<string>();
-  const deduplicated: FacultyJobItem[] = [];
+  let intersection = 0;
+  bg1.forEach((val) => {
+    if (bg2.has(val)) intersection++;
+  });
 
-  for (const job of combined) {
-    const key = `${job.organisationName}_${job.designation}_${job.subject}_${job.city}`.toLowerCase();
-    if (!seen.has(key)) {
-      seen.add(key);
-      deduplicated.push(job);
+  return (2.0 * intersection) / (bg1.size + bg2.size || 1);
+}
+
+/**
+ * Strict Verification to determine if two vacancies from different portals are the EXACT SAME JOB:
+ * - Same School Name (>= 85% fuzzy match or exact)
+ * - Same Post / Role (Designation + Subject)
+ * - Same Address / City Location
+ * - Close Posting Date (within 10 days of each other)
+ * - Matching Salary Range (if both disclosed)
+ */
+export function isExactSameJob(jobA: FacultyJobItem, jobB: FacultyJobItem): boolean {
+  // 1. Post & Role Check (must match exact designation & subject)
+  if (jobA.designation !== jobB.designation || jobA.subject !== jobB.subject) {
+    return false;
+  }
+
+  // 2. City & Location Check (must be same city)
+  if (jobA.city.toLowerCase() !== jobB.city.toLowerCase()) {
+    return false;
+  }
+
+  // If specific address is available for both, ensure they are not different branches/campuses
+  if (jobA.address && jobB.address) {
+    const addrA = jobA.address.toLowerCase();
+    const addrB = jobB.address.toLowerCase();
+    // Check if conflicting campus/sector names
+    const secA = addrA.match(/sector\s*\d+|phase\s*\d+/i)?.[0];
+    const secB = addrB.match(/sector\s*\d+|phase\s*\d+/i)?.[0];
+    if (secA && secB && secA !== secB) {
+      return false; // Different branch campus (e.g. Sector 14 vs Sector 56)
     }
   }
 
-  return deduplicated.filter((job) => {
+  // 3. School Name (High-precision match >= 85%)
+  const schoolSim = fuzzyStringSimilarity(jobA.organisationName, jobB.organisationName);
+  if (schoolSim < 0.85) {
+    return false;
+  }
+
+  // 4. Close Posting Date (within 10 days of each other)
+  const timeA = new Date(jobA.openingDate).getTime();
+  const timeB = new Date(jobB.openingDate).getTime();
+  if (!isNaN(timeA) && !isNaN(timeB)) {
+    const diffDays = Math.abs(timeA - timeB) / (1000 * 60 * 60 * 24);
+    if (diffDays > 10) {
+      return false; // Posted at different times -> separate hiring drive
+    }
+  }
+
+  // 5. Salary Check (if both disclosed, salary ranges must be consistent)
+  if (jobA.salaryMin && jobB.salaryMin && jobA.salaryMax && jobB.salaryMax) {
+    const maxMin = Math.max(jobA.salaryMin, jobB.salaryMin);
+    const minMax = Math.min(jobA.salaryMax, jobB.salaryMax);
+    if (maxMin > minMax && Math.abs(jobA.salaryMin - jobB.salaryMin) > 150000) {
+      return false; // Different pay bands -> different vacancies
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Filter function strictly returning jobs posted within the last 45 days.
+ * Any vacancy older than 45 days is automatically purged.
+ * Cross-portal duplicates across LinkedIn, Indeed, and Naukri are merged only when
+ * ALL 5 validation criteria pass (Name, Address, Post, Close Date, Matching Salary).
+ */
+export function getActiveFacultyJobs(nowDateStr: string = "2026-10-24"): FacultyJobItem[] {
+  const current = new Date(nowDateStr).getTime();
+  const fortyFiveDaysMs = 45 * 24 * 60 * 60 * 1000; // Strictly 45-day freshness rule
+
+  // Merge seed jobs with multi-portal aggregated vacancies (Indeed, LinkedIn, Naukri, Direct Portals)
+  const portalJobs = (aggregatedJobsData as unknown as FacultyJobItem[]) || [];
+  const combined = portalJobs;
+
+  // 1. Purge vacancies older than 45 days
+  const unexpired = combined.filter((job) => {
     const jobDate = new Date(job.openingDate).getTime();
     const diff = current - jobDate;
-    // Job must be within last 30 days and deadline must not have passed
-    return diff >= 0 && diff <= thirtyDaysMs;
+    return diff >= 0 && diff <= fortyFiveDaysMs;
   });
+
+  // 2. Strict Deduplication System (5-Point Validation)
+  const deduplicated: FacultyJobItem[] = [];
+
+  for (const job of unexpired) {
+    let isDuplicate = false;
+
+    for (let i = 0; i < deduplicated.length; i++) {
+      const existing = deduplicated[i];
+
+      if (isExactSameJob(existing, job)) {
+        isDuplicate = true;
+        // Keep freshest date and combine badges/links if multi-portal
+        if (new Date(job.openingDate).getTime() > new Date(existing.openingDate).getTime()) {
+          existing.openingDate = job.openingDate;
+          existing.lastDate = job.lastDate;
+        }
+        if (job.source && !existing.source.includes(job.source)) {
+          existing.source = `${existing.source} / ${job.source}`;
+          existing.badge = `Verified Multi-Portal (${existing.source})`;
+        }
+        break;
+      }
+    }
+
+    if (!isDuplicate) {
+      deduplicated.push({ ...job });
+    }
+  }
+
+  return deduplicated;
 }
 
 // ── Verified Faculty Roster (Authentic Educators) ──────────────────────────────

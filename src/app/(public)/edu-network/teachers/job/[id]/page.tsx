@@ -2,8 +2,11 @@ import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { RAW_FACULTY_JOBS, FacultyJobItem } from '@/data/facultyJobsData';
+import { getActiveFacultyJobs, FacultyJobItem } from '@/data/facultyJobsData';
+import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 import SingleJobClient from './SingleJobClient';
+
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: {
@@ -11,22 +14,25 @@ interface Props {
   };
 }
 
-export async function generateStaticParams() {
-  return RAW_FACULTY_JOBS.map((job) => ({
-    id: job.id,
-  }));
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const job = RAW_FACULTY_JOBS.find((j) => j.id === params.id);
+  const allJobs = getActiveFacultyJobs();
+  let job = allJobs.find((j) => j.id === params.id || (j as any).slug === params.id);
+  if (!job) {
+    try {
+      const supa = await SupabaseJobService.fetchJobsFromSupabase();
+      job = supa.find((j) => j.id === params.id || (j as any).slug === params.id);
+    } catch {}
+  }
+
   if (!job) {
     return {
       title: 'Job Not Found | CSEEL STEM Indexer',
     };
   }
 
-  const title = `${job.jobPostName} at ${job.organisationName} | Teaching Vacancy`;
-  const description = `${job.shortDescription} Salary: ${job.salary}. Location: ${job.city}, ${job.state}. Board: ${job.board || 'CBSE'}. Apply directly on ${job.source}.`;
+  const locationStr = [job.city || job.district, job.state].filter(Boolean).join(', ') || 'India';
+  const title = `${job.jobPostName} at ${job.organisationName} in ${locationStr} | School Teaching Vacancy`;
+  const description = `${job.shortDescription || `${job.jobPostName} vacancy at ${job.organisationName}`}. Compensation: ${job.salary && job.salary !== '---' ? job.salary : 'Best in industry'}. Location: ${locationStr}. Apply directly via verified original source.`;
 
   return {
     title,
@@ -41,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       images: [
         {
-          url: job.organisationLogo || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80',
+          url: job.organisationLogo || 'https://www.cseel.org/og-cover.png',
           width: 800,
           height: 600,
           alt: job.organisationName,
@@ -52,67 +58,84 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: [job.organisationLogo || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&auto=format&fit=crop&q=80'],
+      images: [job.organisationLogo || 'https://www.cseel.org/og-cover.png'],
     },
   };
 }
 
-export default function SingleJobPage({ params }: Props) {
-  const job = RAW_FACULTY_JOBS.find((j) => j.id === params.id);
+export default async function SingleJobPage({ params }: Props) {
+  const allJobs = getActiveFacultyJobs();
+  let job = allJobs.find((j) => j.id === params.id || (j as any).slug === params.id);
+  if (!job) {
+    try {
+      const supa = await SupabaseJobService.fetchJobsFromSupabase();
+      job = supa.find((j) => j.id === params.id || (j as any).slug === params.id);
+    } catch {}
+  }
 
   if (!job) {
     notFound();
   }
 
-  // Schema.org JobPosting Structured Data for Google Jobs Indexing
-  const jsonLd = {
+  // Schema.org JobPosting Structured Data for Google Jobs Indexing (Strict Google Jobs Validator Compliant)
+  const jsonLd: any = {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
     title: job.jobPostName,
-    description: job.shortDescription,
+    description: job.shortDescription || `${job.jobPostName} opening at ${job.organisationName}`,
     identifier: {
       '@type': 'PropertyValue',
       name: job.organisationName,
       value: job.id,
     },
-    datePosted: job.openingDate,
-    validThrough: job.lastDate,
-    employmentType: 'FULL_TIME',
+    employmentType: job.roleType === 'Part-Time' ? 'PART_TIME' : 'FULL_TIME',
     hiringOrganization: {
       '@type': 'Organization',
       name: job.organisationName,
-      logo: job.organisationLogo,
+      ...(job.organisationLogo ? { logo: job.organisationLogo } : {}),
     },
     jobLocation: {
       '@type': 'Place',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: job.address,
-        addressLocality: job.city,
-        addressRegion: job.state,
+        streetAddress: job.address || job.city || 'India',
+        addressLocality: job.city || job.district || 'India',
+        addressRegion: job.state || '',
         addressCountry: 'IN',
       },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: job.coordinates.lat,
-        longitude: job.coordinates.lng,
-      },
+      ...(job.coordinates ? {
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: job.coordinates.lat,
+          longitude: job.coordinates.lng,
+        }
+      } : {}),
     },
-    baseSalary: {
+  };
+
+  if (job.openingDate) {
+    jsonLd.datePosted = job.openingDate;
+  }
+  if (job.lastDate) {
+    jsonLd.validThrough = job.lastDate;
+  }
+
+  if (job.salaryMin && job.salaryMax) {
+    jsonLd.baseSalary = {
       '@type': 'MonetaryAmount',
       currency: 'INR',
       value: {
         '@type': 'QuantitativeValue',
-        minValue: job.salaryMin || 600000,
-        maxValue: job.salaryMax || 1200000,
+        minValue: job.salaryMin,
+        maxValue: job.salaryMax,
         unitText: 'YEAR',
       },
-    },
-  };
+    };
+  }
 
   // Find related jobs in same subject or city
-  const relatedJobs = RAW_FACULTY_JOBS.filter(
-    (j) => j.id !== job.id && (j.subject === job.subject || j.city === job.city)
+  const relatedJobs = allJobs.filter(
+    (j) => j.id !== job!.id && ((job!.subject && j.subject === job!.subject) || (job!.city && j.city === job!.city))
   ).slice(0, 4);
 
   return (

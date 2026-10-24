@@ -86,13 +86,13 @@ const EventDetail = () => {
     <>
 <PageTransition>
         {/* Hero */}
-        <section className="about-hero-gradient py-16 text-primary-foreground">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#001D38] via-[#003C6E] to-[#005689] py-16 text-white">
           <div className="container mx-auto px-4 max-w-4xl">
             <button onClick={() => router.push("/events/upcoming")} className="flex items-center gap-2 text-sm opacity-70 hover:opacity-100 mb-6 transition-opacity">
               <ArrowLeft className="h-4 w-4" /> Back to Events
             </button>
             <span className={`text-xs px-3 py-1 rounded-full font-semibold mb-4 inline-block ${typeColors[event.type] || "bg-gray-100 text-gray-700"}`}>{event.type}</span>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">{event.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight" style={{ color: '#ffffff' }}>{event.title}</h1>
             <div className="flex flex-wrap gap-5 text-sm opacity-90">
               <span className="flex items-center gap-2"><Calendar className="h-4 w-4" /> {event.date}</span>
               <span className="flex items-center gap-2"><Clock className="h-4 w-4" /> {event.time}</span>

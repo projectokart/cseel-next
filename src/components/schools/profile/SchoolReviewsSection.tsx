@@ -279,24 +279,23 @@ export default function SchoolReviewsSection({
   });
 
   return (
-    <section id="reviews" className="py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden">
-      {/* Decorative ambient background blur */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+    <section id="reviews" className="py-12 sm:py-20 bg-white border-b border-[#E8E9E9] relative overflow-hidden">
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header & Write Review Action */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-14">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
-              <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+              <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
               <span>GENUINE COMMUNITY RATINGS</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
               Community Feedback &amp;
-              <span className="text-[#005689] block mt-0.5">Verified Parent &amp; Student Ratings</span>
+              <span className="text-[#006FCC] block mt-0.5">Verified Parent &amp; Student Ratings</span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 mt-3 max-w-2xl leading-relaxed font-medium">
+            <p className="text-sm sm:text-base text-slate-600 mt-3 max-w-2xl leading-relaxed font-normal">
               Real, verified feedback from enrolled families, current scholars, and distinguished alumni of {displayName}.
             </p>
           </div>
@@ -307,7 +306,7 @@ export default function SchoolReviewsSection({
                 <button
                   type="button"
                   onClick={() => handleOpenEditModal(userReview)}
-                  className="bg-[#005689] hover:bg-[#004168] text-white font-black px-5 sm:px-6 py-3 rounded-full text-xs sm:text-sm flex items-center gap-2 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="bg-[#006FCC] hover:bg-[#005399] text-white font-bold font-['Montserrat',sans-serif] px-5 sm:px-6 py-2.5 rounded-[12px] text-xs sm:text-sm flex items-center gap-2 shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span>Edit My Review</span>
@@ -316,7 +315,7 @@ export default function SchoolReviewsSection({
                   type="button"
                   onClick={() => handleDeleteReview(userReview.id)}
                   disabled={isSubmitting}
-                  className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-4 py-3 rounded-full text-xs sm:text-sm flex items-center gap-1.5 border border-rose-200 transition-all cursor-pointer"
+                  className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-4 py-2.5 rounded-[12px] text-xs sm:text-sm flex items-center gap-1.5 border border-rose-200 transition-all cursor-pointer font-['Montserrat',sans-serif]"
                   title="Delete My Review"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -327,7 +326,7 @@ export default function SchoolReviewsSection({
               <button
                 type="button"
                 onClick={() => handleOpenEditModal()}
-                className="bg-[#005689] hover:bg-[#004168] text-white font-black px-7 py-3.5 rounded-full text-xs sm:text-sm flex items-center gap-2.5 shadow-[0_8px_24px_rgba(0,86,137,0.25)] transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="bg-[#006FCC] hover:bg-[#005399] text-white font-bold font-['Montserrat',sans-serif] px-6 py-3 rounded-[14px] text-xs sm:text-sm flex items-center gap-2 shadow-md shadow-[#006FCC]/25 transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Write a Review</span>
@@ -377,21 +376,21 @@ export default function SchoolReviewsSection({
 
         {/* Review Overview */}
         {reviewsList.length === 0 ? (
-          <div className="bg-white/95 rounded-[32px] sm:rounded-[36px] p-8 sm:p-14 border border-[#F4EBD9] mb-12 shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] text-center">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-500 border border-amber-200/80 flex items-center justify-center mx-auto shadow-xs mb-4">
+          <div className="bg-[#F7F8F8] rounded-[14px] p-8 sm:p-14 border border-[#E8E9E9] mb-12 shadow-xs text-center">
+            <div className="w-16 h-16 rounded-[14px] bg-amber-50 text-amber-500 border border-amber-200/80 flex items-center justify-center mx-auto shadow-xs mb-4">
               <Star className="w-8 h-8 fill-amber-400 text-amber-500" />
             </div>
-            <h3 className="text-xl sm:text-2xl font-black text-[#002B49] tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight">
               No Community Reviews Yet
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-2.5 leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto mt-2.5 leading-relaxed">
               Be the first verified parent, student, or alumnus of {displayName} to submit an authentic review and rating.
             </p>
             <div className="mt-6">
               <button
                 type="button"
                 onClick={() => handleOpenEditModal()}
-                className="inline-flex items-center gap-2 bg-[#005689] hover:bg-[#004168] text-white font-black text-xs sm:text-sm px-7 py-3.5 rounded-full shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 bg-[#006FCC] hover:bg-[#005399] text-white font-bold font-['Montserrat',sans-serif] text-xs sm:text-sm px-6 py-3 rounded-[14px] shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
                 <span>Write First Review</span>
@@ -399,39 +398,39 @@ export default function SchoolReviewsSection({
             </div>
           </div>
         ) : (
-          <div className="bg-white/95 rounded-[32px] sm:rounded-[36px] p-6 sm:p-10 border border-[#F4EBD9] mb-12 shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]">
+          <div className="bg-[#F7F8F8] rounded-[14px] p-6 sm:p-8 border border-[#E8E9E9] mb-12 shadow-xs">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-5 text-center lg:text-left lg:border-r border-gray-200 lg:pr-8">
+              <div className="lg:col-span-5 text-center lg:text-left lg:border-r border-[#E8E9E9] lg:pr-8">
                 <div className="flex items-baseline justify-center lg:justify-start gap-2">
-                  <span className="text-5xl sm:text-6xl font-black text-[#002B49] tracking-tight">
+                  <span className="text-5xl sm:text-6xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight">
                     {(reviewsList.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviewsList.length).toFixed(1)}
                   </span>
-                  <span className="text-lg font-bold text-gray-400">/ 5.0</span>
+                  <span className="text-lg font-bold text-slate-400">/ 5.0</span>
                 </div>
                 <div className="flex items-center justify-center lg:justify-start gap-1 text-amber-400 my-2">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star key={s} className="w-5 h-5 fill-current" />
                   ))}
                 </div>
-                <div className="text-xs text-gray-600 font-medium">
+                <div className="text-xs text-slate-600 font-medium">
                   Based on <strong>{reviewsList.length} Verified Community Review{reviewsList.length > 1 ? 's' : ''}</strong>
                 </div>
-                <div className="inline-flex items-center gap-1.5 bg-[#e6f4ea] text-[#137333] text-[11px] font-semibold px-3 py-1 rounded-full mt-3">
+                <div className="inline-flex items-center gap-1.5 bg-[#e6f4ea] text-[#137333] text-[11px] font-semibold px-3 py-1 rounded-[8px] mt-3">
                   <ShieldCheck className="w-3.5 h-3.5" /> 100% Authenticated by CSEEL
                 </div>
               </div>
-              <div className="lg:col-span-7 space-y-2 text-xs text-gray-600">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#005689] mb-2">Community Ratings</h4>
+              <div className="lg:col-span-7 space-y-2 text-xs text-slate-600">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#006FCC] mb-2 font-['Montserrat',sans-serif]">Community Ratings</h4>
                 {[5, 4, 3, 2, 1].map((star) => {
                   const count = reviewsList.filter((r) => Number(r.rating) === star).length;
                   const pct = Math.round((count / reviewsList.length) * 100);
                   return (
                     <div key={star} className="flex items-center gap-2.5">
-                      <span className="w-14 font-semibold text-gray-700">{star} Stars</span>
-                      <div className="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                      <span className="w-14 font-semibold text-slate-700">{star} Stars</span>
+                      <div className="flex-1 h-2 rounded-full bg-slate-200 overflow-hidden">
                         <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
-                      <span className="w-8 text-right font-bold text-gray-800">{pct}%</span>
+                      <span className="w-8 text-right font-bold text-slate-800">{pct}%</span>
                     </div>
                   );
                 })}
@@ -645,9 +644,9 @@ export default function SchoolReviewsSection({
         )}
 
         {/* Filter & Sort Bar */}
-        <div className="bg-white/95 p-4 sm:p-5 rounded-[28px] border border-[#F4EBD9] mb-8 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-white p-4 sm:p-5 rounded-[14px] border border-[#E8E9E9] mb-8 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-            <span className="text-xs font-black text-slate-400 uppercase tracking-wider">Filter:</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-['Montserrat',sans-serif]">Filter:</span>
             {(['all', 'Parent', 'Student', 'Alumni'] as const).map((role) => (
               <button
                 key={role}
@@ -656,10 +655,10 @@ export default function SchoolReviewsSection({
                   setReviewRoleFilter(role);
                   setVisibleReviewsCount(4);
                 }}
-                className={`text-xs px-4 py-2 rounded-full font-black transition-all cursor-pointer ${
+                className={`text-xs px-4 py-2 rounded-[10px] font-bold transition-all cursor-pointer font-['Montserrat',sans-serif] ${
                   reviewRoleFilter === role
-                    ? 'bg-[#005689] text-white shadow-xs'
-                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
+                    ? 'bg-[#006FCC] text-white shadow-xs'
+                    : 'bg-white text-slate-600 hover:bg-slate-50 border border-[#E8E9E9]'
                 }`}
               >
                 {role === 'all' ? 'All Reviews' : role}
@@ -671,7 +670,7 @@ export default function SchoolReviewsSection({
             <select
               value={reviewSortBy}
               onChange={(e) => setReviewSortBy(e.target.value as any)}
-              className="text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-full px-4 py-2.5 focus:outline-none focus:border-[#005689]"
+              className="text-xs font-semibold text-slate-700 bg-white border border-[#E8E9E9] rounded-[10px] px-3.5 py-2 focus:outline-none focus:border-[#006FCC]"
             >
               <option value="recent">Most Recent</option>
               <option value="highest">Highest Rating</option>
@@ -687,9 +686,9 @@ export default function SchoolReviewsSection({
                   setReviewSearchText(e.target.value);
                   setVisibleReviewsCount(4);
                 }}
-                className="w-full text-xs pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-full focus:outline-none focus:border-[#005689]"
+                className="w-full text-xs pl-9 pr-4 py-2 bg-white border border-[#E8E9E9] rounded-[10px] focus:outline-none focus:border-[#006FCC]"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
             </div>
           </div>
         </div>
@@ -701,22 +700,22 @@ export default function SchoolReviewsSection({
             return (
               <div
                 key={rev.id}
-                className="bg-white/95 rounded-[28px] p-6 border border-[#F4EBD9] shadow-[0_10px_30px_rgba(0,35,70,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-[#005689]/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                className="bg-white rounded-[14px] p-6 border border-[#E8E9E9] shadow-xs hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-2xl bg-[#EDF5FA] border border-[#D6EDFF] text-[#005689] font-black text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                      <div className="w-10 h-10 rounded-[10px] bg-[#EDF5FA] border border-[#D0E4F5] text-[#006FCC] font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs font-['Montserrat',sans-serif]">
                         {(rev.author || 'P').charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <h4 className="font-black text-slate-950 text-sm truncate">{rev.author}</h4>
-                          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Verified {rev.role}
+                          <h4 className="font-bold text-[#003C6E] text-sm truncate font-['Montserrat',sans-serif]">{rev.author}</h4>
+                          <span className="inline-flex items-center gap-1 bg-[#EDF5FA] text-[#006FCC] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#D0E4F5]">
+                            <CheckCircle2 className="w-3 h-3 text-[#006FCC]" /> Verified {rev.role}
                           </span>
                           {isOwner && (
-                            <span className="bg-blue-100 text-[#005689] text-[9.5px] font-black px-1.5 py-0.5 rounded-md">
+                            <span className="bg-blue-100 text-[#006FCC] text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">
                               You
                             </span>
                           )}

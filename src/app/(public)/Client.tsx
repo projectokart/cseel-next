@@ -333,7 +333,7 @@ function StatCard({ value, label, desc, delay = 0, suffix = "" }: { value: numbe
   return (
     <div
       ref={revealRef as any}
-      className="p-6 md:p-8 rounded-2xl card-soft-blue shadow-xs hover:shadow-md transition-all duration-500 hover:-translate-y-1"
+      className="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-500 hover:-translate-y-1"
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(32px)",
@@ -341,11 +341,13 @@ function StatCard({ value, label, desc, delay = 0, suffix = "" }: { value: numbe
         transitionDelay: `${delay}ms`,
       }}
     >
-      <div ref={ref} className="text-3xl md:text-5xl font-black text-primary mb-2 tracking-tight">
+      <div ref={ref} className="text-3xl md:text-5xl font-black text-[#003C6E] mb-2 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
         +{count}%
       </div>
-      <h3 className="text-base md:text-lg font-bold text-foreground mb-2">{label}{suffix && <sup className="text-xs text-primary font-bold">{suffix}</sup>}</h3>
-      <p className="text-xs md:text-sm text-muted-foreground font-medium leading-relaxed">{desc}</p>
+      <h3 className="text-base md:text-lg font-bold text-[#003C6E] mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        {label}{suffix && <sup className="text-xs text-[#006FCC] font-bold">{suffix}</sup>}
+      </h3>
+      <p className="text-xs md:text-sm text-slate-600 font-normal leading-relaxed">{desc}</p>
     </div>
   );
 }
@@ -435,15 +437,15 @@ function HeroSlider() {
   );
 }
 
-// ReadMore text component matching Google Search Console typography
+// ReadMore text component with Labster Lato typography
 function HeroText() {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="max-w-2xl mx-auto my-4 sm:my-6 px-3 text-center">
       <div
-        className="text-[#3C4043] font-normal leading-[1.6] text-[16px] sm:text-[17px] transition-all duration-300"
+        className="text-slate-600 font-normal leading-[1.7] text-[15px] sm:text-[16px] transition-all duration-300"
         style={{
-          fontFamily: "var(--font-roboto), Roboto, Arial, sans-serif",
+          fontFamily: "'Lato', sans-serif",
           textAlign: "center",
           display: expanded ? "block" : "-webkit-box",
           WebkitLineClamp: expanded ? "unset" : 3,
@@ -451,33 +453,33 @@ function HeroText() {
           overflow: expanded ? "visible" : "hidden",
         }}
       >
-        At CSEEL, we share the vision of the National Education Policy (<strong className="text-[#3C4043] font-medium">NEP</strong>) 2020
-        to transform Indian education from <strong className="text-[#3C4043] font-medium">rote memorization</strong> to{" "}
-        <strong className="text-[#3C4043] font-medium">experiential, inquiry-based, competency-focused</strong>, and{" "}
-        <strong className="text-[#3C4043] font-medium">hands-on</strong> learning.
+        At CSEEL, we share the vision of the National Education Policy (<strong className="text-[#003C6E] font-bold">NEP</strong>) 2020
+        to transform Indian education from <strong className="text-[#003C6E] font-bold">rote memorization</strong> to{" "}
+        <strong className="text-[#003C6E] font-bold">experiential, inquiry-based, competency-focused</strong>, and{" "}
+        <strong className="text-[#003C6E] font-bold">hands-on</strong> learning.
         <br /><br />
         At CSEEL, we believe the best way to learn science is by doing it.
-        Students learn science most effectively when they <strong className="text-[#3C4043] font-medium">observe</strong>,{" "}
-        <strong className="text-[#3C4043] font-medium">experiment</strong>, <strong className="text-[#3C4043] font-medium">analyse</strong>, <strong className="text-[#3C4043] font-medium">build</strong>, and{" "}
-        <strong className="text-[#3C4043] font-medium">solve real-world problems</strong>, rather than only reading from textbooks.
-        Through <strong className="text-[#3C4043] font-medium">experiential learning</strong> and <strong className="text-[#3C4043] font-medium">hands on learning</strong>, students
+        Students learn science most effectively when they <strong className="text-[#003C6E] font-bold">observe</strong>,{" "}
+        <strong className="text-[#003C6E] font-bold">experiment</strong>, <strong className="text-[#003C6E] font-bold">analyse</strong>, <strong className="text-[#003C6E] font-bold">build</strong>, and{" "}
+        <strong className="text-[#003C6E] font-bold">solve real-world problems</strong>, rather than only reading from textbooks.
+        Through <strong className="text-[#003C6E] font-bold">experiential learning</strong> and <strong className="text-[#003C6E] font-bold">hands-on learning</strong>, students
         discover how things work and why they work, building strong conceptual understanding
         and a deep connection with the world around them.
         <br /><br />
-        This approach strongly aligns with <strong className="text-[#3C4043] font-medium">NEP 2020's</strong> emphasis on{" "}
-        <strong className="text-[#3C4043] font-medium">learning by doing</strong>, <strong className="text-[#3C4043] font-medium">learner-centred pedagogy</strong>,{" "}
-        <strong className="text-[#3C4043] font-medium">development of scientific temper</strong>, and{" "}
-        <strong className="text-[#3C4043] font-medium">real-life application of knowledge</strong>, ensuring that learning is meaningful,
+        This approach strongly aligns with <strong className="text-[#003C6E] font-bold">NEP 2020's</strong> emphasis on{" "}
+        <strong className="text-[#003C6E] font-bold">learning by doing</strong>, <strong className="text-[#003C6E] font-bold">learner-centred pedagogy</strong>,{" "}
+        <strong className="text-[#003C6E] font-bold">development of scientific temper</strong>, and{" "}
+        <strong className="text-[#003C6E] font-bold">real-life application of knowledge</strong>, ensuring that learning is meaningful,
         engaging, and future-ready.
       </div>
       <div className="mt-2.5 flex justify-center">
-        <M3Button
-          variant="text"
-          size="sm"
+        <button
+          type="button"
           onClick={() => setExpanded(!expanded)}
+          className="text-xs sm:text-sm font-bold text-[#006FCC] hover:text-[#005499] hover:underline cursor-pointer py-1 px-3 transition-colors inline-flex items-center gap-1"
         >
           {expanded ? "Read Less ↑" : "Read More ↓"}
-        </M3Button>
+        </button>
       </div>
     </div>
   );
@@ -549,161 +551,184 @@ const Index = () => {
 
   return (
     <PageTransition>
-      {/* ─── Top Floating Admin Visual Editor Bar ─── */}
-      <AdminVisualEditorBar
-        isEditMode={isEditMode}
-        onToggleEditMode={() => setIsEditMode(!isEditMode)}
-        hasUnsavedChanges={hasUnsavedChanges}
-        versions={versions}
-        onSave={async (summary) => {
-          return await saveChangesWithVersion(summary);
-        }}
-        onRollback={async (vId) => {
-          return await rollbackToVersion(vId);
-        }}
-        onDiscard={discardChanges}
-        isSaving={isSaving}
-        isRollingBack={isRollingBack}
-        onOpenVersionModal={() => setIsVersionModalOpen(true)}
-      />
+      {/* ── GOOGLE FONTS & LABSTER TYPOGRAPHY STYLES ─────── */}
+      <style>{`
+        .homepage-wrap {
+          font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .homepage-wrap p,
+        .homepage-wrap li,
+        .homepage-wrap input,
+        .homepage-wrap select,
+        .homepage-wrap textarea,
+        .homepage-wrap label,
+        .homepage-wrap .font-body {
+          font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+      `}</style>
 
-      {/* ─── In-Place Section Editor Drawer ─── */}
-      <SectionEditorDrawer
-        isOpen={Boolean(editingSection)}
-        onClose={() => setEditingSection(null)}
-        section={editingSection}
-        onUpdateDraft={(id, changes) => {
-          updateSectionDraft(id, changes);
-          setEditingSection((prev) => (prev ? { ...prev, ...changes } : null));
-        }}
-      />
+      <div className="homepage-wrap min-h-screen bg-white">
+        {/* ─── Top Floating Admin Visual Editor Bar ─── */}
+        <AdminVisualEditorBar
+          isEditMode={isEditMode}
+          onToggleEditMode={() => setIsEditMode(!isEditMode)}
+          hasUnsavedChanges={hasUnsavedChanges}
+          versions={versions}
+          onSave={async (summary) => {
+            return await saveChangesWithVersion(summary);
+          }}
+          onRollback={async (vId) => {
+            return await rollbackToVersion(vId);
+          }}
+          onDiscard={discardChanges}
+          isSaving={isSaving}
+          isRollingBack={isRollingBack}
+          onOpenVersionModal={() => setIsVersionModalOpen(true)}
+        />
 
-      {/* ─── Version History & Rollback Modal (Max 10 Stored) ─── */}
-      <VersionHistoryModal
-        isOpen={isVersionModalOpen}
-        onClose={() => setIsVersionModalOpen(false)}
-        versions={versions}
-        onRollback={async (vId) => {
-          return await rollbackToVersion(vId);
-        }}
-        isRollingBack={isRollingBack}
-      />
+        {/* ─── In-Place Section Editor Drawer ─── */}
+        <SectionEditorDrawer
+          isOpen={Boolean(editingSection)}
+          onClose={() => setEditingSection(null)}
+          section={editingSection}
+          onUpdateDraft={(id, changes) => {
+            updateSectionDraft(id, changes);
+            setEditingSection((prev) => (prev ? { ...prev, ...changes } : null));
+          }}
+        />
 
-      {/* ─── Hero Section with Google Search Console Clean Aesthetic ─── */}
-      <SectionVisualWrapper
-        sectionId="hero_section"
-        sectionName="Hero Headline & Primary CTAs"
-        isEditMode={isEditMode}
-        enabled={isSectionEnabled('hero_section')}
-        onToggleVisibility={() => toggleSection('hero_section')}
-        onOpenEdit={() => handleOpenEditSection('hero_section')}
-      >
-        <section id="cseel-hero-section" aria-label="Welcome to CSEEL" className="cseel-hero-section bg-white pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 border-b border-[#E2E8F0] overflow-hidden">
-          <div className="cseel-hero-container container mx-auto px-4 text-center">
-            
-            {/* Single-Line Dominant Brand Title (Original CSEEL Brand Blue & Bold Typography) */}
-            <div className="my-4 sm:my-7 px-2">
-              <h1
-                className="cseel-brand-hero-h1 text-[25px] xs:text-[28px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#005689] leading-tight break-words text-center"
-                style={{
-                  fontFamily: "var(--font-montserrat), 'Montserrat', 'Poppins', sans-serif",
-                  color: "#005689",
-                  fontWeight: 900,
-                }}
-              >
-                <span style={{ color: "#005689", fontWeight: 900 }}>{heroConfig?.title ? (heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'Welcome to ' : heroConfig.title + ' ') : 'Welcome to '}</span>
-                <span
-                  className="font-bold tracking-wide inline-block"
+        {/* ─── Version History & Rollback Modal (Max 10 Stored) ─── */}
+        <VersionHistoryModal
+          isOpen={isVersionModalOpen}
+          onClose={() => setIsVersionModalOpen(false)}
+          versions={versions}
+          onRollback={async (vId) => {
+            return await rollbackToVersion(vId);
+          }}
+          isRollingBack={isRollingBack}
+        />
+
+        {/* ─── Hero Section with Labster Clean Aesthetic ─── */}
+        <SectionVisualWrapper
+          sectionId="hero_section"
+          sectionName="Hero Headline & Primary CTAs"
+          isEditMode={isEditMode}
+          enabled={isSectionEnabled('hero_section')}
+          onToggleVisibility={() => toggleSection('hero_section')}
+          onOpenEdit={() => handleOpenEditSection('hero_section')}
+        >
+          <section id="cseel-hero-section" aria-label="Welcome to CSEEL" className="cseel-hero-section bg-white pt-6 sm:pt-10 md:pt-14 pb-8 md:pb-12 border-b border-[#E2E8F0] overflow-hidden">
+            <div className="cseel-hero-container container mx-auto px-4 text-center">
+              
+              {/* Single-Line Dominant Brand Title (Labster Deep Navy & Montserrat Typography) */}
+              <div className="my-4 sm:my-7 px-2">
+                <h1
+                  className="cseel-brand-hero-h1 text-[28px] xs:text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-[#003C6E] leading-tight break-words text-center"
                   style={{
-                    fontFamily: "var(--font-fredoka), 'Fredoka', 'Varela Round', 'Nunito', sans-serif",
-                    fontWeight: 700,
-                    letterSpacing: "0.06em",
-                    color: "#005689",
+                    fontFamily: "'Montserrat', sans-serif",
+                    color: "#003C6E",
+                    fontWeight: 900,
                   }}
                 >
-                  {heroConfig?.title && heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'CSEEL' : ''}
-                </span>
-              </h1>
-              <p
-                className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-bold text-primary tracking-tight max-w-xl mx-auto"
-                style={{ fontFamily: "var(--font-roboto), Roboto, 'Google Sans', Arial, sans-serif" }}
+                  <span style={{ color: "#003C6E", fontWeight: 900 }}>{heroConfig?.title ? (heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'Welcome to ' : heroConfig.title + ' ') : 'Welcome to '}</span>
+                  <span
+                    className="font-black tracking-wide inline-block"
+                    style={{
+                      fontFamily: "'Montserrat', sans-serif",
+                      fontWeight: 900,
+                      letterSpacing: "0.02em",
+                      color: "#006FCC",
+                    }}
+                  >
+                    {heroConfig?.title && heroConfig.title.toLowerCase().includes('welcome to cseel') ? 'CSEEL' : ''}
+                  </span>
+                </h1>
+                <p
+                  className="mt-2.5 sm:mt-3.5 text-xs sm:text-sm md:text-base font-semibold sm:font-bold text-[#006FCC] tracking-normal max-w-xl mx-auto"
+                  style={{ fontFamily: "'Montserrat', sans-serif" }}
+                >
+                  {(() => {
+                    const raw = heroConfig?.subtitle || 'Center for Scientific Exploration and Experiential Learning';
+                    // Convert all uppercase string into natural Title Case
+                    if (raw === raw.toUpperCase()) {
+                      return raw.toLowerCase().replace(/\b(\w)/g, (s) => s.toUpperCase())
+                        .replace(/\bFor\b/g, 'for')
+                        .replace(/\bAnd\b/g, 'and')
+                        .replace(/\bOf\b/g, 'of')
+                        .replace(/\bIn\b/g, 'in')
+                        .replace(/\bTo\b/g, 'to');
+                    }
+                    return raw;
+                  })()}
+                </p>
+              </div>
+
+              {/* Description with Read More */}
+              <div>
+                <HeroText />
+              </div>
+
+              {/* CTA Buttons — Labster Rounded-XL Button Aesthetic */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4">
+                <Link
+                  href={heroConfig?.cta_link || "/compare-plans"}
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 bg-[#006FCC] hover:bg-[#005499] text-white font-bold rounded-xl text-sm sm:text-base shadow-sm hover:shadow-md transition-all active:scale-[0.98] gap-2"
+                >
+                  <span>{heroConfig?.cta_text || "Our Plans"}</span>
+                  
+                </Link>
+                <Link
+                  href={heroConfig?.secondary_cta_link || "/virtual-lab-tour"}
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 bg-white hover:bg-slate-50 text-[#003C6E] font-bold rounded-xl text-sm sm:text-base border border-slate-300 shadow-xs transition-all active:scale-[0.98] gap-2"
+                >
+                  <Play className="w-4 h-4 fill-[#003C6E]/20 text-[#003C6E]" />
+                  <span>{heroConfig?.secondary_cta_text || "Live Lab Tour"}</span>
+                </Link>
+              </div>
+
+              {/* Hero Image Slider - Scaled to fit perfectly */}
+              <div>
+                <HeroSlider />
+              </div>
+
+            </div>
+          </section>
+        </SectionVisualWrapper>
+
+        {/* ─── Ad/Offer Slot #1: slot_after_hero ─── */}
+        <SectionVisualWrapper
+          sectionId="special_offers"
+          sectionName="Special Offers & Events Cards (slot_after_hero)"
+          isEditMode={isEditMode}
+          enabled={isSectionEnabled('special_offers')}
+          onToggleVisibility={() => toggleSection('special_offers')}
+          onOpenEdit={() => handleOpenEditSection('special_offers')}
+        >
+          <OffersSection slotId="slot_after_hero" />
+        </SectionVisualWrapper>
+        {/* ─── Stats ─── */}
+        <section id="cseel-research-backed-stats-section" aria-label="Why Hands-On Science Works" className="cseel-stats-section py-16 bg-slate-50/70 border-y border-slate-200/80">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-10">
+              <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">Research Backed</p>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-[#003C6E] tracking-tight">Why Hands-On Science Works</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <StatCard value={42} label="Higher Retention Rate" desc="Students engaged in hands-on STEAM/STEM learning show up to 42% higher knowledge retention." delay={0} suffix="¹" />
+              <StatCard value={25} label="Engagement" desc="Gamified, interactive STEAM environments increase student engagement and motivation by 25%." delay={150} suffix="²" />
+              <div
+                className="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-500 hover:-translate-y-1"
+                style={{ animation: "fadeSlideUp 0.7s ease 0.4s both" }}
               >
-                {heroConfig?.subtitle || 'Center for Scientific Exploration and Experiential Learning'}
-              </p>
+                <div className="text-3xl md:text-5xl font-black text-[#003C6E] mb-2 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>≧ C</div>
+                <h3 className="text-base md:text-lg font-bold text-[#003C6E] mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                  Higher Academic Success<sup className="text-xs text-[#006FCC] font-bold">³</sup>
+                </h3>
+                <p className="text-xs md:text-sm text-slate-600 font-normal leading-relaxed">Students earning C or higher in foundational science courses are more likely to persist in STEAM careers.</p>
+              </div>
             </div>
-
-            {/* Description with Read More */}
-            <div>
-              <HeroText />
-            </div>
-
-            {/* CTA Buttons — Uniform Official M3 Pill Buttons (rounded-full, 48px lg height) */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 my-6 sm:my-8 max-w-sm sm:max-w-none mx-auto px-4">
-              <Link href={heroConfig?.cta_link || "/compare-plans"} className="w-full sm:w-auto">
-                <M3Button
-                  variant="filled"
-                  size="lg"
-                  fullWidth
-                  trailingIcon={<ArrowRight className="w-4 h-4" />}
-                  className="px-8"
-                >
-                  {heroConfig?.cta_text || "Our Plans"}
-                </M3Button>
-              </Link>
-              <Link href={heroConfig?.secondary_cta_link || "/virtual-lab-tour"} className="w-full sm:w-auto">
-                <M3Button
-                  variant="tonal"
-                  size="lg"
-                  fullWidth
-                  leadingIcon={<Play className="w-4 h-4 fill-[#001d35]/20" />}
-                  className="px-8"
-                >
-                  {heroConfig?.secondary_cta_text || "Live Lab Tour"}
-                </M3Button>
-              </Link>
-            </div>
-
-            {/* Hero Image Slider - Scaled to fit perfectly */}
-            <div>
-              <HeroSlider />
-            </div>
-
           </div>
         </section>
-      </SectionVisualWrapper>
-
-      {/* ─── Ad/Offer Slot #1: slot_after_hero ─── */}
-      <SectionVisualWrapper
-        sectionId="special_offers"
-        sectionName="Special Offers & Events Cards (slot_after_hero)"
-        isEditMode={isEditMode}
-        enabled={isSectionEnabled('special_offers')}
-        onToggleVisibility={() => toggleSection('special_offers')}
-        onOpenEdit={() => handleOpenEditSection('special_offers')}
-      >
-        <OffersSection slotId="slot_after_hero" />
-      </SectionVisualWrapper>
-      {/* ─── Stats ─── */}
-      <section id="cseel-research-backed-stats-section" aria-label="Why Hands-On Science Works" className="cseel-stats-section py-16 bg-slate-50/70 border-y border-slate-200/80">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Research Backed</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Why Hands-On Science Works</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <StatCard value={42} label="Higher Retention Rate" desc="Students engaged in hands-on STEAM/STEM learning show up to 42% higher knowledge retention." delay={0} suffix="¹" />
-            <StatCard value={25} label="Engagement" desc="Gamified, interactive STEAM environments increase student engagement and motivation by 25%." delay={150} suffix="²" />
-            <div
-              className="p-6 md:p-8 rounded-2xl card-soft-blue shadow-xs hover:shadow-md transition-all duration-500 hover:-translate-y-1"
-              style={{ animation: "fadeSlideUp 0.7s ease 0.4s both" }}
-            >
-              <div className="text-3xl md:text-5xl font-black text-primary mb-2 tracking-tight">≧ C</div>
-              <h3 className="text-base md:text-lg font-bold text-foreground mb-2">Higher Academic Success<sup className="text-xs text-primary font-bold">³</sup></h3>
-              <p className="text-xs md:text-sm text-muted-foreground font-medium leading-relaxed">Students earning C or higher in foundational science courses are more likely to persist in STEAM careers.</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ─── Ad/Offer Slot #2: slot_after_stats ─── */}
       <OffersSection slotId="slot_after_stats" />
@@ -787,10 +812,10 @@ const Index = () => {
         >
           <div className="container mx-auto px-4">
             <div className="text-center mb-10">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+              <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">
                 {metricsConfig?.badge_text || "Our Impact"}
               </p>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-[#003C6E] tracking-tight">
                 {metricsConfig?.title || "CSEEL by the Numbers"}
               </h2>
             </div>
@@ -809,8 +834,10 @@ const Index = () => {
                     transitionDelay: `${i * 150}ms`,
                   }}
                 >
-                  <div className="text-5xl font-bold text-primary mb-2">{m.value || m.num}</div>
-                  <p className="font-semibold text-foreground">{m.label}</p>
+                  <div className="text-5xl font-black text-[#003C6E] mb-2 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    {m.value || m.num}
+                  </div>
+                  <p className="font-semibold text-slate-700">{m.label}</p>
                 </div>
               ))}
             </div>
@@ -833,10 +860,10 @@ const Index = () => {
         <section id="cseel-lms-integration-section" aria-label="LMS Integration and Support" className="cseel-lms-section py-20 bg-white border-b border-slate-200/80">
           <div className="container mx-auto px-4 max-w-[1240px]">
             <div className="text-center mb-12">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">
+              <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">
                 {featuresConfig?.badge_text || "Why CSEEL"}
               </p>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#003C6E] tracking-tight">
                 {featuresConfig?.title || "Built for Real Learning Outcomes"}
               </h2>
             </div>
@@ -989,21 +1016,19 @@ const Index = () => {
             {/* Header */}
             <div className="text-center mb-10">
               <div className="mb-3 flex justify-center">
-                <M3AssistChip
-                  icon={<Sparkles className="w-3.5 h-3.5 text-[#0b57d0]" />}
-                  label={catalogConfig?.badge_text || "SUBJECTS & DISCIPLINES"}
-                  className="bg-[#e8f0fe] border-[#c2e7ff] text-[#0b57d0] font-bold uppercase tracking-wider text-[11px] pointer-events-none"
-                />
+                <span className="inline-block px-3.5 py-1 bg-[#EDF5FA] border border-[#D6EDFF] text-[#006FCC] rounded-full font-bold uppercase tracking-[0.2em] text-[11px]">
+                  {catalogConfig?.badge_text || "SUBJECTS & DISCIPLINES"}
+                </span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-black text-[#003C6E] tracking-tight">
                 {catalogConfig?.title || "Explore the CSEEL Experimental Catalog"}
               </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-2 font-medium max-w-xl mx-auto">
+              <p className="text-xs sm:text-sm text-slate-600 mt-2 font-normal max-w-xl mx-auto">
                 Discover experiential learning practicals, hands-on lab experiments, and NEP 2020 concept modules across core disciplines.
               </p>
             </div>
 
-            {/* 3 Domain Cards — Official M3Card (16px radius) */}
+            {/* 3 Domain Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {catalogDomains.map((domain, i) => (
                 <Link
@@ -1012,27 +1037,23 @@ const Index = () => {
                   className="block group"
                   style={{ transitionDelay: `${i * 60}ms` }}
                 >
-                  <M3Card
-                    variant="outlined"
-                    interactive
-                    className="bg-white rounded-[16px] overflow-hidden border-[#c4c7c5] flex flex-col justify-between h-full p-0 hover:border-[#0b57d0]/50 hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200"
-                  >
+                  <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 flex flex-col justify-between h-full p-0 hover:border-[#006FCC]/50 hover:shadow-lg transition-all duration-300">
                     {/* Top content section */}
-                    <div className="p-7 pb-5 lg:p-8">
-                      <div className="flex items-center justify-between mb-3 gap-2">
-                        <h3 className="text-2xl font-bold text-[#1f1f1f] group-hover:text-[#0b57d0] transition-colors">
+                    <div className="p-5 sm:p-6 lg:p-7 pb-4">
+                      <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-3 gap-1.5 xl:gap-2">
+                        <h3 className="text-xl sm:text-2xl font-bold text-[#003C6E] group-hover:text-[#006FCC] transition-colors leading-snug">
                           {domain.title}
                         </h3>
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-[#0b57d0] group-hover:translate-x-1 transition-transform shrink-0">
-                          Explore Labs <ArrowRight className="w-3.5 h-3.5" />
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-[#006FCC] group-hover:translate-x-1 transition-transform shrink-0 whitespace-nowrap">
+                          Explore Labs 
                         </span>
                       </div>
-                      <p className="text-[#444746] text-[15px] leading-relaxed">
+                      <p className="text-slate-600 text-[15px] leading-relaxed font-normal">
                         {domain.desc}
                       </p>
                     </div>
                     {/* Image section */}
-                    <div className="px-7 pb-7 lg:px-8 lg:pb-8">
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6 lg:px-7 lg:pb-7">
                       <div className="thumb-zoom rounded-[12px] overflow-hidden shadow-xs">
                         <img
                           className="w-full object-cover aspect-[16/9] group-hover:scale-[1.04] transition-transform duration-500"
@@ -1045,23 +1066,19 @@ const Index = () => {
                         />
                       </div>
                     </div>
-                  </M3Card>
+                  </div>
                 </Link>
               ))}
             </div>
 
-            {/* Bottom CTA — Official M3Button Pill */}
+            {/* Bottom CTA — Labster Rounded-XL Button */}
             <div className="text-center mt-10">
               <Link
                 href={catalogConfig?.cta_link && catalogConfig.cta_link !== '/subject' ? catalogConfig.cta_link : "/domain/science"}
+                className="inline-flex items-center justify-center px-7 py-3.5 bg-[#006FCC] hover:bg-[#005499] text-white font-bold rounded-xl text-sm sm:text-base shadow-sm hover:shadow-md transition-all active:scale-[0.98] gap-2"
               >
-                <M3Button
-                  variant="filled"
-                  size="lg"
-                  trailingIcon={<ArrowRight className="w-4 h-4" />}
-                >
-                  {catalogConfig?.cta_text || "View All Subject Hubs & Interactive Labs"}
-                </M3Button>
+                <span>{catalogConfig?.cta_text || "View All Subject Hubs & Interactive Labs"}</span>
+                
               </Link>
             </div>
 
@@ -1157,14 +1174,12 @@ const Index = () => {
                   {finalCtaConfig?.subtitle || "See our plan options, learn more about live labs, and find out how easy it is to get started with CSEEL."}
                 </p>
                 <div className="flex flex-wrap items-center gap-4">
-                  <Link href={finalCtaConfig?.cta_link || "/compare-plans"}>
-                    <M3Button
-                      variant="tonal"
-                      size="lg"
-                      trailingIcon={<ArrowRight className="w-4 h-4" />}
-                    >
-                      {finalCtaConfig?.cta_text || "Compare Plans & Pricing"}
-                    </M3Button>
+                  <Link
+                    href={finalCtaConfig?.cta_link || "/compare-plans"}
+                    className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-slate-100 text-[#003C6E] font-bold rounded-xl text-sm sm:text-base shadow-md hover:shadow-lg transition-all active:scale-[0.98] gap-2"
+                  >
+                    <span>{finalCtaConfig?.cta_text || "Compare Plans & Pricing"}</span>
+                    
                   </Link>
                 </div>
               </div>
@@ -1183,6 +1198,7 @@ const Index = () => {
           </div>
         </section>
       </SectionVisualWrapper>
+      </div>
 
       {/* Global keyframes */}
       <style>{`
@@ -1237,9 +1253,10 @@ function TestimonialSection() {
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-6">
           <div>
-            <h2 className="text-2xl md:text-4xl font-bold text-foreground tracking-tight leading-tight">
+            <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">Educator Stories</p>
+            <h2 className="text-2xl md:text-4xl font-extrabold text-[#003C6E] tracking-tight leading-tight">
               Trusted by Teachers<br/>
-              <span className="text-muted-foreground">across the nation.</span>
+              <span className="text-slate-500 font-semibold">across the nation.</span>
             </h2>
           </div>
           {/* Arrows — Official M3IconButton Outlined */}
@@ -1405,8 +1422,8 @@ function AwardsSection() {
           }}
         >
           <div className="text-center mb-8 lg:hidden">
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Recognition</p>
-            <h2 className="text-2xl font-bold text-foreground">Award-Winning Platform</h2>
+            <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">Recognition</p>
+            <h2 className="text-2xl font-extrabold text-[#003C6E]">Award-Winning Platform</h2>
           </div>
           <div className="flex flex-wrap gap-4 justify-center">
             {awardImgs.map((src, i) => (
@@ -1429,19 +1446,17 @@ function AwardsSection() {
             ))}
           </div>
           <div>
-            <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Recognition</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Award-Winning Learning Platform</h2>
-            <p className="text-muted-foreground mb-6">
-              Cseel has earned recognition for our research-based learning architecture, best-in-class customer support, and student impact. Learn why our hands-on science labs have received more than 10 prestigious education awards.
+            <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">Recognition</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#003C6E] mb-4">Award-Winning Learning Platform</h2>
+            <p className="text-slate-600 mb-6 font-normal leading-relaxed">
+              CSEEL has earned recognition for our research-based learning architecture, best-in-class customer support, and student impact. Learn why our hands-on science labs have received more than 10 prestigious education awards.
             </p>
-            <Link href="/about-us">
-              <M3Button
-                variant="filled"
-                size="lg"
-                trailingIcon={<ArrowRight className="w-4 h-4" />}
-              >
-                Learn More About CSEEL
-              </M3Button>
+            <Link
+              href="/about-us"
+              className="inline-flex items-center justify-center px-7 py-3.5 bg-[#006FCC] hover:bg-[#005499] text-white font-bold rounded-xl text-sm sm:text-base shadow-sm hover:shadow-md transition-all active:scale-[0.98] gap-2"
+            >
+              <span>Learn More About CSEEL</span>
+              
             </Link>
           </div>
         </div>
@@ -1458,17 +1473,17 @@ function EasySection() {
     { tag: "Technical Support", title: "Get live support whenever you need it", desc: "Our award-winning support team is ready to help you and your students at every step via Live Chat, Help Center, and training guides." },
   ];
   return (
-    <section className="py-16 bg-background" ref={ref as any}>
+    <section className="py-16 bg-white border-b border-slate-200/80" ref={ref as any}>
       <div className="container mx-auto px-4">
         <div className="text-center mb-12" style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)", transition: "all 0.6s ease" }}>
-          <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">Simple to Start</p>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">We Make it Easy to Use CSEEL in STEM Courses</h2>
+          <p className="text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em] mb-2">Simple to Start</p>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-[#003C6E]">We Make it Easy to Use CSEEL in STEM Courses</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {cards.map((c, i) => (
             <div
               key={i}
-              className="p-8 rounded-2xl card-soft-blue shadow-xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 text-center"
+              className="p-8 rounded-2xl bg-[#EDF5FA]/60 border border-[#D6EDFF] shadow-xs hover:shadow-md transition-all duration-300 hover:-translate-y-1 text-center"
               style={{
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(40px)",
@@ -1476,9 +1491,9 @@ function EasySection() {
                 transitionDelay: `${i * 120}ms`,
               }}
             >
-              <div className="text-sm font-bold text-primary mb-2 uppercase tracking-wide">{c.tag}</div>
-              <h3 className="text-lg font-bold text-foreground mb-3">{c.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
+              <div className="text-xs font-bold text-[#006FCC] mb-2 uppercase tracking-[0.15em]">{c.tag}</div>
+              <h3 className="text-lg font-bold text-[#003C6E] mb-3">{c.title}</h3>
+              <p className="text-sm text-slate-600 font-normal leading-relaxed">{c.desc}</p>
             </div>
           ))}
         </div>

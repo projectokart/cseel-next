@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { DEFAULT_NAV_3STAGE_DATA, NavStage1Category, NavStage2Column, NavStage3Item } from '@/lib/navigationData';
 import { smartCache } from '@/lib/cache/smartCache';
 
-const CACHE_KEY = 'navigation_3stage_settings';
+const CACHE_KEY = 'navigation_3stage_settings_v4';
 
 interface NavigationContextType {
   navCategories: NavStage1Category[];

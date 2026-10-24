@@ -134,43 +134,42 @@ export default function SchoolAddressMapSection({
   };
 
   return (
-    <section id="address-map" className="py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden">
-      {/* Decorative ambient background blur */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+    <section id="address-map" className="py-12 sm:py-20 bg-[#F7F8F8] border-b border-[#E8E9E9] relative overflow-hidden">
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center sm:text-left mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
-            <MapPin className="w-3.5 h-3.5 text-[#005689]" />
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+            <MapPin className="w-3.5 h-3.5 text-[#006FCC]" />
             <span>CAMPUS LOCATION &amp; ACCESS</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
             Campus Address &amp;
-            <span className="text-[#005689] block mt-0.5">Interactive Geospatial Map</span>
+            <span className="text-[#006FCC] block mt-0.5">Interactive Geospatial Map</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed max-w-2xl font-medium">
+          <p className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed max-w-2xl font-normal">
             Verified geographic location and real-time navigation directions for visiting {displayName}.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Campus Address Card (Claymorphic) */}
+          {/* Left Campus Address Card */}
           <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white/95 rounded-[32px] sm:rounded-[36px] p-7 sm:p-8 border border-[#F4EBD9] shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] space-y-6">
+            <div className="bg-white rounded-[14px] p-7 sm:p-8 border border-[#E8E9E9] shadow-xs space-y-6">
               <div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-[#005689] mb-1.5">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] mb-1.5 font-['Montserrat',sans-serif]">
                   OFFICIAL CAMPUS ADDRESS
                 </div>
-                <h3 className="text-2xl font-black text-slate-950 leading-snug">
+                <h3 className="text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-snug">
                   {displayName}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed font-medium">
+                <p className="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed font-normal">
                   {displayAddress}
                 </p>
               </div>
@@ -180,7 +179,7 @@ export default function SchoolAddressMapSection({
                 <button
                   type="button"
                   onClick={handleCopyAddress}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border-2 border-slate-200 text-slate-800 hover:bg-slate-50 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[10px] bg-white border border-[#E8E9E9] text-[#003C6E] hover:bg-slate-50 text-xs font-bold font-['Montserrat',sans-serif] transition-all shadow-xs cursor-pointer active:scale-95"
                 >
                   {isAddressCopied ? (
                     <>
@@ -189,7 +188,7 @@ export default function SchoolAddressMapSection({
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5 text-slate-500" />
+                      <Copy className="w-3.5 h-3.5 text-[#006FCC]" />
                       <span>Copy Address</span>
                     </>
                   )}
@@ -199,7 +198,7 @@ export default function SchoolAddressMapSection({
                   href={`https://www.google.com/maps/dir/?api=1&destination=${mapLat},${mapLng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#005689] hover:bg-[#004168] text-white text-xs font-black transition-all shadow-[0_6px_20px_rgba(0,86,137,0.25)] hover:scale-105 active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all shadow-md shadow-[#006FCC]/20 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                 >
                   <Navigation className="w-3.5 h-3.5" />
                   <span>Get Driving Directions</span>
@@ -207,16 +206,16 @@ export default function SchoolAddressMapSection({
               </div>
 
               {displayWebsiteUrl && (
-                <div className="pt-5 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-bold flex items-center gap-1.5">
-                    <Globe className="w-4 h-4 text-[#005689]" />
+                <div className="pt-5 border-t border-[#E8E9E9] flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold flex items-center gap-1.5">
+                    <Globe className="w-4 h-4 text-[#006FCC]" />
                     Official Website:
                   </span>
                   <a
                     href={displayWebsiteUrl.startsWith('http') ? displayWebsiteUrl : `https://${displayWebsiteUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-black text-[#005689] hover:underline flex items-center gap-1 truncate max-w-[200px]"
+                    className="font-bold text-[#006FCC] hover:underline flex items-center gap-1 truncate max-w-[200px]"
                   >
                     <span>{displayWebsiteUrl.replace(/^https?:\/\//, '')}</span>
                     <ExternalLink className="w-3.5 h-3.5 shrink-0" />
@@ -226,18 +225,18 @@ export default function SchoolAddressMapSection({
             </div>
 
             {/* Geolocation Tag */}
-            <div className="bg-white/95 rounded-[24px] p-5 border border-[#F4EBD9] shadow-xs flex items-center justify-between text-xs text-slate-600">
-              <span className="font-bold">GPS Geolocation:</span>
-              <span className="font-mono font-black text-[#005689] bg-[#EDF5FA] px-3 py-1 rounded-full border border-[#D6EDFF]">
+            <div className="bg-white rounded-[10px] p-4 border border-[#E8E9E9] shadow-xs flex items-center justify-between text-xs text-slate-600">
+              <span className="font-semibold">GPS Geolocation:</span>
+              <span className="font-mono font-bold text-[#006FCC] bg-[#EDF5FA] px-3 py-1 rounded-[6px] border border-[#D0E4F5]">
                 {mapLat.toFixed(4)}° N, {mapLng.toFixed(4)}° E
               </span>
             </div>
           </div>
 
-          {/* Right Interactive Map Card (Clay Frame) */}
+          {/* Right Interactive Map Card */}
           <div className="lg:col-span-7">
             <div
-              className={`rounded-[32px] sm:rounded-[36px] border-[6px] sm:border-[8px] border-[#005689] shadow-[0_16px_40px_rgba(0,86,137,0.2)] overflow-hidden relative bg-slate-100 transition-all ${
+              className={`rounded-[16px] border-4 border-white ring-1 ring-[#E8E9E9] shadow-xl overflow-hidden relative bg-slate-100 transition-all ${
                 isMapFullscreen ? 'fixed inset-4 z-[9999] bg-white m-0' : 'aspect-[4/3] sm:aspect-[16/10] w-full'
               }`}
             >

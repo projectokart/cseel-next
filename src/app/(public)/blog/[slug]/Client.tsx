@@ -246,7 +246,7 @@ const BlogDetail = () => {
               href="/blog"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005689] text-white rounded-full text-sm font-bold hover:bg-[#004570] transition-colors"
             >
-              Browse All Articles <ArrowRight className="w-4 h-4" />
+              Browse All Articles 
             </Link>
           </div>
         </div>
@@ -438,7 +438,7 @@ const BlogDetail = () => {
               href="/contact-us"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#005689] text-white rounded-full text-sm font-bold hover:bg-[#004570] transition-all flex-shrink-0 shadow-sm hover:shadow-md"
             >
-              Get in touch <ArrowRight className="w-4 h-4" />
+              Get in touch 
             </Link>
           </div>
         </div>
@@ -477,7 +477,7 @@ const BlogDetail = () => {
                 <span className="text-[11px] text-[#64748B] sm:hidden">Swipe to explore →</span>
               </div>
               <Link href="/blog" className="text-xs font-bold text-[#005689] hover:underline flex items-center gap-1">
-                View All <ArrowRight className="w-3 h-3" />
+                View All 
               </Link>
             </div>
             {/* Mobile horizontal scroll / Desktop 3-column grid */}

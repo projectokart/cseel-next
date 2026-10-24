@@ -47,407 +47,421 @@ export interface NavItem {
 /* ─── Minimal, High-Impact Experiential Learning Menus with Subcategories ─── */
 const navItems: NavItem[] = [
   {
+    id: 'experiential-labs',
     label: 'Experiential Labs',
+    to: '/domain/science',
     hasDropdown: true,
     columns: [
       {
-        categoryTitle: 'Experiential Science Labs',
+        categoryTitle: 'Science & Mathematics',
         items: [
           {
-            label: 'Physics Lab',
-            to: '/subject/physics',
-            desc: 'Optics, mechanics, electromagnetic circuits, sound & modern physics practicals.',
-            subItems: [
-              { label: 'Mechanics, Pendulums & Dynamics', to: '/subject/physics' },
-              { label: 'Optics, Ray Benches & Prisms', to: '/subject/physics' },
-              { label: 'Electricity & Electromagnetic Circuits', to: '/subject/physics' },
-            ],
-          },
-          {
-            label: 'Chemistry Lab',
-            to: '/subject/chemistry',
-            desc: 'Volumetric titration benches, organic synthesis, reagents & salt analysis.',
-            subItems: [
-              { label: 'Volumetric Titration Benches', to: '/subject/chemistry' },
-              { label: 'Qualitative Salt Analysis', to: '/subject/chemistry' },
-              { label: 'Chemical Reagents & Glassware', to: '/materials' },
-            ],
-          },
-          {
-            label: 'Biology Lab',
-            to: '/subject/biology',
-            desc: 'High-precision microscopy, human anatomy models, cell biology & botany specimens.',
-            subItems: [
-              { label: 'Compound Microscopes & Slides', to: '/subject/biology' },
-              { label: 'Human Anatomy 3D Models', to: '/subject/biology' },
-              { label: 'Specimen Slides & Botany Kits', to: '/subject/biology' },
-            ],
-          },
-          {
-            label: 'Astronomy Lab',
+            label: 'Science Lab',
             to: '/domain/science',
-            desc: 'Telescopes, celestial mechanics, planetary orbits & space science models.',
+            desc: 'Physics, Chemistry, Biology & Earth science experiential simulations and hands-on experiments.',
             subItems: [
-              { label: 'Refractor & Reflector Telescopes', to: '/domain/science' },
-              { label: 'Planetary Orbits & Scale Models', to: '/domain/science' },
+              { label: 'Physics Practicals & Mechanics', to: '/subject/physics' },
+              { label: 'Chemistry Titration & Salt Analysis', to: '/subject/chemistry' },
+              { label: 'Biology Microscopy & Specimen Slides', to: '/subject/biology' },
+              { label: 'Science Domain Hub', to: '/domain/science' },
             ],
           },
           {
-            label: 'Mathematics & Modeling Lab',
-            to: '/domain/science',
-            desc: 'Tactile geometry, conic sections, coordinate visualizers & practical proofs.',
+            label: 'Mathematics & Modeling',
+            to: '/subject/mathematics',
+            desc: 'Tactile 3D geometry, coordinate visualizers, conic sections & practical calculus proofs.',
             subItems: [
-              { label: 'Tactile 3D Conics & Surfaces', to: '/domain/science' },
-              { label: 'Coordinate Geometry Visualizers', to: '/domain/science' },
+              { label: 'Tactile 3D Conics & Surfaces', to: '/subject/mathematics' },
+              { label: 'Coordinate Geometry Visualizer', to: '/subject/mathematics' },
+              { label: 'Algebra & Calculus Proofs', to: '/subject/mathematics' },
             ],
           },
         ],
       },
       {
-        categoryTitle: 'Turnkey Setups & Tinkering',
+        categoryTitle: 'Engineering, Maker & STEAM Arts',
         items: [
           {
-            label: 'Atal Tinkering Lab (ATL 2.0)',
-            to: '/steam-lab/atl',
-            desc: 'Complete NITI Aayog Package 1-4 setup with GeM compliance, 3D printers & robotics.',
+            label: 'Engineering & Technology',
+            to: '/subject/engineering',
+            desc: 'Hands-on engineering design, IoT, smart circuits, robotics, and ATL maker challenges.',
             subItems: [
-              { label: 'ATL Material List & Equipment BOQ', to: '/steam-lab/atl', badge: 'Equipment List' },
-              { label: 'Package 1 & 2: Prototyping & 3D Printers', to: '/steam-lab/atl' },
-              { label: 'Package 3 & 4: Robotics, IoT & Power Tools', to: '/steam-lab/atl' },
-              { label: 'NITI Aayog & GeM Compliance Norms', to: '/schemes/atl-grants' },
+              { label: 'Engineering Practicals Lab', to: '/subject/engineering' },
+              { label: 'Atal Tinkering Lab (ATL 2.0)', to: '/steam-lab/atl', badge: 'ATL 2.0' },
+              { label: 'AI, IoT & Robotics Workstations', to: '/steam-lab/ai-robotics-lab' },
+              { label: 'Engineering Domain Overview', to: '/domain/engineering' },
             ],
           },
           {
-            label: 'CBSE Composite Science Lab',
-            to: '/composite-lab',
-            desc: 'Mandatory SARAS 600 sq ft & 8 sinks setup with 49 non-consumables & safety fixtures.',
+            label: 'Maker Lab & Tinkering Studio',
+            to: '/makerspace',
+            desc: 'Hands-on makerspace with woodworking, prototyping, electronics workbench & hand tools.',
             subItems: [
-              { label: '49 Mandatory Non-Consumable List', to: '/composite-lab', badge: 'CBSE Norms' },
-              { label: '600 Sq Ft Layout & 8 Sinks Blueprint', to: '/composite-lab' },
-              { label: 'SARAS Lab Safety & First Aid Setup', to: '/safety' },
-            ],
-          },
-          {
-            label: 'AI, IoT & Robotics Lab',
-            to: '/steam-lab/ai-robotics-lab',
-            desc: 'Workstations, microcontrollers, computer vision & sensor labs for students.',
-            subItems: [
-              { label: 'Microcontrollers & Sensor Workstations', to: '/steam-lab/ai-robotics-lab' },
-              { label: 'Computer Vision & Autonomous Robotics', to: '/steam-lab/ai-robotics-lab' },
-            ],
-          },
-          {
-            label: 'Hands-on Practical Kits',
-            to: '/hands-on-experiments',
-            desc: 'Blended practicals with physical apparatus kits, data sheets & guided manuals.',
-            subItems: [
-              { label: 'Student DIY Science Practical Benches', to: '/hands-on-experiments' },
-              { label: 'Observation Workbooks & Manuals', to: '/hands-on-experiments' },
+              { label: 'Complete Makerspace Catalog', to: '/makerspace', badge: 'Catalog' },
+              { label: 'Prototyping & Digital Fabrication', to: '/makerspace' },
+              { label: 'Hand & Power Tools Workshop', to: '/makerspace' },
             ],
           },
           {
             label: 'Projectokart STEM Projects',
             to: '/projects',
-            desc: 'Student-led maker projects with schematics, bill of materials & working builds.',
+            desc: 'Student-led maker projects with circuit schematics, bill of materials & working builds.',
             subItems: [
               { label: 'Working Science Fair Prototypes', to: '/projects' },
               { label: 'Innovation Schematics & BOM', to: '/projects' },
+              { label: 'Student Innovation Showcase', to: '/projects' },
             ],
           },
-        ],
-      },
-    ],
-    featuredPanel: {
-      eyebrow: 'Turnkey Laboratory',
-      title: 'CBSE Composite Science Lab & ATL 2.0 Setup for Schools',
-      desc: 'Complete turnkey room blueprint, 8 sinks layout, 49 mandatory apparatus list, GeM registered equipment, and teacher onboarding.',
-      ctaText: 'Explore Lab Setups',
-      ctaHref: '/composite-lab',
-    },
-  },
-  {
-    label: 'Why CSEEL',
-    hasDropdown: true,
-    columns: [
-      {
-        categoryTitle: 'Experiential Pedagogy',
-        items: [
           {
-            label: 'Capabilities & Pedagogy',
-            to: '/why-cseel',
-            desc: 'Experiential learning architecture & hands-on practical methodology aligned with NEP 2020.',
-          },
-          {
-            label: 'Proven Academic Efficacy',
-            to: '/why-cseel',
-            desc: 'See how experiential practical rehearsals boost bench confidence and practical exam scores.',
-          },
-          {
-            label: 'Lab Safety & Compliance',
-            to: '/safety',
-            desc: 'Safe trial-and-error exploration with standard emergency protocols and zero chemical risk.',
-          },
-          {
-            label: 'School Plans & Packages',
-            to: '/compare-plans',
-            desc: 'Institutional packages, syllabus bundles & turnkey setup options for every school.',
-          },
-        ],
-      },
-      {
-        categoryTitle: 'Who It\'s For',
-        items: [
-          {
-            label: 'For School Educators',
-            to: '/for-educators',
-            desc: 'Hands-on lesson plans, teacher guides, practical rubrics & student assessment tools.',
-          },
-          {
-            label: 'For K-12 Students',
-            to: '/for-students',
-            desc: 'Experiential practical clarity, tactile discovery & concept mastery at student pace.',
-          },
-          {
-            label: 'For School Principals',
-            to: '/for-institutions',
-            desc: 'Infrastructure audits, GeM procurement, SARAS compliance & faculty enablement.',
-          },
-          {
-            label: 'NEP 2020 Practical Framework',
-            to: '/schemes/nep-2020-guidelines',
-            desc: 'Fully aligned to national experiential learning norms and skill education guidelines.',
-          },
-        ],
-      },
-    ],
-    featuredPanel: {
-      eyebrow: 'School Case Study',
-      title: 'How Partner Schools Transformed Practical Exam Scores by 34%',
-      desc: 'See how hands-on experiential lab setups boosted student participation, safety compliance, and conceptual exam scores.',
-      ctaText: 'Read the Case Study',
-      ctaHref: '/why-cseel',
-    },
-  },
-  {
-    label: 'Resources',
-    to: '/resources',
-    hasDropdown: true,
-    columns: [
-      {
-        categoryTitle: 'Government Schemes & Policy',
-        items: [
-          {
-            label: 'Government Schemes Hub',
-            to: '/schemes',
-            desc: 'Central & State funding grants, GeM procurement blueprints & lab compliance.',
+            label: 'Art, Design & Craft',
+            to: '/domain/art',
+            desc: 'Creative STEAM studio, color physics, photochemistry, model making & design thinking.',
             subItems: [
-              { label: 'PM SHRI Schools Lab Grant', to: '/schemes/pm-shri', badge: 'Govt Grant' },
-              { label: 'NITI Aayog ATL ₹20 Lakh Grant', to: '/schemes/atl-grants' },
-              { label: 'Samagra Shiksha Secondary Lab Norms', to: '/schemes/samagra-shiksha' },
-              { label: 'CBSE Skill Hub Initiative', to: '/schemes/cbse-skill-hub' },
+              { label: 'Creative STEAM Studio', to: '/domain/art' },
+              { label: 'Color Physics & Optics Lab', to: '/domain/art' },
+              { label: 'Design Thinking & Prototyping', to: '/domain/art' },
             ],
-          },
-          {
-            label: 'PM SHRI Schools Scheme',
-            to: '/schemes/pm-shri',
-            desc: 'Funding for modern experiential composite science laboratories in model schools.',
-          },
-          {
-            label: 'Samagra Shiksha Abhiyan',
-            to: '/schemes/samagra-shiksha',
-            desc: 'Secondary school science lab infrastructure & apparatus annual allocation.',
-          },
-          {
-            label: 'Atal Tinkering Lab (ATL Grants)',
-            to: '/schemes/atl-grants',
-            desc: 'NITI Aayog ₹20 Lakh package equipment, 3D printers & GeM registration.',
-          },
-          {
-            label: 'NEP 2020 Practical Framework',
-            to: '/schemes/nep-2020-guidelines',
-            desc: 'National curriculum framework for experiential learning & practical-first education.',
           },
         ],
       },
+    ],
+    featuredPanel: {
+      eyebrow: 'STEAM Experiential Learning',
+      title: '4 Core STEAM Domains Aligned with NEP 2020',
+      desc: 'Explore Science, Mathematics, Engineering & Technology, and Creative Arts through blended virtual & physical practicals.',
+      ctaText: 'Explore Experiential Labs',
+      ctaHref: '/domain/science',
+    },
+  },
+  {
+    id: 'lab-materials',
+    label: 'Lab Materials',
+    to: '/materials',
+    hasDropdown: true,
+    columns: [
       {
-        categoryTitle: 'Materials, Manuals & Insights',
+        categoryTitle: 'Apparatus Catalog & Lab Packages',
         items: [
           {
-            label: 'Material Cart & Lab Supplies',
+            label: '950+ Lab Materials Catalog',
             to: '/materials',
-            desc: 'Lab glassware, chemical reagents, biology specimens, DIY kits & cart checkout.',
+            desc: 'Certified laboratory apparatus, glassware, chemicals, electronic sensors & makerspace tools.',
             subItems: [
-              { label: 'ATL Package 1-4 Material List', to: '/materials', badge: 'ATL Material' },
-              { label: 'CBSE Composite Apparatus List', to: '/materials' },
-              { label: 'Chemical Reagents & Glassware', to: '/materials' },
+              { label: 'Physics Apparatus & Ray Benches', to: '/materials' },
+              { label: 'Chemistry Reagents & Glassware', to: '/materials' },
+              { label: 'Biology Models & Microscopes', to: '/materials' },
+              { label: 'Robotics Sensors & Microcontrollers', to: '/materials' },
+            ],
+          },
+          {
+            label: 'ATL Lab Material List (Packages 1-4)',
+            to: '/steam-lab/atl',
+            desc: 'Complete NITI Aayog Package 1-4 equipment list, 3D printers, sensors & robotics BOQ.',
+            subItems: [
+              { label: 'ATL Material List & Equipment BOQ', to: '/steam-lab/atl', badge: 'Equipment List' },
+              { label: 'Package 1 & 2: Prototyping & 3D Printers', to: '/steam-lab/atl' },
+              { label: 'Package 3 & 4: Robotics, IoT & Power Tools', to: '/steam-lab/atl' },
+              { label: 'NITI Aayog GeM Compliance Norms', to: '/schemes/atl-grants' },
+            ],
+          },
+          {
+            label: 'CBSE Composite Science Lab (49 List)',
+            to: '/composite-lab',
+            desc: 'Mandatory SARAS 49 non-consumable apparatus list and lab setup specifications.',
+            subItems: [
+              { label: '49 Mandatory Non-Consumable List', to: '/composite-lab', badge: 'CBSE List' },
+              { label: '600 Sq Ft Lab Blueprint & 8 Sinks', to: '/composite-lab' },
+              { label: 'SARAS Lab Safety & First Aid Setup', to: '/safety' },
+            ],
+          },
+        ],
+      },
+      {
+        categoryTitle: 'Procurement & Institutional Cart',
+        items: [
+          {
+            label: 'Instant Quotation Generator',
+            to: '/materials',
+            desc: 'Generate instant GST-compliant formal estimates and quotations for school tenders.',
+            subItems: [
+              { label: 'Instant Quotation Download', to: '/materials', badge: 'Instant PDF' },
+              { label: 'GeM Procurement Assistance', to: '/schemes' },
+            ],
+          },
+          {
+            label: 'Requisition Cart & Checkout',
+            to: '/cart',
+            desc: 'Review selected school lab equipment and submit official purchase inquiries.',
+            subItems: [
               { label: 'Open Material Cart', to: '/cart', badge: 'Cart' },
-            ],
-          },
-          {
-            label: 'Lab Manuals & Practical Guides',
-            to: '/hands-on-experiments',
-            desc: 'Step-by-step practical experiment procedures, safety SOPs & teacher guides.',
-            subItems: [
-              { label: 'Class 9-10 Composite Science Manual', to: '/hands-on-experiments' },
-              { label: 'Class 11-12 Physics Practical SOPs', to: '/hands-on-experiments' },
-              { label: 'Class 11-12 Chemistry Salt Analysis', to: '/hands-on-experiments' },
-              { label: 'Biology Microscopy & Specimen Guides', to: '/hands-on-experiments' },
-            ],
-          },
-          {
-            label: 'Academic Blog & Articles',
-            to: '/blog',
-            desc: 'Expert guides on experiential STEM pedagogy, lab safety, and CBSE practical exams.',
-            subItems: [
-              { label: 'Experiential STEM Pedagogy Research', to: '/blog' },
-              { label: 'GeM Portal Procurement Masterclass', to: '/blog' },
-              { label: '600 Sq Ft Lab Floorplan Compliance', to: '/blog' },
-            ],
-          },
-          {
-            label: 'Teacher CPD & Safety Guidelines',
-            to: '/teacher-training',
-            desc: 'Faculty development masterclasses, emergency SOPs, and lab compliance training.',
-            subItems: [
-              { label: 'Lab In-charge Safety Standards', to: '/safety' },
-              { label: 'Faculty Experiential Masterclasses', to: '/teacher-training' },
+              { label: 'Bulk School Purchase Request', to: '/contact-us' },
             ],
           },
         ],
       },
     ],
     featuredPanel: {
-      eyebrow: 'Government Lab Grants',
-      title: 'Avail PM SHRI & ATL Grants for Your School Lab Setup',
-      desc: 'Download GeM procurement documentation, equipment BOQs, and compliance blueprints for government scheme approvals.',
-      ctaText: 'Explore Schemes & Resources',
-      ctaHref: '/resources',
+      eyebrow: 'Institutional Procurement',
+      title: '950+ Certified School Lab & ATL Materials',
+      desc: 'Everything required for CBSE composite science labs and ATL setups with instant quotation and doorstep delivery.',
+      ctaText: 'Browse Lab Catalog',
+      ctaHref: '/materials',
     },
   },
   {
-    label: 'Media & Gallery',
+    id: 'edu-network',
+    label: 'Edu Network',
+    to: '/schools',
     hasDropdown: true,
     columns: [
       {
-        categoryTitle: 'Visual Lab Showcase',
+        categoryTitle: 'Directory & Discovery',
         items: [
           {
-            label: '360° Interactive Lab Tour',
-            to: '/virtual-lab-tour',
-            desc: 'Take an interactive 360-degree walkthrough inside our modern composite school laboratories.',
+            label: 'Partner Schools Directory',
+            to: '/schools',
+            desc: 'Explore 500+ verified partner schools equipped with modern experiential labs.',
+            subItems: [
+              { label: 'Pan-India School Search', to: '/schools' },
+              { label: 'Search Schools Near Me', to: '/schools', badge: 'Near Me' },
+              { label: 'UDISE Verified Directory', to: '/schools' },
+            ],
           },
           {
-            label: 'School Lab Installations',
-            to: '/media-archive',
-            desc: 'High-resolution photo gallery of real composite labs, ATL centers & furniture setups.',
-          },
-          {
-            label: 'Video Walkthroughs & Demos',
-            to: '/media-archive',
-            desc: 'Watch student practical videos, apparatus demonstrations & turnkey lab walkthroughs.',
-          },
-          {
-            label: 'News & Media Press Updates',
-            to: '/media-archive',
-            desc: 'School lab inaugurations, national STEM conclaves & latest press coverage.',
+            label: 'Affiliation & Board Explorer',
+            to: '/schools',
+            desc: 'Filter schools by CBSE, ICSE, Cambridge and State Board accreditations.',
+            subItems: [
+              { label: 'CBSE Affiliated Labs', to: '/schools' },
+              { label: 'Composite Science Lab Schools', to: '/schools' },
+            ],
           },
         ],
       },
       {
-        categoryTitle: 'Events & Activities',
+        categoryTitle: 'Faculty & Enablement',
         items: [
-          {
-            label: 'Events & Exhibitions Gallery',
-            to: '/exhibitions',
-            desc: 'Photos and highlights from national science exhibitions, inter-school fairs & hackathons.',
-          },
-          {
-            label: 'Teacher Training Glimpses',
-            to: '/teacher-training',
-            desc: 'Moments from faculty development masterclasses, lab safety workshops & certifications.',
-          },
-          {
-            label: 'Student Innovation Builds',
-            to: '/projects',
-            desc: 'Working student prototypes, science fair models, and award-winning student projects.',
-          },
-        ],
-      },
-    ],
-    featuredPanel: {
-      eyebrow: 'Interactive Experience',
-      title: 'Take the 360° Experiential Lab Tour',
-      desc: 'Explore a turnkey 600 sq ft composite school laboratory equipped with mandatory apparatus and student benches.',
-      ctaText: 'Launch 360° Tour',
-      ctaHref: '/virtual-lab-tour',
-    },
-  },
-  {
-    label: 'About & Network',
-    hasDropdown: true,
-    columns: [
-      {
-        categoryTitle: 'Verified EduNetwork',
-        items: [
-          {
-            label: 'EduNetwork Directory',
-            to: '/edu-network/organisation/school',
-            desc: 'India’s verified network of 500+ experiential STEM partner schools & lab hubs.',
-          },
           {
             label: 'Verified Faculty Directory',
             to: '/edu-network/teachers',
-            desc: 'Connect with certified STEM teachers, ATL mentors, and lab demonstrators nationwide.',
+            desc: 'Certified STEM educators, ATL coordinators, and hands-on lab demonstrators.',
+            subItems: [
+              { label: 'STEM Educator Roster', to: '/edu-network/teachers' },
+              { label: 'Expert ATL Mentors', to: '/edu-network/teachers' },
+            ],
           },
           {
-            label: 'Teacher Training & CPD',
-            to: '/teacher-training',
-            desc: 'Certified masterclasses in experiential science pedagogy and practical lab leadership.',
+            label: 'Institutional Partnerships',
+            to: '/for-institutions',
+            desc: "Join India's experiential education network and upgrade your school lab infrastructure.",
+            subItems: [
+              { label: 'Register Your School', to: '/contact-us' },
+              { label: 'School Lab Audit Request', to: '/contact-us' },
+            ],
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Pan-India Network',
+      title: '500+ Experiential Partner Schools Nationwide',
+      desc: 'Discover schools leading practical STEAM learning with modern composite science laboratories and Atal Tinkering Labs.',
+      ctaText: 'Explore Schools Directory',
+      ctaHref: '/schools',
+    },
+  },
+  {
+    id: 'events-workshops',
+    label: 'Events & Workshops',
+    to: '/events',
+    hasDropdown: true,
+    columns: [
+      {
+        categoryTitle: 'Student Competitions & Hackathons',
+        items: [
+          {
+            label: 'National STEM Hackathons',
+            to: '/events',
+            desc: 'Inter-school robotics, maker challenges, and experiential prototype competitions.',
+            subItems: [
+              { label: 'National STEM Hackathon 2026', to: '/events', badge: 'Upcoming' },
+              { label: 'Inter-School Science Olympiad', to: '/events' },
+              { label: 'Innovation Project Showcase', to: '/projects' },
+            ],
           },
           {
-            label: 'Seminars & Student Bootcamps',
-            to: '/workshops',
-            desc: 'Hands-on student workshops, robotics bootcamps, and curriculum advisory seminars.',
+            label: 'Science Exhibitions & Fairs',
+            to: '/exhibitions',
+            desc: 'Annual district and national science project exhibitions and award ceremonies.',
+            subItems: [
+              { label: 'Annual Science Exhibition', to: '/exhibitions' },
+              { label: 'Winner Showcase & Gallery', to: '/media-archive' },
+            ],
           },
         ],
       },
       {
-        categoryTitle: 'Our Organization',
+        categoryTitle: 'Workshops & Faculty CPD',
+        items: [
+          {
+            label: 'Hands-on Student Workshops',
+            to: '/workshops',
+            desc: 'Weekend robotics, 3D printing, space science, and AI immersion bootcamps.',
+            subItems: [
+              { label: 'Weekend Robotics Bootcamps', to: '/workshops' },
+              { label: 'AI & IoT Tinkering Workshops', to: '/workshops' },
+            ],
+          },
+          {
+            label: 'Teacher Training Masterclasses',
+            to: '/teacher-training',
+            desc: 'CPD masterclasses in experiential lab pedagogy, safety SOPs, and NEP 2020.',
+            subItems: [
+              { label: 'Experiential Lab Leadership', to: '/teacher-training' },
+              { label: 'CBSE Safety SOP Certification', to: '/safety' },
+            ],
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Upcoming Conclaves',
+      title: 'Participate in National STEM Competitions & Bootcamps',
+      desc: 'Register your school teams for upcoming hackathons, innovation challenges, and hands-on faculty workshops.',
+      ctaText: 'Browse All Events',
+      ctaHref: '/events',
+    },
+  },
+  {
+    id: 'about-cseel',
+    label: 'About CSEEL',
+    to: '/about',
+    hasDropdown: true,
+    columns: [
+      {
+        categoryTitle: 'Our Organization & Pedagogy',
         items: [
           {
             label: 'About CSEEL',
             to: '/about',
             desc: 'Our mission to bring experiential hands-on science to every learner across India.',
+            subItems: [
+              { label: 'Our Mission & Vision', to: '/about' },
+              { label: 'Our Story & Journey', to: '/our-story' },
+              { label: 'Leadership & Advisory Team', to: '/team' },
+              { label: 'Contact Us & Lab Advisory', to: '/contact-us' },
+            ],
           },
           {
-            label: 'Our Story & Journey',
-            to: '/our-story',
-            desc: 'How CSEEL grew from an educational pilot into a nationwide experiential learning movement.',
+            label: 'Why CSEEL & Efficacy',
+            to: '/why-cseel',
+            desc: 'Experiential learning architecture & hands-on practical methodology aligned with NEP 2020.',
+            subItems: [
+              { label: 'Experiential Pedagogy Framework', to: '/why-cseel' },
+              { label: 'Proven Academic Efficacy (+34%)', to: '/why-cseel' },
+              { label: 'Lab Safety & Compliance SOPs', to: '/safety' },
+              { label: 'School Plans & Packages', to: '/compare-plans' },
+            ],
           },
+        ],
+      },
+      {
+        categoryTitle: 'Who It\'s For & Careers',
+        items: [
           {
-            label: 'Leadership & Advisory Team',
-            to: '/team',
-            desc: 'The passionate educators, scientists, and engineers leading CSEEL.',
+            label: 'CSEEL for Stakeholders',
+            to: '/for-institutions',
+            desc: 'Tailored experiential science solutions for school principals, educators and students.',
+            subItems: [
+              { label: 'For School Principals', to: '/for-institutions' },
+              { label: 'For School Educators', to: '/for-educators' },
+              { label: 'For K-12 Students', to: '/for-students' },
+            ],
           },
           {
             label: 'Careers at CSEEL',
             to: '/careers',
             desc: 'Join our team as we empower students across India with hands-on practical science.',
-          },
-          {
-            label: 'Contact Us & Lab Advisory',
-            to: '/contact-us',
-            desc: 'Speak with our school consultants, lab setup specialists, or request a site inspection.',
+            subItems: [
+              { label: 'STEM & Robotics Educators', to: '/careers' },
+              { label: 'Lab In-Charge & Demonstrators', to: '/careers' },
+              { label: 'ATL Mentors of Change', to: '/careers' },
+              { label: 'School Faculty Placement', to: '/careers' },
+            ],
           },
         ],
       },
     ],
     featuredPanel: {
-      eyebrow: 'Partner With Us',
-      title: 'Setup a Modern Experiential Lab in Your School',
-      desc: 'Get turnkey guidance on CBSE affiliation, room layout, GeM procurement, and teacher certification.',
-      ctaText: 'Contact Lab Advisors',
-      ctaHref: '/contact-us',
+      eyebrow: 'Our Mission',
+      title: 'Transforming Indian Science Education Through Hands-On Learning',
+      desc: 'Discover how CSEEL equips 500+ schools with modern composite labs, ATL setups, and teacher masterclasses.',
+      ctaText: 'Learn About CSEEL',
+      ctaHref: '/about',
+    },
+  },
+  {
+    id: 'resources-media',
+    label: 'Resources & Media',
+    to: '/resources',
+    hasDropdown: true,
+    columns: [
+      {
+        categoryTitle: 'Academic Insights & Govt Schemes',
+        items: [
+          {
+            label: 'Academic Blog & Articles',
+            to: '/blog',
+            desc: 'Pedagogical research, CBSE practical guidelines, and NEP 2020 insights.',
+            subItems: [
+              { label: 'Experiential Learning Pedagogy', to: '/blog' },
+              { label: 'CBSE Practical Exam Guidelines', to: '/blog' },
+              { label: 'Lab Safety & Emergency SOPs', to: '/safety' },
+            ],
+          },
+          {
+            label: 'Government Schemes & Grants',
+            to: '/schemes',
+            desc: 'PM SHRI, Atal Tinkering Labs, and Samagra Shiksha school funding blueprints.',
+            subItems: [
+              { label: 'PM SHRI Lab Grants', to: '/schemes/pm-shri', badge: 'Govt Grant' },
+              { label: 'ATL ₹20 Lakh Grant Blueprint', to: '/schemes/atl-grants' },
+              { label: 'Samagra Shiksha Norms', to: '/schemes/samagra-shiksha' },
+            ],
+          },
+        ],
+      },
+      {
+        categoryTitle: 'Media & Visual Showcase',
+        items: [
+          {
+            label: '360° Interactive Lab Tour',
+            to: '/virtual-lab-tour',
+            desc: 'Take an interactive walkthrough inside modern composite science laboratories.',
+            subItems: [
+              { label: 'Launch 360° Walkthrough', to: '/virtual-lab-tour', badge: '360°' },
+              { label: 'Lab Equipment Inspection', to: '/virtual-lab-tour' },
+            ],
+          },
+          {
+            label: 'Media & Installations Gallery',
+            to: '/media-archive',
+            desc: 'Photos, video walkthroughs, and press coverage of real lab installations.',
+            subItems: [
+              { label: 'School Lab Photo Gallery', to: '/media-archive' },
+              { label: 'Video Demonstrations', to: '/media-archive' },
+              { label: 'Press & Conclave Highlights', to: '/media-archive' },
+            ],
+          },
+        ],
+      },
+    ],
+    featuredPanel: {
+      eyebrow: 'Interactive Tour',
+      title: 'Walk Through a Turnkey 600 Sq Ft Composite Science Lab',
+      desc: 'Experience our interactive 360° virtual tour and browse high-resolution photos of school installations across India.',
+      ctaText: 'Launch 360° Lab Tour',
+      ctaHref: '/virtual-lab-tour',
     },
   },
 ];
@@ -565,137 +579,139 @@ const Navbar = () => {
         }`}
         onMouseLeave={handleMouseLeave}
       >
-        {/* ── Main Navbar Bar (64px Height matching Google Search Console) ── */}
-        <div className="max-w-[1440px] w-full mx-auto flex items-center justify-between px-3 sm:px-6 h-16">
+        {/* ── Main Navbar Bar (Sleek 54px Height matching modern compact navigation) ── */}
+        <div className="max-w-[1380px] w-full mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-10 h-[54px]">
 
-          {/* Brand Logo */}
+          {/* Brand Logo (Crisp, proportional, prominent within 54px navbar) */}
           <Link
             href="/"
             aria-label="CSEEL - Home"
-            className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-2 xl:mr-5"
+            className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-3 xl:mr-5 py-0.5"
           >
             <img
-              src="/images/cseel-logo.png"
+              src="/images/cseel-logo.svg"
               alt="CSEEL - Centre for Scientific Exploration & Experiential Learning"
               width={140}
-              height={40}
-              className="h-8 xl:h-10 w-auto object-contain shrink-0"
+              height={44}
+              style={{ height: '44px', width: 'auto' }}
+              className="h-[38px] sm:h-[42px] lg:h-[44px] max-h-[46px] w-auto max-w-[155px] object-contain shrink-0"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/cseel-logo.png';
+              }}
             />
           </Link>
 
-          {/* Center Desktop Navigation: STRICTLY SINGLE LINE (Official M3 State Layer Pills) */}
-          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-2 h-full flex-nowrap shrink-0">
-            {visibleNavItems.map((item) => {
-              const isOpen = openDropdown === item.label;
+                    {/* Desktop Navigation & Actions: Shifted left closer together, NO empty gap, NO arrow */}
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3 2xl:gap-4 shrink-0">
+            <nav className="flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5 h-full flex-nowrap shrink-0">
+              {visibleNavItems.map((item) => {
+                const isOpen = openDropdown === item.label;
 
-              return (
-                <div
-                  key={item.label}
-                  className="flex items-center shrink-0"
-                >
-                  {item.hasDropdown ? (
-                    <button
-                      type="button"
-                      onClick={() => handleToggle(item.label)}
-                      onMouseEnter={() => handleMouseEnter(item.label)}
-                      onMouseLeave={handleMouseLeave}
-                      className={`top-nav-link flex items-center gap-1 xl:gap-1.5 text-[13px] xl:text-[14px] font-semibold transition-all duration-200 ease-in-out cursor-pointer whitespace-nowrap shrink-0 h-9 xl:h-10 px-2 xl:px-3 rounded-full active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b57d0] ${
-                        isOpen
-                          ? 'is-open text-[#001d35] bg-[#c2e7ff]'
-                          : 'text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08]'
-                      }`}
-                    >
-                      <span className="whitespace-nowrap">
-                        {item.label}
-                      </span>
-                      <ChevronDown
-                        className={`h-3.5 w-3.5 xl:h-4 xl:w-4 shrink-0 transition-transform duration-200 ${
-                          isOpen ? 'rotate-180 text-[#001d35]' : 'text-[#444746]'
+                return (
+                  <div
+                    key={item.label}
+                    className="flex items-center shrink-0"
+                  >
+                    {item.hasDropdown ? (
+                      <button
+                        type="button"
+                        onClick={() => handleToggle(item.label)}
+                        onMouseEnter={() => handleMouseEnter(item.label)}
+                        onMouseLeave={handleMouseLeave}
+                        className={`top-nav-link group flex items-center gap-1.5 text-[14px] xl:text-[15px] 2xl:text-[15.5px] font-bold tracking-tight transition-colors duration-200 ease-in-out cursor-pointer whitespace-nowrap shrink-0 h-[34px] px-2 lg:px-2 xl:px-2.5 2xl:px-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006FCC] ${
+                          isOpen
+                            ? 'is-open text-[#006FCC]'
+                            : 'text-[#1B1F23] hover:text-[#006FCC]'
                         }`}
-                      />
-                    </button>
-                  ) : (
-                    <Link
-                      href={item.to || '/'}
-                      onMouseEnter={handleMouseLeave}
-                      className="top-nav-link inline-flex items-center text-[13px] xl:text-[14px] font-semibold text-[#1f1f1f] transition-all duration-200 ease-in-out whitespace-nowrap shrink-0 h-9 xl:h-10 px-2 xl:px-3 rounded-full hover:bg-[#1f1f1f]/[0.08] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b57d0]"
-                    >
-                      <span>{item.label}</span>
-                    </Link>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
+                        style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}
+                      >
+                        <span className="whitespace-nowrap transition-colors duration-200">
+                          {item.label}
+                        </span>
+                        {/* Labster Exact Polygon Chevron Arrow */}
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          className={`shrink-0 transition-transform duration-200 ${
+                            isOpen ? 'rotate-180 text-[#006FCC]' : 'text-[#1B1F23] group-hover:text-[#006FCC]'
+                          }`}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M2.55806 6.29544C2.46043 6.19781 2.46043 6.03952 2.55806 5.94189L3.44195 5.058C3.53958 4.96037 3.69787 4.96037 3.7955 5.058L8.00001 9.26251L12.2045 5.058C12.3021 4.96037 12.4604 4.96037 12.5581 5.058L13.4419 5.94189C13.5396 6.03952 13.5396 6.19781 13.4419 6.29544L8.17678 11.5606C8.07915 11.6582 7.92086 11.6582 7.82323 11.5606L2.55806 6.29544Z"
+                          />
+                        </svg>
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.to || '/'}
+                        onMouseEnter={handleMouseLeave}
+                        className="top-nav-link inline-flex items-center text-[14px] xl:text-[15px] 2xl:text-[15.5px] font-bold tracking-tight text-[#1B1F23] hover:text-[#006FCC] transition-colors duration-200 ease-in-out whitespace-nowrap shrink-0 h-[34px] px-2 lg:px-2 xl:px-2.5 2xl:px-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006FCC]"
+                        style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}
+                      >
+                        <span>{item.label}</span>
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
 
-          {/* Far Right Action Buttons (Responsive width to prevent cut-off on laptop viewports) */}
-          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0 flex-nowrap ml-1.5 xl:ml-4">
-            <Link href="/schools?view=map" className="shrink-0">
-              <M3Button
-                variant="tonal"
-                size="sm"
-                className="h-8 xl:h-9 text-xs xl:text-sm px-2.5 xl:px-4 font-semibold"
-                leadingIcon={<MapPin className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-[#001d35]" />}
-              >
-                Find School
-              </M3Button>
-            </Link>
-
-            <div className="shrink-0">
-              <M3Button
-                variant="filled"
-                size="sm"
-                onClick={() => openDemoModal({ source: 'Navbar Desktop' })}
-                className="h-8 xl:h-9 text-xs xl:text-sm px-3 xl:px-4 font-semibold cursor-pointer"
-                trailingIcon={<ArrowRight className="w-3.5 h-3.5 xl:w-4 xl:h-4" />}
-              >
-                Book a Demo
-              </M3Button>
-            </div>
+            {/* Book a Demo Button: Shifted left closer to nav items, NO arrow */}
+            <button
+              type="button"
+              onClick={() => openDemoModal({ source: 'Navbar Desktop' })}
+              className="h-[34px] px-4 text-[13.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-xs hover:shadow rounded-[10px] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center shrink-0 whitespace-nowrap font-['Montserrat',sans-serif] cursor-pointer ml-1 xl:ml-2"
+            >
+              <span>Book a Demo</span>
+            </button>
           </div>
 
-          {/* Mobile Hamburger Button (Official M3IconButton) */}
+          {/* Mobile Hamburger Button */}
           <div className="lg:hidden">
             <M3IconButton
               ariaLabel="Toggle navigation menu"
               variant="standard"
-              size="md"
-              icon={mobileOpen ? <X className="h-6 w-6 text-[#1f1f1f]" /> : <Menu className="h-6 w-6 text-[#1f1f1f]" />}
+              size="sm"
+              icon={mobileOpen ? <X className="h-5 w-5 text-[#1b1f23]" /> : <Menu className="h-5 w-5 text-[#1b1f23]" />}
               onClick={() => setMobileOpen(!mobileOpen)}
             />
           </div>
         </div>
 
-        {/* ── FULL-WIDTH MEGA DROPDOWN (STANDARD CLEAN TYPOGRAPHY & ZERO SCROLL) ── */}
+        {/* ── FULL-WIDTH MEGA DROPDOWN (LABSTER EXACT TYPOGRAPHY & DESIGN) ── */}
         {activeItem && activeItem.columns && (
           <div
             className="hidden lg:block absolute top-full left-0 w-full bg-white border-b border-[#E8E9E9] shadow-[0_20px_40px_-10px_rgba(0,28,51,0.08)] z-[450] animate-in fade-in duration-150"
             onMouseEnter={clearTimers}
             onMouseLeave={handleMouseLeave}
           >
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-5">
-              <div className="grid grid-cols-12 gap-6 items-start">
+            <div className="max-w-[1360px] mx-auto px-6 lg:px-8 py-6">
+              <div className="grid grid-cols-12 gap-8 items-start">
 
                 {/* Left Zone: 2 Columns with Vertical Divider (8 cols) */}
                 <div className="col-span-8 pr-4 relative">
                   <div className="grid grid-cols-2 gap-8 relative">
 
                     {/* Column 1 */}
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {activeItem.columns[0] && (
                         <>
-                          <div className="pb-1 border-b border-gray-100">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#006FCC] block">
+                          <div className="pb-2 border-b border-[#E8E9E9]">
+                            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#006FCC] font-['Montserrat',sans-serif] block">
                               {activeItem.columns[0].categoryTitle}
                             </span>
                           </div>
-                          <div className="space-y-3">
+                          <div className="space-y-3.5">
                             {activeItem.columns[0].items.map((sub, idx) => {
                               const isSubExpanded = expandedSubItem === sub.label;
                               const hasSub = Boolean(sub.subItems && sub.subItems.length > 0);
 
                               return (
-                                <div key={idx} className="group/item pb-1.5 transition-all">
+                                <div key={idx} className="group/item pb-1 transition-all">
                                   <div className="flex items-start justify-between gap-2">
                                     <Link
                                       href={sub.to}
@@ -703,12 +719,12 @@ const Navbar = () => {
                                       className="group block flex-1"
                                     >
                                       <div className="flex items-center gap-1.5">
-                                        <h5 className="nav-menu-item-title text-[13.5px] font-semibold leading-tight text-[#023858] group-hover:text-[#006FCC] transition-colors">
+                                        <h5 className="font-['Montserrat',sans-serif] font-bold text-[15px] leading-snug text-[#1B1F23] group-hover:text-[#006FCC] transition-colors">
                                           {sub.label}
                                         </h5>
-                                        <ArrowRight className="w-3 h-3 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-150 shrink-0" />
+                                        <ArrowRight className="w-3.5 h-3.5 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
                                       </div>
-                                      <p className="text-[11.5px] text-[#5F6265] leading-[1.4] mt-0.5 font-normal line-clamp-2">
+                                      <p className="font-['Lato',sans-serif] text-[13px] text-[#5F6265] leading-[1.5] mt-1 font-normal line-clamp-2">
                                         {sub.desc}
                                       </p>
                                     </Link>
@@ -721,10 +737,10 @@ const Navbar = () => {
                                           e.stopPropagation();
                                           setExpandedSubItem(isSubExpanded ? null : sub.label);
                                         }}
-                                        className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+                                        className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-all flex items-center gap-1 shrink-0 cursor-pointer font-['Montserrat',sans-serif] ${
                                           isSubExpanded
-                                            ? 'bg-[#006FCC] text-white shadow-2xs'
-                                            : 'bg-[#EDF5FA] text-[#006FCC] hover:bg-[#DDECF6]'
+                                            ? 'bg-[#006FCC] text-white shadow-xs'
+                                            : 'bg-[#F7F8F8] text-[#006FCC] border border-[#E8E9E9] hover:bg-[#EDF5FA]'
                                         }`}
                                         title="Toggle Subcategories"
                                       >
@@ -736,8 +752,8 @@ const Navbar = () => {
 
                                   {/* Submenu List */}
                                   {hasSub && isSubExpanded && (
-                                    <div className="mt-1.5 ml-1 pl-2.5 border-l-2 border-[#006FCC] space-y-0.5 bg-[#F8FAFD] p-2 rounded-r-lg animate-in fade-in slide-in-from-top-1 duration-150">
-                                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5">
+                                    <div className="mt-2 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F7F8F8] p-2.5 rounded-r-xl border border-l-0 border-[#E8E9E9] animate-in fade-in slide-in-from-top-1 duration-150">
+                                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5 font-['Montserrat',sans-serif]">
                                         Subcategories & Material Lists
                                       </div>
                                       {sub.subItems!.map((child, cIdx) => (
@@ -745,14 +761,14 @@ const Navbar = () => {
                                           key={cIdx}
                                           href={child.to}
                                           onClick={() => setOpenDropdown(null)}
-                                          className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[11.5px] font-medium text-[#023858] hover:text-[#006FCC] transition-colors group/child"
+                                          className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[12px] font-semibold text-[#003C6E] hover:text-[#006FCC] transition-colors group/child font-['Montserrat',sans-serif]"
                                         >
                                           <div className="flex items-center gap-1.5">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#006FCC]/60 group-hover/child:bg-[#006FCC] group-hover/child:scale-125 transition-all" />
                                             <span>{child.label}</span>
                                           </div>
                                           {child.badge && (
-                                            <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20">
+                                            <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20 font-['Montserrat',sans-serif]">
                                               {child.badge}
                                             </span>
                                           )}
@@ -772,21 +788,21 @@ const Navbar = () => {
                     <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-[#E8E9E9]" />
 
                     {/* Column 2 */}
-                    <div className="space-y-3 pl-4">
+                    <div className="space-y-4 pl-4">
                       {activeItem.columns[1] && (
                         <>
-                          <div className="pb-1 border-b border-gray-100">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#006FCC] block">
+                          <div className="pb-2 border-b border-[#E8E9E9]">
+                            <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#006FCC] font-['Montserrat',sans-serif] block">
                               {activeItem.columns[1].categoryTitle}
                             </span>
                           </div>
-                          <div className="space-y-3">
+                          <div className="space-y-3.5">
                             {activeItem.columns[1].items.map((sub, idx) => {
                               const isSubExpanded = expandedSubItem === sub.label;
                               const hasSub = Boolean(sub.subItems && sub.subItems.length > 0);
 
                               return (
-                                <div key={idx} className="group/item pb-1.5 transition-all">
+                                <div key={idx} className="group/item pb-1 transition-all">
                                   <div className="flex items-start justify-between gap-2">
                                     <Link
                                       href={sub.to}
@@ -794,12 +810,12 @@ const Navbar = () => {
                                       className="group block flex-1"
                                     >
                                       <div className="flex items-center gap-1.5">
-                                        <h5 className="nav-menu-item-title text-[13.5px] font-semibold leading-tight text-[#023858] group-hover:text-[#006FCC] transition-colors">
+                                        <h5 className="font-['Montserrat',sans-serif] font-bold text-[15px] leading-snug text-[#1B1F23] group-hover:text-[#006FCC] transition-colors">
                                           {sub.label}
                                         </h5>
-                                        <ArrowRight className="w-3 h-3 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-150 shrink-0" />
+                                        <ArrowRight className="w-3.5 h-3.5 text-[#006FCC] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200 shrink-0" />
                                       </div>
-                                      <p className="text-[11.5px] text-[#5F6265] leading-[1.4] mt-0.5 font-normal line-clamp-2">
+                                      <p className="font-['Lato',sans-serif] text-[13px] text-[#5F6265] leading-[1.5] mt-1 font-normal line-clamp-2">
                                         {sub.desc}
                                       </p>
                                     </Link>
@@ -812,10 +828,10 @@ const Navbar = () => {
                                           e.stopPropagation();
                                           setExpandedSubItem(isSubExpanded ? null : sub.label);
                                         }}
-                                        className={`px-2 py-0.5 text-[10px] font-semibold rounded-md transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+                                        className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-all flex items-center gap-1 shrink-0 cursor-pointer font-['Montserrat',sans-serif] ${
                                           isSubExpanded
-                                            ? 'bg-[#006FCC] text-white shadow-2xs'
-                                            : 'bg-[#EDF5FA] text-[#006FCC] hover:bg-[#DDECF6]'
+                                            ? 'bg-[#006FCC] text-white shadow-xs'
+                                            : 'bg-[#F7F8F8] text-[#006FCC] border border-[#E8E9E9] hover:bg-[#EDF5FA]'
                                         }`}
                                         title="Toggle Subcategories"
                                       >
@@ -827,8 +843,8 @@ const Navbar = () => {
 
                                   {/* Submenu List */}
                                   {hasSub && isSubExpanded && (
-                                    <div className="mt-1.5 ml-1 pl-2.5 border-l-2 border-[#006FCC] space-y-0.5 bg-[#F8FAFD] p-2 rounded-r-lg animate-in fade-in slide-in-from-top-1 duration-150">
-                                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5">
+                                    <div className="mt-2 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F7F8F8] p-2.5 rounded-r-xl border border-l-0 border-[#E8E9E9] animate-in fade-in slide-in-from-top-1 duration-150">
+                                      <div className="text-[10px] font-bold uppercase tracking-wider text-[#006FCC] px-1 py-0.5 font-['Montserrat',sans-serif]">
                                         Subcategories & Material Lists
                                       </div>
                                       {sub.subItems!.map((child, cIdx) => (
@@ -836,14 +852,14 @@ const Navbar = () => {
                                           key={cIdx}
                                           href={child.to}
                                           onClick={() => setOpenDropdown(null)}
-                                          className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[11.5px] font-medium text-[#023858] hover:text-[#006FCC] transition-colors group/child"
+                                          className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[12px] font-semibold text-[#003C6E] hover:text-[#006FCC] transition-colors group/child font-['Montserrat',sans-serif]"
                                         >
                                           <div className="flex items-center gap-1.5">
                                             <span className="w-1.5 h-1.5 rounded-full bg-[#006FCC]/60 group-hover/child:bg-[#006FCC] group-hover/child:scale-125 transition-all" />
                                             <span>{child.label}</span>
                                           </div>
                                           {child.badge && (
-                                            <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20">
+                                            <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20 font-['Montserrat',sans-serif]">
                                               {child.badge}
                                             </span>
                                           )}
@@ -862,19 +878,19 @@ const Navbar = () => {
                   </div>
                 </div>
 
-                {/* Right Zone: Official M3 Surface Container Card (4 cols) */}
+                {/* Right Zone: Labster Featured Card (4 cols) */}
                 {activeItem.featuredPanel && (
-                  <div className="col-span-4 bg-[#f3f6fc] rounded-[14px] p-5 flex flex-col justify-between border border-[#c4c7c5]/50 shadow-2xs">
+                  <div className="col-span-4 bg-[#F7F8F8] rounded-2xl p-6 flex flex-col justify-between border border-[#E8E9E9] shadow-xs">
                     <div>
-                      <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#0b57d0] block mb-2">
+                      <span className="text-[11.5px] font-bold uppercase tracking-[0.16em] text-[#006FCC] font-['Montserrat',sans-serif] block mb-2">
                         {activeItem.featuredPanel.eyebrow}
                       </span>
                       <h4
-                        className="nav-menu-item-title text-[15px] font-bold text-[#1f1f1f] leading-snug mb-2 cursor-pointer"
+                        className="font-['Montserrat',sans-serif] text-[17px] font-bold text-[#1B1F23] hover:text-[#006FCC] leading-snug mb-2 cursor-pointer transition-colors"
                       >
                         {activeItem.featuredPanel.title}
                       </h4>
-                      <p className="text-[12px] text-[#444746] leading-relaxed">
+                      <p className="font-['Lato',sans-serif] text-[13px] text-[#5F6265] leading-[1.5]">
                         {activeItem.featuredPanel.desc}
                       </p>
                     </div>
@@ -883,14 +899,10 @@ const Navbar = () => {
                       <Link
                         href={activeItem.featuredPanel.ctaHref}
                         onClick={() => setOpenDropdown(null)}
+                        className="inline-flex items-center justify-center gap-2 h-10 px-5 text-[13.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] rounded-[14px] shadow-xs hover:shadow transition-all duration-200 active:scale-[0.98] font-['Montserrat',sans-serif] cursor-pointer whitespace-nowrap"
                       >
-                        <M3Button
-                          variant="filled"
-                          size="sm"
-                          trailingIcon={<ArrowRight className="w-3.5 h-3.5" />}
-                        >
-                          {activeItem.featuredPanel.ctaText}
-                        </M3Button>
+                        <span>{activeItem.featuredPanel.ctaText}</span>
+                        <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                       </Link>
                     </div>
                   </div>
@@ -908,35 +920,18 @@ const Navbar = () => {
           }`}
         >
           <div className="px-5 sm:px-6 py-5 space-y-2">
-            {/* Top Action Buttons: Book Demo & Find School (Uniform M3 Pill Buttons) */}
-            <div className="grid grid-cols-2 gap-2.5 pb-4">
-              <div>
-                <M3Button
-                  variant="filled"
-                  size="lg"
-                  fullWidth
-                  onClick={() => {
-                    setMobileOpen(false);
-                    openDemoModal({ source: 'Navbar Mobile Drawer' });
-                  }}
-                  className="cursor-pointer"
-                >
-                  Book Demo
-                </M3Button>
-              </div>
-              <Link
-                href="/schools?view=map"
-                onClick={() => setMobileOpen(false)}
+            {/* Top Action Button: Book Demo (Labster Button Style) */}
+            <div className="pb-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  openDemoModal({ source: 'Navbar Mobile Drawer' });
+                }}
+                className="w-full h-11 px-4 text-[13.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005499] shadow-xs rounded-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2 font-['Montserrat',sans-serif] cursor-pointer"
               >
-                <M3Button
-                  variant="tonal"
-                  size="lg"
-                  fullWidth
-                  leadingIcon={<MapPin className="w-4 h-4 text-[#001d35]" />}
-                >
-                  Find School
-                </M3Button>
-              </Link>
+                <span>Book a Demo</span>
+              </button>
             </div>
 
             {/* Clean Category Rows (Exact match with user's screenshot) */}

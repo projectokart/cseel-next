@@ -322,17 +322,16 @@ export default function SchoolFaqSection({
   }
 
   return (
-    <section id={id} className={`py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden ${className}`}>
-      {/* Decorative ambient background blur */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+    <section id={id} className={`py-12 sm:py-20 bg-[#F7F8F8] border-b border-[#E8E9E9] relative overflow-hidden ${className}`}>
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDF5FA] border border-[#D6EDFF] text-xs font-bold tracking-widest uppercase text-[#005689] mb-3 shadow-2xs">
-            <HelpCircle className="w-4 h-4 text-[#005689]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDF5FA] border border-[#D0E4F5] text-xs font-bold tracking-wider uppercase text-[#006FCC] mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+            <HelpCircle className="w-4 h-4 text-[#006FCC]" />
             <EditableText
               contentKey="faq_eyebrow"
               value="FREQUENTLY ASKED QUESTIONS"
@@ -341,17 +340,17 @@ export default function SchoolFaqSection({
             />
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
             <EditableText
               contentKey="faq_heading"
               value={title}
               maxLength={60}
               className="inline-block"
             />
-            <span className="text-[#005689] block mt-1">Questions & Clear Answers</span>
+            <span className="text-[#006FCC] block mt-1">Questions & Clear Answers</span>
           </h2>
 
-          <p className="mt-3 text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-3 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto">
             <EditableText
               contentKey="faq_subtitle"
               value={subtitle}
@@ -370,10 +369,10 @@ export default function SchoolFaqSection({
                   key={cat}
                   type="button"
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs ${
+                  className={`px-4 py-2 rounded-[10px] text-xs font-bold font-['Montserrat',sans-serif] transition-all cursor-pointer shadow-xs ${
                     activeCategory === cat
-                      ? 'bg-[#005689] text-white shadow-[0_4px_14px_rgba(0,86,137,0.3)] scale-105'
-                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80 hover:border-[#005689]/30'
+                      ? 'bg-[#006FCC] text-white shadow-md'
+                      : 'bg-white text-slate-600 hover:bg-slate-50 border border-[#E8E9E9]'
                   }`}
                 >
                   {cat}
@@ -384,17 +383,17 @@ export default function SchoolFaqSection({
         </div>
 
         {/* FAQ Accordion List */}
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {filteredFaqs.map((faq, idx) => {
             const isOpen = !!openFaqIds[faq.id];
 
             return (
               <div
                 key={faq.id || idx}
-                className={`rounded-[24px] sm:rounded-[28px] border transition-all duration-300 overflow-hidden ${
+                className={`rounded-[14px] border transition-all duration-300 overflow-hidden ${
                   isOpen
-                    ? 'bg-white border-[#005689]/40 shadow-[0_12px_32px_rgba(0,35,70,0.08),inset_0_1px_0_rgba(255,255,255,0.9)] ring-2 ring-[#005689]/10'
-                    : 'bg-white/95 border-[#F4EBD9] shadow-[0_6px_20px_rgba(0,35,70,0.04),inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-[#005689]/30 hover:shadow-md'
+                    ? 'bg-white border-[#006FCC]/50 shadow-md ring-1 ring-[#006FCC]/20'
+                    : 'bg-white border-[#E8E9E9] shadow-xs hover:border-[#006FCC]/40 hover:shadow-sm'
                 }`}
               >
                 {/* Accordion Header */}
@@ -404,10 +403,10 @@ export default function SchoolFaqSection({
                 >
                   <div className="flex items-start gap-3.5 pr-3 flex-1 min-w-0">
                     <div
-                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center shrink-0 transition-colors shadow-2xs border ${
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-[10px] flex items-center justify-center shrink-0 transition-colors shadow-2xs border ${
                         isOpen 
-                          ? 'bg-[#005689] text-white border-[#005689]' 
-                          : 'bg-[#EDF5FA] text-[#005689] border-[#D6EDFF] group-hover:bg-[#005689] group-hover:text-white'
+                          ? 'bg-[#006FCC] text-white border-[#006FCC]' 
+                          : 'bg-[#EDF5FA] text-[#006FCC] border-[#D0E4F5] group-hover:bg-[#006FCC] group-hover:text-white'
                       }`}
                     >
                       <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -416,13 +415,13 @@ export default function SchoolFaqSection({
                     <div className="flex-1 min-w-0 pt-0.5">
                       {faq.category && (
                         <div className="mb-1.5">
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200/60">
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[6px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] font-['Montserrat',sans-serif]">
                             {faq.category}
                           </span>
                         </div>
                       )}
 
-                      <div className="text-sm sm:text-base font-black text-slate-950 group-hover:text-[#005689] transition-colors leading-snug">
+                      <div className="text-sm sm:text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E] group-hover:text-[#006FCC] transition-colors leading-snug">
                         {isEditMode ? (
                           <EditableText
                             contentKey={`faq_q_${faq.id}`}

@@ -46,24 +46,24 @@ export function M3Button({
   const isDisabled = disabled || loading;
 
   const filledColors: Record<M3ButtonColor, string> = {
-    primary: 'bg-[#0b57d0] text-white hover:bg-[#0842a0]',
-    secondary: 'bg-[#00639b] text-white hover:bg-[#004d7a]',
+    primary: 'bg-[#006FCC] text-white hover:bg-[#005499]',
+    secondary: 'bg-[#003C6E] text-white hover:bg-[#00284A]',
     tertiary: 'bg-[#146c2e] text-white hover:bg-[#0f5223]',
     error: 'bg-[#b3261e] text-white hover:bg-[#8c1d18]',
     success: 'bg-[#1f9d5c] text-white hover:bg-[#177a47]',
   };
 
   const tonalColors: Record<M3ButtonColor, string> = {
-    primary: 'bg-[#d3e3fd] text-[#041e49] hover:bg-[#c2d7fa]',
-    secondary: 'bg-[#c2e7ff] text-[#001d35] hover:bg-[#b1defc]',
+    primary: 'bg-[#EDF5FA] text-[#006FCC] border border-[#D6EDFF] hover:bg-[#D6EDFF]',
+    secondary: 'bg-[#EDF5FA] text-[#003C6E] border border-[#D6EDFF] hover:bg-[#D6EDFF]',
     tertiary: 'bg-[#c4eed0] text-[#072711] hover:bg-[#b0e4bf]',
     error: 'bg-[#f9dedc] text-[#410e0b] hover:bg-[#f2c8c5]',
     success: 'bg-[#d1f5e0] text-[#072711] hover:bg-[#bcecd0]',
   };
 
   const textAndOutlineColors: Record<M3ButtonColor, string> = {
-    primary: 'text-[#0b57d0] hover:bg-[#0b57d0]/[0.08]',
-    secondary: 'text-[#00639b] hover:bg-[#00639b]/[0.08]',
+    primary: 'text-[#006FCC] hover:bg-[#006FCC]/[0.08]',
+    secondary: 'text-[#003C6E] hover:bg-[#003C6E]/[0.08]',
     tertiary: 'text-[#146c2e] hover:bg-[#146c2e]/[0.08]',
     error: 'text-[#b3261e] hover:bg-[#b3261e]/[0.08]',
     success: 'text-[#1f9d5c] hover:bg-[#1f9d5c]/[0.08]',
@@ -104,7 +104,7 @@ export function M3Button({
   };
 
   const combinedClasses = cn(
-    'relative overflow-hidden inline-flex items-center justify-center whitespace-nowrap max-w-full rounded-full font-semibold leading-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b57d0] focus-visible:ring-offset-2 active:scale-[0.98] disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer select-none',
+    'relative overflow-hidden inline-flex items-center justify-center whitespace-nowrap max-w-full rounded-xl font-bold font-[\'Montserrat\',sans-serif] leading-none transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006FCC] focus-visible:ring-offset-2 active:scale-[0.98] disabled:pointer-events-none disabled:cursor-not-allowed cursor-pointer select-none',
     variantClasses[variant],
     sizeClasses[size],
     (leadingIcon || loading) && size === 'md' && (variant === 'text' ? 'pl-2.5 sm:pl-3 pr-3 sm:pr-4' : 'pl-3 sm:pl-4'),

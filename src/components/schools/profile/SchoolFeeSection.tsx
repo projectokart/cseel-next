@@ -300,27 +300,27 @@ export default function SchoolFeeSection({
         </div>
 
         {/* Billing Frequency Rule Note */}
-        <div className="px-5 py-2.5 bg-[#FEFBF3] border-b border-[#F4EBD9] flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 text-xs">
+        <div className="px-5 py-2.5 bg-[#F7F8F8] border-b border-[#E8E9E9] flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 text-xs">
           <div className="flex flex-wrap items-center gap-2 text-slate-700">
-            <span className="font-extrabold text-[#8F4700] bg-amber-100 border border-amber-300/80 px-2 py-0.5 rounded text-[10px] sm:text-[11px] uppercase tracking-wider">
+            <span className="font-bold text-[#003C6E] bg-[#EDF5FA] border border-[#D0E4F5] px-2 py-0.5 rounded text-[10px] sm:text-[11px] uppercase tracking-wider font-['Montserrat',sans-serif]">
               Note
             </span>
             <span className="text-slate-700 font-semibold text-[11px] sm:text-xs">
-              Annual total calculate karne ke liye column header me bracket <strong>( )</strong> me ye value likhna <span className="text-red-600 font-black">MUST</span> hai:
+              Annual total calculate karne ke liye column header me bracket <strong>( )</strong> me ye value likhna <span className="text-red-600 font-bold">MUST</span> hai:
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#005689]">(Monthly)</span>
+            <span className="inline-flex items-center gap-1 bg-white border border-[#E8E9E9] text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
+              <span className="text-[#006FCC]">(Monthly)</span>
               <span className="text-slate-500 font-semibold">= Monthly (×12)</span>
             </span>
-            <span className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#005689]">(Qtr)</span>
+            <span className="inline-flex items-center gap-1 bg-white border border-[#E8E9E9] text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
+              <span className="text-[#006FCC]">(Qtr)</span>
               <span className="text-slate-500 font-semibold">= Quarterly (×4)</span>
             </span>
-            <span className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#005689]">(Half Yearly)</span>
+            <span className="inline-flex items-center gap-1 bg-white border border-[#E8E9E9] text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
+              <span className="text-[#006FCC]">(Half Yearly)</span>
               <span className="text-slate-500 font-semibold">= Half Yearly (×2)</span>
             </span>
             <span className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
@@ -440,26 +440,25 @@ export default function SchoolFeeSection({
   };
 
   return (
-    <section id="fee-structure" className="py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden">
-      {/* Decorative ambient background blur */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+    <section id="fee-structure" className="py-12 sm:py-20 bg-[#F7F8F8] border-b border-[#E8E9E9] relative overflow-hidden">
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
         <div className="text-center sm:text-left mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
-            <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+            <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
             <span>ADMISSIONS &amp; COMPOSITE FEES</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
             Transparent Fee Structure &amp;
-            <span className="text-[#005689] block mt-0.5">Admissions Guidelines</span>
+            <span className="text-[#006FCC] block mt-0.5">Admissions Guidelines</span>
           </h2>
 
-          <p className="mt-3 text-slate-600 font-medium max-w-2xl text-sm sm:text-base leading-relaxed">
+          <p className="mt-3 text-slate-600 font-normal max-w-2xl text-sm sm:text-base leading-relaxed">
             Review detailed grade-wise tuition schedules, transparent fee breakdowns, and direct contact channels for {displayName}.
           </p>
         </div>
@@ -472,14 +471,14 @@ export default function SchoolFeeSection({
               (templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl)) && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
                 {(templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl) && (
-                  <div className="bg-white/95 border border-[#F4EBD9] rounded-[28px] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-[0_10px_30px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]">
+                  <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#EDF5FA] text-[#005689] flex items-center justify-center shrink-0 border border-[#D6EDFF] shadow-xs">
-                        <FileText className="w-6 h-6 text-[#005689]" />
+                      <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 border border-[#D0E4F5] shadow-xs">
+                        <FileText className="w-6 h-6 text-[#006FCC]" />
                       </div>
                       <div>
-                        <h4 className="text-base font-black text-slate-950">Official School Fee Structure Page</h4>
-                        <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+                        <h4 className="text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Official School Fee Structure Page</h4>
+                        <p className="text-xs sm:text-sm text-slate-600 font-normal mt-0.5">
                           Direct link to official fee schedule on school website
                         </p>
                       </div>
@@ -488,7 +487,7 @@ export default function SchoolFeeSection({
                       href={templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#005689] hover:bg-[#004168] text-white text-xs font-black transition-all shrink-0 shadow-md hover:scale-105 active:scale-95"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all shrink-0 shadow-md hover:-translate-y-0.5 active:translate-y-0"
                     >
                       <span>Official Fee Page</span>
                       <ExternalLink className="w-4 h-4" />
@@ -497,14 +496,14 @@ export default function SchoolFeeSection({
                 )}
 
                 {(templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl) && (
-                  <div className="bg-white/95 border border-[#F4EBD9] rounded-[28px] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-[0_10px_30px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]">
+                  <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-[#EDF5FA] text-[#005689] flex items-center justify-center shrink-0 border border-[#D6EDFF] shadow-xs">
-                        <ShieldCheck className="w-6 h-6 text-[#005689]" />
+                      <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 border border-[#D0E4F5] shadow-xs">
+                        <ShieldCheck className="w-6 h-6 text-[#006FCC]" />
                       </div>
                       <div>
-                        <h4 className="text-base font-black text-slate-950">Official School Admissions Portal</h4>
-                        <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+                        <h4 className="text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Official School Admissions Portal</h4>
+                        <p className="text-xs sm:text-sm text-slate-600 font-normal mt-0.5">
                           Direct link to official admissions &amp; registration page
                         </p>
                       </div>
@@ -513,7 +512,7 @@ export default function SchoolFeeSection({
                       href={templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#005689] hover:bg-[#004168] text-white text-xs font-black transition-all shrink-0 shadow-md hover:scale-105 active:scale-95"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all shrink-0 shadow-md hover:-translate-y-0.5 active:translate-y-0"
                     >
                       <span>Official Admissions Page</span>
                       <ExternalLink className="w-4 h-4" />
@@ -526,12 +525,12 @@ export default function SchoolFeeSection({
             {feesTable.rows.some(r => r.some((c, idx) => idx > 0 && c && c.trim() !== '')) || isEditMode ? (
               renderDynamicTable('Admission & Tuition Fees', feesTable, setFeesTable)
             ) : (
-              <div className="bg-white/95 border border-[#F4EBD9] rounded-[32px] sm:rounded-[36px] p-8 sm:p-10 text-center max-w-4xl mx-auto mb-8 shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]">
-                <div className="w-14 h-14 rounded-2xl bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF] flex items-center justify-center mx-auto mb-4 shadow-xs">
-                  <FileText className="w-7 h-7 text-[#005689]" />
+              <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-8 sm:p-10 text-center max-w-4xl mx-auto mb-8 shadow-xs">
+                <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center mx-auto mb-4 shadow-xs">
+                  <FileText className="w-6 h-6 text-[#006FCC]" />
                 </div>
-                <h4 className="text-lg font-black text-slate-950 mb-1.5">Official Fee Schedule Verification</h4>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed font-medium">
+                <h4 className="text-lg font-bold font-['Montserrat',sans-serif] text-[#003C6E] mb-1.5">Official Fee Schedule Verification</h4>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
                   Class-wise tuition fee breakdown is officially published directly by the institution during the academic session. Parents are advised to consult the school admissions office for the latest fee structure.
                 </p>
               </div>
@@ -542,10 +541,10 @@ export default function SchoolFeeSection({
             )}
 
             {/* ─── TERMS, DUE DATES & INSTITUTIONAL GUIDELINES CARD ─── */}
-            <div className="bg-white/95 rounded-[32px] border border-[#F4EBD9] shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] overflow-hidden mb-8 max-w-5xl mx-auto w-full">
-              <div className="px-6 py-4.5 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3 bg-gradient-to-r from-[#F8FAFC] to-[#EDF5FA]">
+            <div className="bg-white rounded-[14px] border border-[#E8E9E9] shadow-xs overflow-hidden mb-8 max-w-5xl mx-auto w-full">
+              <div className="px-6 py-4 border-b border-[#E8E9E9] flex flex-wrap justify-between items-center gap-3 bg-[#F7F8F8]">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#005689] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-9 h-9 rounded-[10px] bg-[#006FCC] text-white flex items-center justify-center shadow-xs">
                     <Calendar className="w-5 h-5" />
                   </div>
                   <div>

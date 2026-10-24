@@ -101,26 +101,25 @@ export default function SchoolContactDetailSection({
   ];
 
   return (
-    <section id="contact-details" className="py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden">
-      {/* Decorative ambient background blur */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+    <section id="contact-details" className="py-12 sm:py-20 bg-white border-b border-[#E8E9E9] relative overflow-hidden">
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
         <div className="text-center sm:text-left mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
-            <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+            <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
             <span>COMMUNICATION DESKS</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
             Contact Departments &amp;
-            <span className="text-[#005689] block mt-0.5">Institutional Inquiries</span>
+            <span className="text-[#006FCC] block mt-0.5">Institutional Inquiries</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed max-w-2xl font-medium">
+          <p className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed max-w-2xl font-normal">
             Reach out to our specialized administrative channels for fast, dedicated assistance regarding {displayName}.
           </p>
         </div>
@@ -135,25 +134,25 @@ export default function SchoolContactDetailSection({
             return (
               <div
                 key={desk.id}
-                className="bg-white/95 rounded-[28px] p-6 border border-[#F4EBD9] shadow-[0_10px_30px_rgba(0,35,70,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-[#005689]/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                className="bg-white rounded-[14px] p-6 border border-[#E8E9E9] shadow-xs hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 border shadow-xs ${desk.color}`}>
-                    <Icon className="w-6 h-6" />
+                  <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 border shadow-xs ${desk.color}`}>
+                    <Icon className="w-5 h-5" />
                   </div>
 
-                  <h3 className="text-base font-black text-slate-950 tracking-tight">{desk.title}</h3>
-                  <p className="text-xs text-slate-500 font-medium mt-1 leading-snug min-h-[32px]">{desk.sub}</p>
+                  <h3 className="text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight">{desk.title}</h3>
+                  <p className="text-xs text-slate-500 font-normal mt-1 leading-snug min-h-[32px]">{desk.sub}</p>
                 </div>
 
-                <div className="space-y-2.5 pt-5 mt-4 border-t border-slate-100">
+                <div className="space-y-2.5 pt-4 mt-4 border-t border-[#E8E9E9]">
                   {hasPhone ? (
                     <a
                       href={`tel:${desk.phone}`}
-                      className="flex items-center gap-2.5 text-xs font-extrabold text-slate-800 hover:text-[#005689] transition-colors truncate group"
+                      className="flex items-center gap-2.5 text-xs font-semibold text-slate-800 hover:text-[#006FCC] transition-colors truncate group"
                     >
-                      <div className="w-7 h-7 rounded-full bg-[#EDF5FA] flex items-center justify-center group-hover:bg-[#005689] group-hover:text-white transition-colors">
-                        <Phone className="w-3.5 h-3.5 text-[#005689] group-hover:text-white shrink-0" />
+                      <div className="w-7 h-7 rounded-full bg-[#EDF5FA] flex items-center justify-center group-hover:bg-[#006FCC] group-hover:text-white transition-colors">
+                        <Phone className="w-3.5 h-3.5 text-[#006FCC] group-hover:text-white shrink-0" />
                       </div>
                       <span className="truncate">{desk.phone}</span>
                     </a>
@@ -169,10 +168,10 @@ export default function SchoolContactDetailSection({
                   {hasEmail ? (
                     <a
                       href={`mailto:${desk.email}`}
-                      className="flex items-center gap-2.5 text-xs font-extrabold text-slate-800 hover:text-[#005689] transition-colors truncate group"
+                      className="flex items-center gap-2.5 text-xs font-semibold text-slate-800 hover:text-[#006FCC] transition-colors truncate group"
                     >
-                      <div className="w-7 h-7 rounded-full bg-[#EDF5FA] flex items-center justify-center group-hover:bg-[#005689] group-hover:text-white transition-colors">
-                        <Mail className="w-3.5 h-3.5 text-[#005689] group-hover:text-white shrink-0" />
+                      <div className="w-7 h-7 rounded-full bg-[#EDF5FA] flex items-center justify-center group-hover:bg-[#006FCC] group-hover:text-white transition-colors">
+                        <Mail className="w-3.5 h-3.5 text-[#006FCC] group-hover:text-white shrink-0" />
                       </div>
                       <span className="truncate">{desk.email}</span>
                     </a>
@@ -190,15 +189,15 @@ export default function SchoolContactDetailSection({
           })}
         </div>
 
-        {/* Quick Message Dispatch Box (Claymorphic) */}
-        <div className="bg-white/95 rounded-[32px] sm:rounded-[36px] p-8 sm:p-12 border border-[#F4EBD9] shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] max-w-3xl mx-auto">
+        {/* Quick Message Dispatch Box */}
+        <div className="bg-[#F7F8F8] rounded-[14px] p-8 sm:p-10 border border-[#E8E9E9] shadow-xs max-w-3xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF] flex items-center justify-center shadow-xs shrink-0">
-              <Send className="w-6 h-6 text-[#005689]" />
+            <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center shadow-xs shrink-0">
+              <Send className="w-6 h-6 text-[#006FCC]" />
             </div>
             <div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-950">Send an Administrative Message</h3>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">The administration will receive and respond directly to your inquiry.</p>
+              <h3 className="text-xl sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Send an Administrative Message</h3>
+              <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">The administration will receive and respond directly to your inquiry.</p>
             </div>
           </div>
 
@@ -207,14 +206,14 @@ export default function SchoolContactDetailSection({
               <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
-              <h4 className="text-xl font-black text-slate-950">Message Dispatched!</h4>
+              <h4 className="text-xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Message Dispatched!</h4>
               <p className="text-xs sm:text-sm text-slate-600 font-medium">Thank you. The institutional desk will review your communication.</p>
             </div>
           ) : (
-            <form onSubmit={handleInquirySubmit} className="space-y-5">
+            <form onSubmit={handleInquirySubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[11px] font-black uppercase tracking-wider text-slate-600 block mb-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block mb-1.5 font-['Montserrat',sans-serif]">
                     Your Name *
                   </label>
                   <input
@@ -223,11 +222,11 @@ export default function SchoolContactDetailSection({
                     placeholder="e.g. Ramesh Kumar"
                     value={inquiryName}
                     onChange={(e) => setInquiryName(e.target.value)}
-                    className="w-full text-xs font-semibold px-4 py-3 rounded-2xl border-2 border-slate-200 focus:outline-none focus:border-[#005689] bg-white transition-all"
+                    className="w-full text-xs font-medium px-3.5 py-2.5 rounded-[10px] border border-[#E8E9E9] focus:outline-none focus:border-[#006FCC] bg-white transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-black uppercase tracking-wider text-slate-600 block mb-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block mb-1.5 font-['Montserrat',sans-serif]">
                     Contact Phone *
                   </label>
                   <input
@@ -236,19 +235,19 @@ export default function SchoolContactDetailSection({
                     placeholder="+91 98765 43210"
                     value={inquiryPhone}
                     onChange={(e) => setInquiryPhone(e.target.value)}
-                    className="w-full text-xs font-semibold px-4 py-3 rounded-2xl border-2 border-slate-200 focus:outline-none focus:border-[#005689] bg-white transition-all"
+                    className="w-full text-xs font-medium px-3.5 py-2.5 rounded-[10px] border border-[#E8E9E9] focus:outline-none focus:border-[#006FCC] bg-white transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] font-black uppercase tracking-wider text-slate-600 block mb-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block mb-1.5 font-['Montserrat',sans-serif]">
                   Department Desk *
                 </label>
                 <select
                   value={inquirySubject}
                   onChange={(e) => setInquirySubject(e.target.value)}
-                  className="w-full text-xs font-semibold px-4 py-3 rounded-2xl border-2 border-slate-200 focus:outline-none focus:border-[#005689] bg-white transition-all"
+                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-[10px] border border-[#E8E9E9] focus:outline-none focus:border-[#006FCC] bg-white transition-all"
                 >
                   <option value="Admissions">Admissions &amp; Enrollment</option>
                   <option value="General">General Administration &amp; Transport</option>
@@ -258,7 +257,7 @@ export default function SchoolContactDetailSection({
               </div>
 
               <div>
-                <label className="text-[11px] font-black uppercase tracking-wider text-slate-600 block mb-1.5">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block mb-1.5 font-['Montserrat',sans-serif]">
                   Inquiry Message *
                 </label>
                 <textarea
@@ -267,13 +266,13 @@ export default function SchoolContactDetailSection({
                   placeholder="Enter details of your query..."
                   value={inquiryMessage}
                   onChange={(e) => setInquiryMessage(e.target.value)}
-                  className="w-full text-xs font-semibold px-4 py-3 rounded-2xl border-2 border-slate-200 focus:outline-none focus:border-[#005689] bg-white transition-all"
+                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-[10px] border border-[#E8E9E9] focus:outline-none focus:border-[#006FCC] bg-white transition-all"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-full bg-[#005689] hover:bg-[#004168] text-white font-black text-xs sm:text-sm shadow-[0_8px_24px_rgba(0,86,137,0.25)] transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full py-3.5 rounded-[14px] bg-[#006FCC] hover:bg-[#005399] text-white font-bold text-xs sm:text-sm shadow-md shadow-[#006FCC]/20 transition-all cursor-pointer flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0 font-['Montserrat',sans-serif]"
               >
                 <Send className="w-4 h-4" />
                 <span>Submit Inquiry to {displayName}</span>

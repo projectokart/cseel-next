@@ -619,10 +619,10 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
 
   // Hero Carousel & Minimized state
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-  const [isHeroMinimized, setIsHeroMinimized] = useState(true);
+  const [isHeroMinimized, setIsHeroMinimized] = useState(false);
 
-  // Filter Sidebar Minimized state (Desktop)
-  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+  // Filter Sidebar Minimized state (Desktop) - Closed / Minimized by default
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -1121,7 +1121,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     return [1, '...', current - 1, current, current + 1, '...', total];
   }, [totalPages, currentPage]);
 
-  // Reusable Top & Bottom Pagination Bar (Strictly max 25 schools per page)
+  // Reusable Top & Bottom Pagination Bar (Labster Design System)
   const renderPaginationBar = (position: 'top' | 'bottom') => {
     const pageCount = displayedSchools.length;
     const startItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : (currentPage - 1) * 25 + 1;
@@ -1129,34 +1129,34 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
     return (
       <div
-        className={`w-full bg-white rounded-[16px] border border-[#c4c7c5]/80 px-3.5 py-2.5 sm:px-5 sm:py-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-2.5 ${
-          position === 'top' ? 'mb-3' : 'mt-6'
+        className={`w-full bg-white rounded-2xl border border-[#E8E9E9] px-3.5 py-2.5 sm:px-5 sm:py-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 ${
+          position === 'top' ? 'mb-4' : 'mt-8'
         }`}
       >
         {/* Left: Showing X-Y of Z Schools */}
-        <div className="flex items-center gap-2 text-xs text-[#444746] font-medium">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-[8px] bg-[#e8f0fe] text-[#0b57d0] font-bold text-[11px] border border-[#c2e7ff]">
+        <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-[10px] bg-[#EDF5FA] text-[#006FCC] font-bold text-[11px] border border-[#DDF0FC]">
             Page {currentPage} of {totalPages}
           </span>
           <span>
-            Showing <strong className="text-[#1f1f1f] font-bold">{startItem}–{endItem}</strong> of{' '}
-            <strong className="text-[#1f1f1f] font-bold">{totalSchoolsCount}</strong> Schools
+            Showing <strong className="text-[#1B1F23] font-bold">{startItem}–{endItem}</strong> of{' '}
+            <strong className="text-[#1B1F23] font-bold">{totalSchoolsCount}</strong> Schools
           </span>
-          <span className="hidden md:inline text-[11px] text-[#747775]">
+          <span className="hidden md:inline text-[11px] text-slate-500 font-medium">
             (25 / page)
           </span>
           {isLoadingMore && (
-            <Loader2 size={14} className="animate-spin text-[#0b57d0] ml-1" />
+            <Loader2 size={14} className="animate-spin text-[#006FCC] ml-1" />
           )}
         </div>
 
-        {/* Right: Prev + Page Numbers + Next (Uniform M3 Pill Buttons) */}
+        {/* Right: Prev + Page Numbers + Next (Labster 14px CTA Buttons) */}
         <div className="flex items-center gap-1.5 flex-wrap justify-center">
           <button
             type="button"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage <= 1 || isLoadingMore}
-            className="inline-flex items-center gap-1 h-8 px-3.5 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#0b57d0] text-xs font-semibold transition-all duration-200 ease-in-out active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            className="inline-flex items-center gap-1 h-9 px-3.5 rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
             title="Previous Page (25 Schools)"
           >
             <ChevronLeft size={14} />
@@ -1165,7 +1165,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
           {paginationPages.map((p, idx) =>
             p === '...' ? (
-              <span key={`dots-${position}-${idx}`} className="px-1.5 text-xs text-[#747775] font-bold">
+              <span key={`dots-${position}-${idx}`} className="px-1.5 text-xs text-slate-400 font-bold">
                 ...
               </span>
             ) : (
@@ -1174,10 +1174,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 type="button"
                 onClick={() => handlePageChange(Number(p))}
                 disabled={isLoadingMore}
-                className={`min-w-[32px] h-8 px-2.5 rounded-full text-xs font-semibold transition-all duration-200 ease-in-out active:scale-[0.98] cursor-pointer flex items-center justify-center ${
+                className={`min-w-[36px] h-9 px-3 rounded-[14px] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center ${
                   currentPage === Number(p)
-                    ? 'bg-[#0b57d0] text-white shadow-xs border border-[#0b57d0]'
-                    : 'bg-white hover:bg-[#0b57d0]/[0.08] text-[#444746] hover:text-[#0b57d0] border border-[#c4c7c5]'
+                    ? 'bg-[#006FCC] hover:bg-[#005399] text-white shadow-xs border border-[#006FCC]'
+                    : 'bg-white hover:bg-[#F7F8F8] text-[#1B1F23] hover:text-[#006FCC] border border-[#E8E9E9]'
                 }`}
                 title={`Go to Page ${p}`}
               >
@@ -1190,7 +1190,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             type="button"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages || isLoadingMore}
-            className="inline-flex items-center gap-1 h-8 px-3.5 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#0b57d0] text-xs font-semibold transition-all duration-200 ease-in-out active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            className="inline-flex items-center gap-1 h-9 px-3.5 rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
             title="Next Page (25 Schools)"
           >
             <span>Next</span>
@@ -1401,9 +1401,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     const hasWebsite = Boolean(rawWebsite && rawWebsite.trim() !== '' && rawWebsite !== '#' && !rawWebsite.includes('example.com'));
     const cleanWebsiteUrl = hasWebsite ? (rawWebsite.startsWith('http') ? rawWebsite : `https://${rawWebsite}`) : '';
     
-    // Google Local Inspired Card
+    // Labster Design System School Card
     return (
-      <div key={school.id || idx} className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-shadow group flex flex-col">
+      <div key={school.id || idx} className="bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 group flex flex-col">
         {/* Card Image Header - Compact with sleek single row overlay */}
         <div className="relative h-40 sm:h-44 w-full bg-slate-50 overflow-hidden">
           <img
@@ -1515,10 +1515,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         <div className="p-3.5 sm:p-4 flex-1 flex flex-col">
           <div className="mb-1.5">
             <h2 
-              className="font-semibold text-[15px] sm:text-[16px] text-[#1a0dab] hover:underline leading-snug tracking-tight line-clamp-1 cursor-pointer"
-              style={{ fontSize: '15px', color: '#1a0dab', lineHeight: '1.3' }}
+              className="font-['Montserrat',sans-serif] font-bold text-[15px] sm:text-[16px] leading-snug tracking-tight line-clamp-1 cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors"
+              style={{ fontSize: '15px', color: '#003C6E', lineHeight: '1.3' }}
             >
-              <Link href={profileUrl} className="hover:underline transition-colors inline">
+              <Link href={profileUrl} className="hover:text-[#006FCC] hover:underline transition-colors inline">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
             </h2>
@@ -1599,12 +1599,12 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </div>
           </div>
 
-          {/* Card Actions - Official M3 Uniform Pill Buttons */}
-          <div className="mt-auto pt-3 border-t border-gray-100 flex items-center gap-1.5">
+          {/* Card Actions - Labster 14px CTA Buttons */}
+          <div className="mt-auto pt-3 border-t border-[#E8E9E9] flex items-center gap-2">
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-9 px-3 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#1f1f1f] text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-all duration-200 ease-in-out active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0 flex-1"
+              className="h-9 px-3 rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] hover:border-[#006FCC]/30 text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0 flex-1"
               title="Open location on Google Maps (Popup Window)"
             >
               <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -1625,16 +1625,16 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   udiseCode: school.udise_code || school.id || '',
                 });
               }}
-              className="h-9 px-3 rounded-full bg-[#c2e7ff] hover:bg-[#b1defc] text-[#001d35] text-xs font-semibold inline-flex items-center justify-center gap-1 transition-all duration-200 ease-in-out active:scale-[0.98] whitespace-nowrap min-w-0 cursor-pointer shrink-0"
+              className="h-9 px-3 rounded-[14px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0 cursor-pointer shrink-0"
               title="Claim this school profile to edit details & admissions"
             >
-              <ShieldCheck size={13} className="text-[#001d35] shrink-0" />
+              <ShieldCheck size={13} className="text-[#006FCC] shrink-0" />
               <span className="truncate">Claim</span>
             </button>
             
             <Link
               href={profileUrl}
-              className="h-9 px-3.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] hover:shadow-[0_1px_3px_1px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] whitespace-nowrap min-w-0 flex-1"
+              className="h-9 px-3.5 rounded-[14px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 shadow-xs hover:shadow transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0 flex-1"
             >
               <span className="truncate">View</span>
               <ArrowRight size={13} className="shrink-0" />
@@ -1659,7 +1659,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     return (
       <div 
         key={school.id || idx} 
-        className="bg-white rounded-[16px] border border-[#c4c7c5]/80 hover:border-[#0b57d0]/60 hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden"
+        className="bg-white rounded-2xl border border-[#E8E9E9] hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden"
       >
         {/* Top/Main block: Thumbnail + Info */}
         <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
@@ -1691,16 +1691,16 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
           {/* Info Details */}
           <div className="flex-1 min-w-0 flex flex-col justify-center">
-            {/* Title & Iconic Verified Badge (right behind school name) + Board */}
+            {/* Title & Iconic Verified Badge + Board */}
             <div className="flex items-start sm:items-center gap-1.5 mb-1 flex-wrap">
               <Link 
                 href={profileUrl} 
-                className="font-bold text-sm sm:text-base text-[#1f1f1f] leading-snug hover:text-[#0b57d0] transition-colors inline"
+                className="font-['Montserrat',sans-serif] font-bold text-sm sm:text-base text-[#003C6E] leading-snug hover:text-[#006FCC] transition-colors inline"
                 title={school.school_name || school.name}
               >
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
-              <span className="inline-flex text-[9.5px] sm:text-[11px] font-semibold text-[#0b57d0] bg-[#e8f0fe] px-2 py-0.5 rounded-[8px] border border-[#c2e7ff] shrink-0 align-middle">
+              <span className="inline-flex text-[9.5px] sm:text-[11px] font-bold text-[#006FCC] bg-[#EDF5FA] px-2 py-0.5 rounded-[8px] border border-[#DDF0FC] shrink-0 align-middle">
                 {boardName}
               </span>
             </div>
@@ -1814,7 +1814,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </button>
           </div>
           
-          {/* Claim School CTA — Official M3 Tonal Pill */}
+          {/* Claim School CTA */}
           <button
             type="button"
             onClick={(e) => {
@@ -1826,17 +1826,17 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 udiseCode: school.udise_code || school.id || '',
               });
             }}
-            className="h-8 px-2.5 rounded-full bg-[#c2e7ff] hover:bg-[#b1defc] text-[#001d35] text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
+            className="h-8 px-2.5 rounded-[12px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
             title="Claim this school profile"
           >
-            <ShieldCheck size={13} className="text-[#001d35]" />
+            <ShieldCheck size={13} className="text-[#006FCC]" />
             <span className="text-[11px]">Claim</span>
           </button>
           
-          {/* View CTA — Official M3 Filled Pill (Guaranteed no overflow) */}
+          {/* View CTA */}
           <Link
             href={profileUrl}
-            className="h-8 px-3 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-xs whitespace-nowrap"
+            className="h-8 px-3.5 rounded-[12px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-xs whitespace-nowrap"
           >
             <span>View</span>
           </Link>
@@ -1853,10 +1853,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       <div
         key={`map-card-${school.id || school.udise_code || idx}`}
         onClick={() => handleSelectSchoolFromList(school)}
-        className={`p-2.5 rounded-[16px] border transition-all duration-200 cursor-pointer flex gap-2.5 text-left group ${
+        className={`p-2.5 rounded-2xl border transition-all duration-200 cursor-pointer flex gap-2.5 text-left group ${
           isSelected
-            ? 'bg-[#e8f0fe] border-[#0b57d0] shadow-xs ring-2 ring-[#0b57d0]/20'
-            : 'bg-white border-[#c4c7c5]/80 hover:border-[#0b57d0]/50 hover:bg-[#f8fafd] shadow-2xs'
+            ? 'bg-[#EDF5FA] border-[#006FCC] shadow-xs ring-2 ring-[#006FCC]/20'
+            : 'bg-white border-[#E8E9E9] hover:border-[#006FCC]/50 hover:bg-[#F7F8F8] shadow-2xs'
         }`}
       >
         {/* Compact Thumbnail (w-12 h-12) */}
@@ -1879,36 +1879,36 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
           <div>
             <div className="flex items-center justify-between gap-1">
-              <h4 className="text-[12.5px] font-bold text-[#1f1f1f] truncate group-hover:text-[#0b57d0] leading-tight">
+              <h4 className="text-[12.5px] font-bold text-[#003C6E] truncate group-hover:text-[#006FCC] leading-tight font-['Montserrat',sans-serif]">
                 {getCleanSchoolName(school.school_name || school.name)}
               </h4>
               {school.distance !== undefined && (
-                <span className="text-[9.5px] font-bold text-[#0b57d0] bg-[#e8f0fe] px-1.5 py-0.2 rounded-full shrink-0">
+                <span className="text-[9.5px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
                   {school.distance} km
                 </span>
               )}
             </div>
 
-            <p className="text-[10.5px] text-[#444746] truncate mt-0.5 leading-tight">
+            <p className="text-[10.5px] text-slate-500 truncate mt-0.5 leading-tight">
               {formatCardLocation(school)}
             </p>
 
             <div className="flex items-center gap-1 mt-1 flex-wrap">
               {school.board && (
-                <span className="text-[9.5px] font-semibold text-[#444746] bg-[#eef3fc] px-1.5 py-0.2 rounded-[6px]">
+                <span className="text-[9.5px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-[6px]">
                   {school.board}
                 </span>
               )}
               {school.management && (
-                <span className="text-[9.5px] font-medium text-[#137333] bg-[#e6f4ea] px-1.5 py-0.2 rounded-[6px] truncate max-w-[130px]">
+                <span className="text-[9.5px] font-medium text-[#137333] bg-[#E6F4EA] px-1.5 py-0.2 rounded-[6px] truncate max-w-[130px]">
                   {school.management}
                 </span>
               )}
             </div>
           </div>
 
-          {/* Action Row — Uniform M3 Pill Buttons */}
-          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-gray-100 gap-2">
+          {/* Action Row — Labster 10px Buttons */}
+          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-[#E8E9E9] gap-2">
             <button
               type="button"
               onClick={(e) => {
@@ -1918,7 +1918,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   setMobileSheetState('half');
                 }
               }}
-              className="h-6 px-2.5 rounded-full bg-[#c2e7ff] text-[#001d35] hover:bg-[#b1defc] text-[10.5px] font-semibold flex items-center gap-1 cursor-pointer transition-all duration-200 active:scale-[0.98]"
+              className="h-6 px-2.5 rounded-[10px] bg-[#EDF5FA] text-[#006FCC] hover:bg-[#DDF0FC] text-[10.5px] font-bold flex items-center gap-1 cursor-pointer transition-all duration-200 active:scale-[0.98]"
             >
               <Navigation size={10} />
               <span>Fly to Pin</span>
@@ -1927,7 +1927,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <Link
               href={profileUrl}
               onClick={(e) => e.stopPropagation()}
-              className="h-6 px-3 rounded-full bg-[#0b57d0] text-white hover:bg-[#0842a0] text-[10.5px] font-semibold flex items-center gap-1 transition-all duration-200 active:scale-[0.98]"
+              className="h-6 px-3 rounded-[10px] bg-[#006FCC] text-white hover:bg-[#005399] text-[10.5px] font-bold flex items-center gap-1 transition-all duration-200 active:scale-[0.98]"
             >
               <span>Profile</span>
               <ArrowRight size={10} />
@@ -1952,7 +1952,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     return (
       <div 
         key={`top-${school.id || idx}`}
-        className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white rounded-[16px] overflow-hidden border border-[#c4c7c5]/80 hover:border-[#0b57d0]/60 hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 group flex flex-col"
+        className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 group flex flex-col"
       >
         {/* Compact Image */}
         <div className="relative h-36 w-full bg-slate-50 overflow-hidden shrink-0">
@@ -2029,34 +2029,34 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         {/* Compact Card Body */}
         <div className="p-3.5 flex-1 flex flex-col justify-between">
           <div>
-            <h2 className="font-semibold text-[14px] text-[#1a0dab] hover:underline leading-snug mb-1 line-clamp-1 cursor-pointer" style={{ fontSize: '14.5px', color: '#1a0dab' }}>
-              <Link href={profileUrl} className="hover:text-[#0b57d0] transition-colors inline">
+            <h2 className="font-['Montserrat',sans-serif] font-bold text-[14px] leading-snug mb-1 line-clamp-1 cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors" style={{ fontSize: '14.5px', color: '#003C6E' }}>
+              <Link href={profileUrl} className="hover:text-[#006FCC] hover:underline transition-colors inline">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
             </h2>
 
-            <div className="text-[11px] text-[#444746] flex items-start gap-1 mb-2.5 leading-snug">
+            <div className="text-[11px] text-slate-600 flex items-start gap-1 mb-2.5 leading-snug">
               <MapPin size={11} className="text-red-500 shrink-0 mt-0.5" />
               <span className="break-words">{locationStr}</span>
             </div>
 
             {/* Quick Pills */}
             <div className="flex items-center gap-1.5 flex-wrap mb-3">
-              <span className="text-[10px] font-semibold text-[#0b57d0] bg-[#e8f0fe] px-2 py-0.5 rounded-[8px] border border-[#c2e7ff]">
+              <span className="text-[10px] font-bold text-[#006FCC] bg-[#EDF5FA] px-2 py-0.5 rounded-[8px] border border-[#DDF0FC]">
                 {boardName}
               </span>
-              <span className="text-[10px] font-semibold text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px]">
+              <span className="text-[10px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-[8px]">
                 {formatCompactClasses(school.classes || (school as any).class_range)}
               </span>
             </div>
           </div>
 
-          {/* Bottom CTA - Uniform M3 Pill Buttons */}
-          <div className="pt-2.5 border-t border-gray-100 grid grid-cols-2 gap-2">
+          {/* Bottom CTA - Labster 12px Buttons */}
+          <div className="pt-2.5 border-t border-[#E8E9E9] grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-8.5 px-2.5 rounded-full border border-[#747775] bg-white hover:bg-[#0b57d0]/[0.08] text-[#1f1f1f] text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0"
+              className="h-8 px-2.5 rounded-[12px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0"
               title="Open location on Google Maps (Popup)"
             >
               <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -2067,7 +2067,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </button>
             <Link
               href={profileUrl}
-              className="h-8.5 px-3 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs font-semibold inline-flex items-center justify-center gap-1 shadow-[0_1px_2px_rgba(60,64,67,0.3)] transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0"
+              className="h-8 px-3 rounded-[12px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 shadow-xs hover:shadow transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0"
             >
               <span className="truncate">View</span>
               <ArrowRight size={12} className="shrink-0" />
@@ -2099,18 +2099,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           <ChevronDown size={11} className={`text-[#444746] transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        {/* City Dropdown Menu - Official M3 Menu Surface (16px radius) */}
+        {/* City Dropdown Menu (Floats over all lower content) */}
         {isLocationDropdownOpen && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
-            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[340px] max-w-[calc(100vw-2rem)] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.18)] border border-[#c4c7c5] z-50 overflow-hidden text-left">
-              <div className="p-2.5 border-b border-[#c4c7c5]/60 bg-white flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#444746] uppercase tracking-wider">Popular Cities</span>
+            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[340px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-[#E8E9E9] z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
+              <div className="p-3 border-b border-[#E8E9E9] bg-[#F7F8F8] flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#003C6E] uppercase tracking-wider font-['Montserrat',sans-serif]">Popular Cities</span>
                 {selectedLocation && (
                   <button
                     type="button"
                     onClick={handleResetToAllCities}
-                    className="text-[11px] text-[#0b57d0] hover:underline font-semibold cursor-pointer"
+                    className="text-[11px] text-[#006FCC] hover:underline font-bold cursor-pointer"
                   >
                     Clear Location
                   </button>
@@ -2122,10 +2122,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     key={city.name}
                     type="button"
                     onClick={() => handleSelectCity(city)}
-                    className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-full text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
+                    className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-[12px] text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
                       selectedLocation === city.name
-                        ? 'bg-[#c2e7ff] text-[#001d35] font-semibold'
-                        : 'text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08]'
+                        ? 'bg-[#EDF5FA] text-[#006FCC] font-bold border border-[#DDF0FC]'
+                        : 'text-[#1B1F23] hover:bg-[#F7F8F8] font-medium'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
@@ -2138,24 +2138,24 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       <span className="truncate whitespace-nowrap">{city.name}</span>
                     </div>
                     {city.count > 0 && (
-                      <span className="text-[10px] font-bold text-[#0b57d0] bg-[#e8f0fe] px-1.5 py-0.2 rounded-full shrink-0">
+                      <span className="text-[10px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
                         {city.count}
                       </span>
                     )}
                   </button>
                 ))}
               </div>
-              <div className="p-2 border-t border-[#c4c7c5]/60 bg-slate-50">
+              <div className="p-2.5 border-t border-[#E8E9E9] bg-slate-50">
                 <button
                   type="button"
                   onClick={handleResetToAllCities}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] active:bg-[#0b57d0]/[0.16] rounded-full transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[#006FCC] hover:bg-[#EDF5FA] active:bg-[#DDF0FC] rounded-[12px] transition-colors cursor-pointer font-['Montserrat',sans-serif]"
                 >
                   <div className="flex items-center gap-1.5">
-                    <Globe size={14} className="text-[#0b57d0] shrink-0" />
+                    <Globe size={14} className="text-[#006FCC] shrink-0" />
                     <span>View All Cities (All Schools)</span>
                   </div>
-                  <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold bg-[#EDF5FA] text-[#006FCC] border border-[#DDF0FC] px-2 py-0.5 rounded-full">
                     {allLoadedSchools.length} Schools
                   </span>
                 </button>
@@ -2332,52 +2332,51 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       {/* ── Hero Section (Carousel & Search) with Minimise Feature ── */}
       {/* ── Hero Section (Carousel & Search) with Minimise Feature ── */}
       {!isHeroMinimized && (
-        <div className={`relative min-h-[360px] sm:min-h-[400px] w-full overflow-hidden bg-slate-950 flex flex-col items-center justify-center transition-all duration-300 ${
+        <div className={`relative z-40 min-h-[360px] sm:min-h-[400px] w-full bg-slate-950 flex flex-col items-center justify-center transition-all duration-300 ${
           viewMode === 'map' ? 'hidden md:flex' : ''
         }`}>
-          {/* Carousel Background Images */}
-          {HERO_IMAGES.map((img, idx) => (
-            <div
-              key={img}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                idx === currentHeroIndex ? 'opacity-50' : 'opacity-0'
-              }`}
-            >
-              <img src={img} alt="School Campus" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-slate-950/70" />
-              <div className="absolute inset-0 bg-black/40" />
-            </div>
-          ))}
+          {/* Carousel Background Images with Clean 45% Dark Overlay (Clipped neatly with inner overflow-hidden) */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {HERO_IMAGES.map((img, idx) => (
+              <div
+                key={img}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  idx === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <img src={img} alt="School Campus" className="w-full h-full object-cover" />
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)' }}
+                />
+              </div>
+            ))}
+          </div>
 
-          {/* Top Controls: Minimise Hero Button & Add School Profile */}
-          <div className="absolute top-3 right-3 sm:top-4 sm:right-6 z-20 flex items-center gap-2">
+          {/* Top Controls: Compact Minimise & Add School (Top Right Corner) */}
+          <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-4 z-30 flex items-center gap-1.5">
             <button
               type="button"
               onClick={handleAddSchoolClick}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 text-amber-300 hover:text-white text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+              className="hidden sm:inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-amber-300 hover:text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs active:scale-95"
             >
-              <PlusCircle size={13} className="text-amber-300 stroke-[2.5]" />
-              <span>Add School Profile</span>
+              <PlusCircle size={11} className="text-amber-300" />
+              <span>Add School</span>
             </button>
 
             <button
               type="button"
               onClick={() => setIsHeroMinimized(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/55 hover:bg-black/80 backdrop-blur-md border border-white/25 text-white/95 hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-md active:scale-95 group"
-              title="Minimise Hero Section to maximize workspace"
+              className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/20 text-white/85 hover:text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs active:scale-95 group"
+              title="Minimise Banner"
             >
-              <Minimize2 size={13} className="text-cyan-300 group-hover:scale-110 transition-transform" />
-              <span>Minimise Hero</span>
+              <Minimize2 size={11} className="text-cyan-300 group-hover:scale-110 transition-transform" />
+              <span>Minimise</span>
             </button>
           </div>
 
           {/* Hero Content Overlay */}
-          <div className="relative z-10 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cyan-300 text-xs font-bold tracking-wide uppercase mb-3 shadow-xs">
-              <Award size={12} className="text-cyan-300" />
-              <span>India&apos;s Experiential School Directory</span>
-            </div>
-
+          <div className="relative z-30 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3 drop-shadow-md">
               Find the Best Schools for Your Child
             </h1>
@@ -2386,7 +2385,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </p>
 
             {/* Centered Hero Search Bar */}
-            <div className="w-full max-w-3xl flex justify-center">
+            <div className="w-full max-w-3xl flex justify-center relative z-40">
               {renderSearchBar(false)}
             </div>
 
@@ -2999,7 +2998,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                         <button
                           type="button"
                           onClick={() => handleViewModeChange('grid')}
-                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                             viewMode === 'grid'
                               ? 'bg-white text-blue-600 shadow-2xs font-bold'
                               : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
@@ -3019,7 +3018,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                         <button
                           type="button"
                           onClick={() => handleViewModeChange('grid3')}
-                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                             viewMode === 'grid3'
                               ? 'bg-white text-blue-600 shadow-2xs font-bold'
                               : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
@@ -3040,7 +3039,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                         <button
                           type="button"
                           onClick={() => handleViewModeChange('compact')}
-                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                             viewMode === 'compact'
                               ? 'bg-white text-blue-600 shadow-2xs font-bold'
                               : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
@@ -3061,7 +3060,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                         <button
                           type="button"
                           onClick={() => handleViewModeChange('map')}
-                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                             viewMode === 'map'
                               ? 'bg-[#1A73E8] text-white shadow-2xs font-bold'
                               : 'text-blue-700 hover:bg-blue-100/60'
@@ -3086,7 +3085,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                               setIsMapFullscreen(next);
                             }
                           }}
-                          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-md flex items-center justify-center transition cursor-pointer ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                             isFullscreen
                               ? 'bg-blue-600 text-white shadow-2xs font-bold'
                               : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
@@ -3105,7 +3104,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     <button
                       type="button"
                       onClick={() => setIsHeroMinimized(false)}
-                      className="h-7.5 px-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 flex items-center gap-1.5 transition cursor-pointer text-xs font-semibold shrink-0 shadow-2xs"
+                      className="h-8 px-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 flex items-center gap-1.5 transition cursor-pointer text-xs font-semibold shrink-0 shadow-2xs"
                       title="Show Hero Banner Carousel"
                     >
                       <Layout size={13} className="text-gray-600" />
@@ -3124,10 +3123,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                           setIsAddSchoolExpanded(true);
                         }
                       }}
-                      className={`h-7.5 rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-sm active:scale-95 ${
+                      className={`h-8 rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-sm active:scale-95 ${
                         isAddSchoolExpanded
                           ? 'px-3.5 bg-gradient-to-r from-[#003c6e] to-[#005689] text-white ring-2 ring-blue-400/40 shadow-md gap-1.5'
-                          : 'w-7.5 bg-gradient-to-r from-[#005689] to-[#0077b6] hover:from-[#003c6e] hover:to-[#005689] text-white hover:shadow'
+                          : 'w-8 bg-gradient-to-r from-[#005689] to-[#0077b6] hover:from-[#003c6e] hover:to-[#005689] text-white hover:shadow'
                       }`}
                       title={isAddSchoolExpanded ? "Click to Open School Registration Page" : "Click to unlock Add School"}
                     >
@@ -3257,7 +3256,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Account Logged In: {effectiveUser.email}</span>
                     </div>
-                    <p className="text-amber-800 text-[11px] pl-5.5">
+                    <p className="text-amber-800 text-[11px] pl-6">
                       {isListingDisabled
                         ? 'Administrative notice: School directory display is currently set to verification review mode by administrator.'
                         : 'Your account is queued for admin approval. Once verified by our administration team, full directory access will be unlocked.'}

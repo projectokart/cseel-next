@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle2, Loader2, Sparkles, School, MapPin, Phone, User, FileText, ArrowRight } from 'lucide-react';
+import { X, CheckCircle2, Loader2, Sparkles, School, MapPin, Phone, User, FileText } from 'lucide-react';
 import { useBookDemoModal } from '@/contexts/BookDemoModalContext';
+import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 
 export const BookDemoModal: React.FC = () => {
   const { isOpen, closeDemoModal, prefillData } = useBookDemoModal();
@@ -32,6 +33,10 @@ export const BookDemoModal: React.FC = () => {
         schoolName: prefillData.schoolName || prev.schoolName,
         note: prefillData.note || prev.note,
       }));
+      trackCseelEvent('book_demo_opened', {
+        school: prefillData.schoolName || 'General',
+        source: prefillData.source || 'Website CTA',
+      });
     }
   }, [isOpen, prefillData]);
 
@@ -78,6 +83,12 @@ export const BookDemoModal: React.FC = () => {
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Failed to submit demo request. Please try again.');
       }
+
+      trackCseelEvent('book_demo_submission', {
+        school_name: formData.schoolName,
+        designation: formData.designation,
+        source: prefillData.source || 'Website Book a Demo CTA',
+      });
 
       setSubmitted(true);
       // Reset form after successful submission
@@ -316,7 +327,7 @@ export const BookDemoModal: React.FC = () => {
                       ) : (
                         <>
                           <span>Submit Demo Enquiry</span>
-                          <ArrowRight className="w-4 h-4" />
+                          
                         </>
                       )}
                     </button>

@@ -6,6 +6,7 @@ import ScrollReveal from "@/components/shared/ScrollReveal";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { trackCseelEvent } from "@/components/analytics/AnalyticsScripts";
 
 const ContactUs = () => {
   const { toast } = useToast();
@@ -30,6 +31,11 @@ const ContactUs = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Message sent!", description: "We'll be in touch soon." });
+      trackCseelEvent('contact_form_submitted', {
+        institution: formData.institution,
+        position: formData.position,
+        type: formData.type,
+      });
       setFormData({ firstName: "", lastName: "", email: "", institution: "", phone: "", position: "", type: "", country: "", message: "" });
     }
   };

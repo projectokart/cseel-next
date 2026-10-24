@@ -190,14 +190,14 @@ export default function SchoolStatsSection({
   const displayGrades = formatShortGradeRange(rawGrades, classFrom, classTo);
 
   return (
-    <section id="school-key-metrics" className="relative z-20 w-full bg-[#FEFBF3] border-b border-[#F4EBD9]/90 py-5 sm:py-6">
+    <section id="school-key-metrics" className="relative z-20 w-full bg-[#F7F8F8] border-b border-[#E8E9E9] py-5 sm:py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header Eyebrow */}
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#005689] animate-pulse" />
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-600">
+            <span className="w-2 h-2 rounded-full bg-[#006FCC] animate-pulse" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#006FCC] font-['Montserrat',sans-serif]">
               Key School Profile & Academic Indicators
             </span>
           </div>
@@ -210,19 +210,19 @@ export default function SchoolStatsSection({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
           
           {/* Card 1: Board */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/70 border border-amber-200/80 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_1" defaultIcon="Award" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_1" defaultIcon="Award" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_1"
                   value={displayBoardVal}
                   formatDisplay={formatShortBoard}
                   maxLength={14}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -236,19 +236,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 2: School Nature (Residential / Day School) */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100/70 border border-orange-200/80 text-orange-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_nature" defaultIcon="Home" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_nature" defaultIcon="Home" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_nature"
                   value={displayResidential}
                   formatDisplay={(val) => formatShortStatKeyword(val, 'nature')}
                   maxLength={16}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -262,19 +262,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 3: School Type / Management */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/70 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_mgmt" defaultIcon="Building2" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_mgmt" defaultIcon="Building2" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_mgmt"
                   value={displaySchoolType}
                   formatDisplay={(val) => formatShortStatKeyword(val, 'management')}
                   maxLength={18}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -288,19 +288,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 4: Medium of Instruction */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/70 border border-blue-200/80 text-blue-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_med" defaultIcon="BookOpen" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_med" defaultIcon="BookOpen" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_med"
                   value={displayMedium}
                   formatDisplay={(val) => formatShortStatKeyword(val, 'medium')}
                   maxLength={16}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -314,19 +314,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 5: Student Gender Type */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100/70 border border-purple-200/80 text-purple-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_gender" defaultIcon="Users" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_gender" defaultIcon="Users" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_gender"
                   value={displayGender}
                   formatDisplay={(val) => formatShortStatKeyword(val, 'gender')}
                   maxLength={14}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -340,19 +340,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 6: Student-Teacher Ratio */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100/70 border border-sky-200/80 text-[#005689] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_2" defaultIcon="UsersRound" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_2" defaultIcon="UsersRound" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_2"
                   value={displayRatio}
                   formatDisplay={formatShortRatio}
                   maxLength={10}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -366,19 +366,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 7: Classrooms & Labs */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-50 to-indigo-100/70 border border-indigo-200/80 text-indigo-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_3" defaultIcon="FlaskConical" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_3" defaultIcon="FlaskConical" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_3"
                   value={displayRooms}
                   formatDisplay={(val) => formatShortRooms(val, classroomsCount)}
                   maxLength={14}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText
@@ -392,19 +392,19 @@ export default function SchoolStatsSection({
           </div>
 
           {/* Card 8: School Level / Class Range */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100/70 border border-teal-200/80 text-teal-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="stat_icon_4" defaultIcon="GraduationCap" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+              <EditableIcon iconKey="stat_icon_4" defaultIcon="GraduationCap" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate">
                 <EditableText
                   contentKey="hero_stat_val_4"
                   value={displayGrades}
                   formatDisplay={(val) => formatShortGradeRange(val, classFrom, classTo)}
                   maxLength={16}
                   showVerificationBadge={false}
-                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate block"
+                  className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate block"
                 />
               </div>
               <EditableText

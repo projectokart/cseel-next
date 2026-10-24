@@ -397,15 +397,21 @@ const WhyCseel = () => (
   <>
 <PageTransition>
 
-      <section className="about-hero-gradient py-14 md:py-24 text-center text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage:"radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)", backgroundSize:"55px 55px" }} />
-        <div className="container mx-auto px-4 relative z-10">
-          <p className="text-xs font-semibold uppercase tracking-widest opacity-60 mb-3">Why Choose CSEEL</p>
-          <h1 className="text-3xl md:text-6xl font-bold mb-4 leading-tight">Science Education,<br /><span className="opacity-75">Reimagined.</span></h1>
-          <p className="text-base md:text-lg opacity-80 max-w-xl mx-auto mb-8">One seamless learning journey — from first spark of curiosity to certified mastery.</p>
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#001D38] via-[#003C6E] to-[#005689] py-16 md:py-24 text-center text-white">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10 space-y-4">
+          <span className="inline-block px-3.5 py-1 rounded-full bg-white/10 text-cyan-200 border border-white/20 text-xs font-bold uppercase tracking-wider">
+            Pedagogical Innovation · NEP 2020 Aligned
+          </span>
+          <h1 className="text-3xl md:text-6xl font-extrabold text-white mb-4 leading-tight tracking-tight" style={{ color: '#ffffff' }}>
+            Science Education,<br /><span className="text-cyan-300">Reimagined.</span>
+          </h1>
+          <p className="text-base md:text-lg text-slate-100/90 max-w-xl mx-auto mb-8 leading-relaxed">
+            One seamless learning journey — from first spark of curiosity to certified scientific mastery.
+          </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/compare-plans"><Button size="lg" variant="secondary" className="rounded-full px-6">Explore Plans</Button></Link>
-            <Link href="/demo"><Button size="lg" variant="outline" className="rounded-full px-6 border-white/30 text-white hover:bg-white/10">See Demo</Button></Link>
+            <Link href="/compare-plans"><Button size="lg" variant="secondary" className="rounded-xl px-7 font-bold">Explore Plans</Button></Link>
+            <Link href="/demo"><Button size="lg" variant="outline" className="rounded-xl px-7 font-bold border-white/30 text-white hover:bg-white/10">See Demo</Button></Link>
           </div>
         </div>
       </section>
@@ -449,14 +455,14 @@ const WhyCseel = () => (
         </div>
       </section>
 
-      <section className="py-16 about-hero-gradient text-center text-primary-foreground">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="text-3xl mb-3">🚀</div>
-          <h2 className="text-2xl md:text-4xl font-bold mb-3">Ready to start the journey?</h2>
-          <p className="opacity-80 mb-7 text-sm md:text-base">Join thousands of students already on the path from curious to certified.</p>
+      <section className="py-16 bg-gradient-to-br from-[#001D38] via-[#003C6E] to-[#005689] text-center text-white relative overflow-hidden">
+        <div className="container mx-auto px-4 max-w-2xl relative z-10 space-y-4">
+          <div className="text-3xl mb-1">🚀</div>
+          <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-2 tracking-tight" style={{ color: '#ffffff' }}>Ready to start the journey?</h2>
+          <p className="text-slate-100/90 mb-7 text-sm md:text-base leading-relaxed">Join thousands of students and educators already on the path from curious to certified.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/compare-plans"><Button size="lg" variant="secondary" className="rounded-full px-8">Get Started Free</Button></Link>
-            <Link href="/contact-us"><Button size="lg" variant="outline" className="rounded-full px-8 border-white/30 text-white hover:bg-white/10">Talk to Us</Button></Link>
+            <Link href="/compare-plans"><Button size="lg" variant="secondary" className="rounded-xl px-8 font-bold">Get Started Free</Button></Link>
+            <Link href="/contact-us"><Button size="lg" variant="outline" className="rounded-xl px-8 font-bold border-white/30 text-white hover:bg-white/10">Talk to Us</Button></Link>
           </div>
         </div>
       </section>

@@ -85,7 +85,7 @@ export default function OrgDashboard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <CardTitle className="text-base">Recent Classes</CardTitle>
-          <Link href="/org/classes" className="flex items-center gap-1 text-xs text-primary hover:underline">View all <ArrowRight className="h-3 w-3" /></Link>
+          <Link href="/org/classes" className="flex items-center gap-1 text-xs text-primary hover:underline">View all</Link>
         </CardHeader>
         <CardContent className="p-0">
           {recentClasses.length === 0 ? (

@@ -1058,7 +1058,7 @@ export const SchoolFilterSheet: React.FC<SchoolFilterSheetProps> = ({
             >
               <span>Apply</span>
               <span className="opacity-80 font-normal">({displayedCount} Schools)</span>
-              <ArrowRight size={14} className="shrink-0 ml-0.5" />
+              
             </button>
           </div>
         </div>

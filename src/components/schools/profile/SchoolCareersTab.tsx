@@ -198,33 +198,32 @@ export default function SchoolCareersTab({
   return (
     <section
       id="careers"
-      className="py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden"
+      className="py-12 sm:py-20 bg-white border-b border-[#E8E9E9] relative overflow-hidden"
     >
-      {/* Decorative ambient background blur matching Hero & other tabs */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
-        {/* ─── Section Header (Matching Facilities, Academics & Fees Tabs) ─── */}
+        {/* ─── Section Header ─── */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div className="text-center sm:text-left">
-            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
-              <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+              <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
               <span>CAREERS &amp; FACULTY RECRUITMENT</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
               <EditableText
                 fieldKey="careers_heading"
                 value={cData.heading || 'Join Our Esteemed Teaching &'}
-                className="inline"
+                className="inline text-[#003C6E]"
               />
-              <span className="text-[#005689] block mt-0.5">
+              <span className="text-[#006FCC] block mt-0.5">
                 Mentoring Faculty at {displayName}
               </span>
             </h2>
 
-            <p className="mt-3 text-slate-600 font-medium max-w-2xl text-sm sm:text-base leading-relaxed">
+            <p className="mt-3 text-slate-600 font-normal max-w-2xl text-sm sm:text-base leading-relaxed">
               <EditableText
                 fieldKey="careers_subheading"
                 value={
@@ -237,7 +236,7 @@ export default function SchoolCareersTab({
 
           {/* Direct HR Contact Pill Card */}
           {(contactEmail || contactPhone) && (
-            <div className="bg-white/95 border border-[#F4EBD9] rounded-[24px] p-4 sm:p-5 shadow-[0_10px_30px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
+            <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
               {contactEmail && (
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF] flex items-center justify-center shrink-0">
@@ -344,12 +343,12 @@ export default function SchoolCareersTab({
               {openings.map((job: any, idx: number) => (
                 <div
                   key={job.id || `vac-${idx}`}
-                  className="bg-[#FEFBF3]/60 hover:bg-white rounded-[24px] border border-[#F4EBD9] hover:border-[#005689]/30 p-6 flex flex-col justify-between transition-all duration-300 shadow-xs hover:shadow-[0_12px_28px_rgba(0,86,137,0.08)] group"
+                  className="bg-white hover:bg-slate-50/50 rounded-[14px] border border-[#E8E9E9] hover:border-[#006FCC]/40 p-6 flex flex-col justify-between transition-all duration-300 shadow-xs hover:shadow-md group"
                 >
                   <div className="space-y-4">
                     {/* Top Row: Department + NEW Vacancy Age Badge */}
                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF]">
+                      <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] font-['Montserrat',sans-serif]">
                         {job.department || 'Academic Faculty'}
                       </span>
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -359,13 +358,13 @@ export default function SchoolCareersTab({
                     </div>
 
                     {/* Official Website Published Date & Vacancy Age Banner */}
-                    <div className="bg-white/90 border border-[#D6EDFF] rounded-2xl p-3 space-y-1.5 shadow-2xs">
+                    <div className="bg-[#F7F8F8] border border-[#E8E9E9] rounded-[10px] p-3 space-y-1.5 shadow-2xs">
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-slate-500 font-semibold flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-[#005689]" />
+                          <Calendar className="w-3.5 h-3.5 text-[#006FCC]" />
                           Published on Website:
                         </span>
-                        <span className="font-black text-slate-900">
+                        <span className="font-bold text-[#003C6E]">
                           {job._publishedDateFormatted}
                         </span>
                       </div>
@@ -381,20 +380,20 @@ export default function SchoolCareersTab({
                     </div>
 
                     <div>
-                      <h4 className="text-lg font-black text-slate-950 group-hover:text-[#005689] transition-colors leading-snug">
+                      <h4 className="text-lg font-bold font-['Montserrat',sans-serif] text-[#003C6E] group-hover:text-[#006FCC] transition-colors leading-snug">
                         {job.title}
                       </h4>
                       {job.description && (
-                        <p className="text-xs text-slate-600 mt-2 line-clamp-3 leading-relaxed font-medium">
+                        <p className="text-xs text-slate-600 mt-2 line-clamp-3 leading-relaxed font-normal">
                           {job.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="space-y-2 pt-3 border-t border-[#F4EBD9]/80 text-xs text-slate-600">
+                    <div className="space-y-2 pt-3 border-t border-[#E8E9E9] text-xs text-slate-600">
                       {job.qualification && (
                         <div className="flex items-center gap-2">
-                          <GraduationCap className="w-4 h-4 text-[#005689] shrink-0" />
+                          <GraduationCap className="w-4 h-4 text-[#006FCC] shrink-0" />
                           <span>
                             <strong className="text-slate-800">Qualification:</strong> {job.qualification}
                           </span>
@@ -417,13 +416,13 @@ export default function SchoolCareersTab({
                     </div>
                   </div>
 
-                  <div className="pt-5 mt-5 border-t border-[#F4EBD9]/80 flex items-center justify-between gap-2">
+                  <div className="pt-5 mt-5 border-t border-[#E8E9E9] flex items-center justify-between gap-2">
                     {(job.official_vacancy_url || officialCareersUrl) ? (
                       <a
                         href={job.official_vacancy_url || officialCareersUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] text-[#005689] hover:underline font-bold"
+                        className="inline-flex items-center gap-1 text-[11px] text-[#006FCC] hover:underline font-bold"
                       >
                         <span>Official Notice</span>
                         <ExternalLink className="w-3 h-3" />
@@ -436,7 +435,7 @@ export default function SchoolCareersTab({
                     <button
                       type="button"
                       onClick={() => setSelectedJob(job)}
-                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-xs font-black text-white bg-[#005689] hover:bg-[#003c6e] shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-bold text-white bg-[#006FCC] hover:bg-[#005399] shadow-sm transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer font-['Montserrat',sans-serif]"
                     >
                       <span>Apply Now</span>
                       <Send className="w-3.5 h-3.5" />
@@ -446,14 +445,14 @@ export default function SchoolCareersTab({
               ))}
             </div>
           ) : (
-            <div className="bg-[#FEFBF3]/70 border border-dashed border-[#D6EDFF] rounded-[24px] p-8 sm:p-10 text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#EDF5FA] text-[#005689] flex items-center justify-center mx-auto">
+            <div className="bg-[#F7F8F8] border border-dashed border-[#D0E4F5] rounded-[14px] p-8 sm:p-10 text-center space-y-3">
+              <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center mx-auto">
                 <Briefcase className="w-6 h-6" />
               </div>
-              <h4 className="text-base sm:text-lg font-black text-slate-900">
+              <h4 className="text-base sm:text-lg font-bold font-['Montserrat',sans-serif] text-[#003C6E]">
                 No New Active Vacancies Published on School Website Currently
               </h4>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed font-medium">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
                 According to the official records of <strong>{displayName}</strong>, there are no newly published job vacancies at this time. We strictly display only verified, new recruitment notifications from the school&apos;s official website.
               </p>
               {(officialCareersUrl || contactEmail) && (
@@ -531,15 +530,15 @@ export default function SchoolCareersTab({
             ].map((benefit, i) => (
               <div
                 key={i}
-                className="bg-[#FEFBF3]/70 p-5 rounded-[24px] border border-[#F4EBD9] space-y-3 hover:bg-white transition-colors"
+                className="bg-[#F7F8F8] p-5 rounded-[14px] border border-[#E8E9E9] space-y-3 hover:bg-white hover:border-[#006FCC]/40 transition-all"
               >
                 <div
-                  className={`w-11 h-11 rounded-2xl border flex items-center justify-center ${benefit.badgeBg}`}
+                  className={`w-10 h-10 rounded-[10px] border flex items-center justify-center ${benefit.badgeBg}`}
                 >
                   <benefit.icon className="w-5 h-5" />
                 </div>
-                <h4 className="text-sm font-black text-slate-950">{benefit.title}</h4>
-                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                <h4 className="text-sm font-bold font-['Montserrat',sans-serif] text-[#003C6E]">{benefit.title}</h4>
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
                   {benefit.desc}
                 </p>
               </div>
@@ -551,7 +550,7 @@ export default function SchoolCareersTab({
       {/* ─── Apply Modal ─── */}
       {selectedJob && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-[32px] max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#F4EBD9] relative">
+          <div className="bg-white rounded-[16px] max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8E9E9] relative">
             <button
               onClick={() => setSelectedJob(null)}
               className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 w-8 h-8 rounded-full flex items-center justify-center transition-colors font-bold text-sm"
@@ -561,32 +560,32 @@ export default function SchoolCareersTab({
 
             {appliedSuccess ? (
               <div className="text-center py-8 space-y-3 animate-fade-in">
-                <div className="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-9 h-9" />
+                <div className="w-14 h-14 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-[12px] flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-black text-slate-950">Application Submitted!</h3>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-xs mx-auto font-medium">
+                <h3 className="text-xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Application Submitted!</h3>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-xs mx-auto font-normal">
                   Your application for <strong>{selectedJob.title}</strong> has been sent to the HR desk at {displayName}.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleApplySubmit} className="space-y-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3 py-1 rounded-full mb-2">
-                    <span className="w-1.5 h-1.5 bg-[#FBBC04] rounded-full" />
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3 py-1 rounded-full mb-2 font-['Montserrat',sans-serif]">
+                    <span className="w-1.5 h-1.5 bg-[#006FCC] rounded-full" />
                     Faculty Application
                   </div>
-                  <h3 className="text-xl font-black text-slate-950 leading-tight">
+                  <h3 className="text-xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight">
                     {selectedJob.title}
                   </h3>
-                  <p className="text-xs text-slate-500 font-semibold mt-1">
+                  <p className="text-xs text-slate-500 font-medium mt-1">
                     {selectedJob.department} • {selectedJob.type}
                   </p>
                 </div>
 
                 <div className="space-y-3 pt-2">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1 font-['Montserrat',sans-serif]">
                       Full Name *
                     </label>
                     <input
@@ -595,13 +594,13 @@ export default function SchoolCareersTab({
                       placeholder="e.g. Dr. Anjali Sharma"
                       value={applicantName}
                       onChange={(e) => setApplicantName(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 bg-[#FEFBF3]/50 border border-[#F4EBD9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
+                      className="w-full text-xs px-3.5 py-2.5 bg-[#F7F8F8] border border-[#E8E9E9] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#006FCC]/20 focus:border-[#006FCC]"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-700 mb-1 font-['Montserrat',sans-serif]">
                         Email ID *
                       </label>
                       <input
@@ -610,11 +609,11 @@ export default function SchoolCareersTab({
                         placeholder="yourname@gmail.com"
                         value={applicantEmail}
                         onChange={(e) => setApplicantEmail(e.target.value)}
-                        className="w-full text-xs px-3.5 py-2.5 bg-[#FEFBF3]/50 border border-[#F4EBD9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
+                        className="w-full text-xs px-3.5 py-2.5 bg-[#F7F8F8] border border-[#E8E9E9] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#006FCC]/20 focus:border-[#006FCC]"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-slate-700 mb-1 font-['Montserrat',sans-serif]">
                         Contact Phone *
                       </label>
                       <input
@@ -623,13 +622,13 @@ export default function SchoolCareersTab({
                         placeholder="+91 9876543210"
                         value={applicantPhone}
                         onChange={(e) => setApplicantPhone(e.target.value)}
-                        className="w-full text-xs px-3.5 py-2.5 bg-[#FEFBF3]/50 border border-[#F4EBD9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
+                        className="w-full text-xs px-3.5 py-2.5 bg-[#F7F8F8] border border-[#E8E9E9] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#006FCC]/20 focus:border-[#006FCC]"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1 font-['Montserrat',sans-serif]">
                       Qualification &amp; Teaching Experience
                     </label>
                     <input
@@ -637,7 +636,7 @@ export default function SchoolCareersTab({
                       placeholder="e.g. M.Sc, B.Ed — 4 Years in CBSE School"
                       value={applicantExp}
                       onChange={(e) => setApplicantExp(e.target.value)}
-                      className="w-full text-xs px-3.5 py-2.5 bg-[#FEFBF3]/50 border border-[#F4EBD9] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005689]/20 focus:border-[#005689]"
+                      className="w-full text-xs px-3.5 py-2.5 bg-[#F7F8F8] border border-[#E8E9E9] rounded-[10px] focus:outline-none focus:ring-2 focus:ring-[#006FCC]/20 focus:border-[#006FCC]"
                     />
                   </div>
                 </div>

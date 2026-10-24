@@ -87,16 +87,15 @@ export default function SchoolAcademicsTab({
   };
 
   return (
-    <section id="academics" className="py-12 sm:py-20 bg-[#FEFBF3] border-t border-[#F4EBD9]/80 relative overflow-hidden">
-      {/* Decorative ambient background blur */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/60 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none" />
+    <section id="academics" className="py-12 sm:py-20 bg-[#F7F8F8] border-b border-[#E8E9E9] relative overflow-hidden">
+      {/* Decorative ambient background */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
-            <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
+            <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
             <EditableText
               contentKey="academics_eyebrow"
               value="ACADEMIC EXCELLENCE & CURRICULUM"
@@ -104,13 +103,13 @@ export default function SchoolAcademicsTab({
             />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
             <EditableText
               contentKey="academics_heading"
               value="Rigorous Academics,"
-              className="inline"
+              className="inline text-[#003C6E]"
             />
-            <span className="text-[#005689] block mt-0.5">NEP 2020 Aligned Pedagogy</span>
+            <span className="text-[#006FCC] block mt-0.5">NEP 2020 Aligned Pedagogy</span>
           </h2>
 
           <EditableText
@@ -118,18 +117,18 @@ export default function SchoolAcademicsTab({
             value={`At ${displayName}, education transcends rote memorization. We integrate experiential STEM learning, critical inquiry, and comprehensive continuous evaluation from foundational years to senior secondary board examinations.`}
             multiline={true}
             rows={3}
-            className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed block font-medium"
+            className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed block font-normal"
           />
         </div>
 
-        {/* Classes Offered Range Card (Claymorphic) */}
-        <div className="mb-12 bg-white/95 p-6 sm:p-8 rounded-[32px] sm:rounded-[36px] border border-[#F4EBD9] shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        {/* Classes Offered Range Card */}
+        <div className="mb-12 bg-white p-6 sm:p-7 rounded-[14px] border border-[#E8E9E9] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF] flex items-center justify-center shadow-xs shrink-0">
-              <GraduationCap className="w-7 h-7 text-[#005689]" />
+            <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center shadow-xs shrink-0">
+              <GraduationCap className="w-6 h-6 text-[#006FCC]" />
             </div>
             <div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-950">
+              <h3 className="text-xl sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">
                 Classes Offered &amp; Grade Span
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
@@ -143,23 +142,23 @@ export default function SchoolAcademicsTab({
               <>
                 <input
                   type="text"
-                  className="w-28 sm:w-36 px-4 py-2.5 text-sm font-extrabold border-2 border-blue-200 rounded-full text-center focus:outline-none focus:border-[#005689] bg-white transition-all shadow-xs"
+                  className="w-28 sm:w-36 px-4 py-2 text-sm font-bold border border-[#E8E9E9] rounded-[10px] text-center focus:outline-none focus:border-[#006FCC] bg-white transition-all shadow-xs"
                   defaultValue={displayClassFrom}
                 />
                 <span className="text-slate-400 font-bold uppercase text-xs tracking-wider">to</span>
                 <input
                   type="text"
-                  className="w-28 sm:w-36 px-4 py-2.5 text-sm font-extrabold border-2 border-blue-200 rounded-full text-center focus:outline-none focus:border-[#005689] bg-white transition-all shadow-xs"
+                  className="w-28 sm:w-36 px-4 py-2 text-sm font-bold border border-[#E8E9E9] rounded-[10px] text-center focus:outline-none focus:border-[#006FCC] bg-white transition-all shadow-xs"
                   defaultValue={displayClassTo}
                 />
               </>
             ) : (
               <>
-                <span className="bg-[#EDF5FA] text-[#005689] font-black px-6 py-2.5 rounded-full border border-[#D6EDFF] shadow-xs text-sm sm:text-base">
+                <span className="bg-[#EDF5FA] text-[#006FCC] font-bold font-['Montserrat',sans-serif] px-5 py-2.5 rounded-[10px] border border-[#D0E4F5] shadow-xs text-sm sm:text-base">
                   {displayClassFrom.toLowerCase().startsWith('class') ? displayClassFrom : `Class ${displayClassFrom}`}
                 </span>
-                <span className="text-slate-400 font-black text-xs uppercase tracking-widest">to</span>
-                <span className="bg-[#EDF5FA] text-[#005689] font-black px-6 py-2.5 rounded-full border border-[#D6EDFF] shadow-xs text-sm sm:text-base">
+                <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">to</span>
+                <span className="bg-[#EDF5FA] text-[#006FCC] font-bold font-['Montserrat',sans-serif] px-5 py-2.5 rounded-[10px] border border-[#D0E4F5] shadow-xs text-sm sm:text-base">
                   {displayClassTo.toLowerCase().startsWith('class') ? displayClassTo : `Class ${displayClassTo}`}
                 </span>
               </>
@@ -171,11 +170,11 @@ export default function SchoolAcademicsTab({
         <div className="mb-14">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF] flex items-center justify-center shadow-xs shrink-0">
-                <BookOpen className="w-6 h-6 text-[#005689]" />
+              <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center shadow-xs shrink-0">
+                <BookOpen className="w-6 h-6 text-[#006FCC]" />
               </div>
               <div>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-950">
+                <h3 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">
                   Academic Streams &amp; Course Electives
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
@@ -189,7 +188,7 @@ export default function SchoolAcademicsTab({
             {streamCategories.map((stream, sIdx) => (
               <div
                 key={sIdx}
-                className="bg-white/95 p-6 rounded-[28px] border border-[#F4EBD9] shadow-[0_10px_30px_rgba(0,35,70,0.05),inset_0_1px_0_rgba(255,255,255,0.9)] relative group/stream hover:shadow-xl hover:border-[#005689]/30 transition-all duration-300"
+                className="bg-white p-6 rounded-[14px] border border-[#E8E9E9] shadow-xs relative group/stream hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300"
               >
                 {isEditMode && (
                   <button 
@@ -202,17 +201,17 @@ export default function SchoolAcademicsTab({
                 )}
                 
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-3 h-3 bg-[#005689] rounded-full shadow-xs"></div>
-                  <h4 className="text-base font-black text-slate-950 tracking-tight">{stream.name}</h4>
+                  <div className="w-2.5 h-2.5 bg-[#006FCC] rounded-full shadow-xs"></div>
+                  <h4 className="text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight">{stream.name}</h4>
                 </div>
 
                 <div className="flex flex-wrap gap-2.5">
                   {stream.subjects.map((sub, i) => (
                     <div
                       key={i}
-                      className="group/sub flex items-center gap-2 bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full shadow-2xs hover:bg-[#DDF0FD] transition-colors cursor-default"
+                      className="group/sub flex items-center gap-2 bg-[#F7F8F8] border border-[#E8E9E9] px-3.5 py-1.5 rounded-[10px] hover:border-[#006FCC]/40 hover:bg-white transition-colors cursor-default"
                     >
-                      <span className="text-xs font-bold text-[#005689]">{sub}</span>
+                      <span className="text-xs font-semibold text-[#003C6E]">{sub}</span>
                       {isEditMode && (
                         <button 
                           onClick={() => removeSubject(sIdx, i)}
@@ -232,7 +231,7 @@ export default function SchoolAcademicsTab({
                     <input 
                       type="text" 
                       placeholder="+ Add subject..." 
-                      className="px-3.5 py-1.5 text-xs font-bold border-2 border-dashed border-[#005689]/40 rounded-full focus:outline-none focus:border-[#005689] bg-white w-32 sm:w-36 text-slate-700 placeholder-slate-400"
+                      className="px-3.5 py-1.5 text-xs font-bold border border-dashed border-[#006FCC]/40 rounded-[10px] focus:outline-none focus:border-[#006FCC] bg-white w-32 sm:w-36 text-slate-700 placeholder-slate-400"
                       value={newSubjectInputs[sIdx] || ''}
                       onChange={(e) => setNewSubjectInputs(prev => ({...prev, [sIdx]: e.target.value}))}
                       onKeyDown={(e) => handleAddSubjectToStream(e, sIdx)}
@@ -243,7 +242,7 @@ export default function SchoolAcademicsTab({
             ))}
             
             {streamCategories.length === 0 && (
-              <div className="col-span-1 md:col-span-2 text-center py-8 bg-white/60 rounded-[28px] border-2 border-dashed border-slate-300 text-sm font-semibold text-slate-500">
+              <div className="col-span-1 md:col-span-2 text-center py-8 bg-white rounded-[14px] border border-dashed border-slate-300 text-sm font-semibold text-slate-500">
                 No streams added. Use the input below to add a stream.
               </div>
             )}
@@ -253,7 +252,7 @@ export default function SchoolAcademicsTab({
                 <input 
                   type="text" 
                   placeholder="+ Add new stream (Type & Enter)..." 
-                  className="px-5 py-3 text-sm font-bold border-2 border-dashed border-[#005689]/40 rounded-full focus:outline-none focus:border-[#005689] focus:bg-blue-50/50 w-full sm:w-auto min-w-[280px] shadow-sm transition-all text-slate-800"
+                  className="px-5 py-2.5 text-sm font-bold border border-dashed border-[#006FCC]/40 rounded-[10px] focus:outline-none focus:border-[#006FCC] focus:bg-blue-50/50 w-full sm:w-auto min-w-[280px] shadow-sm transition-all text-slate-800"
                   value={newStreamTitle}
                   onChange={(e) => setNewStreamTitle(e.target.value)}
                   onKeyDown={handleAddNewStream}

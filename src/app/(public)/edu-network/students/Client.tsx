@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Sparkles, Award, Star, ExternalLink, MapPin, Search,
-  Filter, CheckCircle2, ChevronRight, ArrowRight, Eye, BookOpen
+  Filter, CheckCircle2, ChevronRight, Eye, BookOpen
 } from 'lucide-react';
 import PageTransition from '@/components/shared/PageTransition';
 import { ALL_STUDENTS, StudentItem } from '@/lib/eduNetworkData';
@@ -118,59 +118,78 @@ export default function StudentsDirectoryClient() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredStudents.map((s) => (
-                  <div
-                    key={s.id}
-                    className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+              {filteredStudents.length === 0 ? (
+                <div className="bg-white rounded-3xl p-10 text-center border border-slate-200 shadow-xs space-y-4">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
+                    <Sparkles className="w-7 h-7" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-bold text-slate-900">Student Innovation Showcase Launching Soon</h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                      CSEEL will soon feature peer-reviewed student projects, ATL science prototypes, and young innovators across partner schools in India.
+                    </p>
+                  </div>
+                  <Link
+                    href="/contact-us"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#005689] to-[#003c6e] hover:opacity-95 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
                   >
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3.5">
-                        <img
-                          src={s.avatar}
-                          alt={s.name}
-                          className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shrink-0"
-                        />
-                        <div>
-                          <h2 className="text-base font-black text-slate-900 group-hover:text-amber-600 transition-colors">
-                            {s.name}
-                          </h2>
-                          <p className="text-xs font-bold text-amber-800">{s.classGrade}</p>
-                          <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                            <span>{s.schoolCollege}, {s.city}</span>
-                          </p>
+                    <span>Submit Your School Innovation</span>
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredStudents.map((s) => (
+                    <div
+                      key={s.id}
+                      className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3.5">
+                          <img
+                            src={s.avatar}
+                            alt={s.name}
+                            className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shrink-0"
+                          />
+                          <div>
+                            <h2 className="text-base font-black text-slate-900 group-hover:text-amber-600 transition-colors">
+                              {s.name}
+                            </h2>
+                            <p className="text-xs font-bold text-amber-800">{s.classGrade}</p>
+                            <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                              <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                              <span>{s.schoolCollege}, {s.city}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                          {s.bio}
+                        </p>
+
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {s.interests.slice(0, 3).map((tag, idx) => (
+                            <span key={idx} className="px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-200/60 rounded-md text-[10px] font-bold">
+                              {tag}
+                            </span>
+                          ))}
                         </div>
                       </div>
 
-                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                        {s.bio}
-                      </p>
-
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {s.interests.slice(0, 3).map((tag, idx) => (
-                          <span key={idx} className="px-2 py-0.5 bg-amber-50 text-amber-900 border border-amber-200/60 rounded-md text-[10px] font-bold">
-                            {tag}
-                          </span>
-                        ))}
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-500">
+                          {s.projectsCount} Verified Projects
+                        </span>
+                        <Link
+                          href={`/edu-network/students/${s.id}`}
+                          className="px-3.5 py-1.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-xl shadow-xs flex items-center gap-1 transition-all"
+                        >
+                          <span>View Portfolio</span>
+                        </Link>
                       </div>
                     </div>
-
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-500">
-                        {s.projectsCount} Verified Projects
-                      </span>
-                      <Link
-                        href={`/edu-network/students/${s.id}`}
-                        className="px-3.5 py-1.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold rounded-xl shadow-xs flex items-center gap-1 transition-all"
-                      >
-                        <span>View Portfolio</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>

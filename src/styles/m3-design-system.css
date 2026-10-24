@@ -3,16 +3,16 @@
  * ========================================================================== */
 
 :root {
-  /* 1. Brand & M3 Color System Tokens */
-  --brand-primary: #0b57d0;
-  --brand-primary-hover: #0842a0;
+  /* 1. Brand & Labster Styling Tokens */
+  --brand-primary: #006FCC;
+  --brand-primary-hover: #005399;
   --brand-on-primary: #ffffff;
-  --brand-primary-container: #d3e3fd;
-  --brand-on-primary-container: #041e49;
+  --brand-primary-container: #d6edff;
+  --brand-on-primary-container: #001c33;
 
-  --md-sys-color-secondary: #00639b;
-  --md-sys-color-secondary-container: #c2e7ff;
-  --md-sys-color-on-secondary-container: #001d35;
+  --md-sys-color-secondary: #003c6e;
+  --md-sys-color-secondary-container: #f7f8f8;
+  --md-sys-color-on-secondary-container: #1b1f23;
 
   --md-sys-color-tertiary-container: #c4eed0;
   --md-sys-color-on-tertiary-container: #072711;
@@ -24,26 +24,26 @@
   /* 2. M3 Surface & Outline Hierarchy */
   --md-sys-color-surface: #ffffff;
   --md-sys-color-surface-low: #f8fafd;
-  --md-sys-color-surface-container: #f3f6fc;
-  --md-sys-color-surface-high: #eef3fc;
-  --md-sys-color-surface-highest: #e9eef6;
+  --md-sys-color-surface-container: #f7f8f8;
+  --md-sys-color-surface-high: #edf5fa;
+  --md-sys-color-surface-highest: #e8e9e9;
   --md-sys-color-inverse-surface: #303030;
   --md-sys-color-inverse-on-surface: #f2f2f2;
-  --md-sys-color-inverse-primary: #a8c7fa;
+  --md-sys-color-inverse-primary: #8ab4f8;
 
-  --md-sys-color-on-surface: #1f1f1f;
-  --md-sys-color-on-surface-variant: #444746;
-  --md-sys-color-outline: #747775;
-  --md-sys-color-outline-variant: #c4c7c5;
+  --md-sys-color-on-surface: #1b1f23;
+  --md-sys-color-on-surface-variant: #5f6265;
+  --md-sys-color-outline: #e8e9e9;
+  --md-sys-color-outline-variant: #d1d2d3;
 
-  /* 3. M3 Shape & Radius Scale */
-  --btn-radius: 9999px;
-  --chip-radius: 8px;
-  --field-radius: 8px;
-  --menu-radius: 12px;
+  /* 3. Labster Signature Shape & Radius Scale */
+  --btn-radius: 14px;
+  --chip-radius: 10px;
+  --field-radius: 10px;
+  --menu-radius: 14px;
   --card-radius: 16px;
-  --sheet-radius: 28px;
-  --dialog-radius: 28px;
+  --sheet-radius: 24px;
+  --dialog-radius: 24px;
 
   /* 4. M3 Elevation Shadows (Levels 0 to 5) */
   --md-elevation-0: none;
@@ -73,9 +73,10 @@
   gap: 8px;
   height: 40px;
   padding: 0 24px;
-  border-radius: var(--btn-radius);
+  border-radius: var(--btn-radius, 14px);
+  font-family: 'Montserrat', sans-serif;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.25rem;
   white-space: nowrap;
   cursor: pointer;

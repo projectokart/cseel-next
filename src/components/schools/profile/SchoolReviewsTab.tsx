@@ -446,7 +446,7 @@ export default function SchoolReviewsTab({
           {filteredReviewsList.slice(0, visibleReviewsCount).map((rev) => (
             <div
               key={rev.id}
-              className="bg-white rounded-xl p-4 sm:p-4.5 border border-slate-200/90 hover:border-blue-300 hover:shadow-xs transition-all flex flex-col justify-between"
+              className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200/90 hover:border-blue-300 hover:shadow-xs transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-start justify-between gap-2.5 mb-2">

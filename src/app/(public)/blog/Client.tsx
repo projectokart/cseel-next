@@ -788,7 +788,7 @@ export default function BlogClient() {
                   className="px-6 py-3 rounded-[12px] bg-[#006FCC] hover:bg-[#005499] text-white font-bold text-[14px] shadow-sm flex items-center justify-center gap-2 whitespace-nowrap transition-colors"
                 >
                   <span>Subscribe</span>
-                  <ArrowRight className="w-4 h-4" />
+                  
                 </button>
               </form>
 

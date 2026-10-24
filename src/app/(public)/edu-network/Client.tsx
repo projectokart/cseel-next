@@ -32,11 +32,10 @@ export default function EduNetworkHubClient() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedCity && selectedCity !== 'All') {
-      const citySlug = `schools-in-${selectedCity.toLowerCase().replace(/\s+/g, '-')}`;
-      router.push(`/edu-network/organisation/school/${citySlug}`);
+    if (searchQuery) {
+      router.push(`/schools?q=${encodeURIComponent(searchQuery)}`);
     } else {
-      router.push('/edu-network/organisation/school');
+      router.push('/schools');
     }
   };
 
@@ -104,7 +103,7 @@ export default function EduNetworkHubClient() {
                   className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs font-black rounded-xl shadow-md transition-all shrink-0 flex items-center justify-center gap-1.5"
                 >
                   <span>Explore Schools</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  
                 </button>
               </div>
             </form>
@@ -117,7 +116,7 @@ export default function EduNetworkHubClient() {
             
             {/* Card 1: Schools & Institutions */}
             <Link
-              href="/edu-network/organisation/school"
+              href="/schools"
               className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
             >
               <div className="space-y-3">
@@ -125,25 +124,25 @@ export default function EduNetworkHubClient() {
                   <Building2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider">UniApply Verified Directory</span>
+                  <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider">Official Schools Directory</span>
                   <h2 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">
                     Schools & Institutions
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Explore 100+ schools across India with verified fee structures, CBSE/ICSE/IB boards, and live STEM laboratories.
+                    Search and compare verified schools across India with board affiliations, facilities, and STEM lab setups.
                   </p>
                 </div>
               </div>
 
               <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-blue-600">
-                <span>View School Directory</span>
+                <span>Explore Schools</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
 
             {/* Card 2: Teaching & Lab Jobs */}
             <Link
-              href="/edu-network/jobs"
+              href="/careers"
               className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
             >
               <div className="space-y-3">
@@ -151,18 +150,18 @@ export default function EduNetworkHubClient() {
                   <Briefcase className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">Indeed Career Hub</span>
+                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">CSEEL Careers</span>
                   <h2 className="text-lg font-black text-slate-900 group-hover:text-emerald-600 transition-colors">
-                    Teaching & Lab Jobs
+                    Teaching & Lab Careers
                   </h2>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    40+ active STEM faculty, physics, chemistry, biology educator vacancies, and live laboratory coordinator positions.
+                    Active STEM faculty, physics, chemistry, biology educator positions, and hands-on laboratory coordinators.
                   </p>
                 </div>
               </div>
 
               <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-emerald-600">
-                <span>Browse Active Jobs</span>
+                <span>View Open Positions</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
@@ -234,7 +233,7 @@ export default function EduNetworkHubClient() {
               className="text-xs font-black text-blue-600 hover:underline flex items-center gap-1 shrink-0"
             >
               <span>View All 11,900+ Listed Schools</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              
             </Link>
           </div>
 

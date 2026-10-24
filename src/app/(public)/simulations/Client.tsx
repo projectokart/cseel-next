@@ -403,21 +403,27 @@ const Experiments = () => {
         </div>
 
         {/* HERO */}
-        <section className="about-hero-gradient py-10">
-          <div className="container mx-auto px-4">
-            <div className="max-w-xl">
-              <ScrollReveal direction="left">
-                <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-3">Experimental Library</h1>
-                <p className="text-primary-foreground/80 mb-6 text-sm">Turn every concept into a hands-on experience.</p>
-                <div className="flex items-center gap-3">
-                  <Link href="/compare-plans">
-                    <M3Button variant="tonal">View Plans</M3Button>
-                  </Link>
-                  <Link href="/demo">
-                    <M3Button variant="outlined" className="border-white text-white hover:bg-white/15">View Demo</M3Button>
-                  </Link>
-                </div>
-              </ScrollReveal>
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#001D38] via-[#003C6E] to-[#005689] py-12 text-white">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-2xl space-y-3">
+              <span className="inline-block px-3.5 py-1 rounded-full bg-white/10 text-cyan-200 border border-white/20 text-xs font-bold uppercase tracking-wider">
+                Hands-On Practical Library · NEP 2020 Aligned
+              </span>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight" style={{ color: '#ffffff' }}>
+                Curriculum-Mapped Experimental Library
+              </h1>
+              <p className="text-slate-100/90 text-sm md:text-base leading-relaxed">
+                Turn abstract formulas into hands-on practical discoveries. Explore certified physics, chemistry, biology, and engineering simulations.
+              </p>
+              <div className="flex items-center gap-3 pt-2">
+                <Link href="/compare-plans">
+                  <M3Button variant="tonal">View Plans</M3Button>
+                </Link>
+                <Link href="/demo">
+                  <M3Button variant="outlined" className="border-white text-white hover:bg-white/15">View Demo</M3Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>

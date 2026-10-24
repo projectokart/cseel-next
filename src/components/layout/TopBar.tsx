@@ -152,37 +152,37 @@ const TopBar = () => {
   };
 
   return (
-    <div id="site-topbar" className="site-topbar bg-[#023858] text-white text-xs border-b border-white/15 relative z-[1500] shadow-xs pointer-events-auto">
+    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 relative z-[1500] shadow-xs pointer-events-auto font-['Hanken_Grotesk',sans-serif]">
       <div className="container mx-auto px-2.5 sm:px-4 max-w-7xl">
-        <div className="flex items-center justify-between py-1 gap-2 min-h-[34px] w-full">
+        <div className="flex items-center justify-between py-0 gap-2 h-[26px] min-h-[26px] w-full">
           
           {/* ── LEFT SIDE: BACK BUTTON & BRAND / BREADCRUMBS ────────── */}
-          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 shrink-0">
             {isSubPage ? (
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1.5 text-white hover:text-white/80 active:scale-95 active:opacity-70 font-semibold text-xs transition-all shrink-0 cursor-pointer bg-transparent border-0 px-2 py-1.5 -ml-1 min-h-[36px] min-w-[36px] touch-manipulation group"
+                className="inline-flex items-center gap-1 text-white hover:text-white/80 active:scale-95 font-semibold text-[11px] transition-all shrink-0 cursor-pointer bg-transparent border-0 px-1.5 py-0.5 -ml-1 h-5 touch-manipulation group"
                 title="Go Back to Previous Page"
               >
-                <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform shrink-0" />
+                <ArrowLeft className="w-3 h-3 text-white group-hover:-translate-x-0.5 transition-transform shrink-0" />
                 <span className="text-white font-semibold">Back</span>
               </button>
             ) : (
               <Link
                 href="/"
-                className="inline-flex items-center gap-1.5 text-white hover:text-white/80 font-bold text-xs shrink-0 transition-colors py-1 px-1 touch-manipulation"
+                className="inline-flex items-center gap-1 text-white hover:text-white/80 font-bold text-[11px] shrink-0 transition-colors py-0.5 px-1 touch-manipulation"
               >
-                <Home className="w-3.5 h-3.5 text-white" />
+                <Home className="w-3 h-3 text-white" />
                 <span className="text-white">CSEEL</span>
               </Link>
             )}
 
             {/* Breadcrumb Trail on Desktop */}
             {isSubPage && (
-              <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-white/80 font-medium overflow-hidden">
+              <div className="hidden lg:flex items-center gap-1 text-[10.5px] text-white/80 font-medium overflow-hidden">
                 <Link href="/" className="hover:text-white flex items-center gap-1 transition-colors shrink-0 text-white/80">
-                  <Home className="w-3 h-3 text-white" />
+                  <Home className="w-2.5 h-2.5 text-white" />
                   <span>Home</span>
                 </Link>
 
@@ -213,16 +213,16 @@ const TopBar = () => {
           </div>
 
           {/* ── RIGHT SIDE: CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
-          <div className="flex items-center gap-1 sm:gap-2 md:gap-2.5 shrink-0 text-xs font-semibold">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold">
             
             {/* Careers Link */}
             <Link
               href="/careers"
               aria-label="Careers at CSEEL"
-              className="inline-flex items-center gap-1 p-1.5 min-h-[36px] min-w-[36px] justify-center text-white/90 hover:text-white active:scale-95 active:opacity-70 transition-all shrink-0 touch-manipulation"
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
               title="Careers at CSEEL"
             >
-              <Briefcase className="w-4 h-4 text-white shrink-0" />
+              <Briefcase className="w-3 h-3 text-white shrink-0" />
               <span className="hidden sm:inline text-white">Careers</span>
             </Link>
 
@@ -230,10 +230,10 @@ const TopBar = () => {
             <Link
               href="/get-support"
               aria-label="Student and Teacher Support"
-              className="inline-flex items-center gap-1 p-1.5 min-h-[36px] min-w-[36px] justify-center text-white/90 hover:text-white active:scale-95 active:opacity-70 transition-all shrink-0 touch-manipulation"
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
               title="Helpdesk & Student/Teacher Support"
             >
-              <Headphones className="w-4 h-4 text-white shrink-0" />
+              <Headphones className="w-3 h-3 text-white shrink-0" />
               <span className="hidden sm:inline text-white">Support</span>
             </Link>
 
@@ -241,10 +241,10 @@ const TopBar = () => {
             <Link
               href="/contact-us"
               aria-label="Contact CSEEL Directorate"
-              className="inline-flex items-center gap-1 p-1.5 min-h-[36px] min-w-[36px] justify-center text-white/90 hover:text-white active:scale-95 active:opacity-70 transition-all shrink-0 touch-manipulation"
+              className="inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
               title="Contact CSEEL National Directorate"
             >
-              <Mail className="w-4 h-4 text-white shrink-0" />
+              <Mail className="w-3 h-3 text-white shrink-0" />
               <span className="hidden sm:inline text-white">Contact</span>
             </Link>
 
@@ -264,11 +264,11 @@ const TopBar = () => {
                   }}
                   aria-label="User account menu"
                   title={displayName}
-                  className="flex items-center justify-center h-6 w-6 rounded-full ring-1 ring-white/40 hover:ring-2 hover:ring-white transition-all outline-none cursor-pointer shadow-xs overflow-hidden"
+                  className="flex items-center justify-center h-5 w-5 rounded-full ring-1 ring-white/40 hover:ring-2 hover:ring-white transition-all outline-none cursor-pointer shadow-xs overflow-hidden"
                 >
-                  <Avatar className="h-6 w-6">
+                  <Avatar className="h-5 w-5">
                     {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} className="object-cover" />}
-                    <AvatarFallback className="bg-[#006FCC] text-white text-[10px] font-bold">
+                    <AvatarFallback className="bg-[#006FCC] text-white text-[9px] font-bold">
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -384,10 +384,10 @@ const TopBar = () => {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 py-1.5 px-2 text-white/95 hover:text-white active:scale-95 active:opacity-70 font-semibold text-xs transition-all shrink-0 whitespace-nowrap ml-1 cursor-pointer touch-manipulation bg-transparent border-0 min-h-[36px]"
+                className="inline-flex items-center gap-1 py-0.5 px-2 text-white/95 hover:text-white active:scale-95 font-semibold text-[11px] transition-all shrink-0 whitespace-nowrap ml-1 cursor-pointer touch-manipulation bg-transparent border-0 h-5"
                 title="Sign in to CSEEL Portal"
               >
-                <LogIn className="w-4 h-4 text-white shrink-0" />
+                <LogIn className="w-3 h-3 text-white shrink-0" />
                 <span className="text-white font-semibold">Login</span>
               </Link>
             )}

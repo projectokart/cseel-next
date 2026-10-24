@@ -337,7 +337,7 @@ export default function CompositeLabClient() {
                         className="shrink-0 text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#005689] hover:text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1"
                       >
                         <span>Full Checklist</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        
                       </Link>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
@@ -380,7 +380,7 @@ export default function CompositeLabClient() {
                         className="shrink-0 text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#005689] hover:text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1"
                       >
                         <span>View Blueprints</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        
                       </Link>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
@@ -423,7 +423,7 @@ export default function CompositeLabClient() {
                         className="shrink-0 text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#005689] hover:text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1"
                       >
                         <span>Inspection SOP</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        
                       </Link>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
@@ -466,7 +466,7 @@ export default function CompositeLabClient() {
                         className="shrink-0 text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#005689] hover:text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1"
                       >
                         <span>BOQ Pricing</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        
                       </Link>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
@@ -509,7 +509,7 @@ export default function CompositeLabClient() {
                         className="shrink-0 text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#005689] hover:text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1"
                       >
                         <span>Vendor Matrix</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        
                       </Link>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">
@@ -552,7 +552,7 @@ export default function CompositeLabClient() {
                         className="shrink-0 text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#005689] hover:text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1"
                       >
                         <span>Skill Hub Guide</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        
                       </Link>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">

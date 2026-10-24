@@ -18,10 +18,11 @@ const faqs = [
 const Help = () => (
   <>
 <PageTransition>
-      <section className="hero-gradient py-16 text-center">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Help Center</h1>
-          <p className="text-lg text-muted-foreground">Find answers to common questions.</p>
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#001D38] via-[#003C6E] to-[#005689] py-16 text-center text-white">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10 space-y-2">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight" style={{ color: '#ffffff' }}>Help Center & Knowledge Base</h1>
+          <p className="text-base text-slate-100/90 max-w-xl mx-auto">Find instant answers to common questions about accounts, practicals, and institutional access.</p>
         </div>
       </section>
       <section className="py-12">

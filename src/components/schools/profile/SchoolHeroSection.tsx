@@ -261,13 +261,13 @@ export default function SchoolHeroSection({
   };
 
   return (
-    <section id="home" className="relative overflow-hidden w-full bg-[#FEFBF3] border-b border-[#F4EBD9]/80 py-4 sm:py-6 lg:py-8 min-h-auto lg:min-h-[calc(100vh-100px)] flex flex-col justify-center">
+    <section id="home" className="relative overflow-hidden w-full bg-white border-b border-[#E8E9E9] py-4 sm:py-6 lg:py-8 min-h-auto lg:min-h-[calc(100vh-100px)] flex flex-col justify-center">
       
       {/* Subtle Educational Doodle / Sketch Background Overlay (Full Width) */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.055]"
+        className="absolute inset-0 pointer-events-none opacity-[0.035]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23005689' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 35h20M25 25v20'/%3E%3Crect x='70' y='20' width='30' height='22' rx='4'/%3E%3Cpath d='M75 27h20M75 34h12'/%3E%3Ccircle cx='30' cy='85' r='14'/%3E%3Cpath d='M22 85h16M30 77v16'/%3E%3Cpath d='M75 90l15-20 15 20z'/%3E%3Cpath d='M50 15c4 4 10 4 14 0'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23006FCC' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 35h20M25 25v20'/%3E%3Crect x='70' y='20' width='30' height='22' rx='4'/%3E%3Cpath d='M75 27h20M75 34h12'/%3E%3Ccircle cx='30' cy='85' r='14'/%3E%3Cpath d='M22 85h16M30 77v16'/%3E%3Cpath d='M75 90l15-20 15 20z'/%3E%3Cpath d='M50 15c4 4 10 4 14 0'/%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '120px 120px'
         }}
       />
@@ -276,7 +276,7 @@ export default function SchoolHeroSection({
       <div 
         className="absolute top-0 right-0 w-[85%] sm:w-[65%] lg:w-[50%] h-full pointer-events-none z-0"
         style={{
-          background: 'radial-gradient(circle at 75% 45%, #E9F3FA 0%, #D8ECF9 45%, #FEFBF3 90%)',
+          background: 'radial-gradient(circle at 75% 45%, #E9F3FA 0%, #F0F6FA 45%, #FFFFFF 90%)',
           borderBottomLeftRadius: '320px',
           borderTopLeftRadius: '180px',
           opacity: 0.95
@@ -290,7 +290,7 @@ export default function SchoolHeroSection({
         {/* TOP PILL BADGE (Replaces duplicate inner navbar)           */}
         {/* ═══════════════════════════════════════════════════════════ */}
         <div className="flex items-center justify-between gap-2.5 pb-3 sm:pb-4 w-full">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 border border-[#EADBBD] shadow-2xs text-[#005689] text-xs font-semibold whitespace-nowrap shrink-0">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 border border-[#E8E9E9] shadow-2xs text-[#006FCC] text-xs font-semibold whitespace-nowrap shrink-0">
             <span className="w-2 h-2 rounded-full bg-[#FBBC04] animate-pulse shrink-0" />
             <span className="text-slate-700 font-mono text-[11px] font-bold shrink-0">UDISE: {displayUdise || 'Verified'}</span>
           </div>
@@ -349,7 +349,7 @@ export default function SchoolHeroSection({
                     <EditableText
                       contentKey="hero_heading_line2"
                       value="Grow, Together.."
-                      className="inline text-[#005689]"
+                      className="inline text-[#006FCC] font-['Montserrat',sans-serif]"
                       showVerificationBadge={false}
                     />
                   </span>
@@ -368,26 +368,26 @@ export default function SchoolHeroSection({
                 />
               </div>
 
-              {/* Pill Action Buttons (Matching reference UI button styles with CSEEL colors) */}
-              <div className="flex flex-wrap items-center gap-3.5 sm:gap-4">
+              {/* Labster 14px CTA Buttons */}
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                 
-                {/* Primary Button: Filled Pill (Enroll Now / Apply Now) */}
+                {/* Primary Button: Labster Royal Blue */}
                 <button
                   type="button"
                   onClick={onApplyClick}
-                  className="rounded-full px-7 sm:px-8 py-3.5 sm:py-4 bg-[#005689] hover:bg-[#004168] text-white text-xs sm:text-sm font-extrabold tracking-wide shadow-lg shadow-[#005689]/25 hover:shadow-xl hover:shadow-[#005689]/35 hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer inline-flex items-center gap-2"
+                  className="rounded-[14px] px-6 sm:px-8 py-3 sm:py-3.5 bg-[#006FCC] hover:bg-[#005399] text-white text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer inline-flex items-center gap-2 active:scale-[0.98]"
                 >
                   <EditableText contentKey="hero_cta_enroll" value="Enroll Now" showVerificationBadge={false} />
-                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                  
                 </button>
 
-                {/* Secondary Button: Outlined Pill (Watch Video / Campus Tour) */}
+                {/* Secondary Button: Labster Light Surface */}
                 <button
                   type="button"
                   onClick={onTourClick}
-                  className="rounded-full px-6 sm:px-8 py-3.5 sm:py-4 bg-white/80 hover:bg-white border-2 border-[#005689] text-[#005689] hover:text-[#003c6e] text-xs sm:text-sm font-extrabold tracking-wide hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer inline-flex items-center gap-2"
+                  className="rounded-[14px] px-6 sm:px-7 py-3 sm:py-3.5 bg-[#F7F8F8] hover:bg-[#EDF5FA] border border-[#E8E9E9] text-[#003C6E] hover:text-[#006FCC] text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] hover:shadow-md transition-all duration-200 cursor-pointer inline-flex items-center gap-2 active:scale-[0.98]"
                 >
-                  <Play className="w-3.5 h-3.5 fill-[#005689] stroke-[#005689]" />
+                  <Play className="w-3.5 h-3.5 fill-[#006FCC] stroke-[#006FCC]" />
                   <EditableText contentKey="hero_cta_video_pill" value="Watch Video" showVerificationBadge={false} />
                 </button>
               </div>

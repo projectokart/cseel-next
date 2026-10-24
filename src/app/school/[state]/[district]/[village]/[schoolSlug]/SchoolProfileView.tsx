@@ -839,9 +839,9 @@ export default function SchoolProfileView({
     <div className="min-h-screen bg-white font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-clip">
       
 
-      {/* 1. CONTAINER 1: TOP BRANDING & ACTION BAR (Deep Navy Background • School Name & Actions) */}
-      <div id="school-top-bar" className="w-full bg-[#005689] border-b border-[#004770] text-white z-40 relative">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-4">
+      {/* 1. CONTAINER 1: TOP BRANDING & ACTION BAR (Labster Midnight Navy • School Name & Actions) */}
+      <div id="school-top-bar" className="w-full bg-[#001C33] border-b border-[#002F56] text-white z-40 relative font-['Hanken_Grotesk',sans-serif]">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2 flex items-center justify-between gap-3 sm:gap-4">
           
           {/* School Brand / Logo + Name & Location */}
           <div className="flex items-center gap-2.5 sm:gap-3 group min-w-0 text-left shrink-0">
@@ -988,7 +988,7 @@ export default function SchoolProfileView({
               </button>
             )}
 
-            {/* Claim School / Add School Pill Button (For unverified visitors) */}
+            {/* Claim School Button (Labster Tonal Style) */}
             {!isTemplate && !isEditMode && !canEditSchool && !isSuperAdminUser && (
               <button
                 type="button"
@@ -1000,15 +1000,15 @@ export default function SchoolProfileView({
                     setIsAddSchoolModalOpen(true);
                   }
                 }}
-                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs font-bold text-white bg-emerald-600/90 hover:bg-emerald-600 border border-emerald-400/50 shadow-2xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-[12px] text-xs font-bold text-[#006FCC] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-95 font-['Montserrat',sans-serif]"
                 title="Are you an official representative? Register or claim management of this school profile."
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-200 stroke-[2.4]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#006FCC] stroke-[2.4]" />
                 <span>Claim School</span>
               </button>
             )}
 
-            {/* Admission Status Button (Apply Now / Inactive - Click Inactive to Activate) */}
+            {/* Admission Status Button (Labster Primary CTA) */}
             <button
               type="button"
               onClick={() => {
@@ -1018,15 +1018,15 @@ export default function SchoolProfileView({
                   setIsAdmissionConfigModalOpen(true);
                 }
               }}
-              className={`inline-flex items-center justify-center gap-1.5 font-bold px-3.5 sm:px-4 py-1.5 rounded-full text-xs transition-all duration-200 shrink-0 whitespace-nowrap cursor-pointer active:scale-95 ${
+              className={`inline-flex items-center justify-center gap-1.5 font-bold font-['Montserrat',sans-serif] px-3.5 sm:px-4 py-1.5 rounded-[12px] text-xs transition-all duration-200 shrink-0 whitespace-nowrap cursor-pointer active:scale-95 ${
                 isAdmissionsOpen
-                  ? 'bg-white hover:bg-blue-50 text-[#005689] shadow-xs hover:-translate-y-0.5'
+                  ? 'bg-[#006FCC] hover:bg-[#005399] text-white shadow-xs'
                   : 'bg-slate-900 hover:bg-slate-950 text-white border border-white/20 shadow-xs hover:border-amber-400'
               }`}
               title={isAdmissionsOpen ? 'Apply for admission now' : 'Click to configure and activate admissions'}
             >
               <span>{isAdmissionsOpen ? 'Apply Now' : 'Inactive (Activate)'}</span>
-              <ArrowRight className="w-3.5 h-3.5 stroke-[2.4]" />
+              
             </button>
 
             {/* Small Circular Login / User Avatar Icon */}
@@ -1190,10 +1190,10 @@ export default function SchoolProfileView({
         </div>
       </div>
 
-      {/* 2. CONTAINER 2: DEDICATED STICKY NAVIGATION TAB BAR (Sticks to top on scroll) */}
+      {/* 2. CONTAINER 2: DEDICATED STICKY NAVIGATION TAB BAR (Labster Design System) */}
       <nav 
         id="school-tab-navigation-bar" 
-        className={`sticky ${Boolean(isTemplate && templateCtx) ? 'top-[52px]' : 'top-0'} z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-md transition-all`}
+        className={`sticky ${Boolean(isTemplate && templateCtx) ? 'top-[52px]' : 'top-0'} z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E8E9E9] shadow-xs transition-all`}
         aria-label="School sections navigation"
       >
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-1.5 sm:py-2">
@@ -1206,15 +1206,15 @@ export default function SchoolProfileView({
                   key={tab.id}
                   type="button"
                   onClick={() => handleTabSwitch(tab.id)}
-                  className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-bold transition-all duration-150 shrink-0 cursor-pointer select-none ${
+                  className={`inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-[12px] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-150 shrink-0 cursor-pointer select-none active:scale-[0.98] ${
                     isActive
-                      ? 'text-white bg-[#005689] shadow-xs'
-                      : 'text-slate-600 hover:text-[#005689] hover:bg-[#EDF5FA] border border-slate-200/80 bg-white'
+                      ? 'text-white bg-[#006FCC] hover:bg-[#005399] shadow-xs'
+                      : 'text-[#1B1F23] hover:text-[#006FCC] hover:bg-[#F7F8F8] border border-[#E8E9E9] bg-white'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span className="whitespace-nowrap leading-none text-xs">
-                    {/* Short Name on Mobile (e.g. FAQ, Gallery, Academics), Full Name on Desktop */}
+                    {/* Short Name on Mobile, Full Name on Desktop */}
                     <span className="inline md:hidden">{tab.shortLabel}</span>
                     <span className="hidden md:inline">{tab.label}</span>
                     {isLiveTemplate && isEditMode && templateData?.tabVisibility?.[tab.id] === false && (
@@ -1303,7 +1303,7 @@ export default function SchoolProfileView({
                 <GraduationCap className="w-4 h-4 text-amber-300" />
                 <span>{isAdmissionsOpen ? 'Apply for Admission' : 'Admissions: Inactive (Activate)'}</span>
               </span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              
             </button>
 
             {/* Super Admin Add School Button in Quick Actions */}

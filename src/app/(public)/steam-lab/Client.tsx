@@ -196,7 +196,7 @@ export default function Client() {
                   className="px-7 py-3.5 rounded-full bg-white hover:bg-blue-50 text-[#003c6e] font-extrabold text-sm transition-all shadow-xl hover:shadow-2xl flex items-center gap-2 active:scale-98"
                 >
                   <span>Request Turnkey Proposal &amp; DPR</span>
-                  <ArrowRight className="w-4 h-4 text-[#005689]" />
+                  
                 </a>
                 <a 
                   href="#lab-configurator" 
@@ -341,7 +341,7 @@ export default function Client() {
                       className="w-full py-3.5 mt-2 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-extrabold text-xs tracking-wide uppercase transition-all shadow-md active:scale-98 flex items-center justify-center gap-2"
                     >
                       <span>Get Instant DPR &amp; Price Estimate</span>
-                      <ArrowRight className="w-4 h-4" />
+                      
                     </button>
                   </form>
                 )}
@@ -970,7 +970,7 @@ export default function Client() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all"
             >
               <span>Explore All 250+ Hands-on Experiments & Lab Manuals</span>
-              <ArrowRight className="w-4 h-4" />
+              
             </Link>
           </div>
         </div>

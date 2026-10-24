@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import Link from 'next/link';
 import { Play, MonitorPlay, ChevronRight, ExternalLink, Search } from "lucide-react";
 import PageTransition from "@/components/shared/PageTransition";
 import ScrollReveal from "@/components/shared/ScrollReveal";
@@ -79,9 +80,9 @@ const Demo = () => {
                   <p className="text-lg text-slate-600 mb-8 leading-relaxed">
                     Don't just take our word for it—watch how Cseel transforms science education through interactive hands-on live experiments and practical labs.
                   </p>
-                  <button className="button_primary px-8 py-4 text-white rounded-[12px] font-bold text-sm shadow-md flex items-center gap-2 transition-all">
-                    Request Full Access <ChevronRight size={18} />
-                  </button>
+                  <Link href="/contact-us" className="button_primary px-8 py-4 text-white rounded-[12px] font-bold text-sm shadow-md inline-flex items-center gap-2 transition-all">
+                    <span>Request Full Access</span>
+                  </Link>
                 </div>
               </motion.div>
 

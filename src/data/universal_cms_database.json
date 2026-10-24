@@ -483,5 +483,141 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-15T15:18:37.711Z",
     "updatedBy": "Auto Init"
+  },
+  "materials:inclined-plane-ph10574": {
+    "pageKey": "materials:inclined-plane-ph10574",
+    "title": "Materials Inclined Plane Ph10574",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T10:48:50.420Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:density-cubes-ph10036": {
+    "pageKey": "materials:density-cubes-ph10036",
+    "title": "Materials Density Cubes Ph10036",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T10:54:52.490Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:adjustable-collimating-slit-holder-ha012": {
+    "pageKey": "materials:adjustable-collimating-slit-holder-ha012",
+    "title": "Materials Adjustable Collimating Slit Holder Ha012",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T11:10:54.758Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:atomic-spectra-experiment-ase1c": {
+    "pageKey": "materials:atomic-spectra-experiment-ase1c",
+    "title": "Materials Atomic Spectra Experiment Ase1c",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T11:13:52.842Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:analyzer-square-ac002": {
+    "pageKey": "materials:analyzer-square-ac002",
+    "title": "Materials Analyzer Square Ac002",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T11:57:03.700Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:glass-block-ac004": {
+    "pageKey": "materials:glass-block-ac004",
+    "title": "Materials Glass Block Ac004",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T11:57:17.596Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:glass-cuvette-ac006": {
+    "pageKey": "materials:glass-cuvette-ac006",
+    "title": "Materials Glass Cuvette Ac006",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T11:57:21.776Z",
+    "updatedBy": "Auto Init"
+  },
+  "materials:syringe-20ml-ac026": {
+    "pageKey": "materials:syringe-20ml-ac026",
+    "title": "Materials Syringe 20ml Ac026",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T12:20:05.899Z",
+    "updatedBy": "Auto Init"
+  },
+  "events": {
+    "pageKey": "events",
+    "title": "Events",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T15:07:13.180Z",
+    "updatedBy": "Auto Init"
+  },
+  "events:nep-experiential-pedagogy-symposium": {
+    "pageKey": "events:nep-experiential-pedagogy-symposium",
+    "title": "Events Nep Experiential Pedagogy Symposium",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T15:08:31.660Z",
+    "updatedBy": "Auto Init"
+  },
+  "exhibitions": {
+    "pageKey": "exhibitions",
+    "title": "Exhibitions",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T15:08:50.406Z",
+    "updatedBy": "Auto Init"
+  },
+  "workshops": {
+    "pageKey": "workshops",
+    "title": "Workshops",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-23T15:09:18.676Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:teachers": {
+    "pageKey": "edu-network:teachers",
+    "title": "Edu Network Teachers",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-24T03:56:52.146Z",
+    "updatedBy": "Auto Init"
+  },
+  "for-institutions": {
+    "pageKey": "for-institutions",
+    "title": "For Institutions",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-24T03:57:07.700Z",
+    "updatedBy": "Auto Init"
+  },
+  "contact-us": {
+    "pageKey": "contact-us",
+    "title": "Contact Us",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-24T03:57:21.081Z",
+    "updatedBy": "Auto Init"
+  },
+  "teacher-training": {
+    "pageKey": "teacher-training",
+    "title": "Teacher Training",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-24T04:35:59.405Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:teachers:job:job-prt-math-noida": {
+    "pageKey": "edu-network:teachers:job:job-prt-math-noida",
+    "title": "Edu Network Teachers Job Job Prt Math Noida",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-24T09:50:30.270Z",
+    "updatedBy": "Auto Init"
   }
 }

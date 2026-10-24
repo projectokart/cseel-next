@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { MaterialsRequisitionProvider } from "@/contexts/MaterialsRequisitionContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -37,10 +38,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <GlobalThemeSync />
         <AuthProvider>
           <CartProvider>
-            <BookDemoModalProvider>
-              {children}
-              <BookDemoModal />
-            </BookDemoModalProvider>
+            <MaterialsRequisitionProvider>
+              <BookDemoModalProvider>
+                {children}
+                <BookDemoModal />
+              </BookDemoModalProvider>
+            </MaterialsRequisitionProvider>
           </CartProvider>
         </AuthProvider>
       </TooltipProvider>

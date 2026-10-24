@@ -748,7 +748,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                   <M3Button
                     variant="filled"
                     size="lg"
-                    trailingIcon={<ArrowRight className="w-4 h-4" />}
+                    
                   >
                     Book a demo
                   </M3Button>
@@ -843,20 +843,20 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                 href={sub.link}
                 className="lift block bg-white rounded-card shadow-card border overflow-hidden border-rule/60 flex flex-col justify-between group hover:border-[#005689]/40 hover:shadow-card-hi transition-all"
               >
-                <div className="p-7 pb-5 lg:p-8">
-                  <div className="flex items-center justify-between mb-3 gap-2">
-                    <h3 className="text-2xl font-bold text-[#0D4979] group-hover:text-[#005689] transition-colors">
+                <div className="p-5 sm:p-6 lg:p-7 pb-4">
+                  <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-3 gap-1.5 xl:gap-2">
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#0D4979] group-hover:text-[#005689] transition-colors leading-snug">
                       {sub.title}
                     </h3>
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#005689] group-hover:translate-x-1 transition-transform shrink-0">
-                      Explore Labs <ArrowRight className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#005689] group-hover:translate-x-1 transition-transform shrink-0 whitespace-nowrap">
+                      Explore Labs 
                     </span>
                   </div>
                   <p className="text-slate-body text-[15px] leading-relaxed">
                     {sub.desc}
                   </p>
                 </div>
-                <div className="px-7 pb-7 lg:px-8 lg:pb-8">
+                <div className="px-5 pb-5 sm:px-6 sm:pb-6 lg:px-7 lg:pb-7">
                   <div className="thumb-zoom rounded-xl overflow-hidden shadow-sm">
                     <img
                       className="w-full object-cover aspect-[16/9] group-hover:scale-104 transition-transform duration-500"
@@ -888,7 +888,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
               <M3Button
                 variant="text"
                 size="md"
-                trailingIcon={<ArrowRight className="w-4 h-4" />}
+                
               >
                 See all modules
               </M3Button>
@@ -995,7 +995,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                 className="inline-flex items-center gap-2 font-bold text-[#005689] group hover:text-[#0D4979] transition-colors"
               >
                 See how AI Tutor works
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                
               </Link>
             </div>
 
@@ -1069,7 +1069,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                 href="/contact-us"
               >
                 Request a syllabus map for your institution
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                
               </Link>
             </div>
 
@@ -1143,7 +1143,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                   href="/contact-us"
                 >
                   Talk to us
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  
                 </Link>
               </div>
             </div>
@@ -1191,7 +1191,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
                 </p>
                 <span className="inline-flex items-center font-bold text-[#005689] gap-1.5 text-[14px]">
                   Read the case study
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  
                 </span>
               </Link>
             ))}
@@ -1244,7 +1244,7 @@ export default function DomainPage({ params }: { params: { slug: string } }) {
               <M3Button
                 variant="elevated"
                 size="lg"
-                trailingIcon={<ArrowRight className="w-4 h-4" />}
+                
               >
                 Book a demo
               </M3Button>

@@ -464,7 +464,7 @@ export default function SchoolContactTab({
                   className="button_primary w-full bg-[#006FCC] hover:bg-[#005499] text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
                   <span>Send Message to Selected Desk</span>
-                  <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                  
                 </button>
               </form>
             </div>

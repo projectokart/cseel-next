@@ -217,7 +217,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
                   variant="filled"
                   size="md"
                   style={{ backgroundColor: buttonBg }}
-                  trailingIcon={<ArrowRight size={16} />}
+                  
                 >
                   {isCopied ? 'Code Copied! ✓' : ctaText}
                 </M3Button>

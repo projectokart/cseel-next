@@ -35,30 +35,30 @@ export default function SchoolAboutSection({
   onApplyClick,
 }: SchoolAboutSectionProps) {
   return (
-    <section id="about" className="py-14 sm:py-20 bg-white relative">
+    <section id="about" className="py-14 sm:py-20 bg-white border-b border-[#E8E9E9] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
           {/* Left Narrative Column */}
           <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full">
-              <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full font-['Montserrat',sans-serif]">
+              <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
               <EditableText contentKey="about_eyebrow" value="ABOUT OUR INSTITUTION" showVerificationBadge={false} />
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
                 <EditableText
                   contentKey="about_heading_l1"
                   value="More Than Just"
-                  className="block text-slate-950"
+                  className="block text-[#003C6E]"
                   showVerificationBadge={false}
                 />
-                <span className="text-[#005689] block mt-0.5">
+                <span className="text-[#006FCC] block mt-0.5">
                   <EditableText
                     contentKey="about_heading_l2"
                     value="An Education.."
-                    className="inline text-[#005689]"
+                    className="inline text-[#006FCC]"
                     showVerificationBadge={false}
                   />
                 </span>
@@ -84,17 +84,17 @@ export default function SchoolAboutSection({
               <button
                 type="button"
                 onClick={onApplyClick}
-                className="rounded-full px-7 py-3.5 bg-[#005689] hover:bg-[#004168] text-white text-xs sm:text-sm font-extrabold tracking-wide shadow-md shadow-[#005689]/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer inline-flex items-center gap-2"
+                className="rounded-[14px] px-6 py-3.5 bg-[#006FCC] hover:bg-[#005399] text-white text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] tracking-wide shadow-md shadow-[#006FCC]/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer inline-flex items-center gap-2"
               >
                 <EditableText contentKey="about_cta_btn" value="Discover Our Story" showVerificationBadge={false} />
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                
               </button>
             </div>
           </div>
 
-          {/* Right Image Showcase with Arched Frame */}
+          {/* Right Image Showcase with Labster Frame */}
           <div className="lg:col-span-6 relative pb-6 lg:pb-0 flex items-center justify-center">
-            <div className="relative w-full max-w-lg aspect-[4/3] rounded-[32px] sm:rounded-[40px] overflow-hidden shadow-2xl border-[8px] sm:border-[10px] border-[#005689] bg-slate-100 group">
+            <div className="relative w-full max-w-lg aspect-[4/3] rounded-[20px] overflow-hidden shadow-xl border-4 border-white ring-1 ring-[#E8E9E9] bg-slate-100 group">
               <EditableImage
                 imageKey="about_campus_photo"
                 src={templateData?.imageOverrides?.about_campus_photo || initialProfileData?.imageOverrides?.about_campus_photo || imageUrl}
@@ -105,11 +105,11 @@ export default function SchoolAboutSection({
             </div>
 
             {/* Floating Decorative Badge */}
-            <div className="absolute -top-4 right-4 sm:right-8 bg-white border border-[#EADBBD] rounded-2xl px-4 py-2 shadow-lg -rotate-3 z-20">
+            <div className="absolute -top-3 right-4 sm:right-8 bg-white border border-[#E8E9E9] rounded-[14px] px-4 py-2.5 shadow-md z-20">
               <EditableText
                 contentKey="about_badge_text"
                 value="A Campus Built for Big Dreams ✨"
-                className="font-serif italic text-[#005689] font-bold text-xs sm:text-sm tracking-wide"
+                className="font-['Montserrat',sans-serif] font-bold text-[#003C6E] text-xs sm:text-sm tracking-wide"
                 showVerificationBadge={false}
               />
             </div>

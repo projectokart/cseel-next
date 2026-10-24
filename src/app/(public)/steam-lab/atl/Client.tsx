@@ -250,7 +250,7 @@ export default function AtlMasterClient({ subslug = 'overview' }: Props) {
 
                       <span className="shrink-0 text-[10px] font-bold text-[#005689] bg-[#EDF5FA] group-hover:bg-[#005689] group-hover:text-white px-2.5 py-1 rounded-full border border-[#B9DCF2] transition flex items-center gap-1">
                         <span>{link.isPdf ? 'Download' : 'Open Link'}</span>
-                        <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                        
                       </span>
                     </a>
                   ))}
@@ -427,7 +427,7 @@ export default function AtlMasterClient({ subslug = 'overview' }: Props) {
                       className="w-full py-2.5 px-4 rounded-full bg-[#005689] text-white font-bold hover:bg-[#003c6e] transition shadow-sm text-xs flex items-center justify-center gap-1.5 cursor-pointer mt-2"
                     >
                       <span>Request Free ATL Quote &amp; DPR</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      
                     </button>
                   </form>
                 )}

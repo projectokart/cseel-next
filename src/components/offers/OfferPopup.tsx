@@ -241,7 +241,7 @@ const OfferPopup = () => {
                   className="w-full flex items-center justify-center gap-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white h-12 px-7 rounded-full font-semibold text-sm sm:text-base shadow-[0_1px_2px_rgba(60,64,67,0.3),0_1px_3px_1px_rgba(60,64,67,0.15)] hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_2px_6px_2px_rgba(60,64,67,0.15)] transition-all duration-200 ease-in-out active:scale-[0.98] cursor-pointer group"
                 >
                   <span>{item.cta_text || "Book Free School Demo"}</span>
-                  <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" strokeWidth={2.5} />
+                  
                 </button>
 
                 {/* Secondary 360 Tour Quick Link & Dismiss */}

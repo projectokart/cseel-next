@@ -20,12 +20,12 @@ export default function SchoolVisionMissionSection({
   initialProfileData,
 }: SchoolVisionMissionSectionProps) {
   return (
-    <section id="vision-mission" className="pt-6 sm:pt-10 pb-10 sm:pb-16 bg-white relative">
+    <section id="vision-mission" className="py-12 sm:py-16 bg-white border-b border-[#E8E9E9] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="text-left max-w-3xl mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3">
-            <span className="w-2 h-2 bg-[#FBBC04] rounded-full inline-block" />
+          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 font-['Montserrat',sans-serif]">
+            <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
             <EditableText
               contentKey="principles_eyebrow"
               value="VISION • MISSION • VALUES"
@@ -33,17 +33,17 @@ export default function SchoolVisionMissionSection({
             />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
             <EditableText
               contentKey="principles_heading_l1"
               value="Our Guiding Philosophy,"
-              className="block text-slate-950"
+              className="block text-[#003C6E]"
             />
-            <span className="text-[#005689] block mt-0.5">
+            <span className="text-[#006FCC] block mt-0.5">
               <EditableText
                 contentKey="principles_heading_l2"
                 value="Vision & Mission.."
-                className="inline text-[#005689]"
+                className="inline text-[#006FCC]"
               />
             </span>
           </h2>
@@ -60,9 +60,9 @@ export default function SchoolVisionMissionSection({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           
           {/* Card 1: Vision */}
-          <div className="bg-gradient-to-b from-blue-50/50 via-white to-white rounded-3xl p-6 sm:p-8 border border-blue-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white rounded-[14px] p-6 sm:p-7 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 flex flex-col justify-between group">
             <div>
-              <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white mb-6 p-2 flex items-center justify-center border border-blue-50 group-hover:scale-105 transition-transform duration-500">
+              <div className="w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-white mb-6 p-2 flex items-center justify-center border border-[#E8E9E9] group-hover:scale-[1.02] transition-transform duration-500">
                 <EditableImage
                   imageKey="vision_image"
                   defaultSrc="/images/illustrations/vision-telescope.jpg"
@@ -72,14 +72,14 @@ export default function SchoolVisionMissionSection({
               </div>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-100/80 text-[#005689] flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-[10px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center font-bold">
                   <EditableIcon
                     iconKey="vision_icon"
                     defaultIcon="Telescope"
-                    className="w-5 h-5 text-[#005689]"
+                    className="w-5 h-5 text-[#006FCC]"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">
                   <EditableText
                     contentKey="vision_title"
                     value="Our Vision"
@@ -93,12 +93,12 @@ export default function SchoolVisionMissionSection({
                 value={templateData?.visionText || "To cultivate enlightened, creative, and compassionate leaders who excel academically and contribute positively to society."}
                 multiline={true}
                 rows={4}
-                className="text-sm text-gray-600 leading-relaxed block"
+                className="text-sm text-slate-600 leading-relaxed block"
               />
             </div>
 
-            <div className="pt-6 mt-6 border-t border-gray-100 flex items-center gap-2 text-xs font-semibold text-[#005689]">
-              <Sparkles className="w-4 h-4 text-[#FBBC04]" />
+            <div className="pt-5 mt-6 border-t border-[#E8E9E9] flex items-center gap-2 text-xs font-semibold text-[#006FCC] font-['Montserrat',sans-serif]">
+              <Sparkles className="w-4 h-4 text-[#006FCC]" />
               <EditableText
                 contentKey="vision_tag"
                 value="Future-Focused Education"
@@ -108,9 +108,9 @@ export default function SchoolVisionMissionSection({
           </div>
 
           {/* Card 2: Mission */}
-          <div className="bg-gradient-to-b from-amber-50/40 via-white to-white rounded-3xl p-6 sm:p-8 border border-amber-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white rounded-[14px] p-6 sm:p-7 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 flex flex-col justify-between group">
             <div>
-              <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white mb-6 p-2 flex items-center justify-center border border-amber-50 group-hover:scale-105 transition-transform duration-500">
+              <div className="w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-white mb-6 p-2 flex items-center justify-center border border-[#E8E9E9] group-hover:scale-[1.02] transition-transform duration-500">
                 <EditableImage
                   imageKey="mission_image"
                   defaultSrc="/images/illustrations/mission-target.png"
@@ -120,14 +120,14 @@ export default function SchoolVisionMissionSection({
               </div>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-100/80 text-amber-700 flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-[10px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center font-bold">
                   <EditableIcon
                     iconKey="mission_icon"
                     defaultIcon="Target"
-                    className="w-5 h-5 text-amber-700"
+                    className="w-5 h-5 text-[#006FCC]"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">
                   <EditableText
                     contentKey="mission_title"
                     value="Our Mission"
@@ -141,12 +141,12 @@ export default function SchoolVisionMissionSection({
                 value={templateData?.missionText || "To provide experiential, inclusive, and technologically advanced learning that builds critical thinking, scientific temperament, and ethical character."}
                 multiline={true}
                 rows={4}
-                className="text-sm text-gray-600 leading-relaxed block"
+                className="text-sm text-slate-600 leading-relaxed block"
               />
             </div>
 
-            <div className="pt-6 mt-6 border-t border-gray-100 flex items-center gap-2 text-xs font-semibold text-amber-700">
-              <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
+            <div className="pt-5 mt-6 border-t border-[#E8E9E9] flex items-center gap-2 text-xs font-semibold text-[#006FCC] font-['Montserrat',sans-serif]">
+              <Check className="w-4 h-4 text-[#006FCC] stroke-[2.5]" />
               <EditableText
                 contentKey="mission_tag"
                 value="Experiential Pedagogy"
@@ -156,9 +156,9 @@ export default function SchoolVisionMissionSection({
           </div>
 
           {/* Card 3: Core Values */}
-          <div className="bg-gradient-to-b from-emerald-50/40 via-white to-white rounded-3xl p-6 sm:p-8 border border-emerald-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <div className="bg-white rounded-[14px] p-6 sm:p-7 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 flex flex-col justify-between group">
             <div>
-              <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-white mb-6 p-2 flex items-center justify-center border border-emerald-50 group-hover:scale-105 transition-transform duration-500">
+              <div className="w-full aspect-[4/3] rounded-[10px] overflow-hidden bg-white mb-6 p-2 flex items-center justify-center border border-[#E8E9E9] group-hover:scale-[1.02] transition-transform duration-500">
                 <EditableImage
                   imageKey="values_image"
                   defaultSrc="/images/illustrations/values-community.jpg"
@@ -168,14 +168,14 @@ export default function SchoolVisionMissionSection({
               </div>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-[10px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center font-bold">
                   <EditableIcon
                     iconKey="values_icon"
                     defaultIcon="Heart"
-                    className="w-5 h-5 text-emerald-700"
+                    className="w-5 h-5 text-[#006FCC]"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold font-['Montserrat',sans-serif] text-[#003C6E]">
                   <EditableText
                     contentKey="values_title"
                     value="Core Values"
@@ -189,12 +189,12 @@ export default function SchoolVisionMissionSection({
                 value={templateData?.contentOverrides?.['values_desc'] || "Integrity, curiosity, resilience, empathy, and respect form the bedrock of our student development and school culture."}
                 multiline={true}
                 rows={4}
-                className="text-sm text-gray-600 leading-relaxed block"
+                className="text-sm text-slate-600 leading-relaxed block"
               />
             </div>
 
-            <div className="pt-6 mt-6 border-t border-gray-100 flex items-center gap-2 text-xs font-semibold text-emerald-700">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
+            <div className="pt-5 mt-6 border-t border-[#E8E9E9] flex items-center gap-2 text-xs font-semibold text-[#006FCC] font-['Montserrat',sans-serif]">
+              <Sparkles className="w-4 h-4 text-[#006FCC]" />
               <EditableText
                 contentKey="values_tag"
                 value="Character & Ethics"

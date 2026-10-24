@@ -7,7 +7,6 @@ import {
   FlaskConical, 
   Sparkles, 
   BarChart3, 
-  ArrowRight, 
   CheckCircle2, 
   X,
   Target,
@@ -467,7 +466,7 @@ export default function AboutClient() {
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link href="/virtual-lab" className="btn-on-blue">
-                Launch 3D Virtual Lab <ArrowRight className="w-4 h-4" />
+                Launch 3D Virtual Lab 
               </Link>
               <button 
                 onClick={() => setShowBrochureModal(true)}

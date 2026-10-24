@@ -133,7 +133,7 @@ export default function UserDashboard() {
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-base">Recent Projects</CardTitle>
             <Link href="/user/projects">
-              <Button variant="ghost" size="sm" className="gap-1 text-xs">View all <ArrowRight className="h-3 w-3" /></Button>
+              <Button variant="ghost" size="sm" className="gap-1 text-xs">View all</Button>
             </Link>
           </CardHeader>
           <CardContent className="p-0">

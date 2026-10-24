@@ -6,14 +6,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const local = getMaterialBySlugOrId(params.slug);
 
   if (local) {
-    const title = `${local.name} | Lab Equipment & Science Materials India | CSEEL`;
-    const description = local.description.slice(0, 160);
+    const title = `${local.name} (${local.sku}) - ${local.cbse_chapter} Apparatus | CSEEL`;
+    const description = `${local.name}: ${local.description.slice(0, 160)}. Curriculum: ${local.cbse_chapter}. Experiential learning and school science practical apparatus from CSEEL.`;
     const image = local.image_url || "https://www.cseel.org/images/cseel-social-preview.jpg";
 
     return {
       title,
       description,
-      keywords: `${local.name}, ${local.category} lab equipment India, ${local.common_names.join(', ')}, buy science kits India, CSEEL materials`,
+      keywords: `${local.name}, ${local.sku}, ${local.cbse_chapter}, physics practical apparatus, experiential science lab, CSEEL materials`,
       alternates: {
         canonical: `https://www.cseel.org/materials/${local.slug}`,
       },
@@ -42,8 +42,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    title: 'Lab Materials & Scientific Equipment | CSEEL India',
-    description: 'Explore certified science lab apparatus, chemical reagents, and STEM experiment kits on CSEEL.',
+    title: 'Science & Physics Lab Apparatus | CSEEL Experiential Learning',
+    description: 'Explore 954+ science and physics laboratory apparatuses categorized by curriculum chapters for experiential school education.',
   };
 }
 
@@ -57,21 +57,11 @@ export default function MaterialDetailPage({ params }: { params: { slug: string 
         name: material.name,
         image: material.image_url,
         description: material.description,
+        sku: material.sku,
+        category: material.cbse_chapter,
         brand: {
           '@type': 'Brand',
-          name: 'CSEEL',
-        },
-        offers: {
-          '@type': 'Offer',
-          url: `https://www.cseel.org/materials/${material.slug}`,
-          priceCurrency: 'INR',
-          price: material.price,
-          availability: material.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-        },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: material.rating,
-          reviewCount: material.reviews,
+          name: 'CSEEL Experiential Learning',
         },
       }
     : null;

@@ -1774,14 +1774,14 @@ export default function MakerspaceClient() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="jl-btn-yellow px-8 py-4.5 rounded-2xl text-base font-black cursor-pointer"
+              className="jl-btn-yellow px-8 py-4 rounded-2xl text-base font-black cursor-pointer"
             >
               Request School Consultation & Quote →
             </button>
 
             <button
               onClick={handleExportExcel}
-              className="px-8 py-4.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-base transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              className="px-8 py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-base transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
               <span>📊</span>
               <span>Export Master Inventory to Excel</span>

@@ -71,8 +71,8 @@ export default function SchoolAboutCardsSection({
         {/* Section Header Eyebrow */}
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#005689] animate-pulse" />
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+            <span className="w-2 h-2 rounded-full bg-[#006FCC] animate-pulse" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#006FCC] font-['Montserrat',sans-serif]">
               Institutional Heritage & Infrastructure Metrics
             </span>
           </div>
@@ -81,23 +81,23 @@ export default function SchoolAboutCardsSection({
           </span>
         </div>
 
-        {/* 4 Floating Elevated Cards with Hero Card Proportion and Typography */}
+        {/* 4 Floating Elevated Cards (Labster 14px Card Design) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
           
           {/* Card 1: Established Year */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/70 border border-amber-200/80 text-amber-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="about_stat_icon_1" defaultIcon="Building2" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-amber-50 border border-amber-200/80 text-amber-700 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+              <EditableIcon iconKey="about_stat_icon_1" defaultIcon="Building2" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate flex items-center gap-1">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate flex items-center gap-1">
                 {isLiveTemplate && isEditMode ? (
                   <EditableText
                     value={rawEstablished}
                     fieldKey="establishedYear"
                     maxLength={12}
                     showVerificationBadge={false}
-                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate"
+                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate"
                   />
                 ) : (
                   <span className="truncate">{rawEstablished}</span>
@@ -115,19 +115,19 @@ export default function SchoolAboutCardsSection({
           </div>
 
           {/* Card 2: Student Strength */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100/70 border border-sky-200/80 text-[#005689] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="about_stat_icon_2" defaultIcon="Users" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#EDF5FA] border border-[#DDF0FC] text-[#006FCC] flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+              <EditableIcon iconKey="about_stat_icon_2" defaultIcon="Users" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate flex items-center gap-1">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate flex items-center gap-1">
                 {isLiveTemplate && isEditMode ? (
                   <EditableText
                     value={rawStudents}
                     fieldKey="totalStudents"
                     maxLength={12}
                     showVerificationBadge={false}
-                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate"
+                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate"
                   />
                 ) : (
                   <span className="truncate">{rawStudents}</span>
@@ -145,19 +145,19 @@ export default function SchoolAboutCardsSection({
           </div>
 
           {/* Card 3: Faculty Strength */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-50 to-indigo-100/70 border border-indigo-200/80 text-indigo-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="about_stat_icon_3" defaultIcon="Award" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-indigo-50 border border-indigo-200/80 text-indigo-700 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+              <EditableIcon iconKey="about_stat_icon_3" defaultIcon="Award" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate flex items-center gap-1">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate flex items-center gap-1">
                 {isLiveTemplate && isEditMode ? (
                   <EditableText
                     value={rawTeachers}
                     fieldKey="totalTeachers"
                     maxLength={12}
                     showVerificationBadge={false}
-                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate"
+                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate"
                   />
                 ) : (
                   <span className="truncate">{rawTeachers}</span>
@@ -175,12 +175,12 @@ export default function SchoolAboutCardsSection({
           </div>
 
           {/* Card 4: Campus Area */}
-          <div className="group relative rounded-2xl bg-white/95 backdrop-blur-md p-2 sm:p-2.5 lg:p-3 border border-slate-200/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-1.5 sm:gap-2.5 min-w-0 overflow-hidden">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/70 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
-              <EditableIcon iconKey="about_stat_icon_4" defaultIcon="Compass" className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
+          <div className="group relative rounded-[14px] bg-white p-2.5 sm:p-3 border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 sm:gap-2.5 min-w-0 overflow-hidden">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+              <EditableIcon iconKey="about_stat_icon_4" defaultIcon="Compass" className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate flex items-center gap-1">
+              <div className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate flex items-center gap-1">
                 {isLiveTemplate && isEditMode ? (
                   <EditableText
                     value={formattedCampusArea}
@@ -188,7 +188,7 @@ export default function SchoolAboutCardsSection({
                     fieldKey="campusArea"
                     maxLength={18}
                     showVerificationBadge={false}
-                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-black text-[#002B49] leading-tight truncate"
+                    className="text-[10.5px] xs:text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] text-[#003C6E] leading-tight truncate"
                   />
                 ) : (
                   <span className="truncate">{formattedCampusArea}</span>

@@ -244,7 +244,7 @@ export default function SchemesHubClient() {
                       className="flex-1 py-2 px-3 rounded-full bg-[#005689] text-white font-bold text-xs hover:bg-[#003c6e] transition flex items-center justify-center gap-1.5"
                     >
                       <span>Read Full Guide</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      
                     </Link>
 
                     {scheme.officialLinks[0] && (

@@ -316,7 +316,7 @@ export default function CartDrawer({
                 className="w-full py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-black text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 <span>Proceed to Shipping</span>
-                <ArrowRight className="w-4 h-4" />
+                
               </button>
             ) : checkoutStep === 'shipping' ? (
               <div className="flex gap-2">
@@ -333,7 +333,7 @@ export default function CartDrawer({
                   className="flex-1 py-2 bg-teal-600 text-white font-bold rounded-xl flex items-center justify-center gap-1.5"
                 >
                   <span>Select Payment</span>
-                  <ArrowRight className="w-4 h-4" />
+                  
                 </button>
               </div>
             ) : (

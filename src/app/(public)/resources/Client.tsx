@@ -311,7 +311,7 @@ export default function ResourcesClient() {
                 className="inline-flex items-center gap-1.5 text-sm font-bold text-[#006FCC] hover:text-[#005499] transition-colors shrink-0"
               >
                 <span>View All Schemes Hub</span>
-                <ArrowRight className="w-4 h-4" />
+                
               </Link>
             </div>
 
@@ -382,7 +382,7 @@ export default function ResourcesClient() {
                   className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-[12px] bg-white text-[#023858] font-bold text-xs hover:bg-sky-50 transition-all shadow-sm"
                 >
                   <span>Request Free DPR Consultation</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  
                 </Link>
               </div>
             </div>
@@ -419,7 +419,7 @@ export default function ResourcesClient() {
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold transition-all shadow-xs"
                 >
                   <span>Browse Full Store</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  
                 </Link>
               </div>
             </div>
@@ -479,7 +479,7 @@ export default function ResourcesClient() {
                 className="inline-flex items-center gap-1.5 text-sm font-bold text-[#006FCC] hover:text-[#005499] transition-colors shrink-0"
               >
                 <span>Browse All Practical Modules</span>
-                <ArrowRight className="w-4 h-4" />
+                
               </Link>
             </div>
 
@@ -541,7 +541,7 @@ export default function ResourcesClient() {
                 className="inline-flex items-center gap-1.5 text-sm font-bold text-[#006FCC] hover:text-[#005499] transition-colors shrink-0"
               >
                 <span>Visit Knowledge Blog</span>
-                <ArrowRight className="w-4 h-4" />
+                
               </Link>
             </div>
 
@@ -606,7 +606,7 @@ export default function ResourcesClient() {
                 className="inline-flex items-center gap-1.5 text-sm font-bold text-[#006FCC] hover:text-[#005499] transition-colors shrink-0"
               >
                 <span>View Full Media Archive</span>
-                <ArrowRight className="w-4 h-4" />
+                
               </Link>
             </div>
 
@@ -666,7 +666,7 @@ export default function ResourcesClient() {
                 className="inline-flex items-center gap-1.5 text-sm font-bold text-[#006FCC] hover:text-[#005499] transition-colors shrink-0"
               >
                 <span>View All Open Positions</span>
-                <ArrowRight className="w-4 h-4" />
+                
               </Link>
             </div>
 
@@ -699,7 +699,7 @@ export default function ResourcesClient() {
                       className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold transition-all shadow-xs"
                     >
                       <span>Apply for this Role</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      
                     </Link>
                   </div>
                 </div>

@@ -1254,7 +1254,7 @@ export default function SchoolFinderClient() {
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-600 hover:text-slate-900 flex items-center justify-center shrink-0 transition-all cursor-pointer"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-600 hover:text-slate-900 flex items-center justify-center shrink-0 transition-all cursor-pointer"
                   title="Clear search"
                   aria-label="Clear search"
                 >
@@ -1264,7 +1264,7 @@ export default function SchoolFinderClient() {
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-95 text-white flex items-center justify-center shrink-0 shadow-2xs transition-all cursor-pointer"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-95 text-white flex items-center justify-center shrink-0 shadow-2xs transition-all cursor-pointer"
                   title="Search location, address or PIN"
                   aria-label="Search"
                 >

@@ -82,11 +82,18 @@ const EventsUpcoming = () => {
     <>
 <PageTransition>
       
-        <section className="about-hero-gradient py-20 text-center text-primary-foreground">
-          <div className="container mx-auto px-4">
-            <p className="text-sm font-semibold uppercase tracking-widest opacity-70 mb-3">Events</p>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Upcoming Events</h1>
-            <p className="text-lg opacity-90 max-w-2xl mx-auto">Join us at our upcoming science education events, workshops, and competitions.</p>
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#001D38] via-[#003C6E] to-[#005689] text-white py-16 md:py-20 text-center">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+          <div className="container mx-auto px-4 relative z-10 space-y-3">
+            <span className="inline-block px-3.5 py-1 rounded-full bg-white/10 text-cyan-200 border border-white/20 text-xs font-bold uppercase tracking-wider">
+              National STEM Conclaves & Hackathons
+            </span>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight" style={{ color: '#ffffff' }}>
+              Upcoming Science Events & Competitions
+            </h1>
+            <p className="text-sm md:text-base text-slate-100/90 max-w-2xl mx-auto leading-relaxed">
+              Join upcoming inter-school science exhibitions, robotics hackathons, and faculty development symposiums across India.
+            </p>
           </div>
         </section>
         <section className="py-16 bg-background">
@@ -119,7 +126,7 @@ const EventsUpcoming = () => {
                         onClick={(ev) => handleRegister(ev, e)}
                         className="flex-shrink-0 px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-full hover:bg-primary/90 transition-colors flex items-center gap-1"
                       >
-                        Register <ArrowRight className="h-3 w-3" />
+                        Register
                       </button>
                     </div>
                   </div>

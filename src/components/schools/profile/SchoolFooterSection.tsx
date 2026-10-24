@@ -34,10 +34,10 @@ export default function SchoolFooterSection({
   onTabSwitch,
 }: SchoolFooterSectionProps) {
   return (
-    <footer id="contact" className="relative bg-[#071F38] text-white pt-20 pb-10 overflow-hidden">
+    <footer id="contact" className="relative bg-[#001C33] text-white pt-20 pb-10 overflow-hidden border-t border-[#002F56]">
       {/* Curved Top Wave Divider matching page background */}
       <div className="absolute top-0 left-0 right-0 h-10 overflow-hidden leading-none pointer-events-none">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full text-[#FEFBF3] fill-current">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full text-white fill-current">
           <path d="M0,0 C300,90 600,0 900,60 C1050,90 1150,40 1200,0 L1200,0 L0,0 Z"></path>
         </svg>
       </div>

@@ -10,10 +10,6 @@ const NAV_FILE = path.join(DATA_DIR, 'navigation_cms.json');
 let inMemoryNav: NavStage1Category[] | null = null;
 
 function loadNavData(): NavStage1Category[] {
-  if (inMemoryNav && inMemoryNav.length > 0) {
-    return inMemoryNav;
-  }
-
   try {
     if (fs.existsSync(NAV_FILE)) {
       const raw = fs.readFileSync(NAV_FILE, 'utf-8');

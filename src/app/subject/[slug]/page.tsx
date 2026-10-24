@@ -818,20 +818,20 @@ export default function SubjectActivityPage() {
       {/* ─── 2. Search, Filter & Sort Toolbar (Official Google M3 Search & Filter Bar) ─── */}
       <section id="experiments-grid" className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-6 sm:mt-8 w-full max-w-full">
         
-        <div className="w-full bg-white rounded-3xl p-3 sm:p-4 border border-[#dde3ea] shadow-[0_4px_20px_rgba(15,23,42,0.06)] transition-all space-y-2.5 box-border">
+        <div className="w-full bg-white rounded-3xl p-3 sm:p-4 border border-[#dadce0] shadow-[0_4px_20px_rgba(15,23,42,0.06)] transition-all space-y-2.5 box-border">
           
           {/* Search Bar Row: Search Pill + External Selections Bookmark Button */}
           <div className="flex items-center gap-2.5 w-full">
             {/* Official Google M3 Search Bar (52px pill, #eef3fc Surface Container High) */}
-            <div className="flex items-center gap-2.5 flex-1 min-w-0 h-12 bg-[#eef3fc] hover:bg-[#e3ecf8] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#0b57d0] border border-transparent focus-within:border-[#0b57d0] rounded-full px-4 transition-all">
-              <Search size={18} className="text-[#444746] shrink-0" />
+            <div className="flex items-center gap-2.5 flex-1 min-w-0 h-12 bg-[#eef3fc] hover:bg-[#e3ecf8] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#1a73e8] border border-[#dadce0] focus-within:border-[#1a73e8] rounded-full px-4 transition-all">
+              <Search size={18} className="text-[#656773] shrink-0" />
 
               <input 
                 type="text" 
                 placeholder={`Search ${displayName} experiments, topics, concepts...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#1f1f1f] placeholder-[#444746] outline-none min-w-0"
+                className="w-full bg-transparent text-xs sm:text-sm font-medium text-[#16171A] placeholder-[#656773] outline-none min-w-0 font-['Google_Sans',Roboto,sans-serif]"
               />
 
               {searchQuery && (
@@ -854,8 +854,8 @@ export default function SubjectActivityPage() {
                 title="View Selected Experiments"
                 className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs active:scale-95 ${
                   totalSelectedQuantity > 0
-                    ? 'bg-[#0b57d0] text-white hover:bg-[#003c6e] ring-2 ring-[#0b57d0]/20'
-                    : 'bg-[#eef3fc] text-[#001d35] hover:bg-[#d3e3fd] border border-[#dde3ea]'
+                    ? 'bg-[#1a73e8] text-white hover:bg-[#1557b0] ring-2 ring-[#1a73e8]/20'
+                    : 'bg-[#eef3fc] text-[#16171A] hover:bg-[#d3e3fd] border border-[#dadce0]'
                 }`}
               >
                 <BookmarkCheck size={20} strokeWidth={2.4} />
@@ -913,8 +913,8 @@ export default function SubjectActivityPage() {
                     />
 
                     {/* Dropdown Card */}
-                    <div className="absolute top-full left-0 mt-2 w-56 bg-[#f8fafd] rounded-2xl shadow-2xl border border-[#dde3ea] py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-left overflow-hidden">
-                      <div className="px-3 py-1.5 text-[10px] font-bold text-[#444746] uppercase tracking-wider border-b border-[#dde3ea] flex items-center justify-between">
+                    <div className="absolute top-full left-0 mt-2 w-56 bg-[#f8fafd] rounded-2xl shadow-2xl border border-[#dadce0] py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150 origin-top-left overflow-hidden">
+                      <div className="px-3 py-1.5 text-[10px] font-bold text-[#656773] uppercase tracking-wider border-b border-[#dadce0] flex items-center justify-between">
                         <span>Sort Activities</span>
                         {selectedSort !== 'popularity' && (
                           <button
@@ -923,7 +923,7 @@ export default function SubjectActivityPage() {
                               setSelectedSort('popularity');
                               setIsSortMenuOpen(false);
                             }}
-                            className="text-[10px] text-[#0b57d0] hover:underline font-bold"
+                            className="text-[10px] text-[#1a73e8] hover:underline font-bold"
                           >
                             Reset
                           </button>
@@ -984,8 +984,8 @@ export default function SubjectActivityPage() {
 
           {/* Active Filters using Official M3 InputChips */}
           {(activeFilterCount > 0 || searchQuery) && (
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#dde3ea]">
-              <span className="text-[10px] font-bold text-[#444746] uppercase tracking-wider mr-1">Active:</span>
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#dadce0]">
+              <span className="text-[10px] font-bold text-[#656773] uppercase tracking-wider mr-1">Active:</span>
 
               {searchQuery && (
                 <M3InputChip
@@ -1059,17 +1059,17 @@ export default function SubjectActivityPage() {
         </div>
 
         {/* Results Counter Bar */}
-        <div className="mt-5 flex items-center justify-between pb-2.5 border-b border-slate-200">
-          <p className="text-xs sm:text-sm font-bold text-slate-700">
-            Showing <span className="text-[#0b57d0] font-black">{filteredActivities.length}</span> of {baseActivities.length} {displayName} Experiments
+        <div className="mt-5 flex items-center justify-between pb-2.5 border-b border-[#dadce0]">
+          <p className="text-xs sm:text-sm font-semibold text-[#16171A] font-['Google_Sans',Roboto,sans-serif]">
+            Showing <span className="text-[#1a73e8] font-bold">{filteredActivities.length}</span> of {baseActivities.length} {displayName} Experiments
           </p>
-          <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+          <span className="text-xs text-[#656773] font-medium hidden sm:inline font-['Google_Sans',Roboto,sans-serif]">
             NEP 2020 Hands-On Curriculum
           </span>
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4.5 mt-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4 mt-5">
           {filteredActivities.slice(0, visibleCount).map((act, index) => {
             const isSelected = selectedIds.includes(act.id);
             const selectedItem = selectedExperiments.find((e) => e.id === act.id);
@@ -1085,8 +1085,8 @@ export default function SubjectActivityPage() {
             return (
               <div
                 key={act.id}
-                className={`relative flex flex-col justify-between border rounded-2xl bg-white w-full select-none overflow-hidden cursor-pointer group box-border transition-all duration-300 shadow-[0_2px_12px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_30px_rgba(15,23,42,0.13)] hover:-translate-y-1 ${
-                  isSelected ? 'border-[#0b57d0] ring-2 ring-[#0b57d0]/30 shadow-[0_8px_24px_rgba(11,87,208,0.18)]' : 'border-[#dde3ea] hover:border-[#0b57d0]/50'
+                className={`relative flex flex-col justify-between border rounded-2xl bg-white w-full select-none overflow-hidden cursor-pointer group box-border transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 ${
+                  isSelected ? 'border-[#1a73e8] ring-1 ring-[#1a73e8]/30 shadow-[0_4px_16px_rgba(26,115,232,0.15)]' : 'border-[#dadce0] hover:border-[#bdc1c6]'
                 }`}
                 onClick={() => setActiveModalActivity(act)}
               >
@@ -1094,7 +1094,7 @@ export default function SubjectActivityPage() {
                 <div className="flex flex-row items-stretch gap-3 p-3.5">
                   
                   {/* Image on the Left Side - Full container fitted apparatus photo */}
-                  <div className="w-28 sm:w-36 flex-shrink-0 overflow-hidden rounded-xl bg-slate-900/[0.04] border border-slate-200/80 relative self-stretch min-h-[96px]">
+                  <div className="w-28 sm:w-36 flex-shrink-0 overflow-hidden rounded-xl bg-[#f8f9fa] border border-[#dadce0] relative self-stretch min-h-[96px]">
                     <img
                       src={imageSrc}
                       alt={act.title}
@@ -1122,17 +1122,17 @@ export default function SubjectActivityPage() {
                   <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                     <div className="space-y-1">
                       {/* Subtle Secondary Category Label */}
-                      <span className="text-[10px] font-semibold text-[#0b57d0] block tracking-wide truncate">
+                      <span className="text-[11px] font-medium text-[#1a73e8] block tracking-wide truncate font-['Google_Sans',Roboto,sans-serif]">
                         {act.category}
                       </span>
 
                       {/* Primary Hero: Bold Prominent Activity Title */}
-                      <h3 className="text-[14px] sm:text-[15px] font-bold text-[#1f1f1f] group-hover:text-[#0b57d0] leading-snug transition-colors">
+                      <h3 className="text-[14px] sm:text-[15px] font-semibold text-[#16171A] group-hover:text-[#1a73e8] leading-snug transition-colors font-['Google_Sans',Roboto,sans-serif]">
                         {act.title}
                       </h3>
 
                       {/* Subdued Description */}
-                      <p className="text-[11px] text-[#444746] font-normal leading-relaxed line-clamp-2">
+                      <p className="text-[12px] text-[#656773] font-normal leading-relaxed line-clamp-2 font-['Google_Sans',Roboto,sans-serif]">
                         {act.subtitle || act.description}
                       </p>
                       
@@ -1142,7 +1142,7 @@ export default function SubjectActivityPage() {
                           {act.tags.slice(0, 3).map((tag) => (
                             <span
                               key={tag}
-                              className="inline-flex items-center text-[9px] font-medium text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-full border border-[#d3e3fd] transition-colors"
+                              className="inline-flex items-center text-[10px] font-medium text-[#656773] bg-[#f8f9fa] px-2 py-0.5 rounded-full border border-[#dadce0] transition-colors font-['Google_Sans',Roboto,sans-serif]"
                             >
                               #{tag}
                             </span>
@@ -1155,7 +1155,7 @@ export default function SubjectActivityPage() {
 
                 {/* Full-Width Card Footer using Official Google M3 Components */}
                 <div 
-                  className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-t border-[#dde3ea] bg-[#f8fafd] rounded-b-2xl"
+                  className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-t border-[#dadce0] bg-[#f8fafd] rounded-b-2xl"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Official M3 AssistChip for Class Badge */}
@@ -1194,11 +1194,11 @@ export default function SubjectActivityPage() {
 
                     {/* Official M3 Quantity Controller (+ / -) or Add Button */}
                     {isSelected ? (
-                      <div className="flex items-center gap-1.5 bg-[#eef3fc] rounded-full p-1 border border-[#0b57d0]/30 shadow-xs">
+                      <div className="flex items-center gap-1.5 bg-[#eef3fc] rounded-full p-1 border border-[#1a73e8]/30 shadow-xs">
                         <button
                           type="button"
                           aria-label="Decrease quantity"
-                          className="w-7 h-7 rounded-full bg-white text-[#0b57d0] hover:bg-[#d3e3fd] border border-[#d3e3fd] flex items-center justify-center transition-all cursor-pointer shrink-0"
+                          className="w-7 h-7 rounded-full bg-white text-[#1a73e8] hover:bg-[#d3e3fd] border border-[#d3e3fd] flex items-center justify-center transition-all cursor-pointer shrink-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
@@ -1208,14 +1208,14 @@ export default function SubjectActivityPage() {
                           <Minus size={13} strokeWidth={2.5} />
                         </button>
 
-                        <span className="min-w-[20px] text-center text-xs font-black text-[#0b57d0] select-none">
+                        <span className="min-w-[20px] text-center text-xs font-bold text-[#1a73e8] select-none font-['Google_Sans',Roboto,sans-serif]">
                           {selectedQty}
                         </span>
 
                         <button
                           type="button"
                           aria-label="Increase quantity"
-                          className="w-7 h-7 rounded-full bg-[#0b57d0] text-white hover:bg-[#003c6e] flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-2xs"
+                          className="w-7 h-7 rounded-full bg-[#1a73e8] text-white hover:bg-[#1557b0] flex items-center justify-center transition-all cursor-pointer shrink-0 shadow-2xs"
                           onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
@@ -1229,7 +1229,7 @@ export default function SubjectActivityPage() {
                       <button
                         type="button"
                         aria-label="Add to selection"
-                        className="h-8 px-3 rounded-full bg-[#eef3fc] hover:bg-[#0b57d0] text-[#0b57d0] hover:text-white border border-[#d3e3fd] hover:border-[#0b57d0] text-xs font-bold inline-flex items-center gap-1 transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+                        className="h-8 px-3 rounded-full bg-white hover:bg-[#f8fafd] text-[#1a73e8] hover:text-[#1557b0] border border-[#dadce0] hover:border-[#1a73e8]/40 text-xs font-medium inline-flex items-center gap-1 transition-all duration-200 cursor-pointer shadow-xs active:scale-95 font-['Google_Sans',Roboto,sans-serif]"
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
@@ -1318,7 +1318,7 @@ export default function SubjectActivityPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-t border-[#dde3ea] bg-[#f8fafd]">
+              <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 border-t border-[#dadce0] bg-[#f8fafd]">
                 <span className="text-xs font-bold text-slate-500">{fakeItem.grade}</span>
                 <span className="text-xs font-bold text-slate-400">Locked Premium</span>
               </div>
@@ -1531,7 +1531,6 @@ export default function SubjectActivityPage() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <span>Book a Demo</span>
-              <ArrowRight className="w-4 h-4" />
             </button>
 
             <Link
@@ -1545,7 +1544,7 @@ export default function SubjectActivityPage() {
 
         {/* Empty State */}
         {filteredActivities.length === 0 && (
-          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-[#dde3ea] mt-6 space-y-3">
+          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center border border-[#dadce0] mt-6 space-y-3">
             <div className="w-11 h-11 rounded-2xl bg-[#eef3fc] text-[#0b57d0] mx-auto flex items-center justify-center">
               <Search size={22} />
             </div>
@@ -1606,7 +1605,7 @@ export default function SubjectActivityPage() {
                 <M3Button
                   variant="elevated"
                   size="md"
-                  trailingIcon={<ArrowRight size={14} />}
+                  
                   onClick={() => router.push('/projects')}
                 >
                   Browse Projectokart Catalog
@@ -1652,19 +1651,19 @@ export default function SubjectActivityPage() {
 
       {/* ─── 5. Compact Google-Style Horizontal STEAM Subjects Swipe Carousel ─── */}
       <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-10 sm:mt-14 w-full max-w-full">
-        <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#dde3ea] shadow-xs space-y-3.5">
+        <div className="bg-white rounded-3xl p-4 sm:p-5 border border-[#dadce0] shadow-xs space-y-3.5">
           
           {/* Header Row */}
-          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[#dde3ea]">
+          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[#dadce0]">
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#eef3fc] text-[#0b57d0] flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-[#eef3fc] text-[#1a73e8] flex items-center justify-center shrink-0">
                 <Compass size={16} />
               </div>
               <div className="min-w-0">
-                <h3 className="text-xs sm:text-sm font-black text-[#1f1f1f] truncate">
+                <h3 className="text-xs sm:text-sm font-semibold text-[#16171A] truncate font-['Google_Sans',Roboto,sans-serif]">
                   Explore Other STEAM Subjects
                 </h3>
-                <p className="text-[10px] sm:text-[11px] text-[#444746] font-medium truncate block">
+                <p className="text-[10px] sm:text-[11px] text-[#656773] font-normal truncate block font-['Google_Sans',Roboto,sans-serif]">
                   Swipe horizontally to switch between curriculum labs
                 </p>
               </div>
@@ -1673,7 +1672,7 @@ export default function SubjectActivityPage() {
             <M3Button
               variant="tonal"
               size="sm"
-              trailingIcon={<ArrowRight size={13} />}
+              
               onClick={() => router.push('/domain/science')}
             >
               All Subjects ({ALL_SUBJECT_NAV.length})
@@ -1786,7 +1785,7 @@ export default function SubjectActivityPage() {
 
       {/* ─── 5. Dynamic Filter Sheet (Google "Refine results" Left Side Drawer) ─── */}
       {isFilterSheetOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
+        <div className="fixed inset-0 z-[9999] overflow-hidden">
           
           {/* Backdrop */}
           <div 
@@ -1795,12 +1794,12 @@ export default function SubjectActivityPage() {
           />
 
           {/* Sheet Container: Half-screen on mobile (~58vw / 250-280px), compact Google panel on tablet/desktop */}
-          <div className="fixed inset-y-0 left-0 right-auto w-[62vw] xs:w-[270px] sm:w-[310px] md:w-[340px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col z-50 rounded-r-2xl border-r border-slate-200 overflow-hidden box-border animate-in slide-in-from-left duration-300">
+          <div className="fixed inset-y-0 left-0 right-auto w-[62vw] xs:w-[270px] sm:w-[310px] md:w-[340px] max-w-[85vw] h-full bg-white shadow-2xl flex flex-col z-[9999] rounded-r-2xl border-r border-slate-200 overflow-hidden box-border animate-in slide-in-from-left duration-300">
             
             {/* Google Refine Results Header */}
-            <div className="px-3.5 py-3 border-b border-[#dde3ea] flex items-center justify-between shrink-0 bg-[#f8fafd]">
+            <div className="px-3.5 py-3 border-b border-[#dadce0] flex items-center justify-between shrink-0 bg-[#f8fafd]">
               <div className="flex items-center gap-2 min-w-0">
-                <h2 className="text-sm sm:text-base font-bold text-[#1f1f1f] tracking-tight truncate">Refine results</h2>
+                <h2 className="text-sm sm:text-base font-semibold text-[#16171A] tracking-tight truncate font-['Google_Sans',Roboto,sans-serif]">Refine results</h2>
                 {activeFilterCount > 0 && (
                   <M3Badge count={activeFilterCount} />
                 )}
@@ -1829,48 +1828,8 @@ export default function SubjectActivityPage() {
             {/* Google Refine Results Body Scrollable */}
             <div className="flex-1 overflow-y-auto px-3 py-2.5 space-y-4 no-scrollbar divide-y divide-slate-100">
               
-              {/* 0. Sort Order Group */}
-              <div className="pt-1 first:pt-0 space-y-1.5">
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                    <ArrowUpDown size={13} className="text-[#006fcc]" /> Sort By
-                  </span>
-                  {selectedSort !== 'popularity' && (
-                    <button onClick={() => setSelectedSort('popularity')} className="text-[10px] text-blue-600 hover:underline font-bold">Reset</button>
-                  )}
-                </div>
-                <div className="space-y-0.5">
-                  {SORT_OPTIONS.map((opt) => {
-                    const isActive = selectedSort === opt.value;
-                    return (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setSelectedSort(opt.value)}
-                        className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-colors text-left ${
-                          isActive 
-                            ? 'bg-blue-50/80 text-[#006fcc] font-bold' 
-                            : 'text-slate-700 hover:bg-slate-50 font-medium'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center border transition-all ${
-                            isActive 
-                              ? 'border-[#006fcc] bg-[#006fcc]' 
-                              : 'border-slate-300 bg-white'
-                          }`}>
-                            {isActive && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
-                          </span>
-                          <span className="truncate">{opt.label}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
               {/* 1. Class / Grade Group */}
-              <div className="pt-3 space-y-1.5">
+              <div className="pt-1 first:pt-0 space-y-1.5">
                 <div className="flex items-center justify-between py-1">
                   <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                     <GraduationCap size={13} className="text-[#006fcc]" /> Class / Grade
@@ -2157,7 +2116,7 @@ export default function SubjectActivityPage() {
             </div>
 
             {/* Google Refine Results Sticky Footer */}
-            <div className="p-3 border-t border-[#dde3ea] bg-[#f8fafd] flex items-center gap-2 shrink-0">
+            <div className="p-3 border-t border-[#dadce0] bg-[#f8fafd] flex items-center gap-2 shrink-0">
               <M3Button
                 variant="outlined"
                 size="md"

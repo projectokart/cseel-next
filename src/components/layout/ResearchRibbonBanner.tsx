@@ -68,7 +68,7 @@ export default function ResearchRibbonBanner() {
                   {/* Title and Subtext */}
                   <div className="min-w-0">
                     <Link
-                      href="/research"
+                      href="/online-stem-retention-research-preview"
                       className="group block"
                     >
                       <h2 className="text-[12px] sm:text-[13px] font-bold text-white tracking-[0.16px] group-hover:text-[#66A9E0] transition-colors truncate font-['Hanken_Grotesk',sans-serif] leading-tight">
@@ -84,7 +84,7 @@ export default function ResearchRibbonBanner() {
                 {/* Right Action CTA + Close Dismiss Button */}
                 <div className="flex items-center gap-2.5 shrink-0">
                   <Link
-                    href="/research"
+                    href="/online-stem-retention-research-preview"
                     className="hidden sm:inline-flex items-center justify-center px-3 py-1 rounded-[10px] bg-white hover:bg-[#F7F8F8] text-[#001C33] hover:text-[#006FCC] text-[11.5px] font-bold font-['Montserrat',sans-serif] shadow-xs transition-all active:scale-[0.98] whitespace-nowrap cursor-pointer"
                   >
                     Read the report

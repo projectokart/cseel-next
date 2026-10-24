@@ -124,3 +124,18 @@ export function getSourceBadgeColor(source?: string | null): string {
   if (s.includes('linkedin')) return 'bg-blue-50 text-[#0A66C2] border-blue-200';
   return 'bg-emerald-50 text-emerald-800 border-emerald-200';
 }
+
+export function getGoogleMapsSearchUrl(job: {
+  organisationName?: string | null;
+  address?: string | null;
+  city?: string | null;
+  district?: string | null;
+  state?: string | null;
+  coordinates?: { lat: number; lng: number } | null;
+}): string {
+  const org = (job.organisationName || '').trim();
+  const structured = formatStructuredAddress(job);
+  const parts = [org, structured].filter(Boolean);
+  const query = parts.join(', ');
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}

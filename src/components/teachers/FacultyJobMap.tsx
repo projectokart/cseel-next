@@ -10,13 +10,37 @@ import {
   Plus, Minus, Maximize2, List, Columns2, ChevronUp, ChevronDown, Bookmark, CheckCircle2, Globe
 } from 'lucide-react';
 import Link from 'next/link';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
+
+// Helper to format ultra-compact salary for 2-line map badges
+function getBadgeSalaryShort(raw?: string | null): string {
+  if (!raw || raw === '---' || raw.toLowerCase().includes('not disclosed')) {
+    return '₹ Norms';
+  }
+  const s = raw.trim();
+  const mMatch = s.match(/(\d+)\s*k?\s*[-–—to]*\s*(\d*)\s*k?\s*\/\s*mo/i);
+  if (mMatch) {
+    if (mMatch[2] && mMatch[1] !== mMatch[2]) return `₹${mMatch[1]}-${mMatch[2]}k/mo`;
+    return `₹${mMatch[1]}k/mo`;
+  }
+  const lMatch = s.match(/([\d\.]+)\s*[-–—to]*\s*([\d\.]*)\s*(?:lpa|lakhs?|lacs?)/i);
+  if (lMatch) {
+    if (lMatch[2] && lMatch[1] !== lMatch[2]) return `₹${lMatch[1]}-${lMatch[2]} LPA`;
+    return `₹${lMatch[1]} LPA`;
+  }
+  return s.length > 11 ? s.slice(0, 10) : s;
+}
+
 
 interface FacultyJobMapProps {
   activeTab: 'jobs' | 'faculty';
   jobs: FacultyJobItem[];
   faculty: VerifiedFacultyItem[];
   selectedCity?: string;
+  currentPage?: number;
+  totalPages?: number;
+  totalJobsCount?: number;
+  onPageChange?: (page: number) => void;
   onSelectJob?: (job: FacultyJobItem) => void;
   onSelectFaculty?: (faculty: VerifiedFacultyItem) => void;
   onPostJob?: () => void;
@@ -64,6 +88,10 @@ export default function FacultyJobMap({
   jobs,
   faculty,
   selectedCity,
+  currentPage = 1,
+  totalPages = 1,
+  totalJobsCount = 0,
+  onPageChange,
   onSelectJob,
   onSelectFaculty,
   onPostJob,
@@ -345,10 +373,11 @@ export default function FacultyJobMap({
       coordCounts[key] = offsetIndex + 1;
 
       if (offsetIndex > 0) {
-        const angle = (offsetIndex * (2 * Math.PI)) / 6;
-        const radius = 0.02 * offsetIndex;
-        lat += radius * Math.cos(angle);
-        lng += radius * Math.sin(angle);
+        // Natural micro-offset within ~50 to 100 meters (golden angle) - keeps markers precisely at school campus, never shoots across districts!
+        const angle = offsetIndex * 2.399963;
+        const microRadius = 0.0006 * Math.sqrt(offsetIndex);
+        lat += microRadius * Math.cos(angle);
+        lng += microRadius * Math.sin(angle);
       }
 
       bounds.extend([lat, lng]);
@@ -359,14 +388,14 @@ export default function FacultyJobMap({
       if (displayMode === 'points') {
         // MODE 1: RED DOT POINT VIEW (Minimal, prevents map clutter)
         const dotHtml = `
-          <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">
             <div style="
-              width: ${isSelected ? '20px' : '13px'};
-              height: ${isSelected ? '20px' : '13px'};
+              width: ${isSelected ? '18px' : '11px'};
+              height: ${isSelected ? '18px' : '11px'};
               background: ${isSelected ? '#dc2626' : '#ef4444'};
-              border: ${isSelected ? '3px solid #ffffff' : '2px solid #ffffff'};
+              border: ${isSelected ? '2.5px solid #ffffff' : '1.5px solid #ffffff'};
               border-radius: 9999px;
-              box-shadow: ${isSelected ? '0 0 0 5px rgba(220,38,38,0.35), 0 3px 10px rgba(0,0,0,0.3)' : '0 2px 6px rgba(239,68,68,0.45), 0 1px 3px rgba(0,0,0,0.2)'};
+              box-shadow: ${isSelected ? '0 0 0 4px rgba(220,38,38,0.35), 0 3px 8px rgba(0,0,0,0.3)' : '0 2px 5px rgba(239,68,68,0.4), 0 1px 2px rgba(0,0,0,0.2)'};
             "></div>
           </div>
         `;
@@ -374,35 +403,111 @@ export default function FacultyJobMap({
         icon = L.divIcon({
           className: `map-dot-${item.id}`,
           html: dotHtml,
-          iconSize: isSelected ? [24, 24] : [16, 16],
-          iconAnchor: isSelected ? [12, 12] : [8, 8],
+          iconSize: isSelected ? [22, 22] : [14, 14],
+          iconAnchor: isSelected ? [11, 11] : [7, 7],
         });
       } else {
-        // MODE 2: BADGE VIEW (Rich designation + subject pill)
-        const label = activeTab === 'jobs' ? (item.designation || 'Job') : item.name.split(' ')[0];
-        const sub = activeTab === 'jobs' ? item.subject.split(' ')[0] : item.subject;
+        // MODE 2: 2-LINE SMALL POST BADGE (Line 1: Post like PGT Physics, Line 2: Salary with ₹ icon)
+        let line1 = '';
+        let line2 = '';
+
+        if (activeTab === 'jobs') {
+          const j = item as FacultyJobItem;
+          const des = j.designation || '';
+          const sub = j.subject ? j.subject.split(' ')[0] : '';
+          line1 = des && sub ? `${des} ${sub}` : (j.jobPostName || 'Teaching Job');
+          if (line1.length > 18) line1 = line1.slice(0, 16) + '..';
+          line2 = getBadgeSalaryShort(j.salary);
+        } else {
+          const f = item as VerifiedFacultyItem;
+          line1 = `${f.name.split(' ')[0]} (${f.designation})`;
+          line2 = `₹ ${f.expectedSalary || 'Exp'}`;
+        }
 
         const pinHtml = `
-          <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
-            <div style="background: ${isSelected ? '#003c6e' : '#005689'}; color: #ffffff; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 800; border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(0, 30, 60, 0.28); display: flex; align-items: center; gap: 4px; white-space: nowrap;">
-              <span>${label}</span>
-              <span style="background: rgba(255,255,255,0.25); padding: 1px 4px; border-radius: 4px; font-size: 9px; font-weight: 700;">${sub}</span>
+          <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            <div style="background: ${isSelected ? '#00284d' : '#004c7d'}; color: #ffffff; padding: 2px 5.5px; border-radius: 6px; border: 1.5px solid #ffffff; box-shadow: 0 3px 8px rgba(0, 20, 45, 0.35); display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.15; white-space: nowrap;">
+              <div style="font-size: 8.5px; font-weight: 800; letter-spacing: 0.1px; max-width: 95px; overflow: hidden; text-overflow: ellipsis;">${line1}</div>
+              <div style="font-size: 8px; font-weight: 700; color: #4ade80; margin-top: 1px;">${line2}</div>
             </div>
-            <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid ${isSelected ? '#003c6e' : '#005689'}; margin-top: -1px;"></div>
+            <div style="width: 0; height: 0; border-left: 3.5px solid transparent; border-right: 3.5px solid transparent; border-top: 4px solid ${isSelected ? '#00284d' : '#004c7d'}; margin-top: -1px;"></div>
           </div>
         `;
 
         icon = L.divIcon({
           className: `map-marker-${item.id}`,
           html: pinHtml,
-          iconSize: [84, 32],
-          iconAnchor: [42, 32],
+          iconSize: [75, 28],
+          iconAnchor: [37.5, 28],
         });
       }
 
       const marker = L.marker([lat, lng], { icon });
+
+      // Generate Rich Hover/Click Information Popup right ABOVE pointer
+      let popupContent = '';
+      if (activeTab === 'jobs') {
+        const j = item as FacultyJobItem;
+        const orgName = (j.organisationName || 'School').replace(/"/g, '&quot;');
+        const postName = (j.jobPostName || 'Teaching Faculty').replace(/"/g, '&quot;');
+        const salaryClean = formatCleanSalary(j.salary, false);
+        const addrClean = formatStructuredAddress(j).replace(/"/g, '&quot;');
+        const gMapsUrl = getGoogleMapsSearchUrl(j);
+        const applyUrl = j.applyUrl || j.originalUrl;
+        const logoUrl = j.organisationLogo || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80';
+        const srcName = getSourceDisplayName(j.source);
+
+        popupContent = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 210px; max-width: 240px; padding: 2px;">
+            <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px;">
+              <img src="${logoUrl}" style="width: 30px; height: 30px; border-radius: 7px; object-fit: contain; border: 1px solid #e2e8f0; background: #fff; padding: 2px; shrink: 0;" alt="" />
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-weight: 700; font-size: 12px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${orgName}</div>
+                <div style="font-size: 9.5px; color: #0284c7; font-weight: 700;">${srcName} Verified</div>
+              </div>
+            </div>
+            <div style="font-size: 12px; font-weight: 800; color: #003c6e; margin-bottom: 3px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${postName}</div>
+            <div style="font-size: 11px; color: #16a34a; font-weight: 800; margin-bottom: 4px;">${salaryClean}</div>
+            <div style="display: flex; align-items: flex-start; gap: 4px; font-size: 10px; color: #64748b; margin-bottom: 7px; line-height: 1.3;">
+              <span style="color: #ef4444; font-size: 11px; line-height: 1;">📍</span>
+              <span style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${addrClean}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px; padding-top: 5px; border-top: 1px solid #f1f5f9;">
+              <a href="${gMapsUrl}" target="_blank" rel="noopener noreferrer" style="flex: 1; text-align: center; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; text-decoration: none; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 700;">Maps ↗</a>
+              <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" style="flex: 1.2; text-align: center; background: #0A66C2; color: #fff; text-decoration: none; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 700;">Apply ↗</a>
+            </div>
+          </div>
+        `;
+      } else {
+        const f = item as VerifiedFacultyItem;
+        popupContent = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 200px; padding: 2px;">
+            <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 4px;">
+              <img src="${f.avatar}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;" alt="" />
+              <div>
+                <div style="font-weight: 800; font-size: 12.5px; color: #003c6e;">${f.name}</div>
+                <div style="font-size: 10px; color: #64748b;">${f.designation} • ${f.subject}</div>
+              </div>
+            </div>
+            <div style="font-size: 10.5px; color: #475569; margin-bottom: 6px;">${f.city} • ${f.experienceYears}+ Yrs Exp</div>
+            <a href="/edu-network/teachers/${f.id}" style="display: block; text-align: center; background: #005689; color: #fff; text-decoration: none; padding: 4px 0; border-radius: 6px; font-size: 10.5px; font-weight: 700;">View Profile</a>
+          </div>
+        `;
+      }
+
+      marker.bindPopup(popupContent, {
+        offset: displayMode === 'points' ? [0, -8] : [0, -24],
+        closeButton: true,
+        autoPan: true
+      });
+
+      marker.on('mouseover', () => {
+        marker.openPopup();
+      });
+
       marker.on('click', () => {
         handleSelectCard(index);
+        marker.openPopup();
       });
 
       markersGroup.addLayer(marker);
@@ -767,52 +872,77 @@ export default function FacultyJobMap({
           <div className="w-14 h-1.5 bg-gray-300/90 group-hover:bg-gray-400 group-active:bg-[#006FCC] rounded-full transition-colors" />
         </div>
 
-        {/* Header Strip with Segmented Tabs & Action Button */}
-        <div className="w-full px-3 py-1 flex items-center justify-between gap-2 border-b border-gray-100 shrink-0 bg-white/90">
-          {/* Segmented View Switcher: Map (0/Peek), Split (Half), Vacancies/Faculty (Full) */}
-          <div className="flex items-center bg-gray-100 p-0.5 rounded-lg text-xs font-bold shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setMobileSheetState('peek')}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
-                mobileSheetState === 'peek'
-                  ? 'bg-white text-blue-600 shadow-2xs'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-              title="Map View (Collapse Sheet)"
+        {/* Header Strip: Up/Down arrow + Toggle Points/Badges + Total count number + Plus button */}
+        <div className="w-full px-3 py-1.5 flex items-center justify-between gap-2 border-b border-gray-100 shrink-0 bg-white/95 backdrop-blur-xs">
+          {/* Left: Up/Down Drawer Resize Arrows + Points/Badges Switch + Count Number */}
+          <div className="flex items-center gap-2">
+            {/* Up/Down Drawer Resize Control */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => {
+                  if (mobileSheetState === 'peek') setMobileSheetState('half');
+                  else if (mobileSheetState === 'half') setMobileSheetState('full');
+                }}
+                disabled={mobileSheetState === 'full'}
+                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                title="Expand list drawer (Up)"
+              >
+                <ChevronUp size={16} strokeWidth={2.5} />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (mobileSheetState === 'full') setMobileSheetState('half');
+                  else if (mobileSheetState === 'half') setMobileSheetState('peek');
+                }}
+                disabled={mobileSheetState === 'peek'}
+                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                title="Collapse list drawer (Down)"
+              >
+                <ChevronDown size={16} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Points vs Badges Toggle Pill */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 shadow-2xs text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setDisplayMode('points')}
+                className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer text-[11px] ${
+                  displayMode === 'points'
+                    ? 'bg-[#ef4444] text-white shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Point view (compact dots)"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                <span>Points</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDisplayMode('badges')}
+                className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer text-[11px] ${
+                  displayMode === 'badges'
+                    ? 'bg-[#005689] text-white shadow-xs font-bold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Badge view (small labels)"
+              >
+                <span>Badges</span>
+              </button>
+            </div>
+
+            {/* Total Vacancies / Faculty Just Number */}
+            <div
+              className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200/80 text-[#005689] font-black text-xs shadow-2xs"
+              title={`${totalJobsCount || filteredItems.length} total vacancies`}
             >
-              <MapPin size={12} className="text-amber-600" />
-              <span>Map</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileSheetState('half')}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
-                mobileSheetState === 'half'
-                  ? 'bg-white text-blue-600 shadow-2xs'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-              title="Split View (Half Screen)"
-            >
-              <Columns2 size={12} className="rotate-90 text-blue-600" />
-              <span>Split</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileSheetState('full')}
-              className={`px-2.5 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
-                mobileSheetState === 'full'
-                  ? 'bg-white text-blue-600 shadow-2xs'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-              title="Full List View"
-            >
-              <List size={12} className="text-emerald-600" />
-              <span>{activeTab === 'jobs' ? `Vacancies (${filteredItems.length})` : `Faculty (${filteredItems.length})`}</span>
-            </button>
+              {totalJobsCount || filteredItems.length}
+            </div>
           </div>
 
-          {/* Right: Circular Blue Action Button (+) - Fits perfectly on mobile without cut-off */}
+          {/* Right: Circular Blue Action Button (+) */}
           <div className="flex items-center shrink-0">
             <button
               type="button"
@@ -830,7 +960,8 @@ export default function FacultyJobMap({
 
         {/* Drawer Scrollable Feed (Shown in Half & Full mode) */}
         {mobileSheetState !== 'peek' && (
-          <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar bg-slate-50/50">
+          <>
+            <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar bg-slate-50/50">
             {filteredItems.map((item: any, idx: number) => {
               if (activeTab === 'jobs') {
                 const job = item as FacultyJobItem;
@@ -1049,6 +1180,32 @@ export default function FacultyJobMap({
               }
             })}
           </div>
+          {totalPages > 1 && onPageChange && (
+            <div className="sticky bottom-0 bg-white/95 backdrop-blur-xs p-2.5 border-t border-slate-200/90 flex items-center justify-between gap-2 shadow-xs z-10 shrink-0">
+              <button
+                type="button"
+                onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+                disabled={currentPage <= 1}
+                className="h-7.5 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1 cursor-pointer"
+              >
+                <ChevronLeft size={13} />
+                <span>Prev</span>
+              </button>
+              <span className="text-[11px] font-bold text-slate-700">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage >= totalPages}
+                className="h-7.5 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1 cursor-pointer"
+              >
+                <span>Next</span>
+                <ChevronRight size={13} />
+              </button>
+            </div>
+          )}
+          </>
         )}
       </div>
 

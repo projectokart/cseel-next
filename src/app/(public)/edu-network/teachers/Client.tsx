@@ -24,7 +24,7 @@ import {
   getMinExperience
 } from '@/data/facultyJobsData';
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 
 const POPULAR_CITIES = [
@@ -689,6 +689,30 @@ export default function TeachersDirectoryClient() {
       .catch((err) => console.warn('[Client] Jobs fetch error:', err));
   }, []);
 
+  // ── PAGINATION (STRICT 50 ITEMS PER PAGE - SYNCED WITH MAP & CARDS) ──
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const JOBS_PER_PAGE = 50;
+
+  // Reset page to 1 whenever any filter or search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchQuery,
+    selectedDesignations,
+    selectedSubjects,
+    selectedBoards,
+    selectedCities,
+    selectedStates,
+    selectedJobTypes,
+    selectedPortals,
+    minSalaryFilter,
+    urgentOnly,
+    sortBy,
+    activeTab
+  ]);
+
+
+
   // Dynamic filter counts
   const dynamicCounts = useMemo(() => {
     const desCounts: Record<string, number> = {};
@@ -836,6 +860,28 @@ export default function TeachersDirectoryClient() {
       return b.rating - a.rating;
     });
   }, [selectedDesignations, selectedSubjects, selectedBoards, selectedCities, searchQuery, sortBy]);
+
+  const totalJobsCount = activeTab === 'jobs' ? filteredJobs.length : filteredFaculty.length;
+  const totalPages = Math.max(1, Math.ceil(totalJobsCount / JOBS_PER_PAGE));
+
+  // Exactly 50 items for current page!
+  const paginatedJobs = useMemo(() => {
+    const start = (currentPage - 1) * JOBS_PER_PAGE;
+    return filteredJobs.slice(start, start + JOBS_PER_PAGE);
+  }, [filteredJobs, currentPage]);
+
+  const paginatedFaculty = useMemo(() => {
+    const start = (currentPage - 1) * JOBS_PER_PAGE;
+    return filteredFaculty.slice(start, start + JOBS_PER_PAGE);
+  }, [filteredFaculty, currentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    const p = Math.max(1, Math.min(newPage, totalPages));
+    setCurrentPage(p);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 380, behavior: 'smooth' });
+    }
+  };
 
   // Search telemetry (600ms debounce)
   useEffect(() => {
@@ -1950,8 +1996,8 @@ export default function TeachersDirectoryClient() {
                 <div className="flex items-center gap-3 shrink-0 flex-wrap">
                   <h2 className="text-xs sm:text-[13px] font-bold text-slate-800 whitespace-nowrap">
                     {activeTab === 'jobs'
-                      ? `Showing 1–${filteredJobs.length} of ${activeJobs.length} Vacancies`
-                      : `Showing 1–${filteredFaculty.length} of ${VERIFIED_FACULTY_MEMBERS.length} Faculty`}
+                      ? `Showing ${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredJobs.length)} of ${filteredJobs.length} Vacancies`
+                      : `Showing ${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredFaculty.length)} of ${filteredFaculty.length} Faculty`}
                   </h2>
 
                   <div className="h-3.5 w-px bg-slate-200" />
@@ -2064,8 +2110,12 @@ export default function TeachersDirectoryClient() {
                 <div className="fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col md:relative md:inset-auto md:z-auto md:w-full md:rounded-3xl md:h-[620px] bg-slate-50 overflow-hidden mb-4">
                   <FacultyJobMap
                     activeTab={activeTab}
-                    jobs={filteredJobs}
-                    faculty={filteredFaculty}
+                    jobs={paginatedJobs}
+                    faculty={paginatedFaculty}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalJobsCount={totalJobsCount}
+                    onPageChange={handlePageChange}
                     selectedCity={selectedCities[0]}
                     onPostJob={handleOpenPostJob}
                     onListTeacher={handleOpenListAsTeacher}
@@ -2108,7 +2158,7 @@ export default function TeachersDirectoryClient() {
                       </button>
                     </div>
                   ) : (
-                    filteredJobs.map((job) => {
+                    paginatedJobs.map((job) => {
                       const isSaved = savedJobIds.includes(job.id);
                       const structuredAddress = formatStructuredAddress(job);
                       const sourceDisplayName = getSourceDisplayName(job.source);
@@ -2201,11 +2251,17 @@ export default function TeachersDirectoryClient() {
 
                               <span className="text-slate-300">|</span>
 
-                              {/* Location: State + District + Local Address in District */}
-                              <div className="flex items-center gap-1.5 min-w-0 flex-1 truncate">
-                                <MapPin size={13} className="text-slate-400 shrink-0" />
-                                <span className="truncate" title={structuredAddress}>{structuredAddress}</span>
-                              </div>
+                              {/* Location: State + District + Local Address with Google Maps Query */}
+                              <a
+                                href={getGoogleMapsSearchUrl(job)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 min-w-0 flex-1 truncate hover:text-[#0A66C2] transition-colors group/loc"
+                                title={`Open Google Maps for ${job.organisationName}, ${structuredAddress}`}
+                              >
+                                <MapPin size={13} className="text-slate-400 group-hover/loc:text-[#EA4335] shrink-0 transition-colors" />
+                                <span className="truncate group-hover/loc:underline">{structuredAddress}</span>
+                              </a>
                             </div>
 
                             {/* Row 3: Short Description (with document icon) */}
@@ -2294,7 +2350,7 @@ export default function TeachersDirectoryClient() {
                     ? "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 w-full mt-2 sm:mt-2.5"
                     : "space-y-3 w-full mt-2 sm:mt-2.5"
                 }>
-                  {filteredFaculty.map((f) => {
+                  {paginatedFaculty.map((f) => {
                     /* ── 1. COMPACT LIST VIEW (LinkedIn SRP Mobile Style) ── */
                     if (viewMode === 'compact') {
                       const fullLocation = [f.city, f.qualification].filter(Boolean).join(' • ');
@@ -2520,6 +2576,74 @@ export default function TeachersDirectoryClient() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+
+
+              {/* ── CLEAN RESPONSIVE NUMBERED PAGINATION BAR (50 ITEMS PER PAGE) ── */}
+              {totalPages > 1 && (
+                <div className="mt-6 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+                  <div className="text-xs text-slate-500 font-medium text-center sm:text-left">
+                    Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
+                  </div>
+
+                  <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage <= 1}
+                      className="h-8 px-2.5 sm:px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft size={14} />
+                      <span className="hidden sm:inline">Prev</span>
+                    </button>
+
+                    {/* Numbered page pills */}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
+                      .reduce((acc: (number | string)[], p, idx, arr) => {
+                        if (idx > 0 && p - (arr[idx - 1] as number) > 1) {
+                          acc.push('...');
+                        }
+                        acc.push(p);
+                        return acc;
+                      }, [])
+                      .map((item, idx) => {
+                        if (item === '...') {
+                          return (
+                            <span key={`dots-${idx}`} className="px-1 text-slate-400 text-xs select-none">
+                              ...
+                            </span>
+                          );
+                        }
+                        const pageNum = item as number;
+                        const isActive = pageNum === currentPage;
+                        return (
+                          <button
+                            key={pageNum}
+                            type="button"
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                              isActive
+                                ? 'bg-[#005689] text-white shadow-2xs'
+                                : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+
+                    <button
+                      type="button"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage >= totalPages}
+                      className="h-8 px-2.5 sm:px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1 cursor-pointer"
+                    >
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
                 </div>
               )}
 

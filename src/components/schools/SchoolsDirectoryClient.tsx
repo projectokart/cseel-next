@@ -1403,7 +1403,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     
     // Labster Design System School Card
     return (
-      <div key={school.id || idx} className="bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 group flex flex-col">
+      <div key={school.id || idx} className="bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 group flex flex-col w-full max-w-full box-border">
         {/* Card Image Header - Compact with sleek single row overlay */}
         <div className="relative h-40 sm:h-44 w-full bg-slate-50 overflow-hidden">
           <img
@@ -1512,13 +1512,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         </div>
 
         {/* Card Body - Crisp Google Places Local Listing Typography */}
-        <div className="p-3.5 sm:p-4 flex-1 flex flex-col">
-          <div className="mb-1.5">
+        <div className="p-3.5 sm:p-4 flex-1 flex flex-col min-w-0 overflow-hidden">
+          <div className="mb-1.5 min-w-0">
             <h2 
-              className="font-['Montserrat',sans-serif] font-bold text-[15px] sm:text-[16px] leading-snug tracking-tight line-clamp-1 cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors"
+              className="font-['Montserrat',sans-serif] font-bold text-[14.5px] sm:text-[15.5px] leading-snug tracking-tight line-clamp-2 break-words cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors"
               style={{ fontSize: '15px', color: '#003C6E', lineHeight: '1.3' }}
             >
-              <Link href={profileUrl} className="hover:text-[#006FCC] hover:underline transition-colors inline">
+              <Link href={profileUrl} className="hover:text-[#006FCC] hover:underline transition-colors inline break-words">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
             </h2>
@@ -1538,13 +1538,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           ) : null}
           
           {/* Address & Meta */}
-          <div className="text-[12.5px] text-gray-600 flex items-start justify-between gap-1.5 mb-2.5 leading-snug">
-            <div className="flex items-start gap-1.5 min-w-0">
+          <div className="text-[12.5px] text-gray-600 flex items-start justify-between gap-1.5 mb-2.5 leading-snug min-w-0">
+            <div className="flex items-start gap-1.5 min-w-0 flex-1">
               <MapPin size={14} className="text-red-500 shrink-0 mt-0.5" />
-              <span className="break-words line-clamp-1">{formatCardLocation(school)}</span>
+              <span className="break-words line-clamp-2 min-w-0">{formatCardLocation(school)}</span>
             </div>
             {school.distance !== undefined && school.distance > 0 && (
-              <span className="shrink-0 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-2 py-0.5 rounded text-[11px] font-bold shadow-sm whitespace-nowrap">
+              <span className="shrink-0 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-300 px-2 py-0.5 rounded text-[11px] font-bold shadow-sm whitespace-nowrap ml-1">
                 {school.distance} km
               </span>
             )}
@@ -1571,9 +1571,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           )}
 
           {/* Features Grid - Standard Educational Icons */}
-          <div className="grid grid-cols-2 gap-y-2 gap-x-2.5 text-[11.5px] text-gray-700 mb-3.5 bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/70">
+          <div className="grid grid-cols-2 gap-y-2 gap-x-2 text-[11.5px] text-gray-700 mb-3.5 bg-slate-50/90 p-2.5 rounded-xl border border-slate-200/70 min-w-0 overflow-hidden">
             {/* 1. Board with Official Logo Badge */}
-            <div className="flex items-center gap-1.5 min-w-0" title={`Board: ${school.board || school.board_secondary_10th || 'CBSE'}`}>
+            <div className="flex items-center gap-1.5 min-w-0 overflow-hidden" title={`Board: ${school.board || school.board_secondary_10th || 'CBSE'}`}>
               <div className="w-4 h-4 flex items-center justify-center shrink-0">
                 {renderBoardLogo(school.board || school.board_secondary_10th || 'CBSE')}
               </div>
@@ -1581,19 +1581,19 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </div>
 
             {/* 2. Classes / Grade Range */}
-            <div className="flex items-center gap-1.5 min-w-0" title={`Classes: ${formatCompactClasses(school.classes || (school as any).class_range)}`}>
+            <div className="flex items-center gap-1.5 min-w-0 overflow-hidden" title={`Classes: ${formatCompactClasses(school.classes || (school as any).class_range)}`}>
               <GraduationCap size={13} className="text-purple-600 shrink-0" />
               <span className="font-semibold text-slate-800 truncate">{formatCompactClasses(school.classes || (school as any).class_range)}</span>
             </div>
 
             {/* 3. Medium of Instruction (Languages icon, NOT building) */}
-            <div className="flex items-center gap-1.5 min-w-0" title={`Medium: ${school.medium || school.medium_of_instruction_1 || 'English Medium'}`}>
+            <div className="flex items-center gap-1.5 min-w-0 overflow-hidden" title={`Medium: ${school.medium || school.medium_of_instruction_1 || 'English Medium'}`}>
               <Languages size={13} className="text-indigo-600 shrink-0" />
               <span className="font-medium text-slate-700 truncate">{school.medium || school.medium_of_instruction_1 || 'English Medium'}</span>
             </div>
 
             {/* 4. Format / Type */}
-            <div className="flex items-center gap-1.5 min-w-0" title={`Type: ${school.school_type || school.gender || 'Co-ed Day'}`}>
+            <div className="flex items-center gap-1.5 min-w-0 overflow-hidden" title={`Type: ${school.school_type || school.gender || 'Co-ed Day'}`}>
               <Building2 size={13} className="text-emerald-600 shrink-0" />
               <span className="font-medium text-slate-700 truncate">{school.school_type || school.gender || 'Co-ed Day'}</span>
             </div>
@@ -1659,7 +1659,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     return (
       <div 
         key={school.id || idx} 
-        className="bg-white rounded-2xl border border-[#E8E9E9] hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden"
+        className="bg-white rounded-2xl border border-[#E8E9E9] hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden w-full max-w-full box-border"
       >
         {/* Top/Main block: Thumbnail + Info */}
         <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
@@ -1692,10 +1692,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           {/* Info Details */}
           <div className="flex-1 min-w-0 flex flex-col justify-center">
             {/* Title & Iconic Verified Badge + Board */}
-            <div className="flex items-start sm:items-center gap-1.5 mb-1 flex-wrap">
+            <div className="flex items-start sm:items-center gap-1.5 mb-1 flex-wrap min-w-0">
               <Link 
                 href={profileUrl} 
-                className="font-['Montserrat',sans-serif] font-bold text-sm sm:text-base text-[#003C6E] leading-snug hover:text-[#006FCC] transition-colors inline"
+                className="font-['Montserrat',sans-serif] font-bold text-sm sm:text-base text-[#003C6E] leading-snug hover:text-[#006FCC] transition-colors inline break-words line-clamp-2"
                 title={school.school_name || school.name}
               >
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
@@ -2499,7 +2499,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       )}
 
       {/* ── Main Layout: Admin Dashboard Style (Sidebar + Content) ── */}
-      <div className={`w-full flex flex-col md:flex-row gap-3 sm:gap-4 pl-0 pr-2 sm:pr-4 lg:pr-5 pt-0 pb-4 sm:pb-6 flex-1 ${
+      <div className={`w-full flex flex-col md:flex-row gap-3 sm:gap-4 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 pt-2 sm:pt-3 md:pt-0 pb-4 sm:pb-6 flex-1 ${
         viewMode === 'map' ? 'p-0 md:pl-0 md:pr-4 lg:pr-5 md:pb-6' : ''
       }`}>
         {/* ── 1. Modern Mobile Filter Sheet (Drawer / Bottom Sheet on < 768px) ── */}
@@ -3765,15 +3765,15 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   </div>
                 </div>
               ) : viewMode === 'compact' ? (
-                <div className="flex flex-col gap-2 sm:gap-2.5 touch-pan-y overscroll-contain">
+                <div className="flex flex-col gap-2.5 sm:gap-3 touch-pan-y overscroll-contain mt-2 sm:mt-2.5 w-full">
                   {displayedSchools.slice(0, 25).map((school, idx) => renderCompactSchoolRow(school, idx))}
                 </div>
               ) : viewMode === 'grid3' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 touch-pan-y overscroll-contain">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-5 touch-pan-y overscroll-contain mt-2 sm:mt-2.5 w-full">
                   {displayedSchools.slice(0, 25).map((school, idx) => renderSchoolCard(school, idx))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-5 touch-pan-y overscroll-contain">
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3.5 sm:gap-5 touch-pan-y overscroll-contain mt-2 sm:mt-2.5 w-full">
                   {displayedSchools.slice(0, 25).map((school, idx) => renderSchoolCard(school, idx))}
                 </div>
               )}

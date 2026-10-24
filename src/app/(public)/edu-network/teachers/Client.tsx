@@ -25,6 +25,7 @@ import {
 } from '@/data/facultyJobsData';
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
+import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 
 const POPULAR_CITIES = [
@@ -2327,6 +2328,17 @@ export default function TeachersDirectoryClient() {
                                 href={job.applyUrl || job.originalUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() => {
+                                  trackCseelEvent('job_apply_click', {
+                                    job_id: job.id,
+                                    job_title: job.jobPostName,
+                                    school_name: job.organisationName,
+                                    city: job.city,
+                                    state: job.state,
+                                    salary: job.salary,
+                                    source: job.source,
+                                  });
+                                }}
                                 className="h-7.5 px-3.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-bold transition inline-flex items-center justify-center gap-1 shadow-2xs"
                               >
                                 <span>Apply</span>

@@ -85,8 +85,23 @@ const nextConfig = {
       { source: '/projectocart', destination: 'https://projectokart.com', permanent: true },
       { source: '/subject', destination: '/domain/science', permanent: false },
       { source: '/contact', destination: '/contact-us', permanent: true },
+      { source: '/about-us', destination: '/about', permanent: true },
       { source: '/about-experiential-lab', destination: '/about', permanent: true },
       { source: '/match-your-syllabus', destination: '/materials', permanent: true },
+      { source: '/composite-skill-lab', destination: '/composite-lab', permanent: true },
+      { source: '/edu-network/schools', destination: '/schools', permanent: true },
+      { source: '/edu-network/schools/:slug*', destination: '/schools', permanent: true },
+      { source: '/edu-network/school/:slug*', destination: '/schools', permanent: true },
+      { source: '/edu-network/organisation/:slug*', destination: '/schools', permanent: true },
+      { source: '/edu-network/jobs', destination: '/careers', permanent: true },
+      { source: '/edu-network/jobs/:id*', destination: '/careers', permanent: true },
+      { source: '/edu-network/teacher-jobs', destination: '/careers', permanent: true },
+    ];
+  },
+  async rewrites() {
+    return [
+      { source: '/freelancers', destination: '/freelancers/index.html' },
+      { source: '/freelancers/', destination: '/freelancers/index.html' },
     ];
   },
   async headers() {

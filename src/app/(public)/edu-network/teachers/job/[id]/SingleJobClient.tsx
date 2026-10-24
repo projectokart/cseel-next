@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { FacultyJobItem } from '@/data/facultyJobsData';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
+import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 
 const FacultyJobMap = dynamic(() => import('@/components/teachers/FacultyJobMap'), {
   ssr: false,
@@ -178,6 +179,17 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     href={job.originalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => {
+                      trackCseelEvent('job_apply_click', {
+                        job_id: job.id,
+                        job_title: job.jobPostName,
+                        school_name: job.organisationName,
+                        city: job.city,
+                        state: job.state,
+                        salary: job.salary,
+                        source: job.source,
+                      });
+                    }}
                     className="flex-1 sm:flex-initial py-2.5 px-6 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98"
                   >
                     <ExternalLink className="w-4 h-4 shrink-0" />
@@ -366,6 +378,17 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     href={job.originalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => {
+                      trackCseelEvent('job_apply_click', {
+                        job_id: job.id,
+                        job_title: job.jobPostName,
+                        school_name: job.organisationName,
+                        city: job.city,
+                        state: job.state,
+                        salary: job.salary,
+                        source: job.source,
+                      });
+                    }}
                     className="w-full py-3 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-xs"
                   >
                     <ExternalLink className="w-4 h-4" />

@@ -698,14 +698,19 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Hamburger Button */}
-          <div className="lg:hidden">
-            <M3IconButton
-              ariaLabel="Toggle navigation menu"
-              variant="standard"
-              size="sm"
-              icon={mobileOpen ? <X className="h-5 w-5 text-[#1b1f23]" /> : <Menu className="h-5 w-5 text-[#1b1f23]" />}
+          <div className="lg:hidden flex items-center">
+            <button
+              type="button"
+              aria-label="Toggle navigation menu"
               onClick={() => setMobileOpen(!mobileOpen)}
-            />
+              className="p-2 -mr-1.5 rounded-xl text-[#1B1F23] hover:text-[#006FCC] hover:bg-slate-100 active:bg-slate-200 transition-all flex items-center justify-center cursor-pointer"
+            >
+              {mobileOpen ? (
+                <X className="h-7 w-7 stroke-[2.3]" />
+              ) : (
+                <Menu className="h-7 w-7 stroke-[2.3]" />
+              )}
+            </button>
           </div>
         </div>
 

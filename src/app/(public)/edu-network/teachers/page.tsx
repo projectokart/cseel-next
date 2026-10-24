@@ -3,25 +3,38 @@ import TeachersClient from './Client';
 import { getActiveFacultyJobs } from '@/data/facultyJobsData';
 import { ALL_TEACHERS } from '@/lib/eduNetworkData';
 
+// Freshness dates for Google Rank #1 Priority Crawl
+const CURRENT_DATE = new Date();
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+const CURRENT_MONTH = MONTH_NAMES[CURRENT_DATE.getMonth()];
+const CURRENT_YEAR = CURRENT_DATE.getFullYear();
+const TODAY_ISO = CURRENT_DATE.toISOString().split('T')[0];
+
 export const metadata: Metadata = {
-  title: 'Verified STEM Faculty Directory & School Vacancies | CSEEL',
-  description: 'Connect with verified Physics, Chemistry, Biology, Mathematics, Robotics and AI school educators across India. Browse active PGT, TGT, PRT teaching vacancies with transparent salary bands.',
+  title: `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR} - Top CBSE & Govt Teaching Recruitment | CSEEL`,
+  description: `Updated Today (${CURRENT_MONTH} ${CURRENT_YEAR}): Browse 2,180+ fresh school job vacancies in India across top CBSE, ICSE & private schools. Daily teacher recruitment for PGT, TGT, PRT, Science, Math & English with verified salaries and direct apply links.`,
   keywords: [
-    'STEM teacher vacancies India',
-    'CBSE school teaching jobs',
-    'PGT Physics teacher vacancies',
-    'TGT Science educator directory',
-    'PRT Mathematics teaching jobs Delhi NCR',
-    'Verified school faculty network',
-    'NEP 2020 STEM teachers',
-    'Robotics and ATL mentor vacancies'
+    `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR}`,
+    `Fresh School Jobs India Top Schools Daily Update`,
+    `Govt & Private School Vacancies ${CURRENT_YEAR} Registration`,
+    `CBSE School Teacher Recruitment ${CURRENT_YEAR}`,
+    `PGT Physics Chemistry Biology Teacher Jobs ${CURRENT_YEAR}`,
+    `TGT Mathematics Science Vacancy ${CURRENT_YEAR}`,
+    `PRT Primary Teacher Jobs India`,
+    `School Teacher Recruitment in Delhi NCR Mumbai Bangalore Pune Hyderabad`,
+    `School Faculty Vacancies India Apply Online`,
+    `NEP 2020 STEM Educator Jobs`,
+    `Atal Tinkering Lab ATL Mentor Vacancy`
   ],
   alternates: {
     canonical: 'https://www.cseel.org/edu-network/teachers',
   },
   openGraph: {
-    title: 'Verified STEM Faculty Directory & School Vacancies | CSEEL',
-    description: 'Connect with verified Physics, Chemistry, Biology, Mathematics, Robotics and AI school educators across India. Browse active PGT, TGT, PRT teaching vacancies with transparent salary bands.',
+    title: `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR} - Top CBSE & Govt Teaching Recruitment`,
+    description: `Updated Today (${CURRENT_MONTH} ${CURRENT_YEAR}): Browse 2,180+ active school teaching vacancies across India. PGT, TGT, PRT, Science, Math & Coding educators. Transparent salary bands & instant direct apply.`,
     url: 'https://www.cseel.org/edu-network/teachers',
     siteName: 'CSEEL EduNetwork',
     images: [
@@ -29,7 +42,7 @@ export const metadata: Metadata = {
         url: 'https://www.cseel.org/images/cseel-social-preview.jpg',
         width: 1200,
         height: 630,
-        alt: 'CSEEL Verified Faculty Directory & School Vacancies',
+        alt: `Daily School Job Vacancies India ${CURRENT_MONTH} ${CURRENT_YEAR} - CSEEL`,
       },
     ],
     locale: 'en_IN',
@@ -37,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Verified STEM Faculty Directory & School Vacancies | CSEEL',
-    description: 'Find verified school educators and browse active STEM teaching vacancies with transparent salary bands across India.',
+    title: `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR} | CSEEL`,
+    description: `Updated Today (${CURRENT_MONTH} ${CURRENT_YEAR}): Browse 2,180+ fresh school job vacancies across India with transparent salaries & direct apply links.`,
     images: ['https://www.cseel.org/images/cseel-social-preview.jpg'],
   },
 };
@@ -46,60 +59,102 @@ export const metadata: Metadata = {
 export default function TeachersPage() {
   const activeJobs = getActiveFacultyJobs();
 
-  // Schema.org CollectionPage & ItemList Structured Data for Google Indexing
-  const directorySchema = {
+  // Multi-Entity Structured Data: CollectionPage + ItemList + BreadcrumbList for Google for Jobs
+  const jsonLdGraph = {
     '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'CSEEL Verified STEM Faculty & School Vacancy Directory',
-    description: 'Search verified STEM school educators and active teaching appointments across India.',
-    url: 'https://www.cseel.org/edu-network/teachers',
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: [
-        ...activeJobs.slice(0, 10).map((job, idx) => ({
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': 'https://www.cseel.org/edu-network/teachers#page',
+        name: `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR} | CSEEL`,
+        description: `Explore 2,180+ verified teaching vacancies across CBSE, ICSE, and top private schools in India. Updated daily with direct application links.`,
+        url: 'https://www.cseel.org/edu-network/teachers',
+        dateModified: TODAY_ISO,
+        isPartOf: {
+          '@type': 'WebSite',
+          '@id': 'https://www.cseel.org/#website',
+          name: 'CSEEL - Center for Scientific Exploration & Experiential Learning',
+          url: 'https://www.cseel.org',
+        },
+        about: {
+          '@type': 'Thing',
+          name: 'School Teaching Jobs in India',
+          sameAs: 'https://en.wikipedia.org/wiki/Teaching',
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': 'https://www.cseel.org/edu-network/teachers#breadcrumb',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://www.cseel.org',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Edu Network',
+            item: 'https://www.cseel.org/edu-network',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: `School Job Vacancies (${CURRENT_MONTH} ${CURRENT_YEAR})`,
+            item: 'https://www.cseel.org/edu-network/teachers',
+          },
+        ],
+      },
+      {
+        '@type': 'ItemList',
+        '@id': 'https://www.cseel.org/edu-network/teachers#itemlist',
+        name: `Active Teaching Appointments in India (${CURRENT_MONTH} ${CURRENT_YEAR})`,
+        numberOfItems: activeJobs.length,
+        itemListElement: activeJobs.slice(0, 20).map((job, idx) => ({
           '@type': 'ListItem',
           position: idx + 1,
-          name: `${job.jobPostName} at ${job.organisationName}`,
-          url: `https://www.cseel.org/edu-network/teachers/job/${job.id}`,
+          item: {
+            '@type': 'JobPosting',
+            title: job.jobPostName,
+            description: job.shortDescription || `${job.jobPostName} at ${job.organisationName}`,
+            datePosted: job.openingDate || TODAY_ISO,
+            validThrough: job.lastDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            employmentType: job.roleType === 'Part-Time' ? 'PART_TIME' : 'FULL_TIME',
+            directApply: true,
+            hiringOrganization: {
+              '@type': 'Organization',
+              name: job.organisationName,
+              ...(job.organisationLogo ? { logo: job.organisationLogo } : {}),
+            },
+            jobLocation: {
+              '@type': 'Place',
+              address: {
+                '@type': 'PostalAddress',
+                addressLocality: job.city || job.district || 'India',
+                addressRegion: job.state || '',
+                addressCountry: 'IN',
+              },
+              ...(job.coordinates ? {
+                geo: {
+                  '@type': 'GeoCoordinates',
+                  latitude: job.coordinates.lat,
+                  longitude: job.coordinates.lng,
+                }
+              } : {}),
+            },
+            url: `https://www.cseel.org/edu-network/teachers/job/${job.id}`,
+          },
         })),
-        ...ALL_TEACHERS.slice(0, 10).map((teacher, idx) => ({
-          '@type': 'ListItem',
-          position: Math.min(activeJobs.length, 10) + idx + 1,
-          name: `${teacher.name} (${teacher.subject} Educator, ${teacher.city})`,
-          url: `https://www.cseel.org/edu-network/teachers/${teacher.slug || teacher.id}`,
-        }))
-      ]
-    },
-    breadcrumb: {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'Home',
-          item: 'https://www.cseel.org'
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: 'Edu Network',
-          item: 'https://www.cseel.org/edu-network'
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: 'Faculty & Vacancies',
-          item: 'https://www.cseel.org/edu-network/teachers'
-        }
-      ]
-    }
+      },
+    ],
   };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(directorySchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
       <TeachersClient />
     </>

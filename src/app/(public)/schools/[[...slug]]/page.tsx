@@ -65,5 +65,95 @@ export default async function SchoolsDirectoryPage({
   const parsedQuery = parseSchoolsSeoQuery(segments, resolvedSearchParams);
   const directoryData = await fetchSchoolsForDirectory(parsedQuery);
 
-  return <SchoolsDirectoryClient initialData={directoryData} />;
+  // Hyper-Local Schema.org Graph for Schools Directory
+  const jsonLdGraph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': `${parsedQuery.canonicalUrl}#page`,
+        name: parsedQuery.pageTitle,
+        description: parsedQuery.metaDescription,
+        url: parsedQuery.canonicalUrl,
+        isPartOf: {
+          '@type': 'WebSite',
+          '@id': 'https://www.cseel.org/#website',
+          name: 'CSEEL',
+          url: 'https://www.cseel.org',
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${parsedQuery.canonicalUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://www.cseel.org',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Schools Directory',
+            item: 'https://www.cseel.org/schools',
+          },
+          ...(parsedQuery.state ? [{
+            '@type': 'ListItem',
+            position: 3,
+            name: parsedQuery.state,
+            item: `https://www.cseel.org/schools/${parsedQuery.state.toLowerCase().replace(/\s+/g, '-')}`,
+          }] : []),
+        ],
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${parsedQuery.canonicalUrl}#itemlist`,
+        name: parsedQuery.pageTitle,
+        numberOfItems: directoryData.totalCount,
+        itemListElement: directoryData.schools.slice(0, 15).map((school, idx) => ({
+          '@type': 'ListItem',
+          position: idx + 1,
+          item: {
+            '@type': ['School', 'EducationalOrganization', 'LocalBusiness'],
+            name: school.school_name || school.name,
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: school.address || '',
+              addressLocality: school.district_name || school.city || '',
+              addressRegion: school.state_name || school.state || '',
+              postalCode: school.pincode || undefined,
+              addressCountry: 'IN',
+            },
+            ...(school.latitude && school.longitude ? {
+              geo: {
+                '@type': 'GeoCoordinates',
+                latitude: school.latitude,
+                longitude: school.longitude,
+              }
+            } : {}),
+            telephone: school.phone || undefined,
+            url: school.website || `https://www.cseel.org/schools`,
+            ...(school.rating ? {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: String(school.rating),
+                reviewCount: '1',
+              }
+            } : {}),
+          },
+        })),
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
+      />
+      <SchoolsDirectoryClient initialData={directoryData} />
+    </>
+  );
 }

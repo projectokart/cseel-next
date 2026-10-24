@@ -92,11 +92,11 @@
     /* 4. Global Dynamic Styling & Button Variations (Admin Controlled) */
     --brand-primary: #006FCC;
     --brand-primary-hover: #005499;
-    --brand-secondary-bg: #EDF5FA;
+    --brand-secondary-bg: #F7F8F8;
     --brand-secondary-text: #006FCC;
-    --brand-secondary-border: #D6EDFF;
-    --btn-radius: 9999px;
-    --btn-shadow: 0 4px 14px rgba(0, 111, 204, 0.35);
+    --brand-secondary-border: #E8E9E9;
+    --btn-radius: 14px;
+    --btn-shadow: 0 4px 14px rgba(0, 111, 204, 0.25);
     --card-radius: 16px;
     --google-blue: #1A73E8;
     --google-blue-hover: #1557B0;
@@ -184,6 +184,10 @@
     @apply border-border;
   }
 
+  .wf-force-outline-none[tabindex="-1"]:focus {
+    outline: none !important;
+  }
+
   html {
     font-size: 16px;
     scroll-behavior: smooth;
@@ -196,13 +200,14 @@
 
   body {
     background-color: #ffffff;
-    color: #3C4043;
-    font-family: var(--font-roboto), Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+    color: #334155;
+    font-family: 'Lato', var(--font-roboto), Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 16px;
     letter-spacing: 0.00625em;
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     text-size-adjust: 100%;
     overflow-x: clip;
     max-width: 100vw;
@@ -210,14 +215,14 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     UNIVERSAL HEADING SYSTEM (Google Search Console Typography)
+     UNIVERSAL HEADING SYSTEM (Labster Montserrat Typography)
      ═══════════════════════════════════════════════════════════ */
   h1, h2, h3, h4, h5, h6,
   .h1, .h2, .h3, .h4, .h5, .h6,
   .hero-h1, .hero-h2, .hero-h3 {
-    font-family: 'Google Sans Display', 'Google Sans', var(--font-roboto), Roboto, Arial, sans-serif;
-    letter-spacing: -0.01em;
-    color: #3C4043;
+    font-family: 'Montserrat', 'Google Sans Display', 'Google Sans', sans-serif;
+    letter-spacing: -0.02em;
+    color: #003C6E;
   }
 
   h1, .h1 { font-weight: 800; }
@@ -230,37 +235,41 @@
   /* Preserve Original Brand Blue & Bold Typography Exclusively for "Welcome to CSEEL" Hero Title */
   h1.cseel-brand-hero-h1,
   h1.cseel-brand-hero-h1 span {
-    color: #005689 !important;
+    font-family: 'Montserrat', sans-serif !important;
+    color: #003C6E !important;
     font-weight: 800 !important;
   }
 
-  /* Interactive Heading Hovers */
+  /* Interactive Heading Hovers (Labster Accent Blue #006FCC) */
   a:hover h1, a:hover h2, a:hover h3, a:hover h4,
   .group:hover h1:not(.text-white):not([style*="color: #ffffff"]):not([style*="color: rgb(255, 255, 255)"]),
   .group:hover h2:not(.text-white),
   .group:hover h3:not(.text-white),
   .group:hover h4:not(.text-white) {
-    color: #1A73E8 !important;
+    color: #006FCC !important;
   }
 
-  /* Navbar Mega Menu Titles: Google Charcoal (#3C4043) by default, Google Blue (#1A73E8) on hover */
+  /* Navbar Mega Menu Titles: Labster Hanken Grotesk, #1B1F23 by default, #006FCC on hover */
   .nav-menu-item-title {
-    color: #3C4043 !important;
-    font-weight: 500 !important;
+    font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #1B1F23 !important;
+    font-weight: 700 !important;
     transition: color 0.18s ease-in-out;
   }
   .group:hover .nav-menu-item-title,
   a:hover .nav-menu-item-title,
   .nav-menu-item-title:hover {
-    color: #1A73E8 !important;
+    color: #006FCC !important;
   }
 
-  /* Top Navigation Bar Item Links: #3C4043 by default, #1A73E8 on hover/open */
+  /* Top Navigation Bar Item Links: Labster Hanken Grotesk & #1B1F23 Colors */
   .top-nav-link,
   .top-nav-link span {
-    color: #3C4043 !important;
-    font-weight: 500;
-    transition: color 0.18s ease-in-out;
+    color: #1B1F23 !important;
+    font-weight: 700 !important;
+    font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    letter-spacing: 0.16px;
+    transition: color 0.2s ease-in-out;
   }
   .top-nav-link:hover,
   .top-nav-link:hover span,
@@ -268,13 +277,14 @@
   .top-nav-link.is-open,
   .top-nav-link.is-open span,
   .top-nav-link.is-open svg {
-    color: #1A73E8 !important;
+    color: #006FCC !important;
   }
 
   /* Preserve Pure White Headings in Dark / Blue Hero Banners */
   h1.text-white, h2.text-white, h3.text-white, h4.text-white, h5.text-white, h6.text-white,
   .text-white h1, .text-white h2, .text-white h3, .text-white h4, .text-white h5, .text-white h6,
   .bg-primary h1, .bg-primary h2, .bg-primary h3, .bg-primary h4,
+  .about-hero-gradient h1, .about-hero-gradient h2, .about-hero-gradient h3, .about-hero-gradient h4,
   [class*="from-[#0D4979]"] h1, [class*="from-[#0D4979]"] h2, [class*="from-[#0D4979]"] h3,
   [class*="from-[#005689]"] h1, [class*="from-[#005689]"] h2, [class*="from-[#005689]"] h3,
   [class*="from-[#002244]"] h1, [class*="from-[#002244]"] h2, [class*="from-[#002244]"] h3,
@@ -422,93 +432,73 @@
   /* ═══════════════════════════════════════════════════════════
      4. BUTTONS & ACTIONS (Dynamic Admin Theme + CSEEL & Google Variations)
      ═══════════════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════════════
+     LABSTER SIGNATURE BUTTON SYSTEM (Rounded-XL 14px, Montserrat Font)
+     ═══════════════════════════════════════════════════════════ */
   .btn-sm {
-    @apply h-9 px-3.5 py-1.5 text-xs;
-    border-radius: var(--btn-radius, 9999px);
+    @apply h-9 px-4 py-1.5 text-xs font-bold;
+    border-radius: var(--btn-radius, 14px);
+    font-family: 'Montserrat', sans-serif;
   }
   .btn-md {
-    @apply h-11 px-5 py-2.5 text-sm md:text-[15px];
-    border-radius: var(--btn-radius, 9999px);
+    @apply h-11 px-6 py-2.5 text-sm md:text-[15px] font-bold;
+    border-radius: var(--btn-radius, 14px);
+    font-family: 'Montserrat', sans-serif;
   }
   .btn-lg {
-    @apply h-12 px-8 py-3.5 text-base;
-    border-radius: var(--btn-radius, 9999px);
+    @apply h-12 px-8 py-3.5 text-base font-bold;
+    border-radius: var(--btn-radius, 14px);
+    font-family: 'Montserrat', sans-serif;
   }
 
-  /* ── 🌟 VARIATION 1: CSEEL MODERN SIGNATURE BUTTON (Pill rounded-full, bold, glow shadow) ── */
-  .btn-cseel, .button_cseel {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    border-radius: 9999px !important;
+  /* ── 🌟 LABSTER SIGNATURE PRIMARY BUTTON (Rounded-XL 14px, #006FCC) ── */
+  .btn-cseel, .button_cseel, .btn-primary, .button_primary, .button-primary, a.button_primary, button.button_primary, a.btn-primary, button.btn-primary, .btn-google-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer active:scale-[0.98];
+    border-radius: var(--btn-radius, 14px) !important;
     background-color: var(--brand-primary, #006FCC) !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(0, 111, 204, 0.35) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    box-shadow: 0 4px 14px rgba(0, 111, 204, 0.25) !important;
     border: none;
     line-height: 1.3;
   }
-  .btn-cseel:hover, .button_cseel:hover {
-    background-color: var(--brand-primary-hover, #005499) !important;
-    box-shadow: 0 6px 22px rgba(0, 111, 204, 0.45) !important;
+  .btn-cseel:hover, .button_cseel:hover, .btn-primary:hover, .button_primary:hover, .button-primary:hover, a.button_primary:hover, button.button_primary:hover, a.btn-primary:hover, button.btn-primary:hover, .btn-google-primary:hover {
+    background-color: var(--brand-primary-hover, #005399) !important;
+    box-shadow: 0 6px 20px rgba(0, 111, 204, 0.35) !important;
     transform: translateY(-1px);
     color: #ffffff !important;
   }
 
-  /* ── 🌟 VARIATION 2: GOOGLE MATERIAL BUTTON (Pill rounded-full #1A73E8) ── */
-  .btn-google, .button_google {
-    @apply inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer;
-    border-radius: 9999px !important;
-    background-color: var(--google-blue, #1A73E8) !important;
-    color: #ffffff !important;
-    font-family: var(--font-google-sans), Google Sans, Roboto, sans-serif !important;
-    letter-spacing: 0.2px;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3) !important;
-    border: none;
-    line-height: 1.3;
-  }
-  .btn-google:hover, .button_google:hover {
-    background-color: var(--google-blue-hover, #1557B0) !important;
-    box-shadow: 0 1px 3px 1px rgba(60, 64, 67, 0.25) !important;
-    transform: translateY(-0.5px);
-    color: #ffffff !important;
-  }
-
-  /* ── 🌟 DYNAMIC PRIMARY BUTTON (Adapts to Admin Choice: Pill Shape) ── */
-  .btn-google-primary, .btn-primary, .button_primary, .button-primary, a.button_primary, button.button_primary, a.btn-primary, button.btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    border-radius: var(--btn-radius, 9999px);
-    background-color: var(--brand-primary, #006FCC) !important;
-    color: #ffffff !important;
-    box-shadow: var(--btn-shadow, 0 4px 14px rgba(0, 111, 204, 0.35));
-    border: none;
-    line-height: 1.3;
-  }
-  .btn-google-primary:hover, .btn-primary:hover, .button_primary:hover, .button-primary:hover, a.button_primary:hover, button.button_primary:hover, a.btn-primary:hover, button.btn-primary:hover {
-    background-color: var(--brand-primary-hover, #005499) !important;
-    box-shadow: 0 6px 22px rgba(0, 111, 204, 0.45);
-    transform: translateY(-1px);
-    color: #ffffff !important;
-  }
-
+  /* ── 🌟 LABSTER SECONDARY / TONAL BUTTON ── */
   .btn-google-tonal, .btn-tonal, .btn-google-secondary, .btn-secondary, .button_secondary, .button-secondary, a.button_secondary, button.button_secondary, a.btn-secondary, button.btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer;
-    border-radius: var(--btn-radius, 9999px);
-    background-color: var(--brand-secondary-bg, #EDF5FA) !important;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm md:text-[15px] font-bold transition-all duration-200 cursor-pointer active:scale-[0.98];
+    border-radius: var(--btn-radius, 14px) !important;
+    background-color: var(--brand-secondary-bg, #F7F8F8) !important;
     color: var(--brand-secondary-text, #006FCC) !important;
-    border: 1px solid var(--brand-secondary-border, #D6EDFF) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    border: 1px solid var(--brand-secondary-border, #E8E9E9) !important;
     line-height: 1.3;
   }
   .btn-google-tonal:hover, .btn-tonal:hover, .btn-google-secondary:hover, .btn-secondary:hover, .button_secondary:hover, .button-secondary:hover, a.button_secondary:hover, button.button_secondary:hover, a.btn-secondary:hover, button.btn-secondary:hover {
-    background-color: var(--brand-secondary-border, #D6EDFF) !important;
-    color: var(--brand-primary-hover, #005499) !important;
+    background-color: #EDF5FA !important;
+    border-color: #D6EDFF !important;
+    color: var(--brand-primary-hover, #005399) !important;
     transform: translateY(-1px);
   }
+
+  /* ── 🌟 LABSTER OUTLINE / WHITE BUTTON ── */
   .btn-google-outline, .btn-outline, .button_outline, .button-outline, a.button_outline, button.button_outline, a.btn-outline, button.btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold bg-white active:scale-[0.98] transition-all cursor-pointer;
-    border-radius: var(--btn-radius, 9999px);
-    border: 2px solid var(--brand-primary, #006FCC);
-    color: var(--brand-primary, #006FCC);
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold bg-white active:scale-[0.98] transition-all cursor-pointer;
+    border-radius: var(--btn-radius, 14px) !important;
+    border: 1px solid #E8E9E9 !important;
+    font-family: 'Montserrat', sans-serif !important;
+    color: #003C6E !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   .btn-google-outline:hover, .btn-outline:hover, .button_outline:hover, a.button_outline:hover, button.button_outline:hover {
-    background-color: var(--brand-secondary-bg, #EDF5FA);
+    background-color: #F7F8F8 !important;
+    border-color: #CBD5E1 !important;
+    color: #006FCC !important;
   }
   .btn-google-danger, .btn-danger {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold bg-[#EA4335] hover:bg-[#D93025] text-white shadow-sm active:scale-[0.98] transition-all cursor-pointer;
@@ -659,7 +649,7 @@
   }
 }
 
-/* Labster Motion & Smooth Fluid Keyframes */
+/* Fluid Motion & Keyframes */
 @keyframes fadeSlideUp {
   0% {
     opacity: 0;
@@ -693,11 +683,11 @@
   }
 }
 
-.labster-motion-card {
+.cseel-motion-card {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.labster-motion-card:hover {
+.cseel-motion-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 32px -8px rgba(0, 60, 110, 0.12);
 }
@@ -1422,6 +1412,83 @@
   border-color: #005689 !important;
   font-weight: 600;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   LABSTER WEBFLOW COMPATIBILITY & GLOBAL STYLES
+   ═══════════════════════════════════════════════════════════ */
+.w-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #006FCC;
+  color: #FFFFFF !important;
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px 24px;
+  text-decoration: none;
+  line-height: 1.3;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.w-button:hover {
+  background-color: #005499;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 111, 204, 0.35);
+}
+
+.w-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  color: #003C6E !important;
+  border: 1px solid #CBD5E1;
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px 24px;
+  text-decoration: none;
+  line-height: 1.3;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.w-button-secondary:hover {
+  background-color: #F8FAFC;
+  border-color: #94A3B8;
+  transform: translateY(-1px);
+}
+
+/* Global Forms & Input Styling */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea,
+.w-input,
+.w-select {
+  font-family: 'Lato', -apple-system, sans-serif;
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus,
+.w-input:focus,
+.w-select:focus {
+  border-color: #006FCC !important;
+  box-shadow: 0 0 0 3px rgba(0, 111, 204, 0.15) !important;
+  outline: none !important;
+}
+
+/* Global Swiper Pagination (Labster Blue) */
+.swiper-pagination-bullet {
+  transition: all 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  background: #006FCC !important;
+  width: 24px !important;
+  border-radius: 9999px !important;
+}
+
 
 
 

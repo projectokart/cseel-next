@@ -6,6 +6,7 @@ import TopBar from "./TopBar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import AnnouncementBar from "./AnnouncementBar";
+import ResearchRibbonBanner from "./ResearchRibbonBanner";
 import OfferPopup from "@/components/offers/OfferPopup";
 
 import { NavigationProvider } from '@/contexts/NavigationContext';
@@ -32,6 +33,9 @@ const LayoutContent = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen flex flex-col w-full max-w-[100vw] [overflow-x:clip]">
+      {/* Empirical Research Announcement Ribbon at the very top of all pages */}
+      <ResearchRibbonBanner />
+
       {/* On non-home pages, Universal Admin Bar handles in-place live editing */}
       {!isHomePage && <UniversalAdminBar />}
 

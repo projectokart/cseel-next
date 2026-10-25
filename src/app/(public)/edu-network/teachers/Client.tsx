@@ -898,7 +898,7 @@ export default function TeachersDirectoryClient() {
 
     let results = candidates;
     if (searchQuery && searchQuery.trim()) {
-      results = filterAndRankJobsBySearch(candidates, searchQuery);
+      results = filterAndRankJobsBySearch(candidates, searchQuery) as FacultyJobItem[];
     }
 
     if (sortBy === 'salary') {

@@ -7,29 +7,54 @@ import { FacultyJobItem, VerifiedFacultyItem, getJobFacilityTags, getJobRequirem
 import {
   ExternalLink, MapPin, Share2, Navigation, Crosshair, ChevronLeft, ChevronRight,
   X, Briefcase, IndianRupee, ShieldCheck, Mail, Sliders, CheckCheck, Compass, Sparkles,
-  Plus, Minus, Maximize2, List, Columns2, ChevronUp, ChevronDown, Bookmark, CheckCircle2, Globe
+  Plus, Minus, Maximize2, Minimize2, List, Columns2, ChevronUp, ChevronDown, Bookmark, CheckCircle2, Globe, Search
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
 
-// Helper to format ultra-compact salary for 2-line map badges
+// Helper to format ultra-compact per-month salary for 2-line map badges
 function getBadgeSalaryShort(raw?: string | null): string {
   if (!raw || raw === '---' || raw.toLowerCase().includes('not disclosed')) {
     return '₹ Norms';
   }
-  const s = raw.trim();
-  const mMatch = s.match(/(\d+)\s*k?\s*[-–—to]*\s*(\d*)\s*k?\s*\/\s*mo/i);
-  if (mMatch) {
-    if (mMatch[2] && mMatch[1] !== mMatch[2]) return `₹${mMatch[1]}-${mMatch[2]}k/mo`;
-    return `₹${mMatch[1]}k/mo`;
+  let s = raw.trim();
+
+  // If long description passed, extract salary segment
+  if (s.length > 50) {
+    const payMatch = s.match(/(?:pay|salary|ctc|stipend)?\s*[:\-–]?\s*(₹?\s*[\d\.,]+\s*(?:k|lpa|lacs?|lakhs?|per\s*(?:month|year)|p\.?a\.?|\/\s*(?:mo|month|yr))?(?:\s*[-–—to]+\s*₹?\s*[\d\.,]+)?)/i);
+    if (payMatch) s = payMatch[1];
+    else return '₹ Norms';
   }
-  const lMatch = s.match(/([\d\.]+)\s*[-–—to]*\s*([\d\.]*)\s*(?:lpa|lakhs?|lacs?)/i);
+
+  // 1. Convert LPA to per-month short (e.g. 3-5 LPA -> ₹25-42k/mo)
+  const lMatch = s.match(/([\d\.]+)\s*(?:lpa|lakhs?|lacs?)?\s*[-–—to]*\s*([\d\.]*)\s*(?:lpa|lakhs?|lacs?)/i);
   if (lMatch) {
-    if (lMatch[2] && lMatch[1] !== lMatch[2]) return `₹${lMatch[1]}-${lMatch[2]} LPA`;
-    return `₹${lMatch[1]} LPA`;
+    const v1 = parseFloat(lMatch[1]);
+    const v2 = lMatch[2] ? parseFloat(lMatch[2]) : null;
+    if (!isNaN(v1) && v1 < 100) {
+      const k1 = Math.round((v1 * 100) / 12);
+      if (v2 && !isNaN(v2) && v2 < 100 && v1 !== v2) {
+        const k2 = Math.round((v2 * 100) / 12);
+        return `₹${k1}-${k2}k/mo`;
+      }
+      return `₹${k1}k/mo`;
+    }
   }
+
+  // 2. Monthly k match (e.g. 25k - 40k/mo)
+  const mMatch = s.match(/(\d+)\s*k?\s*[-–—to]*\s*(\d*)\s*k?\s*(?:\/\s*mo|\/\s*month|per\s*month)?/i);
+  if (mMatch) {
+    let k1 = parseInt(mMatch[1], 10);
+    let k2 = mMatch[2] ? parseInt(mMatch[2], 10) : null;
+    if (k1 >= 1000) k1 = Math.round(k1 / 1000);
+    if (k2 && k2 >= 1000) k2 = Math.round(k2 / 1000);
+    if (k2 && k1 !== k2) return `₹${k1}-${k2}k/mo`;
+    return `₹${k1}k/mo`;
+  }
+
   return s.length > 11 ? s.slice(0, 10) : s;
 }
+
 
 
 interface FacultyJobMapProps {
@@ -113,7 +138,15 @@ export default function FacultyJobMap({
   const [displayMode, setDisplayMode] = useState<'points' | 'badges'>('points');
   // Range: 0 to 200 km (default 50 km)
   const [distanceRadius, setDistanceRadius] = useState<number>(50);
+  const [isDesktopSheetMinimized, setIsDesktopSheetMinimized] = useState(false);
+  const [isDesktopSheetWide, setIsDesktopSheetWide] = useState(false);
+  const [isDesktopSheetHidden, setIsDesktopSheetHidden] = useState(false);
+  const [mapDisplayMode, setMapDisplayMode] = useState<'page' | 'accumulate' | 'all_dots'>('page');
+  const [mapListSearch, setMapListSearch] = useState('');
   const [activeOpportunityIndex, setActiveOpportunityIndex] = useState<number | null>(null);
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isDesktopSheetOpen, setIsDesktopSheetOpen] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   // Mobile sheet drawer state: 'peek' (58px) | 'half' (50vh) | 'full' (86vh)
   const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('peek');
@@ -123,6 +156,43 @@ export default function FacultyJobMap({
   const dragCurrentYRef = useRef<number | null>(null);
   const [isDraggingSheet, setIsDraggingSheet] = useState(false);
   const [dragDeltaY, setDragDeltaY] = useState(0);
+  // Fullscreen change listener for Esc / F11 sync
+  useEffect(() => {
+    const handleFsChange = () => {
+      const fs = !!document.fullscreenElement;
+      setIsFullscreen(fs);
+      setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 150);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    const el = mapWrapperRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(() => {
+          setIsFullscreen((prev) => !prev);
+        });
+      } else {
+        setIsFullscreen((prev) => !prev);
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    setTimeout(() => {
+      mapInstanceRef.current?.invalidateSize();
+    }, 150);
+    setTimeout(() => {
+      mapInstanceRef.current?.invalidateSize();
+    }, 400);
+  };
+
 
   const handleDragStart = (clientY: number) => {
     dragStartYRef.current = clientY;
@@ -203,6 +273,28 @@ export default function FacultyJobMap({
 
     return withDist.length > 0 ? withDist : rawList;
   }, [activeTab, jobs, faculty, distanceRadius, currentCenter]);
+
+  // Filtered by in-list search term (Filter role, subject, school...)
+  const displayedListItems = useMemo(() => {
+    if (!mapListSearch.trim()) return filteredItems;
+    const q = mapListSearch.toLowerCase().trim();
+    return filteredItems.filter((item: any) => {
+      const title = (item.jobPostName || item.name || '').toLowerCase();
+      const school = (item.organisationName || item.currentInstitute || '').toLowerCase();
+      const loc = (item.city || item.state || '').toLowerCase();
+      const subj = (item.subject || '').toLowerCase();
+      return title.includes(q) || school.includes(q) || loc.includes(q) || subj.includes(q);
+    });
+  }, [filteredItems, mapListSearch]);
+
+  const handleFlyToPin = (item: any, idx: number) => {
+    setActiveOpportunityIndex(idx);
+    if (item.coordinates && mapInstanceRef.current) {
+      const zoom = 13;
+      const offsetLatLng = getOffsetLatLng(item.coordinates.lat, item.coordinates.lng, zoom);
+      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
+    }
+  };
 
   // Reset active index if out of range
   useEffect(() => {
@@ -498,7 +590,10 @@ export default function FacultyJobMap({
       marker.bindPopup(popupContent, {
         offset: displayMode === 'points' ? [0, -8] : [0, -24],
         closeButton: true,
-        autoPan: true
+        autoPan: true,
+        autoPanPaddingTopLeft: [24, 130],
+        autoPanPaddingBottomRight: [24, 80],
+        autoPanPadding: [24, 130]
       });
 
       marker.on('mouseover', () => {
@@ -518,38 +613,44 @@ export default function FacultyJobMap({
     }
   }, [filteredItems, displayMode, activeOpportunityIndex, distanceRadius, activeTab]);
 
-  // Dynamic offset calculation based on mobile sheet state & screen size (School directory style)
+  // Dynamic offset calculation ensuring popups NEVER touch the top header or right-side sheet
   const getOffsetLatLng = useCallback((lat: number, lng: number, zoom?: number) => {
     if (!mapInstanceRef.current || !mapContainerRef.current) return [lat, lng] as [number, number];
 
     const currentZoom = zoom ?? mapInstanceRef.current.getZoom();
     const containerHeight = mapContainerRef.current.clientHeight;
+    const containerWidth = mapContainerRef.current.clientWidth;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
     let offsetY = 0;
+    let offsetX = 0;
 
     if (isMobile) {
       if (mobileSheetState === 'half') {
-        // Visible upper half is 0 to 50vh (middle is 25vh).
-        // Screen center is at 50vh. Distance from 50vh to 28.5vh is ~21.5% of container height.
-        offsetY = Math.round(containerHeight * 0.215);
+        // Leave comfortable headroom for popup card (~120px) under top header
+        offsetY = Math.round(containerHeight * 0.10);
       } else if (mobileSheetState === 'full') {
-        offsetY = Math.round(containerHeight * 0.36);
+        offsetY = Math.round(containerHeight * 0.22);
       } else {
-        // 'peek' mode (58px bottom sheet, ~60px floating top bar)
-        offsetY = 12;
+        // peek mode: shift center slightly down so popup has clearance below header
+        offsetY = -20;
       }
+    } else {
+      // Desktop: if right sheet is open (410px), shift center to the right so marker displays in left visible zone
+      if (isDesktopSheetOpen) {
+        offsetX = 120;
+      }
+      // Top header clearance
+      offsetY = -15;
     }
 
     // Convert target lat/lng to container pixel point at current zoom
     const targetPoint = mapInstanceRef.current.project([lat, lng], currentZoom);
-    // Applying offset: shifting center down (targetPoint.y + offsetY) so marker appears higher up in visible area!
-    const newCenterPoint = L.point(targetPoint.x, targetPoint.y + offsetY);
-    // Convert back to LatLng
+    const newCenterPoint = L.point(targetPoint.x + offsetX, targetPoint.y + offsetY);
     const newCenterLatLng = mapInstanceRef.current.unproject(newCenterPoint, currentZoom);
 
     return [newCenterLatLng.lat, newCenterLatLng.lng] as [number, number];
-  }, [mobileSheetState]);
+  }, [mobileSheetState, isDesktopSheetOpen]);
 
   // Auto-center shift: smoothly re-center when mobileSheetState changes (e.g. user toggles Split / Half / Peek)
   useEffect(() => {
@@ -645,215 +746,487 @@ export default function FacultyJobMap({
       ? (filteredItems[activeOpportunityIndex] as VerifiedFacultyItem)
       : null;
 
-  return (
-    <div className={`relative w-full h-full min-h-0 overflow-hidden bg-slate-100 flex flex-col select-none ${className}`}>
-      {/* Map Canvas */}
-      <div ref={mapContainerRef} className="w-full h-full z-0 flex-1 min-h-0" />
+  const renderMapCard = (item: any, idx: number) => {
+    const isJob = activeTab === 'jobs';
+    const job = isJob ? (item as FacultyJobItem) : null;
+    const fac = !isJob ? (item as VerifiedFacultyItem) : null;
+    const isSelected = activeOpportunityIndex === idx;
 
-      {/* ── Top Bar Mode Toggle: Points vs Badges (Floating on map) ── */}
-      <div className="absolute top-3 left-3 z-10 hidden sm:flex items-center bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 p-0.5 shadow-md">
-        <button
-          type="button"
-          onClick={() => setDisplayMode('points')}
-          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-            displayMode === 'points'
-              ? 'bg-[#ef4444] text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-          title="Compact red dot view (prevents map clutter)"
-        >
-          <span className="w-2 h-2 rounded-full bg-current" />
-          <span>Points</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setDisplayMode('badges')}
-          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-            displayMode === 'badges'
-              ? 'bg-[#005689] text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900'
-          }`}
-          title="Detailed badge cards"
-        >
-          <span>🏷️</span>
-          <span>Badges</span>
-        </button>
-      </div>
+    const title = job ? job.jobPostName : fac?.name;
+    const subTitle = job ? (job.organisationName || 'School') : fac?.currentInstitute;
+    const locationStr = job ? formatStructuredAddress(job) : fac?.city;
+    const logoImg = job ? job.organisationLogo : fac?.avatar;
+    const salaryStr = job ? formatCleanSalary(job.salary, true) : fac?.expectedSalary;
+    const boardStr = job?.board || 'CBSE';
+    const subjectStr = job?.subject || fac?.subject;
 
-      {/* ── Right-Side Floating Map Controls & Vertical Distance Range Bar (School Directory Style) ── */}
-      <div className="absolute top-20 sm:top-24 right-2.5 sm:right-3 md:top-auto md:bottom-6 md:right-4 z-10 flex flex-col items-center gap-2 select-none">
-        {/* Zoom & GPS Stack */}
-        <div className="flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
-          <button
-            type="button"
-            onClick={handleZoomIn}
-            className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
-            title="Zoom In"
-            aria-label="Zoom In"
-          >
-            <Plus size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={handleZoomOut}
-            className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center transition-colors active:bg-slate-100 cursor-pointer"
-            title="Zoom Out"
-            aria-label="Zoom Out"
-          >
-            <Minus size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={fitToCurrentRadius}
-            className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
-            title="Fit View to Search Radius Area"
-            aria-label="Fit View"
-          >
-            <Maximize2 size={15} />
-          </button>
-          <button
-            type="button"
-            onClick={handleLocateMe}
-            disabled={isLocating}
-            className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
-            title="Locate Current Position"
-            aria-label="My Location"
-          >
-            <Crosshair size={16} className={isLocating ? 'animate-spin' : ''} />
-          </button>
-        </div>
-
-        {/* Vertical Distance Range Bar (0 to 200 km) */}
-        <div className="flex flex-col items-center bg-white/95 backdrop-blur-md border border-[#dadce0] rounded-2xl py-2 px-1 shadow-[0_2px_8px_rgba(60,64,67,0.25)]">
-          {/* Value badge at top */}
-          <span className="text-[9.5px] font-extrabold text-[#006FCC] bg-[#eef3fc] px-1 py-0.5 rounded font-mono mb-1.5 whitespace-nowrap">
-            {distanceRadius === 0 ? 'All' : `${distanceRadius}k`}
-          </span>
-
-          {/* Vertical Hairline Slider Track */}
-          <div className="relative h-22 sm:h-26 flex items-center justify-center">
-            <input
-              type="range"
-              min="0"
-              max="200"
-              step="5"
-              value={distanceRadius}
-              onChange={(e) => setDistanceRadius(Number(e.target.value))}
-              className="h-22 sm:h-26 w-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#006FCC]"
-              style={{
-                writingMode: 'vertical-lr',
-                WebkitAppearance: 'slider-vertical',
-                direction: 'rtl',
+    return (
+      <div
+        key={`map-card-${item.id || idx}`}
+        onClick={() => handleSelectCard(idx)}
+        className={`p-2.5 rounded-2xl border transition-all duration-200 cursor-pointer flex gap-2.5 text-left group ${
+          isSelected
+            ? 'bg-[#EDF5FA] border-[#006FCC] shadow-xs ring-2 ring-[#006FCC]/20'
+            : 'bg-white border-[#E8E9E9] hover:border-[#006FCC]/50 hover:bg-[#F7F8F8] shadow-2xs'
+        }`}
+      >
+        {/* Compact Logo / Thumbnail */}
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[10px] overflow-hidden bg-slate-50 border border-slate-100 shrink-0 relative flex items-center justify-center">
+          {logoImg ? (
+            <img
+              src={logoImg}
+              alt={title || ''}
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+                const fb = (e.target as HTMLElement).parentElement?.querySelector('.monogram-map') as HTMLElement;
+                if (fb) fb.style.display = 'flex';
               }}
-              title={`Search Radius: ${distanceRadius === 0 ? 'All India' : distanceRadius + ' km'}`}
             />
+          ) : null}
+          <div
+            className={`monogram-map w-full h-full rounded-[10px] bg-blue-50 text-[#006FCC] font-black text-xs items-center justify-center uppercase select-none ${logoImg ? 'hidden' : 'flex'}`}
+          >
+            {(subTitle || 'SC').slice(0, 2)}
           </div>
-
-          {/* Compass icon at bottom */}
-          <Compass className="w-3.5 h-3.5 text-slate-400 mt-1.5" />
-        </div>
-      </div>
-
-      {/* ── Active Opportunity Detail Card for Desktop ── */}
-      {activeOpportunityIndex !== null && (activeJob || activeFaculty) && (
-        <div className="hidden md:block absolute bottom-6 left-6 z-20 w-88 bg-white/98 backdrop-blur-md rounded-2xl border border-slate-200 p-4 shadow-xl space-y-2.5">
-          <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border truncate ${
-              activeJob
-                ? getSourceBadgeColor(activeJob.source)
-                : 'bg-[#EDF5FA] text-[#005689] border-[#005689]/20'
-            }`}>
-              {activeJob ? getSourceDisplayName(activeJob.source) : `${activeFaculty?.designation} · ${activeFaculty?.subject}`}
-            </span>
-            <button
-              type="button"
-              onClick={() => setActiveOpportunityIndex(null)}
-              className="w-6 h-6 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center transition cursor-pointer"
-            >
-              <X size={13} />
-            </button>
-          </div>
-
-          {activeJob && (
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-bold text-[#003c6e] line-clamp-1">{activeJob.jobPostName}</h4>
-              <div className="text-[11px] font-medium text-slate-700 truncate">{activeJob.organisationName}</div>
-              <div className="text-[10.5px] text-slate-500 flex items-center gap-1 min-w-0">
-                <MapPin size={11} className="text-amber-600 shrink-0" />
-                <span className="truncate">{formatStructuredAddress(activeJob)}</span>
-              </div>
-              <div className="text-xs font-bold text-emerald-700 pt-0.5">{formatCleanSalary(activeJob.salary, true)}</div>
-              <div className="flex items-center gap-2 pt-1">
-                <a
-                  href={activeJob.originalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-1.5 px-3 bg-[#006FCC] hover:bg-[#005399] text-white rounded-xl text-[11px] font-bold text-center transition flex items-center justify-center gap-1"
-                >
-                  <span>Apply</span>
-                  <ExternalLink size={11} />
-                </a>
-                <Link
-                  href={`/edu-network/teachers/job/${activeJob.id}`}
-                  className="py-1.5 px-3 bg-[#EDF5FA] hover:bg-[#DDF0FC] text-[#006FCC] rounded-xl text-[11px] font-bold text-center border border-[#006FCC]/30 transition"
-                >
-                  Details
-                </Link>
-              </div>
+          {job?.rating && (
+            <div className="absolute bottom-0.5 left-0.5 bg-black/75 backdrop-blur-xs text-amber-300 text-[9px] font-bold px-1 rounded flex items-center gap-0.5 leading-tight">
+              <span>★</span>
+              <span>{job.rating}</span>
             </div>
           )}
+        </div>
 
-          {activeFaculty && (
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <img src={activeFaculty.avatar} alt={activeFaculty.name} className="w-8 h-8 rounded-lg object-cover" />
-                <div>
-                  <h4 className="text-xs font-bold text-[#003c6e]">
-                    <Link href={`/edu-network/teachers/${activeFaculty.id}`} className="hover:underline">
-                      {activeFaculty.name}
-                    </Link>
-                  </h4>
-                  <p className="text-[10px] text-slate-500">{activeFaculty.currentInstitute}</p>
+        {/* Info */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+          <div>
+            <div className="flex items-center justify-between gap-1">
+              <h4 className="text-[12.5px] font-bold text-[#003C6E] truncate group-hover:text-[#006FCC] leading-tight font-['Montserrat',sans-serif]">
+                {title}
+              </h4>
+              {salaryStr && (
+                <span className="text-[9.5px] font-bold text-[#137333] bg-[#E6F4EA] px-1.5 py-0.2 rounded-full shrink-0">
+                  {salaryStr}
+                </span>
+              )}
+            </div>
+
+            <p className="text-[10.5px] text-slate-500 truncate mt-0.5 leading-tight">
+              {locationStr}
+            </p>
+
+            <div className="flex items-center gap-1 mt-1 flex-wrap">
+              {boardStr && (
+                <span className="text-[9.5px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-[6px]">
+                  {boardStr}
+                </span>
+              )}
+              {subjectStr && (
+                <span className="text-[9.5px] font-medium text-slate-700 bg-slate-100 px-1.5 py-0.2 rounded-[6px] truncate max-w-[130px]">
+                  {subjectStr}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Action Row */}
+          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-[#E8E9E9] gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFlyToPin(item, idx);
+              }}
+              className="h-6 px-2.5 rounded-[8px] bg-[#EDF5FA] hover:bg-[#DDF0FC] text-[#006FCC] text-[10.5px] font-bold flex items-center gap-1 transition cursor-pointer"
+            >
+              <Navigation size={10} className="fill-[#006FCC] rotate-45" />
+              <span>Fly to Pin</span>
+            </button>
+
+            {job ? (
+              <Link
+                href={`/edu-network/teachers/job/${job.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="h-6 px-3 rounded-[8px] bg-[#006FCC] hover:bg-[#005399] text-white text-[10.5px] font-bold inline-flex items-center gap-1 transition shadow-2xs"
+              >
+                <span>Details</span>
+                <ChevronRight size={11} />
+              </Link>
+            ) : fac ? (
+              <Link
+                href={`/edu-network/teachers/${fac.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="h-6 px-3 rounded-[8px] bg-[#006FCC] hover:bg-[#005399] text-white text-[10.5px] font-bold inline-flex items-center gap-1 transition shadow-2xs"
+              >
+                <span>Profile</span>
+                <ChevronRight size={11} />
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div
+      ref={mapWrapperRef}
+      className={`relative w-full h-full min-h-0 overflow-hidden bg-slate-50 flex flex-col md:flex-row select-none ${
+        isFullscreen ? 'fixed inset-0 z-[9999] w-screen h-screen rounded-none max-h-none h-screen' : ''
+      } ${className}`}
+    >
+      {/* ─── DESKTOP SIDE SHEET (Left side of map, collapsible, pullable, minimizable) ─── */}
+      {!isDesktopSheetHidden && (
+        <div
+          className={`hidden md:flex flex-col bg-white/95 backdrop-blur-xl border-r border-slate-200 shadow-xl transition-all duration-300 z-20 shrink-0 h-full relative rounded-l-3xl overflow-hidden ${
+            isDesktopSheetMinimized
+              ? 'w-14'
+              : isDesktopSheetWide
+              ? 'w-[480px]'
+              : 'w-[320px] lg:w-[380px]'
+          }`}
+        >
+          {/* Minimized Vertical Bar */}
+          {isDesktopSheetMinimized ? (
+            <div className="flex flex-col items-center py-4 h-full justify-between">
+              <button
+                type="button"
+                onClick={() => setIsDesktopSheetMinimized(false)}
+                className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center justify-center transition shadow-2xs group relative cursor-pointer"
+                title="Expand Results"
+              >
+                <ChevronRight size={18} className="group-hover:scale-110 transition-transform" />
+                <span className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-[11px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-30">
+                  Show Results List ({displayedListItems.length})
+                </span>
+              </button>
+
+              <div className="[writing-mode:vertical-rl] rotate-180 text-xs font-bold text-gray-500 tracking-wider flex items-center gap-2">
+                <span>{displayedListItems.length} Points</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <span>Batch {currentPage}/{totalPages || 1}</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsDesktopSheetHidden(true)}
+                className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 flex items-center justify-center transition cursor-pointer"
+                title="Close Sheet"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ) : (
+            /* Expanded Desktop Sheet */
+            <div className="flex flex-col h-full overflow-hidden">
+              {/* Sheet Header */}
+              <div className="p-3.5 border-b border-gray-200 bg-slate-50/70 shrink-0 space-y-2.5">
+                {/* Title & Action Handles */}
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                      {displayedListItems.length}
+                    </div>
+                    <div className="truncate">
+                      <h3 className="text-xs font-bold text-gray-900 truncate">
+                        {activeTab === 'jobs' ? 'Jobs on Map' : 'Faculty on Map'}
+                      </h3>
+                      <p className="text-[10px] text-gray-500 truncate">
+                        {totalJobsCount || filteredItems.length} total • {distanceRadius}km radius
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Sheet Window Controls */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={toggleFullscreen}
+                      className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
+                      title={isFullscreen ? 'Restore View' : 'Expand Fullscreen'}
+                    >
+                      {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsDesktopSheetWide(!isDesktopSheetWide)}
+                      className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
+                      title={isDesktopSheetWide ? 'Narrow Sheet' : 'Widen Sheet (Pull)'}
+                    >
+                      <Columns2 size={13} className={isDesktopSheetWide ? 'rotate-90' : ''} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsDesktopSheetMinimized(true)}
+                      className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
+                      title="Minimize to side strip"
+                    >
+                      <Minus size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsDesktopSheetHidden(true)}
+                      className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-rose-50 hover:text-rose-600 text-gray-400 flex items-center justify-center transition cursor-pointer"
+                      title="Hide Sheet"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Compact Control Row 1: Display Mode & Batch Info */}
+                <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                  <div className="flex items-center bg-gray-200/80 p-0.5 rounded-lg text-[10px] font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setMapDisplayMode('page')}
+                      className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
+                        mapDisplayMode === 'page'
+                          ? 'bg-white text-blue-600 shadow-2xs'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      title="Show current page 50 vacancies"
+                    >
+                      50 Page
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMapDisplayMode('accumulate')}
+                      className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
+                        mapDisplayMode === 'accumulate'
+                          ? 'bg-white text-emerald-600 shadow-2xs'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      title="Accumulate points on map"
+                    >
+                      +Add ({displayedListItems.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMapDisplayMode('all_dots')}
+                      className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
+                        mapDisplayMode === 'all_dots'
+                          ? 'bg-[#EA4335] text-white shadow-2xs'
+                          : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                      title="Show all jobs as red dots"
+                    >
+                      All Dots
+                    </button>
+                  </div>
+
+                  <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
+                    50 pts / batch
+                  </span>
+                </div>
+
+                {/* Compact Control Row 2: In-list search & Radius */}
+                <div className="flex items-center gap-1.5">
+                  <div className="relative flex-1 min-w-0">
+                    <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={mapListSearch}
+                      onChange={(e) => setMapListSearch(e.target.value)}
+                      placeholder="Filter role, subject, school..."
+                      className="w-full pl-7 pr-6 py-1 bg-white border border-gray-200 rounded-lg text-xs placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    {mapListSearch && (
+                      <button
+                        type="button"
+                        onClick={() => setMapListSearch('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                      >
+                        <X size={11} />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-0.5 shrink-0 bg-white p-0.5 rounded-lg border border-gray-200">
+                    {[5, 10, 25, 50, 0].map((km) => (
+                      <button
+                        key={km}
+                        type="button"
+                        onClick={() => setDistanceRadius(km)}
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition cursor-pointer ${
+                          distanceRadius === km
+                            ? 'bg-gray-900 text-white shadow-2xs'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        }`}
+                        title={km === 0 ? 'All India' : `${km} km radius`}
+                      >
+                        {km === 0 ? 'All' : `${km}k`}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-              <div className="text-[10.5px] text-slate-500">{activeFaculty.city} • {activeFaculty.experienceYears}+ Yrs Exp</div>
-              <div className="text-xs font-bold text-emerald-700">Exp: {activeFaculty.expectedSalary}</div>
-              <div className="flex items-center gap-1.5 pt-1">
-                <Link
-                  href={`/edu-network/teachers/${activeFaculty.id}`}
-                  className="flex-1 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-[11px] font-bold text-center transition flex items-center justify-center gap-1"
-                >
-                  <span>View Profile</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => onOpenConnect && onOpenConnect(activeFaculty)}
-                  className="flex-1 py-1.5 px-2 bg-[#006FCC] hover:bg-[#005399] text-white rounded-xl text-[11px] font-bold text-center transition flex items-center justify-center gap-1"
-                >
-                  <Mail size={11} />
-                  <span>Connect</span>
-                </button>
+
+              {/* Scrollable Job Cards List */}
+              <div className="flex-1 overflow-y-auto p-2.5 space-y-2 custom-scrollbar">
+                {displayedListItems.length > 0 ? (
+                  displayedListItems.map((item: any, idx: number) => renderMapCard(item, idx))
+                ) : (
+                  <div className="p-8 text-center text-gray-400 text-xs">
+                    No vacancies match &quot;{mapListSearch}&quot;
+                  </div>
+                )}
               </div>
+
+              {/* Sheet Bottom Footer: Add Next 20 Points on Map */}
+              {totalPages > 1 && onPageChange && (
+                <div className="p-2.5 border-t border-gray-200 bg-slate-50 shrink-0 flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
+                    <span>
+                      Map Points: <strong className="text-gray-900">{displayedListItems.length}</strong> of{' '}
+                      <strong className="text-gray-900">{totalJobsCount || filteredItems.length}</strong>
+                    </span>
+                    <span className="text-[11px] text-emerald-700 font-semibold">
+                      (+50 pts / page)
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+                      disabled={currentPage <= 1}
+                      className="flex-1 py-1.5 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 disabled:opacity-40 transition flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <ChevronLeft size={13} />
+                      <span>Prev</span>
+                    </button>
+                    <span className="text-xs font-mono font-bold text-slate-700 px-2">
+                      {currentPage} / {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage >= totalPages}
+                      className="flex-1 py-1.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:opacity-40 transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
+                    >
+                      <span>Next 50</span>
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
       )}
 
-      {/* ─── MOBILE BOTTOM DRAWER / SHEET (Schools Directory Style) ─── */}
+      {/* Re-open Button if Desktop Sheet is Hidden */}
+      {isDesktopSheetHidden && (
+        <button
+          type="button"
+          onClick={() => setIsDesktopSheetHidden(false)}
+          className="hidden md:flex absolute top-4 left-4 z-30 items-center gap-2 px-3 py-2 bg-white/95 backdrop-blur-md rounded-full border border-gray-200 shadow-md hover:bg-white text-xs font-bold text-blue-600 transition cursor-pointer"
+        >
+          <List size={14} />
+          <span>Show Jobs List ({displayedListItems.length})</span>
+        </button>
+      )}
+
+      {/* ─── MAP CANVAS (Right side) ─── */}
+      <div className="flex-1 h-full relative min-w-0 rounded-none md:rounded-r-3xl md:rounded-l-none overflow-hidden">
+        <div ref={mapContainerRef} className="w-full h-full z-0 flex-1 min-h-0" />
+
+        {/* Floating Points vs Badges toggle on map */}
+        <div className="absolute top-3.5 right-16 z-20 hidden sm:flex items-center bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 p-0.5 shadow-md">
+          <button
+            type="button"
+            onClick={() => setDisplayMode('points')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              displayMode === 'points'
+                ? 'bg-[#ef4444] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+            title="Points view (red dots)"
+          >
+            <span className="w-2 h-2 rounded-full bg-current" />
+            <span>Points</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setDisplayMode('badges')}
+            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+              displayMode === 'badges'
+                ? 'bg-[#005689] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+            title="Badge view"
+          >
+            <span>🏷️</span>
+            <span>Badges</span>
+          </button>
+        </div>
+
+        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) - Top Placed */}
+        <div className="absolute top-16 right-3 md:top-3.5 md:right-3.5 z-20 flex flex-col items-center gap-2 select-none">
+          <div className="flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
+            <button
+              type="button"
+              onClick={handleZoomIn}
+              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              title="Zoom In"
+            >
+              <Plus size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={handleZoomOut}
+              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center transition-colors active:bg-slate-100 cursor-pointer"
+              title="Zoom Out"
+            >
+              <Minus size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              title={isFullscreen ? "Exit Fullscreen" : "Full Screen View"}
+            >
+              {isFullscreen ? <Minimize2 size={16} className="text-[#006FCC]" /> : <Maximize2 size={15} />}
+            </button>
+            <button
+              type="button"
+              onClick={fitToCurrentRadius}
+              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              title="Fit View to Search Radius Area"
+            >
+              <svg className="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={handleLocateMe}
+              disabled={isLocating}
+              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
+              title="Locate Current Position"
+            >
+              <Crosshair size={16} className={isLocating ? 'animate-spin' : ''} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── MOBILE BOTTOM DRAWER (< 768px) ─── */}
       <div
         style={isDraggingSheet ? {
           transform: `translateY(${Math.max(Math.min(dragDeltaY, 200), -200)}px)`,
           transition: 'none'
         } : undefined}
-        className={`md:hidden absolute inset-x-0 bottom-0 z-30 bg-white/95 backdrop-blur-xl border-t border-gray-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.18)] flex flex-col transition-all duration-300 ease-in-out ${
-          mobileSheetState === 'peek'
-            ? 'h-[58px]'
-            : mobileSheetState === 'half'
-            ? 'h-[50vh]'
-            : 'h-[86vh]'
+        className={`md:hidden absolute z-30 inset-x-0 bottom-0 bg-white/95 backdrop-blur-xl border-t border-gray-200/90 shadow-[0_-8px_30px_rgba(0,0,0,0.18)] transition-all duration-300 ease-in-out flex flex-col ${
+          mobileSheetState === 'peek' ? 'h-[58px]' : mobileSheetState === 'half' ? 'h-[50vh]' : 'h-[86vh]'
         }`}
       >
-        {/* Visual drag pill handle with interactive Touch & Pointer drag gestures */}
+        {/* Visual drag pill handle */}
         <div
           className="w-full pt-2 pb-1.5 px-4 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none shrink-0 group"
           onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
@@ -872,11 +1245,9 @@ export default function FacultyJobMap({
           <div className="w-14 h-1.5 bg-gray-300/90 group-hover:bg-gray-400 group-active:bg-[#006FCC] rounded-full transition-colors" />
         </div>
 
-        {/* Header Strip: Up/Down arrow + Toggle Points/Badges + Total count number + Plus button */}
-        <div className="w-full px-3 py-1.5 flex items-center justify-between gap-2 border-b border-gray-100 shrink-0 bg-white/95 backdrop-blur-xs">
-          {/* Left: Up/Down Drawer Resize Arrows + Points/Badges Switch + Count Number */}
+        {/* Header Strip */}
+        <div className="w-full px-3 py-1.5 flex items-center justify-between gap-2 border-b border-gray-100 shrink-0 bg-white/95">
           <div className="flex items-center gap-2">
-            {/* Up/Down Drawer Resize Control */}
             <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 shadow-2xs">
               <button
                 type="button"
@@ -885,8 +1256,7 @@ export default function FacultyJobMap({
                   else if (mobileSheetState === 'half') setMobileSheetState('full');
                 }}
                 disabled={mobileSheetState === 'full'}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
-                title="Expand list drawer (Up)"
+                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
               >
                 <ChevronUp size={16} strokeWidth={2.5} />
               </button>
@@ -897,315 +1267,37 @@ export default function FacultyJobMap({
                   else if (mobileSheetState === 'half') setMobileSheetState('peek');
                 }}
                 disabled={mobileSheetState === 'peek'}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
-                title="Collapse list drawer (Down)"
+                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
               >
                 <ChevronDown size={16} strokeWidth={2.5} />
               </button>
             </div>
 
-            {/* Points vs Badges Toggle Pill */}
-            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 shadow-2xs text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setDisplayMode('points')}
-                className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer text-[11px] ${
-                  displayMode === 'points'
-                    ? 'bg-[#ef4444] text-white shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Point view (compact dots)"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                <span>Points</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setDisplayMode('badges')}
-                className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer text-[11px] ${
-                  displayMode === 'badges'
-                    ? 'bg-[#005689] text-white shadow-xs font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Badge view (small labels)"
-              >
-                <span>Badges</span>
-              </button>
-            </div>
-
-            {/* Total Vacancies / Faculty Just Number */}
-            <div
-              className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200/80 text-[#005689] font-black text-xs shadow-2xs"
-              title={`${totalJobsCount || filteredItems.length} total vacancies`}
-            >
-              {totalJobsCount || filteredItems.length}
+            <div className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200/80 text-[#005689] font-black text-xs shadow-2xs">
+              {displayedListItems.length} {activeTab === 'jobs' ? 'Jobs' : 'Faculty'}
             </div>
           </div>
 
-          {/* Right: Circular Blue Action Button (+) */}
-          <div className="flex items-center shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => {
                 if (activeTab === 'jobs' && onPostJob) onPostJob();
                 else if (activeTab === 'faculty' && onListTeacher) onListTeacher();
               }}
-              className="w-8 h-8 rounded-full bg-[#006FCC] hover:bg-[#005399] text-white flex items-center justify-center shadow-md active:scale-95 transition cursor-pointer"
+              className="w-7.5 h-7.5 rounded-full bg-[#006FCC] hover:bg-[#005399] text-white flex items-center justify-center shadow-md active:scale-95 transition cursor-pointer"
               title={activeTab === 'jobs' ? "+ Post Vacancy" : "+ List as Faculty"}
             >
-              <Plus size={16} strokeWidth={2.8} />
+              <Plus size={15} strokeWidth={2.8} />
             </button>
           </div>
         </div>
 
-        {/* Drawer Scrollable Feed (Shown in Half & Full mode) */}
+        {/* Mobile Scrollable Feed */}
         {mobileSheetState !== 'peek' && (
-          <>
-            <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar bg-slate-50/50">
-            {filteredItems.map((item: any, idx: number) => {
-              if (activeTab === 'jobs') {
-                const job = item as FacultyJobItem;
-                const isSaved = savedJobIds.includes(job.id);
-                const isSelected = activeOpportunityIndex === idx;
-                const structuredAddress = formatStructuredAddress(job);
-                const sourceDisplayName = getSourceDisplayName(job.source);
-                const sourceBadgeColor = getSourceBadgeColor(job.source);
-                const cardTags = [job.designation, job.subject, job.board, job.roleType].filter(Boolean);
-                const mapLink = job.mapUrl || (job.coordinates?.lat && job.coordinates?.lng ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(job.organisationName + ', ' + structuredAddress)}` : null);
-                const websiteLink = job.websiteUrl || job.website;
-
-                return (
-                  <div
-                    key={job.id}
-                    onClick={() => handleSelectCard(idx)}
-                    className={`p-3.5 bg-white border rounded-2xl transition-all shadow-2xs space-y-2.5 cursor-pointer ${
-                      isSelected ? 'border-[#006FCC] ring-1 ring-[#006FCC]/40 bg-blue-50/20' : 'border-[#dadce0] hover:border-[#006FCC]'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3 min-w-0">
-                      <div className="w-11 h-11 rounded-xl border border-slate-200 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs">
-                        <img
-                          src={job.organisationLogo || "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80"}
-                          alt={job.organisationName}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <h4 className="font-['Montserrat',sans-serif] font-bold text-[14px] text-slate-900 hover:text-[#0A66C2] line-clamp-1 block">
-                          {job.jobPostName}
-                        </h4>
-                        
-                        {/* School Name + Very small source tag */}
-                        <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-700">
-                          <span className="font-semibold text-slate-800 truncate" title={job.organisationName}>
-                            {job.organisationName}
-                          </span>
-                          <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sourceBadgeColor}`}>
-                            {sourceDisplayName}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Parameters with Icons & Vertical Lines */}
-                    <div className="flex items-center gap-2 text-slate-600 text-[11.5px] font-medium flex-wrap pt-0.5">
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Briefcase size={12} className="text-slate-400 shrink-0" />
-                        <span>{job.minExperience ? `${job.minExperience}` : '0-3 Yrs'}</span>
-                      </div>
-                      <span className="text-slate-300">|</span>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <IndianRupee size={11} className="text-slate-400 shrink-0" />
-                        <span className={job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'font-semibold text-slate-800' : 'text-slate-400'}>
-                          {formatCleanSalary(job.salary, false)}
-                        </span>
-                      </div>
-                      <span className="text-slate-300">|</span>
-                      <div className="flex items-center gap-1 min-w-0 flex-1 truncate">
-                        <MapPin size={12} className="text-slate-400 shrink-0" />
-                        <span className="truncate" title={structuredAddress}>{structuredAddress}</span>
-                      </div>
-                    </div>
-
-                    {/* Short Description */}
-                    {job.shortDescription && (
-                      <div className="flex items-start gap-1.5 text-slate-500 text-[11px] leading-snug line-clamp-1">
-                        <span className="truncate">{job.shortDescription}</span>
-                      </div>
-                    )}
-
-                    {/* Dot-separated clean tags */}
-                    {cardTags.length > 0 && (
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium flex-wrap">
-                        {cardTags.map((tag, tIdx, arr) => (
-                          <React.Fragment key={tIdx}>
-                            <span>{tag}</span>
-                            {tIdx < arr.length - 1 && <span className="text-slate-300">•</span>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Action Buttons Row: Like, Share, Map, Website, Details, Apply (NO description) */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {/* Bookmark */}
-                        <button
-                          type="button"
-                          onClick={() => toggleSaveJob && toggleSaveJob(job.id)}
-                          className={`h-7.5 w-7.5 rounded-lg border flex items-center justify-center transition cursor-pointer ${
-                            isSaved ? 'bg-[#EDF5FA] text-[#006FCC] border-[#006FCC]/40' : 'bg-[#F7F8F8] text-slate-600 border-[#E8E9E9]'
-                          }`}
-                          title="Like / Save"
-                        >
-                          <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-[#006FCC]' : ''}`} />
-                        </button>
-                        {/* Share Button */}
-                        <button
-                          type="button"
-                          onClick={() => onCopyJobUrl && onCopyJobUrl(job)}
-                          className="h-7.5 w-7.5 rounded-lg border border-[#E8E9E9] bg-[#F7F8F8] text-slate-600 hover:text-[#006FCC] flex items-center justify-center transition cursor-pointer"
-                          title="Share"
-                        >
-                          {copiedJobId === job.id ? <CheckCheck className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
-                        </button>
-                        {/* Map Location */}
-                        {mapLink && (
-                          <a
-                            href={mapLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="h-7.5 w-7.5 rounded-lg border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-amber-50 text-slate-600 hover:text-amber-600 flex items-center justify-center transition cursor-pointer"
-                            title="View Map Location"
-                            aria-label="View Map Location"
-                          >
-                            <MapPin size={12} className="text-amber-600" />
-                          </a>
-                        )}
-                        {/* School Website */}
-                        {websiteLink && (
-                          <a
-                            href={websiteLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="h-7.5 w-7.5 rounded-lg border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-slate-600 hover:text-[#006FCC] flex items-center justify-center transition cursor-pointer"
-                            title="Visit School Website"
-                            aria-label="Visit School Website"
-                          >
-                            <Globe size={12} className="text-[#006FCC]" />
-                          </a>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <Link
-                          href={`/edu-network/teachers/job/${job.id}`}
-                          className="h-7.5 px-3 rounded-lg border border-slate-200 bg-[#F7F8F8] text-[#003C6E] text-[11px] font-bold flex items-center justify-center"
-                        >
-                          Details
-                        </Link>
-                        <a
-                          href={job.originalUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="h-7.5 px-3.5 rounded-lg bg-[#006FCC] text-white text-[11px] font-bold flex items-center justify-center gap-1"
-                        >
-                          <span>Apply</span>
-                          <ExternalLink size={10} />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else {
-                const fac = item as VerifiedFacultyItem;
-                const isSelected = activeOpportunityIndex === idx;
-
-                return (
-                  <div
-                    key={fac.id}
-                    onClick={() => handleSelectCard(idx)}
-                    className={`p-3 bg-white border rounded-xl transition-all shadow-2xs space-y-2 cursor-pointer ${
-                      isSelected ? 'border-[#006FCC] ring-1 ring-[#006FCC]/40 bg-blue-50/20' : 'border-[#dadce0] hover:border-[#006FCC]'
-                    }`}
-                  >
-                    <div className="flex items-start gap-3 min-w-0">
-                      <img src={fac.avatar} alt={fac.name} className="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0 shadow-2xs" />
-                      <div className="min-w-0 flex-1 space-y-0.5">
-                        <h4>
-                          <Link
-                            href={`/edu-network/teachers/${fac.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="font-bold text-[13.5px] text-[#0A66C2] hover:underline truncate block"
-                          >
-                            {fac.name}
-                          </Link>
-                        </h4>
-                        <div className="text-[12px] font-medium text-slate-800 truncate">{fac.currentInstitute}</div>
-                        <div className="text-[11px] text-slate-500 truncate">{fac.city} • {fac.qualification}</div>
-                        <div className="flex items-center gap-2 pt-0.5">
-                          <span className="font-bold text-emerald-600 text-[12px]">
-                            Exp: {fac.expectedSalary}
-                          </span>
-                          <span className="text-slate-300">•</span>
-                          <span className="text-[11px] font-semibold text-[#006FCC]">{fac.experienceYears}+ Yrs</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
-                      <span className="text-[10.5px] font-bold text-emerald-700 flex items-center gap-1">
-                        <CheckCircle2 size={12} />
-                        <span>Verified</span>
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <Link
-                          href={`/edu-network/teachers/${fac.id}`}
-                          className="h-7.5 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center justify-center transition"
-                        >
-                          Profile
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => onOpenConnect && onOpenConnect(fac)}
-                          className="h-7.5 px-3 rounded-lg bg-[#006FCC] hover:bg-[#005399] text-white text-[11px] font-bold flex items-center gap-1 transition"
-                        >
-                          <Mail size={11} />
-                          <span>Connect</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-            })}
+          <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar bg-slate-50/50">
+            {displayedListItems.map((item: any, idx: number) => renderMapCard(item, idx))}
           </div>
-          {totalPages > 1 && onPageChange && (
-            <div className="sticky bottom-0 bg-white/95 backdrop-blur-xs p-2.5 border-t border-slate-200/90 flex items-center justify-between gap-2 shadow-xs z-10 shrink-0">
-              <button
-                type="button"
-                onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage <= 1}
-                className="h-7.5 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1 cursor-pointer"
-              >
-                <ChevronLeft size={13} />
-                <span>Prev</span>
-              </button>
-              <span className="text-[11px] font-bold text-slate-700">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                type="button"
-                onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage >= totalPages}
-                className="h-7.5 px-3 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1 cursor-pointer"
-              >
-                <span>Next</span>
-                <ChevronRight size={13} />
-              </button>
-            </div>
-          )}
-          </>
         )}
       </div>
 

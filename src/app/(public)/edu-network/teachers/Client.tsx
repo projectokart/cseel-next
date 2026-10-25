@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import PageTransition from '@/components/shared/PageTransition';
@@ -27,6 +27,8 @@ import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
+import { calculateDynamicFacets, DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
+import { matchesJobFuzzy, filterAndRankJobsBySearch } from '@/lib/fuzzySearch';
 
 const POPULAR_CITIES = [
   { name: 'Delhi NCR', icon: 'https://img.icons8.com/color/48/india-gate.png' },
@@ -197,13 +199,22 @@ export default function TeachersDirectoryClient() {
   // View Mode: 'grid' (2 cols), 'grid3' (3 cols), 'compact' (list), or 'map' (map) - Default: 'compact' (List Grid)
   const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>('compact');
 
-  // Sidebar minimize state (exactly like school listing page)
-  const [isSidebarMinimized, setIsSidebarMinimized] = useState<boolean>(true);
+  // Sidebar minimize state (Desktop by default OPEN, minimizes in map mode)
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  const handleViewModeChange = (mode: 'grid' | 'grid3' | 'compact' | 'map') => {
+    setViewMode(mode);
+    if (mode === 'map') {
+      setIsSidebarMinimized(true);
+    }
+  };
   const [navBottomOffset, setNavBottomOffset] = useState<number>(54);
 
-  // Filter States
+  // Filter States (Typing updates searchInput; Search only runs on Enter or Button Click)
+  const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const hasSearchText = searchInput.trim().length > 0;
   const [selectedDesignations, setSelectedDesignations] = useState<string[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedBoards, setSelectedBoards] = useState<string[]>([]);
@@ -213,6 +224,7 @@ export default function TeachersDirectoryClient() {
   const [selectedPortals, setSelectedPortals] = useState<string[]>([]);
   const [minSalaryFilter, setMinSalaryFilter] = useState<number>(0);
   const [urgentOnly, setUrgentOnly] = useState<boolean>(false);
+  const [forLadyOnly, setForLadyOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'newest' | 'salary' | 'deadline' | 'experience' | 'rating'>('newest');
 
   // Mobile Filter Drawer & Menu States
@@ -325,6 +337,33 @@ export default function TeachersDirectoryClient() {
   const [securityError, setSecurityError] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Google-Grade Search Execution (Triggered ONLY on Search Button Click or Enter Key)
+  const handleExecuteSearch = useCallback((overrideQuery?: string) => {
+    const q = (overrideQuery !== undefined ? overrideQuery : searchInput).trim();
+    setSearchInput(q);
+    setSearchQuery(q);
+    setCurrentPage(1);
+    setIsSearchFocused(false);
+
+    if (q.length >= 2) {
+      fetch('/api/search/record-query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: q,
+          timestamp: new Date().toISOString(),
+        }),
+      }).catch(() => {});
+    }
+  }, [searchInput]);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchInput('');
+    setSearchQuery('');
+    setCurrentPage(1);
+    setIsSearchFocused(false);
+  }, []);
 
   // Countdown timer for Teacher Missed Call Verification
   useEffect(() => {
@@ -593,15 +632,42 @@ export default function TeachersDirectoryClient() {
     };
   }, [isFullscreen]);
 
-  // Handle ESC key to exit fullscreen mode
+  // Fullscreen toggle handler (Native browser fullscreen + In-page immersive view)
+  const handleToggleFullscreen = useCallback(() => {
+    const next = !isFullscreen;
+    setIsFullscreen(next);
+    if (typeof document !== 'undefined') {
+      if (next) {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } else {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+  }, [isFullscreen]);
+
+  // Handle ESC key & native fullscreenchange event
   useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        }
         setIsFullscreen(false);
       }
     };
+    document.addEventListener('fullscreenchange', handleFsChange);
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [isFullscreen]);
 
   // Keyboard shortcut '/'
@@ -714,23 +780,30 @@ export default function TeachersDirectoryClient() {
 
 
 
-  // Dynamic filter counts
+  // Dynamic multi-dimensional drill-down filter counts
   const dynamicCounts = useMemo(() => {
-    const desCounts: Record<string, number> = {};
-    const subCounts: Record<string, number> = {};
-    const boardCounts: Record<string, number> = {};
-    const cityCounts: Record<string, number> = {};
-    const stateCounts: Record<string, number> = {};
-
     if (activeTab === 'jobs') {
-      activeJobs.forEach((job) => {
-        if (job.designation) desCounts[job.designation] = (desCounts[job.designation] || 0) + 1;
-        if (job.subject) subCounts[job.subject] = (subCounts[job.subject] || 0) + 1;
-        if (job.board) boardCounts[job.board] = (boardCounts[job.board] || 0) + 1;
-        if (job.city) cityCounts[job.city] = (cityCounts[job.city] || 0) + 1;
-        if (job.state) stateCounts[job.state] = (stateCounts[job.state] || 0) + 1;
+      return calculateDynamicFacets(activeJobs, {
+        selectedDesignations,
+        selectedSubjects,
+        selectedBoards,
+        selectedCities,
+        selectedStates,
+        selectedJobTypes,
+        selectedPortals,
+        minSalaryFilter,
+        urgentOnly,
+        forLadyOnly,
+        searchQuery,
+        searchLocation: locationSearchInput,
       });
     } else {
+      const desCounts: Record<string, number> = {};
+      const subCounts: Record<string, number> = {};
+      const boardCounts: Record<string, number> = {};
+      const cityCounts: Record<string, number> = {};
+      const stateCounts: Record<string, number> = {};
+
       VERIFIED_FACULTY_MEMBERS.forEach((fac) => {
         if (fac.designation) desCounts[fac.designation] = (desCounts[fac.designation] || 0) + 1;
         if (fac.subject) subCounts[fac.subject] = (subCounts[fac.subject] || 0) + 1;
@@ -738,20 +811,36 @@ export default function TeachersDirectoryClient() {
         if (fac.city) cityCounts[fac.city] = (cityCounts[fac.city] || 0) + 1;
         if (fac.state) stateCounts[fac.state] = (stateCounts[fac.state] || 0) + 1;
       });
-    }
 
-    return {
-      designations: desCounts,
-      subjects: subCounts,
-      boards: boardCounts,
-      cities: cityCounts,
-      states: stateCounts,
-    };
-  }, [activeJobs, activeTab]);
+      return {
+        designations: desCounts,
+        subjects: subCounts,
+        boards: boardCounts,
+        cities: cityCounts,
+        states: stateCounts,
+        portals: {},
+      };
+    }
+  }, [
+    activeJobs,
+    activeTab,
+    selectedDesignations,
+    selectedSubjects,
+    selectedBoards,
+    selectedCities,
+    selectedStates,
+    selectedJobTypes,
+    selectedPortals,
+    minSalaryFilter,
+    urgentOnly,
+    forLadyOnly,
+    searchQuery,
+    locationSearchInput,
+  ]);
 
   // Filtered Jobs
   const filteredJobs = useMemo(() => {
-    return activeJobs.filter((job) => {
+    const candidates = activeJobs.filter((job) => {
       if (selectedDesignations.length > 0 && !selectedDesignations.includes(job.designation)) return false;
       if (selectedSubjects.length > 0 && !selectedSubjects.includes(job.subject)) return false;
       if (selectedBoards.length > 0 && !selectedBoards.includes(job.board)) return false;
@@ -803,36 +892,35 @@ export default function TeachersDirectoryClient() {
         if (annualMax < minSalaryFilter) return false;
       }
       if (urgentOnly && !job.badge?.includes('🔥')) return false;
-
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const matches =
-          job.jobPostName.toLowerCase().includes(q) ||
-          job.organisationName.toLowerCase().includes(q) ||
-          job.city.toLowerCase().includes(q) ||
-          (job.state && job.state.toLowerCase().includes(q)) ||
-          (job.district && job.district.toLowerCase().includes(q)) ||
-          job.subject.toLowerCase().includes(q) ||
-          job.designation.toLowerCase().includes(q) ||
-          job.shortDescription.toLowerCase().includes(q);
-        if (!matches) return false;
-      }
+      if (forLadyOnly && !job.forLady) return false;
       return true;
-    }).sort((a, b) => {
-      if (sortBy === 'salary') {
+    });
+
+    let results = candidates;
+    if (searchQuery && searchQuery.trim()) {
+      results = filterAndRankJobsBySearch(candidates, searchQuery);
+    }
+
+    if (sortBy === 'salary') {
+      return [...results].sort((a, b) => {
         const salA = getAnnualSalaryNumber(a.salary, a.salaryMax).max;
         const salB = getAnnualSalaryNumber(b.salary, b.salaryMax).max;
         if (salB !== salA) return salB - salA; // Strictly Highest to Lowest in annual INR!
         return new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime();
-      }
-      if (sortBy === 'deadline') {
+      });
+    }
+    if (sortBy === 'deadline') {
+      return [...results].sort((a, b) => {
         const timeA = a.lastDate ? new Date(a.lastDate).getTime() : Infinity;
         const timeB = b.lastDate ? new Date(b.lastDate).getTime() : Infinity;
         return timeA - timeB;
-      }
-      return new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime();
-    });
-  }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, selectedJobTypes, selectedPortals, minSalaryFilter, urgentOnly, searchQuery, sortBy]);
+      });
+    }
+    if (!searchQuery || !searchQuery.trim()) {
+      return [...results].sort((a, b) => new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime());
+    }
+    return results;
+  }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, selectedJobTypes, selectedPortals, minSalaryFilter, urgentOnly, forLadyOnly, searchQuery, sortBy]);
 
   // Filtered Verified Faculty
   const filteredFaculty = useMemo(() => {
@@ -1250,12 +1338,14 @@ export default function TeachersDirectoryClient() {
     if (typeof navigator !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         () => {
-          setSelectedCities(['Delhi NCR']);
+          setSearchInput('Delhi NCR');
+          handleExecuteSearch('Delhi NCR');
           setShareToastMessage('Showing opportunities near your GPS location (Delhi NCR)');
           setTimeout(() => setShareToastMessage(null), 3500);
         },
         () => {
-          setSelectedCities(['Delhi NCR']);
+          setSearchInput('Delhi NCR');
+          handleExecuteSearch('Delhi NCR');
           setShareToastMessage('Location permission denied — defaulting to Delhi NCR');
           setTimeout(() => setShareToastMessage(null), 3500);
         }
@@ -1263,197 +1353,39 @@ export default function TeachersDirectoryClient() {
     }
   };
 
-  // Google M3 Search Bar (Matching School Directory)
+  // Google Pill Search Bar (Active Search Button only with text, enter/button triggers search)
   const renderSearchBar = (isCompact: boolean = true) => (
-    <div className={`w-full ${isCompact ? 'max-w-2xl' : 'max-w-3xl'} flex flex-row items-center bg-white rounded-full shadow-2xs px-1.5 py-0.5 border border-slate-300 divide-x divide-slate-200 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#005689] focus-within:border-[#005689]`}>
-      {/* State & District Selector */}
-      <div className="relative shrink-0 z-50">
-        <button
-          type="button"
-          onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-          className={`flex items-center justify-between gap-1 px-2.5 py-1.5 transition-all duration-200 group rounded-full hover:bg-slate-100 active:scale-95 cursor-pointer text-xs ${
-            isCompact ? 'w-[125px] sm:w-[150px]' : 'w-[145px] sm:w-[175px]'
-          }`}
-        >
-          <div className="flex items-center gap-1.5 overflow-hidden">
-            <div className="p-1 rounded-full bg-blue-50 text-[#005689] group-hover:scale-105 transition-transform shrink-0">
-              <MapPin size={13} />
-            </div>
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-900 truncate block">
-              {selectedStates.length > 0
-                ? selectedStates[0]
-                : selectedCities.length > 0
-                ? selectedCities[0]
-                : 'All India'}
-            </span>
-          </div>
-          <ChevronDown size={11} className={`text-slate-400 transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
-
-        {/* Location Dropdown Menu (Districts & States) */}
-        {isLocationDropdownOpen && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
-            <div className="absolute top-full left-0 mt-2 w-[310px] sm:w-[350px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
-              <div className="p-2.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                {/* Tabs: Districts vs States */}
-                <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setLocationTab('districts')}
-                    className={`px-2 py-1 text-[11px] font-bold rounded-md transition-colors cursor-pointer ${
-                      locationTab === 'districts'
-                        ? 'bg-[#005689] text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    Districts
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLocationTab('states')}
-                    className={`px-2 py-1 text-[11px] font-bold rounded-md transition-colors cursor-pointer ${
-                      locationTab === 'states'
-                        ? 'bg-[#005689] text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    States
-                  </button>
-                </div>
-
-                {(selectedCities.length > 0 || selectedStates.length > 0) && (
-                  <button
-                    type="button"
-                    onClick={handleResetToAllCities}
-                    className="text-[11px] text-[#005689] hover:underline font-bold cursor-pointer"
-                  >
-                    All India
-                  </button>
-                )}
-              </div>
-
-              {/* Search Inside Location Dropdown */}
-              <div className="p-2 border-b border-slate-100">
-                <input
-                  type="text"
-                  placeholder={locationTab === 'districts' ? "Search district or city..." : "Search state..."}
-                  value={locationSearchInput}
-                  onChange={(e) => setLocationSearchInput(e.target.value)}
-                  className="w-full px-2.5 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#005689]"
-                />
-              </div>
-
-              <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-60 overflow-y-auto custom-scrollbar">
-                {locationTab === 'districts' ? (
-                  POPULAR_CITIES
-                    .filter((c) => !locationSearchInput || c.name.toLowerCase().includes(locationSearchInput.toLowerCase()))
-                    .map((city) => {
-                      const count = cityCounts[city.name] || 0;
-                      const isSelected = selectedCities.includes(city.name);
-                      return (
-                        <button
-                          key={city.name}
-                          type="button"
-                          onClick={() => handleSelectCity(city.name)}
-                          className={`flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl text-xs transition-all duration-200 text-left cursor-pointer active:scale-95 ${
-                            isSelected
-                              ? 'bg-[#EDF5FA] text-[#005689] font-bold border border-[#005689]/20'
-                              : 'text-slate-800 hover:bg-slate-50 font-medium'
-                          }`}
-                        >
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <img
-                              src={city.icon}
-                              alt={city.name}
-                              className="w-3.5 h-3.5 object-contain shrink-0"
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
-                            />
-                            <span className="truncate whitespace-nowrap text-[11px]">{city.name}</span>
-                          </div>
-                          {count > 0 && (
-                            <span className="text-[10px] font-bold text-[#005689] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
-                              {count}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })
-                ) : (
-                  Object.keys(INDIAN_STATES_DISTRICTS)
-                    .filter((s) => !locationSearchInput || s.toLowerCase().includes(locationSearchInput.toLowerCase()))
-                    .map((stateName) => {
-                      const count = stateCounts[stateName] || 0;
-                      const isSelected = selectedStates.includes(stateName);
-                      return (
-                        <button
-                          key={stateName}
-                          type="button"
-                          onClick={() => handleSelectState(stateName)}
-                          className={`flex items-center justify-between gap-1.5 px-2.5 py-1.5 rounded-xl text-xs transition-all duration-200 text-left cursor-pointer active:scale-95 ${
-                            isSelected
-                              ? 'bg-[#EDF5FA] text-[#005689] font-bold border border-[#005689]/20'
-                              : 'text-slate-800 hover:bg-slate-50 font-medium'
-                          }`}
-                        >
-                          <span className="truncate whitespace-nowrap text-[11px]">{stateName}</span>
-                          {count > 0 && (
-                            <span className="text-[10px] font-bold text-[#005689] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
-                              {count}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })
-                )}
-              </div>
-
-              <div className="p-2 border-t border-slate-100 bg-slate-50">
-                <button
-                  type="button"
-                  onClick={handleResetToAllCities}
-                  className="w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold text-[#005689] hover:bg-[#EDF5FA] rounded-xl transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Globe size={13} className="text-[#005689] shrink-0" />
-                    <span>Pan-India Search (All Locations)</span>
-                  </div>
-                  <span className="text-[10px] font-bold bg-[#EDF5FA] text-[#005689] px-2 py-0.5 rounded-full border border-[#005689]/20">
-                    {activeTab === 'jobs' ? activeJobs.length : VERIFIED_FACULTY_MEMBERS.length}
-                  </span>
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Search Input */}
-      <div className="flex-1 flex items-center px-2 min-w-0 relative">
+    <div className={`w-full ${isCompact ? 'max-w-2xl' : 'max-w-3xl'} flex flex-row items-center bg-white rounded-full shadow-2xs pl-4 sm:pl-5 pr-1.5 py-1 sm:py-1.5 border border-slate-300 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#005689] focus-within:border-[#005689]`}>
+      {/* Search Input with generous padding */}
+      <div className="flex-1 flex items-center min-w-0 relative">
         <input
           ref={searchInputRef}
           type="text"
-          placeholder={activeTab === 'jobs' ? "Search role, subject, school..." : "Search teacher, qualification..."}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={activeTab === 'jobs' ? "Search role, subject, school, location..." : "Search teacher, qualification..."}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           onFocus={() => setIsSearchFocused(true)}
           onBlur={() => setTimeout(() => setIsSearchFocused(false), 250)}
-          className="w-full bg-transparent text-xs sm:text-[13px] text-slate-800 placeholder-slate-400 font-medium focus:outline-none min-w-0 py-1"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              if (hasSearchText) {
+                handleExecuteSearch();
+              }
+            }
+          }}
+          className="w-full bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 font-medium focus:outline-none min-w-0 py-1"
         />
 
-        {searchQuery ? (
+        {hasSearchText && (
           <button
             type="button"
-            onClick={() => setSearchQuery('')}
-            className="p-1 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer"
+            onClick={handleClearSearch}
+            className="p-1 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer mr-1"
             title="Clear search"
           >
-            <X size={13} />
+            <X size={14} />
           </button>
-        ) : (
-          <span className="text-[10px] font-mono px-1 py-0.5 rounded bg-slate-100 text-slate-400 border border-slate-200 hidden sm:inline-block shrink-0">
-            /
-          </span>
         )}
 
         {/* Trending Searches Popover */}
@@ -1466,14 +1398,14 @@ export default function TeachersDirectoryClient() {
               </span>
               <span className="text-[10px] text-slate-400">Popular Roles</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-48 overflow-y-auto">
               {trendingSearches.map((item, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onMouseDown={() => {
-                    setSearchQuery(item.query);
-                    setIsSearchFocused(false);
+                    handleExecuteSearch(item.query);
                   }}
                   className="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 text-slate-700 text-xs text-left transition-colors cursor-pointer group"
                 >
@@ -1503,9 +1435,14 @@ export default function TeachersDirectoryClient() {
 
         <button
           type="button"
-          onClick={() => {}}
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white flex items-center justify-center transition shadow-2xs cursor-pointer active:scale-95"
-          title="Search"
+          disabled={!hasSearchText}
+          onClick={() => handleExecuteSearch()}
+          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition shadow-2xs ${
+            hasSearchText
+              ? 'bg-[#005689] hover:bg-[#003c6e] text-white cursor-pointer active:scale-95'
+              : 'bg-slate-100 text-slate-300 cursor-not-allowed opacity-60'
+          }`}
+          title={hasSearchText ? "Search" : "Type to search"}
         >
           <Search size={14} />
         </button>
@@ -1531,13 +1468,28 @@ export default function TeachersDirectoryClient() {
           dangerouslySetInnerHTML={{ __html: `
           @media (min-width: 768px) {
             .directory-sidebar-fixed {
-              top: ${navBottomOffset}px !important;
-              height: calc(100vh - ${navBottomOffset}px) !important;
-              max-height: calc(100vh - ${navBottomOffset}px) !important;
+              top: ${isFullscreen ? '0px' : `${navBottomOffset}px`} !important;
+              height: ${isFullscreen ? '100vh' : `calc(100vh - ${navBottomOffset}px)`} !important;
+              max-height: ${isFullscreen ? '100vh' : `calc(100vh - ${navBottomOffset}px)`} !important;
             }
           }
+          ${isFullscreen ? `
+            #site-topbar,
+            .site-topbar,
+            #site-navbar,
+            .site-navbar,
+            #universal-admin-bar,
+            .universal-admin-bar,
+            header.fixed,
+            nav.fixed,
+            header,
+            .announcement-bar,
+            [id*="admin-bar"] {
+              display: none !important;
+            }
+          ` : ''}
           @media (max-width: 767px) {
-            ${viewMode === 'map' ? `
+            ${(viewMode === 'map' || isFullscreen) ? `
               html, body {
                 overflow: hidden !important;
                 height: 100% !important;
@@ -1561,6 +1513,22 @@ export default function TeachersDirectoryClient() {
           }
           `}}
         />
+
+        {/* Floating Exit Fullscreen Button - Placed in top middle/center */}
+        {isFullscreen && (
+          <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[99999] animate-in fade-in slide-in-from-top-2 duration-200">
+            <button
+              type="button"
+              onClick={handleToggleFullscreen}
+              className="h-8 px-3.5 flex items-center gap-1.5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white shadow-2xl backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 transition cursor-pointer text-xs font-bold"
+              title="Exit Fullscreen (Esc)"
+              aria-label="Exit Fullscreen"
+            >
+              <X size={15} />
+              <span>Exit Fullscreen</span>
+            </button>
+          </div>
+        )}
 
         {/* ── 1. Minimized Desktop Sidebar Strip (Shown when minimized, exactly like School Listing) ── */}
         {isSidebarMinimized && (
@@ -1666,6 +1634,8 @@ export default function TeachersDirectoryClient() {
           setMinSalaryFilter={setMinSalaryFilter}
           urgentOnly={urgentOnly}
           setUrgentOnly={setUrgentOnly}
+          forLadyOnly={forLadyOnly}
+          setForLadyOnly={setForLadyOnly}
           dynamicCounts={dynamicCounts}
           onResetAll={resetAllFilters}
           isSidebarMinimized={isSidebarMinimized}
@@ -1698,6 +1668,8 @@ export default function TeachersDirectoryClient() {
           setMinSalaryFilter={setMinSalaryFilter}
           urgentOnly={urgentOnly}
           setUrgentOnly={setUrgentOnly}
+          forLadyOnly={forLadyOnly}
+          setForLadyOnly={setForLadyOnly}
           dynamicCounts={dynamicCounts}
           onResetAll={resetAllFilters}
         />
@@ -1739,16 +1711,24 @@ export default function TeachersDirectoryClient() {
                   <input
                     type="text"
                     placeholder={selectedCities.length === 1 ? `Search in ${selectedCities[0]}...` : (activeTab === 'jobs' ? "Search role, school..." : "Search teacher...")}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (hasSearchText) {
+                          handleExecuteSearch();
+                        }
+                      }
+                    }}
                     className="flex-1 bg-transparent px-2 py-0.5 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
                   />
 
                   {/* Clear Text Icon */}
-                  {searchQuery.trim() && (
+                  {hasSearchText && (
                     <button
                       type="button"
-                      onClick={() => setSearchQuery('')}
+                      onClick={handleClearSearch}
                       className="p-1 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
                       title="Clear search"
                     >
@@ -1759,9 +1739,14 @@ export default function TeachersDirectoryClient() {
                   {/* Search Icon */}
                   <button
                     type="button"
-                    onClick={() => {}}
-                    className="p-1 text-blue-600 hover:text-blue-700 active:scale-90 transition shrink-0 cursor-pointer"
-                    title="Search"
+                    disabled={!hasSearchText}
+                    onClick={() => handleExecuteSearch()}
+                    className={`p-1 transition shrink-0 ${
+                      hasSearchText
+                        ? 'text-[#005689] hover:text-[#003c6e] active:scale-90 cursor-pointer'
+                        : 'text-gray-300 cursor-not-allowed opacity-50'
+                    }`}
+                    title={hasSearchText ? "Search" : "Type to search"}
                   >
                     <Search size={16} />
                   </button>
@@ -1809,7 +1794,7 @@ export default function TeachersDirectoryClient() {
                   {/* 2-Grid (2 Columns) */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => handleViewModeChange('grid')}
                     className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'grid'
                         ? 'bg-white text-blue-600 shadow-2xs font-bold'
@@ -1823,7 +1808,7 @@ export default function TeachersDirectoryClient() {
                   {/* 1-Grid (Single Full Card) */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('grid3')}
+                    onClick={() => handleViewModeChange('grid3')}
                     className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'grid3'
                         ? 'bg-white text-blue-600 shadow-2xs font-bold'
@@ -1839,7 +1824,7 @@ export default function TeachersDirectoryClient() {
                   {/* List Grid (Compact Single-Row List) */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('compact')}
+                    onClick={() => handleViewModeChange('compact')}
                     className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'compact'
                         ? 'bg-white text-blue-600 shadow-2xs font-bold'
@@ -1853,7 +1838,7 @@ export default function TeachersDirectoryClient() {
                   {/* Map View */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('map')}
+                    onClick={() => handleViewModeChange('map')}
                     className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'map'
                         ? 'bg-[#1A73E8] text-white shadow-2xs font-bold'
@@ -2025,7 +2010,7 @@ export default function TeachersDirectoryClient() {
                   {/* 2-Col Grid */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('grid')}
+                    onClick={() => handleViewModeChange('grid')}
                     className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
                     }`}
@@ -2040,7 +2025,7 @@ export default function TeachersDirectoryClient() {
                   {/* 3-Col Grid */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('grid3')}
+                    onClick={() => handleViewModeChange('grid3')}
                     className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'grid3' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
                     }`}
@@ -2056,7 +2041,7 @@ export default function TeachersDirectoryClient() {
                   {/* Compact List */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('compact')}
+                    onClick={() => handleViewModeChange('compact')}
                     className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'compact' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
                     }`}
@@ -2072,7 +2057,7 @@ export default function TeachersDirectoryClient() {
                   {/* Map View */}
                   <button
                     type="button"
-                    onClick={() => setViewMode('map')}
+                    onClick={() => handleViewModeChange('map')}
                     className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'map' ? 'bg-[#1A73E8] text-white shadow-2xs font-bold' : 'text-blue-700 hover:bg-blue-100/60'
                     }`}
@@ -2086,11 +2071,11 @@ export default function TeachersDirectoryClient() {
                   {/* Fullscreen Toggle */}
                   <button
                     type="button"
-                    onClick={() => setIsFullscreen(!isFullscreen)}
+                    onClick={handleToggleFullscreen}
                     className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
                       isFullscreen ? 'bg-blue-600 text-white shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
                     }`}
-                    title={isFullscreen ? 'Restore Top Bar' : 'Expand Fullscreen'}
+                    title={isFullscreen ? 'Restore Top Bar (Exit Fullscreen)' : 'Expand Fullscreen (Hide Navigation)'}
                   >
                     {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
                   </button>
@@ -2108,7 +2093,11 @@ export default function TeachersDirectoryClient() {
               
               {/* ── MAP VIEW (IF TOGGLED) ── */}
               {viewMode === 'map' && (
-                <div className="fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col md:relative md:inset-auto md:z-auto md:w-full md:rounded-3xl md:h-[620px] bg-slate-50 overflow-hidden mb-4">
+                <div className={`fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col bg-slate-50 overflow-hidden mb-4 ${
+                  isFullscreen
+                    ? 'md:fixed md:inset-0 md:z-[9999] md:w-screen md:h-screen md:rounded-none'
+                    : 'md:relative md:inset-auto md:z-auto md:w-full md:rounded-3xl md:h-[620px]'
+                }`}>
                   <FacultyJobMap
                     activeTab={activeTab}
                     jobs={paginatedJobs}
@@ -2176,7 +2165,7 @@ export default function TeachersDirectoryClient() {
                       return (
                         <div
                           key={job.id}
-                          className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
+                          className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
                         >
                           <div className="space-y-2.5 min-w-0">
                             {/* Row 1: Title & Logo */}
@@ -2265,11 +2254,19 @@ export default function TeachersDirectoryClient() {
                               </a>
                             </div>
 
-                            {/* Row 3: Short Description (with document icon) */}
+                            {/* Row 3: Short Description (with document icon & For Lady badge) */}
                             {job.shortDescription && (
                               <div className="flex items-start gap-1.5 text-slate-500 text-[11.5px] sm:text-[12px] leading-relaxed line-clamp-1">
                                 <FileText size={12} className="text-slate-400 shrink-0 mt-0.5" />
-                                <span className="truncate">{job.shortDescription}</span>
+                                <div className="truncate flex items-center">
+                                  {job.forLady && (
+                                    <span className="inline-flex items-center gap-1 font-bold text-rose-700 bg-rose-50 border border-rose-200/90 px-1.5 py-0.5 rounded text-[10.5px] mr-1.5 shrink-0 select-none">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                      For Lady
+                                    </span>
+                                  )}
+                                  <span className="truncate">{job.shortDescription}</span>
+                                </div>
                               </div>
                             )}
 
@@ -2287,17 +2284,17 @@ export default function TeachersDirectoryClient() {
                           </div>
 
                           {/* Row 5: Footer (Posted Date on Left, Share + Save + Details + Apply on Right) */}
-                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                          <div className="pt-1.5 pb-0.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
                             <div className="text-[11px] text-slate-400 font-medium">
                               {job.openingDate ? formatJobDisplayDate(job.openingDate) : 'Today'}
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
                               {/* Share Button */}
                               <button
                                 type="button"
                                 onClick={() => handleCopyJobUrl(job)}
-                                className="flex items-center gap-1 text-[11.5px] text-slate-500 hover:text-[#0A66C2] px-1.5 py-1 rounded-lg hover:bg-slate-50 transition cursor-pointer"
+                                className="h-9 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer"
                                 title="Share Vacancy"
                               >
                                 {copiedJobId === job.id ? <CheckCheck size={13} className="text-emerald-600" /> : <Share2 size={13} className="text-slate-400" />}
@@ -2308,17 +2305,17 @@ export default function TeachersDirectoryClient() {
                               <button
                                 type="button"
                                 onClick={() => toggleSaveJob(job.id)}
-                                className="flex items-center gap-1 text-[11.5px] text-slate-500 hover:text-[#0A66C2] px-2 py-1 rounded-lg hover:bg-slate-50 transition cursor-pointer"
+                                className="h-9 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer"
                                 title={isSaved ? "Saved" : "Save Vacancy"}
                               >
-                                <Bookmark size={13} className={isSaved ? 'fill-[#0A66C2] text-[#0A66C2]' : 'text-slate-400'} />
-                                <span>{isSaved ? 'Saved' : 'Save'}</span>
+                                <Bookmark size={13} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
+                                <span>{isSaved ? "Saved" : "Save"}</span>
                               </button>
 
                               {/* Details Button */}
                               <Link
                                 href={`/edu-network/teachers/job/${job.id}`}
-                                className="text-[11.5px] font-semibold text-slate-600 hover:text-[#0A66C2] px-2.5 py-1 rounded-lg hover:bg-slate-50 transition"
+                                className="h-9 px-3.5 sm:px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition inline-flex items-center justify-center"
                               >
                                 Details
                               </Link>
@@ -2329,7 +2326,7 @@ export default function TeachersDirectoryClient() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={() => {
-                                  trackCseelEvent('job_apply_click', {
+                                  trackCseelEvent("job_apply_click", {
                                     job_id: job.id,
                                     job_title: job.jobPostName,
                                     school_name: job.organisationName,
@@ -2339,10 +2336,10 @@ export default function TeachersDirectoryClient() {
                                     source: job.source,
                                   });
                                 }}
-                                className="h-7.5 px-3.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-bold transition inline-flex items-center justify-center gap-1 shadow-2xs"
+                                className="h-9 px-4 sm:px-4.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer"
                               >
                                 <span>Apply</span>
-                                <ExternalLink size={10} className="shrink-0" />
+                                <ExternalLink size={12} className="shrink-0" />
                               </a>
                             </div>
                           </div>

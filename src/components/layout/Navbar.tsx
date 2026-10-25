@@ -599,7 +599,7 @@ const Navbar = () => {
       <header
         ref={headerRef}
         id="site-navbar"
-        className={`site-navbar sticky top-0 w-full z-[400] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
+        className={`site-navbar sticky top-[26px] w-full z-[400] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
           isScrolled
             ? 'shadow-[0_4px_5px_0_rgba(0,0,0,0.14),0_1px_10px_0_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.2)]'
             : ''

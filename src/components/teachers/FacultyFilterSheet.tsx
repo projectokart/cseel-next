@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   SlidersHorizontal, X, RotateCcw, Check, ChevronDown, ChevronUp, ChevronLeft,
   GraduationCap, Award, MapPin, Building2, Briefcase, DollarSign,
-  Zap, Flame, BookOpen, Layers, CheckCircle2, ShieldCheck, ChevronRight
+  Zap, Flame, BookOpen, Layers, CheckCircle2, ShieldCheck, ChevronRight, Search
 } from 'lucide-react';
+import { DEFAULT_JOB_FACETS, JobFilterFacetsData } from '@/data/jobFilterFacets';
 
 export interface FacultyFilterSheetProps {
   mode: 'sidebar' | 'sheet';
@@ -33,43 +34,23 @@ export interface FacultyFilterSheetProps {
   setMinSalaryFilter: (val: number) => void;
   urgentOnly: boolean;
   setUrgentOnly: (val: boolean) => void;
+  forLadyOnly?: boolean;
+  setForLadyOnly?: (val: boolean) => void;
   dynamicCounts: {
     designations: Record<string, number>;
     subjects: Record<string, number>;
     boards: Record<string, number>;
     cities: Record<string, number>;
     states: Record<string, number>;
+    portals?: Record<string, number>;
+    forLady?: number;
   };
   onResetAll: () => void;
   // Sidebar minimize
   isSidebarMinimized?: boolean;
   setIsSidebarMinimized?: (minimized: boolean) => void;
+  availableFacets?: JobFilterFacetsData;
 }
-
-const DESIGNATION_OPTIONS = [
-  { id: 'PGT', label: 'PGT (Class 11-12)' },
-  { id: 'TGT', label: 'TGT (Class 6-10)' },
-  { id: 'PRT', label: 'PRT (Primary 1-5)' },
-  { id: 'Lab In-Charge', label: 'Composite Lab In-Charge' },
-  { id: 'ATL Mentor', label: 'ATL Tinkering Lab Mentor' },
-];
-
-const SUBJECT_OPTIONS = [
-  { id: 'Physics', label: 'Physics' },
-  { id: 'Chemistry', label: 'Chemistry' },
-  { id: 'Biology', label: 'Biology' },
-  { id: 'Mathematics', label: 'Mathematics' },
-  { id: 'Robotics & AI', label: 'Robotics & AI' },
-  { id: 'Computer Science', label: 'Computer Science' },
-  { id: 'General Science', label: 'General Science' },
-  { id: 'Composite Lab', label: 'Composite Lab' },
-];
-
-const BOARD_OPTIONS = [
-  { id: 'CBSE', label: 'CBSE' },
-  { id: 'ICSE', label: 'ICSE / CISCE' },
-  { id: 'Cambridge / IB', label: 'Cambridge / IB' },
-];
 
 const JOB_TYPE_OPTIONS = [
   { id: 'Full-Time', label: 'Full Time' },
@@ -78,57 +59,13 @@ const JOB_TYPE_OPTIONS = [
   { id: 'On-site', label: 'Offline / On-site' },
 ];
 
-const PORTAL_OPTIONS = [
-  { id: 'Naukri.com', label: 'Naukri.com' },
-  { id: 'Indeed', label: 'Indeed' },
-  { id: 'LinkedIn', label: 'LinkedIn' },
-  { id: 'Direct School Portal', label: 'Direct Portal' },
-];
-
-const CITY_OPTIONS = [
-  { id: 'Delhi', label: 'Delhi NCR' },
-  { id: 'Gurugram', label: 'Gurugram' },
-  { id: 'Noida', label: 'Noida' },
-  { id: 'Mumbai', label: 'Mumbai' },
-  { id: 'Pune', label: 'Pune' },
-  { id: 'Bengaluru', label: 'Bengaluru' },
-  { id: 'Hyderabad', label: 'Hyderabad' },
-  { id: 'Jaipur', label: 'Jaipur' },
-  { id: 'Chandigarh', label: 'Chandigarh' },
-  { id: 'Kolkata', label: 'Kolkata' },
-];
-
 const SALARY_OPTIONS = [
   { value: 0, label: 'Any Package' },
-  { value: 600000, label: '₹6+ Lacs PA' },
-  { value: 800000, label: '₹8+ Lacs PA' },
-  { value: 1000000, label: '₹10+ Lacs PA' },
-  { value: 1200000, label: '₹12+ Lacs PA' },
-];
-
-const STATE_OPTIONS = [
-  { id: 'Delhi NCR', label: 'Delhi NCR' },
-  { id: 'Uttar Pradesh', label: 'Uttar Pradesh' },
-  { id: 'Haryana', label: 'Haryana' },
-  { id: 'Maharashtra', label: 'Maharashtra' },
-  { id: 'Rajasthan', label: 'Rajasthan' },
-  { id: 'Punjab', label: 'Punjab' },
-  { id: 'Karnataka', label: 'Karnataka' },
-  { id: 'Tamil Nadu', label: 'Tamil Nadu' },
-  { id: 'Telangana', label: 'Telangana' },
-  { id: 'Madhya Pradesh', label: 'Madhya Pradesh' },
-  { id: 'Gujarat', label: 'Gujarat' },
-  { id: 'West Bengal', label: 'West Bengal' },
-  { id: 'Uttarakhand', label: 'Uttarakhand' },
-  { id: 'Bihar', label: 'Bihar' },
-  { id: 'Kerala', label: 'Kerala' },
-  { id: 'Odisha', label: 'Odisha' },
-  { id: 'Chandigarh', label: 'Chandigarh' },
-  { id: 'Andhra Pradesh', label: 'Andhra Pradesh' },
-  { id: 'Jharkhand', label: 'Jharkhand' },
-  { id: 'Himachal Pradesh', label: 'Himachal Pradesh' },
-  { id: 'Assam', label: 'Assam' },
-  { id: 'Goa', label: 'Goa' },
+  { value: 300000, label: '₹3+ Lakhs PA' },
+  { value: 500000, label: '₹5+ Lakhs PA' },
+  { value: 800000, label: '₹8+ Lakhs PA' },
+  { value: 1000000, label: '₹10+ Lakhs PA' },
+  { value: 1200000, label: '₹12+ Lakhs PA' },
 ];
 
 export default function FacultyFilterSheet({
@@ -156,23 +93,30 @@ export default function FacultyFilterSheet({
   setMinSalaryFilter,
   urgentOnly,
   setUrgentOnly,
+  forLadyOnly = false,
+  setForLadyOnly,
   dynamicCounts,
   onResetAll,
   isSidebarMinimized = false,
   setIsSidebarMinimized,
+  availableFacets = DEFAULT_JOB_FACETS,
 }: FacultyFilterSheetProps) {
 
   // Collapsible section states (Naukri style)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    designation: true,
     subject: true,
+    designation: true,
     board: true,
     jobType: true,
     portal: true,
     salary: true,
     city: true,
-    state: true,
+    state: false,
   });
+
+  // Local filter search states
+  const [subjectQuery, setSubjectQuery] = useState('');
+  const [cityQuery, setCityQuery] = useState('');
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
@@ -187,52 +131,126 @@ export default function FacultyFilterSheet({
     selectedJobTypes.length > 0 ||
     selectedPortals.length > 0 ||
     minSalaryFilter > 0 ||
-    urgentOnly;
+    urgentOnly ||
+    forLadyOnly;
 
-  const scrollToSection = (id: string, sectionKey?: string) => {
-    if (sectionKey) {
-      setOpenSections((prev) => ({ ...prev, [sectionKey]: true }));
+  // Dynamically sorted subjects based on current dynamic count or global facet list
+  const dynamicSubjects = useMemo(() => {
+    const list = availableFacets.subjects.map((s) => ({
+      ...s,
+      currentCount: (dynamicCounts?.subjects && dynamicCounts.subjects[s.id] !== undefined) ? dynamicCounts.subjects[s.id] : 0,
+    }));
+
+    // If search query is present, filter
+    let filtered = list;
+    if (subjectQuery.trim()) {
+      const q = subjectQuery.toLowerCase().trim();
+      filtered = list.filter((s) => s.label.toLowerCase().includes(q));
     }
-    setTimeout(() => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 60);
-  };
+
+    // Sort: selected first, then by currentCount descending
+    return filtered.sort((a, b) => {
+      const aSel = selectedSubjects.includes(a.id) ? 1 : 0;
+      const bSel = selectedSubjects.includes(b.id) ? 1 : 0;
+      if (aSel !== bSel) return bSel - aSel;
+      return b.currentCount - a.currentCount;
+    });
+  }, [availableFacets.subjects, dynamicCounts.subjects, subjectQuery, selectedSubjects]);
+
+  // Dynamically sorted designations
+  const dynamicDesignations = useMemo(() => {
+    return availableFacets.designations.map((d) => ({
+      ...d,
+      currentCount: (dynamicCounts?.designations && dynamicCounts.designations[d.id] !== undefined) ? dynamicCounts.designations[d.id] : 0,
+    })).sort((a, b) => {
+      const aSel = selectedDesignations.includes(a.id) ? 1 : 0;
+      const bSel = selectedDesignations.includes(b.id) ? 1 : 0;
+      if (aSel !== bSel) return bSel - aSel;
+      return b.currentCount - a.currentCount;
+    });
+  }, [availableFacets.designations, dynamicCounts.designations, selectedDesignations]);
+
+  // Dynamically sorted boards
+  const dynamicBoards = useMemo(() => {
+    return availableFacets.boards.map((b) => ({
+      ...b,
+      currentCount: (dynamicCounts?.boards && dynamicCounts.boards[b.id] !== undefined) ? dynamicCounts.boards[b.id] : 0,
+    })).sort((a, b) => b.currentCount - a.currentCount);
+  }, [availableFacets.boards, dynamicCounts.boards]);
+
+  // Dynamically sorted cities
+  const dynamicCities = useMemo(() => {
+    let list = availableFacets.cities.map((c) => ({
+      ...c,
+      currentCount: (dynamicCounts?.cities && dynamicCounts.cities[c.id] !== undefined) ? dynamicCounts.cities[c.id] : 0,
+    }));
+
+    if (cityQuery.trim()) {
+      const q = cityQuery.toLowerCase().trim();
+      list = list.filter((c) => c.label.toLowerCase().includes(q));
+    }
+
+    return list.sort((a, b) => {
+      const aSel = selectedCities.includes(a.id) ? 1 : 0;
+      const bSel = selectedCities.includes(b.id) ? 1 : 0;
+      if (aSel !== bSel) return bSel - aSel;
+      return b.currentCount - a.currentCount;
+    });
+  }, [availableFacets.cities, dynamicCounts.cities, cityQuery, selectedCities]);
+
+  // Dynamically sorted states
+  const dynamicStates = useMemo(() => {
+    return availableFacets.states.map((st) => ({
+      ...st,
+      currentCount: (dynamicCounts?.states && dynamicCounts.states[st.id] !== undefined) ? dynamicCounts.states[st.id] : 0,
+    })).sort((a, b) => {
+      const aSel = selectedStates.includes(a.id) ? 1 : 0;
+      const bSel = selectedStates.includes(b.id) ? 1 : 0;
+      if (aSel !== bSel) return bSel - aSel;
+      return b.currentCount - a.currentCount;
+    });
+  }, [availableFacets.states, dynamicCounts.states, selectedStates]);
+
+  // Dynamically sorted portals
+  const dynamicPortals = useMemo(() => {
+    return availableFacets.portals.map((p) => ({
+      ...p,
+      currentCount: (dynamicCounts?.portals && dynamicCounts.portals[p.id] !== undefined) ? dynamicCounts.portals[p.id] : 0,
+    })).sort((a, b) => b.currentCount - a.currentCount);
+  }, [availableFacets.portals, dynamicCounts.portals]);
 
   const filterContent = (
     <div className="flex flex-col h-full bg-white rounded-none md:border-r md:border-b md:border-slate-200 shadow-none overflow-hidden">
       
       {/* Header */}
-      <div className="p-3.5 sm:p-4 border-b border-slate-200 flex items-center justify-between bg-white shrink-0 sticky top-0 z-10 shadow-2xs">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-blue-50 text-[#005689] flex items-center justify-center shrink-0">
-            <SlidersHorizontal size={15} />
+      <div className="p-3 sm:p-3.5 border-b border-slate-200 flex items-start justify-between bg-white shrink-0 sticky top-0 z-10 shadow-2xs gap-2">
+        <div className="flex items-start gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-full bg-blue-50 text-[#005689] flex items-center justify-center shrink-0 mt-0.5">
+            <SlidersHorizontal size={14} />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900 uppercase tracking-wider">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs font-bold text-gray-900 uppercase tracking-wider">
                 Filters
               </span>
               {hasAnyFilter && (
-                <span className="text-[10px] font-semibold text-[#005689] bg-[#EDF5FA] px-2 py-0.5 rounded-full border border-[#DDF0FC]">
+                <span className="text-[10px] font-semibold text-[#005689] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full border border-[#DDF0FC]">
                   Active
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-gray-500 font-medium">
-              {filteredCount} of {totalCount} opportunities match
+            <p className="text-[11px] text-gray-500 font-medium truncate">
+              {filteredCount} of {totalCount} results
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0">
           {hasAnyFilter && (
             <button
               type="button"
               onClick={onResetAll}
-              className="px-2.5 py-1 rounded-full text-xs font-semibold text-[#005689] hover:bg-[#EDF5FA] border border-[#005689]/30 transition cursor-pointer"
+              className="px-2 py-0.5 rounded-full text-[11px] font-semibold text-[#005689] hover:bg-[#EDF5FA] border border-[#005689]/30 transition cursor-pointer"
               title="Reset all active filters"
             >
               Reset
@@ -243,7 +261,7 @@ export default function FacultyFilterSheet({
             <button
               type="button"
               onClick={() => setIsSidebarMinimized(true)}
-              className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+              className="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
               title="Minimise Filters"
             >
               <ChevronLeft size={16} />
@@ -266,59 +284,8 @@ export default function FacultyFilterSheet({
       {/* Accordion List Body */}
       <div className="flex-1 overflow-y-auto p-4 space-y-5 text-xs divide-y divide-slate-100 custom-scrollbar">
 
-        {/* 1. Designation / Teaching Level */}
-        <div id="filter-designation" className="space-y-2.5 scroll-mt-3">
-          <button
-            type="button"
-            onClick={() => toggleSection('designation')}
-            className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
-          >
-            <span className="flex items-center gap-1.5">
-              <span>Teaching Level</span>
-              {selectedDesignations.length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
-              )}
-            </span>
-            {openSections.designation ? (
-              <ChevronUp className="w-4 h-4 text-slate-400" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-slate-400" />
-            )}
-          </button>
-
-          {openSections.designation && (
-            <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-              {DESIGNATION_OPTIONS.map((opt) => {
-                const count = dynamicCounts.designations[opt.id] || 0;
-                const isChecked = selectedDesignations.includes(opt.id);
-                return (
-                  <label
-                    key={opt.id}
-                    className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggleDesignation(opt.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
-                      />
-                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
-                        {opt.label}
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
-                      ({count})
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* 2. Subject Specialization */}
-        <div id="filter-subject" className="pt-4 space-y-2.5 scroll-mt-3">
+        {/* 1. Subject Discipline (DYNAMIC & SEARCHABLE) */}
+        <div id="filter-subject" className="space-y-2.5 scroll-mt-3">
           <button
             type="button"
             onClick={() => toggleSection('subject')}
@@ -327,7 +294,9 @@ export default function FacultyFilterSheet({
             <span className="flex items-center gap-1.5">
               <span>Subject Discipline</span>
               {selectedSubjects.length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
+                <span className="px-1.5 py-0.2 rounded-full bg-[#005689] text-white text-[10px] font-bold">
+                  {selectedSubjects.length}
+                </span>
               )}
             </span>
             {openSections.subject ? (
@@ -339,26 +308,116 @@ export default function FacultyFilterSheet({
 
           {openSections.subject && (
             <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-              {SUBJECT_OPTIONS.map((opt) => {
-                const count = dynamicCounts.subjects[opt.id] || 0;
-                const isChecked = selectedSubjects.includes(opt.id);
+              {/* Quick Search in Subjects */}
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={subjectQuery}
+                  onChange={(e) => setSubjectQuery(e.target.value)}
+                  placeholder="Search subject (e.g. Physics, Math)..."
+                  className="w-full pl-8 pr-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:border-[#005689] focus:outline-none"
+                />
+              </div>
+
+              {/* Scrollable Subjects List */}
+              <div className="max-h-56 overflow-y-auto custom-scrollbar pr-1 space-y-1">
+                {dynamicSubjects.map((opt) => {
+                  const count = opt.currentCount;
+                  const isChecked = selectedSubjects.includes(opt.id);
+                  const isZero = count === 0 && !isChecked;
+
+                  return (
+                    <label
+                      key={opt.id}
+                      className={`flex items-center justify-between select-none py-1 px-1.5 rounded-lg transition-colors ${
+                        isChecked ? 'bg-blue-50/70 font-semibold text-[#005689]' : ''
+                      } ${
+                        isZero
+                          ? 'opacity-30 cursor-not-allowed text-slate-400 bg-slate-50/40'
+                          : 'group cursor-pointer text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          disabled={isZero}
+                          onChange={() => !isZero && toggleSubject(opt.id)}
+                          className={`w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] ${
+                            isZero ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
+                          }`}
+                        />
+                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : isZero ? 'text-slate-400' : 'text-slate-800'}`}>
+                          {opt.label}
+                        </span>
+                      </div>
+                      <span className={`text-[11px] font-mono shrink-0 ml-2 ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-400'}`}>
+                        ({count})
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 2. Designation / Teaching Level (DYNAMIC) */}
+        <div id="filter-designation" className="pt-4 space-y-2.5 scroll-mt-3">
+          <button
+            type="button"
+            onClick={() => toggleSection('designation')}
+            className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
+          >
+            <span className="flex items-center gap-1.5">
+              <span>Teaching Level</span>
+              {selectedDesignations.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full bg-[#005689] text-white text-[10px] font-bold">
+                  {selectedDesignations.length}
+                </span>
+              )}
+            </span>
+            {openSections.designation ? (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            )}
+          </button>
+
+          {openSections.designation && (
+            <div className="space-y-1 pt-1 animate-in fade-in duration-150">
+              {dynamicDesignations.map((opt) => {
+                const count = opt.currentCount;
+                const isChecked = selectedDesignations.includes(opt.id);
+                const isZero = count === 0 && !isChecked;
+
                 return (
                   <label
                     key={opt.id}
-                    className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                    className={`flex items-center justify-between select-none py-1 px-1.5 rounded-lg transition-colors ${
+                      isChecked ? 'bg-blue-50/70 font-semibold text-[#005689]' : ''
+                    } ${
+                      isZero
+                        ? 'opacity-30 cursor-not-allowed text-slate-400 bg-slate-50/40'
+                        : 'group cursor-pointer text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
                       <input
                         type="checkbox"
                         checked={isChecked}
-                        onChange={() => toggleSubject(opt.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                        disabled={isZero}
+                        onChange={() => !isZero && (() => toggleDesignation(opt.id))()}
+                        className={`w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] ${
+                          isZero ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
+                        }`}
                       />
-                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : isZero ? 'text-slate-400' : 'text-slate-800'}`}>
                         {opt.label}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
+                    <span className={`text-[11px] font-mono shrink-0 ml-2 ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-400'}`}>
                       ({count})
                     </span>
                   </label>
@@ -368,7 +427,7 @@ export default function FacultyFilterSheet({
           )}
         </div>
 
-        {/* 3. Curriculum Board */}
+        {/* 3. Curriculum Board (DYNAMIC) */}
         <div id="filter-board" className="pt-4 space-y-2.5 scroll-mt-3">
           <button
             type="button"
@@ -378,7 +437,9 @@ export default function FacultyFilterSheet({
             <span className="flex items-center gap-1.5">
               <span>Curriculum Board</span>
               {selectedBoards.length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
+                <span className="px-1.5 py-0.2 rounded-full bg-[#005689] text-white text-[10px] font-bold">
+                  {selectedBoards.length}
+                </span>
               )}
             </span>
             {openSections.board ? (
@@ -389,27 +450,38 @@ export default function FacultyFilterSheet({
           </button>
 
           {openSections.board && (
-            <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-              {BOARD_OPTIONS.map((opt) => {
-                const count = dynamicCounts.boards[opt.id] || 0;
+            <div className="space-y-1 pt-1 animate-in fade-in duration-150">
+              {dynamicBoards.map((opt) => {
+                const count = opt.currentCount;
                 const isChecked = selectedBoards.includes(opt.id);
+                const isZero = count === 0 && !isChecked;
+
                 return (
                   <label
                     key={opt.id}
-                    className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                    className={`flex items-center justify-between select-none py-1 px-1.5 rounded-lg transition-colors ${
+                      isChecked ? 'bg-blue-50/70 font-semibold text-[#005689]' : ''
+                    } ${
+                      isZero
+                        ? 'opacity-30 cursor-not-allowed text-slate-400 bg-slate-50/40'
+                        : 'group cursor-pointer text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
                       <input
                         type="checkbox"
                         checked={isChecked}
-                        onChange={() => toggleBoard(opt.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                        disabled={isZero}
+                        onChange={() => !isZero && (() => toggleBoard(opt.id))()}
+                        className={`w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] ${
+                          isZero ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
+                        }`}
                       />
-                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : isZero ? 'text-slate-400' : 'text-slate-800'}`}>
                         {opt.label}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
+                    <span className={`text-[11px] font-mono shrink-0 ml-2 ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-400'}`}>
                       ({count})
                     </span>
                   </label>
@@ -419,7 +491,7 @@ export default function FacultyFilterSheet({
           )}
         </div>
 
-        {/* 4. Employment / Job Type (Full Time, Part Time, Remote/Online, Offline) */}
+        {/* 4. Employment / Job Type (Full Time, Part Time, Remote, On-site) */}
         {toggleJobType && (
           <div id="filter-jobtype" className="pt-4 space-y-2.5 scroll-mt-3">
             <button
@@ -441,22 +513,22 @@ export default function FacultyFilterSheet({
             </button>
 
             {openSections.jobType && (
-              <div className="space-y-2 pt-1 animate-in fade-in duration-150">
+              <div className="space-y-1 pt-1 animate-in fade-in duration-150">
                 {JOB_TYPE_OPTIONS.map((opt) => {
                   const isChecked = selectedJobTypes.includes(opt.id);
                   return (
                     <label
                       key={opt.id}
-                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-1 px-1.5 rounded-lg"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => toggleJobType(opt.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                          className="w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
                         />
-                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-800'}`}>
                           {opt.label}
                         </span>
                       </div>
@@ -468,7 +540,7 @@ export default function FacultyFilterSheet({
           </div>
         )}
 
-        {/* 5. Source Portal (Naukri, Indeed, LinkedIn, Direct Portal) */}
+        {/* 5. Source Portal (DYNAMIC) */}
         {togglePortal && (
           <div id="filter-portal" className="pt-4 space-y-2.5 scroll-mt-3">
             <button
@@ -479,7 +551,9 @@ export default function FacultyFilterSheet({
               <span className="flex items-center gap-1.5">
                 <span>Source Portal</span>
                 {selectedPortals.length > 0 && (
-                  <span className="w-2 h-2 rounded-full bg-blue-600" />
+                  <span className="px-1.5 py-0.2 rounded-full bg-[#005689] text-white text-[10px] font-bold">
+                    {selectedPortals.length}
+                  </span>
                 )}
               </span>
               {openSections.portal ? (
@@ -490,25 +564,40 @@ export default function FacultyFilterSheet({
             </button>
 
             {openSections.portal && (
-              <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-                {PORTAL_OPTIONS.map((opt) => {
+              <div className="space-y-1 pt-1 animate-in fade-in duration-150">
+                {dynamicPortals.map((opt) => {
+                  const count = opt.currentCount;
                   const isChecked = selectedPortals.includes(opt.id);
+                  const isZero = count === 0 && !isChecked;
+
                   return (
                     <label
                       key={opt.id}
-                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                      className={`flex items-center justify-between select-none py-1 px-1.5 rounded-lg transition-colors ${
+                        isChecked ? 'bg-blue-50/70 font-semibold text-[#005689]' : ''
+                      } ${
+                        isZero
+                          ? 'opacity-30 cursor-not-allowed text-slate-400 bg-slate-50/40'
+                          : 'group cursor-pointer text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                      }`}
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
                         <input
                           type="checkbox"
                           checked={isChecked}
-                          onChange={() => togglePortal(opt.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                          disabled={isZero}
+                          onChange={() => !isZero && togglePortal(opt.id)}
+                          className={`w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] ${
+                            isZero ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
+                          }`}
                         />
-                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : isZero ? 'text-slate-400' : 'text-slate-800'}`}>
                           {opt.label}
                         </span>
                       </div>
+                      <span className={`text-[11px] font-mono shrink-0 ml-2 ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-400'}`}>
+                        ({count})
+                      </span>
                     </label>
                   );
                 })}
@@ -517,7 +606,7 @@ export default function FacultyFilterSheet({
           </div>
         )}
 
-        {/* 4. Salary / Compensation */}
+        {/* 6. Salary / Compensation */}
         {activeTab === 'jobs' && (
           <div id="filter-salary" className="pt-4 space-y-2.5 scroll-mt-3">
             <button
@@ -526,7 +615,7 @@ export default function FacultyFilterSheet({
               className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
             >
               <span className="flex items-center gap-1.5">
-                <span>Salary Bracket</span>
+                <span>Minimum Package</span>
                 {minSalaryFilter > 0 && (
                   <span className="w-2 h-2 rounded-full bg-blue-600" />
                 )}
@@ -545,17 +634,17 @@ export default function FacultyFilterSheet({
                   return (
                     <label
                       key={opt.value}
-                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                      className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-1 px-1.5 rounded-lg"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2">
                         <input
                           type="radio"
                           name="salaryFilter"
                           checked={isChecked}
                           onChange={() => setMinSalaryFilter(opt.value)}
-                          className="w-4 h-4 border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                          className="w-3.5 h-3.5 border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
                         />
-                        <span className={`text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                        <span className={`text-xs ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-800'}`}>
                           {opt.label}
                         </span>
                       </div>
@@ -567,7 +656,7 @@ export default function FacultyFilterSheet({
           </div>
         )}
 
-        {/* 5. City / Metro Location */}
+        {/* 7. City / Location (DYNAMIC & SEARCHABLE) */}
         <div id="filter-city" className="pt-4 space-y-2.5 scroll-mt-3">
           <button
             type="button"
@@ -575,9 +664,11 @@ export default function FacultyFilterSheet({
             className="w-full flex items-center justify-between text-left font-bold text-slate-900 text-sm hover:text-[#005689] transition-colors cursor-pointer"
           >
             <span className="flex items-center gap-1.5">
-              <span>Location</span>
+              <span>City / Metro Hub</span>
               {selectedCities.length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
+                <span className="px-1.5 py-0.2 rounded-full bg-[#005689] text-white text-[10px] font-bold">
+                  {selectedCities.length}
+                </span>
               )}
             </span>
             {openSections.city ? (
@@ -589,38 +680,61 @@ export default function FacultyFilterSheet({
 
           {openSections.city && (
             <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-              {CITY_OPTIONS.map((opt) => {
-                const count = dynamicCounts.cities[opt.id] || 0;
-                const isChecked = selectedCities.includes(opt.id);
-                return (
-                  <label
-                    key={opt.id}
-                    className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggleCity(opt.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
-                      />
-                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
-                        {opt.label}
-                      </span>
-                    </div>
-                    {count > 0 && (
-                      <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
+              {/* City quick search */}
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={cityQuery}
+                  onChange={(e) => setCityQuery(e.target.value)}
+                  placeholder="Search city (e.g. Delhi, Mumbai)..."
+                  className="w-full pl-8 pr-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:border-[#005689] focus:outline-none"
+                />
+              </div>
+
+              <div className="max-h-56 overflow-y-auto custom-scrollbar pr-1 space-y-1">
+                {dynamicCities.map((opt) => {
+                  const count = opt.currentCount;
+                  const isChecked = selectedCities.includes(opt.id);
+                  const isZero = count === 0 && !isChecked;
+
+                  return (
+                    <label
+                      key={opt.id}
+                      className={`flex items-center justify-between select-none py-1 px-1.5 rounded-lg transition-colors ${
+                        isChecked ? 'bg-blue-50/70 font-semibold text-[#005689]' : ''
+                      } ${
+                        isZero
+                          ? 'opacity-30 cursor-not-allowed text-slate-400 bg-slate-50/40'
+                          : 'group cursor-pointer text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          disabled={isZero}
+                          onChange={() => !isZero && toggleCity(opt.id)}
+                          className={`w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] ${
+                            isZero ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
+                          }`}
+                        />
+                        <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : isZero ? 'text-slate-400' : 'text-slate-800'}`}>
+                          {opt.label}
+                        </span>
+                      </div>
+                      <span className={`text-[11px] font-mono shrink-0 ml-2 ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-400'}`}>
                         ({count})
                       </span>
-                    )}
-                  </label>
-                );
-              })}
+                    </label>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
 
-        {/* 6. Indian States & Union Territories Filter */}
+        {/* 8. State / UT (DYNAMIC) */}
         <div id="filter-state" className="pt-4 space-y-2.5 scroll-mt-3">
           <button
             type="button"
@@ -630,7 +744,9 @@ export default function FacultyFilterSheet({
             <span className="flex items-center gap-1.5">
               <span>State / UT</span>
               {selectedStates.length > 0 && (
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
+                <span className="px-1.5 py-0.2 rounded-full bg-[#005689] text-white text-[10px] font-bold">
+                  {selectedStates.length}
+                </span>
               )}
             </span>
             {openSections.state ? (
@@ -641,31 +757,40 @@ export default function FacultyFilterSheet({
           </button>
 
           {openSections.state && (
-            <div className="space-y-2 pt-1 max-h-56 overflow-y-auto custom-scrollbar pr-1 animate-in fade-in duration-150">
-              {STATE_OPTIONS.map((opt) => {
-                const count = dynamicCounts.states[opt.id] || 0;
+            <div className="space-y-1 pt-1 max-h-56 overflow-y-auto custom-scrollbar pr-1 animate-in fade-in duration-150">
+              {dynamicStates.map((opt) => {
+                const count = opt.currentCount;
                 const isChecked = selectedStates.includes(opt.id);
+                const isZero = count === 0 && !isChecked;
+
                 return (
                   <label
                     key={opt.id}
-                    className="flex items-center justify-between group cursor-pointer text-slate-700 hover:text-slate-900 select-none py-0.5"
+                    className={`flex items-center justify-between select-none py-1 px-1.5 rounded-lg transition-colors ${
+                      isChecked ? 'bg-blue-50/70 font-semibold text-[#005689]' : ''
+                    } ${
+                      isZero
+                        ? 'opacity-30 cursor-not-allowed text-slate-400 bg-slate-50/40'
+                        : 'group cursor-pointer text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+                    }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center gap-2 min-w-0">
                       <input
                         type="checkbox"
                         checked={isChecked}
-                        onChange={() => toggleState(opt.id)}
-                        className="w-4 h-4 rounded border-slate-300 text-[#005689] focus:ring-[#005689] cursor-pointer"
+                        disabled={isZero}
+                        onChange={() => !isZero && (() => toggleState(opt.id))()}
+                        className={`w-3.5 h-3.5 rounded border-slate-300 text-[#005689] focus:ring-[#005689] ${
+                          isZero ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
+                        }`}
                       />
-                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-slate-900' : 'font-medium'}`}>
+                      <span className={`truncate text-xs ${isChecked ? 'font-bold text-[#005689]' : isZero ? 'text-slate-400' : 'text-slate-800'}`}>
                         {opt.label}
                       </span>
                     </div>
-                    {count > 0 && (
-                      <span className="text-[11px] text-slate-400 font-mono shrink-0 ml-2">
-                        ({count})
-                      </span>
-                    )}
+                    <span className={`text-[11px] font-mono shrink-0 ml-2 ${isChecked ? 'font-bold text-[#005689]' : 'text-slate-400'}`}>
+                      ({count})
+                    </span>
                   </label>
                 );
               })}
@@ -673,16 +798,40 @@ export default function FacultyFilterSheet({
           )}
         </div>
 
-        {/* 7. Urgency Tag */}
+        {/* 9. Urgency Hiring */}
         <div id="filter-urgent" className="pt-4 scroll-mt-3">
-          <label className="flex items-center gap-2.5 group cursor-pointer select-none">
+          <label className="flex items-center gap-2.5 group cursor-pointer select-none py-1 px-1.5 rounded-lg hover:bg-red-50/50 transition-colors">
             <input
               type="checkbox"
               checked={urgentOnly}
               onChange={(e) => setUrgentOnly(e.target.checked)}
               className="w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-600 cursor-pointer"
             />
-            <span className="text-xs font-bold text-red-700">⚡ Urgently Hiring Only</span>
+            <span className="text-xs font-bold text-red-700 flex items-center gap-1">
+              <Flame className="w-3.5 h-3.5 text-red-600 fill-red-600" />
+              <span>Urgently Hiring Only</span>
+            </span>
+          </label>
+        </div>
+
+        {/* 10. For Lady / Women Only */}
+        <div id="filter-lady" className="pt-2 scroll-mt-3">
+          <label className="flex items-center justify-between group cursor-pointer select-none py-1.5 px-2 rounded-lg hover:bg-rose-50 border border-rose-100 bg-rose-50/30 transition-colors">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={forLadyOnly}
+                onChange={(e) => setForLadyOnly?.(e.target.checked)}
+                className="w-4 h-4 rounded border-rose-300 text-rose-600 focus:ring-rose-600 cursor-pointer"
+              />
+              <span className="text-xs font-bold text-rose-800 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>For Lady / Women Only</span>
+              </span>
+            </div>
+            <span className="text-[11px] font-mono font-bold text-rose-700 bg-rose-100/80 px-1.5 py-0.2 rounded-full">
+              {dynamicCounts.forLady ?? 28}
+            </span>
           </label>
         </div>
 
@@ -717,15 +866,12 @@ export default function FacultyFilterSheet({
     if (!isOpen) return null;
     return (
       <div className="fixed inset-0 z-[99990] flex animate-in fade-in duration-200">
-        {/* Backdrop overlay (tap to close) */}
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity cursor-pointer"
           onClick={onClose}
           aria-hidden="true"
         />
-
-        {/* Left-Side Drawer: occupies ~72% width ("half se thoda jada") */}
-        <div className="relative z-10 w-[72vw] max-w-[340px] min-w-[270px] h-full bg-white shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-left duration-300">
+        <div className="relative z-10 w-[78vw] max-w-[340px] min-w-[270px] h-full bg-white shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-left duration-300">
           {filterContent}
         </div>
       </div>

@@ -36,6 +36,7 @@ export interface FacultyJobItem {
   rating?: number | string | null;
   verified: boolean;
   badge?: string;
+  forLady?: boolean;
 }
 
 // Helper to enforce tag rules: max 20 chars per single tag, total cumulative length <= 60 chars (e.g. 3x20 chars or 4x15 chars)

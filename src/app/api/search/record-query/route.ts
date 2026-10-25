@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { sanitizeSearchQuery } from '@/lib/searchSanitizer';
 
 interface SearchQueryLog {
   id: string;
@@ -42,11 +43,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { query, category = 'faculty_jobs', filters = {}, resultsCount = 0 } = body;
 
-    if (!query || typeof query !== 'string' || query.trim().length < 2) {
-      return NextResponse.json({ success: false, message: 'Query too short' }, { status: 400 });
+    // Strict sanitization, length checking, and abusive language blocking
+    const { isValid, cleanQuery, reason } = sanitizeSearchQuery(query);
+    if (!isValid) {
+      return NextResponse.json({ success: false, message: reason || 'Invalid search query' }, { status: 400 });
     }
 
-    const cleanQuery = query.trim().toLowerCase();
     ensureDataFile();
 
     let logs: any[] = [];
@@ -60,12 +62,12 @@ export async function POST(req: NextRequest) {
     const newEntry: SearchQueryLog = {
       id: `sq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       query: cleanQuery,
-      category,
-      filters,
-      resultsCount,
+      category: typeof category === 'string' ? category.slice(0, 30) : 'faculty_jobs',
+      filters: typeof filters === 'object' && filters !== null ? filters : {},
+      resultsCount: typeof resultsCount === 'number' ? resultsCount : 0,
       timestamp: new Date().toISOString(),
-      ip: req.headers.get('x-forwarded-for') || 'local',
-      userAgent: req.headers.get('user-agent') || 'browser',
+      ip: req.headers.get('x-forwarded-for')?.slice(0, 45) || 'local',
+      userAgent: req.headers.get('user-agent')?.slice(0, 150) || 'browser',
     };
 
     logs.unshift(newEntry);
@@ -93,12 +95,13 @@ export async function GET() {
     const fileData = fs.readFileSync(LOG_FILE, 'utf-8');
     const logs = JSON.parse(fileData);
 
-    // Compute frequency map
+    // Compute frequency map with sanitization check
     const counts: Record<string, number> = {};
     for (const item of logs) {
-      const q = typeof item === 'string' ? item : item.query;
-      if (q && q.length > 2) {
-        counts[q] = (counts[q] || 0) + 1;
+      const rawQ = typeof item === 'string' ? item : item.query;
+      const { isValid, cleanQuery } = sanitizeSearchQuery(rawQ);
+      if (isValid && cleanQuery) {
+        counts[cleanQuery] = (counts[cleanQuery] || 0) + 1;
       }
     }
 

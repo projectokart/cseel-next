@@ -129,10 +129,7 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                     className="w-full h-full object-contain"
                   />
 
-                  {/* SKU Badge - Bottom Left */}
-                  <span className="absolute bottom-3 left-3 px-2.5 py-1 bg-black/80 backdrop-blur-sm text-white text-[10px] font-mono font-bold rounded-md">
-                    SKU: {item.sku}
-                  </span>
+
 
                   {/* Wishlist */}
                   <button
@@ -154,13 +151,20 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
               {/* Description & Selection Area */}
               <div className="lg:col-span-7 flex flex-col justify-between">
                 <div>
-                  {/* Chapter Pill */}
+                  {/* Chapter Pill & On Demand Status Badges */}
                   <div className="flex flex-wrap items-center gap-2 mb-3">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#EDF5FA] text-[#005689] border border-blue-200">
                       {item.cbse_chapter}
                     </span>
                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                       CBSE / NCERT Syllabus
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1">
+                      <span className="text-gray-500 font-normal">Price:</span> On Demand
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                      <span className="text-gray-500 font-normal">Availability:</span> Available
                     </span>
                   </div>
 
@@ -278,9 +282,7 @@ export default function MaterialDetailClient({ slug }: { slug: string }) {
                       <h3 className="text-xs font-bold text-gray-900 group-hover:text-[#005689] line-clamp-2 mb-1">
                         {rel.name}
                       </h3>
-                      <span className="text-[10px] font-mono text-gray-400 block">
-                        {rel.sku}
-                      </span>
+
                     </div>
                     <div className="pt-2 mt-2 border-t border-gray-100 text-right">
                       <span className="text-[11px] font-bold text-[#005689] group-hover:underline">

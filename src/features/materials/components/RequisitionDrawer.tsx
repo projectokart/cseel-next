@@ -17,6 +17,28 @@ export interface RequisitionDrawerProps {
   onRequestQuotation: () => void;
 }
 
+const DrawerItemThumb = ({ item }: { item: RequisitionItemData }) => {
+  const [failed, setFailed] = React.useState(false);
+  const src = item.image_url || `/images/materials/physics/${item.sku || item.id}.jpg`;
+
+  if (failed) {
+    return (
+      <div className="w-11 h-11 bg-white rounded-xl p-1 border border-slate-200 shrink-0 flex items-center justify-center text-[9px] font-bold text-[#1a73e8] font-mono">
+        {item.sku || item.id}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={item.name}
+      onError={() => setFailed(true)}
+      className="w-11 h-11 object-contain bg-white rounded-xl p-1 border border-slate-200 shrink-0"
+    />
+  );
+};
+
 export const RequisitionDrawer: React.FC<RequisitionDrawerProps> = ({
   isOpen,
   onClose,
@@ -94,11 +116,7 @@ export const RequisitionDrawer: React.FC<RequisitionDrawerProps> = ({
                   <span className="w-4 text-center text-[10px] font-bold text-gray-400 shrink-0">
                     {idx + 1}
                   </span>
-                  <img
-                    src={`/images/materials/physics/${item.id}.jpg`}
-                    alt={item.name}
-                    className="w-11 h-11 object-contain bg-white rounded-xl p-1 border border-slate-200 shrink-0"
-                  />
+                  <DrawerItemThumb item={item} />
                   <div className="flex-1 min-w-0">
                     <h4 className="text-xs font-bold text-gray-900 truncate">{item.name}</h4>
                     <span className="text-[10px] text-gray-400 block font-mono">

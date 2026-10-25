@@ -2357,6 +2357,39 @@ export default function SchoolProfileView({
         defaultSchoolName={displayName}
       />
 
+      {/* ─── MOBILE STICKY FLOATING ACTION BAR (High-Converting B2B & Parent Lead Engine) ─── */}
+      <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-4 py-3 shadow-2xl safe-bottom">
+        <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
+          <div className="min-w-0 flex-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block truncate">
+              {displayBoard || 'CBSE'} • Verified Campus
+            </span>
+            <span className="text-xs font-bold text-white truncate block">
+              {displayName}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {displayPhone && (
+              <a
+                href={`tel:${displayPhone.replace(/[^0-9+]/g, '')}`}
+                aria-label="Call School"
+                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 active:scale-95 transition-all"
+              >
+                <Phone className="w-4 h-4" />
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsClaimModalOpen(true)}
+              className="py-2.5 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold shadow-lg shadow-blue-900/30 active:scale-95 transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Claim Profile</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

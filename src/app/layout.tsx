@@ -187,31 +187,6 @@ export default function RootLayout({
         <link rel="llms-txt" href="/llms.txt" type="text/markdown" />
         <link rel="help" href="/llms-full.txt" type="text/markdown" title="CSEEL LLM Knowledge Guide" />
 
-        {/* Canonical Open Graph & Social Preview Tags for WhatsApp, Telegram, LinkedIn, Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="CSEEL - Center for Scientific Exploration &amp; Experiential Learning" />
-        <meta property="og:title" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
-        <meta property="og:description" content="CSEEL offers Experiential Learning Labs empowering students through hands-on learning, learning by doing, project-based learning, and problem-based learning aligned with NEP 2020 across India." />
-        <meta property="og:url" content="https://www.cseel.org" />
-        <meta property="og:image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
-        <meta property="og:image:secure_url" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
-        <meta property="og:image:type" content="image/jpeg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="CSEEL - Experiential Science Learning &amp; Live STEM Labs India" />
-
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@cseel_org" />
-        <meta name="twitter:title" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
-        <meta name="twitter:description" content="CSEEL offers Experiential Learning Labs empowering students through hands-on learning, learning by doing, project-based learning, and problem-based learning aligned with NEP 2020 across India." />
-        <meta name="twitter:image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
-
-        {/* Schema.org Microdata Fallback for WhatsApp */}
-        <meta itemProp="name" content="CSEEL | India's #1 Experiential Science &amp; STEM Learning Platform" />
-        <meta itemProp="description" content="CSEEL offers Experiential Learning Labs empowering students through hands-on learning, learning by doing, project-based learning, and problem-based learning aligned with NEP 2020 across India." />
-        <meta itemProp="image" content="https://www.cseel.org/images/cseel-social-preview.jpg" />
-
         {/* Favicon Direct Links (Google Search Central 48px Multiple & Vector Standard with v=3 cache bust) */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=31" />
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=31" />
@@ -236,7 +211,6 @@ export default function RootLayout({
           href="/images/hero/students-doing-chemistry-lab-experiment.webp"
           type="image/webp"
           // @ts-ignore
-          fetchpriority="high"
           fetchPriority="high"
         />
 
@@ -249,9 +223,6 @@ export default function RootLayout({
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
-          media="print"
-          // @ts-ignore
-          onLoad="this.media='all'"
         />
         <noscript>
           <link

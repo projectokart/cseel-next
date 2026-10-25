@@ -1213,6 +1213,35 @@ export default function FacultyJobMap({
               <Crosshair size={16} className={isLocating ? 'animate-spin' : ''} />
             </button>
           </div>
+
+          {/* Vertical Distance Range Bar (0 to 200 km) */}
+          <div className="flex flex-col items-center bg-white/95 backdrop-blur-md border border-[#dadce0] rounded-2xl py-2 px-1.5 shadow-[0_2px_8px_rgba(60,64,67,0.25)] select-none">
+            {/* Value badge at top */}
+            <span className="text-[9.5px] font-extrabold text-[#006FCC] bg-[#eef3fc] px-1 py-0.5 rounded font-mono mb-1.5 whitespace-nowrap">
+              {distanceRadius === 0 ? 'All' : `${distanceRadius}k`}
+            </span>
+
+            {/* Vertical Hairline Slider Track */}
+            <div className="relative h-22 sm:h-26 flex items-center justify-center">
+              <input
+                type="range"
+                min="0"
+                max="200"
+                step="5"
+                value={distanceRadius}
+                onChange={(e) => setDistanceRadius(Number(e.target.value))}
+                className="h-22 sm:h-26 w-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#006FCC]"
+                style={{
+                  writingMode: 'vertical-lr',
+                  WebkitAppearance: 'slider-vertical',
+                  direction: 'rtl',
+                }}
+                title={`Search Radius: ${distanceRadius === 0 ? 'All India' : distanceRadius + ' km'}`}
+              />
+            </div>
+
+            <span className="text-[8px] font-bold text-slate-400 mt-1 uppercase tracking-tight">km</span>
+          </div>
         </div>
       </div>
 

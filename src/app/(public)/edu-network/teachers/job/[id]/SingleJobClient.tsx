@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import PageTransition from '@/components/shared/PageTransition';
 import {
   MapPin, Clock, ExternalLink, Share2, Check, CheckCheck,
@@ -10,17 +9,8 @@ import {
   Sparkles, Award, ArrowLeft, RefreshCw
 } from 'lucide-react';
 import { FacultyJobItem } from '@/data/facultyJobsData';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
-
-const FacultyJobMap = dynamic(() => import('@/components/teachers/FacultyJobMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-72 bg-slate-100 rounded-2xl flex items-center justify-center text-xs font-bold text-slate-500 animate-pulse">
-      Loading Location Map...
-    </div>
-  ),
-});
 
 interface Props {
   job: FacultyJobItem;
@@ -49,7 +39,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
       case 'TimesJobs':
         return 'bg-[#C5221F]/10 text-[#C5221F] border-[#C5221F]/30';
       default:
-        return 'bg-emerald-50 text-emerald-700 border-emerald-300';
+        return 'bg-emerald-50 text-[#0F9D58] border-emerald-300';
     }
   };
 
@@ -134,15 +124,21 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     {job.jobPostName}
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm text-slate-600 font-medium">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs sm:text-sm text-slate-600 font-medium">
                     <span className="font-bold text-slate-900 flex items-center gap-1">
                       <Building2 className="w-4 h-4 text-[#005689]" />
                       <span>{job.organisationName}</span>
                     </span>
-                    <span className="flex items-center gap-1 text-slate-500">
-                      <MapPin className="w-4 h-4 text-slate-400" />
-                      <span>{formatStructuredAddress(job)}</span>
-                    </span>
+                    {(() => {
+                      const localAddr = extractPureLocalAddress(job);
+                      return (
+                        <span className="flex items-center gap-1 text-slate-700 bg-slate-100/90 px-2.5 py-1 rounded-md text-xs font-semibold">
+                          <MapPin className="w-3.5 h-3.5 text-[#005689] shrink-0" />
+                          <span className="text-slate-500 font-medium mr-1">Local Address:</span>
+                          <span className="font-bold text-slate-800">{localAddr}</span>
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
@@ -151,7 +147,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
               <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-3 shrink-0">
                 <div className="text-left md:text-right">
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Offered Compensation</div>
-                  <div className={`text-xl sm:text-2xl font-black ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-emerald-700' : 'text-slate-700'}`}>
+                  <div className={`text-xl sm:text-2xl font-black ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58]' : 'text-slate-700'}`}>
                     {formatCleanSalary(job.salary, true)}
                   </div>
                 </div>
@@ -165,7 +161,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     {copied ? (
                       <>
                         <CheckCheck className="w-4 h-4 text-emerald-600" />
-                        <span className="text-emerald-700">Link Copied!</span>
+                        <span className="text-[#0F9D58]">Link Copied!</span>
                       </>
                     ) : (
                       <>
@@ -221,42 +217,20 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                   </div>
                 ) : (
                   <div className="text-slate-500 font-medium shrink-0">
-                    Application Status: <strong className="text-emerald-700">Open & Active</strong>
+                    Application Status: <strong className="text-[#0F9D58]">Open & Active</strong>
                   </div>
                 )}
               </div>
 
-              {/* Description Card */}
+              {/* Description Card - 100% Authentic Scraped/Original Data */}
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
                 <div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900" style={{ color: '#003c6e' }}>
-                    Job Role & Pedagogical Scope
+                    Job Role & Overview
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-700 mt-2 leading-relaxed">
-                    {job.shortDescription}
+                  <p className="text-xs sm:text-sm text-slate-700 mt-2 leading-relaxed whitespace-pre-line">
+                    {job.shortDescription || "Please refer to the official vacancy posting for comprehensive details regarding this role."}
                   </p>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Key Lab Responsibilities</h4>
-                  <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#005689] mt-2 shrink-0" />
-                      <span>Conduct experiential hands-on practicals, demonstrations, and NEP 2020 inquiry-based investigation sets.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#005689] mt-2 shrink-0" />
-                      <span>Prepare senior secondary students for CBSE / ICSE external viva examinations, lab logbook maintenance, and project assessments.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#005689] mt-2 shrink-0" />
-                      <span>Adhere strictly to composite science laboratory safety standards (CBSE SARAS 4.4 and emergency neutralization protocols).</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#005689] mt-2 shrink-0" />
-                      <span>Guide student innovators for science fairs, Olympiads, and inter-school ATL maker hackathons.</span>
-                    </li>
-                  </ul>
                 </div>
 
                 {/* Direct Apply Callout Box */}
@@ -282,28 +256,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
 
               </div>
 
-              {/* Interactive Location Map */}
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#005689]">Geographic Location</span>
-                    <h3 className="text-base font-bold text-slate-900 mt-0.5" style={{ color: '#003c6e' }}>
-                      School Campus Location
-                    </h3>
-                  </div>
-                  <span className="text-xs text-slate-500 flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{job.city}, {job.state}</span>
-                  </span>
-                </div>
 
-                <FacultyJobMap
-                  activeTab="jobs"
-                  jobs={[job]}
-                  faculty={[]}
-                  className="h-72 w-full rounded-2xl overflow-hidden border border-slate-200 shadow-2xs relative"
-                />
-              </div>
 
             </div>
 
@@ -353,7 +306,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
 
                   <div className="flex items-center justify-between py-1 border-b border-slate-50">
                     <span className="text-slate-500">Compensation</span>
-                    <span className={`font-bold ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-emerald-700' : 'text-slate-700'}`}>
+                    <span className={`font-bold ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58]' : 'text-slate-700'}`}>
                       {formatCleanSalary(job.salary, true)}
                     </span>
                   </div>
@@ -420,75 +373,157 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
 
           </div>
 
-          {/* ─── RELATED VACANCIES (Strict 2-3-4 Responsive Grid) ─── */}
+          {/* ─── NEARBY & SIMILAR VACANCIES (Zero Bounce Engine) ─── */}
           {relatedJobs.length > 0 && (
-            <div className="mt-14 pt-8 border-t border-slate-200 space-y-5">
-              <div className="flex items-center justify-between">
+            <div className="mt-14 pt-8 border-t border-slate-200 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#005689]">Similar Opportunities</span>
-                  <h3 className="text-lg font-bold text-slate-900 mt-0.5" style={{ color: '#003c6e' }}>
-                    Related STEM Teaching Vacancies
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Verified Nearby Vacancies
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium hidden sm:inline">• Zero Application Fees</span>
+                  </div>
+                  <h3 className="text-xl font-black text-slate-900 mt-1" style={{ color: '#003c6e' }}>
+                    More Teaching Positions near {job.city || job.district || 'this Location'}
                   </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Explore similar school teaching openings in {job.city || job.state || 'India'} matching your subject background.
+                  </p>
                 </div>
                 <Link
                   href="/edu-network/teachers"
-                  className="text-xs font-bold text-[#005689] hover:underline"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#005689] hover:text-[#003c6e] hover:underline whitespace-nowrap self-start sm:self-auto"
                 >
-                  View All Active Openings
+                  <span>Explore All 2,300+ School Openings</span>
+                  <span>&rarr;</span>
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
-                {relatedJobs.map((rj) => (
-                  <div
-                    key={rj.id}
-                    className="bg-white rounded-2xl p-4 border border-slate-200 hover:border-[#005689]/40 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 text-[10px] font-bold border border-blue-200">
-                          {rj.designation} · {rj.subject}
-                        </span>
-                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${getSourceBadgeColor(rj.source)}`}>
-                          {rj.source}
-                        </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {relatedJobs.map((rj) => {
+                  const isSameCity = Boolean(job.city && rj.city && job.city.toLowerCase() === rj.city.toLowerCase());
+                  return (
+                    <div
+                      key={rj.id}
+                      className="bg-white rounded-2xl p-4 border border-slate-200/90 hover:border-[#005689] shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                    >
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-900 text-[10px] font-bold border border-blue-200 truncate max-w-[140px]">
+                            {rj.designation || 'Teacher'} · {rj.subject || 'Faculty'}
+                          </span>
+                          {isSameCity ? (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shrink-0">
+                              Nearby
+                            </span>
+                          ) : (
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border shrink-0 ${getSourceBadgeColor(rj.source)}`}>
+                              {rj.source}
+                            </span>
+                          )}
+                        </div>
+
+                        <h4 className="text-xs font-bold text-slate-900 line-clamp-2 group-hover:text-[#005689] transition-colors leading-snug" style={{ color: '#003c6e' }}>
+                          {rj.jobPostName}
+                        </h4>
+
+                        <p className="text-[11px] font-medium text-slate-600 truncate flex items-center gap-1">
+                          <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
+                          <span className="truncate">{rj.organisationName}</span>
+                        </p>
+
+                        <div className="flex items-center justify-between pt-1">
+                          <div className="text-xs font-extrabold text-[#0F9D58]">
+                            {formatCleanSalary(rj.salary, false)}
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-medium flex items-center gap-0.5 truncate max-w-[110px]">
+                            <MapPin className="w-2.5 h-2.5 text-slate-400 shrink-0" />
+                            <span className="truncate">{rj.city || rj.district || 'India'}</span>
+                          </div>
+                        </div>
                       </div>
 
-                      <h4 className="text-xs font-bold text-slate-900 line-clamp-2" style={{ color: '#003c6e' }}>
-                        {rj.jobPostName}
-                      </h4>
-                      <p className="text-[11px] text-slate-500 truncate">{rj.organisationName}</p>
-
-                      <div className="text-[11px] font-bold text-emerald-700">{formatCleanSalary(rj.salary, false)}</div>
-                      <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        <span>{rj.city}</span>
+                      <div className="pt-3 mt-3 border-t border-slate-100 flex items-center gap-2">
+                        <Link
+                          href={`/edu-network/teachers/job/${rj.id}`}
+                          className="flex-1 py-1.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-bold text-center transition-all"
+                        >
+                          Details
+                        </Link>
+                        <a
+                          href={rj.originalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => {
+                            trackCseelEvent('job_apply_click', {
+                              job_id: rj.id,
+                              job_title: rj.jobPostName,
+                              school_name: rj.organisationName,
+                              city: rj.city,
+                              salary: rj.salary,
+                              source: rj.source,
+                            });
+                          }}
+                          className="flex-1 py-1.5 px-2 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-[11px] font-bold text-center transition-all flex items-center justify-center gap-1"
+                        >
+                          <span>Apply</span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
                       </div>
                     </div>
-
-                    <div className="pt-3 mt-3 border-t border-slate-100 flex items-center gap-2">
-                      <Link
-                        href={`/edu-network/teachers/job/${rj.id}`}
-                        className="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold text-center transition-all"
-                      >
-                        Details
-                      </Link>
-                      <a
-                        href={rj.originalUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-1.5 px-2 rounded-lg bg-[#005689] hover:bg-[#003c6e] text-white text-[11px] font-bold text-center transition-all"
-                      >
-                        Apply
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
 
         </section>
+
+        {/* ─── MOBILE STICKY FLOATING ACTION BAR (70.8% Traffic Conversion Engine) ─── */}
+        <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-4 py-3 shadow-2xl safe-bottom">
+          <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block truncate">
+                {job.designation || 'Teaching Faculty'} • {formatCleanSalary(job.salary, true)}
+              </span>
+              <span className="text-xs font-bold text-white truncate block">
+                {job.organisationName}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleShare}
+                aria-label="Share Job"
+                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 active:scale-95 transition-all"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+              </button>
+              <a
+                href={job.originalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  trackCseelEvent('job_apply_click', {
+                    job_id: job.id,
+                    job_title: job.jobPostName,
+                    school_name: job.organisationName,
+                    city: job.city,
+                    state: job.state,
+                    salary: job.salary,
+                    source: job.source,
+                  });
+                }}
+                className="py-2.5 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-blue-900/30 active:scale-95 transition-all whitespace-nowrap"
+              >
+                <span>Apply Now</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
 
       </div>
     </PageTransition>

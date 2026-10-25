@@ -6,14 +6,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const local = getMaterialBySlugOrId(params.slug);
 
   if (local) {
-    const title = `${local.name} (${local.sku}) - ${local.cbse_chapter} Apparatus | CSEEL`;
+    const title = `${local.name} - ${local.cbse_chapter} Apparatus | CSEEL`;
     const description = `${local.name}: ${local.description.slice(0, 160)}. Curriculum: ${local.cbse_chapter}. Experiential learning and school science practical apparatus from CSEEL.`;
     const image = local.image_url || "https://www.cseel.org/images/cseel-social-preview.jpg";
 
     return {
       title,
       description,
-      keywords: `${local.name}, ${local.sku}, ${local.cbse_chapter}, physics practical apparatus, experiential science lab, CSEEL materials`,
+      keywords: `${local.name}, ${local.cbse_chapter}, physics practical apparatus, experiential science lab, CSEEL materials`,
       alternates: {
         canonical: `https://www.cseel.org/materials/${local.slug}`,
       },
@@ -53,15 +53,17 @@ export default function MaterialDetailPage({ params }: { params: { slug: string 
   const jsonLd = material
     ? {
         '@context': 'https://schema.org',
-        '@type': 'Product',
+        '@type': 'LearningResource',
         name: material.name,
-        image: material.image_url,
-        description: material.description,
-        sku: material.sku,
-        category: material.cbse_chapter,
-        brand: {
-          '@type': 'Brand',
+        image: material.cdn_image_url || material.image_url,
+        description: material.description || `${material.name} science laboratory apparatus for CBSE, ICSE, and NEP 2020 experiential learning practicals.`,
+        learningResourceType: 'Laboratory Apparatus & Equipment',
+        educationalLevel: 'Secondary & Senior Secondary School Science (CBSE/ICSE)',
+        teaches: material.cbse_chapter,
+        publisher: {
+          '@type': 'Organization',
           name: 'CSEEL Experiential Learning',
+          url: 'https://www.cseel.org',
         },
       }
     : null;

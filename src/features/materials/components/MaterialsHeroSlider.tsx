@@ -87,7 +87,7 @@ export const MaterialsHeroSlider: React.FC<MaterialsHeroSliderProps> = ({
         {HERO_SLIDES.map((slide) => (
           <SwiperSlide
             key={slide.id}
-            className="relative w-full max-w-full px-4 sm:px-8 pt-4 sm:pt-6 pb-6 sm:pb-10 overflow-hidden min-h-[380px] sm:min-h-[440px] md:min-h-[480px] flex flex-col justify-between"
+            className="relative w-full max-w-full px-4 sm:px-8 py-8 sm:py-12 md:py-16 overflow-hidden min-h-[220px] sm:min-h-[260px] md:min-h-[290px] flex items-center"
           >
             {/* Background Image with Fallback */}
             <div
@@ -98,62 +98,22 @@ export const MaterialsHeroSlider: React.FC<MaterialsHeroSliderProps> = ({
             />
 
             {/* Cinematic Gradient Overlays for Razor-Sharp Text Contrast */}
-            <div className="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#000a18]/92 via-[#001229]/65 to-[#000e1f]/35" />
-            <div className="absolute inset-0 z-[2] pointer-events-none bg-gradient-to-t from-[#000814]/85 via-transparent to-transparent" />
+            <div className="absolute inset-0 z-[1] pointer-events-none bg-gradient-to-r from-[#000a18]/90 via-[#001229]/60 to-[#000e1f]/30" />
+            <div className="absolute inset-0 z-[2] pointer-events-none bg-gradient-to-t from-[#000814]/75 via-transparent to-transparent" />
 
-            {/* Slide Content */}
-            <div className="relative z-10 w-full max-w-6xl mx-auto pt-2 sm:pt-4">
-              <div className="max-w-xl flex flex-col items-start text-left space-y-2 pt-1 sm:pt-2">
-                {/* Eyebrow Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00172e]/80 border border-[#38bdf8]/40 backdrop-blur-md shadow-md">
-                  <Atom className="w-3.5 h-3.5 text-[#fbb03b] shrink-0" />
-                  <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold tracking-wider uppercase text-sky-100">
-                    {slide.badge}
-                  </span>
-                </div>
-
+            {/* Slide Content: Just Clean Main Heading & 1-line short paragraph */}
+            <div className="relative z-10 w-full max-w-6xl mx-auto">
+              <div className="max-w-2xl flex flex-col items-start text-left">
                 {/* Main Heading */}
-                <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.12] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
-                  {slide.titleLine1} <br />
+                <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.15] drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+                  {slide.titleLine1}{' '}
                   <span className="text-[#fbb03b]">{slide.titleLine2}</span>
                 </h1>
 
-                {/* Dual Color Accent Bar */}
-                <div className="flex items-center gap-1.5 my-1">
-                  <div className="w-8 h-[3.5px] rounded-full bg-[#fbb03b]" />
-                  <div className="w-8 h-[3.5px] rounded-full bg-[#38bdf8]" />
-                </div>
-
-                {/* Subtitle / Tagline */}
-                <p className="text-xs sm:text-sm md:text-base text-white font-bold tracking-wide drop-shadow-sm">
-                  {slide.tagline}
-                </p>
-
-                {/* Description */}
-                <p className="text-[11.5px] xs:text-xs sm:text-sm text-slate-100/90 leading-relaxed font-normal max-w-md drop-shadow-sm line-clamp-3 xs:line-clamp-none">
+                {/* 1-line Short Paragraph */}
+                <p className="text-xs sm:text-sm md:text-[15px] text-slate-100/95 font-medium max-w-xl truncate leading-relaxed mt-2 drop-shadow-sm">
                   {slide.description}
                 </p>
-              </div>
-            </div>
-
-            {/* Footer Buttons Bar */}
-            <div className="relative z-10 w-full max-w-6xl mx-auto pt-4 mt-auto">
-              <div className="flex flex-wrap items-center gap-3">
-                <M3Button variant="filled" size="md" onClick={onExploreClick}>
-                  {slide.primaryCta}
-                </M3Button>
-
-                <button
-                  type="button"
-                  onClick={onOpenRequisition}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/95 hover:bg-white text-[#005689] font-bold text-xs shadow-md transition-all active:scale-95"
-                >
-                  <BookmarkCheck className="w-4 h-4" />
-                  <span>Requisition List</span>
-                  <span className="px-2 py-0.5 rounded-full bg-[#005689] text-white text-[10px] font-extrabold">
-                    {totalQuantity}
-                  </span>
-                </button>
               </div>
             </div>
           </SwiperSlide>

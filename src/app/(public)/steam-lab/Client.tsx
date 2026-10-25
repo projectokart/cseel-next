@@ -121,20 +121,16 @@ export default function Client() {
             "@context": "https://schema.org",
             "@graph": [
               {
-                "@type": "Product",
+                "@type": "Service",
+                "serviceType": "Turnkey STEAM & Atal Tinkering Lab Setup",
                 "name": "CSEEL Turnkey Atal Tinkering Lab & STEAM Lab Setup",
                 "description": "Comprehensive NITI Aayog ATL and NEP 2020 compliant STEAM lab setup for Indian schools including Package 1 to 4 equipment, 3D printers, AI robotics kits, and certified teacher training.",
-                "brand": {
-                  "@type": "Brand",
-                  "name": "CSEEL"
+                "provider": {
+                  "@type": "EducationalOrganization",
+                  "name": "CSEEL",
+                  "url": "https://www.cseel.org"
                 },
-                "offers": {
-                  "@type": "AggregateOffer",
-                  "priceCurrency": "INR",
-                  "lowPrice": "350000",
-                  "highPrice": "2000000",
-                  "offerCount": "6"
-                }
+                "areaServed": "IN"
               },
               {
                 "@type": "FAQPage",

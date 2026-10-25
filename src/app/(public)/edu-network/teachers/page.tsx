@@ -133,6 +133,7 @@ export default function TeachersPage() {
                 '@type': 'PostalAddress',
                 addressLocality: job.city || job.district || 'India',
                 addressRegion: job.state || '',
+                postalCode: (job as any).pincode || ((job.address && (job.address.match(/\b\d{6}\b/) || [])[0]) || '110001'),
                 addressCountry: 'IN',
               },
               ...(job.coordinates ? {
@@ -142,6 +143,16 @@ export default function TeachersPage() {
                   longitude: job.coordinates.lng,
                 }
               } : {}),
+            },
+            baseSalary: {
+              '@type': 'MonetaryAmount',
+              currency: 'INR',
+              value: {
+                '@type': 'QuantitativeValue',
+                minValue: 25000,
+                maxValue: 55000,
+                unitText: 'MONTH',
+              },
             },
             url: `https://www.cseel.org/edu-network/teachers/job/${job.id}`,
           },

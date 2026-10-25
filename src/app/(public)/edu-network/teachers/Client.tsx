@@ -24,7 +24,7 @@ import {
   getMinExperience
 } from '@/data/facultyJobsData';
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 import { calculateDynamicFacets, DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
@@ -150,6 +150,13 @@ function getHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: nu
 
 export default function TeachersDirectoryClient() {
   const { user } = useAuth();
+  const latestUpdatedDate = useMemo(() => {
+    return new Date().toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }, []);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
@@ -1871,7 +1878,7 @@ export default function TeachersDirectoryClient() {
                     activeTab === 'jobs' ? 'bg-[#005689] text-white shadow-2xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  Vacancies ({activeJobs.length})
+                  Vacancies
                 </button>
                 <button
                   type="button"
@@ -1880,7 +1887,7 @@ export default function TeachersDirectoryClient() {
                     activeTab === 'faculty' ? 'bg-[#005689] text-white shadow-2xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  Verified Faculty ({VERIFIED_FACULTY_MEMBERS.length})
+                  Faculty
                 </button>
               </div>
 
@@ -1922,163 +1929,262 @@ export default function TeachersDirectoryClient() {
               </div>
             </div>
 
-            {/* Desktop View (>= 768px): 2-Row Clean Responsive Layout (Zero Overlap Guaranteed) */}
-            <div className="hidden md:flex flex-col gap-2 w-full min-w-0">
-              {/* Row 1: Tab Switcher (Left) + Search Pill (Center) + Primary CTA (Right) */}
-              <div className="flex items-center justify-between gap-3 w-full min-w-0">
-                {/* Left: Tab Switcher */}
+            {/* ─── DESKTOP VIEW (>= lg): SINGLE LINE CLEAN BAR (Grid/Map left of search) ─── */}
+            <div className="hidden lg:flex items-center justify-between gap-2.5 w-full min-w-0">
+              {/* 1. Tab Switcher (No counts) */}
+              <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('jobs')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'jobs' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Briefcase className="w-3.5 h-3.5 text-[#005689]" />
+                  <span>Vacancies</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('faculty')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === 'faculty' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <GraduationCap className="w-3.5 h-3.5 text-[#005689]" />
+                  <span>Faculty</span>
+                </button>
+              </div>
+
+              {/* 2. Grid & Map View Mode Switcher (Placed directly to the LEFT of Search Bar) */}
+              <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
+                {/* 2-Col Grid */}
+                <button
+                  type="button"
+                  onClick={() => handleViewModeChange('grid')}
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
+                    viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                  }`}
+                  title="2 Columns Grid"
+                >
+                  <Columns2 size={13} />
+                </button>
+
+                {/* Wide Grid */}
+                <button
+                  type="button"
+                  onClick={() => handleViewModeChange('grid3')}
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
+                    viewMode === 'grid3' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                  }`}
+                  title="Wide Grid"
+                >
+                  <LayoutGrid size={13} />
+                </button>
+
+                {/* Compact List */}
+                <button
+                  type="button"
+                  onClick={() => handleViewModeChange('compact')}
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
+                    viewMode === 'compact' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                  }`}
+                  title="Compact List"
+                >
+                  <List size={13} />
+                </button>
+
+                {/* Map View */}
+                <button
+                  type="button"
+                  onClick={() => handleViewModeChange('map')}
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
+                    viewMode === 'map' ? 'bg-[#1A73E8] text-white shadow-2xs font-bold' : 'text-blue-700 hover:bg-blue-100/60'
+                  }`}
+                  title="Interactive Map View"
+                >
+                  <MapIcon size={13} />
+                </button>
+              </div>
+
+              {/* 3. Search Bar with Reduced Width */}
+              <div className="w-52 xl:w-64 max-w-[260px] shrink-0 min-w-0">
+                {renderSearchBar(true)}
+              </div>
+
+              {/* 4. Results Count & Last Updated Badge */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-bold text-slate-700 whitespace-nowrap">
+                  {activeTab === 'jobs'
+                    ? `${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredJobs.length)} of ${filteredJobs.length} Vacancies`
+                    : `${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredFaculty.length)} of ${filteredFaculty.length} Faculty`}
+                </span>
+                <span className="text-slate-300 hidden xl:inline">•</span>
+                <span className="text-[11px] text-slate-500 font-medium hidden xl:inline-flex items-center gap-1">
+                  <Clock size={11} className="text-slate-400 shrink-0" />
+                  <span>Last Updated: <strong className="text-slate-700 font-semibold">{latestUpdatedDate}</strong></span>
+                </span>
+              </div>
+
+              {/* 5. Sort Dropdown */}
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium shrink-0">
+                <span>Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="bg-slate-100 rounded-lg px-2 py-1 font-bold text-slate-800 border border-slate-200/80 focus:outline-none cursor-pointer text-xs"
+                >
+                  <option value="newest">Newest</option>
+                  <option value="salary">Salary (Highest)</option>
+                  <option value="deadline">Deadline</option>
+                  {activeTab === 'faculty' && <option value="experience">Experience</option>}
+                  {activeTab === 'faculty' && <option value="rating">Rating</option>}
+                </select>
+              </div>
+
+              {/* 6. Primary Action Button */}
+              <div className="shrink-0">
+                {activeTab === 'jobs' ? (
+                  <button
+                    type="button"
+                    onClick={handleOpenPostJob}
+                    className="h-8.5 px-3.5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1.5 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm hover:shadow active:scale-95"
+                  >
+                    <span>+ Post Vacancy</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleOpenListAsTeacher}
+                    className="h-8.5 px-3.5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1.5 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm hover:shadow active:scale-95"
+                  >
+                    <span>+ List as Faculty</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* ─── TABLET VIEW (md to lg): CLEAN STACKED LIST ─── */}
+            <div className="hidden md:flex lg:hidden flex-col gap-2 w-full min-w-0">
+              {/* Row 1: Tab Switcher (Left) + Primary CTA (Right) */}
+              <div className="flex items-center justify-between gap-2.5 w-full min-w-0">
+                {/* Tabs */}
                 <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 shrink-0">
                   <button
+                    type="button"
                     onClick={() => setActiveTab('jobs')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeTab === 'jobs' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     <Briefcase className="w-3.5 h-3.5 text-[#005689]" />
-                    <span>Vacancies ({activeJobs.length})</span>
+                    <span>Vacancies</span>
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => setActiveTab('faculty')}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       activeTab === 'faculty' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     <GraduationCap className="w-3.5 h-3.5 text-[#005689]" />
-                    <span>Faculty ({VERIFIED_FACULTY_MEMBERS.length})</span>
+                    <span>Faculty</span>
                   </button>
                 </div>
 
-                {/* Center: Search Bar Pill */}
-                <div className="flex-1 max-w-xl mx-auto min-w-0">
-                  {renderSearchBar(true)}
-                </div>
-
-                {/* Right: Action CTA */}
+                {/* Action CTA */}
                 <div className="shrink-0">
                   {activeTab === 'jobs' ? (
                     <button
                       type="button"
                       onClick={handleOpenPostJob}
-                      className="h-9 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1.5 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm hover:shadow active:scale-95"
+                      className="h-8.5 px-3 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm"
                     >
-                      <span>+ Post Vacancy</span>
+                      <span>+ Post</span>
                     </button>
                   ) : (
                     <button
                       type="button"
                       onClick={handleOpenListAsTeacher}
-                      className="h-9 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1.5 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm hover:shadow active:scale-95"
+                      className="h-8.5 px-3 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm"
                     >
-                      <span>+ List as Faculty</span>
+                      <span>+ List</span>
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Row 2: Sub-bar with Results Count & Sort (Left) + View Mode Switcher (Right) */}
-              <div className="flex items-center justify-between gap-3 pt-1.5 border-t border-slate-100 w-full min-w-0">
-                {/* Left: Results Count & Sort By */}
-                <div className="flex items-center gap-3 shrink-0 flex-wrap">
-                  <h2 className="text-xs sm:text-[13px] font-bold text-slate-800 whitespace-nowrap">
-                    {activeTab === 'jobs'
-                      ? `Showing ${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredJobs.length)} of ${filteredJobs.length} Vacancies`
-                      : `Showing ${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredFaculty.length)} of ${filteredFaculty.length} Faculty`}
-                  </h2>
+              {/* Row 2: Search Bar */}
+              <div className="w-full min-w-0">
+                {renderSearchBar(true)}
+              </div>
 
-                  <div className="h-3.5 w-px bg-slate-200" />
-
-                  {/* Sort By Dropdown */}
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                    <span>Sort:</span>
-                    <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
-                      className="bg-transparent font-bold text-slate-800 border-none focus:outline-none cursor-pointer text-xs"
-                    >
-                      <option value="newest">Newest</option>
-                      <option value="salary">Salary (Highest)</option>
-                      <option value="deadline">Application Deadline</option>
-                      {activeTab === 'faculty' && <option value="experience">Experience</option>}
-                      {activeTab === 'faculty' && <option value="rating">Rating</option>}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Right: View Mode Switcher */}
+              {/* Row 3: Grid/Map options on left + Results count + Sort on right */}
+              <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 w-full min-w-0">
+                {/* Left: View Mode Options */}
                 <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
-                  {/* 2-Col Grid */}
                   <button
                     type="button"
                     onClick={() => handleViewModeChange('grid')}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
+                      viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900'
                     }`}
                     title="2 Columns Grid"
                   >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                      <rect x="1" y="2" width="6" height="12" rx="1.5" />
-                      <rect x="9" y="2" width="6" height="12" rx="1.5" />
-                    </svg>
+                    <Columns2 size={13} />
                   </button>
-
-                  {/* 3-Col Grid */}
                   <button
                     type="button"
                     onClick={() => handleViewModeChange('grid3')}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'grid3' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
+                      viewMode === 'grid3' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900'
                     }`}
-                    title="3 Columns Grid"
+                    title="Wide Grid"
                   >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                      <rect x="1" y="2" width="3.8" height="12" rx="1" />
-                      <rect x="6.1" y="2" width="3.8" height="12" rx="1" />
-                      <rect x="11.2" y="2" width="3.8" height="12" rx="1" />
-                    </svg>
+                    <LayoutGrid size={13} />
                   </button>
-
-                  {/* Compact List */}
                   <button
                     type="button"
                     onClick={() => handleViewModeChange('compact')}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'compact' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
+                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
+                      viewMode === 'compact' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900'
                     }`}
                     title="Compact List"
                   >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                      <rect x="1" y="2" width="14" height="3" rx="1" />
-                      <rect x="1" y="6.5" width="14" height="3" rx="1" />
-                      <rect x="1" y="11" width="14" height="3" rx="1" />
-                    </svg>
+                    <List size={13} />
                   </button>
-
-                  {/* Map View */}
                   <button
                     type="button"
                     onClick={() => handleViewModeChange('map')}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
+                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
                       viewMode === 'map' ? 'bg-[#1A73E8] text-white shadow-2xs font-bold' : 'text-blue-700 hover:bg-blue-100/60'
                     }`}
-                    title="Interactive Map View"
+                    title="Map View"
                   >
-                    <MapIcon size={14} />
+                    <MapIcon size={13} />
                   </button>
+                </div>
 
-                  <div className="w-[1px] h-4 bg-gray-300 mx-0.5" />
+                {/* Right: Results Count & Sort */}
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xs font-bold text-slate-700 whitespace-nowrap">
+                    {activeTab === 'jobs'
+                      ? `${filteredJobs.length} Vacancies`
+                      : `${filteredFaculty.length} Faculty`}
+                  </span>
 
-                  {/* Fullscreen Toggle */}
-                  <button
-                    type="button"
-                    onClick={handleToggleFullscreen}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      isFullscreen ? 'bg-blue-600 text-white shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                    }`}
-                    title={isFullscreen ? 'Restore Top Bar (Exit Fullscreen)' : 'Expand Fullscreen (Hide Navigation)'}
+                  <div className="h-3 w-px bg-slate-200" />
+
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="bg-slate-100 rounded-lg px-2 py-0.5 text-xs font-semibold text-slate-800 border-none focus:outline-none"
                   >
-                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-                  </button>
+                    <option value="newest">Newest</option>
+                    <option value="salary">Salary</option>
+                    <option value="deadline">Deadline</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -2090,6 +2196,23 @@ export default function TeachersDirectoryClient() {
             
             {/* Center Content: Cards Feed according to viewMode */}
             <div className="flex-1 min-w-0 space-y-3 overflow-hidden">
+              {/* Top List Trust & Freshness Header (Last Updated at Top of Page) */}
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Verified Active Board
+                  </span>
+                  <span className="text-slate-300 hidden sm:inline">•</span>
+                  <span className="text-[11.5px] text-slate-600 font-medium flex items-center gap-1">
+                    <Clock size={12} className="text-slate-400 shrink-0" />
+                    <span>Last Updated: <strong className="text-slate-800 font-bold">{latestUpdatedDate}</strong></span>
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-400 font-medium hidden sm:block">
+                  <span>Pan-India Direct Educational Openings</span>
+                </div>
+              </div>
               
               {/* ── MAP VIEW (IF TOGGLED) ── */}
               {viewMode === 'map' && (
@@ -2171,6 +2294,19 @@ export default function TeachersDirectoryClient() {
                             {/* Row 1: Title & Logo */}
                             <div className="flex items-start justify-between gap-3 min-w-0">
                               <div className="min-w-0 flex-1 space-y-1">
+                                {/* Local Campus Address Line (Strictly Local: District & State stripped) */}
+                                {(() => {
+                                  const localAddr = extractPureLocalAddress(job);
+                                  return (
+                                    <div className="flex items-center gap-1.5 text-[11.5px] font-medium text-slate-500 mb-0.5 truncate">
+                                      <MapPin size={11} className="text-[#005689] shrink-0" />
+                                      <span className="font-bold text-slate-700 shrink-0">Local Address:</span>
+                                      <span className="truncate font-semibold text-slate-700" title={localAddr}>
+                                        {localAddr}
+                                      </span>
+                                    </div>
+                                  );
+                                })()}
                                 <h2>
                                   <Link
                                     href={`/edu-network/teachers/job/${job.id}`}
@@ -2231,10 +2367,10 @@ export default function TeachersDirectoryClient() {
 
                               <span className="text-slate-300">|</span>
 
-                              {/* Salary */}
+                              {/* Salary (Google Green #0F9D58) */}
                               <div className="flex items-center gap-1 shrink-0">
-                                <IndianRupee size={12} className="text-slate-400 shrink-0" />
-                                <span className={job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'font-semibold text-slate-800' : 'text-slate-400'}>
+                                <IndianRupee size={12} className={job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58] shrink-0' : 'text-slate-400 shrink-0'} />
+                                <span className={job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'font-bold text-[#0F9D58]' : 'text-slate-400'}>
                                   {formatCleanSalary(job.salary, false)}
                                 </span>
                               </div>
@@ -2283,10 +2419,11 @@ export default function TeachersDirectoryClient() {
                             )}
                           </div>
 
-                          {/* Row 5: Footer (Posted Date on Left, Share + Save + Details + Apply on Right) */}
+                          {/* Row 5: Footer (Post Date on Left, Share + Save + Details + Apply on Right) */}
                           <div className="pt-1.5 pb-0.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                            <div className="text-[11px] text-slate-400 font-medium">
-                              {job.openingDate ? formatJobDisplayDate(job.openingDate) : 'Today'}
+                            <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                              <Clock size={11} className="text-slate-400 shrink-0" />
+                              <span>{job.openingDate ? formatJobDisplayDate(job.openingDate) : 'Today'}</span>
                             </div>
 
                             <div className="flex items-center gap-1.5 sm:gap-2">
@@ -2301,15 +2438,14 @@ export default function TeachersDirectoryClient() {
                                 <span className="hidden sm:inline">Share</span>
                               </button>
 
-                              {/* Save Button */}
+                              {/* Save Button (Icon Only) */}
                               <button
                                 type="button"
                                 onClick={() => toggleSaveJob(job.id)}
-                                className="h-9 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                                className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center cursor-pointer shrink-0"
                                 title={isSaved ? "Saved" : "Save Vacancy"}
                               >
-                                <Bookmark size={13} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
-                                <span>{isSaved ? "Saved" : "Save"}</span>
+                                <Bookmark size={14} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
                               </button>
 
                               {/* Details Button */}

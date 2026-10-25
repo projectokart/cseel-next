@@ -32,12 +32,12 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: `
       default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net;
-      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://www.clarity.ms https://*.clarity.ms;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
       img-src 'self' data: blob: https: https://ukazkxthavxphibdbspd.supabase.co https://cdn.sanity.io https://images.unsplash.com https://cdn.prod.website-files.com https://www.cseel.org https://i.ytimg.com;
       font-src 'self' data: https://fonts.gstatic.com;
       frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
-      connect-src 'self' https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org;
+      connect-src 'self' https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org https://*.clarity.ms;
     `.replace(/\s{2,}/g, ' ').trim(),
   },
 ];
@@ -89,6 +89,7 @@ const nextConfig = {
       { source: '/about-experiential-lab', destination: '/about', permanent: true },
       { source: '/match-your-syllabus', destination: '/materials', permanent: true },
       { source: '/composite-skill-lab', destination: '/composite-lab', permanent: true },
+      { source: '/edu-network', destination: '/schools', permanent: true },
       { source: '/edu-network/schools', destination: '/schools', permanent: true },
       { source: '/edu-network/schools/:slug*', destination: '/schools', permanent: true },
       { source: '/edu-network/school/:slug*', destination: '/schools', permanent: true },

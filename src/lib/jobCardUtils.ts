@@ -114,6 +114,129 @@ export function formatStructuredAddress(job: {
   return district || state || 'India';
 }
 
+
+/**
+ * Extract Pure Local Address
+ * Strips District, City, State, and Country from the full address so ONLY the Local Address
+ * (Locality / Colony / Sector / Area / Street / Campus branch) remains.
+ * If full address only had District and State, scans shortDescription for branch/campus mentions.
+ * Falls back to "School Campus" if no specific local colony is available, never repeating District & State.
+ */
+export function extractPureLocalAddress(job: {
+  address?: string | null;
+  city?: string | null;
+  district?: string | null;
+  state?: string | null;
+  shortDescription?: string | null;
+  organisationName?: string | null;
+}): string {
+  const state = (job.state || '').trim();
+  const district = (job.district || job.city || '').trim();
+  const city = (job.city || '').trim();
+  const rawAddress = (job.address || '').trim();
+  const desc = (job.shortDescription || '').trim();
+
+  const DISQUALIFIED = [
+    'committed to', 'the address mentioned', 'walk-in', 'apply now', 'looking for',
+    'experienced', 'qualification', 'salary', 'benefits', 'reputed', 'hiring',
+    'immediate', 'urgent', 'required', 'interview', 'criteria', 'candidates',
+    'in person', 'hybrid', 'remote', 'full time', 'part time', 'preference',
+    'deliver', 'education', 'school', 'institution', 'organisation'
+  ];
+
+  const cleanCandidate = (str: string): string => {
+    if (!str) return '';
+    let s = str.replace(/[*#_~]/g, '').trim();
+    // Remove 6-digit Indian pincode
+    s = s.replace(/\b\d{6}\b/g, '');
+    // Remove Country & generic keywords
+    s = s.replace(/\b(india|all india|all areas|pan india)\b/gi, '');
+    // Remove State
+    if (state && state.toLowerCase() !== 'india') {
+      s = s.replace(new RegExp(`\\b${escapeRegExp(state)}\\b`, 'gi'), '');
+    }
+    // Remove District
+    if (district && district.toLowerCase() !== 'india') {
+      s = s.replace(new RegExp(`\\b${escapeRegExp(district)}\\b`, 'gi'), '');
+    }
+    // Remove City
+    if (city && city.toLowerCase() !== district.toLowerCase() && city.toLowerCase() !== 'india') {
+      s = s.replace(new RegExp(`\\b${escapeRegExp(city)}\\b`, 'gi'), '');
+    }
+
+    // Clean leading/trailing punctuation & preserve inner commas cleanly
+    s = s.replace(/^[\s,;\-()+/:|]+|[\s,;\-()+/:|]+$/g, '').trim();
+    s = s.replace(/\s*,\s*/g, ', ');
+    s = s.replace(/\s+/g, ' ').trim();
+
+    // Check disqualified phrases
+    const lower = s.toLowerCase();
+    for (const dq of DISQUALIFIED) {
+      if (lower.includes(dq)) return '';
+    }
+
+    // Must not be empty and must not match district/city/state
+    if (!s || s.length < 2) return '';
+    if (
+      s.toLowerCase() === district.toLowerCase() ||
+      s.toLowerCase() === city.toLowerCase() ||
+      s.toLowerCase() === state.toLowerCase()
+    ) {
+      return '';
+    }
+
+    if (s.length > 55) {
+      const parts = s.split(',');
+      if (parts[0] && parts[0].trim().length >= 3 && parts[0].trim().length <= 50) {
+        return parts[0].trim();
+      }
+      return s.slice(0, 50).trim();
+    }
+
+    return s;
+  };
+
+  // 1. Check parentheses in raw address (Naukri/Indeed format, e.g. "Coimbatore(Saibaba Colony", "New (Rohini")
+  const parenMatches = rawAddress.match(/\(([^)]+)\)/g);
+  if (parenMatches) {
+    for (const p of parenMatches) {
+      const cleaned = cleanCandidate(p.replace(/[()]/g, ''));
+      if (cleaned) return cleaned;
+    }
+  }
+
+  if (rawAddress.includes('(') && !rawAddress.includes(')')) {
+    const afterParen = rawAddress.split('(').pop() || '';
+    const cleaned = cleanCandidate(afterParen);
+    if (cleaned) return cleaned;
+  }
+
+  // 2. Strip district, city, state directly from rawAddress
+  if (rawAddress) {
+    const cleaned = cleanCandidate(rawAddress);
+    if (cleaned) return cleaned;
+  }
+
+  // 3. Check shortDescription for branch or campus mentions (e.g. Everwin's "branches in *Perambur*, *Kolathur*...")
+  if (desc) {
+    const branchMatch = desc.match(/(?:branches?|campus(?:es)?|centre|center)\s+(?:in|at)\s+([^\n\r:;.]+)/i);
+    if (branchMatch && branchMatch[1]) {
+      const cleaned = cleanCandidate(branchMatch[1]);
+      if (cleaned) return cleaned;
+    }
+
+    const locMatch = desc.match(/(?:located\s+at|situated\s+at)\s+([^\n\r:;.]+)/i);
+    if (locMatch && locMatch[1]) {
+      const cleaned = cleanCandidate(locMatch[1]);
+      if (cleaned) return cleaned;
+    }
+  }
+
+  // 4. Fallback if no specific colony/sector/street is given:
+  // Return "School Campus" so we never repeat District & State
+  return 'School Campus';
+}
+
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

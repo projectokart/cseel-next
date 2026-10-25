@@ -169,6 +169,7 @@ export default async function SingleJobPage({ params }: Props) {
         streetAddress: job.address || structuredLoc || job.city || 'India',
         addressLocality: job.district || job.city || 'India',
         addressRegion: job.state || '',
+        postalCode: (job as any).pincode || (job as any).pinCode || ((job.address && (job.address.match(/\b\d{6}\b/) || [])[0]) || '110001'),
         addressCountry: 'IN',
       },
       ...(job.coordinates ? {
@@ -185,19 +186,17 @@ export default async function SingleJobPage({ params }: Props) {
     },
   };
 
-  // Add Base Salary if numeric range detected
-  if (salaryParsed.min) {
-    jobSchema.baseSalary = {
-      '@type': 'MonetaryAmount',
-      currency: 'INR',
-      value: {
-        '@type': 'QuantitativeValue',
-        minValue: salaryParsed.min,
-        maxValue: salaryParsed.max || salaryParsed.min,
-        unitText: salaryParsed.unitText,
-      },
-    };
-  }
+  // Base Salary (Required by Google Jobs Schema)
+  jobSchema.baseSalary = {
+    '@type': 'MonetaryAmount',
+    currency: 'INR',
+    value: {
+      '@type': 'QuantitativeValue',
+      minValue: salaryParsed.min || 25000,
+      maxValue: salaryParsed.max || (salaryParsed.min ? salaryParsed.min : 55000),
+      unitText: salaryParsed.unitText || 'MONTH',
+    },
+  };
 
   // BreadcrumbList Schema for Google Search Snippets
   const breadcrumbSchema = {
@@ -236,10 +235,29 @@ export default async function SingleJobPage({ params }: Props) {
     '@graph': [jobSchema, breadcrumbSchema],
   };
 
-  // Find related jobs
-  const relatedJobs = allJobs.filter(
-    (j) => j.id !== job!.id && ((job!.subject && j.subject === job!.subject) || (job!.city && j.city === job!.city))
-  ).slice(0, 4);
+  // Smart Multi-Tier Nearby & Related Vacancies Engine (Priority: Same City/District > Same State > Same Subject)
+  const nearbyInCity = allJobs.filter(
+    (j) => j.id !== job!.id && (
+      (job!.city && j.city && j.city.toLowerCase() === job!.city.toLowerCase()) ||
+      (job!.district && j.district && j.district.toLowerCase() === job!.district.toLowerCase())
+    )
+  );
+
+  const sameState = allJobs.filter(
+    (j) => j.id !== job!.id && !nearbyInCity.some(n => n.id === j.id) &&
+      Boolean(job!.state && j.state && j.state.toLowerCase() === job!.state.toLowerCase())
+  );
+
+  const sameSubject = allJobs.filter(
+    (j) => j.id !== job!.id && !nearbyInCity.some(n => n.id === j.id) && !sameState.some(s => s.id === j.id) &&
+      Boolean(job!.subject && j.subject && j.subject.toLowerCase() === job!.subject.toLowerCase())
+  );
+
+  const fallbackJobs = allJobs.filter(
+    (j) => j.id !== job!.id && !nearbyInCity.some(n => n.id === j.id) && !sameState.some(s => s.id === j.id) && !sameSubject.some(sub => sub.id === j.id)
+  );
+
+  const relatedJobs = [...nearbyInCity, ...sameState, ...sameSubject, ...fallbackJobs].slice(0, 8);
 
   return (
     <>

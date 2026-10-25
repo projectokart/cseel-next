@@ -87,10 +87,11 @@ export interface JobSearchableFields {
   district?: string | null;
   state?: string | null;
   shortDescription?: string | null;
-  minExperience?: string | null;
+  minExperience?: string | number | null;
   salary?: string | null;
   forLady?: boolean | null;
   openingDate?: string | null;
+  [key: string]: any;
 }
 
 /**

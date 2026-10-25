@@ -119,8 +119,8 @@ export const MaterialsFilterDrawer: React.FC<MaterialsFilterDrawerProps> = ({
           {/* 1. Physics Chapter / Unit Group */}
           <div className="pt-1 first:pt-0 space-y-2">
             <div className="flex items-center justify-between py-1">
-              <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                <Atom size={13} className="text-[#006fcc]" /> Physics Chapters
+              <span className="text-xs font-bold text-slate-900">
+                Physics Chapters
               </span>
               {tempChapter !== 'All' && (
                 <button
@@ -154,7 +154,7 @@ export const MaterialsFilterDrawer: React.FC<MaterialsFilterDrawerProps> = ({
               )}
             </div>
 
-            <div className="space-y-0.5 max-h-72 overflow-y-auto no-scrollbar pr-0.5">
+            <div className="space-y-0.5 pb-4">
               {/* All option */}
               <button
                 type="button"

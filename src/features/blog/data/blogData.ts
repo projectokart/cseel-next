@@ -2,6 +2,31 @@ import { BlogPost } from '../types';
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    "id": "blog-jigyasu-lab-reality",
+    "slug": "truth-behind-jigyasu-school-lab-kits-scam-safety-reality",
+    "title": "The Ground Reality of School Lab Kit Vendors: The Case of Jigyasu (Jigyasu.co.in), Fake 800+ Counts & Severe Safety Hazards",
+    "summary": "An urgent investigative advisory for Indian school principals: Unpacking the reality behind vendors like Jigyasu.co.in\u2014from recycled 800+ activity counts and 50x-100x markups to unlabelled hazardous chemicals and life-threatening 230V apparatus.",
+    "category": "School Leadership",
+    "author": {
+      "name": "CSEEL School Safety & Lab Audit Cell",
+      "role": "Academic Lab Standards & Compliance",
+      "avatarUrl": "/images/hero/kolb_cycle_circle_pristine.png"
+    },
+    "publishedAt": "October 25, 2026",
+    "readTimeMinutes": 5,
+    "coverImage": "/images/categories/chemistry-card-1.jpg",
+    "tags": [
+      "School Lab Safety",
+      "Jigyasu Review",
+      "Hands-On Learning",
+      "Vendor Red Flags",
+      "CBSE Lab Norms",
+      "School Leadership"
+    ],
+    "isFeatured": true
+  },
+
+  {
     id: 'nep-2020-experiential-learning-mandate',
     slug: 'nep-2020-experiential-learning-mandate',
     title: 'Transforming CBSE Practical Labs Under NEP 2020: From Rote to Experiential Mastery',

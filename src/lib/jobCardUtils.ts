@@ -15,6 +15,8 @@ export function formatStructuredAddress(job: {
   district?: string | null;
   city?: string | null;
   address?: string | null;
+  shortDescription?: string | null;
+  organisationName?: string | null;
 }): string {
   const state = (job.state || '').trim();
   const district = (job.district || job.city || '').trim();
@@ -81,16 +83,26 @@ export function formatStructuredAddress(job: {
     }
   }
 
-  // 2. Assemble in clean natural order: Local Area, District, State
-  const parts: string[] = [];
-  if (local) {
-    parts.push(local);
+    // Fallback to extractPureLocalAddress to detect branches/campuses (e.g. Kolathur) from description
+  if (!local) {
+    const fallback = extractPureLocalAddress(job);
+    if (
+      fallback &&
+      fallback.toLowerCase() !== 'school campus' &&
+      fallback.toLowerCase() !== 'main campus' &&
+      fallback.toLowerCase() !== district.toLowerCase() &&
+      fallback.toLowerCase() !== state.toLowerCase()
+    ) {
+      local = fallback;
+    }
   }
 
+  // 2. Assemble in exact user order: District, State, Local Address (without any label)
+  const parts: string[] = [];
+
+  // District first
   if (district && district.toLowerCase() !== 'all india' && district.toLowerCase() !== 'india') {
-    if (!parts.some((p) => p.toLowerCase() === district.toLowerCase())) {
-      parts.push(district);
-    }
+    parts.push(district);
   }
 
   // Special Delhi case: avoid "Delhi, Delhi"
@@ -98,12 +110,31 @@ export function formatStructuredAddress(job: {
     district.toLowerCase() === 'delhi' &&
     (!state || state.toLowerCase() === 'delhi' || state.toLowerCase() === 'india')
   ) {
-    return local ? `${local}, Delhi NCR` : 'Delhi NCR';
+    if (local && local.toLowerCase() !== 'delhi' && !parts.some((p) => p.toLowerCase() === local.toLowerCase())) {
+      return `Delhi NCR, ${local}`;
+    }
+    return 'Delhi NCR';
   }
 
+  // State second
   if (state && state.toLowerCase() !== 'all india' && state.toLowerCase() !== 'india') {
     if (!parts.some((p) => p.toLowerCase() === state.toLowerCase())) {
       parts.push(state);
+    }
+  }
+
+  // Local Address third (after District and State on same line, wraps if long)
+  if (local) {
+    const localLower = local.toLowerCase();
+    const alreadyIncluded = parts.some(
+      (p) => p.toLowerCase() === localLower || p.toLowerCase().includes(localLower)
+    );
+    if (
+      !alreadyIncluded &&
+      localLower !== district.toLowerCase() &&
+      localLower !== state.toLowerCase()
+    ) {
+      parts.push(local);
     }
   }
 

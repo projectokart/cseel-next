@@ -32,20 +32,32 @@ const LayoutContent = ({ children }: LayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col w-full max-w-[100vw] [overflow-x:clip]">
+    <div className="min-h-screen flex flex-col w-full max-w-[100vw] [overflow-x:clip] print:min-h-0 print:h-auto print:block print:w-auto print:max-w-none print:overflow-visible">
       {/* Empirical Research Announcement Ribbon at the very top of all pages */}
-      <ResearchRibbonBanner />
+      <div className="print:hidden">
+        <ResearchRibbonBanner />
+      </div>
 
       {/* On non-home pages, Universal Admin Bar handles in-place live editing */}
-      {!isHomePage && <UniversalAdminBar />}
+      {!isHomePage && (
+        <div className="print:hidden">
+          <UniversalAdminBar />
+        </div>
+      )}
 
-      <TopBar />
-      <OfferPopup />
-      <Navbar />
+      <div className="print:hidden sticky top-0 z-[500] w-full">
+        <TopBar />
+        <OfferPopup />
+        <Navbar />
+      </div>
+
       <DisabledRouteGuard>
-        <main className="flex-1 min-w-0 w-full [overflow-x:clip]">{children}</main>
+        <main className="flex-1 min-w-0 w-full [overflow-x:clip] print:overflow-visible print:min-h-0 print:h-auto print:block">{children}</main>
       </DisabledRouteGuard>
-      <Footer />
+
+      <div className="print:hidden">
+        <Footer />
+      </div>
     </div>
   );
 };

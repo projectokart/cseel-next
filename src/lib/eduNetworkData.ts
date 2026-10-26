@@ -92,6 +92,7 @@ export interface TeacherItem {
   profileVisibility?: "public" | "private" | "followers";
   showContactInfo?: boolean;
   resources?: TeacherResourceItem[];
+  customBlocks?: any[];
 }
 
 export interface ProjectFileItem {
@@ -537,6 +538,17 @@ export function getJobById(idOrSlug: string): EduJobItem | undefined {
 }
 
 export function getTeacherById(idOrSlug: string): TeacherItem | undefined {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('cseel_created_teacher_profiles');
+      if (stored) {
+        const customTeachers = JSON.parse(stored);
+        const decoded = decodeURIComponent(idOrSlug).toLowerCase();
+        const customFound = customTeachers.find((t) => t.id.toLowerCase() === decoded || (t.slug && t.slug.toLowerCase() === decoded) || getTeacherSlug(t) === decoded);
+        if (customFound) return customFound;
+      }
+    } catch (e) {}
+  }
   if (!idOrSlug) return undefined;
   const decoded = decodeURIComponent(idOrSlug).toLowerCase();
   return ALL_TEACHERS.find(

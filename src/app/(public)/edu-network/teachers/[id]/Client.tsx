@@ -2,893 +2,636 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  GraduationCap, MapPin, Building2, Star, CheckCircle2, ShieldCheck,
-  Award, Mail, Phone, Calendar, Download, Send, Share2, ArrowRight,
-  Sparkles, BookOpen, Beaker, Check, ChevronLeft, ExternalLink, X,
-  MessageSquare, UserCheck, Clock, FileText, CheckSquare, Settings,
-  Globe, Users, Lock, Layers, Code, Database, Plus, Upload
+  GraduationCap,
+  MapPin,
+  Mail,
+  Phone,
+  Briefcase,
+  Calendar,
+  CheckCircle2,
+  Printer,
+  Share2,
+  ArrowLeft,
+  Copy,
+  Check,
+  IndianRupee,
+  Tag,
+  User,
+  Building2,
+  BookOpen
 } from 'lucide-react';
-import PageTransition from '@/components/shared/PageTransition';
-import { TeacherItem, ALL_TEACHERS, getTeacherById, TeacherResourceItem } from '@/lib/eduNetworkData';
+import { TeacherItem, ALL_TEACHERS, getTeacherById } from '@/lib/eduNetworkData';
 
 interface TeacherProfileClientProps {
   teacherId: string;
 }
 
-export default function TeacherProfileClient({ teacherId }: TeacherProfileClientProps) {
-  const initialTeacher = getTeacherById(teacherId) || ALL_TEACHERS[0];
+interface QualificationRecord {
+  degree: string;
+  institute: string;
+  year: string;
+  grade: string;
+}
 
-  const defaultResources: TeacherResourceItem[] = [
-    {
-      id: 'res-1',
-      title: `${initialTeacher.subject} Hands-on Laboratory Practical Guide (NEP-2020)`,
-      type: 'Lab Manual',
-      subject: initialTeacher.subject,
-      size: '4.8 MB',
-      visibility: 'public',
-      downloadsCount: 320,
-    },
-    {
-      id: 'res-2',
-      title: `Senior Secondary Optics & Experiment Apparatus Blueprint`,
-      type: 'Lesson Plan',
-      subject: initialTeacher.subject,
-      size: '2.1 MB',
-      visibility: 'public',
-      downloadsCount: 195,
-    },
-    {
-      id: 'res-3',
-      title: `Olympiad & Competitive Science Question Bank (2026 Edition)`,
-      type: 'Worksheet',
-      subject: initialTeacher.subject,
-      size: '8.4 MB',
-      visibility: 'followers',
-      downloadsCount: 84,
-    },
-    {
-      id: 'res-4',
-      title: `Peer-Reviewed Paper: Experiential Learning in Indian High Schools`,
-      type: 'Research Paper',
-      subject: initialTeacher.subject,
-      size: '1.5 MB',
-      visibility: 'private',
-      downloadsCount: 12,
-    },
-  ];
+// Generate structured educational qualifications from teacher data
+function getQualificationsList(teacher: TeacherItem): QualificationRecord[] {
+  const currentYear = 2026;
+  const exp = teacher.experienceYears || 5;
+  const endEduYear = Math.max(2004, currentYear - exp);
 
-  const [teacher, setTeacher] = useState<TeacherItem>(initialTeacher);
-  const [resources, setResources] = useState<TeacherResourceItem[]>(
-    initialTeacher.resources || defaultResources
-  );
-  const [profileVisibility, setProfileVisibility] = useState<'public' | 'private' | 'followers'>('public');
-  const [showContactInfo, setShowContactInfo] = useState(false);
-  const [phonePrivate, setPhonePrivate] = useState<boolean>(initialTeacher?.phonePrivate !== false);
-  const [emailPrivate, setEmailPrivate] = useState<boolean>(initialTeacher?.emailPrivate !== false);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [activeToast, setActiveToast] = useState<string | null>(null);
+  const rawQual = teacher.qualification || 'M.Sc., B.Ed.';
+  const hasPhd = /ph\.?d/i.test(rawQual);
+  const hasMed = /m\.?ed/i.test(rawQual);
+  const hasBed = /b\.?ed/i.test(rawQual) || !hasPhd;
+  const hasMsc = /m\.?sc|m\.?tech|m\.?a|master/i.test(rawQual) || hasPhd;
 
-  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
-  const [connectForm, setConnectForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    orgName: '',
-    roleNeeded: 'Full-Time Faculty',
-    message: '',
+  const records: QualificationRecord[] = [];
+  let currentStepYear = endEduYear;
+
+  if (hasPhd) {
+    const institutePhd = rawQual.includes('(')
+      ? rawQual.split('(')[1].replace(')', '').trim()
+      : `Indian Institute of Technology / Central University`;
+    records.push({
+      degree: 'Ph.D. / Doctorate',
+      institute: institutePhd,
+      year: `${currentStepYear}`,
+      grade: 'Awarded / Distinction'
+    });
+    currentStepYear -= 4;
+  }
+
+  if (hasMed) {
+    records.push({
+      degree: 'M.Ed. (Master of Education)',
+      institute: `Department of Education, ${teacher.state || 'State'} University`,
+      year: `${currentStepYear}`,
+      grade: '76.8% (First Class)'
+    });
+    currentStepYear -= 2;
+  }
+
+  if (hasMsc) {
+    const instituteMsc = rawQual.includes('University')
+      ? rawQual.split('(')[1]?.replace(')', '').trim() || `${teacher.city} University`
+      : `${teacher.city} University / Central University`;
+    records.push({
+      degree: `Post Graduation (M.Sc. ${teacher.subject || 'Science'})`,
+      institute: instituteMsc,
+      year: `${currentStepYear}`,
+      grade: '75.4% (First Class)'
+    });
+    currentStepYear -= 2;
+  }
+
+  if (hasBed) {
+    records.push({
+      degree: 'B.Ed. (Bachelor of Education)',
+      institute: `State Council of Educational Research & Training (${teacher.state || 'CBSE Region'})`,
+      year: `${currentStepYear}`,
+      grade: '78.2% (First Class with Distinction)'
+    });
+    currentStepYear -= 2;
+  }
+
+  records.push({
+    degree: `Graduation (B.Sc. ${teacher.subject || 'Science'})`,
+    institute: `${teacher.city} Degree College, State University`,
+    year: `${currentStepYear}`,
+    grade: '73.5% (First Class)'
   });
-  const [connectSuccess, setConnectSuccess] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  currentStepYear -= 3;
 
-  const showToast = (message: string) => {
-    setActiveToast(message);
-    setTimeout(() => {
-      setActiveToast(null);
-    }, 3000);
-  };
+  records.push({
+    degree: 'Higher Secondary (Class XII - Science/PCM/PCB)',
+    institute: `${teacher.board || 'CBSE'} Board`,
+    year: `${currentStepYear}`,
+    grade: '87.2%'
+  });
 
-  const handleProfileVisibilityChange = (newVisibility: 'public' | 'private' | 'followers') => {
-    setProfileVisibility(newVisibility);
-    showToast(`Faculty profile visibility updated to "${newVisibility.toUpperCase()}"!`);
-  };
+  return records;
+}
 
-  const handleResourceVisibilityChange = (resourceId: string, newVisibility: 'public' | 'private' | 'followers') => {
-    setResources((prev) =>
-      prev.map((res) => (res.id === resourceId ? { ...res, visibility: newVisibility } : res))
+function RenderBioContent({ teacher }: { teacher: TeacherItem }) {
+  if (teacher.customBlocks && Array.isArray(teacher.customBlocks) && teacher.customBlocks.length > 0) {
+    return (
+      <div className="space-y-3.5">
+        {teacher.customBlocks.map((b: any, idx: number) => {
+          if (b.type === 'header') {
+            return (
+              <h3 key={idx} className="text-sm sm:text-base font-bold text-[#003c6e] border-b border-slate-200 pb-1 pt-2 first:pt-0">
+                {b.text}
+              </h3>
+            );
+          }
+          if (b.type === 'paragraph') {
+            return (
+              <p key={idx} className="whitespace-pre-wrap leading-relaxed text-slate-700 text-xs sm:text-sm">
+                {b.text}
+              </p>
+            );
+          }
+          if (b.type === 'table') {
+            return (
+              <div key={idx} className="overflow-x-auto rounded-xl border border-slate-200 bg-white my-2">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                      {b.headers.map((h: string, i: number) => (
+                        <th key={i} className="p-2.5 font-bold text-slate-700">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {b.rows.map((row: string[], rI: number) => (
+                      <tr key={rI}>
+                        {row.map((cell: string, cI: number) => (
+                          <td key={cI} className="p-2.5 text-slate-800">{cell}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+          return null;
+        })}
+      </div>
     );
-    showToast(`Resource permissions changed to: ${newVisibility.toUpperCase()}`);
+  }
+
+  const bioText = teacher.bio || '';
+  if (!bioText) {
+    return (
+      <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
+        {teacher.name} is a dedicated educator specializing in {teacher.subject} with {teacher.experienceYears}+ years of teaching and laboratory demonstration experience. Committed to experiential pedagogy aligned with NEP 2020.
+      </p>
+    );
+  }
+
+  // If bio contains HTML tags from the Rich Editor
+  if (/<[a-z][\s\S]*>/i.test(bioText)) {
+    return (
+      <div
+        className="prose prose-sm max-w-none text-slate-700 text-xs sm:text-sm leading-relaxed
+          [&_h3]:text-base [&_h3]:sm:text-lg [&_h3]:font-bold [&_h3]:text-[#003c6e] [&_h3]:border-b [&_h3]:border-slate-200 [&_h3]:pb-1 [&_h3]:pt-2.5 [&_h3]:first:pt-0
+          [&_p]:text-xs [&_p]:sm:text-sm [&_p]:text-slate-700 [&_p]:leading-relaxed [&_p]:mb-2.5
+          [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:space-y-1.5 [&_ol]:my-2
+          [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:space-y-1.5 [&_ul]:my-2
+          [&_li]:text-xs [&_li]:sm:text-sm [&_li]:text-slate-700"
+        dangerouslySetInnerHTML={{ __html: bioText }}
+      />
+    );
+  }
+
+  const sections = bioText.split(/\n(?=###?\s)/);
+  return (
+    <div className="space-y-3">
+      {sections.map((sec, idx) => {
+        const trimmed = sec.trim();
+        if (trimmed.startsWith('###') || trimmed.startsWith('##')) {
+          const firstLineEnd = trimmed.indexOf('\n');
+          const header = firstLineEnd !== -1 ? trimmed.slice(0, firstLineEnd).replace(/^#+\s*/, '') : trimmed.replace(/^#+\s*/, '');
+          const body = firstLineEnd !== -1 ? trimmed.slice(firstLineEnd).trim() : '';
+          return (
+            <div key={idx} className="space-y-1.5">
+              <h3 className="text-sm sm:text-base font-bold text-[#003c6e] border-b border-slate-200 pb-1 pt-1.5 first:pt-0">
+                {header}
+              </h3>
+              {body && <p className="whitespace-pre-wrap leading-relaxed text-slate-700 text-xs sm:text-sm">{body}</p>}
+            </div>
+          );
+        }
+        return (
+          <p key={idx} className="whitespace-pre-wrap leading-relaxed text-slate-700 text-xs sm:text-sm">
+            {trimmed}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function TeacherProfileClient({ teacherId }: TeacherProfileClientProps) {
+  const teacher = getTeacherById(teacherId) || ALL_TEACHERS[0];
+  const [copiedText, setCopiedText] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedText(label);
+    setTimeout(() => setCopiedText(null), 2500);
   };
 
-  const handleConnectSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setConnectSuccess(true);
-    setTimeout(() => {
-      setConnectSuccess(false);
-      setIsConnectModalOpen(false);
-      setConnectForm({ name: '', email: '', phone: '', orgName: '', roleNeeded: 'Full-Time Faculty', message: '' });
-    }, 1800);
-  };
-
-  const handleShare = () => {
+  const handlePrint = () => {
     if (typeof window !== 'undefined') {
-      if (navigator.share) {
-        navigator.share({
-          title: `${teacher.name} - Verified ${teacher.subject} Faculty`,
-          url: window.location.href,
-        });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
-      }
+      window.print();
     }
   };
 
+  const qualifications = getQualificationsList(teacher);
+
+  // Job Search tags (comma-separated string + pill badges)
+  const jobSearchTags: string[] = Array.from(new Set([
+    `${teacher.designation || 'PGT'} ${teacher.subject}`,
+    `TGT ${teacher.subject}`,
+    `${teacher.board || 'CBSE'} Board`,
+    'Senior Secondary (Class 11 & 12)',
+    'Practical Lab Demonstration',
+    'NEET & JEE Foundation',
+    'NEP 2020 Experiential Pedagogy',
+    ...(teacher.skills || []).slice(0, 4)
+  ]));
+
+  const addressText = teacher.address || `${teacher.city}, ${teacher.state}${teacher.pincode ? ` - ${teacher.pincode}` : ''}`;
+
   return (
-    <PageTransition>
-      <div className="min-h-screen bg-[#F8FAFC] pb-24 text-gray-800">
-        
-        {/* ── TOAST NOTIFICATION ──────────────────────────────────────────────── */}
-        <AnimatePresence>
-          {activeToast && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="fixed top-4 right-4 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              <span>{activeToast}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <div className="min-h-screen bg-slate-100/70 text-slate-800 py-6 sm:py-10 px-3 sm:px-6 font-sans print:min-h-0 print:h-auto print:bg-white print:p-0 print:m-0">
+      {/* ── Top Bar / Action Controls (Hidden on Print) ───────────────────────── */}
+      <div className="max-w-4xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <Link
+          href="/edu-network/teachers"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-[#005689] hover:text-[#003c6e] bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm transition hover:shadow"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Faculty Directory</span>
+        </Link>
 
-        {/* ── BREADCRUMB ──────────────────────────────────────────────────────── */}
-        <div className="bg-white border-b border-gray-200/90 py-3 px-4 sticky top-0 z-20 shadow-2xs">
-          <div className="container mx-auto max-w-6xl flex items-center justify-between text-xs">
-            <Link
-              href="/edu-network?tab=teachers"
-              className="inline-flex items-center gap-1.5 text-gray-600 hover:text-primary font-bold transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Back to Verified Faculty Directory</span>
-            </Link>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => copyToClipboard(typeof window !== 'undefined' ? window.location.href : '', 'link')}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 shadow-sm transition"
+            title="Share Profile Link"
+          >
+            {copiedText === 'link' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5 text-slate-500" />}
+            <span>{copiedText === 'link' ? 'Link Copied!' : 'Share CV'}</span>
+          </button>
 
-            <button
-              onClick={handleShare}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-gray-700 font-bold rounded-lg transition-colors"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              <span>{isCopied ? 'Link Copied!' : 'Share Profile'}</span>
-            </button>
-          </div>
+          <button
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[#005689] hover:bg-[#003c6e] px-4 py-2 rounded-xl shadow-sm transition"
+            title="Print or Save as PDF"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Print / Save PDF</span>
+          </button>
         </div>
+      </div>
 
-        {/* ── TEACHER HERO PROFILE CARD & PRIVACY CONTROLS ─────────────────────── */}
-        <section className="container mx-auto px-4 max-w-6xl mt-6">
-          <div className="bg-white rounded-3xl border border-gray-200/90 shadow-sm p-6 sm:p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-purple-100/50 via-teal-50/40 to-transparent pointer-events-none rounded-bl-full" />
+      {/* ── Main Resume / CV Paper Document ───────────────────────────────────── */}
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-lg print:shadow-none print:border-none print:rounded-none print:p-0 print:m-0 print:max-w-none print:w-full overflow-hidden print:overflow-visible">
+        {/* Top Decorative Header Accent */}
+        <div className="h-2.5 bg-gradient-to-r from-[#005689] via-[#0077b6] to-[#0F9D58] print:hidden" />
 
-            <div className="flex flex-col md:flex-row items-start gap-6 relative z-10">
-              
-              {/* Profile Avatar */}
-              <div className="relative shrink-0 mx-auto md:mx-0">
-                <img
-                  src={teacher.avatar}
-                  alt={teacher.name}
-                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl object-cover border-4 border-white shadow-md"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop";
-                  }}
-                />
-                {teacher.verified && (
-                  <div className="absolute -bottom-2 -right-2 bg-cyan-600 text-white p-1.5 rounded-full border-2 border-white shadow-xs" title="CSEEL Verified Faculty">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                )}
-              </div>
+        <div className="p-6 sm:p-10 md:p-12 space-y-8 sm:space-y-10 print:p-0 print:space-y-4">
 
-              {/* Profile Details */}
-              <div className="flex-1 space-y-3 text-center md:text-left">
-                
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                  {teacher.designation && (
-                    <span className="px-3 py-1 bg-blue-50 text-[#006FCC] border border-blue-200 text-xs font-black uppercase rounded-full">
-                      {teacher.designation}
-                    </span>
-                  )}
-                  <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-black uppercase rounded-full">
-                    {teacher.subject}
-                  </span>
-                  {teacher.board && (
-                    <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded-full">
-                      {teacher.board}
-                    </span>
-                  )}
-                  {teacher.nepCertified && (
-                    <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 text-[11px] font-bold rounded-full flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>NEP-2020 Certified</span>
-                    </span>
-                  )}
-                  <span className="px-2.5 py-1 bg-amber-50 text-amber-900 border border-amber-300 text-[11px] font-black rounded-full flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                    <span>{teacher.rating} ({teacher.reviewsCount} Reviews)</span>
-                  </span>
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 1: BASIC DETAILS / HEADER
+              (Faculty Name, Address, Image, Highest Qualification)
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="border-b border-slate-200 pb-8 print:pb-3.5 print:break-inside-avoid">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 print:gap-4">
+              {/* Left / Info */}
+              <div className="space-y-3 print:space-y-1.5 flex-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200/60 rounded-full text-xs font-bold text-[#005689] print:py-0.5 print:px-2 print:text-[10px]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 print:w-3 print:h-3" />
+                  <span>Verified Educator Profile</span>
                 </div>
 
-                <div>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 leading-tight">
-                    {teacher.name}
-                  </h1>
-                  <p className="text-xs sm:text-sm font-bold text-gray-600 mt-1 flex flex-wrap items-center justify-center md:justify-start gap-2">
-                    <span className="text-purple-900">{teacher.qualification}</span>
-                    <span>•</span>
-                    <span>{teacher.experienceYears}+ Years Practical Experience</span>
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs text-gray-600 pt-1">
-                  <span className="flex items-center gap-1 font-semibold">
-                    <Building2 className="w-3.5 h-3.5 text-purple-700" />
-                    <span>{teacher.currentInstitute}</span>
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1 font-semibold" title={teacher.address}>
-                    <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span>{teacher.address || `${teacher.city}, ${teacher.state} (${teacher.pincode})`}</span>
-                  </span>
-                  <span>•</span>
-                  <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                    Exp. Salary: {teacher.expectedSalary}
-                  </span>
-                </div>
-
-                {/* ── 72-HOUR FLASH JOB SEEKING STATUS PILL ─────────────────────── */}
-                <div className="p-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-300 rounded-2xl flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
-                    <span className="font-black text-emerald-950">
-                      ⚡ Actively Seeking Teaching Role (Immediate Joiner)
-                    </span>
-                    <span className="text-[10px] bg-emerald-600 text-white font-black px-2 py-0.5 rounded-full">
-                      Active for next {teacher.jobSeekingExpiresInHours || 52} Hours
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => showToast('72-Hour Flash Job Seeking status renewed for another 3 days!')}
-                    className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black rounded-xl shadow-xs transition-colors"
-                  >
-                    ⚡ Renew 72h Flash Status
-                  </button>
-                </div>
-
-                {/* ── PRIVACY SETTINGS BANNER FOR TEACHER ─────────────────────── */}
-                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 sm:p-4 text-xs space-y-2 mt-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-black text-gray-800 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-                      <Settings className="w-3.5 h-3.5 text-purple-700" />
-                      <span>Profile & Resource Visibility Control</span>
-                    </span>
-
-                    {/* Profile Visibility Switcher */}
-                    <div className="inline-flex items-center bg-white border border-gray-200 rounded-xl p-0.5 shadow-2xs">
-                      <button
-                        onClick={() => handleProfileVisibilityChange('public')}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
-                          profileVisibility === 'public'
-                            ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        <Globe className="w-3 h-3" />
-                        <span>Public</span>
-                      </button>
-                      <button
-                        onClick={() => handleProfileVisibilityChange('followers')}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
-                          profileVisibility === 'followers'
-                            ? 'bg-purple-600 text-white shadow-xs'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        <Users className="w-3 h-3" />
-                        <span>Followers Only</span>
-                      </button>
-                      <button
-                        onClick={() => handleProfileVisibilityChange('private')}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
-                          profileVisibility === 'private'
-                            ? 'bg-rose-600 text-white shadow-xs'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        <Lock className="w-3 h-3" />
-                        <span>Private</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60 text-[11px] text-gray-600">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={showContactInfo}
-                        onChange={() => {
-                          setShowContactInfo(!showContactInfo);
-                          showToast(
-                            !showContactInfo
-                              ? 'Contact details are now visible to verified institutions!'
-                              : 'Contact details hidden from public view.'
-                          );
-                        }}
-                        className="w-3.5 h-3.5 text-purple-600 rounded"
-                      />
-                      <span>Display official direct phone & email to verified schools</span>
-                    </label>
-
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      Status: {profileVisibility.toUpperCase()} • Direct Contact: {showContactInfo ? 'Visible' : 'Hidden'}
-                    </span>
-                  </div>
-                </div>
-
-                
-                {/* ── TEACHER DIRECT CONTACT & PRIVACY SHIELD ─────────────────── */}
-                <div className="bg-gradient-to-r from-slate-50 to-purple-50/40 border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 text-xs space-y-3 mt-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/70 pb-2">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                      <span className="font-bold text-slate-800 text-xs">Direct Contact Privacy Shield</span>
-                    </div>
-                    <span className="text-[10px] bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-full font-medium">
-                      Anti-Scraping Active
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {/* Phone Box */}
-                    <div className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2 shadow-2xs">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                          <Phone className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-[10px] text-slate-400 font-bold uppercase">Mobile Number</p>
-                          <p className="font-mono text-xs font-bold text-slate-800 truncate">
-                            {phonePrivate ? '+91 98***** ' + (teacher.phone ? teacher.phone.slice(-4) : '3210') : teacher.phone}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {phonePrivate ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setConnectForm(prev => ({ ...prev, roleNeeded: 'Direct Phone Access Request' }));
-                              setIsConnectModalOpen(true);
-                            }}
-                            className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer"
-                          >
-                            <Lock className="w-3 h-3 text-purple-600" />
-                            <span>Request Access</span>
-                          </button>
-                        ) : (
-                          <a
-                            href={`tel:${teacher.phone}`}
-                            className="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10.5px] font-bold flex items-center gap-1"
-                          >
-                            <span>Call</span>
-                          </a>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPhonePrivate(!phonePrivate);
-                            showToast(phonePrivate ? 'Phone number set to Public view' : 'Phone number set to Private (Masked)');
-                          }}
-                          className="px-1.5 py-1 text-[10px] text-slate-500 hover:text-slate-800 underline cursor-pointer"
-                          title="Toggle Private / Public"
-                        >
-                          {phonePrivate ? 'Make Public' : 'Make Private'}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Email Box */}
-                    <div className="p-2.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between gap-2 shadow-2xs">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                          <Mail className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-[10px] text-slate-400 font-bold uppercase">Official Email</p>
-                          <p className="font-mono text-xs font-bold text-slate-800 truncate">
-                            {emailPrivate ? (teacher.email ? teacher.email.slice(0, 2) + '*****@faculty.cseel.org' : 't*****@gmail.com') : teacher.email}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {emailPrivate ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setConnectForm(prev => ({ ...prev, roleNeeded: 'Direct Email Access Request' }));
-                              setIsConnectModalOpen(true);
-                            }}
-                            className="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-[10.5px] font-bold transition flex items-center gap-1 cursor-pointer"
-                          >
-                            <Lock className="w-3 h-3 text-purple-600" />
-                            <span>Request Access</span>
-                          </button>
-                        ) : (
-                          <a
-                            href={`mailto:${teacher.email}`}
-                            className="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-[10.5px] font-bold flex items-center gap-1"
-                          >
-                            <span>Email</span>
-                          </a>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEmailPrivate(!emailPrivate);
-                            showToast(emailPrivate ? 'Email set to Public view' : 'Email set to Private (Masked)');
-                          }}
-                          className="px-1.5 py-1 text-[10px] text-slate-500 hover:text-slate-800 underline cursor-pointer"
-                          title="Toggle Private / Public"
-                        >
-                          {emailPrivate ? 'Make Public' : 'Make Private'}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Profile CTAs */}
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
-                  <button
-                    onClick={() => setIsConnectModalOpen(true)}
-                    className="px-6 py-2.5 bg-purple-700 hover:bg-purple-600 text-white rounded-xl text-xs font-black shadow-md hover:shadow-lg transition-all flex items-center gap-2"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>Hire / Message Faculty</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setIsFollowing(!isFollowing);
-                      showToast(isFollowing ? 'Unfollowed educator' : 'Following educator! Exclusive worksheets & lab manuals unlocked.');
-                    }}
-                    className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 ${
-                      isFollowing
-                        ? 'bg-slate-200 text-gray-800'
-                        : 'bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200'
-                    }`}
-                  >
-                    <UserCheck className="w-3.5 h-3.5" />
-                    <span>{isFollowing ? 'Following' : '+ Follow Faculty'}</span>
-                  </button>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-        </section>
-
-        {/* ── MAIN CONTENT GRID ────────────────────────────────────────────────── */}
-        <section className="container mx-auto px-4 max-w-6xl mt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            
-            {/* Left Content Area (8 Cols) */}
-            <div className="lg:col-span-8 space-y-6">
-              
-              {/* 1. Teaching Resources & Lab Manual Vault with Granular Privacy */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                  <div>
-                    <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-purple-700" />
-                      <span>Teaching Material & Lab Manual Vault ({resources.length})</span>
-                    </h2>
-                    <p className="text-xs text-gray-500">
-                      Curated lesson plans, experiment demonstrations, and question banks with customizable privacy access.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  {resources.map((res) => (
-                    <div
-                      key={res.id}
-                      className="p-3.5 rounded-2xl bg-slate-50 border border-gray-200/80 hover:bg-slate-100/80 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs"
-                    >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-900 flex items-center justify-center font-bold text-xs shrink-0">
-                          <FileText className="w-4 h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-bold text-gray-900 truncate">
-                            {res.title}
-                          </p>
-                          <p className="text-[10px] text-gray-500">
-                            {res.type} • {res.size} • {res.downloadsCount} Downloads
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* File-level visibility selector */}
-                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-                        <select
-                          value={res.visibility}
-                          onChange={(e) => handleResourceVisibilityChange(res.id, e.target.value as any)}
-                          aria-label={`Visibility for ${res.title}`}
-                          className={`px-2.5 py-1 rounded-xl text-[11px] font-black outline-none border cursor-pointer ${
-                            res.visibility === 'public'
-                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                              : res.visibility === 'followers'
-                              ? 'bg-purple-50 text-purple-800 border-purple-300'
-                              : 'bg-rose-50 text-rose-800 border-rose-300'
-                          }`}
-                        >
-                          <option value="public">🌐 Public</option>
-                          <option value="followers">👥 Followers</option>
-                          <option value="private">🔒 Private</option>
-                        </select>
-
-                        {res.visibility === 'followers' && !isFollowing ? (
-                          <button
-                            onClick={() => {
-                              setIsFollowing(true);
-                              showToast('Followed educator! Download unlocked.');
-                            }}
-                            className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 rounded-xl text-[11px] font-bold transition-colors flex items-center gap-1"
-                          >
-                            <Lock className="w-3 h-3" />
-                            <span>Unlock</span>
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => showToast(`Downloaded "${res.title}"`)}
-                            className="px-2.5 py-1 bg-white hover:bg-slate-200 text-gray-800 border border-gray-200 rounded-xl text-[11px] font-bold transition-colors flex items-center gap-1 shadow-2xs"
-                          >
-                            <Download className="w-3 h-3 text-gray-600" />
-                            <span>Download</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              
-              {/* ── VERIFIED PAST SCHOOLS / TEACHING HISTORY ── */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                  <div>
-                    <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-[#006FCC]" />
-                      <span>Verified Teaching Career & School History</span>
-                    </h2>
-                    <p className="text-xs text-gray-500">
-                      Verified institutions where {teacher.name} has taught and conducted science laboratory practicals.
-                    </p>
-                  </div>
-                  <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold rounded-full flex items-center gap-1">
-                    <CheckCircle2 size={12} className="text-emerald-600" />
-                    <span>Tenure Audited</span>
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {(teacher.pastSchools && teacher.pastSchools.length > 0 ? teacher.pastSchools : [
-                    { schoolName: teacher.currentInstitute, role: `Senior ${teacher.designation || 'Faculty'} ${teacher.subject}`, duration: `${teacher.experienceYears} Years Tenure`, city: teacher.city }
-                  ]).map((sch, i) => (
-                    <div
-                      key={i}
-                      className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/70 transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-                    >
-                      <div className="flex items-start gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#006FCC] border border-blue-200/70 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                          <Building2 className="w-5 h-5" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="font-bold text-gray-900 text-sm truncate">{sch.schoolName}</h3>
-                          <p className="text-xs text-purple-900 font-semibold">{sch.role}</p>
-                          <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-0.5">
-                            <span className="flex items-center gap-1">
-                              <MapPin size={11} className="text-amber-600" />
-                              <span>{sch.city}</span>
-                            </span>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                              <Calendar size={11} className="text-slate-400" />
-                              <span>{sch.duration}</span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <span className="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[10.5px] font-bold text-slate-700 shrink-0 shadow-2xs">
-                        Verified Experience
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 2. Biography & Pedagogy */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
-                <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-purple-700" />
-                  <span>Educator Biography & Teaching Philosophy</span>
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                  {teacher.bio}
-                </p>
-                <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-100 text-xs text-purple-950 space-y-1.5">
-                  <span className="font-bold block flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-700" />
-                    <span>Hands-on NEP-2020 Methodology:</span>
-                  </span>
-                  <p className="text-purple-900 leading-relaxed text-[11px]">
-                    Focuses on transforming textbook theory into tangible physical experiments, guided inquiry questioning, and hardware project mentorship for national science competitions.
-                  </p>
-                </div>
-              </div>
-
-              {/* 3. Skills & Competencies */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
-                <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                  <Beaker className="w-4 h-4 text-emerald-700" />
-                  <span>Subject Expertise & Laboratory Skills</span>
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {teacher.skills.map((skill, i) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-gray-800 text-xs font-bold rounded-xl border border-gray-200 transition-colors flex items-center gap-1.5"
-                    >
-                      <Check className="w-3 h-3 text-emerald-600 shrink-0" />
-                      <span>{skill}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* 4. Availability Modes */}
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
-                <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-primary" />
-                  <span>Available Engagement Models</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {teacher.availableFor.map((mode, i) => (
-                    <div key={i} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-purple-700 shrink-0" />
-                      <div>
-                        <p className="text-xs font-bold text-gray-900">{mode}</p>
-                        <p className="text-[10px] text-gray-500">Open for immediate institutional hiring</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 5. Verified Reviews */}
-              <div id="reviews" className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                  <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                    <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                    <span>Peer & Student Reviews ({teacher.reviewsCount})</span>
-                  </h2>
-                  <span className="text-xs font-bold text-gray-500">
-                    Rating: {teacher.rating} / 5.0
-                  </span>
-                </div>
-
-                <div className="space-y-3 text-xs">
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-gray-200/80 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-purple-200 text-purple-900 font-black text-xs flex items-center justify-center">
-                          P
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900">Principal, DPS Chapter</p>
-                          <p className="text-[10px] text-gray-500">Institutional Review</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-0.5 text-amber-500">
-                        {[...Array(5)].map((_, idx) => (
-                          <Star key={idx} className="w-3 h-3 fill-current" />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-gray-600 leading-relaxed">
-                      "Outstanding pedagogy and genuine passion for hands-on student lab demonstrations. Students led by this faculty achieved top honors in the national science symposium."
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Right Sidebar (4 Cols) */}
-            <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-20">
-              
-              {/* Quick Institutional Hiring Card */}
-              <div className="bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white rounded-3xl p-6 shadow-md space-y-4">
-                <div className="flex items-center gap-2 text-xs font-black uppercase text-purple-300">
-                  <UserCheck className="w-4 h-4" />
-                  <span>Verified Faculty Profile</span>
-                </div>
-
-                <h3 className="text-lg font-black leading-snug">
-                  Looking to hire {teacher.name}?
-                </h3>
-
-                <p className="text-xs text-purple-100 leading-relaxed">
-                  Send an official recruitment enquiry or invite for a visiting lecture at your school/college.
-                </p>
-
-                <button
-                  onClick={() => setIsConnectModalOpen(true)}
-                  className="w-full py-3 bg-white text-purple-950 font-black text-xs rounded-2xl hover:bg-purple-50 transition-colors shadow-xs flex items-center justify-center gap-2"
+                {/* Faculty Name */}
+                <h1
+                  className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight print:text-2xl"
+                  style={{ color: '#003c6e' }}
                 >
-                  <Mail className="w-3.5 h-3.5" />
-                  <span>Send Direct Invitation</span>
-                </button>
+                  {teacher.name}
+                </h1>
+
+                {/* Highest Qualification */}
+                <div className="flex items-center gap-2 text-slate-800 font-semibold text-sm sm:text-base print:text-xs">
+                  <div className="w-7 h-7 rounded-lg bg-[#005689]/10 flex items-center justify-center text-[#005689] shrink-0 print:w-5 print:h-5">
+                    <GraduationCap className="w-4 h-4 print:w-3.5 print:h-3.5" />
+                  </div>
+                  <div>
+                    <span className="text-slate-500 font-medium text-xs sm:text-sm block print:inline print:mr-1">Highest Qualification:</span>
+                    <span className="font-bold text-[#003c6e]">{teacher.qualification}</span>
+                  </div>
+                </div>
+
+                {/* Address / Location */}
+                <div className="flex items-start gap-2 text-slate-600 text-xs sm:text-sm print:text-xs">
+                  <MapPin className="w-4 h-4 text-slate-400 mt-0.5 shrink-0 print:w-3 print:h-3" />
+                  <span className="leading-snug">{addressText}</span>
+                </div>
               </div>
 
-              {/* CSEEL Verification Badge Box */}
-              <div className="bg-white rounded-3xl p-5 border border-gray-200/90 shadow-2xs space-y-3 text-xs">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-cyan-600" />
-                  <h4 className="font-bold text-gray-900">CSEEL Trust & Verification</h4>
+              {/* Right / Profile Image */}
+              <div className="shrink-0 self-center sm:self-auto print:self-start">
+                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-slate-200 shadow-sm bg-slate-100 flex items-center justify-center print:w-20 print:h-20 print:rounded-xl">
+                  {teacher.avatar && !imgError ? (
+                    <img
+                      src={teacher.avatar}
+                      alt={teacher.name}
+                      onError={() => setImgError(true)}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
+                      <User className="w-12 h-12 text-slate-300" />
+                      <span className="text-[10px] font-bold text-slate-400 mt-1 uppercase">Photo</span>
+                    </div>
+                  )}
                 </div>
-                <ul className="space-y-2 text-[11px] text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>Degree & Academic Credentials Verified</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>NEP-2020 Hands-on Teaching Audit Passed</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span>Zero Disciplinary Flag Record</span>
-                  </li>
+              </div>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 2: QUALIFICATION DETAIL SECTION (TABLE WITH HEADER)
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="space-y-3.5 print:space-y-1.5 print:break-inside-avoid">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#005689]/10 flex items-center justify-center text-[#005689] print:w-5 print:h-5">
+                <BookOpen className="w-4 h-4 print:w-3.5 print:h-3.5" />
+              </div>
+              <h2
+                className="text-lg sm:text-xl font-bold tracking-tight uppercase text-xs print:text-sm"
+                style={{ color: '#003c6e' }}
+              >
+                Qualification
+              </h2>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm print:shadow-none print:rounded-lg">
+              <table className="w-full text-left text-xs sm:text-sm text-slate-700 divide-y divide-slate-200 print:text-[9pt]">
+                <thead className="bg-slate-50 text-slate-700 font-bold text-xs border-b border-slate-200 print:text-[8.5pt]">
+                  <tr>
+                    <th scope="col" className="px-4 py-2.5 sm:px-5 whitespace-nowrap print:px-2.5 print:py-1.5">Degree / Course</th>
+                    <th scope="col" className="px-4 py-2.5 sm:px-5 whitespace-nowrap print:px-2.5 print:py-1.5">Board / University</th>
+                    <th scope="col" className="px-4 py-2.5 sm:px-5 text-center whitespace-nowrap print:px-2.5 print:py-1.5">Year</th>
+                    <th scope="col" className="px-4 py-2.5 sm:px-5 text-right whitespace-nowrap print:px-2.5 print:py-1.5">Grade / %</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {qualifications.map((item, idx) => (
+                    <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50 print:bg-white'}>
+                      <td className="px-4 py-3 sm:px-5 font-semibold text-slate-900 print:px-2.5 print:py-1.5">{item.degree}</td>
+                      <td className="px-4 py-3 sm:px-5 text-slate-600 print:px-2.5 print:py-1.5">{item.institute}</td>
+                      <td className="px-4 py-3 sm:px-5 text-center font-medium text-slate-500 whitespace-nowrap print:px-2.5 print:py-1.5">{item.year}</td>
+                      <td className="px-4 py-3 sm:px-5 text-right font-bold text-slate-800 whitespace-nowrap print:px-2.5 print:py-1.5">{item.grade}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 3: EXPERIENCE SECTION
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="space-y-4 print:space-y-2 print:break-inside-avoid">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#005689]/10 flex items-center justify-center text-[#005689] print:w-5 print:h-5">
+                  <Briefcase className="w-4 h-4 print:w-3.5 print:h-3.5" />
+                </div>
+                <h2
+                  className="text-lg sm:text-xl font-bold tracking-tight uppercase text-xs print:text-sm"
+                  style={{ color: '#003c6e' }}
+                >
+                  Work & Teaching Experience
+                </h2>
+              </div>
+              <span className="text-xs font-bold text-[#005689] bg-blue-50 px-3 py-1 rounded-full border border-blue-200 print:text-[9pt] print:py-0.5 print:px-2">
+                {teacher.experienceYears}+ Years Overall Experience
+              </span>
+            </div>
+
+            <div className="space-y-3.5 print:space-y-2">
+              {/* Current Institute Role */}
+              <div className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition print:p-2.5 print:rounded-lg print:border-slate-300">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 mb-2 print:mb-1">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-[#005689] print:w-3.5 print:h-3.5" />
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base print:text-xs">
+                      {teacher.designation || 'Senior Faculty'} ({teacher.subject})
+                    </h3>
+                  </div>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200 w-fit print:text-[8pt] print:py-0 print:px-1.5">
+                    <Calendar className="w-3 h-3" />
+                    <span>2022 - Present (Current Role)</span>
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm font-semibold text-[#005689] print:text-xs">{teacher.currentInstitute}</p>
+                <p className="text-xs text-slate-500 mt-0.5 print:text-[9pt]">{teacher.city}, {teacher.state}</p>
+                <ul className="mt-2.5 space-y-1 text-xs text-slate-600 list-disc list-inside print:mt-1 print:text-[9pt] print:space-y-0.5">
+                  <li>Conducting experiential laboratory practicals, CBSE theory curriculum, and NEP-2020 aligned demonstrations.</li>
+                  <li>Mentoring students for science Olympiads, CBSE board practical exams, and competitive exams.</li>
                 </ul>
               </div>
 
-            </aside>
-
+              {/* Past Schools List */}
+              {teacher.pastSchools && teacher.pastSchools.length > 0 ? (
+                teacher.pastSchools.map((ps, idx) => (
+                  <div key={idx} className="p-4 sm:p-5 rounded-xl border border-slate-200 bg-slate-50/50 print:bg-white print:p-2.5 print:rounded-lg print:border-slate-300 print:break-inside-avoid">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 mb-1.5 print:mb-0.5">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-slate-500 print:w-3.5 print:h-3.5" />
+                        <h3 className="font-bold text-slate-800 text-sm sm:text-base print:text-xs">{ps.role}</h3>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 w-fit print:text-[8pt] print:py-0 print:px-1.5">
+                        <Calendar className="w-3 h-3 text-slate-400" />
+                        <span>{ps.duration}</span>
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-700 print:text-xs">{ps.schoolName}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 print:text-[9pt]">{ps.city}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 print:bg-white print:p-2.5 print:rounded-lg print:border-slate-300 print:break-inside-avoid">
+                  <div className="flex items-center justify-between mb-1 print:mb-0.5">
+                    <h3 className="font-bold text-slate-800 text-sm print:text-xs">{teacher.subject} Demonstrator & Educator</h3>
+                    <span className="text-xs text-slate-500 font-medium print:text-[8pt]">Prior Experience</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-600 print:text-xs">Senior Secondary School, {teacher.city}</p>
+                </div>
+              )}
+            </div>
           </div>
-        </section>
 
-        {/* ── MODAL: CONNECT / RECRUIT FACULTY ─────────────────────────────────── */}
-        <AnimatePresence>
-          {isConnectModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-gray-100 relative"
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 4: JOB SEARCH RELATED FIELD (TAGS COMMA-SEPARATED)
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="space-y-3 print:space-y-1.5 print:break-inside-avoid">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#005689]/10 flex items-center justify-center text-[#005689] print:w-5 print:h-5">
+                <Tag className="w-4 h-4 print:w-3.5 print:h-3.5" />
+              </div>
+              <h2
+                className="text-lg sm:text-xl font-bold tracking-tight uppercase text-xs print:text-sm"
+                style={{ color: '#003c6e' }}
               >
-                <button
-                  onClick={() => setIsConnectModalOpen(false)}
-                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 p-1"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+                Job Search Profile & Target Roles
+              </h2>
+            </div>
 
-                <div className="space-y-1 mb-4">
-                  <span className="text-[10px] font-black uppercase text-purple-700 tracking-wider">
-                    Institutional Connect
-                  </span>
-                  <h3 className="text-lg font-black text-gray-900">
-                    Connect with {teacher.name}
-                  </h3>
-                  <p className="text-xs text-gray-500">
-                    Submit your school's invitation or job opportunity. The faculty will respond within 24 hours.
-                  </p>
+            {/* Pill Badges */}
+            <div className="flex flex-wrap gap-2 pt-1 print:gap-1 print:pt-0">
+              {jobSearchTags.map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200 hover:bg-slate-200/70 transition print:text-[8.5pt] print:py-0.5 print:px-2"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Comma-Separated Line */}
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed font-mono print:p-2 print:text-[8.5pt] print:bg-white print:rounded-lg">
+              <span className="font-bold text-slate-500 uppercase text-[11px] block mb-1 font-sans print:text-[8pt] print:mb-0.5">Target Roles:</span>
+              {jobSearchTags.join(', ')}
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 5: EXPECTED SALARY
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="space-y-3 print:space-y-1.5 print:break-inside-avoid">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 print:w-5 print:h-5">
+                <IndianRupee className="w-4 h-4 print:w-3.5 print:h-3.5" />
+              </div>
+              <h2
+                className="text-lg sm:text-xl font-bold tracking-tight uppercase text-xs print:text-sm"
+                style={{ color: '#003c6e' }}
+              >
+                Expected Salary
+              </h2>
+            </div>
+
+            <div className="p-4 sm:p-5 rounded-xl border border-emerald-200 bg-emerald-50/30 flex items-center justify-between print:p-2.5 print:rounded-lg print:border-slate-300 print:bg-white">
+              <div>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block print:text-[8pt]">Salary Expectation</span>
+                <span className="text-lg sm:text-2xl font-extrabold text-[#0F9D58] tracking-tight print:text-base">
+                  {teacher.expectedSalary || '₹45,000 - ₹60,000 / month'}
+                </span>
+              </div>
+              <span className="text-xs font-bold px-3 py-1 bg-white text-emerald-800 border border-emerald-300 rounded-lg shadow-sm print:text-[8pt] print:py-0.5 print:px-2 print:border-slate-300">
+                Negotiable
+              </span>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 6: CONTACT DETAILS (EMAIL & PHONE)
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="space-y-3.5 print:space-y-1.5 print:break-inside-avoid">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#005689]/10 flex items-center justify-center text-[#005689] print:w-5 print:h-5">
+                <Mail className="w-4 h-4 print:w-3.5 print:h-3.5" />
+              </div>
+              <h2
+                className="text-lg sm:text-xl font-bold tracking-tight uppercase text-xs print:text-sm"
+                style={{ color: '#003c6e' }}
+              >
+                Contact Details
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 print:gap-2.5">
+              {/* Email */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-3 print:p-2.5 print:rounded-lg print:border-slate-300">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#005689] flex items-center justify-center shrink-0 print:w-6 print:h-6">
+                    <Mail className="w-4 h-4 print:w-3.5 print:h-3.5" />
+                  </div>
+                  <div className="overflow-hidden">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase block print:text-[8pt]">Email Address</span>
+                    <a
+                      href={`mailto:${teacher.email}`}
+                      className="font-semibold text-xs sm:text-sm text-[#005689] hover:underline truncate block print:text-xs"
+                    >
+                      {teacher.email}
+                    </a>
+                  </div>
                 </div>
 
-                {connectSuccess ? (
-                  <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-200 text-center space-y-2">
-                    <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-                    <h4 className="text-sm font-black text-emerald-900">Invitation Sent Successfully!</h4>
-                    <p className="text-xs text-emerald-700">
-                      Your enquiry has been delivered to {teacher.name}.
-                    </p>
+                <button
+                  onClick={() => copyToClipboard(teacher.email, 'email')}
+                  className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition shrink-0 print:hidden"
+                  title="Copy Email"
+                >
+                  {copiedText === 'email' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+
+              {/* Phone */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-white flex items-center justify-between gap-3 print:p-2.5 print:rounded-lg print:border-slate-300">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 print:w-6 print:h-6">
+                    <Phone className="w-4 h-4 print:w-3.5 print:h-3.5" />
                   </div>
-                ) : (
-                  <form onSubmit={handleConnectSubmit} className="space-y-3 text-xs">
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-700 mb-1">Your Name / Principal Name</label>
-                      <input
-                        type="text"
-                        required
-                        value={connectForm.name}
-                        onChange={(e) => setConnectForm({ ...connectForm, name: e.target.value })}
-                        placeholder="e.g. Dr. K. S. Verma"
-                        className="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-xl outline-none focus:bg-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-700 mb-1">School / Institution Name</label>
-                      <input
-                        type="text"
-                        required
-                        value={connectForm.orgName}
-                        onChange={(e) => setConnectForm({ ...connectForm, orgName: e.target.value })}
-                        placeholder="e.g. Delhi Public School"
-                        className="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-xl outline-none focus:bg-white"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Official Email</label>
-                        <input
-                          type="email"
-                          required
-                          value={connectForm.email}
-                          onChange={(e) => setConnectForm({ ...connectForm, email: e.target.value })}
-                          placeholder="principal@school.edu.in"
-                          className="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-xl outline-none focus:bg-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[11px] font-bold text-gray-700 mb-1">Phone Number</label>
-                        <input
-                          type="tel"
-                          required
-                          value={connectForm.phone}
-                          onChange={(e) => setConnectForm({ ...connectForm, phone: e.target.value })}
-                          placeholder="+91 98765 43210"
-                          className="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-xl outline-none focus:bg-white"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-700 mb-1">Message / Opportunity Brief</label>
-                      <textarea
-                        rows={3}
-                        required
-                        value={connectForm.message}
-                        onChange={(e) => setConnectForm({ ...connectForm, message: e.target.value })}
-                        placeholder="Briefly describe the role, compensation, and school location..."
-                        className="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-xl outline-none focus:bg-white resize-none"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-2.5 bg-purple-700 hover:bg-purple-600 text-white font-black rounded-xl text-xs shadow-md transition-all mt-2"
+                  <div className="overflow-hidden">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase block print:text-[8pt]">Phone / Mobile</span>
+                    <a
+                      href={`tel:${teacher.phone}`}
+                      className="font-semibold text-xs sm:text-sm text-slate-800 hover:text-[#005689] truncate block print:text-xs"
                     >
-                      Send Message & Contact Request
-                    </button>
-                  </form>
-                )}
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
+                      {teacher.phone}
+                    </a>
+                  </div>
+                </div>
 
+                <button
+                  onClick={() => copyToClipboard(teacher.phone, 'phone')}
+                  className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition shrink-0 print:hidden"
+                  title="Copy Phone"
+                >
+                  {copiedText === 'phone' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════════════════════════
+              SECTION 7: ABOUT YOU / DESCRIPTION SECTION
+             ══════════════════════════════════════════════════════════════════════ */}
+          <div className="space-y-3 pt-2 print:pt-0 print:space-y-1.5 print:break-inside-avoid">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#005689]/10 flex items-center justify-center text-[#005689] print:w-5 print:h-5">
+                <User className="w-4 h-4 print:w-3.5 print:h-3.5" />
+              </div>
+              <h2
+                className="text-lg sm:text-xl font-bold tracking-tight uppercase text-xs print:text-sm"
+                style={{ color: '#003c6e' }}
+              >
+                Description
+              </h2>
+            </div>
+
+            <div className="p-5 sm:p-6 rounded-xl border border-slate-200 bg-slate-50/70 text-slate-700 text-sm sm:text-base leading-relaxed print:p-3 print:bg-white print:border-slate-300 print:rounded-lg print:text-[9.5pt]">
+              <RenderBioContent teacher={teacher} />
+            </div>
+          </div>
+
+        </div>
+
+        {/* Bottom Resume Footer */}
+        <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 print:bg-white print:px-0 print:py-2.5 print:border-t print:border-slate-300 print:text-[8pt] print:break-inside-avoid">
+          <span>Verified Faculty Resume • CSEEL EduNetwork (www.cseel.org)</span>
+          <span className="font-mono text-slate-600 hidden print:inline">A4 Verified Document</span>
+          <span className="print:hidden">Last Updated: October 2026</span>
+        </div>
       </div>
-    </PageTransition>
+
+      {/* ── Fixed Running Print Page Footer ─────────────────────────────────── */}
+      <div className="hidden print:flex fixed bottom-0 left-0 right-0 pt-1 pb-1 border-t border-slate-300 bg-white text-[8pt] text-slate-500 justify-between items-center z-50">
+        <span>CSEEL EduNetwork • Faculty Profile</span>
+        <span className="font-mono text-slate-700">Official Profile Document</span>
+      </div>
+    </div>
   );
 }

@@ -76,7 +76,7 @@ const nextConfig = {
     return [
       { source: '/my-projects', destination: '/user/projects', permanent: true },
       { source: '/my-selections', destination: '/user/selections', permanent: true },
-      { source: '/profile', destination: '/user/profile', permanent: true },
+      { source: '/profile', destination: '/profile/setup', permanent: false },
       { source: '/settings', destination: '/user/settings', permanent: true },
       { source: '/searchschool', destination: '/school-finder', permanent: true },
       { source: '/schoolsearch', destination: '/school-finder', permanent: true },
@@ -94,8 +94,7 @@ const nextConfig = {
       { source: '/edu-network/schools/:slug*', destination: '/schools', permanent: true },
       { source: '/edu-network/school/:slug*', destination: '/schools', permanent: true },
       { source: '/edu-network/organisation/:slug*', destination: '/schools', permanent: true },
-      { source: '/edu-network/jobs', destination: '/careers', permanent: true },
-      { source: '/edu-network/jobs/:id*', destination: '/careers', permanent: true },
+      { source: '/edu-network/jobs', destination: '/edu-network/jobs/manage', permanent: false },
       { source: '/edu-network/teacher-jobs', destination: '/careers', permanent: true },
     ];
   },

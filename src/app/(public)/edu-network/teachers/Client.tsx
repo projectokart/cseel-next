@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import PageTransition from '@/components/shared/PageTransition';
 import { useAuth } from '@/contexts/AuthContext';
 import {
+  MoreVertical,
   GraduationCap, MapPin, Search, Star, CheckCircle2, ShieldCheck,
   Filter, Sparkles, Phone, Mail, Award, Clock, X, Check,
   Send, Users, BookOpen, ExternalLink, Briefcase, Building2,
@@ -236,6 +237,8 @@ export default function TeachersDirectoryClient() {
 
   // Mobile Filter Drawer & Menu States
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState<boolean>(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isMobileCityDropdownOpen, setIsMobileCityDropdownOpen] = useState<boolean>(false);
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState<boolean>(false);
@@ -599,18 +602,18 @@ export default function TeachersDirectoryClient() {
 
   const handleOpenPostJob = () => {
     if (!user) {
-      setIsAuthModalOpen(true);
+      window.location.href = '/login?returnUrl=/edu-network/jobs/post';
       return;
     }
-    setIsPostJobOpen(true);
+    window.location.href = '/edu-network/jobs/post';
   };
 
   const handleOpenListAsTeacher = () => {
     if (!user) {
-      setIsAuthModalOpen(true);
+      window.location.href = '/login?returnUrl=/edu-network/teachers/create-profile';
       return;
     }
-    setIsListAsTeacherOpen(true);
+    window.location.href = '/edu-network/teachers/create-profile';
   };
 
 
@@ -753,6 +756,15 @@ export default function TeachersDirectoryClient() {
   const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(() => getActiveFacultyJobs());
 
   useEffect(() => {
+    try {
+      const stored = localStorage.getItem('cseel_custom_jobs');
+      if (stored) {
+        const custom = JSON.parse(stored);
+        if (Array.isArray(custom) && custom.length > 0) {
+          setActiveJobs(prev => [...custom, ...prev]);
+        }
+      }
+    } catch (e) {}
     fetch('/api/jobs')
       .then((res) => res.json())
       .then((data) => {
@@ -1682,513 +1694,294 @@ export default function TeachersDirectoryClient() {
         />
 
         {/* ── 4. Main Content Area (Offset by fixed sidebar width) ── */}
-        <main className={`flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 ${
+        <main className={`flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 pt-3 sm:pt-4 md:pt-4 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 ${
           isSidebarMinimized ? 'md:ml-14' : 'md:ml-[272px] lg:ml-[296px]'
         }`}>
           
-          {/* ── Top Bar: Normal Flow (Floating on Mobile when viewMode === 'map') ── */}
-          <div className={`transition-all duration-300 ${
+          {/* ── Top Bar Search & Control Card (Exact User Spec Design) ── */}
+          <div className={`bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 transition-all duration-300 relative ${
             viewMode === 'map'
-              ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/90 p-1.5 md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white md:p-3 sm:md:p-4 md:rounded-2xl md:border md:border-gray-200 md:shadow-2xs flex flex-col gap-1.5 md:gap-2.5 mb-2 sm:mb-3'
-              : 'bg-white p-3 sm:p-4 rounded-2xl border border-gray-200 shadow-2xs flex flex-col gap-2.5 mb-2 sm:mb-3'
+              ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md shadow-lg md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white'
+              : ''
           }`}>
-            
-            {/* Mobile View (< 768px) */}
-            <div className="md:hidden flex flex-col gap-1.5 w-full">
-              <div className="flex items-center gap-1 w-full">
-                {/* Unified Search Input Bar */}
-                <div className="relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 py-1.5 border border-gray-200 focus-within:bg-white focus-within:border-blue-500 transition-all min-w-0">
-                  {/* Select City Icon & Trigger */}
-                  <button
-                    type="button"
-                    onClick={() => setIsMobileCityDropdownOpen(!isMobileCityDropdownOpen)}
-                    className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition shrink-0 pr-1.5 border-r border-gray-300 cursor-pointer"
-                    title={selectedCities.length === 1 ? `Selected: ${selectedCities[0]}` : "Select City"}
-                  >
-                    <MapPin size={15} className={selectedCities.length > 0 ? 'text-blue-600' : 'text-gray-500'} />
-                    {selectedCities.length === 1 && (
-                      <span className="text-[11px] font-bold text-blue-600 max-w-[60px] truncate">
-                        {selectedCities[0]}
-                      </span>
-                    )}
-                    <ChevronDown size={11} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {/* Search Text Input */}
-                  <input
-                    type="text"
-                    placeholder={selectedCities.length === 1 ? `Search in ${selectedCities[0]}...` : (activeTab === 'jobs' ? "Search role, school..." : "Search teacher...")}
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (hasSearchText) {
-                          handleExecuteSearch();
-                        }
+            {/* Row 1: Search Input (flex-1) + Filter Button + Sort Button + 3-Dots Menu Button */}
+            <div className="flex items-center gap-2 w-full">
+              {/* Unified Search Input Bar */}
+              <div className="relative flex-1 flex items-center bg-[#F4F6F8] rounded-xl px-3 py-2 border border-slate-200/70 focus-within:bg-white focus-within:border-[#004A75] focus-within:ring-2 focus-within:ring-[#004A75]/15 transition-all min-w-0 h-10">
+                <Search size={15} className="text-slate-400 shrink-0 mr-2" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder={activeTab === 'jobs' ? "Search role, school, location..." : "Search teacher, qualification..."}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 250)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (hasSearchText) {
+                        handleExecuteSearch();
                       }
-                    }}
-                    className="flex-1 bg-transparent px-2 py-0.5 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
-                  />
-
-                  {/* Clear Text Icon */}
-                  {hasSearchText && (
-                    <button
-                      type="button"
-                      onClick={handleClearSearch}
-                      className="p-1 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
-                      title="Clear search"
-                    >
-                      <X size={12} />
-                    </button>
-                  )}
-
-                  {/* Search Icon */}
+                    }
+                  }}
+                  className="search-clean-input flex-1 bg-transparent text-xs sm:text-sm text-slate-800 placeholder-slate-400 font-medium focus:outline-none border-none shadow-none ring-0 focus:ring-0 min-w-0"
+                  style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+                />
+                {hasSearchText && (
                   <button
                     type="button"
-                    disabled={!hasSearchText}
-                    onClick={() => handleExecuteSearch()}
-                    className={`p-1 transition shrink-0 ${
-                      hasSearchText
-                        ? 'text-[#005689] hover:text-[#003c6e] active:scale-90 cursor-pointer'
-                        : 'text-gray-300 cursor-not-allowed opacity-50'
-                    }`}
-                    title={hasSearchText ? "Search" : "Type to search"}
+                    onClick={handleClearSearch}
+                    className="p-1 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer ml-1"
+                    title="Clear search"
                   >
-                    <Search size={16} />
+                    <X size={13} />
                   </button>
+                )}
 
-                  {/* Mobile City Dropdown Menu */}
-                  {isMobileCityDropdownOpen && (
-                    <>
-                      <div className="fixed inset-0 z-40" onClick={() => setIsMobileCityDropdownOpen(false)} />
-                      <div className="absolute top-full left-0 mt-1.5 w-[260px] bg-white rounded-2xl shadow-xl border border-gray-200 z-50 p-2 text-left animate-in fade-in zoom-in-95">
-                        <div className="flex items-center justify-between pb-2 mb-1.5 border-b border-gray-100">
-                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Popular Cities</span>
-                          {selectedCities.length > 0 && (
-                            <button
-                              type="button"
-                              onClick={handleResetToAllCities}
-                              className="text-[10px] text-blue-600 font-bold cursor-pointer"
-                            >
-                              Reset
-                            </button>
+                {/* Trending Searches Popover */}
+                {isSearchFocused && (
+                  <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left animate-in fade-in zoom-in-95">
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                        <Flame className="w-3.5 h-3.5 text-orange-500" />
+                        <span>Trending Searches</span>
+                      </span>
+                      <span className="text-[10px] text-slate-400">Popular Roles</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-48 overflow-y-auto">
+                      {trendingSearches.map((item, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onMouseDown={() => {
+                            handleExecuteSearch(item.query);
+                          }}
+                          className="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 text-slate-700 text-xs text-left transition-colors cursor-pointer group"
+                        >
+                          <span className="truncate group-hover:text-[#005689] font-medium">{item.query}</span>
+                          {item.count && (
+                            <span className="text-[10px] text-slate-400 group-hover:text-[#005689] shrink-0 font-medium">
+                              {item.count}+
+                            </span>
                           )}
-                        </div>
-                        <div className="grid grid-cols-2 gap-1 max-h-48 overflow-y-auto">
-                          {POPULAR_CITIES.map((c) => (
-                            <button
-                              key={c.name}
-                              type="button"
-                              onClick={() => handleSelectCity(c.name)}
-                              className={`p-1.5 rounded-lg text-[11px] text-left truncate cursor-pointer ${
-                                selectedCities.includes(c.name)
-                                  ? 'bg-blue-50 text-blue-700 font-bold'
-                                  : 'text-gray-700 hover:bg-gray-50'
-                              }`}
-                            >
-                              {c.name}
-                            </button>
-                          ))}
-                        </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Filter Button (Mobile & Tablet only; hidden on Desktop where sidebar filter is already open) */}
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="md:hidden w-10 h-10 rounded-xl bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 flex items-center justify-center border border-slate-200/70 transition cursor-pointer relative shrink-0 active:scale-95"
+                title="Filters"
+              >
+                <SlidersHorizontal size={15} />
+                {hasActiveFilters && (
+                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#004A75]" />
+                )}
+              </button>
+
+              {/* Sort Button with Dropdown (Screenshot 3) */}
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSortMenuOpen(!isSortMenuOpen);
+                    setIsMoreMenuOpen(false);
+                  }}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200/70 transition cursor-pointer active:scale-95 ${
+                    isSortMenuOpen ? 'bg-slate-200 text-[#004A75]' : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700'
+                  }`}
+                  title="Sort List"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="21" y1="6" x2="3" y2="6"/>
+                    <line x1="17" y1="12" x2="3" y2="12"/>
+                    <line x1="13" y1="18" x2="3" y2="18"/>
+                  </svg>
+                </button>
+
+                {/* Sort Dropdown Menu (Screenshot 3) */}
+                {isSortMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsSortMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-2.5 text-left animate-in fade-in zoom-in-95">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1 mb-1">
+                        SORT LIST BY
                       </div>
-                    </>
-                  )}
-                </div>
+                      <div className="space-y-0.5">
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('newest'); setIsSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                            sortBy === 'newest' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <span>Newest First</span>
+                          {sortBy === 'newest' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                        </button>
 
-                {/* Mobile View Mode Switcher: 2-Grid, 1-Grid, List, Map */}
-                <div className="flex items-center bg-gray-100 p-0.5 rounded-xl border border-gray-200/90 shrink-0 gap-0.5">
-                  {/* 2-Grid (2 Columns) */}
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('grid')}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'grid'
-                        ? 'bg-white text-blue-600 shadow-2xs font-bold'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`}
-                    title="2 Columns Grid"
-                  >
-                    <Columns2 size={13} />
-                  </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('salary'); setIsSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                            sortBy === 'salary' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <span>Salary (Highest)</span>
+                          {sortBy === 'salary' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                        </button>
 
-                  {/* 1-Grid (Single Full Card) */}
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('grid3')}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'grid3'
-                        ? 'bg-white text-blue-600 shadow-2xs font-bold'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`}
-                    title="1 Column Full Card"
-                  >
-                    <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
-                      <rect x="2" y="2" width="12" height="12" rx="2" />
-                    </svg>
-                  </button>
-
-                  {/* List Grid (Compact Single-Row List) */}
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('compact')}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'compact'
-                        ? 'bg-white text-blue-600 shadow-2xs font-bold'
-                        : 'text-gray-500 hover:text-gray-900'
-                    }`}
-                    title="Compact List View"
-                  >
-                    <List size={13} />
-                  </button>
-
-                  {/* Map View */}
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('map')}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'map'
-                        ? 'bg-[#1A73E8] text-white shadow-2xs font-bold'
-                        : 'text-blue-700 hover:bg-blue-100/60'
-                    }`}
-                    title="Interactive Map View"
-                  >
-                    <MapIcon size={13} />
-                  </button>
-                </div>
-
-                {/* Mobile Filter Button */}
-                <button
-                  type="button"
-                  onClick={() => setIsMobileFilterOpen(true)}
-                  className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#005689] flex items-center justify-center transition cursor-pointer relative shrink-0"
-                  title="Filters"
-                >
-                  <SlidersHorizontal size={15} />
-                  {hasActiveFilters && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600" />}
-                </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('deadline'); setIsSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                            sortBy === 'deadline' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <span>Deadline Soonest</span>
+                          {sortBy === 'deadline' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Mobile Tab Switcher (Hidden in mobile map mode to keep floating search bar compact) */}
-              <div className={`items-center gap-1.5 pt-1 ${viewMode === 'map' ? 'hidden' : 'flex'}`}>
+              {/* 3-Dots Dark Blue Menu Button with Popover (Screenshot 2) */}
+              <div className="relative shrink-0">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('jobs')}
-                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
-                    activeTab === 'jobs' ? 'bg-[#005689] text-white shadow-2xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  onClick={() => {
+                    setIsMoreMenuOpen(!isMoreMenuOpen);
+                    setIsSortMenuOpen(false);
+                  }}
+                  className="w-10 h-10 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white flex items-center justify-center transition cursor-pointer shadow-sm active:scale-95"
+                  title="Browse Category & View Mode"
                 >
-                  Vacancies
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('faculty')}
-                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
-                    activeTab === 'faculty' ? 'bg-[#005689] text-white shadow-2xs' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  Faculty
-                </button>
-              </div>
-
-              {/* Mobile Action & Count Row (Hidden in mobile map mode) */}
-              <div className={`items-center justify-between gap-2 pt-2.5 pb-0.5 border-t border-slate-100 text-xs ${viewMode === 'map' ? 'hidden' : 'flex'}`}>
-                <span className="text-[11px] font-bold text-slate-700">
-                  {activeTab === 'jobs' ? `${filteredJobs.length} Vacancies` : `${filteredFaculty.length} Verified Faculty`}
-                </span>
-
-                <div className="flex items-center gap-1.5">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="bg-slate-100 rounded-lg px-2 py-1 text-[11px] font-semibold text-slate-800 border-none focus:outline-none"
-                  >
-                    <option value="newest">Newest</option>
-                    <option value="salary">Salary</option>
-                    <option value="deadline">Deadline</option>
-                  </select>
-
-                  {activeTab === 'jobs' ? (
-                    <button
-                      type="button"
-                      onClick={handleOpenPostJob}
-                      className="px-2.5 py-1 rounded-lg bg-[#005689] text-white font-bold text-[11px] hover:bg-[#003c6e] shadow-2xs cursor-pointer active:scale-95"
-                    >
-                      + Post
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleOpenListAsTeacher}
-                      className="px-2.5 py-1 rounded-lg bg-[#005689] text-white font-bold text-[11px] hover:bg-[#003c6e] shadow-2xs cursor-pointer active:scale-95"
-                    >
-                      + List
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* ─── DESKTOP VIEW (>= lg): SINGLE LINE CLEAN BAR (Grid/Map left of search) ─── */}
-            <div className="hidden lg:flex items-center justify-between gap-2.5 w-full min-w-0">
-              {/* 1. Tab Switcher (No counts) */}
-              <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('jobs')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === 'jobs' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <Briefcase className="w-3.5 h-3.5 text-[#005689]" />
-                  <span>Vacancies</span>
+                  <MoreVertical size={18} className="text-white" />
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('faculty')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === 'faculty' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <GraduationCap className="w-3.5 h-3.5 text-[#005689]" />
-                  <span>Faculty</span>
-                </button>
-              </div>
+                {/* More Options Popover Menu (Screenshot 2) */}
+                {isMoreMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-2 w-[270px] sm:w-[290px] bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-3.5 text-left animate-in fade-in zoom-in-95">
+                      {/* Section 1: Browse Category */}
+                      <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                        BROWSE CATEGORY
+                      </div>
+                      <div className="bg-[#F4F6F8] p-1 rounded-xl flex items-center gap-1 mb-3.5">
+                        <button
+                          type="button"
+                          onClick={() => { setActiveTab('jobs'); setIsMoreMenuOpen(false); }}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
+                            activeTab === 'jobs'
+                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                              : 'text-slate-600 hover:text-slate-900 font-medium'
+                          }`}
+                        >
+                          Vacancies
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setActiveTab('faculty'); setIsMoreMenuOpen(false); }}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
+                            activeTab === 'faculty'
+                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                              : 'text-slate-600 hover:text-slate-900 font-medium'
+                          }`}
+                        >
+                          Faculty
+                        </button>
+                      </div>
 
-              {/* 2. Grid & Map View Mode Switcher (Placed directly to the LEFT of Search Bar) */}
-              <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
-                {/* 2-Col Grid */}
-                <button
-                  type="button"
-                  onClick={() => handleViewModeChange('grid')}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                    viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                  }`}
-                  title="2 Columns Grid"
-                >
-                  <Columns2 size={13} />
-                </button>
+                      {/* Section 2: View Mode */}
+                      <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                        VIEW MODE
+                      </div>
+                      <div className="bg-[#F4F6F8] p-1 rounded-xl flex items-center justify-between gap-1 mb-4">
+                        <button
+                          type="button"
+                          onClick={() => { handleViewModeChange('compact'); setIsMoreMenuOpen(false); }}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                            viewMode === 'compact'
+                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                              : 'text-slate-600 hover:text-slate-900 font-medium'
+                          }`}
+                        >
+                          <List size={13} />
+                          <span>List</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { handleViewModeChange('grid'); setIsMoreMenuOpen(false); }}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                            viewMode === 'grid' || viewMode === 'grid3'
+                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                              : 'text-slate-600 hover:text-slate-900 font-medium'
+                          }`}
+                        >
+                          <LayoutGrid size={13} />
+                          <span>Grid</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { handleViewModeChange('map'); setIsMoreMenuOpen(false); }}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                            viewMode === 'map'
+                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                              : 'text-slate-600 hover:text-slate-900 font-medium'
+                          }`}
+                        >
+                          <MapIcon size={13} />
+                          <span>Map</span>
+                        </button>
+                      </div>
 
-                {/* Wide Grid */}
-                <button
-                  type="button"
-                  onClick={() => handleViewModeChange('grid3')}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                    viewMode === 'grid3' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                  }`}
-                  title="Wide Grid"
-                >
-                  <LayoutGrid size={13} />
-                </button>
-
-                {/* Compact List */}
-                <button
-                  type="button"
-                  onClick={() => handleViewModeChange('compact')}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                    viewMode === 'compact' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900 hover:bg-white/50'
-                  }`}
-                  title="Compact List"
-                >
-                  <List size={13} />
-                </button>
-
-                {/* Map View */}
-                <button
-                  type="button"
-                  onClick={() => handleViewModeChange('map')}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-md flex items-center justify-center transition cursor-pointer ${
-                    viewMode === 'map' ? 'bg-[#1A73E8] text-white shadow-2xs font-bold' : 'text-blue-700 hover:bg-blue-100/60'
-                  }`}
-                  title="Interactive Map View"
-                >
-                  <MapIcon size={13} />
-                </button>
-              </div>
-
-              {/* 3. Search Bar with Reduced Width */}
-              <div className="w-52 xl:w-64 max-w-[260px] shrink-0 min-w-0">
-                {renderSearchBar(true)}
-              </div>
-
-              {/* 4. Results Count & Last Updated Badge */}
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs font-bold text-slate-700 whitespace-nowrap">
-                  {activeTab === 'jobs'
-                    ? `${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredJobs.length)} of ${filteredJobs.length} Vacancies`
-                    : `${(currentPage - 1) * JOBS_PER_PAGE + 1}–${Math.min(currentPage * JOBS_PER_PAGE, filteredFaculty.length)} of ${filteredFaculty.length} Faculty`}
-                </span>
-                <span className="text-slate-300 hidden xl:inline">•</span>
-                <span className="text-[11px] text-slate-500 font-medium hidden xl:inline-flex items-center gap-1">
-                  <Clock size={11} className="text-slate-400 shrink-0" />
-                  <span>Last Updated: <strong className="text-slate-700 font-semibold">{latestUpdatedDate}</strong></span>
-                </span>
-              </div>
-
-              {/* 5. Sort Dropdown */}
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium shrink-0">
-                <span>Sort:</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-slate-100 rounded-lg px-2 py-1 font-bold text-slate-800 border border-slate-200/80 focus:outline-none cursor-pointer text-xs"
-                >
-                  <option value="newest">Newest</option>
-                  <option value="salary">Salary (Highest)</option>
-                  <option value="deadline">Deadline</option>
-                  {activeTab === 'faculty' && <option value="experience">Experience</option>}
-                  {activeTab === 'faculty' && <option value="rating">Rating</option>}
-                </select>
-              </div>
-
-              {/* 6. Primary Action Button */}
-              <div className="shrink-0">
-                {activeTab === 'jobs' ? (
-                  <button
-                    type="button"
-                    onClick={handleOpenPostJob}
-                    className="h-8.5 px-3.5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1.5 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm hover:shadow active:scale-95"
-                  >
-                    <span>+ Post Vacancy</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleOpenListAsTeacher}
-                    className="h-8.5 px-3.5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1.5 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm hover:shadow active:scale-95"
-                  >
-                    <span>+ List as Faculty</span>
-                  </button>
+                      {/* Section 3: Action Buttons */}
+                      <div className="space-y-2 pt-1 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => { handleOpenPostJob(); setIsMoreMenuOpen(false); }}
+                          className="w-full py-2.5 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer active:scale-98"
+                        >
+                          <span>+ Post Job / Vacancy</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { handleOpenListAsTeacher(); setIsMoreMenuOpen(false); }}
+                          className="w-full py-2.5 rounded-xl bg-[#F4F6F8] hover:bg-slate-200/90 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-98"
+                        >
+                          <span>+ List as Faculty</span>
+                        </button>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
 
-            {/* ─── TABLET VIEW (md to lg): CLEAN STACKED LIST ─── */}
-            <div className="hidden md:flex lg:hidden flex-col gap-2 w-full min-w-0">
-              {/* Row 1: Tab Switcher (Left) + Primary CTA (Right) */}
-              <div className="flex items-center justify-between gap-2.5 w-full min-w-0">
-                {/* Tabs */}
-                <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('jobs')}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      activeTab === 'jobs' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    <Briefcase className="w-3.5 h-3.5 text-[#005689]" />
-                    <span>Vacancies</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('faculty')}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      activeTab === 'faculty' ? 'bg-white text-[#005689] shadow-2xs' : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    <GraduationCap className="w-3.5 h-3.5 text-[#005689]" />
-                    <span>Faculty</span>
-                  </button>
-                </div>
-
-                {/* Action CTA */}
-                <div className="shrink-0">
-                  {activeTab === 'jobs' ? (
-                    <button
-                      type="button"
-                      onClick={handleOpenPostJob}
-                      className="h-8.5 px-3 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm"
-                    >
-                      <span>+ Post</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleOpenListAsTeacher}
-                      className="h-8.5 px-3 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white flex items-center gap-1 transition cursor-pointer text-xs font-bold shrink-0 shadow-sm"
-                    >
-                      <span>+ List</span>
-                    </button>
-                  )}
-                </div>
+            {/* Row 2: Vacancies Count (Left) & Updated Date (Right) (Screenshot 1) */}
+            <div className="flex items-center justify-between pt-1 px-0.5 text-xs">
+              <div className="text-[12.5px] text-slate-700">
+                <strong className="font-extrabold text-slate-950">
+                  {activeTab === 'jobs' ? filteredJobs.length.toLocaleString() : filteredFaculty.length.toLocaleString()}
+                </strong>{' '}
+                <span className="font-medium text-slate-600">
+                  {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
+                </span>
               </div>
 
-              {/* Row 2: Search Bar */}
-              <div className="w-full min-w-0">
-                {renderSearchBar(true)}
-              </div>
-
-              {/* Row 3: Grid/Map options on left + Results count + Sort on right */}
-              <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 w-full min-w-0">
-                {/* Left: View Mode Options */}
-                <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200/70 shrink-0 gap-0.5">
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('grid')}
-                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'grid' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900'
-                    }`}
-                    title="2 Columns Grid"
-                  >
-                    <Columns2 size={13} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('grid3')}
-                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'grid3' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900'
-                    }`}
-                    title="Wide Grid"
-                  >
-                    <LayoutGrid size={13} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('compact')}
-                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'compact' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-gray-500 hover:text-gray-900'
-                    }`}
-                    title="Compact List"
-                  >
-                    <List size={13} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleViewModeChange('map')}
-                    className={`w-7 h-7 rounded-md flex items-center justify-center transition cursor-pointer ${
-                      viewMode === 'map' ? 'bg-[#1A73E8] text-white shadow-2xs font-bold' : 'text-blue-700 hover:bg-blue-100/60'
-                    }`}
-                    title="Map View"
-                  >
-                    <MapIcon size={13} />
-                  </button>
-                </div>
-
-                {/* Right: Results Count & Sort */}
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-bold text-slate-700 whitespace-nowrap">
-                    {activeTab === 'jobs'
-                      ? `${filteredJobs.length} Vacancies`
-                      : `${filteredFaculty.length} Faculty`}
-                  </span>
-
-                  <div className="h-3 w-px bg-slate-200" />
-
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="bg-slate-100 rounded-lg px-2 py-0.5 text-xs font-semibold text-slate-800 border-none focus:outline-none"
-                  >
-                    <option value="newest">Newest</option>
-                    <option value="salary">Salary</option>
-                    <option value="deadline">Deadline</option>
-                  </select>
-                </div>
+              <div className="text-[12px] text-slate-500 font-medium">
+                Updated: <span className="text-slate-700 font-semibold">{latestUpdatedDate}</span>
               </div>
             </div>
-
           </div>
 
           {/* ── Main Flex Layout: Center Feed + Extra Right Panel ── */}
@@ -2196,24 +1989,6 @@ export default function TeachersDirectoryClient() {
             
             {/* Center Content: Cards Feed according to viewMode */}
             <div className="flex-1 min-w-0 space-y-3 overflow-hidden">
-              {/* Top List Trust & Freshness Header (Last Updated at Top of Page) */}
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Verified Active Board
-                  </span>
-                  <span className="text-slate-300 hidden sm:inline">•</span>
-                  <span className="text-[11.5px] text-slate-600 font-medium flex items-center gap-1">
-                    <Clock size={12} className="text-slate-400 shrink-0" />
-                    <span>Last Updated: <strong className="text-slate-800 font-bold">{latestUpdatedDate}</strong></span>
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-400 font-medium hidden sm:block">
-                  <span>Pan-India Direct Educational Openings</span>
-                </div>
-              </div>
-              
               {/* ── MAP VIEW (IF TOGGLED) ── */}
               {viewMode === 'map' && (
                 <div className={`fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col bg-slate-50 overflow-hidden mb-4 ${
@@ -2291,22 +2066,9 @@ export default function TeachersDirectoryClient() {
                           className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
                         >
                           <div className="space-y-2.5 min-w-0">
-                            {/* Row 1: Title & Logo */}
+                            {/* Row 1: Title, School & Optional Logo (Hide if no valid image URL) */}
                             <div className="flex items-start justify-between gap-3 min-w-0">
                               <div className="min-w-0 flex-1 space-y-1">
-                                {/* Local Campus Address Line (Strictly Local: District & State stripped) */}
-                                {(() => {
-                                  const localAddr = extractPureLocalAddress(job);
-                                  return (
-                                    <div className="flex items-center gap-1.5 text-[11.5px] font-medium text-slate-500 mb-0.5 truncate">
-                                      <MapPin size={11} className="text-[#005689] shrink-0" />
-                                      <span className="font-bold text-slate-700 shrink-0">Local Address:</span>
-                                      <span className="truncate font-semibold text-slate-700" title={localAddr}>
-                                        {localAddr}
-                                      </span>
-                                    </div>
-                                  );
-                                })()}
                                 <h2>
                                   <Link
                                     href={`/edu-network/teachers/job/${job.id}`}
@@ -2319,7 +2081,7 @@ export default function TeachersDirectoryClient() {
 
                                 {/* School Name + Very small source tag + Rating */}
                                 <div className="flex items-center gap-2 flex-wrap text-[13px] text-slate-700">
-                                  <span className="font-semibold text-slate-800 truncate" title={job.organisationName}>
+                                  <span className="font-semibold text-slate-800" title={job.organisationName}>
                                     {job.organisationName}
                                   </span>
                                   {/* Very small source tag */}
@@ -2335,29 +2097,24 @@ export default function TeachersDirectoryClient() {
                                 </div>
                               </div>
 
-                              {/* School Logo */}
-                              <div className="w-12 h-12 rounded-xl border border-slate-200/80 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs relative">
-                                {job.organisationLogo ? (
+                              {/* School Logo: ONLY show if valid URL exists. If not available, completely hidden to not waste space */}
+                              {job.organisationLogo && job.organisationLogo.trim() !== '' ? (
+                                <div className="school-logo-box w-12 h-12 rounded-xl border border-slate-200/80 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs relative">
                                   <img
                                     src={job.organisationLogo}
                                     alt={job.organisationName}
                                     className="w-full h-full object-contain"
                                     onError={(e) => {
-                                      (e.target as HTMLElement).style.display = 'none';
-                                      const fb = (e.target as HTMLElement).parentElement?.querySelector('.monogram-fb') as HTMLElement;
-                                      if (fb) fb.style.display = 'flex';
+                                      // Hide whole logo container if image fails to load so no space is wasted
+                                      const box = (e.target as HTMLElement).closest('.school-logo-box') as HTMLElement;
+                                      if (box) box.style.display = 'none';
                                     }}
                                   />
-                                ) : null}
-                                <div
-                                  className={`monogram-fb w-full h-full rounded-lg bg-blue-50 text-[#006FCC] font-black text-xs items-center justify-center uppercase select-none ${job.organisationLogo ? 'hidden' : 'flex'}`}
-                                >
-                                  {(job.organisationName || 'SC').slice(0, 2)}
                                 </div>
-                              </div>
+                              ) : null}
                             </div>
 
-                            {/* Row 2: Parameters Tuple with Icons & Vertical Lines (Exp | Salary | Location) */}
+                            {/* Row 2: Parameters (Experience | Salary) */}
                             <div className="flex items-center gap-2 sm:gap-2.5 text-slate-600 text-[12px] sm:text-[12.5px] font-medium flex-wrap pt-0.5">
                               {/* Experience */}
                               <div className="flex items-center gap-1.5 shrink-0">
@@ -2374,41 +2131,37 @@ export default function TeachersDirectoryClient() {
                                   {formatCleanSalary(job.salary, false)}
                                 </span>
                               </div>
+                            </div>
 
-                              <span className="text-slate-300">|</span>
-
-                              {/* Location: State + District + Local Address with Google Maps Query */}
+                            {/* Row 3: Full Address (Local Area, District, State) - wraps gracefully to next line if width is tight */}
+                            <div className="pt-0.5">
                               <a
                                 href={getGoogleMapsSearchUrl(job)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 min-w-0 flex-1 truncate hover:text-[#0A66C2] transition-colors group/loc"
+                                className="inline-flex items-start gap-1.5 text-slate-600 text-[12px] sm:text-[12.5px] font-medium hover:text-[#0A66C2] transition-colors group/loc"
                                 title={`Open Google Maps for ${job.organisationName}, ${structuredAddress}`}
                               >
-                                <MapPin size={13} className="text-slate-400 group-hover/loc:text-[#EA4335] shrink-0 transition-colors" />
-                                <span className="truncate group-hover/loc:underline">{structuredAddress}</span>
+                                <MapPin size={13} className="text-[#005689] group-hover/loc:text-[#EA4335] shrink-0 mt-0.5 transition-colors" />
+                                <span className="leading-snug break-words group-hover/loc:underline">
+                                  {structuredAddress}
+                                </span>
                               </a>
                             </div>
 
-                            {/* Row 3: Short Description (with document icon & For Lady badge) */}
-                            {job.shortDescription && (
-                              <div className="flex items-start gap-1.5 text-slate-500 text-[11.5px] sm:text-[12px] leading-relaxed line-clamp-1">
-                                <FileText size={12} className="text-slate-400 shrink-0 mt-0.5" />
-                                <div className="truncate flex items-center">
-                                  {job.forLady && (
-                                    <span className="inline-flex items-center gap-1 font-bold text-rose-700 bg-rose-50 border border-rose-200/90 px-1.5 py-0.5 rounded text-[10.5px] mr-1.5 shrink-0 select-none">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                      For Lady
-                                    </span>
-                                  )}
-                                  <span className="truncate">{job.shortDescription}</span>
-                                </div>
+                            {/* Row 4: Only Lady Only badge (description completely removed) */}
+                            {job.forLady && (
+                              <div className="flex items-center pt-0.5">
+                                <span className="inline-flex items-center gap-1.5 font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md text-[11px] select-none">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                  Lady Only
+                                </span>
                               </div>
                             )}
 
-                            {/* Row 4: Clean Text Tags separated by dots (Lesson Planning · Teaching · Physics · TGT) */}
+                            {/* Row 5: Clean Text Tags separated by dots */}
                             {cardTags.length > 0 && (
-                              <div className="flex items-center gap-1.5 text-[11.5px] text-slate-500 font-medium flex-wrap">
+                              <div className="flex items-center gap-1.5 text-[11.5px] text-slate-500 font-medium flex-wrap pt-0.5">
                                 {cardTags.map((tag, tIdx, arr) => (
                                   <React.Fragment key={tIdx}>
                                     <span className="hover:text-slate-800 transition-colors">{tag}</span>
@@ -2768,10 +2521,10 @@ export default function TeachersDirectoryClient() {
                             key={pageNum}
                             type="button"
                             onClick={() => handlePageChange(pageNum)}
-                            className={`w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                            className={`min-w-[32px] h-8 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer select-none ${
                               isActive
-                                ? 'bg-[#005689] text-white shadow-2xs'
-                                : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
+                                ? 'bg-[#004A75] text-white shadow-sm'
+                                : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                             }`}
                           >
                             {pageNum}
@@ -2831,6 +2584,14 @@ export default function TeachersDirectoryClient() {
                       <FileText className="w-3.5 h-3.5" />
                       <span>Post School Vacancy</span>
                     </button>
+
+                    <Link
+                      href="/edu-network/jobs/manage"
+                      className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                    >
+                      <Layers className="w-3.5 h-3.5 text-[#005689]" />
+                      <span>Manage Posted Vacancies</span>
+                    </Link>
                   </div>
 
                   {/* Widget 2: Fresh Today Vacancies List */}

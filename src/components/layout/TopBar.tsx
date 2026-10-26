@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard,
   ArrowLeft, Home, Headphones, Mail, LogIn, Users, Briefcase,
-  Edit3, PlusCircle, Clock
+  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles
 } from "lucide-react";
 import dynamic from 'next/dynamic';
 import {
@@ -38,7 +38,6 @@ const TopBar = () => {
   const [mounted, setMounted] = useState(false);
   const [userSchoolClaim, setUserSchoolClaim] = useState<any | null>(null);
   const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
-
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -74,13 +73,7 @@ const TopBar = () => {
   const initials    = (displayName || "US").slice(0, 2).toUpperCase();
   const primaryRole = (roles && roles.length > 0) ? roles[0] : "user";
 
-  const dashboardPath = isOrganisation
-    ? "/org"
-    : isTeacher
-    ? "/teacher"
-    : isStudent
-    ? "/student"
-    : "/user";
+  const dashboardPath = "/dashboard";
 
   const handleLogout = async () => {
     try {
@@ -111,6 +104,14 @@ const TopBar = () => {
   const profileRef = React.useRef<HTMLDivElement | null>(null);
   const profileOpenTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const profileCloseTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+const [localProfile, setLocalProfile] = useState<any | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('cseel_user_profile');
+      if (stored) setLocalProfile(JSON.parse(stored));
+    } catch (e) {}
+  }, [profileMenuOpen]);
 
   const clearProfileTimers = () => {
     if (profileOpenTimer.current) {
@@ -297,71 +298,12 @@ const TopBar = () => {
                         type="button"
                         onClick={() => {
                           setProfileMenuOpen(false);
-                          router.push(dashboardPath);
+                          router.push('/dashboard');
                         }}
-                        className="w-full flex items-center px-3 py-2 text-xs font-medium text-[#3C4043] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
+                        className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
                       >
-                        <LayoutDashboard className="mr-2.5 h-4 w-4 text-[#023858]" />
-                        Dashboard
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          router.push(`${dashboardPath}/profile` === "/user/profile" ? "/user/profile" : dashboardPath);
-                        }}
-                        className="w-full flex items-center px-3 py-2 text-xs font-medium text-[#3C4043] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
-                      >
-                        <User className="mr-2.5 h-4 w-4 text-[#023858]" />
-                        Profile
-                      </button>
-
-                      {/* School Profile Management Action */}
-                      {userSchoolClaim && userSchoolClaim.isApproved ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setProfileMenuOpen(false);
-                            if (userSchoolClaim.profile_path) {
-                              router.push(`${userSchoolClaim.profile_path}?edit=true`);
-                            } else {
-                              router.push('/schools');
-                            }
-                          }}
-                          className="w-full flex items-center px-3 py-2 text-xs font-semibold text-[#005689] bg-[#EDF5FA] hover:bg-[#D6EDFF] cursor-pointer transition-colors"
-                        >
-                          <Edit3 className="mr-2.5 h-4 w-4 text-[#005689]" />
-                          <span className="truncate">Edit Your School Details</span>
-                        </button>
-                      ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
-                        <div className="px-3 py-2 text-xs font-medium text-amber-800 bg-amber-50 border-y border-amber-100 flex items-center">
-                          <Clock className="mr-2 h-3.5 w-3.5 text-amber-600 shrink-0" />
-                          <span className="truncate text-[11px]">School Verification Pending</span>
-                        </div>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setProfileMenuOpen(false);
-                            setIsAddSchoolModalOpen(true);
-                          }}
-                          className="w-full flex items-center px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50 cursor-pointer transition-colors"
-                        >
-                          <PlusCircle className="mr-2.5 h-4 w-4 text-emerald-600" />
-                          <span className="truncate">Add Your School Profile</span>
-                        </button>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          router.push("/help");
-                        }}
-                        className="w-full flex items-center px-3 py-2 text-xs font-medium text-[#3C4043] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
-                      >
-                        <HelpCircle className="mr-2.5 h-4 w-4 text-[#023858]" />
-                        Help Center
+                        <LayoutDashboard className="mr-2.5 h-4 w-4 text-[#006FCC]" />
+                        <span>Dashboard</span>
                       </button>
                     </div>
 
@@ -372,10 +314,10 @@ const TopBar = () => {
                           setProfileMenuOpen(false);
                           handleLogout();
                         }}
-                        className="w-full flex items-center px-3 py-2 text-xs font-bold text-[#EA4335] hover:bg-red-50 cursor-pointer transition-colors"
+                        className="w-full flex items-center px-3.5 py-2 text-xs font-bold text-[#EA4335] hover:bg-red-50 cursor-pointer transition-colors"
                       >
                         <LogOut className="mr-2.5 h-4 w-4" />
-                        Logout
+                        <span>Logout</span>
                       </button>
                     </div>
                   </div>

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowLeft, Loader2, CheckCircle2, FileSpreadsheet, GraduationCap, Building2, Sparkles, Check, Download, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Loader2, CheckCircle2, FileSpreadsheet, GraduationCap, Building2, Sparkles, Check, Download, ShieldCheck, Upload, User, Camera } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import type { AppRole } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { M3Button, M3IconButton, M3AssistChip, M3Card } from "@/components/google-ui";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { INDIAN_STATES_DISTRICTS, INDIA_STATES_LIST, CORE_TEACHING_SUBJECTS } from "@/data/indiaLocations";
 
 // ── Pincode API ───────────────────────────────────────────────────────────────
 const fetchPincodeData = async (pincode: string) => {
@@ -50,6 +51,17 @@ interface UserForm {
   institution_id: string; institution_name: string;
 }
 
+interface TeacherForm {
+  name: string;
+  highestQualification: string;
+  avatar: string;
+  state: string;
+  district: string;
+  localAddress: string;
+  pincode: string;
+  subjectTeaching: string;
+}
+
 const ROLES: { value: AppRole; label: string; desc: string; accent: string }[] = [
   { value: "student",      label: "Student",      desc: "Access experiments & assignments",  accent: "border-green-400  bg-green-50"  },
   { value: "teacher",      label: "Teacher",      desc: "Manage classes & assignments",       accent: "border-blue-400   bg-blue-50"   },
@@ -75,6 +87,17 @@ const Login = () => {
   const [userForm, setUserForm] = useState<UserForm>({
     display_name: "", phone: "", institution_id: "", institution_name: "",
   });
+  const [teacherForm, setTeacherForm] = useState<TeacherForm>({
+    name: "",
+    highestQualification: "",
+    avatar: "",
+    state: "Haryana",
+    district: "Gurugram",
+    localAddress: "",
+    pincode: "",
+    subjectTeaching: "Physics",
+  });
+  const [customSubject, setCustomSubject] = useState("");
   const [signupEmail, setSignupEmail]         = useState("");
   const [signupPassword, setSignupPassword]   = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -132,7 +155,7 @@ const Login = () => {
     }
   }, [role, step]);
 
-  // Pincode auto-fill
+  // Pincode auto-fill for Organisation
   const handlePincodeChange = async (val: string) => {
     setOrgForm(f => ({ ...f, pincode: val, district: "", state: "", country: "India" }));
     setPincodeOk(false);
@@ -147,6 +170,43 @@ const Login = () => {
         toast({ title: "Invalid pincode", description: "Location data not found", variant: "destructive" });
       }
     }
+  };
+
+  // Pincode auto-fill for Teacher
+  const handleTeacherPincodeChange = async (val: string) => {
+    const cleanPin = val.replace(/[^0-9]/g, '').slice(0, 6);
+    setTeacherForm(f => ({ ...f, pincode: cleanPin }));
+    setPincodeOk(false);
+    if (cleanPin.length === 6) {
+      setPincodeLoading(true);
+      const data = await fetchPincodeData(cleanPin);
+      setPincodeLoading(false);
+      if (data) {
+        setTeacherForm(f => ({
+          ...f,
+          district: data.district,
+          state: data.state in INDIAN_STATES_DISTRICTS ? data.state : f.state
+        }));
+        setPincodeOk(true);
+      }
+    }
+  };
+
+  // Teacher photo upload handler
+  const handleTeacherPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) {
+      toast({ title: "Photo too large", description: "Max 4MB image allowed", variant: "destructive" });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.result) {
+        setTeacherForm(f => ({ ...f, avatar: reader.result as string }));
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // ── Login ──────────────────────────────────────────────────────────────────
@@ -172,30 +232,36 @@ const Login = () => {
     if (error) toast({ title: "Login failed", description: error.message, variant: "destructive" });
   };
 
-  // ── Signup ─────────────────────────────────────────────────────────────────
+    // ── Universal Signup ───────────────────────────────────────────────────────
+  const [signupFullName, setSignupFullName] = useState("");
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!signupFullName.trim()) {
+      toast({ title: "Name is required", variant: "destructive" });
+      return;
+    }
     if (signupPassword.length < 6) {
-      toast({ title: "Password too short", description: "Min. 6 characters", variant: "destructive" }); return;
+      toast({ title: "Password too short", description: "Min. 6 characters", variant: "destructive" });
+      return;
     }
     if (signupPassword !== confirmPassword) {
-      toast({ title: "Passwords don't match", variant: "destructive" }); return;
+      toast({ title: "Passwords don't match", variant: "destructive" });
+      return;
     }
-    if (role === "organisation" && !orgForm.org_name.trim()) {
-      toast({ title: "Organisation name required", variant: "destructive" }); return;
-    }
+
     setLoading(true);
-    const { error } = await signUp(signupEmail, signupPassword, role, {
-      displayName:     role === "organisation" ? orgForm.org_name : userForm.display_name,
-      institutionName: (role === "student" || role === "teacher") ? userForm.institution_name || undefined : undefined,
-      organisation:    role === "organisation" ? orgForm : undefined,
+    const { error } = await signUp(signupEmail, signupPassword, 'student', {
+      displayName: signupFullName.trim(),
     });
     setLoading(false);
+
     if (error) {
       toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Account created!", description: "Check your email to verify your account." });
-      setIsSignup(false); setStep("role");
+      toast({ title: "Account created!", description: "Welcome to CSEEL. Let's complete your profile setup." });
+      // Redirect to profile setup
+      window.location.href = '/profile/setup';
     }
   };
 
@@ -379,274 +445,141 @@ const Login = () => {
             </div>
           )}
 
-          {/* ── SIGNUP MULTI-STEP ─────────────────────────────────────────── */}
+          {/* ── UNIVERSAL SIGNUP (ALL USERS SAME) ─────────────────────────── */}
           {!forgotMode && isSignup && (
             <div>
-              {/* Back button */}
-              <M3Button
-                variant="text"
-                size="sm"
-                onClick={() => {
-                  if (step === "role")        setIsSignup(false);
-                  else if (step === "details") setStep("role");
-                  else                         setStep("details");
-                }}
-                leadingIcon={<ArrowLeft className="h-4 w-4" />}
-                className="mb-4 -ml-2"
+              {/* Back to sign in */}
+              <button
+                type="button"
+                onClick={() => setIsSignup(false)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-[#005689] hover:underline mb-4 cursor-pointer"
               >
-                {step === "role" ? "Back to login" : "Back"}
-              </M3Button>
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Back to sign in</span>
+              </button>
 
-              {/* Step indicator */}
-              <div className="flex items-center gap-2 mb-6">
-                {(["role", "details", "credentials"] as Step[]).map((s, i) => {
-                  const current = ["role", "details", "credentials"].indexOf(step);
-                  return (
-                    <div key={s} className="flex items-center gap-2">
-                      <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                        step === s ? "bg-[#0b57d0] text-white" :
-                        current > i ? "bg-[#c2e7ff] text-[#001d35]" : "bg-[#eef3fc] text-[#444746]"
-                      }`}>{i + 1}</div>
-                      {i < 2 && <div className={`h-0.5 w-8 transition-all ${current > i ? "bg-[#0b57d0]" : "bg-[#c4c7c5]"}`} />}
-                    </div>
-                  );
-                })}
-                <span className="ml-2 text-xs font-medium text-[#444746]">
-                  {step === "role" ? "Choose role" : step === "details" ? "Your details" : "Set credentials"}
-                </span>
+              <div className="mb-5">
+                <h2 className="text-2xl font-black text-[#003c6e] mb-1">Create Account</h2>
+                <p className="text-[#444746] text-xs">
+                  Join CSEEL as a universal member. You can complete your profile (School, Teacher, Student) right after login.
+                </p>
               </div>
 
-              {/* ── STEP 1: Role ──────────────────────────────────────────── */}
-              {step === "role" && (
-                <div>
-                  <h2 className="text-2xl font-bold text-[#1f1f1f] mb-1">Create account</h2>
-                  <p className="text-[#444746] text-sm mb-6">Who are you joining as?</p>
-                  <div className="space-y-3">
-                    {ROLES.map(r => (
-                      <M3Card
-                        key={r.value}
-                        variant={role === r.value ? "filled" : "outlined"}
-                        interactive
-                        onClick={() => setRole(r.value)}
-                        className={`w-full text-left p-4 rounded-[16px] transition-all ${
-                          role === r.value
-                            ? "bg-[#e8f0fe] border-2 border-[#0b57d0]"
-                            : "bg-white border border-[#c4c7c5] hover:border-[#0b57d0]/50"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="font-bold text-[#1f1f1f]">{r.label}</p>
-                          {role === r.value && <Check className="w-4 h-4 text-[#0b57d0]" />}
-                        </div>
-                        <p className="text-sm text-[#444746] mt-0.5">{r.desc}</p>
-                      </M3Card>
-                    ))}
+              {/* Google Sign In */}
+              <M3Button
+                type="button"
+                variant="outlined"
+                size="lg"
+                fullWidth
+                onClick={handleGoogleSignIn}
+                disabled={googleLoading || loading}
+                className="mb-4 bg-white border-[#747775] text-[#1f1f1f] hover:bg-[#f8fafd]"
+                leadingIcon={
+                  googleLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-[#0b57d0]" />
+                  ) : (
+                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                    </svg>
+                  )
+                }
+              >
+                Sign up with Google
+              </M3Button>
+
+              <div className="relative flex items-center justify-center mb-4">
+                <div className="border-t border-[#c4c7c5] w-full" />
+                <span className="bg-white px-3 text-[11px] font-bold text-[#444746] uppercase tracking-wider relative shrink-0">
+                  or sign up with email
+                </span>
+                <div className="border-t border-[#c4c7c5] w-full" />
+              </div>
+
+              <form onSubmit={handleSignup} className="space-y-3.5 text-xs">
+                <div className="space-y-1.5">
+                  <Label>Full Name *</Label>
+                  <Input
+                    type="text"
+                    required
+                    autoFocus
+                    placeholder="e.g. Arvind Sharma / Sunita Verma"
+                    value={signupFullName}
+                    onChange={e => setSignupFullName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label>Email Address *</Label>
+                  <Input
+                    type="email"
+                    required
+                    placeholder="you@example.com"
+                    value={signupEmail}
+                    onChange={e => setSignupEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label>Password * (Min. 6 Characters)</Label>
+                  <div className="relative">
+                    <Input
+                      type={showPwd ? "text" : "password"}
+                      required
+                      placeholder="Enter password"
+                      value={signupPassword}
+                      onChange={e => setSignupPassword(e.target.value)}
+                    />
+                    <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
+                      <M3IconButton
+                        type="button"
+                        variant="standard"
+                        size="sm"
+                        ariaLabel={showPwd ? "Hide password" : "Show password"}
+                        icon={showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        onClick={() => setShowPwd(v => !v)}
+                      />
+                    </div>
                   </div>
-                  <Button className="w-full mt-6" onClick={() => setStep("details")}>Continue →</Button>
                 </div>
-              )}
 
-              {/* ── STEP 2: Details ───────────────────────────────────────── */}
-              {step === "details" && (
-                <div>
-                  <h2 className="text-2xl font-bold mb-1">
-                    {role === "organisation" ? "Organisation Details" : "Your Details"}
-                  </h2>
-                  <p className="text-muted-foreground text-sm mb-6">
-                    {role === "organisation"
-                      ? "Tell us about your organisation"
-                      : "Basic information for your profile"}
-                  </p>
-
-                  {/* Organisation form */}
-                  {role === "organisation" && (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Organisation Name *</Label>
-                        <Input
-                          value={orgForm.org_name}
-                          onChange={e => setOrgForm(f => ({ ...f, org_name: e.target.value }))}
-                          placeholder="e.g. CSEEL Centre, Bhubaneswar"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Phone Number</Label>
-                        <Input value={orgForm.phone} onChange={e => setOrgForm(f => ({ ...f, phone: e.target.value }))} placeholder="+91 98765 43210" type="tel" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Pin Code *</Label>
-                        <div className="relative">
-                          <Input
-                            value={orgForm.pincode}
-                            onChange={e => handlePincodeChange(e.target.value)}
-                            placeholder="Enter 6-digit pin code"
-                            maxLength={6}
-                            inputMode="numeric"
-                          />
-                          {pincodeLoading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />}
-                          {pincodeOk && !pincodeLoading && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />}
-                        </div>
-                        {pincodeOk && <p className="text-xs text-green-600">District & state auto-filled ✓</p>}
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-2">
-                          <Label>District</Label>
-                          <Input value={orgForm.district} onChange={e => setOrgForm(f => ({ ...f, district: e.target.value }))} placeholder="Auto-filled" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>State</Label>
-                          <select className={selectSel} value={orgForm.state} onChange={e => setOrgForm(f => ({ ...f, state: e.target.value }))}>
-                            <option value="">Select state</option>
-                            {INDIA_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-2">
-                          <Label>Country</Label>
-                          <Input value={orgForm.country} onChange={e => setOrgForm(f => ({ ...f, country: e.target.value }))} />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Full Address *</Label>
-                        <textarea
-                          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
-                          value={orgForm.address}
-                          onChange={e => setOrgForm(f => ({ ...f, address: e.target.value }))}
-                          placeholder="Building, street, area..."
-                        />
-                      </div>
-                    </div>
+                <div className="space-y-1.5">
+                  <Label>Confirm Password *</Label>
+                  <Input
+                    type={showPwd ? "text" : "password"}
+                    required
+                    placeholder="Repeat password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                  />
+                  {confirmPassword && signupPassword !== confirmPassword && (
+                    <p className="text-[11px] text-red-500 font-medium">Passwords don't match</p>
                   )}
-
-                  {/* Student / Teacher form */}
-                  {(role === "student" || role === "teacher") && (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Full Name *</Label>
-                        <Input value={userForm.display_name} onChange={e => setUserForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Your full name" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Phone (optional)</Label>
-                        <Input value={userForm.phone} onChange={e => setUserForm(f => ({ ...f, phone: e.target.value }))} placeholder="+91 ..." type="tel" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>
-                          {role === "student" ? "My Organisation" : "Organisation I work at"}
-                        </Label>
-                        <p className="text-xs text-muted-foreground">Select from registered organisations (optional)</p>
-                        <Input
-                          placeholder="Search by name or district..."
-                          value={orgSearch}
-                          onChange={e => {
-                            setOrgSearch(e.target.value);
-                            if (!e.target.value) setUserForm(f => ({ ...f, institution_id: "", institution_name: "" }));
-                          }}
-                        />
-                        {orgSearch && !userForm.institution_id && filteredOrgs.length > 0 && (
-                          <div className="border border-border rounded-lg overflow-hidden max-h-44 overflow-y-auto bg-background shadow-sm">
-                            {filteredOrgs.map(o => (
-                              <button
-                                key={o.id}
-                                type="button"
-                                onClick={() => {
-                                  setUserForm(f => ({ ...f, institution_id: o.id, institution_name: o.org_name }));
-                                  setOrgSearch(o.org_name);
-                                }}
-                                className="w-full text-left px-3 py-2.5 hover:bg-muted text-sm border-b border-border last:border-0 transition-colors"
-                              >
-                                <p className="font-medium text-foreground">{o.org_name}</p>
-                                <p className="text-xs text-muted-foreground">{[o.district, o.state].filter(Boolean).join(", ")}</p>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                        {orgSearch && !userForm.institution_id && filteredOrgs.length === 0 && (
-                          <p className="text-xs text-muted-foreground px-1">No organisations found — you can skip this</p>
-                        )}
-                        {userForm.institution_id && (
-                          <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">
-                            <CheckCircle2 className="h-4 w-4 shrink-0" />
-                            <span className="flex-1 truncate">{userForm.institution_name}</span>
-                            <button
-                              type="button"
-                              onClick={() => { setUserForm(f => ({ ...f, institution_id: "", institution_name: "" })); setOrgSearch(""); }}
-                              className="text-muted-foreground hover:text-destructive text-xs shrink-0"
-                            >Remove</button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  <Button
-                    className="w-full mt-6"
-                    onClick={() => {
-                      if (role === "organisation" && !orgForm.org_name.trim()) {
-                        toast({ title: "Organisation name required", variant: "destructive" }); return;
-                      }
-                      if ((role === "student" || role === "teacher") && !userForm.display_name.trim()) {
-                        toast({ title: "Full name is required", variant: "destructive" }); return;
-                      }
-                      setStep("credentials");
-                    }}
-                  >
-                    Continue →
-                  </Button>
                 </div>
-              )}
 
-              {/* ── STEP 3: Credentials ───────────────────────────────────── */}
-              {step === "credentials" && (
-                <div>
-                  <h2 className="text-2xl font-bold mb-1">Set credentials</h2>
-                  <p className="text-muted-foreground text-sm mb-6">Email and password for your account</p>
-                  <form onSubmit={handleSignup} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Email *</Label>
-                      <Input type="email" value={signupEmail} onChange={e => setSignupEmail(e.target.value)} required autoFocus placeholder="you@example.com" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Password *</Label>
-                      <div className="relative">
-                        <Input type={showPwd ? "text" : "password"} value={signupPassword} onChange={e => setSignupPassword(e.target.value)} required placeholder="Min. 6 characters" />
-                        <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPwd(v => !v)}>
-                          {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Confirm Password *</Label>
-                      <Input type={showPwd ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required placeholder="Repeat password" />
-                      {confirmPassword && signupPassword !== confirmPassword && (
-                        <p className="text-xs text-destructive">Passwords don't match</p>
-                      )}
-                    </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full font-bold shadow-md hover:shadow-lg transition-all mt-2 bg-[#005689] hover:bg-[#003c6e] text-white"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Create Account →"}
+                </Button>
+              </form>
 
-                    {/* Summary card */}
-                    <div className="bg-muted/50 border border-border rounded-xl p-3 text-xs space-y-1">
-                      <p className="font-semibold text-foreground text-sm mb-1">Account summary</p>
-                      <p>Role: <span className="font-medium text-foreground capitalize">{role}</span></p>
-                      {role === "organisation" && <p>Organisation: <span className="font-medium text-foreground">{orgForm.org_name}</span></p>}
-                      {role === "organisation" && orgForm.district && <p>Location: {orgForm.district}, {orgForm.state} — {orgForm.pincode}</p>}
-                      {(role === "student" || role === "teacher") && <p>Name: <span className="font-medium text-foreground">{userForm.display_name}</span></p>}
-                      {userForm.institution_name && <p>Organisation: <span className="font-medium text-foreground">{userForm.institution_name}</span></p>}
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Creating account…</> : "Create Account"}
-                    </Button>
-                  </form>
-                </div>
-              )}
-
-              <p className="text-center text-sm text-muted-foreground mt-6">
+              <p className="text-center text-xs text-[#444746] mt-5">
                 Already have an account?{" "}
-                <button onClick={() => { setIsSignup(false); setStep("role"); }} className="text-primary font-medium hover:underline">Sign in</button>
+                <button
+                  type="button"
+                  onClick={() => setIsSignup(false)}
+                  className="text-[#005689] font-bold hover:underline"
+                >
+                  Sign in
+                </button>
               </p>
             </div>
           )}
-
           <p className="text-xs text-muted-foreground text-center mt-6">
             <Link href="/" className="text-primary hover:underline">← Back to Home</Link>
           </p>

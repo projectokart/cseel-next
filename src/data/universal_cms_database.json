@@ -723,5 +723,29 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-25T10:23:48.538Z",
     "updatedBy": "Auto Init"
+  },
+  "edu-network:teachers:create-profile": {
+    "pageKey": "edu-network:teachers:create-profile",
+    "title": "Edu Network Teachers Create Profile",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-25T12:46:06.031Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:jobs:manage": {
+    "pageKey": "edu-network:jobs:manage",
+    "title": "Edu Network Jobs Manage",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-25T16:34:57.984Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:jobs:post": {
+    "pageKey": "edu-network:jobs:post",
+    "title": "Edu Network Jobs Post",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-25T16:35:10.571Z",
+    "updatedBy": "Auto Init"
   }
 }

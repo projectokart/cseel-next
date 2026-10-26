@@ -341,13 +341,13 @@ export default function SchoolVacancyPageClient({ orgId, backUrl }: SchoolVacanc
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                <button
-                  onClick={() => setIsPostJobModalOpen(true)}
-                  className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl shadow-lg transition flex items-center gap-1.5"
+                <Link
+                  href={`/edu-network/jobs/post?schoolId=${org.id}`}
+                  className="px-4 py-2.5 bg-[#005689] hover:bg-[#003c6e] text-white font-black text-xs rounded-xl shadow-lg transition flex items-center gap-1.5"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Post a Vacancy (Indeed Portal)</span>
-                </button>
+                  <span>Post a Vacancy</span>
+                </Link>
                 <Link
                   href="/edu-network/jobs"
                   className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs rounded-xl transition flex items-center gap-1.5"

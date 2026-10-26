@@ -9,7 +9,7 @@ import {
   Sparkles, Award, ArrowLeft, RefreshCw
 } from 'lucide-react';
 import { FacultyJobItem } from '@/data/facultyJobsData';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 
 interface Props {
@@ -73,25 +73,20 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
               
               <div className="flex items-start gap-4 sm:gap-5">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 shadow-sm relative flex items-center justify-center">
-                  {job.organisationLogo ? (
+                {/* School Logo: Only show if valid URL exists. Hide completely if not available so no space is wasted */}
+                {job.organisationLogo && job.organisationLogo.trim() !== '' ? (
+                  <div className="single-logo-box w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden bg-white border border-slate-200 shrink-0 shadow-sm relative flex items-center justify-center p-1.5">
                     <img
                       src={job.organisationLogo}
                       alt={job.organisationName}
-                      className="w-full h-full object-contain p-1"
+                      className="w-full h-full object-contain"
                       onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                        const fb = (e.target as HTMLElement).parentElement?.querySelector('.monogram-single') as HTMLElement;
-                        if (fb) fb.style.display = 'flex';
+                        const box = (e.target as HTMLElement).closest('.single-logo-box') as HTMLElement;
+                        if (box) box.style.display = 'none';
                       }}
                     />
-                  ) : null}
-                  <div
-                    className={`monogram-single w-full h-full bg-blue-50 text-[#006FCC] font-black text-xl sm:text-2xl items-center justify-center uppercase select-none ${job.organisationLogo ? 'hidden' : 'flex'}`}
-                  >
-                    {(job.organisationName || 'SC').slice(0, 2)}
                   </div>
-                </div>
+                ) : null}
 
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
@@ -108,6 +103,12 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     {job.board && (
                       <span className="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-800 border border-cyan-200 text-xs font-bold">
                         {job.board}
+                      </span>
+                    )}
+                    {job.forLady && (
+                      <span className="px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold inline-flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                        Lady Only
                       </span>
                     )}
                     <span className={`px-2 py-0.5 rounded-md text-xs font-bold border ${getSourceBadgeColor(job.source)}`}>
@@ -130,13 +131,18 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                       <span>{job.organisationName}</span>
                     </span>
                     {(() => {
-                      const localAddr = extractPureLocalAddress(job);
+                      const structuredAddress = formatStructuredAddress(job);
                       return (
-                        <span className="flex items-center gap-1 text-slate-700 bg-slate-100/90 px-2.5 py-1 rounded-md text-xs font-semibold">
-                          <MapPin className="w-3.5 h-3.5 text-[#005689] shrink-0" />
-                          <span className="text-slate-500 font-medium mr-1">Local Address:</span>
-                          <span className="font-bold text-slate-800">{localAddr}</span>
-                        </span>
+                        <a
+                          href={getGoogleMapsSearchUrl(job)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-start gap-1.5 text-slate-700 bg-slate-100/90 hover:bg-slate-200/80 px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors group/maplink"
+                          title={`Open Google Maps for ${job.organisationName}, ${structuredAddress}`}
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-[#005689] group-hover/maplink:text-[#EA4335] shrink-0 mt-0.5 transition-colors" />
+                          <span className="break-words leading-tight">{structuredAddress}</span>
+                        </a>
                       );
                     })()}
                   </div>
@@ -222,25 +228,16 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 )}
               </div>
 
-              {/* Description Card - 100% Authentic Scraped/Original Data */}
+              {/* Overview & Direct Apply Callout Box (Description kept empty per request) */}
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
-                <div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900" style={{ color: '#003c6e' }}>
-                    Job Role & Overview
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-700 mt-2 leading-relaxed whitespace-pre-line">
-                    {job.shortDescription || "Please refer to the official vacancy posting for comprehensive details regarding this role."}
-                  </p>
-                </div>
-
                 {/* Direct Apply Callout Box */}
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-6">
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900" style={{ color: '#003c6e' }}>
                       Ready to submit your application?
                     </h4>
                     <p className="text-xs text-slate-500 mt-0.5">
-                      This opening is hosted on {job.source}. Click below to view the official vacancy listing and submit your resume.
+                      This vacancy is hosted on {job.source}. Click below to visit the official portal and submit your application.
                     </p>
                   </div>
                   <a
@@ -253,7 +250,6 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     <span>Apply on {job.source}</span>
                   </a>
                 </div>
-
               </div>
 
 
@@ -401,13 +397,13 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="flex flex-row overflow-x-auto gap-4 pb-4 pt-1 scroll-smooth snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
                 {relatedJobs.map((rj) => {
                   const isSameCity = Boolean(job.city && rj.city && job.city.toLowerCase() === rj.city.toLowerCase());
                   return (
                     <div
                       key={rj.id}
-                      className="bg-white rounded-2xl p-4 border border-slate-200/90 hover:border-[#005689] shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                      className="min-w-[280px] sm:min-w-[320px] max-w-[340px] shrink-0 snap-start bg-white rounded-2xl p-4 border border-slate-200/90 hover:border-[#005689] shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                     >
                       <div className="space-y-2.5">
                         <div className="flex items-center justify-between gap-1">
@@ -438,9 +434,9 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                           <div className="text-xs font-extrabold text-[#0F9D58]">
                             {formatCleanSalary(rj.salary, false)}
                           </div>
-                          <div className="text-[10px] text-slate-500 font-medium flex items-center gap-0.5 truncate max-w-[110px]">
-                            <MapPin className="w-2.5 h-2.5 text-slate-400 shrink-0" />
-                            <span className="truncate">{rj.city || rj.district || 'India'}</span>
+                          <div className="text-[10.5px] text-slate-500 font-medium flex items-start gap-1 max-w-[150px]">
+                            <MapPin className="w-2.5 h-2.5 text-slate-400 shrink-0 mt-0.5" />
+                            <span className="break-words leading-tight">{formatStructuredAddress(rj)}</span>
                           </div>
                         </div>
                       </div>

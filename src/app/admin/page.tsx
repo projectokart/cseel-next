@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
-import { AdminLayout } from '@/features/admin';
+import AdminDashboard from '@/dashboards/AdminDashboard';
 
 export const metadata: Metadata = {
-  title: 'CSEEL Administrative Governance Center | Role-Based Control Portal',
-  description: 'Enterprise role-based admin management portal for CSEEL. Super Admin, HR, School, Faculty Recruitment, Science Labs, Projectokart, Inventory, Events and Content governance.',
+  title: 'Admin Governance Console | CSEEL Master Operations',
+  description: 'Enterprise master control portal for CSEEL. Science Labs, STEM Projects, School UDISE Verification, Procurement and NEP Certifications.',
   robots: {
     index: false,
     follow: false,
@@ -18,5 +18,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-  return <AdminLayout />;
+  return <AdminDashboard />;
 }

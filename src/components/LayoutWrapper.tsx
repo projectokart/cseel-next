@@ -10,6 +10,8 @@ export interface LayoutWrapperProps {
   portalBadge?: string;
   badgeColor?: string;
   searchPlaceholder?: string;
+  searchValue?: string;
+  onSearchChange?: (val: string) => void;
   roleIcon?: HeaderProps['roleIcon'];
   isLoading?: boolean;
   customLeftContent?: React.ReactNode;
@@ -21,6 +23,8 @@ export function LayoutWrapper({
   portalBadge,
   badgeColor,
   searchPlaceholder,
+  searchValue,
+  onSearchChange,
   roleIcon,
   isLoading = false,
   customLeftContent,
@@ -41,6 +45,8 @@ export function LayoutWrapper({
         portalBadge={portalBadge}
         badgeColor={badgeColor}
         searchPlaceholder={searchPlaceholder}
+        searchValue={searchValue}
+        onSearchChange={onSearchChange}
         roleIcon={roleIcon}
         customLeftContent={customLeftContent}
       />

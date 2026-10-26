@@ -462,5 +462,19 @@
     "itemName": "Two Trees TTC 450 Pro CNC router & carving machine",
     "verified": true,
     "publicUrl": "/images/makerspace/catalog/optional-advanced-16.avif"
+  },
+  "makedo-safe-saw": {
+    "itemName": "Makedo Safe-Saw",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/makedo-safe-saw.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-26T16:08:57.221Z"
+  },
+  "cardboard-engineering-kits": {
+    "itemName": "Cardboard engineering kits",
+    "verified": true,
+    "publicUrl": "/images/makerspace/verified-products/makedo-safe-saw.jpg",
+    "confidence": 1,
+    "verifiedAt": "2026-10-26T16:08:57.221Z"
   }
 }

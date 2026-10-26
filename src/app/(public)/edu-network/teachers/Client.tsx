@@ -610,10 +610,10 @@ export default function TeachersDirectoryClient() {
 
   const handleOpenListAsTeacher = () => {
     if (!user) {
-      window.location.href = '/login?returnUrl=/edu-network/teachers/create-profile';
+      window.location.href = '/login?returnUrl=/edu-network/teachers';
       return;
     }
-    window.location.href = '/edu-network/teachers/create-profile';
+    setIsListAsTeacherOpen(true);
   };
 
 

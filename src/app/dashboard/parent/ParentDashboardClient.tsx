@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import LayoutWrapper, { ContentSubHeader } from '@/components/LayoutWrapper';
 import { Card, CardHeader, CardContent } from '@/components/Card';
 import {
+  X,
   Home,
   Users,
   Award,
@@ -25,7 +26,13 @@ import { Button } from '@/components/ui/button';
 export default function ParentDashboardClient() {
   const [activeTab, setActiveTab] = useState<'overview' | 'experiments' | 'reports'>('overview');
   const [rail1Hovered, setRail1Hovered] = useState(false);
-  const [rail2Open, setRail2Open] = useState(true);
+  const [rail2Open, setRail2Open] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setRail2Open(true);
+    }
+  }, []);
   const [isPageLoading, setIsPageLoading] = useState(false);
 
   // Parent Context
@@ -35,6 +42,9 @@ export default function ParentDashboardClient() {
   const schoolName = 'Delhi Public School (R.K. Puram)';
 
   const handleSelectTab = (tab: 'overview' | 'experiments' | 'reports') => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setRail2Open(false);
+    }
     if (activeTab === tab) return;
     setIsPageLoading(true);
     setActiveTab(tab);
@@ -60,13 +70,15 @@ export default function ParentDashboardClient() {
       badgeColor="bg-amber-50 text-amber-800 border-amber-200"
       searchPlaceholder="Search Aarav's lab practicals, scores, faculty feedback..."
       roleIcon="parent"
+      onToggleSidebar={() => setRail2Open(prev => !prev)}
+      isSidebarOpen={rail2Open}
       isLoading={isPageLoading}
     >
       {/* 2. DUAL-RAIL MAIN AREA */}
       <div className="flex-1 h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] flex overflow-hidden relative">
         
         {/* Fixed placeholder so underlying content never shifts */}
-        <div className="w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
+        <div className="portal-rail-placeholder hidden md:block w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
 
         {/* ═════════════════════════════════════════════════════════════
             1. RAIL 1: SLIM ICON BAR (48px EXPANDABLE TO 220px)

@@ -15,6 +15,8 @@ export interface LayoutWrapperProps {
   roleIcon?: HeaderProps['roleIcon'];
   isLoading?: boolean;
   customLeftContent?: React.ReactNode;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
   children: React.ReactNode;
 }
 
@@ -28,6 +30,8 @@ export function LayoutWrapper({
   roleIcon,
   isLoading = false,
   customLeftContent,
+  onToggleSidebar,
+  isSidebarOpen = false,
   children
 }: LayoutWrapperProps) {
   return (
@@ -49,7 +53,17 @@ export function LayoutWrapper({
         onSearchChange={onSearchChange}
         roleIcon={roleIcon}
         customLeftContent={customLeftContent}
+        onToggleSidebar={onToggleSidebar}
+        isSidebarOpen={isSidebarOpen}
       />
+
+      {/* Mobile Drawer Backdrop */}
+      {isSidebarOpen && onToggleSidebar && (
+        <div
+          className="fixed inset-0 bg-black/40 z-50 md:hidden backdrop-blur-xs transition-opacity duration-200"
+          onClick={onToggleSidebar}
+        />
+      )}
 
       {/* Dynamic Module Layout Injection Slot */}
       <div className="flex-1 flex overflow-hidden min-h-0 relative">

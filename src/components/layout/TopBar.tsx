@@ -73,7 +73,15 @@ const TopBar = () => {
   const initials    = (displayName || "US").slice(0, 2).toUpperCase();
   const primaryRole = (roles && roles.length > 0) ? roles[0] : "user";
 
-  const dashboardPath = "/dashboard";
+  const dashboardPath = primaryRole === 'moderator' || (user?.email && (user.email.endsWith('@cseel.org') || user.email.endsWith('@cseel.in')))
+    ? '/admin'
+    : primaryRole === 'teacher'
+    ? '/dashboard/teacher'
+    : primaryRole === 'organisation'
+    ? '/dashboard/school'
+    : primaryRole === 'student'
+    ? '/dashboard/student'
+    : '/dashboard/student';
 
   const handleLogout = async () => {
     try {
@@ -298,7 +306,7 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
                         type="button"
                         onClick={() => {
                           setProfileMenuOpen(false);
-                          router.push('/dashboard');
+                          router.push(dashboardPath);
                         }}
                         className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
                       >

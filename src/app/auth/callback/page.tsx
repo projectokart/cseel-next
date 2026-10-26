@@ -29,19 +29,28 @@ export default function AuthCallbackPage() {
 
         const routeAfterAuth = async (userId: string, targetNext: string) => {
           try {
-            const { data: profile } = await (supabase as any)
-              .from('profiles')
-              .select('is_onboarded')
-              .eq('user_id', userId)
-              .maybeSingle();
+            let dest = targetNext;
+            if (!dest || dest === '/' || dest === '/login' || dest.startsWith('/onboarding') || dest.startsWith('/profile/setup')) {
+              // Fetch user role if available to send to appropriate dashboard
+              const { data: userRole } = await (supabase as any)
+                .from('user_roles')
+                .select('role')
+                .eq('user_id', userId)
+                .maybeSingle();
 
-            if (!profile || profile.is_onboarded === false) {
-              router.replace(`/onboarding?next=${encodeURIComponent(targetNext)}`);
-            } else {
-              router.replace(targetNext);
+              if (userRole?.role === 'teacher') {
+                dest = '/dashboard/teacher';
+              } else if (userRole?.role === 'organisation') {
+                dest = '/dashboard/school';
+              } else if (userRole?.role === 'student') {
+                dest = '/dashboard/student';
+              } else {
+                dest = '/schools';
+              }
             }
+            router.replace(dest);
           } catch (e) {
-            router.replace(targetNext);
+            router.replace(targetNext && !targetNext.includes('onboarding') && !targetNext.includes('profile/setup') ? targetNext : '/schools');
           }
         };
 

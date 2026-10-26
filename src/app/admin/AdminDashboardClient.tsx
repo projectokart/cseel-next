@@ -300,7 +300,13 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
   const [activeDashboard, setActiveDashboard] = useState<DashboardType>(initialDashboard);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [rail1Hovered, setRail1Hovered] = useState(false);
-  const [rail2Open, setRail2Open] = useState(true);
+  const [rail2Open, setRail2Open] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setRail2Open(true);
+    }
+  }, []);
   const [activeNavId, setActiveNavId] = useState<string>(
     initialDashboard === 'teacher'
       ? 'teacher-resume'
@@ -466,6 +472,9 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
   const handleSwitchDashboard = (newDash: DashboardType, defaultNav: string = 'overview') => {
     if (activeDashboard === newDash && activeNavId === defaultNav) return;
     setIsPageLoading(true);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setRail2Open(false);
+    }
     setActiveDashboard(newDash);
     setActiveNavId(defaultNav);
 
@@ -488,6 +497,9 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
 
   // Switch Sub-Tab with URL sync
   const handleSelectTab = (tabId: string) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setRail2Open(false);
+    }
     setActiveNavId(tabId);
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
@@ -603,6 +615,8 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
       searchValue={searchQuery}
       onSearchChange={setSearchQuery}
       isLoading={isPageLoading}
+      onToggleSidebar={() => setRail2Open(prev => !prev)}
+      isSidebarOpen={rail2Open}
       customLeftContent={
         <div className="relative" ref={propertyMenuRef}>
           <button
@@ -663,7 +677,7 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
       <div className="flex-1 h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] flex overflow-hidden relative">
         
         {/* Fixed placeholder so underlying content never shifts */}
-        <div className="w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
+        <div className="portal-rail-placeholder hidden md:block w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
 
         {/* RAIL 1: ULTRA-COMPACT HOVER SLIDE-OVER RAIL */}
         <aside
@@ -770,8 +784,9 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
           <aside className="portal-rail2 h-full z-20">
             <div className="flex-1 overflow-y-auto">
               
-              <div className="px-3.5 pt-3 pb-2 border-b border-gray-100 mb-1">
-                <h2 className="portal-rail2-header-title">
+              <div className="px-3.5 pt-3 pb-2 border-b border-gray-100 mb-1 flex items-center justify-between">
+                <div>
+                  <h2 className="portal-rail2-header-title">
                   {activeDashboard === 'reports' && 'Reports'}
                   {activeDashboard === 'cms' && 'CSEEL Content Studio'}
                   {activeDashboard === 'inventory' && 'Inventory Hub'}
@@ -783,6 +798,51 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
                   {activeDashboard === 'admin' && 'Governance & RBAC'}
                 </h2>
                 <p className="portal-rail2-header-sub">Directorate Governance</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRail2Open(false)}
+                  className="md:hidden p-1 text-gray-500 hover:text-gray-900 rounded-md hover:bg-gray-100"
+                  title="Close navigation"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Mobile Module Switcher Dropdown (Only visible on mobile screens) */}
+              <div className="md:hidden px-3 pt-1 pb-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
+                  Active Console
+                </label>
+                <select
+                  value={activeDashboard}
+                  onChange={(e) => {
+                    const val = e.target.value as DashboardType;
+                    const defaultTabs: Record<string, string> = {
+                      home: 'overview',
+                      reports: 'reports-snapshot',
+                      cms: 'cms-all',
+                      jobs: 'jobs-schools',
+                      schools: 'claims-verification',
+                      inventory: 'inventory-overview',
+                      labs: 'labs-all',
+                      media: 'media-gallery',
+                      admin: 'admin-settings'
+                    };
+                    handleSwitchDashboard(val, defaultTabs[val] || 'overview');
+                  }}
+                  className="w-full text-xs font-semibold bg-gray-50 border border-gray-200 rounded-lg p-2 text-gray-800"
+                >
+                  <option value="home">Home (Overview)</option>
+                  <option value="reports">Reports &amp; Analytics</option>
+                  <option value="cms">CMS (Content Studio)</option>
+                  <option value="jobs">Job Post Verification</option>
+                  <option value="schools">School Directory</option>
+                  <option value="inventory">Inventory Hub</option>
+                  <option value="labs">Science Labs</option>
+                  <option value="media">Media Management</option>
+                  <option value="admin">Admin Settings</option>
+                </select>
               </div>
 
               {/* "+ Create" Pill Button */}

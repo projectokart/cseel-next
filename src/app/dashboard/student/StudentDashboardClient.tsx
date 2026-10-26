@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LayoutWrapper, { ContentSubHeader } from '@/components/LayoutWrapper';
 import {
+  X,
   Home,
   Menu,
   PanelLeft,
@@ -44,7 +45,13 @@ export default function StudentDashboardClient() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<'home' | 'my-experiments' | 'simulations' | 'submissions' | 'certificates'>('home');
   const [rail1Hovered, setRail1Hovered] = useState(false);
-  const [rail2Open, setRail2Open] = useState(true);
+  const [rail2Open, setRail2Open] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setRail2Open(true);
+    }
+  }, []);
   const [isPageLoading, setIsPageLoading] = useState(false);
 
   // Dropdown States
@@ -61,6 +68,9 @@ export default function StudentDashboardClient() {
   const schoolName = 'Delhi Public School (R.K. Puram)';
 
   const handleSelectTab = (tab: 'home' | 'my-experiments' | 'simulations' | 'submissions' | 'certificates') => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setRail2Open(false);
+    }
     if (activeTab === tab) return;
     setIsPageLoading(true);
     setActiveTab(tab);
@@ -86,6 +96,8 @@ export default function StudentDashboardClient() {
       badgeColor="bg-purple-50 text-purple-800 border-purple-200"
       searchPlaceholder="Search practical simulations, formulas, lab assignments..."
       roleIcon="student"
+      onToggleSidebar={() => setRail2Open(prev => !prev)}
+      isSidebarOpen={rail2Open}
       isLoading={isPageLoading}
     >
 
@@ -95,7 +107,7 @@ export default function StudentDashboardClient() {
       <div className="flex-1 h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] flex overflow-hidden relative">
         
         {/* Fixed placeholder so underlying content never shifts */}
-        <div className="w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
+        <div className="portal-rail-placeholder hidden md:block w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
 
         {/* RAIL 1: ULTRA-COMPACT HOVER SLIDE-OVER RAIL */}
         <aside
@@ -199,6 +211,14 @@ export default function StudentDashboardClient() {
           <aside className="portal-rail2 h-full z-20">
             <div className="flex-1 overflow-y-auto">
               <div className="px-3 pb-2 border-b border-gray-100 mb-2 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setRail2Open(false)}
+                  className="md:hidden p-1 text-gray-500 hover:text-gray-900 rounded-md hover:bg-gray-100 order-last"
+                  title="Close navigation"
+                >
+                  <X className="w-4 h-4" />
+                </button>
                 <div>
                   <h3 className="portal-rail2-header-title">
                     Student Lab Portal

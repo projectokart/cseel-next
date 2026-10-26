@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LayoutWrapper, { ContentSubHeader } from '@/components/LayoutWrapper';
 import {
+  X,
   Home,
   Menu,
   PanelLeft,
@@ -61,7 +62,13 @@ export default function SchoolDashboardClient() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<'home' | 'create-job' | 'my-jobs' | 'school-kyc'>('home');
   const [rail1Hovered, setRail1Hovered] = useState(false);
-  const [rail2Open, setRail2Open] = useState(true);
+  const [rail2Open, setRail2Open] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      setRail2Open(true);
+    }
+  }, []);
   const [isPageLoading, setIsPageLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
@@ -132,6 +139,9 @@ export default function SchoolDashboardClient() {
   ]);
 
   const handleSelectTab = (tab: 'home' | 'create-job' | 'my-jobs' | 'school-kyc') => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setRail2Open(false);
+    }
     if (activeTab === tab) return;
     setIsPageLoading(true);
     setActiveTab(tab);
@@ -185,6 +195,8 @@ export default function SchoolDashboardClient() {
       badgeColor="bg-emerald-50 text-emerald-800 border-emerald-200"
       searchPlaceholder="Search faculty candidates, applicant resumes, physics..."
       roleIcon="school"
+      onToggleSidebar={() => setRail2Open(prev => !prev)}
+      isSidebarOpen={rail2Open}
       isLoading={isPageLoading}
     >
 
@@ -194,7 +206,7 @@ export default function SchoolDashboardClient() {
       <div className="flex-1 h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] flex overflow-hidden relative">
         
         {/* Fixed placeholder so underlying content never shifts */}
-        <div className="w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
+        <div className="portal-rail-placeholder hidden md:block w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
 
         {/* RAIL 1: ULTRA-COMPACT HOVER SLIDE-OVER RAIL */}
         <aside

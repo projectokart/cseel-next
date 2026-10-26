@@ -109,13 +109,36 @@ const Login = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || '/';
+  const rawParam = searchParams.get('returnUrl') || searchParams.get('redirect') || searchParams.get('next') || '';
+
+  const getSafeDestination = (url: string, currentRoles?: string[]) => {
+    if (!url || url === '/' || url === '/login' || url.startsWith('/onboarding') || url.startsWith('/profile/setup')) {
+      if (currentRoles?.includes('teacher')) return '/dashboard/teacher';
+      if (currentRoles?.includes('organisation')) return '/dashboard/school';
+      if (currentRoles?.includes('student')) return '/dashboard/student';
+      return '/schools';
+    }
+    // Remap deleted or legacy routes safely
+    if (url === '/dashboard') {
+      if (currentRoles?.includes('teacher')) return '/dashboard/teacher';
+      if (currentRoles?.includes('organisation')) return '/dashboard/school';
+      if (currentRoles?.includes('student')) return '/dashboard/student';
+      return '/dashboard/student';
+    }
+    if (url === '/edu-network/teachers/create-profile') {
+      return '/edu-network/teachers';
+    }
+    return url;
+  };
+
+  const returnUrl = getSafeDestination(rawParam, roles);
   const { toast } = useToast();
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await signInWithGoogle(returnUrl !== '/' ? returnUrl : '/schools');
+      const target = getSafeDestination(rawParam, roles);
+      const { error } = await signInWithGoogle(target);
       if (error) {
         toast({
           title: "Google Sign In Failed",
@@ -134,16 +157,16 @@ const Login = () => {
     }
   };
 
-  // Redirect if already logged in — go to returnUrl or schools
+  // Redirect if already logged in — go to safe destination
   useEffect(() => {
     if (user) {
-      const dest = returnUrl && returnUrl !== '/login' ? returnUrl : '/schools';
+      const dest = getSafeDestination(rawParam, roles);
       const timer = setTimeout(() => {
         window.location.href = dest;
       }, 400);
       return () => clearTimeout(timer);
     }
-  }, [user, returnUrl]);
+  }, [user, rawParam, roles]);
 
   // Load organisations list when student/teacher reaches details step
   useEffect(() => {
@@ -259,9 +282,9 @@ const Login = () => {
     if (error) {
       toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Account created!", description: "Welcome to CSEEL. Let's complete your profile setup." });
-      // Redirect to profile setup
-      window.location.href = '/profile/setup';
+      toast({ title: "Account created!", description: "Welcome to CSEEL. Let's explore the platform." });
+      // Redirect to safe role-based dashboard or schools
+      window.location.href = getSafeDestination(rawParam, roles);
     }
   };
 
@@ -348,11 +371,11 @@ const Login = () => {
                   size="lg"
                   fullWidth
                   onClick={() => {
-                    const dest = returnUrl && returnUrl !== '/login' ? returnUrl : '/schools';
+                    const dest = getSafeDestination(rawParam, roles);
                     window.location.href = dest;
                   }}
                 >
-                  Continue to {returnUrl.includes('schools') ? 'Schools Directory' : 'Platform'} &rarr;
+                  Continue to {returnUrl.includes('schools') ? 'Schools Directory' : 'Dashboard'} &rarr;
                 </M3Button>
                 <M3Button
                   variant="outlined"

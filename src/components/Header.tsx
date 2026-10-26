@@ -12,7 +12,8 @@ import {
   School,
   GraduationCap,
   Users,
-  UserCheck
+  UserCheck,
+  Menu
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,6 +27,8 @@ export interface HeaderProps {
   searchValue?: string;
   roleIcon?: 'admin' | 'school' | 'teacher' | 'student' | 'parent';
   customLeftContent?: React.ReactNode;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 export default function Header({
@@ -36,7 +39,9 @@ export default function Header({
   onSearchChange,
   searchValue = '',
   roleIcon = 'admin',
-  customLeftContent
+  customLeftContent,
+  onToggleSidebar,
+  isSidebarOpen = false
 }: HeaderProps) {
   const router = useRouter();
   const { signOut, user } = useAuth();
@@ -69,7 +74,19 @@ export default function Header({
   return (
     <header className="portal-header">
       {/* Left: Brand Logo & Role Pill */}
-      <div className="flex items-center gap-2.5 min-w-0 shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink-0">
+        {onToggleSidebar && (
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            className="md:hidden portal-header-tool-btn -ml-1 text-[#202124] hover:bg-[#f1f3f4]"
+            title={isSidebarOpen ? "Close navigation drawer" : "Open navigation drawer"}
+            aria-label="Toggle navigation drawer"
+          >
+            <Menu className="w-5 h-5 text-[#202124]" />
+          </button>
+        )}
+
         <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity shrink-0">
           <img
             src="/images/cseel-logo.svg"

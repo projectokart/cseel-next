@@ -3,14 +3,14 @@ import Client from './Client';
 
 export const metadata: Metadata = {
   title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
-  description: "Discover why 500+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
+  description: "Discover why 28,000+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
   keywords: "why CSEEL, best science lab India, benefits of live lab, experiential science education",
   alternates: {
     canonical: "https://www.cseel.org/why-cseel",
   },
   openGraph: {
     title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
-    description: "Discover why 500+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
+    description: "Discover why 28,000+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
     url: "https://www.cseel.org/why-cseel",
     siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     site: "@cseel_org",
     creator: "@cseel_org",
     title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
-    description: "Discover why 500+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
+    description: "Discover why 28,000+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
     images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
   },
 };

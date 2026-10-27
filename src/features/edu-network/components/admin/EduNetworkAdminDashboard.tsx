@@ -318,7 +318,7 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
           success++;
         }
       }
-      alert(`Successfully imported ${success} partner schools!`);
+      alert(`Successfully imported ${success} schools!`);
       setImportModalOpen(false);
       setCsvText('');
       loadPartnerData();
@@ -334,7 +334,7 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
     try {
       await udiseMasterService.onboardSchool(record);
       setUdiseRecords(prev => prev.map(r => r.id === record.id ? { ...r, is_onboarded: true } : r));
-      alert(`🎉 "${record.school_name}" has been onboarded to Verified Partner Schools Directory!`);
+      alert(`🎉 "${record.school_name}" has been onboarded to Verified Schools Directory!`);
       onAuditLog?.('ONBOARD_UDISE_SCHOOL', 'edu_network', `Onboarded UDISE school: ${record.school_name} (${record.udise_code})`);
     } catch (err: any) {
       alert('Onboarding failed: ' + err.message);
@@ -456,11 +456,11 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
             <span>ACADEMIC INSTITUTIONS &amp; NATIONAL UDISE DATA GOVERNANCE</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-            {activeTab === 'partners' ? 'Partner Schools & STEM Infrastructure Registry' : 'All-India UDISE Master Database (400,000+ Schools)'}
+            {activeTab === 'partners' ? 'Verified Schools & STEM Infrastructure Registry' : 'All-India UDISE Master Database (400,000+ Schools)'}
           </h2>
           <p className="text-xs text-slate-500">
             {activeTab === 'partners' 
-              ? 'Govern accredited partner schools, STEM live labs KYC, public/private visibility, and direct profile shares.' 
+              ? 'Govern accredited schools, STEM live labs KYC, public/private visibility, and direct profile shares.' 
               : 'Nationwide institutional directory lookup storing 4,00,000+ schools with UDISE ID, District, Block, State & Board.'}
           </p>
         </div>
@@ -475,7 +475,7 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
             }`}
           >
             <School className="w-4 h-4" />
-            <span>Partner Schools ({totalCount})</span>
+            <span>Schools ({totalCount})</span>
           </button>
 
           <button
@@ -505,7 +505,7 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search partner schools, code, city, board, principal..."
+                placeholder="Search schools, code, city, board, principal..."
                 className="w-full pl-10 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
@@ -588,12 +588,12 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
           {isLoading ? (
             <div className="p-12 text-center bg-white rounded-3xl border border-slate-200">
               <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-xs text-slate-500 font-bold">Loading verified partner schools...</p>
+              <p className="text-xs text-slate-500 font-bold">Loading verified schools...</p>
             </div>
           ) : schools.length === 0 ? (
             <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 space-y-2">
               <School className="w-10 h-10 text-slate-300 mx-auto" />
-              <h4 className="font-bold text-sm text-slate-800">No partner schools found</h4>
+              <h4 className="font-bold text-sm text-slate-800">No schools found</h4>
               <p className="text-xs text-slate-500">Try changing your search term or add a new school.</p>
             </div>
           ) : viewMode === 'table' ? (
@@ -1058,13 +1058,13 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
       {/* ── MODALS (PARTNER EDIT / CREATE / CSV IMPORT / UDISE IMPORT) ── */}
       {/* ═══════════════════════════════════════════════════════════════════════ */}
 
-      {/* 1. Partner School Edit / Create Modal */}
+      {/* 1. School Edit / Create Modal */}
       {formOpen && (
         <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs overflow-y-auto animate-in fade-in-50">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 space-y-4 my-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-black text-base text-slate-900">
-                {editingSchool ? `Edit "${editingSchool.name}"` : 'Register New Partner School'}
+                {editingSchool ? `Edit "${editingSchool.name}"` : 'Register New School'}
               </h3>
               <button onClick={() => setFormOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
@@ -1193,7 +1193,7 @@ export default function EduNetworkAdminDashboard({ onAuditLog }: EduNetworkAdmin
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="w-5 h-5 text-indigo-600" />
-                <h3 className="font-black text-base text-slate-900">Bulk Import Partner Schools (CSV)</h3>
+                <h3 className="font-black text-base text-slate-900">Bulk Import Schools (CSV)</h3>
               </div>
               <button onClick={() => setImportModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />

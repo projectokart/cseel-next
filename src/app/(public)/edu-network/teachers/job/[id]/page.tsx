@@ -141,16 +141,25 @@ export default async function SingleJobPage({ params }: Props) {
     validThrough = future.toISOString().split('T')[0];
   }
 
-  // Schema.org JobPosting Structured Data for Google for Jobs Indexing
+  // Format HTML description strictly per Google Search Central JobPosting guidelines
+  const descParagraphs = (job.shortDescription || `${job.jobPostName} opening at ${job.organisationName}. Verified school vacancy in India.`)
+    .split(/\n\s*\n/)
+    .map(p => p.trim())
+    .filter(Boolean)
+    .map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`)
+    .join('');
+
+  // Schema.org JobPosting Structured Data for Google for Jobs Indexing (Strict Standard)
   const jobSchema: any = {
+    '@context': 'https://schema.org',
     '@type': 'JobPosting',
     '@id': `https://www.cseel.org/edu-network/teachers/job/${job.id}#job`,
     title: job.jobPostName,
-    description: job.shortDescription || `${job.jobPostName} opening at ${job.organisationName}. Verified school vacancy in India.`,
+    description: descParagraphs || `<p>${job.jobPostName} opening at ${job.organisationName}.</p>`,
     identifier: {
       '@type': 'PropertyValue',
       name: job.organisationName,
-      value: job.id,
+      value: String(job.id),
     },
     datePosted,
     validThrough,
@@ -159,24 +168,25 @@ export default async function SingleJobPage({ params }: Props) {
     hiringOrganization: {
       '@type': 'Organization',
       name: job.organisationName,
-      sameAs: job.websiteUrl || job.website || undefined,
+      sameAs: job.websiteUrl || job.website || 'https://www.cseel.org',
       logo: job.organisationLogo || 'https://www.cseel.org/images/cseel-social-preview.jpg',
     },
+    ...(job.image_url ? { image: [job.image_url] } : {}),
     jobLocation: {
       '@type': 'Place',
       address: {
         '@type': 'PostalAddress',
         streetAddress: job.address || structuredLoc || job.city || 'India',
         addressLocality: job.district || job.city || 'India',
-        addressRegion: job.state || '',
+        addressRegion: job.state || 'Delhi',
         postalCode: (job as any).pincode || (job as any).pinCode || ((job.address && (job.address.match(/\b\d{6}\b/) || [])[0]) || '110001'),
         addressCountry: 'IN',
       },
       ...(job.coordinates ? {
         geo: {
           '@type': 'GeoCoordinates',
-          latitude: job.coordinates.lat,
-          longitude: job.coordinates.lng,
+          latitude: Number(job.coordinates.lat),
+          longitude: Number(job.coordinates.lng),
         }
       } : {}),
     },

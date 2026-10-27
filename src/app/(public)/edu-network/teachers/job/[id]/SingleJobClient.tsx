@@ -47,6 +47,25 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
     <PageTransition>
       <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-28">
 
+        {/* ─── VERY TOP RESPONSIVE FACULTY HIRING BANNER ─── */}
+        <section className="w-full bg-slate-900 border-b border-slate-200">
+          <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4">
+            <Link
+              href="/list-as-faculty"
+              className="block w-full rounded-2xl overflow-hidden border border-slate-700/80 hover:border-[#0A66C2] transition-all duration-300 shadow-md hover:shadow-xl group relative cursor-pointer bg-slate-950"
+              title="Are you a School Teacher? Join CSEEL as a Faculty"
+            >
+              <div className="w-full aspect-[16/9] sm:aspect-[1.79/1] max-h-[320px] relative overflow-hidden flex items-center justify-center bg-slate-950">
+                <img
+                  src="/images/banners/faculty-hiring-banner-2.webp"
+                  alt="Are you a School Teacher? Join CSEEL as a Faculty and get direct interview calls from 28,000+ verified schools"
+                  className="w-full h-full object-contain object-center group-hover:scale-[1.01] transition-transform duration-500"
+                />
+              </div>
+            </Link>
+          </div>
+        </section>
+
         {/* ─── BREADCRUMB & BACK NAVIGATION ─── */}
         <section className="bg-white border-b border-slate-200 py-3 px-4">
           <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 text-xs font-medium text-slate-600">
@@ -228,9 +247,25 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 )}
               </div>
 
-              {/* Overview & Direct Apply Callout Box (Description kept empty per request) */}
+              {/* Detailed Job Description Section */}
+              {job.shortDescription && job.shortDescription.trim() !== '' && (
+                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900" style={{ color: '#003c6e' }}>
+                      Detailed Job Description & Requirements
+                    </h3>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Verified Position
+                    </span>
+                  </div>
+                  <div className="text-sm leading-relaxed text-slate-700 whitespace-pre-line space-y-3 font-normal">
+                    {job.shortDescription}
+                  </div>
+                </div>
+              )}
+
+              {/* Direct Apply Callout Box */}
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
-                {/* Direct Apply Callout Box */}
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <h4 className="text-xs sm:text-sm font-bold text-slate-900" style={{ color: '#003c6e' }}>
@@ -241,7 +276,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     </p>
                   </div>
                   <a
-                    href={job.originalUrl}
+                    href={job.applyUrl || job.originalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="py-2.5 px-5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold inline-flex items-center gap-1.5 shrink-0 transition-all shadow-xs"

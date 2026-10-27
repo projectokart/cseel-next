@@ -164,6 +164,7 @@ export class SupabaseJobService {
       id: r.slug || r.id,
       organisationName: r.institute_name || 'Educational Institution',
       organisationLogo: meta.logo || undefined,
+      image_url: r.image_url || meta.image_url || undefined,
       jobPostName: r.title,
       designation: meta.designation || undefined,
       subject: r.department && r.department !== 'Faculty' ? r.department : (meta.subject || undefined),
@@ -212,6 +213,7 @@ export class SupabaseJobService {
     if (j.subject) reqs.push(`subject:${j.subject}`);
     if (j.board) reqs.push(`board:${j.board}`);
     if (j.organisationLogo) reqs.push(`logo:${j.organisationLogo}`);
+    if (j.image_url) reqs.push(`image_url:${j.image_url}`);
     if (j.salaryMin) reqs.push(`salary_min:${j.salaryMin}`);
     if (j.salaryMax) reqs.push(`salary_max:${j.salaryMax}`);
     if (j.openingDate) reqs.push(`opening_date:${j.openingDate}`);
@@ -227,6 +229,7 @@ export class SupabaseJobService {
       experience_required: j.minExperience || null,
       job_type: j.roleType || 'Full-time',
       description: j.shortDescription,
+      image_url: j.image_url || null,
       requirements: reqs,
       benefits: j.facilities || [],
       is_active: true,

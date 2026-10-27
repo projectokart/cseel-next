@@ -241,9 +241,9 @@ const navItems: NavItem[] = [
         categoryTitle: 'Directory & Discovery',
         items: [
           {
-            label: 'Partner Schools Directory',
+            label: 'Schools Directory',
             to: '/schools',
-            desc: 'Explore 500+ verified partner schools equipped with modern experiential labs.',
+            desc: 'Explore 28,000+ verified schools equipped with modern experiential labs.',
             subItems: [
               { label: 'Pan-India School Search', to: '/schools' },
               { label: 'Search Schools Near Me', to: '/schools', badge: 'Near Me' },
@@ -265,7 +265,7 @@ const navItems: NavItem[] = [
         categoryTitle: 'Faculty & Enablement',
         items: [
           {
-            label: 'Verified Faculty Directory',
+            label: 'Verified Faculty and Teaching Jobs',
             to: '/edu-network/teachers',
             desc: 'Certified STEM educators, ATL coordinators, and hands-on lab demonstrators.',
             subItems: [
@@ -274,7 +274,7 @@ const navItems: NavItem[] = [
             ],
           },
           {
-            label: 'Institutional Partnerships',
+            label: 'Institutional Solutions',
             to: '/for-institutions',
             desc: "Join India's experiential education network and upgrade your school lab infrastructure.",
             subItems: [
@@ -287,7 +287,7 @@ const navItems: NavItem[] = [
     ],
     featuredPanel: {
       eyebrow: 'Pan-India Network',
-      title: '500+ Experiential Partner Schools Nationwide',
+      title: '28,000+ Experiential Schools Nationwide',
       desc: 'Discover schools leading practical STEAM learning with modern composite science laboratories and Atal Tinkering Labs.',
       ctaText: 'Explore Schools Directory',
       ctaHref: '/schools',
@@ -418,7 +418,7 @@ const navItems: NavItem[] = [
     featuredPanel: {
       eyebrow: 'Our Mission',
       title: 'Transforming Indian Science Education Through Hands-On Learning',
-      desc: 'Discover how CSEEL equips 500+ schools with modern composite labs, ATL setups, and teacher masterclasses.',
+      desc: 'Discover how CSEEL equips 28,000+ schools with modern composite labs, ATL setups, and teacher masterclasses.',
       ctaText: 'Learn About CSEEL',
       ctaHref: '/about',
     },

@@ -17,6 +17,7 @@ export interface JobOpening {
   type: JobEmploymentType;
   experience: string;
   salary: string;
+  image_url?: string | null;
   skills: string[];
   descriptionHtml: string;
   deadline: string;

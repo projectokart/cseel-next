@@ -478,7 +478,7 @@ export const ALL_ORGANIZATIONS: OrganizationItem[] = (Array.isArray(rawSchoolsDa
 
       slug: s.slug || (s.name ? slugify(s.name) : `school-${idx}`),
 
-      name: s.name || s.school_name || "Partner School",
+      name: s.name || s.school_name || "School",
 
       type: "School",
 

@@ -18,7 +18,7 @@ export default function ForInstitutionsClient() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const stats = [
-    { value: '500+', label: 'Partner Schools Across India', sub: 'CBSE, ICSE & Cambridge' },
+    { value: '28,000+', label: 'Verified Schools Across India', sub: 'CBSE, ICSE & State Boards' },
     { value: '150,000+', label: 'Active Student Innovators', sub: 'Hands-on practical learning' },
     { value: '950+', label: 'Certified Lab Apparatus', sub: 'Composite & ATL setups' },
     { value: '34%', label: 'Avg Surge in Practical Marks', sub: 'CBSE Board & Viva scores' },
@@ -232,7 +232,7 @@ export default function ForInstitutionsClient() {
                 <div className="pt-4 flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-200/90 font-medium border-t border-white/15">
                   <span className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-cyan-300" />
-                    <span>500+ Partner Schools</span>
+                    <span>28,000+ Verified Schools</span>
                   </span>
                   <span className="flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-cyan-300" />
@@ -584,7 +584,7 @@ export default function ForInstitutionsClient() {
                 </h2>
 
                 <p className="text-xs sm:text-base text-slate-100/90 max-w-xl mx-auto leading-relaxed">
-                  Join 500+ top Indian schools. Schedule an on-site lab audit and receive a customized CBSE SARAS & ATL blueprint tailored to your campus.
+                  Join 28,000+ top Indian schools. Schedule an on-site lab audit and receive a customized CBSE SARAS & ATL blueprint tailored to your campus.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3.5 justify-center pt-2">

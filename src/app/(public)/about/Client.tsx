@@ -172,9 +172,9 @@ export default function AboutClient() {
 
               <div className="bg-tint rounded-card border p-4 sm:p-6 lg:p-8 text-center border-rule/60 hover:shadow-card transition-all overflow-hidden">
                 <div className="font-extrabold text-ixr-blue-2 leading-tight mb-1 sm:mb-2 text-[clamp(26px,4.5vw,52px)]">
-                  <span>500</span>+
+                  <span>28,000</span>+
                 </div>
-                <p className="text-slate-body text-xs sm:text-[15px] font-medium">partner schools &amp; ATLs</p>
+                <p className="text-slate-body text-xs sm:text-[15px] font-medium">verified schools &amp; ATLs</p>
               </div>
 
               <div className="bg-tint rounded-card border p-4 sm:p-6 lg:p-8 text-center border-rule/60 hover:shadow-card transition-all overflow-hidden">
@@ -358,7 +358,7 @@ export default function AboutClient() {
                   </div>
                   <p className="text-ixr-blue font-bold text-[14px] mb-2.5">Founder &amp; Lead Innovator</p>
                   <p className="text-slate-body text-[14px] leading-[1.6] mb-0 break-words">
-                    Dev Sharma founded CSEEL with a clear mission: to revolutionize experiential science learning and solve the hands-on lab deficit across Indian schools. Under his leadership, CSEEL has engineered India’s most comprehensive browser-native 3D laboratory simulation engine, smart barcode apparatus inspectors, and NEP 2020 experiential curriculum modules, empowering over 500+ schools and 250,000+ students nationwide.
+                    Dev Sharma founded CSEEL with a clear mission: to revolutionize experiential science learning and solve the hands-on lab deficit across Indian schools. Under his leadership, CSEEL has engineered India’s most comprehensive browser-native 3D laboratory simulation engine, smart barcode apparatus inspectors, and NEP 2020 experiential curriculum modules, empowering over 28,000+ schools and 250,000+ students nationwide.
                   </p>
                 </div>
               </article>

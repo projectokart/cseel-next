@@ -17,6 +17,21 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onClick, onApply }) => {
       className="relative flex flex-col justify-between border border-[#dadce0] hover:border-[#bdc1c6] rounded-2xl bg-white w-full select-none overflow-hidden cursor-pointer group box-border transition-all duration-300 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 space-y-3.5"
     >
       <div className="space-y-2">
+        {/* Conditional Card Image Banner */}
+        {job.image_url && job.image_url.trim() !== '' && (
+          <div className="w-full aspect-[16/9] sm:aspect-[2/1] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 mb-2 relative">
+            <img
+              src={job.image_url}
+              alt={job.title}
+              className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
+              onError={(e) => {
+                const parent = (e.target as HTMLElement).parentElement;
+                if (parent) parent.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+
         <div className="flex items-center justify-between gap-2">
           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#eef3fc] text-[#1a73e8] border border-[#d3e3fd] font-['Google_Sans',Roboto,sans-serif]">
             {job.department}

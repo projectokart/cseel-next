@@ -2284,6 +2284,21 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                             className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
                           >
                           <div className="space-y-2.5 min-w-0">
+                            {/* Conditional Job Image Banner (Only if image_url is available) */}
+                            {job.image_url && job.image_url.trim() !== '' && (
+                              <div className="w-full aspect-[16/9] sm:aspect-[2/1] rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 mb-2.5 relative">
+                                <img
+                                  src={job.image_url}
+                                  alt={job.jobPostName}
+                                  className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
+                                  onError={(e) => {
+                                    const parent = (e.target as HTMLElement).parentElement;
+                                    if (parent) parent.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            )}
+
                             {/* Row 1: Title, School & Optional Logo (Hide if no valid image URL) */}
                             <div className="flex items-start justify-between gap-3 min-w-0">
                               <div className="min-w-0 flex-1 space-y-1">

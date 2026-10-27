@@ -9,11 +9,15 @@ import {
   Sparkles, Layers, BookOpen, AlertCircle, Lock, Clock
 } from 'lucide-react';
 import CloudflareTurnstile from '@/components/shared/CloudflareTurnstile';
+import { useAuth } from '@/contexts/AuthContext';
 import { INDIAN_STATES_DISTRICTS } from '@/app/(public)/edu-network/teachers/Client';
 import { VerifiedFacultyItem } from '@/data/facultyJobsData';
 
 export default function RegisterFacultyClient() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const [existingProfile, setExistingProfile] = useState<any | null>(null);
+  const [checkingExisting, setCheckingExisting] = useState(true);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -48,6 +52,48 @@ export default function RegisterFacultyClient() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [honeypotVal, setHoneypotVal] = useState('');
   const formMountTime = React.useRef(Date.now());
+  // Check if current user already registered a profile (Strict 1 profile per user enforcement)
+  React.useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setCheckingExisting(false);
+      return;
+    }
+
+    // Auto-populate user's registered name & email
+    setFormData((prev) => ({
+      ...prev,
+      email: user.email || prev.email,
+      name: prev.name || (user.user_metadata?.full_name || user.user_metadata?.name || ''),
+    }));
+
+    // Check local storage first
+    try {
+      const stored = JSON.parse(localStorage.getItem('cseel_created_teacher_profiles') || '[]');
+      const match = stored.find((p: any) => (user.email && p.email?.toLowerCase() === user.email.toLowerCase()) || (p.userId && p.userId === user.id));
+      if (match) {
+        setExistingProfile(match);
+        setCheckingExisting(false);
+        return;
+      }
+    } catch {}
+
+    // Check backend API by user email
+    if (user.email) {
+      fetch(`/api/faculty/check?email=${encodeURIComponent(user.email)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.exists && data.profile) {
+            setExistingProfile(data.profile);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setCheckingExisting(false));
+    } else {
+      setCheckingExisting(false);
+    }
+  }, [user, authLoading]);
+
 
   // Automatically compress uploaded image to WebP strictly <= 10KB
   const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,8 +192,16 @@ export default function RegisterFacultyClient() {
 
     try {
       // Send secure registration request through multi-layer server defense
+      if (!user) {
+        setErrorMessage('Authentication required: Please log in to submit your profile.');
+        setIsSubmitting(false);
+        return;
+      }
+
       const payload = {
         ...formData,
+        userId: user.id,
+        userEmail: user.email,
         turnstileToken,
         website_company_trap: honeypotVal,
         clientTimestamp: formMountTime.current,
@@ -165,7 +219,12 @@ export default function RegisterFacultyClient() {
         return;
       }
 
-      const newFacultyItem = data.educator;
+      const newFacultyItem = {
+        ...data.educator,
+        userId: user?.id,
+        email: user?.email || formData.email,
+        verified: false,
+      };
       if (typeof window !== 'undefined') {
         try {
           const stored = JSON.parse(localStorage.getItem('cseel_custom_faculty') || '[]');
@@ -174,6 +233,7 @@ export default function RegisterFacultyClient() {
           localStorage.setItem('cseel_created_teacher_profiles', JSON.stringify([newFacultyItem, ...storedProfiles]));
         } catch {}
       }
+      setExistingProfile(newFacultyItem);
 
       setIsSuccess(true);
     } catch (err: any) {
@@ -200,7 +260,131 @@ export default function RegisterFacultyClient() {
           <span className="text-[#005689] font-bold">Register as Faculty</span>
         </nav>
 
-        {isSuccess ? (
+        {authLoading || checkingExisting ? (
+          /* ─── LOADING STATE ─── */
+          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 shadow-2xs space-y-4">
+            <div className="w-10 h-10 border-3 border-[#004A75] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-slate-500 font-medium">Checking verified account status...</p>
+          </div>
+        ) : !user ? (
+          /* ─── AUTHENTICATION GATE (BOT & SPAM SHIELD) ─── */
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200 text-center space-y-5 animate-in fade-in zoom-in-95">
+            <div className="w-16 h-16 bg-blue-50 text-[#004A75] rounded-2xl flex items-center justify-center mx-auto shadow-2xs">
+              <Lock className="w-8 h-8 text-[#004A75]" />
+            </div>
+            <div className="space-y-2">
+              <span className="text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1">
+                <ShieldCheck size={12} className="text-amber-600" />
+                <span>Account Login Required</span>
+              </span>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight" style={{ color: '#003c6e' }}>
+                Please Log In to Register as Faculty
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                To prevent automated bot submissions, protect educator credentials, and maintain school trust, each faculty member must be authenticated.
+              </p>
+            </div>
+
+            <div className="max-w-md mx-auto p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-left text-xs text-slate-600 space-y-1.5">
+              <div className="flex items-center gap-2 font-bold text-slate-900">
+                <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
+                <span>Strict Limit: 1 Verified Profile Per Account</span>
+              </div>
+              <p className="text-[11.5px] text-slate-500 leading-relaxed">
+                Each verified teacher account can create exactly one faculty profile. You can update your profile at any time.
+              </p>
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/login?redirect=/edu-network/teachers/register"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
+              >
+                <User size={15} />
+                <span>Log In with Email / Google</span>
+              </Link>
+              <Link
+                href="/signup?role=teacher&redirect=/edu-network/teachers/register"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition cursor-pointer"
+              >
+                <span>Create Free Educator Account</span>
+              </Link>
+            </div>
+          </div>
+        ) : existingProfile && !isSuccess ? (
+          /* ─── SINGLE PROFILE LIMIT: PROFILE ALREADY REGISTERED SCREEN ─── */
+          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200 text-center space-y-6 animate-in fade-in zoom-in-95">
+            <div className="w-16 h-16 bg-blue-50 text-[#004A75] rounded-2xl flex items-center justify-center mx-auto shadow-2xs">
+              <ShieldCheck className="w-9 h-9 text-[#004A75]" />
+            </div>
+
+            <div className="space-y-2">
+              <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1 ${
+                existingProfile.verified
+                  ? 'text-emerald-800 bg-emerald-50 border border-emerald-300'
+                  : 'text-amber-800 bg-amber-50 border border-amber-300'
+              }`}>
+                {existingProfile.verified ? (
+                  <>
+                    <ShieldCheck size={12} className="text-emerald-600" />
+                    <span>Verified Faculty Member</span>
+                  </>
+                ) : (
+                  <>
+                    <Clock size={12} className="text-amber-600" />
+                    <span>Pending Verification</span>
+                  </>
+                )}
+              </span>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight" style={{ color: '#003c6e' }}>
+                You Already Have a Registered Faculty Profile
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
+                Your account (<strong>{user.email}</strong>) has already registered a faculty profile. To maintain school trust and directory integrity, only <strong>1 profile per user</strong> is permitted.
+              </p>
+            </div>
+
+            {/* Profile Preview Card */}
+            <div className="max-w-md mx-auto bg-slate-50 border border-slate-200/90 rounded-2xl p-4 text-left space-y-3">
+              <div className="flex items-center gap-3">
+                <img
+                  src={existingProfile.avatar || existingProfile.avatar_url || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150'}
+                  alt={existingProfile.name}
+                  className="w-12 h-12 rounded-xl object-cover border border-slate-200 shadow-2xs"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="text-sm font-bold text-slate-900 truncate">{existingProfile.name}</h4>
+                    <span className={`text-[9.5px] px-1.5 py-0.5 rounded font-bold inline-flex items-center gap-0.5 ${
+                      existingProfile.verified
+                        ? 'text-emerald-800 bg-emerald-50 border border-emerald-200'
+                        : 'text-amber-800 bg-amber-50 border border-amber-200'
+                    }`}>
+                      {existingProfile.verified ? 'Verified' : 'Pending Verification'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {existingProfile.designation || 'Teacher'} · {existingProfile.subject || 'Faculty'}
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    {existingProfile.city || existingProfile.district || 'India'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/edu-network/teachers?tab=faculty"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition active:scale-98 cursor-pointer"
+              >
+                <BookOpen size={15} />
+                <span>View in Faculty Directory</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+          </div>
+        ) : isSuccess ? (
           /* ─── SUCCESS CONFIRMATION SCREEN ─── */
           <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-slate-200 text-center space-y-6 animate-in fade-in zoom-in-95">
             <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto shadow-inner">
@@ -258,22 +442,13 @@ export default function RegisterFacultyClient() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
               <Link
-                href="/edu-network/teachers"
-                className="w-full sm:w-auto px-6 py-3 bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-xs rounded-xl shadow-sm transition active:scale-95 flex items-center justify-center gap-2"
+                href="/edu-network/teachers?tab=faculty"
+                className="w-full sm:w-auto px-6 py-3 bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs sm:text-sm rounded-xl shadow-sm transition active:scale-95 flex items-center justify-center gap-2"
               >
                 <BookOpen size={15} />
-                <span>Browse Teachers Directory</span>
+                <span>View in Faculty Directory</span>
+                <ChevronRight size={14} />
               </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSuccess(false);
-                  setFormData((prev) => ({ ...prev, name: '', phone: '', email: '', bio: '' }));
-                }}
-                className="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs rounded-xl transition cursor-pointer"
-              >
-                Register Another Educator
-              </button>
             </div>
           </div>
         ) : (

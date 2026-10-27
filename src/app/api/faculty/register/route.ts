@@ -225,6 +225,39 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ── DEFENSE LAYER 7: ONE PROFILE PER USER (CHECK DUPLICATE EMAIL OR PHONE) ──
+    const cleanEmail = String(email || '').trim().toLowerCase();
+    const duplicateFilters: string[] = [];
+    if (cleanEmail) duplicateFilters.push(`email.eq.${encodeURIComponent(cleanEmail)}`);
+    if (cleanPhone) duplicateFilters.push(`phone.eq.${cleanPhone}`);
+
+    if (duplicateFilters.length > 0) {
+      try {
+        const dupQuery = duplicateFilters.length === 1 ? duplicateFilters[0] : `or=(${duplicateFilters.join(',')})`;
+        const dupCheckRes = await fetch(`${SUPABASE_URL}/rest/v1/teachers?${dupQuery}&select=id,name,verified`, {
+          headers: {
+            apikey: SUPABASE_SERVICE_KEY,
+            Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+          },
+        });
+        if (dupCheckRes.ok) {
+          const dupRows = await dupCheckRes.json();
+          if (Array.isArray(dupRows) && dupRows.length > 0) {
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'A faculty profile is already registered with this mobile number or email. Each educator is allowed strictly 1 profile.',
+                code: 'DUPLICATE_PROFILE_NOT_ALLOWED',
+              },
+              { status: 409 }
+            );
+          }
+        }
+      } catch (dupErr) {
+        console.warn('[Duplicate Check Error]:', dupErr);
+      }
+    }
+
     // XSS / Injection Check
     const combinedContent = `${cleanName} ${bio || ''} ${skills || ''} ${qualification || ''}`;
     if (/<script|javascript:|onerror=|onload=|<iframe|<object/i.test(combinedContent)) {

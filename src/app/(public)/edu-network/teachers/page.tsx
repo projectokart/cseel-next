@@ -60,7 +60,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function TeachersPage() {
+export default async function TeachersPage({
+  searchParams,
+}: {
+  searchParams?: { tab?: string };
+}) {
   let activeJobs = await SupabaseJobService.fetchJobsFromSupabase();
   if (!activeJobs || activeJobs.length === 0) {
     activeJobs = getActiveFacultyJobs();
@@ -168,13 +172,15 @@ export default async function TeachersPage() {
     ],
   };
 
+  const initialTab = searchParams?.tab === 'faculty' ? 'faculty' : 'jobs';
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient initialJobs={activeJobs} />
+      <TeachersClient initialJobs={activeJobs} initialTab={initialTab} />
     </>
   );
 }

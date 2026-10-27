@@ -168,9 +168,10 @@ function getHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: nu
 
 interface TeachersDirectoryClientProps {
   initialJobs?: FacultyJobItem[];
+  initialTab?: 'jobs' | 'faculty';
 }
 
-export default function TeachersDirectoryClient({ initialJobs }: TeachersDirectoryClientProps = {}) {
+export default function TeachersDirectoryClient({ initialJobs, initialTab = 'jobs' }: TeachersDirectoryClientProps = {}) {
   const { user } = useAuth();
   const latestUpdatedDate = useMemo(() => {
     return new Date().toLocaleDateString('en-GB', {
@@ -247,7 +248,33 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
   });
 
   // Navigation Tabs: 'jobs' (Job Finder & Indexer) or 'faculty' (Verified Teachers)
-  const [activeTab, setActiveTab] = useState<'jobs' | 'faculty'>('jobs');
+  const [activeTab, setActiveTab] = useState<'jobs' | 'faculty'>(initialTab);
+
+  // Sync activeTab with URL without page reload and persist across refreshes
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam === 'faculty') {
+        setActiveTab('faculty');
+      } else if (tabParam === 'jobs' || tabParam === 'vacancies') {
+        setActiveTab('jobs');
+      }
+    }
+  }, []);
+
+  const handleTabChange = React.useCallback((newTab: 'jobs' | 'faculty') => {
+    setActiveTab(newTab);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (newTab === 'faculty') {
+        url.searchParams.set('tab', 'faculty');
+      } else {
+        url.searchParams.delete('tab');
+      }
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
   
   // View Mode: 'grid' (2 cols), 'grid3' (3 cols), 'compact' (list), or 'map' (map) - Default: 'compact' (List Grid)
   const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>('compact');
@@ -855,6 +882,29 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
               const isVer = Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug));
               if (idx !== -1) {
                 updated[idx] = { ...updated[idx], verified: isVer };
+              } else {
+                updated.unshift({
+                  id: f.id || f.slug,
+                  name: f.name,
+                  designation: f.designation || 'PGT',
+                  subject: f.subject || 'Faculty',
+                  board: f.board || 'CBSE',
+                  qualification: f.qualification || 'Post Graduate / B.Ed',
+                  experienceYears: f.experienceYears || 3,
+                  currentInstitute: f.currentInstitute || 'Senior Secondary School',
+                  city: f.city || 'Delhi NCR',
+                  state: f.state || 'Delhi NCR',
+                  coordinates: { lat: 28.6139, lng: 77.2090 },
+                  verified: isVer,
+                  nepCertified: false,
+                  rating: 5.0,
+                  reviewsCount: 0,
+                  avatar: f.avatar || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
+                  bio: f.bio || '',
+                  skills: Array.isArray(f.skills) ? f.skills : (f.skills ? f.skills.split(',').map((s: string) => s.trim()) : ['Pedagogy']),
+                  expectedSalary: f.expectedSalary || '₹6 - ₹9 LPA',
+                  isActivelySeekingJob: true,
+                });
               }
             }
             return updated;
@@ -1076,7 +1126,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
       if (sortBy === 'rating') return b.rating - a.rating;
       return b.rating - a.rating;
     });
-  }, [selectedDesignations, selectedSubjects, selectedBoards, selectedCities, searchQuery, sortBy]);
+  }, [facultyList, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, searchQuery, sortBy]);
 
   const totalJobsCount = activeTab === 'jobs' ? filteredJobs.length : filteredFaculty.length;
   const totalPages = Math.max(1, Math.ceil(totalJobsCount / JOBS_PER_PAGE));
@@ -2024,7 +2074,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                       <div className="bg-[#F4F6F8] p-1 rounded-xl flex items-center gap-1 mb-3.5">
                         <button
                           type="button"
-                          onClick={() => { setActiveTab('jobs'); setIsMoreMenuOpen(false); }}
+                          onClick={() => { handleTabChange('jobs'); setIsMoreMenuOpen(false); }}
                           className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
                             activeTab === 'jobs'
                               ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
@@ -2035,7 +2085,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                         </button>
                         <button
                           type="button"
-                          onClick={() => { setActiveTab('faculty'); setIsMoreMenuOpen(false); }}
+                          onClick={() => { handleTabChange('faculty'); setIsMoreMenuOpen(false); }}
                           className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
                             activeTab === 'faculty'
                               ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
@@ -2106,15 +2156,43 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
               </div>
             </div>
 
-            {/* Row 2: Vacancies Count (Left) & Updated Date (Right) (Screenshot 1) */}
-            <div className={`flex items-center justify-between pt-1 px-0.5 text-xs ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
-              <div className="text-[12.5px] text-slate-700">
-                <strong className="font-extrabold text-slate-950">
-                  {activeTab === 'jobs' ? filteredJobs.length.toLocaleString() : filteredFaculty.length.toLocaleString()}
-                </strong>{' '}
-                <span className="font-medium text-slate-600">
-                  {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
-                </span>
+            {/* Row 2: Category Tab Switcher (Vacancies / Faculty) & Updated Date */}
+            <div className={`flex items-center justify-between pt-1 px-0.5 text-xs flex-wrap gap-2 ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                {/* Fast Category Toggle Pill Buttons */}
+                <div className="inline-flex items-center bg-[#F1F5F9] p-0.5 rounded-xl border border-slate-200/80">
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange('jobs')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      activeTab === 'jobs'
+                        ? 'bg-white text-[#004A75] shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Briefcase size={13} className={activeTab === 'jobs' ? 'text-[#004A75]' : 'text-slate-400'} />
+                    <span>Vacancies</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
+                      {filteredJobs.length.toLocaleString()}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange('faculty')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      activeTab === 'faculty'
+                        ? 'bg-white text-[#004A75] shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <GraduationCap size={13} className={activeTab === 'faculty' ? 'text-[#004A75]' : 'text-slate-400'} />
+                    <span>Faculty</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
+                      {filteredFaculty.length.toLocaleString()}
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div className="text-[12px] text-slate-500 font-medium">
@@ -2476,10 +2554,17 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
 
                           {/* Full-width Footer Strip with Negative Margin */}
                           <div className="pt-2.5 mt-3 -mx-3 -mb-3 sm:-mx-3.5 sm:-mb-3.5 px-3 sm:px-3.5 pb-2.5 bg-slate-50/60 rounded-b-2xl border-t border-slate-100 flex items-center justify-between gap-2">
-                            <span className="text-[10.5px] text-emerald-700 font-bold flex items-center gap-1 truncate font-['Montserrat',sans-serif]">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                              <span className="truncate">SARAS Verified</span>
-                            </span>
+                            {f.verified ? (
+                              <span className="text-[10.5px] text-emerald-700 font-bold flex items-center gap-1 truncate font-['Montserrat',sans-serif]">
+                                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                <span className="truncate">Verified</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 truncate font-['Montserrat',sans-serif]">
+                                <Clock className="w-3 h-3 text-amber-600 shrink-0" />
+                                <span className="truncate">Pending Verification</span>
+                              </span>
+                            )}
 
                             <div className="flex items-center gap-3">
                               {/* Detail as plain text link */}
@@ -2532,7 +2617,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                                 ) : (
                                   <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0 font-['Montserrat',sans-serif]">
                                     <Clock size={11} className="text-amber-600" />
-                                    <span>Under Verification</span>
+                                    <span>Pending Verification</span>
                                   </span>
                                 )
                               )}
@@ -2861,7 +2946,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                     <div className="space-y-1.5 text-[11px] text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                       <div className="flex items-center gap-1.5">
                         <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>Verified CBSE SARAS Badge</span>
+                        <span>Verified Faculty Badge</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />

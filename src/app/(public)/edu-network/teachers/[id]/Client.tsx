@@ -575,13 +575,10 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
                     <Phone className="w-4 h-4 print:w-3.5 print:h-3.5" />
                   </div>
                   <div className="overflow-hidden">
-                    <span className="text-[11px] font-bold text-slate-400 uppercase block print:text-[8pt]">Phone / Mobile</span>
-                    <a
-                      href={`tel:${teacher.phone}`}
-                      className="font-semibold text-xs sm:text-sm text-slate-800 hover:text-[#005689] truncate block print:text-xs"
-                    >
-                      {teacher.phone}
-                    </a>
+                    <span className="text-[11px] font-bold text-slate-400 uppercase block print:text-[8pt]">Phone / Mobile (Protected)</span>
+                    <span className="font-semibold text-xs sm:text-sm text-slate-800 font-mono truncate block print:text-xs">
+                      {maskPhoneNumber(teacher.phone)}
+                    </span>
                   </div>
                 </div>
 

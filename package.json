@@ -12,6 +12,7 @@
         "node": "22.x"
     },
     "dependencies": {
+        "@marsidev/react-turnstile": "^1.6.3",
         "@sanity/client": "^8.9.0",
         "@sanity/image-url": "^2.1.1",
         "@supabase/supabase-js": "^2.99.0",

@@ -417,3 +417,23 @@ export function getGoogleMapsSearchUrl(job: {
   const query = parts.join(', ');
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
+
+/**
+ * Privacy Phone Masker: Only first 1 digit visible, rest 9 digits masked (+91 9*********)
+ */
+export function maskPhoneNumber(phone?: string | null): string {
+  if (!phone) return '';
+  const digits = phone.replace(/[^0-9]/g, '');
+  if (!digits) return '';
+  const num = digits.length > 10 && digits.startsWith('91') ? digits.slice(2) : digits;
+  const firstDigit = num.charAt(0) || '9';
+  return `+91 ${firstDigit}*********`;
+}
+
+/**
+ * Mask all 10-digit mobile numbers inside text/descriptions
+ */
+export function maskPhonesInText(text?: string | null): string {
+  if (!text) return '';
+  return text.replace(/(?:\+91[\s-]?)?([6-9])\d{9}\b/g, '+91 $1*********');
+}

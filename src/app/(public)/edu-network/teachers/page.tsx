@@ -2,6 +2,10 @@ import { Metadata } from 'next';
 import TeachersClient from './Client';
 import { getActiveFacultyJobs } from '@/data/facultyJobsData';
 import { ALL_TEACHERS } from '@/lib/eduNetworkData';
+import { SupabaseJobService } from '@/lib/services/supabaseJobService';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Freshness dates for Google Rank #1 Priority Crawl
 const CURRENT_DATE = new Date();
@@ -56,8 +60,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TeachersPage() {
-  const activeJobs = getActiveFacultyJobs();
+export default async function TeachersPage() {
+  let activeJobs = await SupabaseJobService.fetchJobsFromSupabase();
+  if (!activeJobs || activeJobs.length === 0) {
+    activeJobs = getActiveFacultyJobs();
+  }
 
   // Multi-Entity Structured Data: CollectionPage + ItemList + BreadcrumbList for Google for Jobs
   const jsonLdGraph = {
@@ -167,7 +174,7 @@ export default function TeachersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient />
+      <TeachersClient initialJobs={activeJobs} />
     </>
   );
 }

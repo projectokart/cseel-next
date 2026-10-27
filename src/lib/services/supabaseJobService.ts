@@ -1,4 +1,5 @@
 import { FacultyJobItem } from '@/data/facultyJobsData';
+import { maskPhonesInText } from '@/lib/jobCardUtils';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ukazkxthavxphibdbspd.supabase.co';
 const SUPABASE_KEY =
@@ -158,7 +159,7 @@ export class SupabaseJobService {
       salary: r.salary_range || '---',
       salaryMin: sMin,
       salaryMax: sMax,
-      shortDescription: r.description || `${r.institute_name} is hiring for ${r.title} in ${r.city}, ${r.state}.`,
+      shortDescription: maskPhonesInText(r.description || `${r.institute_name} is hiring for ${r.title} in ${r.city}, ${r.state}.`),
       address: meta.address || `${r.city || ''}, ${r.state || 'India'}`,
       city: r.city || 'India',
       state: r.state || 'India',

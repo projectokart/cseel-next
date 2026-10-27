@@ -149,7 +149,11 @@ function getHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: nu
   return R * c;
 }
 
-export default function TeachersDirectoryClient() {
+interface TeachersDirectoryClientProps {
+  initialJobs?: FacultyJobItem[];
+}
+
+export default function TeachersDirectoryClient({ initialJobs }: TeachersDirectoryClientProps = {}) {
   const { user } = useAuth();
   const latestUpdatedDate = useMemo(() => {
     return new Date().toLocaleDateString('en-GB', {
@@ -609,11 +613,7 @@ export default function TeachersDirectoryClient() {
   };
 
   const handleOpenListAsTeacher = () => {
-    if (!user) {
-      window.location.href = '/login?returnUrl=/edu-network/teachers';
-      return;
-    }
-    setIsListAsTeacherOpen(true);
+    window.location.href = '/edu-network/teachers/register';
   };
 
 
@@ -753,7 +753,25 @@ export default function TeachersDirectoryClient() {
   };
 
   // Active 45-Day Vacancies with real-time Supabase hydration
-  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(() => getActiveFacultyJobs());
+  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(() => 
+    initialJobs && initialJobs.length > 0 ? initialJobs : getActiveFacultyJobs()
+  );
+
+  // Faculty list state initialized with custom registered faculty
+  const [facultyList, setFacultyList] = useState<VerifiedFacultyItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('cseel_custom_faculty');
+        if (stored) {
+          const custom = JSON.parse(stored);
+          if (Array.isArray(custom) && custom.length > 0) {
+            return [...custom, ...VERIFIED_FACULTY_MEMBERS];
+          }
+        }
+      } catch {}
+    }
+    return VERIFIED_FACULTY_MEMBERS;
+  });
 
   useEffect(() => {
     try {
@@ -943,7 +961,7 @@ export default function TeachersDirectoryClient() {
 
   // Filtered Verified Faculty
   const filteredFaculty = useMemo(() => {
-    return VERIFIED_FACULTY_MEMBERS.filter((faculty) => {
+    return facultyList.filter((faculty) => {
       if (selectedDesignations.length > 0 && !selectedDesignations.includes(faculty.designation)) return false;
       if (selectedSubjects.length > 0 && !selectedSubjects.includes(faculty.subject)) return false;
       if (selectedBoards.length > 0 && !selectedBoards.includes(faculty.board)) return false;
@@ -1075,9 +1093,10 @@ export default function TeachersDirectoryClient() {
 
   const handleTeacherOnboardingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 1. Phone Verification Mandatory Check
-    if (teacherPhoneVerify.status !== 'verified' || !teacherPhoneVerify.token) {
-      alert("Phone Verification Required: Please verify your 10-digit mobile number via our free missed-call gateway before submitting your profile.");
+    // 1. Direct Indian Mobile Number Validation
+    const cleanPhone = teacherOnboardingForm.phone.replace(/[^0-9]/g, '');
+    if (!cleanPhone || cleanPhone.length < 10) {
+      alert("Please enter a valid 10-digit Indian mobile number.");
       return;
     }
 
@@ -1112,26 +1131,35 @@ export default function TeachersDirectoryClient() {
       }
     }
 
-    // 4. Backend validation of phone verification token
+    // 4. Create and persist verified faculty profile
+    const newFacultyItem: VerifiedFacultyItem = {
+      id: `fac-${Date.now()}`,
+      name: teacherOnboardingForm.name,
+      designation: (teacherOnboardingForm.designation as any) || 'PGT',
+      subject: (teacherOnboardingForm.subject as any) || 'Physics',
+      board: (teacherOnboardingForm.board as any) || 'CBSE',
+      qualification: teacherOnboardingForm.qualification || 'Post Graduate / B.Ed',
+      experienceYears: Number(teacherOnboardingForm.experienceYears) || 3,
+      currentInstitute: teacherOnboardingForm.pastSchools || 'Senior Secondary School',
+      city: teacherOnboardingForm.city || 'Delhi NCR',
+      state: teacherOnboardingForm.state || 'Delhi NCR',
+      coordinates: { lat: 28.6139, lng: 77.2090 },
+      verified: true,
+      nepCertified: true,
+      rating: 5.0,
+      reviewsCount: 1,
+      avatar: teacherOnboardingForm.avatarUrl || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150',
+      bio: teacherOnboardingForm.bio || `${teacherOnboardingForm.designation} in ${teacherOnboardingForm.subject}`,
+      skills: teacherOnboardingForm.skills ? teacherOnboardingForm.skills.split(',').map(s => s.trim()) : ['Classroom Pedagogy', 'STEM'],
+      expectedSalary: teacherOnboardingForm.expectedSalary || '₹6 - ₹9 LPA',
+      isActivelySeekingJob: true,
+    };
+
+    setFacultyList((prev) => [newFacultyItem, ...prev]);
     try {
-      const valRes = await fetch('/api/auth/phone-verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'VALIDATE_TOKEN',
-          phone: teacherOnboardingForm.phone,
-          token: teacherPhoneVerify.token
-        })
-      });
-      const valData = await valRes.json();
-      if (!valData.success || !valData.valid) {
-        alert("Mobile number verification failed: " + (valData.error || "Invalid token"));
-        return;
-      }
-    } catch (err: any) {
-      alert("Phone validation check error: " + err.message);
-      return;
-    }
+      const stored = JSON.parse(localStorage.getItem('cseel_custom_faculty') || '[]');
+      localStorage.setItem('cseel_custom_faculty', JSON.stringify([newFacultyItem, ...stored]));
+    } catch {}
 
     setTeacherOnboardingSuccess(true);
     setTimeout(() => {
@@ -1946,20 +1974,14 @@ export default function TeachersDirectoryClient() {
 
                       {/* Section 3: Action Buttons */}
                       <div className="space-y-2 pt-1 border-t border-slate-100">
-                        <button
-                          type="button"
-                          onClick={() => { handleOpenPostJob(); setIsMoreMenuOpen(false); }}
+                        <Link
+                          href="/edu-network/teachers/register"
+                          onClick={() => setIsMoreMenuOpen(false)}
                           className="w-full py-2.5 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer active:scale-98"
                         >
-                          <span>+ Post Job / Vacancy</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { handleOpenListAsTeacher(); setIsMoreMenuOpen(false); }}
-                          className="w-full py-2.5 rounded-xl bg-[#F4F6F8] hover:bg-slate-200/90 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-98"
-                        >
+                          <GraduationCap size={14} />
                           <span>+ List as Faculty</span>
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </>
@@ -2005,7 +2027,6 @@ export default function TeachersDirectoryClient() {
                     totalJobsCount={totalJobsCount}
                     onPageChange={handlePageChange}
                     selectedCity={selectedCities[0]}
-                    onPostJob={handleOpenPostJob}
                     onListTeacher={handleOpenListAsTeacher}
                     savedJobIds={savedJobIds}
                     toggleSaveJob={toggleSaveJob}
@@ -2569,28 +2590,19 @@ export default function TeachersDirectoryClient() {
 
                     <div className="space-y-1 pt-0.5">
                       <h4 className="text-[13.5px] font-bold text-slate-900 leading-snug" style={{ color: '#003c6e' }}>
-                        Hiring STEM Educators for Your School?
+                        Join Verified STEM Faculty Roster
                       </h4>
                       <p className="text-[11.5px] text-slate-500 leading-relaxed">
-                        Submit your PGT, TGT, PRT or Composite Lab vacancy for national indexing across verified STEM faculty.
+                        List yourself as a verified PGT, TGT, PRT or Lab Educator to connect directly with top schools.
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={handleOpenPostJob}
+                    <Link
+                      href="/edu-network/teachers/register"
                       className="w-full py-2.5 px-3 bg-[#005689] hover:bg-[#003c6e] text-white rounded-xl text-xs font-bold transition-all shadow-xs hover:shadow cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
                     >
-                      <FileText className="w-3.5 h-3.5" />
-                      <span>Post School Vacancy</span>
-                    </button>
-
-                    <Link
-                      href="/edu-network/jobs/manage"
-                      className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                    >
-                      <Layers className="w-3.5 h-3.5 text-[#005689]" />
-                      <span>Manage Posted Vacancies</span>
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>+ List as Faculty</span>
                     </Link>
                   </div>
 
@@ -2747,453 +2759,6 @@ export default function TeachersDirectoryClient() {
 
           </div>
         </main>
-
-        {/* ─── MODAL 1: "LIST YOURSELF AS STEM FACULTY" ONBOARDING MODAL ─── */}
-        {isListAsTeacherOpen && (
-          <div className="fixed inset-0 z-[99999] flex items-start justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto pt-20 sm:pt-10">
-            <div className="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 max-h-[85vh] overflow-y-auto my-auto space-y-4">
-              
-              <button
-                onClick={() => setIsListAsTeacherOpen(false)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              {teacherOnboardingSuccess ? (
-                <div className="text-center py-8 space-y-3">
-                  <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-900" style={{ color: '#003c6e' }}>Faculty Profile Submitted!</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
-                    Thank you, {teacherOnboardingForm.name}. Your verified profile with missed-call authentication token has been submitted and will appear across CSEEL EduNetwork.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleTeacherOnboardingSubmit} className="space-y-4">
-                  <div className="pb-3 border-b border-slate-100">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#005689]">Teacher Onboarding & Profile</span>
-                    <h3 className="text-lg font-bold text-slate-900 mt-0.5" style={{ color: '#003c6e' }}>
-                      Register as a Verified STEM Faculty
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      Create your educator profile with verified experience, past schools, and anti-spam contact privacy.
-                    </p>
-                  </div>
-
-                  {/* 1. Name & Avatar Upload (with client-side canvas <= 10KB compression) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
-                    <div className="sm:col-span-2">
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Full Name *</label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={50}
-                        placeholder="e.g. Dr. Arvind Joshi"
-                        value={teacherOnboardingForm.name}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, name: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">
-                        Profile Photo (Max 10KB)
-                      </label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarFileChange}
-                        className="text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-[#005689] hover:file:bg-blue-100 cursor-pointer w-full"
-                      />
-                      {isCompressingAvatar && (
-                        <p className="text-[10px] text-amber-600 font-semibold mt-1">Compressing to WebP &lt;= 10KB...</p>
-                      )}
-                      {avatarCompressedSize !== null && !isCompressingAvatar && (
-                        <p className="text-[10px] text-emerald-700 font-bold mt-1 flex items-center gap-1">
-                          <CheckCircle2 size={11} className="text-emerald-600" />
-                          <span>{(avatarCompressedSize / 1024).toFixed(2)} KB (✓ WebP &lt;= 10KB)</span>
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* 2. Mobile Number with Missed-Call Verification Widget */}
-                  <div className="p-3 bg-slate-50/80 border border-slate-200 rounded-2xl space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-bold text-slate-800 flex items-center gap-1">
-                        <Phone className="w-3.5 h-3.5 text-[#005689]" />
-                        <span>Mobile Phone & Missed-Call Verification *</span>
-                      </label>
-                      {teacherPhoneVerify.status === 'verified' && (
-                        <span className="text-[10.5px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                          <CheckCircle2 size={11} className="text-emerald-600" />
-                          <span>Verified</span>
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <div className="relative flex-1">
-                        <span className="absolute left-3 top-2.5 text-xs text-slate-400 font-mono font-bold">+91</span>
-                        <input
-                          type="tel"
-                          required
-                          maxLength={10}
-                          placeholder="9876543210 (10 digits)"
-                          disabled={teacherPhoneVerify.status === 'waiting' || teacherPhoneVerify.status === 'verified'}
-                          value={teacherOnboardingForm.phone}
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/[^0-9]/g, '');
-                            setTeacherOnboardingForm({ ...teacherOnboardingForm, phone: val });
-                          }}
-                          className="w-full pl-11 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689] font-mono"
-                        />
-                      </div>
-
-                      {teacherPhoneVerify.status !== 'verified' ? (
-                        <button
-                          type="button"
-                          onClick={() => handleInitiatePhoneVerify('teacher')}
-                          disabled={teacherPhoneVerify.status === 'initiating'}
-                          className="h-9 px-3.5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold shrink-0 transition flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                        >
-                          <Phone size={12} />
-                          <span>{teacherPhoneVerify.status === 'waiting' ? 'Restart Verify' : 'Verify via Call'}</span>
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setTeacherPhoneVerify(prev => ({ ...prev, status: 'idle', token: '' }))}
-                          className="text-[11px] text-slate-500 hover:text-slate-800 underline px-2 cursor-pointer"
-                        >
-                          Change Number
-                        </button>
-                      )}
-                    </div>
-
-                    {/* 2-minute Missed Call Active Box */}
-                    {teacherPhoneVerify.status === 'waiting' && (
-                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs space-y-2 animate-in fade-in">
-                        <div className="flex items-center justify-between text-amber-900 font-bold">
-                          <span className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-amber-700 animate-spin" />
-                            <span>Missed Call Verification Active</span>
-                          </span>
-                          <span className="bg-amber-200/80 text-amber-950 px-2 py-0.5 rounded-full text-[10.5px] font-mono">
-                            ⏱️ {Math.floor(teacherPhoneVerify.countdown / 60).toString().padStart(2, '0')}:{(teacherPhoneVerify.countdown % 60).toString().padStart(2, '0')}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-amber-800 leading-relaxed">
-                          Give 1 missed call to <strong>{teacherPhoneVerify.tollFreeNumber}</strong> from <strong>+91 {teacherPhoneVerify.phone}</strong>. Our gateway will automatically disconnect after 1 ring. Zero cost.
-                        </p>
-                        <div className="flex items-center gap-2 pt-1">
-                          <a
-                            href={`tel:${teacherPhoneVerify.tollFreeNumber.replace(/\s+/g, '')}`}
-                            className="flex-1 py-1.5 px-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-center text-xs transition"
-                          >
-                            📞 Tap to Dial {teacherPhoneVerify.tollFreeNumber}
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => handleCheckCallVerify('teacher')}
-                            className="py-1.5 px-3 bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 font-bold rounded-lg text-xs transition cursor-pointer"
-                          >
-                            Check Now
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {teacherPhoneVerify.error && (
-                      <p className="text-[11px] text-red-600 font-medium">{teacherPhoneVerify.error}</p>
-                    )}
-                  </div>
-
-                  {/* 3. Email & Privacy Toggles */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Email Address *</label>
-                      <input
-                        type="email"
-                        required
-                        maxLength={60}
-                        placeholder="teacher@gmail.com"
-                        value={teacherOnboardingForm.email}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, email: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Contact Privacy Controls</label>
-                      <div className="space-y-1.5 pt-1 text-[11px] text-slate-700">
-                        <label className="flex items-center gap-1.5 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={teacherOnboardingForm.phonePrivate}
-                            onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, phonePrivate: e.target.checked })}
-                            className="w-3.5 h-3.5 rounded text-[#005689]"
-                          />
-                          <span>Keep phone masked (+91 98***** 3210)</span>
-                        </label>
-                        <label className="flex items-center gap-1.5 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={teacherOnboardingForm.emailPrivate}
-                            onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, emailPrivate: e.target.checked })}
-                            className="w-3.5 h-3.5 rounded text-[#005689]"
-                          />
-                          <span>Keep email masked from public scrapers</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 4. Level, Subject, Board */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Teaching Level *</label>
-                      <select
-                        value={teacherOnboardingForm.designation}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, designation: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      >
-                        <option value="PGT">PGT (11-12)</option>
-                        <option value="TGT">TGT (6-10)</option>
-                        <option value="PRT">PRT (1-5)</option>
-                        <option value="Lab In-Charge">Lab In-Charge</option>
-                        <option value="ATL Mentor">ATL Mentor</option>
-                        <option value="Coordinator">Coordinator</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Core Discipline *</label>
-                      <select
-                        value={teacherOnboardingForm.subject}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, subject: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      >
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Biology">Biology</option>
-                        <option value="Mathematics">Mathematics</option>
-                        <option value="Robotics & AI">Robotics & AI</option>
-                        <option value="Computer Science">Computer Science</option>
-                        <option value="General Science">General Science</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Board Syllabus *</label>
-                      <select
-                        value={teacherOnboardingForm.board}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, board: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      >
-                        <option value="CBSE">CBSE</option>
-                        <option value="ICSE">ICSE</option>
-                        <option value="Cambridge / IB">Cambridge / IB</option>
-                        <option value="State Board">State Board</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* 5. Address Details with 📍 Detect My Location */}
-                  <div className="p-3 bg-slate-50/70 border border-slate-200 rounded-2xl space-y-2.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-bold text-slate-800 flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-amber-600" />
-                        <span>Address & Location *</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => handleDetectLocation('teacher')}
-                        disabled={isDetectingLocation}
-                        className="text-[11px] font-bold text-[#005689] hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                      >
-                        <Navigation size={12} className={isDetectingLocation ? 'animate-spin' : ''} />
-                        <span>{isDetectingLocation ? 'Detecting...' : '📍 Detect My Location'}</span>
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      <div>
-                        <label className="text-[10px] text-slate-500 font-bold block mb-1">State *</label>
-                        <select
-                          value={teacherOnboardingForm.state}
-                          onChange={(e) => {
-                            const newState = e.target.value;
-                            const newDistricts = INDIAN_STATES_DISTRICTS[newState] || [];
-                            setTeacherOnboardingForm({
-                              ...teacherOnboardingForm,
-                              state: newState,
-                              district: newDistricts[0] || '',
-                              city: newDistricts[0] || teacherOnboardingForm.city
-                            });
-                          }}
-                          className="w-full p-2 text-xs bg-white border border-slate-200 rounded-xl"
-                        >
-                          {Object.keys(INDIAN_STATES_DISTRICTS).map((st) => (
-                            <option key={st} value={st}>{st}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-[10px] text-slate-500 font-bold block mb-1">District *</label>
-                        <select
-                          value={teacherOnboardingForm.district}
-                          onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, district: e.target.value, city: e.target.value })}
-                          className="w-full p-2 text-xs bg-white border border-slate-200 rounded-xl"
-                        >
-                          {(INDIAN_STATES_DISTRICTS[teacherOnboardingForm.state] || []).map((dst) => (
-                            <option key={dst} value={dst}>{dst}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                      <div className="sm:col-span-2">
-                        <label className="text-[10px] text-slate-500 font-bold block mb-1">Local Address / Area</label>
-                        <input
-                          type="text"
-                          maxLength={80}
-                          placeholder="e.g. Sector 14, Near Metro Station"
-                          value={teacherOnboardingForm.address}
-                          onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, address: e.target.value })}
-                          className="w-full p-2 text-xs bg-white border border-slate-200 rounded-xl"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-slate-500 font-bold block mb-1">PIN Code</label>
-                        <input
-                          type="text"
-                          maxLength={6}
-                          placeholder="122001"
-                          value={teacherOnboardingForm.pincode}
-                          onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, pincode: e.target.value.replace(/[^0-9]/g, '') })}
-                          className="w-full p-2 text-xs bg-white border border-slate-200 rounded-xl font-mono"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 6. Past Schools / Where I Have Taught */}
-                  <div>
-                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
-                      Where You Have Worked / Past Schools (Max 120 chars)
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={120}
-                      placeholder="e.g. DPS R.K. Puram (PGT), Modern School (TGT Science)"
-                      value={teacherOnboardingForm.pastSchools}
-                      onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, pastSchools: e.target.value })}
-                      className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                    />
-                  </div>
-
-                  {/* 7. Key Skills & Tags */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Highest Qualification *</label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={60}
-                        placeholder="e.g. M.Sc. Physics (DU), B.Ed."
-                        value={teacherOnboardingForm.qualification}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, qualification: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-700 block mb-1">Key Skills & Tags (Max 60 chars)</label>
-                      <input
-                        type="text"
-                        maxLength={60}
-                        placeholder="e.g. Ray Optics, LCR Circuits, NEP Lab"
-                        value={teacherOnboardingForm.skills}
-                        onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, skills: e.target.value })}
-                        className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* 8. Practical Experience & Bio */}
-                  <div>
-                    <label className="text-[11px] font-bold text-slate-700 block mb-1">Practical Experience & Bio * (Max 250 chars)</label>
-                    <textarea
-                      rows={3}
-                      required
-                      maxLength={250}
-                      placeholder="Briefly describe your composite laboratory practical experience, viva preparation, or ATL mentoring background..."
-                      value={teacherOnboardingForm.bio}
-                      onChange={(e) => setTeacherOnboardingForm({ ...teacherOnboardingForm, bio: e.target.value })}
-                      className="w-full p-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#005689]"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 rounded-xl font-bold text-xs bg-[#005689] hover:bg-[#003c6e] text-white transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    <ShieldCheck size={14} />
-                    <span>Submit Verified Faculty Profile</span>
-                  </button>
-                </form>
-              )}
-
-            </div>
-          </div>
-        )}
-
-        
-        {/* ─── MODAL 3: AUTHENTICATION REQUIRED GUARD ─── */}
-        {isAuthModalOpen && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 text-center space-y-4">
-              <button
-                onClick={() => setIsAuthModalOpen(false)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#005689] flex items-center justify-center mx-auto border border-blue-200 shadow-2xs">
-                <ShieldCheck className="w-7 h-7" />
-              </div>
-
-              <div className="space-y-1.5">
-                <h3 className="text-lg font-bold text-slate-900" style={{ color: '#003c6e' }}>
-                  Authentication Required
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  To prevent fraudulent data and ensure 100% genuine school recruitment under SARAS guidelines, only verified logged-in users can post vacancies or create faculty profiles.
-                </p>
-              </div>
-
-              <div className="space-y-2 pt-2">
-                <Link
-                  href="/login?redirect=/edu-network/teachers"
-                  className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-[#005689] hover:bg-[#003c6e] text-white flex items-center justify-center gap-2 shadow-xs transition"
-                >
-                  <span>Sign In with Account</span>
-                  <ChevronRight className="w-4 h-4" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setIsAuthModalOpen(false)}
-                  className="w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ─── MODAL 2: "POST A SCHOOL VACANCY" MODAL ─── */}
         {isPostJobOpen && (

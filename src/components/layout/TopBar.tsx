@@ -73,15 +73,8 @@ const TopBar = () => {
   const initials    = (displayName || "US").slice(0, 2).toUpperCase();
   const primaryRole = (roles && roles.length > 0) ? roles[0] : "user";
 
-  const dashboardPath = primaryRole === 'moderator' || (user?.email && (user.email.endsWith('@cseel.org') || user.email.endsWith('@cseel.in')))
-    ? '/admin'
-    : primaryRole === 'teacher'
-    ? '/dashboard/teacher'
-    : primaryRole === 'organisation'
-    ? '/dashboard/school'
-    : primaryRole === 'student'
-    ? '/dashboard/student'
-    : '/dashboard/student';
+  const isAdmin = primaryRole === 'moderator' || Boolean(user?.email && (user.email.endsWith('@cseel.org') || user.email.endsWith('@cseel.in')));
+  const dashboardPath = isAdmin ? '/admin' : '/';
 
   const handleLogout = async () => {
     try {
@@ -301,19 +294,21 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
                       </span>
                     </div>
 
-                    <div className="py-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          router.push(dashboardPath);
-                        }}
-                        className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
-                      >
-                        <LayoutDashboard className="mr-2.5 h-4 w-4 text-[#006FCC]" />
-                        <span>Dashboard</span>
-                      </button>
-                    </div>
+                    {isAdmin && (
+                      <div className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            router.push(dashboardPath);
+                          }}
+                          className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
+                        >
+                          <LayoutDashboard className="mr-2.5 h-4 w-4 text-[#006FCC]" />
+                          <span>Admin Dashboard</span>
+                        </button>
+                      </div>
+                    )}
 
                     <div className="border-t border-gray-100 pt-1">
                       <button

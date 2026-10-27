@@ -71,6 +71,29 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Redirect /dashboard/admin to /admin (Admin Console is the ONLY active dashboard)
+  if (pathname === '/dashboard/admin' || pathname.startsWith('/dashboard/admin/')) {
+    url.pathname = '/admin';
+    return NextResponse.redirect(url);
+  }
+
+  // Disable all non-admin dashboards (parent, school, student, teacher)
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard/')) {
+    url.pathname = '/';
+    return NextResponse.redirect(url);
+  }
+
+  // Hide public Post a Job pages — redirect to teachers directory
+  if (
+    pathname === '/edu-network/jobs/post' ||
+    pathname.startsWith('/edu-network/jobs/post/') ||
+    pathname === '/edu-network/teachers/post-job' ||
+    pathname.startsWith('/edu-network/teachers/post-job/')
+  ) {
+    url.pathname = '/edu-network/teachers';
+    return NextResponse.redirect(url);
+  }
+
   // 1.5. Maintenance Mode: Redirect entire cseel.org to /under-construction when active (Production only, skip localhost)
   const isLocalhost = hostname.includes('localhost') || hostname.includes('127.0.0.1');
   if (!isLocalhost && (currentHost === '' || currentHost === 'www')) {

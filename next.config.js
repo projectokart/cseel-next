@@ -96,12 +96,26 @@ const nextConfig = {
       { source: '/edu-network/organisation/:slug*', destination: '/schools', permanent: true },
       { source: '/edu-network/jobs', destination: '/edu-network/jobs/manage', permanent: false },
       { source: '/edu-network/teacher-jobs', destination: '/careers', permanent: true },
+      { source: '/makerspace/curriculam', destination: '/makerspace/curriculum', permanent: false },
     ];
   },
   async rewrites() {
     return [
       { source: '/freelancers', destination: '/freelancers/index.html' },
       { source: '/freelancers/', destination: '/freelancers/index.html' },
+      { source: '/makerspace/curriculum/grade-1', destination: '/curriculum/grade-1.html' },
+      { source: '/makerspace/curriculum/grade-1/', destination: '/curriculum/grade-1.html' },
+      { source: '/makerspace/curriculam/grade-1', destination: '/curriculum/grade-1.html' },
+      { source: '/makerspace/curriculam/grade-1/', destination: '/curriculum/grade-1.html' },
+      { source: '/makerspace/curriculum/grade-2', destination: '/curriculum/grade-2.html' },
+      { source: '/makerspace/curriculum/grade-2/', destination: '/curriculum/grade-2.html' },
+      { source: '/makerspace/curriculum/grade-3', destination: '/curriculum/grade-3.html' },
+      { source: '/makerspace/curriculum/grade-3/', destination: '/curriculum/grade-3.html' },
+      { source: '/makerspace/curriculum/grade-4', destination: '/curriculum/grade-4.html' },
+      { source: '/makerspace/curriculum/grade-5', destination: '/curriculum/grade-5.html' },
+      { source: '/makerspace/curriculum/grade-6', destination: '/curriculum/grade-6.html' },
+      { source: '/makerspace/curriculum/grade-7', destination: '/curriculum/grade-7.html' },
+      { source: '/makerspace/curriculum/grade-8', destination: '/curriculum/grade-8.html' },
     ];
   },
   async headers() {

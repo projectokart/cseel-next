@@ -1,5 +1,5 @@
 import facetsJson from './job_filter_facets.json';
-import { FacultyJobItem } from './facultyJobsData';
+import { FacultyJobItem, isJobForLady } from './facultyJobsData';
 import { matchesJobFuzzy, filterAndRankJobsBySearch } from '@/lib/fuzzySearch';
 
 export interface FacetOption {
@@ -84,7 +84,7 @@ export function calculateDynamicFacets(
   // Helper to test if a job passes global non-faceted filters (text search, location text, salary, urgency, job type, portal)
   const passesSearchAndMeta = (j: FacultyJobItem): boolean => {
     if (urgentOnly && !j.urgent) return false;
-    if (forLadyOnly && !j.forLady) return false;
+    if (forLadyOnly && !isJobForLady(j)) return false;
 
     if (minSalaryFilter > 0) {
       const salVal = j.salaryMax || j.salaryMin || 0;
@@ -176,7 +176,7 @@ export function calculateDynamicFacets(
     }
 
     // 7. For Lady facet count: matches sub, des, board, city, state
-    if (job.forLady && matchSub && matchDes && matchBoard && matchCity && matchState) {
+    if (isJobForLady(job) && matchSub && matchDes && matchBoard && matchCity && matchState) {
       forLadyCount++;
     }
   }

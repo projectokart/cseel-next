@@ -367,12 +367,63 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
     { id: 'sch-4', name: 'DAV Centenary Public School', udise: '06180104505', affiliation: 'CBSE Affiliation # 530089', city: 'Faridabad, Haryana', status: 'Pending Review', docs: 'Trust Deed & Land Certificate', contact: 'Mr. Ashok Kumar' },
   ]);
 
-  const [adminTeachers, setAdminTeachers] = useState([
-    { id: 'tch-1', name: 'Dr. Ramesh Sharma', qualification: 'Ph.D, M.Sc (Physics), B.Ed', ctet: 'CTET Paper 2 (122/150)', subject: 'Senior Secondary Physics & Lab', experience: '12 Years', city: 'Noida, UP', status: 'Pending Review', skills: 'Optics, Atal Tinkering Lab, Oscilloscopes' },
-    { id: 'tch-2', name: 'Ananya Mukherjee', qualification: 'M.Sc (Chemistry), B.Ed', ctet: 'CTET Paper 2 (124/150)', subject: 'PGT Chemistry & Organic Lab', experience: '7 Years', city: 'Kolkata, WB', status: 'Verified', skills: 'Titration, Spectrophotometer, CBSE Evaluator' },
-    { id: 'tch-3', name: 'Vikramaditya Rao', qualification: 'B.Tech (Robotics), B.Ed', ctet: 'State TET Qualified', subject: 'ATL Robotics & AI Mentor', experience: '5 Years', city: 'Bengaluru, KA', status: 'Pending Review', skills: 'Arduino, Python, 3D Printing, Sensors' },
-    { id: 'tch-4', name: 'Pooja Verma', qualification: 'M.Sc (Mathematics), B.Ed', ctet: 'CTET Paper 1 & 2', subject: 'TGT Science & Mathematics', experience: '4 Years', city: 'Jaipur, RJ', status: 'Pending Review', skills: 'Experiential Math Lab, Remedial Pedagogy' },
-  ]);
+  const [adminTeachers, setAdminTeachers] = useState<any[]>([]);
+  const [loadingTeachers, setLoadingTeachers] = useState<boolean>(true);
+
+  // Load real registered faculty from API & localStorage
+  const loadAdminTeachers = async () => {
+    try {
+      setLoadingTeachers(true);
+      const res = await fetch('/api/admin/faculty');
+      const data = await res.json();
+      let list: any[] = [];
+      if (data && data.success && Array.isArray(data.faculty)) {
+        list = data.faculty;
+      }
+      
+      // Merge with browser local storage submissions
+      if (typeof window !== 'undefined') {
+        try {
+          const verifiedUsers: string[] = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
+          const localStored = JSON.parse(localStorage.getItem('cseel_custom_faculty') || '[]');
+          if (Array.isArray(localStored)) {
+            for (const item of localStored) {
+              const existingIdx = list.findIndex(t => t.id === item.id || t.slug === item.slug);
+              const isItemVerified = Boolean(item.verified || verifiedUsers.includes(item.id) || verifiedUsers.includes(item.slug));
+              if (existingIdx !== -1) {
+                list[existingIdx] = { ...list[existingIdx], verified: isItemVerified, status: isItemVerified ? 'Verified' : 'Pending Review' };
+              } else {
+                list.unshift({
+                  id: item.id || item.slug,
+                  slug: item.slug,
+                  name: item.name,
+                  phone: item.phone,
+                  email: item.email,
+                  subject: item.subject,
+                  qualification: item.qualification,
+                  experience: `${item.experienceYears || 3} Years`,
+                  city: `${item.city}, ${item.state}`,
+                  status: isItemVerified ? 'Verified' : 'Pending Review',
+                  verified: isItemVerified,
+                  skills: Array.isArray(item.skills) ? item.skills.join(', ') : (item.skills || '')
+                });
+              }
+            }
+          }
+        } catch {}
+      }
+
+      setAdminTeachers(list);
+    } catch (err) {
+      console.warn('[Admin] Error loading faculty:', err);
+    } finally {
+      setLoadingTeachers(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAdminTeachers();
+  }, []);
 
   const [adminJobs, setAdminJobs] = useState([
     { id: 'jb-1', title: 'Senior Secondary PGT Physics Faculty', school: 'Delhi Public School (R.K. Puram)', location: 'New Delhi', salary: '₹50,000 - ₹70,000 / mo', type: 'Full Time', source: 'CSEEL Direct', sourceType: 'school', postedDate: 'Today', status: 'Pending Review', eligibility: 'M.Sc Physics + B.Ed + 5 yrs exp' },
@@ -388,8 +439,51 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
     setAdminSchools(prev => prev.map(s => s.id === id ? { ...s, status: s.status === 'Verified' ? 'Pending Review' : 'Verified' } : s));
   };
 
-  const handleVerifyTeacher = (id: string) => {
-    setAdminTeachers(prev => prev.map(t => t.id === id ? { ...t, status: t.status === 'Verified' ? 'Pending Review' : 'Verified' } : t));
+  const handleVerifyTeacher = async (id: string, slug?: string) => {
+    const current = adminTeachers.find(t => t.id === id || t.slug === slug);
+    if (!current) return;
+    const newVerified = !current.verified;
+
+    // Optimistic UI update
+    setAdminTeachers(prev => prev.map(t => (t.id === id || t.slug === slug) ? {
+      ...t,
+      verified: newVerified,
+      status: newVerified ? 'Verified' : 'Pending Review'
+    } : t));
+
+    // Update in Supabase via API
+    try {
+      await fetch('/api/admin/faculty', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, slug: slug || current.slug, verified: newVerified })
+      });
+    } catch (e) {
+      console.warn('[Admin] Error updating faculty in DB:', e);
+    }
+
+    // Update in local storage
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('cseel_custom_faculty') || '[]');
+        const updated = stored.map((item: any) => {
+          if (item.id === id || item.slug === slug || item.slug === current.slug) {
+            return { ...item, verified: newVerified };
+          }
+          return item;
+        });
+        localStorage.setItem('cseel_custom_faculty', JSON.stringify(updated));
+
+        // Sync with verified users list
+        const verifiedUsers: string[] = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
+        if (newVerified) {
+          const setUsers = new Set([...verifiedUsers, id, slug || current.slug, current.name]);
+          localStorage.setItem('cseel_admin_verified_users', JSON.stringify(Array.from(setUsers)));
+        } else {
+          localStorage.setItem('cseel_admin_verified_users', JSON.stringify(verifiedUsers.filter(x => x !== id && x !== (slug || current.slug) && x !== current.name)));
+        }
+      } catch {}
+    }
   };
 
   const handleApproveJob = (id: string) => {
@@ -677,7 +771,7 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
       <div className="flex-1 h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] flex overflow-hidden relative">
         
         {/* Fixed placeholder so underlying content never shifts */}
-        <div className="portal-rail-placeholder hidden md:block w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
+        <div className="portal-rail-placeholder w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
 
         {/* RAIL 1: ULTRA-COMPACT HOVER SLIDE-OVER RAIL */}
         <aside
@@ -772,7 +866,7 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
           <button
             type="button"
             onClick={() => setRail2Open(true)}
-            className="portal-rail-expand-btn"
+            className="portal-rail-expand-btn hidden md:flex"
             title="Expand navigation (Ctrl+B)"
           >
             <ChevronRight className="w-3.5 h-3.5 stroke-[2]" />
@@ -1973,78 +2067,125 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
                   </div>
                 )}
 
-                {/* SECTION 2: TEACHER VERIFICATION */}
+                {/* SECTION 2: TEACHER VERIFICATION (ADMIN: ptdevkaushik101@admin) */}
                 {activeNavId === 'jobs-teachers' && (
-                  <div className="bg-white rounded-lg border border-[#dadce0] p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(60,64,67,0.06)] space-y-3">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <div className="bg-white rounded-xl border border-[#dadce0] p-4 sm:p-5 shadow-[0_1px_3px_rgba(60,64,67,0.08)] space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
                       <div>
-                        <h3 className="font-semibold text-sm text-[#202124]">Faculty &amp; Educator Verification Queue</h3>
-                        <p className="text-[11px] text-[#5f6368]">Audit CTET eligibility, degree certificates, and experiential lab specializations.</p>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-base text-[#202124]">Faculty Registrations &amp; Verification Roster</h3>
+                          <span className="text-[10px] font-black bg-blue-100 text-blue-900 border border-blue-200 px-2 py-0.5 rounded-full">
+                            Admin: ptdevkaushik101
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#5f6368] mt-0.5">
+                          Applicants who filled the Faculty Form. Verify credentials to grant the official &quot;Verified&quot; green badge on their card.
+                        </p>
                       </div>
-                      <span className="text-[11px] font-medium text-[#5f6368]">{adminTeachers.length} Candidates</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          onClick={loadAdminTeachers}
+                          className="h-8 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <RefreshCw size={12} className={loadingTeachers ? 'animate-spin' : ''} />
+                          <span>Refresh Submissions</span>
+                        </Button>
+                        <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg">
+                          {adminTeachers.length} Applicants ({adminTeachers.filter(t => !t.verified).length} Pending)
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead className="bg-gray-50 border-b border-[#dadce0] text-[11px] text-[#5f6368] font-semibold uppercase">
-                          <tr>
-                            <th className="py-2 px-3">Faculty Name</th>
-                            <th className="py-2 px-3">Degrees &amp; Qualifications</th>
-                            <th className="py-2 px-3">CTET / TET Status</th>
-                            <th className="py-2 px-3">Target Role &amp; Exp</th>
-                            <th className="py-2 px-3">Verification</th>
-                            <th className="py-2 px-3 text-right">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                          {adminTeachers.map((tch) => (
-                            <tr key={tch.id} className="hover:bg-gray-50/80">
-                              <td className="py-2.5 px-3">
-                                <p className="font-semibold text-[#202124]">{tch.name}</p>
-                                <p className="text-[#5f6368] text-[11px]">{tch.city}</p>
-                              </td>
-                              <td className="py-2.5 px-3 text-[#3c4043]">
-                                <p className="font-medium">{tch.qualification}</p>
-                                <p className="text-[#5f6368] text-[11px]">{tch.skills}</p>
-                              </td>
-                              <td className="py-2.5 px-3">
-                                <span className="font-medium text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 text-[11px]">
-                                  {tch.ctet}
-                                </span>
-                              </td>
-                              <td className="py-2.5 px-3">
-                                <p className="font-medium text-[#202124]">{tch.subject}</p>
-                                <p className="text-[#5f6368] text-[11px]">{tch.experience} teaching</p>
-                              </td>
-                              <td className="py-2.5 px-3">
-                                {tch.status === 'Verified' ? (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
-                                    <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Verified Badge
-                                  </span>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-amber-50 text-amber-800 px-2 py-0.5 rounded-full border border-amber-200">
-                                    <Clock className="w-3 h-3 text-amber-600" /> Pending Check
-                                  </span>
-                                )}
-                              </td>
-                              <td className="py-2.5 px-3 text-right">
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleVerifyTeacher(tch.id)}
-                                  className={`text-xs h-7 px-2.5 rounded-md cursor-pointer ${
-                                    tch.status === 'Verified'
-                                      ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                      : 'bg-[#1a73e8] hover:bg-[#1557b0] text-white font-medium'
-                                  }`}
-                                >
-                                  {tch.status === 'Verified' ? 'Revoke' : 'Grant Badge'}
-                                </Button>
-                              </td>
+                    {adminTeachers.length === 0 ? (
+                      <div className="p-10 text-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50 space-y-2">
+                        <Users className="w-10 h-10 text-slate-400 mx-auto" />
+                        <h4 className="text-sm font-bold text-slate-800">No Faculty Submissions Found</h4>
+                        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                          New teacher registrations submitted on /edu-network/teachers/register will appear here in real-time for verification.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto rounded-xl border border-slate-200">
+                        <table className="w-full text-xs text-left">
+                          <thead className="bg-slate-50 border-b border-slate-200 text-[11px] text-slate-600 font-bold uppercase tracking-wider">
+                            <tr>
+                              <th className="py-3 px-3.5">Candidate Details</th>
+                              <th className="py-3 px-3.5">Subject &amp; Target Role</th>
+                              <th className="py-3 px-3.5">Qualifications &amp; Institute</th>
+                              <th className="py-3 px-3.5">Current Status</th>
+                              <th className="py-3 px-3.5 text-right">Admin Actions</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {adminTeachers.map((tch) => {
+                              const isVer = Boolean(tch.verified || tch.status === 'Verified');
+                              return (
+                                <tr key={tch.id || tch.slug} className="hover:bg-slate-50/80 transition-colors">
+                                  <td className="py-3 px-3.5">
+                                    <div className="flex items-center gap-2.5">
+                                      <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-[#005689] font-bold text-xs flex items-center justify-center shrink-0">
+                                        {tch.name?.charAt(0) || 'E'}
+                                      </div>
+                                      <div className="min-w-0">
+                                        <p className="font-bold text-slate-900 text-sm leading-tight">{tch.name}</p>
+                                        <p className="text-slate-500 text-[11px] truncate">{tch.email || 'No email provided'}</p>
+                                        <p className="text-slate-600 font-mono text-[10.5px]">{tch.phone ? `+91 ${tch.phone}` : ''} • {tch.city}</p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td className="py-3 px-3.5 text-slate-700">
+                                    <p className="font-bold text-slate-900">{tch.subject}</p>
+                                    <p className="text-slate-500 text-[11px]">{tch.experience || '3+ Years Exp'}</p>
+                                  </td>
+                                  <td className="py-3 px-3.5 text-slate-700">
+                                    <p className="font-medium">{tch.qualification || 'Post Graduate / B.Ed'}</p>
+                                    <p className="text-slate-400 text-[11px] truncate max-w-xs">{tch.skills || tch.currentInstitute || 'Senior Secondary'}</p>
+                                  </td>
+                                  <td className="py-3 px-3.5">
+                                    {isVer ? (
+                                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full border border-emerald-200 shadow-2xs">
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                        <span>Verified</span>
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold bg-amber-50 text-amber-800 px-3 py-1 rounded-full border border-amber-200">
+                                        <Clock className="w-3.5 h-3.5 text-amber-600" />
+                                        <span>Under Verification</span>
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="py-3 px-3.5 text-right">
+                                    <div className="flex items-center justify-end gap-2">
+                                      <Button
+                                        size="sm"
+                                        onClick={() => handleVerifyTeacher(tch.id, tch.slug)}
+                                        className={`text-xs h-7.5 px-3 rounded-lg font-bold transition cursor-pointer active:scale-95 ${
+                                          isVer
+                                            ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300'
+                                            : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs'
+                                        }`}
+                                      >
+                                        {isVer ? 'Revoke' : '✓ Verify & Grant Badge'}
+                                      </Button>
+                                      <Link
+                                        href={`/edu-network/teachers/${tch.slug || tch.id}`}
+                                        target="_blank"
+                                        className="h-7.5 px-2.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 inline-flex items-center gap-1 text-[11px] font-semibold transition"
+                                        title="View Live Card"
+                                      >
+                                        <ExternalLink size={12} />
+                                        <span>Card</span>
+                                      </Link>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 )}
 

@@ -23,6 +23,7 @@ import {
   Clock
 } from 'lucide-react';
 import { TeacherItem, ALL_TEACHERS, getTeacherById } from '@/lib/eduNetworkData';
+import { maskPhoneNumber } from '@/lib/jobCardUtils';
 
 interface TeacherProfileClientProps {
   teacherId: string;
@@ -224,11 +225,28 @@ export default function TeacherProfileClient({ teacherId, initialTeacher }: Teac
   React.useEffect(() => {
     if (initialTeacher) {
       setTeacher(initialTeacher);
-      return;
+    } else {
+      const local = getTeacherById(teacherId);
+      if (local) {
+        setTeacher(local);
+      }
     }
-    const local = getTeacherById(teacherId);
-    if (local) {
-      setTeacher(local);
+
+    // Check if verified by admin
+    if (typeof window !== 'undefined') {
+      try {
+        const verifiedUsers: string[] = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
+        const customFaculty = JSON.parse(localStorage.getItem('cseel_custom_faculty') || '[]');
+        const matchedCustom = customFaculty.find((f: any) => f.id === teacherId || f.slug === teacherId);
+        if (matchedCustom) {
+          const isVer = Boolean(matchedCustom.verified || verifiedUsers.includes(teacherId) || verifiedUsers.includes(matchedCustom.id) || verifiedUsers.includes(matchedCustom.slug));
+          setTeacher(prev => ({ ...prev, ...matchedCustom, verified: isVer }));
+          return;
+        }
+        if (verifiedUsers.includes(teacherId)) {
+          setTeacher(prev => ({ ...prev, verified: true }));
+        }
+      } catch {}
     }
   }, [teacherId, initialTeacher]);
   const [copiedText, setCopiedText] = useState<string | null>(null);

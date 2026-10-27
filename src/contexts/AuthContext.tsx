@@ -198,7 +198,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
       const targetNext = redirectTo ? (redirectTo.startsWith('http') ? redirectTo : redirectTo) : '/schools';
-      const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent(targetNext)}`;
+      
+      // Store redirect target in localStorage to avoid query param rejection in Supabase OAuth whitelist
+      if (typeof window !== 'undefined' && targetNext) {
+        try {
+          localStorage.setItem('auth_redirect_next', targetNext);
+        } catch {}
+      }
+
+      const callbackUrl = `${origin}/auth/callback`;
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

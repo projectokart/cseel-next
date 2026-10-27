@@ -78,7 +78,7 @@ export default function ParentDashboardClient() {
       <div className="flex-1 h-[calc(100vh-48px)] max-h-[calc(100vh-48px)] flex overflow-hidden relative">
         
         {/* Fixed placeholder so underlying content never shifts */}
-        <div className="portal-rail-placeholder hidden md:block w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
+        <div className="portal-rail-placeholder w-[48px] min-w-[48px] max-w-[48px] h-full shrink-0" />
 
         {/* ═════════════════════════════════════════════════════════════
             1. RAIL 1: SLIM ICON BAR (48px EXPANDABLE TO 220px)
@@ -165,7 +165,7 @@ export default function ParentDashboardClient() {
         <button
           type="button"
           onClick={() => setRail2Open(true)}
-          className="portal-rail-expand-btn"
+          className="portal-rail-expand-btn hidden md:flex"
           title="Expand navigation (Ctrl+B)"
         >
           <ChevronRight className="w-3.5 h-3.5 stroke-[2]" />

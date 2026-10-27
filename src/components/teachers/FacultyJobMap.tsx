@@ -76,6 +76,7 @@ interface FacultyJobMapProps {
   copiedJobId?: string | null;
   onOpenConnect?: (faculty: VerifiedFacultyItem) => void;
   className?: string;
+  latestUpdatedDate?: string;
 }
 
 const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
@@ -126,6 +127,7 @@ export default function FacultyJobMap({
   onCopyJobUrl,
   copiedJobId,
   onOpenConnect,
+  latestUpdatedDate,
   className = "h-[calc(100dvh-200px)] min-h-[460px] max-h-[700px] md:h-[620px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-sm relative",
 }: FacultyJobMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -148,6 +150,26 @@ export default function FacultyJobMap({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDesktopSheetOpen, setIsDesktopSheetOpen] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  // Auto Live Location on initial mount
+  useEffect(() => {
+    if (typeof window === 'undefined' || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setUserLocation({ lat: latitude, lng: longitude });
+        if (mapInstanceRef.current) {
+          const zoom = 11;
+          const offsetLatLng = getOffsetLatLng(latitude, longitude, zoom);
+          mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 1.2 });
+        }
+      },
+      (err) => {
+        console.log('[FacultyJobMap] Auto-geolocation notice:', err.message);
+      },
+      { timeout: 7000 }
+    );
+  }, []);
+
   // Mobile sheet drawer state: 'peek' (58px) | 'half' (50vh) | 'full' (86vh)
   const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('peek');
 
@@ -727,6 +749,20 @@ export default function FacultyJobMap({
     );
   };
 
+    const handlePrevSchool = () => {
+    if (displayedListItems.length === 0) return;
+    const currentIdx = activeOpportunityIndex ?? 0;
+    const prevIdx = currentIdx > 0 ? currentIdx - 1 : displayedListItems.length - 1;
+    handleSelectCard(prevIdx);
+  };
+
+  const handleNextSchool = () => {
+    if (displayedListItems.length === 0) return;
+    const currentIdx = activeOpportunityIndex ?? -1;
+    const nextIdx = currentIdx < displayedListItems.length - 1 ? currentIdx + 1 : 0;
+    handleSelectCard(nextIdx);
+  };
+
   const handleSelectCard = (idx: number) => {
     setActiveOpportunityIndex(idx);
     const item: any = filteredItems[idx];
@@ -1162,40 +1198,40 @@ export default function FacultyJobMap({
           </button>
         </div>
 
-        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) - Top Placed */}
-        <div className="absolute top-16 right-3 md:top-3.5 md:right-3.5 z-20 flex flex-col items-center gap-2 select-none">
+        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) - Top Placed with safe mobile margins */}
+        <div className="absolute top-20 right-2 sm:right-3.5 md:top-3.5 md:right-3.5 z-20 flex flex-col items-center gap-1.5 sm:gap-2 select-none pointer-events-auto">
           <div className="flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
             <button
               type="button"
               onClick={handleZoomIn}
-              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
               title="Zoom In"
             >
-              <Plus size={16} />
+              <Plus size={15} />
             </button>
             <button
               type="button"
               onClick={handleZoomOut}
-              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center transition-colors active:bg-slate-100 cursor-pointer"
               title="Zoom Out"
             >
-              <Minus size={16} />
+              <Minus size={15} />
             </button>
             <button
               type="button"
               onClick={toggleFullscreen}
-              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
               title={isFullscreen ? "Exit Fullscreen" : "Full Screen View"}
             >
-              {isFullscreen ? <Minimize2 size={16} className="text-[#006FCC]" /> : <Maximize2 size={15} />}
+              {isFullscreen ? <Minimize2 size={15} className="text-[#006FCC]" /> : <Maximize2 size={14} />}
             </button>
             <button
               type="button"
               onClick={fitToCurrentRadius}
-              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
               title="Fit View to Search Radius Area"
             >
-              <svg className="w-4 h-4 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="3" />
                 <path d="M3 7V5a2 2 0 0 1 2-2h2" />
                 <path d="M17 3h2a2 2 0 0 1 2 2v2" />
@@ -1207,15 +1243,15 @@ export default function FacultyJobMap({
               type="button"
               onClick={handleLocateMe}
               disabled={isLocating}
-              className="w-9 h-9 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
+              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
               title="Locate Current Position"
             >
-              <Crosshair size={16} className={isLocating ? 'animate-spin' : ''} />
+              <Crosshair size={15} className={isLocating ? 'animate-spin' : ''} />
             </button>
           </div>
 
           {/* Vertical Distance Range Bar (0 to 200 km) */}
-          <div className="flex flex-col items-center bg-white/95 backdrop-blur-md border border-[#dadce0] rounded-2xl py-2 px-1.5 shadow-[0_2px_8px_rgba(60,64,67,0.25)] select-none">
+          <div className="flex flex-col items-center bg-white/95 backdrop-blur-md border border-[#dadce0] rounded-2xl py-1.5 px-1 sm:py-2 sm:px-1.5 shadow-[0_2px_8px_rgba(60,64,67,0.25)] select-none">
             {/* Value badge at top */}
             <span className="text-[9.5px] font-extrabold text-[#006FCC] bg-[#eef3fc] px-1 py-0.5 rounded font-mono mb-1.5 whitespace-nowrap">
               {distanceRadius === 0 ? 'All' : `${distanceRadius}k`}
@@ -1274,10 +1310,53 @@ export default function FacultyJobMap({
           <div className="w-14 h-1.5 bg-gray-300/90 group-hover:bg-gray-400 group-active:bg-[#006FCC] rounded-full transition-colors" />
         </div>
 
-        {/* Header Strip */}
-        <div className="w-full px-3 py-1.5 flex items-center justify-between gap-2 border-b border-gray-100 shrink-0 bg-white/95">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 shadow-2xs">
+        {/* Header Strip with Vacancies Count, Updated Date & Prev/Next School Stepper */}
+        <div className="w-full px-2.5 py-1.5 flex items-center justify-between gap-1.5 border-b border-gray-100 shrink-0 bg-white/95">
+          {/* Left: Vacancy Count + Updated Date */}
+          <div className="flex flex-col min-w-0 pr-1">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 leading-tight">
+              <span className="font-extrabold text-[#004A75]">
+                {displayedListItems.length} {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
+              </span>
+              {activeOpportunityIndex !== null && displayedListItems.length > 0 && (
+                <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded font-mono">
+                  {activeOpportunityIndex + 1}/{displayedListItems.length}
+                </span>
+              )}
+            </div>
+            <div className="text-[10px] text-slate-400 font-medium truncate">
+              Updated: <span className="text-slate-600 font-semibold">{latestUpdatedDate || 'Today'}</span>
+            </div>
+          </div>
+
+          {/* Right: Prev / Next School Stepper & Drawer Resize Controls */}
+          <div className="flex items-center gap-1 shrink-0">
+            {/* Prev School Button */}
+            <button
+              type="button"
+              onClick={handlePrevSchool}
+              disabled={displayedListItems.length === 0}
+              className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-0.5 disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
+              title="Previous school in list"
+            >
+              <ChevronLeft size={13} strokeWidth={2.5} />
+              <span>Back</span>
+            </button>
+
+            {/* Next School Button */}
+            <button
+              type="button"
+              onClick={handleNextSchool}
+              disabled={displayedListItems.length === 0}
+              className="px-2.5 py-1 rounded-lg bg-[#004A75] hover:bg-[#003859] text-white text-xs font-bold flex items-center gap-0.5 disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
+              title="Next school in list"
+            >
+              <span>Next</span>
+              <ChevronRight size={13} strokeWidth={2.5} />
+            </button>
+
+            {/* Drawer Up/Down Controls */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 ml-0.5">
               <button
                 type="button"
                 onClick={() => {
@@ -1285,9 +1364,9 @@ export default function FacultyJobMap({
                   else if (mobileSheetState === 'half') setMobileSheetState('full');
                 }}
                 disabled={mobileSheetState === 'full'}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
+                className="w-6 h-6 rounded flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
               >
-                <ChevronUp size={16} strokeWidth={2.5} />
+                <ChevronUp size={14} strokeWidth={2.5} />
               </button>
               <button
                 type="button"
@@ -1296,29 +1375,11 @@ export default function FacultyJobMap({
                   else if (mobileSheetState === 'half') setMobileSheetState('peek');
                 }}
                 disabled={mobileSheetState === 'peek'}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
+                className="w-6 h-6 rounded flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
               >
-                <ChevronDown size={16} strokeWidth={2.5} />
+                <ChevronDown size={14} strokeWidth={2.5} />
               </button>
             </div>
-
-            <div className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200/80 text-[#005689] font-black text-xs shadow-2xs">
-              {displayedListItems.length} {activeTab === 'jobs' ? 'Jobs' : 'Faculty'}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                if (activeTab === 'jobs' && onPostJob) onPostJob();
-                else if (activeTab === 'faculty' && onListTeacher) onListTeacher();
-              }}
-              className="w-7.5 h-7.5 rounded-full bg-[#006FCC] hover:bg-[#005399] text-white flex items-center justify-center shadow-md active:scale-95 transition cursor-pointer"
-              title={activeTab === 'jobs' ? "+ Post Vacancy" : "+ List as Faculty"}
-            >
-              <Plus size={15} strokeWidth={2.8} />
-            </button>
           </div>
         </div>
 

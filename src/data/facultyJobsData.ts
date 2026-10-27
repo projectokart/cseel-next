@@ -200,10 +200,19 @@ export function isExactSameJob(jobA: FacultyJobItem, jobB: FacultyJobItem): bool
  * Cross-portal duplicates across LinkedIn, Indeed, and Naukri are merged only when
  * ALL 5 validation criteria pass (Name, Address, Post, Close Date, Matching Salary).
  */
+export function isJobForLady(job: { forLady?: boolean; jobPostName?: string; shortDescription?: string; organisationName?: string; badge?: string }): boolean {
+  if (job.forLady === true) return true;
+  const text = `${job.jobPostName || ''} ${job.shortDescription || ''} ${job.organisationName || ''} ${job.badge || ''}`.toLowerCase();
+  return /\b(female|lady|women|woman|girls?\s*school|all[\s-]girls?|mother\s*teacher|ladies)\b/i.test(text);
+}
+
 export function getActiveFacultyJobs(): FacultyJobItem[] {
   // Returns clean, verified multi-portal vacancies (2,345 jobs) directly without initial flicker or mismatch
   const portalJobs = (aggregatedJobsData as unknown as FacultyJobItem[]) || [];
-  return portalJobs;
+  return portalJobs.map((j) => ({
+    ...j,
+    forLady: isJobForLady(j),
+  }));
 }
 
 // ── Verified Faculty Roster (Authentic Educators) ──────────────────────────────

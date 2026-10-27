@@ -1,5 +1,6 @@
 import { FacultyJobItem } from '@/data/facultyJobsData';
 import { maskPhonesInText } from '@/lib/jobCardUtils';
+import { GoogleGeocodingService } from './googleGeocodingService';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ukazkxthavxphibdbspd.supabase.co';
 const SUPABASE_KEY =
@@ -141,8 +142,20 @@ export class SupabaseJobService {
       }
     }
 
-    const lat = meta.lat ? parseFloat(meta.lat) : (r.city === 'Delhi' ? 28.6139 : 28.4595);
-    const lng = meta.lng ? parseFloat(meta.lng) : (r.city === 'Delhi' ? 77.2090 : 77.0266);
+    let lat = meta.lat ? parseFloat(meta.lat) : NaN;
+    let lng = meta.lng ? parseFloat(meta.lng) : NaN;
+
+    if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
+      const geo = GoogleGeocodingService.resolveSync({
+        schoolName: r.institute_name,
+        city: r.city,
+        state: r.state,
+        address: meta.address,
+        district: meta.district,
+      });
+      lat = geo.lat;
+      lng = geo.lng;
+    }
 
     const sMin = meta.salary_min ? parseInt(meta.salary_min, 10) : undefined;
     const sMax = meta.salary_max ? parseInt(meta.salary_max, 10) : undefined;

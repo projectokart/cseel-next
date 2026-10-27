@@ -747,5 +747,21 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-25T16:35:10.571Z",
     "updatedBy": "Auto Init"
+  },
+  "edu-network:teachers:register": {
+    "pageKey": "edu-network:teachers:register",
+    "title": "Edu Network Teachers Register",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-27T03:46:23.285Z",
+    "updatedBy": "Auto Init"
+  },
+  "makerspace:curriculum": {
+    "pageKey": "makerspace:curriculum",
+    "title": "Makerspace Curriculum",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-27T08:55:21.844Z",
+    "updatedBy": "Auto Init"
   }
 }

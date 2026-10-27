@@ -17,6 +17,20 @@ export const dynamic = 'force-dynamic';
  *  - source: portal filter (Indeed, LinkedIn, Naukri.com, Apna.co, Foundit, etc.)
  *  - minSalary: minimum salary in LPA numeric (e.g. 500000)
  */
+function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -30,13 +44,18 @@ export async function GET(req: NextRequest) {
     const minSalaryStr = searchParams.get('minSalary') || '0';
     const minSalary = parseInt(minSalaryStr, 10) || 0;
 
+    const userLat = searchParams.get('lat') ? parseFloat(searchParams.get('lat')!) : null;
+    const userLng = searchParams.get('lng') ? parseFloat(searchParams.get('lng')!) : null;
+    const radiusKm = searchParams.get('radius') ? parseFloat(searchParams.get('radius')!) : null;
+    const sortBy = searchParams.get('sort');
+
     // Load active, verified vacancies from Supabase directly, fall back to local store
     let allJobs: FacultyJobItem[] = await SupabaseJobService.fetchJobsFromSupabase();
     if (!allJobs || allJobs.length === 0) {
       allJobs = getActiveFacultyJobs();
     }
 
-    const filtered = allJobs.filter((job) => {
+    let filtered = allJobs.filter((job) => {
       if (q) {
         const text = `${job.jobPostName} ${job.organisationName} ${job.subject || ''} ${job.designation || ''} ${job.city || ''} ${job.state || ''} ${job.district || ''} ${job.address || ''}`.toLowerCase();
         if (!text.includes(q)) return false;
@@ -48,8 +67,33 @@ export async function GET(req: NextRequest) {
       if (designation && (job.designation || '').toLowerCase() !== designation) return false;
       if (source && !(job.source || '').toLowerCase().includes(source)) return false;
       if (minSalary > 0 && job.salaryMin && job.salaryMin < minSalary) return false;
+
+      // Distance radius filter if GPS coords and radius provided
+      if (userLat !== null && userLng !== null && radiusKm && radiusKm > 0) {
+        if (job.coordinates && typeof job.coordinates.lat === 'number' && typeof job.coordinates.lng === 'number') {
+          const dist = getDistanceKm(userLat, userLng, job.coordinates.lat, job.coordinates.lng);
+          if (dist > radiusKm) return false;
+        }
+      }
+
       return true;
     });
+
+    // Attach distanceKm if user coordinates are provided
+    if (userLat !== null && userLng !== null) {
+      filtered = filtered.map((job) => {
+        if (job.coordinates && typeof job.coordinates.lat === 'number' && typeof job.coordinates.lng === 'number') {
+          const distanceKm = getDistanceKm(userLat, userLng, job.coordinates.lat, job.coordinates.lng);
+          return { ...job, distanceKm };
+        }
+        return job;
+      });
+
+      // Sort by distance ascending if near_me requested
+      if (sortBy === 'near_me') {
+        filtered.sort((a: any, b: any) => (a.distanceKm ?? 99999) - (b.distanceKm ?? 99999));
+      }
+    }
 
     // Portal breakdown statistics
     const portalStats: Record<string, number> = {};

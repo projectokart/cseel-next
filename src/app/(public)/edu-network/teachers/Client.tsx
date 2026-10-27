@@ -1,5 +1,20 @@
 'use client';
 
+function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10;
+}
+
+
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -22,7 +37,8 @@ import {
   VERIFIED_FACULTY_MEMBERS,
   getJobFacilityTags,
   getJobRequirementTags,
-  getMinExperience
+  getMinExperience,
+  isJobForLady
 } from '@/data/facultyJobsData';
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress } from '@/lib/jobCardUtils';
@@ -164,6 +180,30 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
   }, []);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  // Request User Location with user alert feedback
+  const requestUserLocation = () => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (err) => alert("Please allow location access to find vacancies near you."),
+      { timeout: 8000, enableHighAccuracy: true }
+    );
+  };
+
+  // Auto-request live GPS location on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && navigator.geolocation && !userCoords) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (err) => console.log('[Client] Geolocation notice:', err.message),
+        { timeout: 7000 }
+      );
+    }
+  }, []);
+
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [isCompressingAvatar, setIsCompressingAvatar] = useState(false);
   const [avatarCompressedSize, setAvatarCompressedSize] = useState<number | null>(null);
@@ -237,7 +277,8 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
   const [minSalaryFilter, setMinSalaryFilter] = useState<number>(0);
   const [urgentOnly, setUrgentOnly] = useState<boolean>(false);
   const [forLadyOnly, setForLadyOnly] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'newest' | 'salary' | 'deadline' | 'experience' | 'rating'>('newest');
+  const [sortBy, setSortBy] = useState<'newest' | 'salary' | 'deadline' | 'experience' | 'rating' | 'near_me'>('newest');
+  const [distanceRadiusFilter, setDistanceRadiusFilter] = useState<number>(0);
 
   // Mobile Filter Drawer & Menu States
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
@@ -757,15 +798,20 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
     initialJobs && initialJobs.length > 0 ? initialJobs : getActiveFacultyJobs()
   );
 
-  // Faculty list state initialized with custom registered faculty
+  // Faculty list state initialized with custom registered faculty + admin verified overrides
   const [facultyList, setFacultyList] = useState<VerifiedFacultyItem[]>(() => {
     if (typeof window !== 'undefined') {
       try {
         const stored = localStorage.getItem('cseel_custom_faculty');
+        const verifiedUsers: string[] = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
         if (stored) {
           const custom = JSON.parse(stored);
           if (Array.isArray(custom) && custom.length > 0) {
-            return [...custom, ...VERIFIED_FACULTY_MEMBERS];
+            const mappedCustom = custom.map((f: any) => ({
+              ...f,
+              verified: Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug) || verifiedUsers.includes(f.name))
+            }));
+            return [...mappedCustom, ...VERIFIED_FACULTY_MEMBERS];
           }
         }
       } catch {}
@@ -791,6 +837,30 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
         }
       })
       .catch((err) => console.warn('[Client] Jobs fetch error:', err));
+
+    // Fetch latest verified faculty from database
+    fetch('/api/admin/faculty')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.faculty) && data.faculty.length > 0) {
+          setFacultyList((prev) => {
+            const updated = [...prev];
+            const verifiedUsers: string[] = typeof window !== 'undefined'
+              ? JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]')
+              : [];
+
+            for (const f of data.faculty) {
+              const idx = updated.findIndex((x: any) => x.id === f.id || x.slug === f.slug);
+              const isVer = Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug));
+              if (idx !== -1) {
+                updated[idx] = { ...updated[idx], verified: isVer };
+              }
+            }
+            return updated;
+          });
+        }
+      })
+      .catch((err) => console.warn('[Client] Faculty sync notice:', err));
   }, []);
 
   // ── PAGINATION (STRICT 50 ITEMS PER PAGE - SYNCED WITH MAP & CARDS) ──
@@ -929,7 +999,16 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
         if (annualMax < minSalaryFilter) return false;
       }
       if (urgentOnly && !job.badge?.includes('🔥')) return false;
-      if (forLadyOnly && !job.forLady) return false;
+      if (forLadyOnly && !isJobForLady(job)) return false;
+
+      // Distance radius filter from user GPS location
+      if (distanceRadiusFilter > 0 && userCoords) {
+        if (job.coordinates?.lat && job.coordinates?.lng) {
+          const d = getDistanceKm(userCoords.lat, userCoords.lng, job.coordinates.lat, job.coordinates.lng);
+          if (d > distanceRadiusFilter) return false;
+        }
+      }
+
       return true;
     });
 
@@ -953,11 +1032,22 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
         return timeA - timeB;
       });
     }
+    if (sortBy === 'near_me' && userCoords) {
+      return [...results].sort((a, b) => {
+        const distA = (a.coordinates?.lat && a.coordinates?.lng)
+          ? getDistanceKm(userCoords.lat, userCoords.lng, a.coordinates.lat, a.coordinates.lng)
+          : 99999;
+        const distB = (b.coordinates?.lat && b.coordinates?.lng)
+          ? getDistanceKm(userCoords.lat, userCoords.lng, b.coordinates.lat, b.coordinates.lng)
+          : 99999;
+        return distA - distB;
+      });
+    }
     if (!searchQuery || !searchQuery.trim()) {
       return [...results].sort((a, b) => new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime());
     }
     return results;
-  }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, selectedJobTypes, selectedPortals, minSalaryFilter, urgentOnly, forLadyOnly, searchQuery, sortBy]);
+  }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, selectedJobTypes, selectedPortals, minSalaryFilter, distanceRadiusFilter, userCoords, urgentOnly, forLadyOnly, searchQuery, sortBy]);
 
   // Filtered Verified Faculty
   const filteredFaculty = useMemo(() => {
@@ -1687,6 +1777,10 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
           onResetAll={resetAllFilters}
           isSidebarMinimized={isSidebarMinimized}
           setIsSidebarMinimized={setIsSidebarMinimized}
+          distanceRadiusFilter={distanceRadiusFilter}
+          setDistanceRadiusFilter={setDistanceRadiusFilter}
+          userCoords={userCoords}
+          onRequestUserLocation={requestUserLocation}
         />
 
         {/* ── 3. Mobile Filter Drawer (< 768px) ── */}
@@ -1719,6 +1813,10 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
           setForLadyOnly={setForLadyOnly}
           dynamicCounts={dynamicCounts}
           onResetAll={resetAllFilters}
+          distanceRadiusFilter={distanceRadiusFilter}
+          setDistanceRadiusFilter={setDistanceRadiusFilter}
+          userCoords={userCoords}
+          onRequestUserLocation={requestUserLocation}
         />
 
         {/* ── 4. Main Content Area (Offset by fixed sidebar width) ── */}
@@ -1843,6 +1941,24 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                         SORT LIST BY
                       </div>
                       <div className="space-y-0.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSortBy('near_me');
+                            setIsSortMenuOpen(false);
+                            if (!userCoords) requestUserLocation();
+                          }}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                            sortBy === 'near_me' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <MapPin size={13} className="text-[#004A75]" />
+                            <span>Near Me (Nearest First)</span>
+                          </div>
+                          {sortBy === 'near_me' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                        </button>
+
                         <button
                           type="button"
                           onClick={() => { setSortBy('newest'); setIsSortMenuOpen(false); }}
@@ -1990,7 +2106,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
             </div>
 
             {/* Row 2: Vacancies Count (Left) & Updated Date (Right) (Screenshot 1) */}
-            <div className="flex items-center justify-between pt-1 px-0.5 text-xs">
+            <div className={`flex items-center justify-between pt-1 px-0.5 text-xs ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
               <div className="text-[12.5px] text-slate-700">
                 <strong className="font-extrabold text-slate-950">
                   {activeTab === 'jobs' ? filteredJobs.length.toLocaleString() : filteredFaculty.length.toLocaleString()}
@@ -2154,7 +2270,15 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                               </div>
                             </div>
 
-                            {/* Row 3: Full Address (Local Area, District, State) - wraps gracefully to next line if width is tight */}
+                            {/* Row 3: Full Address & Distance */}
+                            {userCoords && job.coordinates?.lat && job.coordinates?.lng && (
+                              <div className="pt-0.5">
+                                <span className="text-[11px] font-bold text-[#004A75] bg-[#EBF3F8] px-2 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0">
+                                  <MapPin size={10} className="text-[#004A75]" />
+                                  <span>{getDistanceKm(userCoords.lat, userCoords.lng, job.coordinates.lat, job.coordinates.lng)} km away</span>
+                                </span>
+                              </div>
+                            )}
                             <div className="pt-0.5">
                               <a
                                 href={getGoogleMapsSearchUrl(job)}
@@ -2171,7 +2295,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                             </div>
 
                             {/* Row 4: Only Lady Only badge (description completely removed) */}
-                            {job.forLady && (
+                            {isJobForLady(job) && (
                               <div className="flex items-center pt-0.5">
                                 <span className="inline-flex items-center gap-1.5 font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md text-[11px] select-none">
                                   <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>

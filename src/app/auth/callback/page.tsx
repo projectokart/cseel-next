@@ -62,7 +62,8 @@ export default function AuthCallbackPage() {
             return;
           }
           if (data.session && isMounted) {
-            const next = searchParams.get('next') || searchParams.get('redirectTo') || '/schools';
+            const next = searchParams.get('next') || searchParams.get('redirectTo') || (typeof window !== 'undefined' ? localStorage.getItem('auth_redirect_next') : null) || '/schools';
+            if (typeof window !== 'undefined') { try { localStorage.removeItem('auth_redirect_next'); } catch {} }
             await routeAfterAuth(data.session.user.id, next);
             return;
           }

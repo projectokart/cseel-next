@@ -18,6 +18,7 @@ import fs from 'fs';
 import path from 'path';
 import { FacultyJobItem } from '@/data/facultyJobsData';
 import geoData from '@/data/india_geo_centroids.json';
+import { GoogleGeocodingService } from './googleGeocodingService';
 
 export type JobSourcePortal = "Indeed" | "LinkedIn" | "Naukri.com" | "Apna.co" | "Foundit" | "Shine.com" | "TeacherON" | "EducoHire" | "TimesJobs" | "DAV CMC" | "AWES India" | "KVS / NVS" | "Direct School Portal" | string;
 
@@ -284,52 +285,34 @@ export class JobCardExtractor {
   }
 
   /**
-   * Resolves location, city, state, and coordinates with zero fallback to Delhi NCR.
-   * Matches 102+ key cities or 37 Indian States/UTs centroids!
+   * Resolves location, city, state, district, and high-precision coordinates.
+   * Leverages SchoolGeoResolver (29,450+ verified schools index, pincodes, districts, and dynamic cache).
    */
-  static parseLocation(rawLoc: string = '', rawCity?: string, rawState?: string): {
+  static parseLocation(
+    rawLoc: string = '',
+    rawCity?: string,
+    rawState?: string,
+    rawSchoolName?: string
+  ): {
     city: string;
     state: string;
+    district?: string;
     address: string;
     coordinates: { lat: number; lng: number };
   } {
-    const combined = `${rawLoc} ${rawCity || ''} ${rawState || ''}`.toLowerCase();
+    const geo = GoogleGeocodingService.resolveSync({
+      schoolName: rawSchoolName,
+      address: rawLoc,
+      city: rawCity,
+      state: rawState,
+    });
 
-    // 1. Precise City Match from expanded geo database
-    const citiesDict = (geoData as any).cities || {};
-    for (const [cityName, info] of Object.entries(citiesDict)) {
-      if (combined.includes(cityName)) {
-        const capitalizedCity = cityName.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-        const itemInfo = info as any;
-        return {
-          city: capitalizedCity,
-          state: itemInfo.state,
-          address: rawLoc.trim() || `${capitalizedCity}, ${itemInfo.state}`,
-          coordinates: { lat: itemInfo.lat, lng: itemInfo.lng }
-        };
-      }
-    }
-
-    // 2. State Centroid Match from expanded 37 State centroids
-    const statesDict = (geoData as any).state_centroids || {};
-    for (const [stName, stInfo] of Object.entries(statesDict)) {
-      if (combined.includes(stName.toLowerCase())) {
-        const info = stInfo as any;
-        return {
-          city: rawCity || info.capital || stName,
-          state: stName,
-          address: rawLoc.trim() || `${rawCity || info.capital}, ${stName}`,
-          coordinates: { lat: info.lat, lng: info.lng }
-        };
-      }
-    }
-
-    // 3. True All-India Center (Nagpur Geographical Center of India)
     return {
-      city: rawCity || 'India',
-      state: rawState || 'All India',
-      address: rawLoc.trim() || 'India',
-      coordinates: { lat: 20.5937, lng: 78.9629 }
+      city: geo.city,
+      state: geo.state,
+      district: geo.district,
+      address: geo.formattedAddress || rawLoc,
+      coordinates: { lat: geo.lat, lng: geo.lng }
     };
   }
 
@@ -349,7 +332,12 @@ export class JobCardExtractor {
   static transformToCardItem(input: RawJobInput): FacultyJobItem {
     const { designation, subject, board, roleType } = this.parseDesignationAndSubject(input.rawTitle, input.rawDescription);
     const { salary, salaryMin, salaryMax } = this.parseSalary(input.rawSalary, designation);
-    const { city, state, address, coordinates } = this.parseLocation(input.rawLocation, input.rawCity, input.rawState);
+    const { city, state, district, address, coordinates } = this.parseLocation(
+      input.rawLocation,
+      input.rawCity,
+      input.rawState,
+      input.rawSchoolName
+    );
     const organisationLogo = this.resolveLogo(input.rawSchoolName, input.logoUrl);
 
     // Slug generation
@@ -394,6 +382,7 @@ export class JobCardExtractor {
       shortDescription,
       address,
       city,
+      district,
       state,
       coordinates,
       minExperience,

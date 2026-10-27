@@ -46,6 +46,7 @@ import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 import { calculateDynamicFacets, DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
 import { matchesJobFuzzy, filterAndRankJobsBySearch } from '@/lib/fuzzySearch';
+import FacultyAdBanner from '@/components/teachers/FacultyAdBanner';
 
 const POPULAR_CITIES = [
   { name: 'Delhi NCR', icon: 'https://img.icons8.com/color/48/india-gate.png' },
@@ -2154,6 +2155,16 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                 </div>
               )}
 
+              {/* ── TOP AD BANNER: REGISTER YOU AS FACULTY ── */}
+              {activeTab === 'jobs' && viewMode !== 'map' && (
+                <div className="w-full mb-2.5 sm:mb-3.5">
+                  <FacultyAdBanner
+                    variant="top"
+                    onRegisterClick={handleOpenListAsTeacher}
+                  />
+                </div>
+              )}
+
               {/* ── JOB CARDS FEED (COMPACT GOOGLE / LABSTER CARD) ── */}
               {activeTab === 'jobs' && viewMode !== 'map' && (
                 <div className={
@@ -2183,7 +2194,7 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                       </button>
                     </div>
                   ) : (
-                    paginatedJobs.map((job) => {
+                    paginatedJobs.map((job, index) => {
                       const isSaved = savedJobIds.includes(job.id);
                       const structuredAddress = formatStructuredAddress(job);
                       const sourceDisplayName = getSourceDisplayName(job.source);
@@ -2198,10 +2209,10 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                       ].filter(Boolean);
 
                       return (
-                        <div
-                          key={job.id}
-                          className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
-                        >
+                        <React.Fragment key={job.id}>
+                          <div
+                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
+                          >
                           <div className="space-y-2.5 min-w-0">
                             {/* Row 1: Title, School & Optional Logo (Hide if no valid image URL) */}
                             <div className="flex items-start justify-between gap-3 min-w-0">
@@ -2378,6 +2389,17 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                             </div>
                           </div>
                         </div>
+
+                        {/* ── INTERSTITIAL AD BANNER (BETWEEN JOB CARDS) ── */}
+                        {((index === 3 && paginatedJobs.length >= 4) || (index === 9 && paginatedJobs.length >= 10)) && (
+                          <div className="col-span-full w-full py-1.5 sm:py-2">
+                            <FacultyAdBanner
+                              variant="feed"
+                              onRegisterClick={handleOpenListAsTeacher}
+                            />
+                          </div>
+                        )}
+                      </React.Fragment>
                       );
                     })
                   )}

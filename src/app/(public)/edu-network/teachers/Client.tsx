@@ -2233,15 +2233,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                 </div>
               )}
 
-              {/* ── TOP AD BANNER: REGISTER YOU AS FACULTY ── */}
-              {activeTab === 'jobs' && viewMode !== 'map' && (
-                <div className="w-full mb-2.5 sm:mb-3.5">
-                  <FacultyAdBanner
-                    variant="top"
-                    onRegisterClick={handleOpenListAsTeacher}
-                  />
-                </div>
-              )}
+
 
               {/* ── JOB CARDS FEED (COMPACT GOOGLE / LABSTER CARD) ── */}
               {activeTab === 'jobs' && viewMode !== 'map' && (
@@ -2468,18 +2460,24 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                           </div>
                         </div>
 
-                        {/* ── INTERSTITIAL AD BANNER (BETWEEN JOB CARDS) ── */}
-                        {((index === 3 && paginatedJobs.length >= 4) || (index === 9 && paginatedJobs.length >= 10)) && (
-                          <div className="col-span-full w-full py-1.5 sm:py-2">
-                            <FacultyAdBanner
-                              variant="feed"
-                              onRegisterClick={handleOpenListAsTeacher}
-                            />
-                          </div>
+                        {/* ── MID-FEED AD BANNER 1 (USER'S IMAGE BANNER) ── */}
+                        {index === 3 && paginatedJobs.length >= 4 && (
+                          <FacultyAdBanner
+                            bannerNumber={1}
+                            onRegisterClick={handleOpenListAsTeacher}
+                          />
                         )}
                       </React.Fragment>
                       );
                     })
+                  )}
+
+                  {/* ── END OF FEED AD BANNER 2 (BOTTOM COMPANION BANNER) ── */}
+                  {paginatedJobs.length > 0 && (
+                    <FacultyAdBanner
+                      bannerNumber={2}
+                      onRegisterClick={handleOpenListAsTeacher}
+                    />
                   )}
                 </div>
               )}

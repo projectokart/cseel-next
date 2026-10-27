@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import {
   GraduationCap, Phone, Mail, MapPin, CheckCircle2, ChevronRight,
   User, Award, Briefcase, FileText, ArrowLeft, ShieldCheck, Upload,
-  Sparkles, Layers, BookOpen, AlertCircle, Lock
+  Sparkles, Layers, BookOpen, AlertCircle, Lock, Clock
 } from 'lucide-react';
 import CloudflareTurnstile from '@/components/shared/CloudflareTurnstile';
 import { INDIAN_STATES_DISTRICTS } from '@/app/(public)/edu-network/teachers/Client';
@@ -49,7 +49,7 @@ export default function RegisterFacultyClient() {
   const [honeypotVal, setHoneypotVal] = useState('');
   const formMountTime = React.useRef(Date.now());
 
-  // Compress image to WebP <= 10KB
+  // Automatically compress uploaded image to WebP strictly <= 10KB
   const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -61,40 +61,45 @@ export default function RegisterFacultyClient() {
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxDim = 120;
-        let width = img.width;
-        let height = img.height;
+        let currentDim = 120;
+        let finalDataUrl = '';
+        let finalByteSize = 0;
 
-        if (width > height) {
-          if (width > maxDim) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
+        // Loop to guarantee strictly under 10KB (<= 9900 bytes)
+        while (currentDim >= 40) {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            height = Math.round((height * currentDim) / width);
+            width = currentDim;
+          } else {
+            width = Math.round((width * currentDim) / height);
+            height = currentDim;
           }
-        } else {
-          if (height > maxDim) {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
+          canvas.width = Math.max(width, 1);
+          canvas.height = Math.max(height, 1);
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            let quality = 0.8;
+            while (quality >= 0.15) {
+              const testUrl = canvas.toDataURL('image/webp', quality);
+              const byteSize = Math.round((testUrl.length * 3) / 4);
+              if (byteSize <= 9900 || quality <= 0.2) {
+                finalDataUrl = testUrl;
+                finalByteSize = byteSize;
+                if (byteSize <= 9900) break;
+              }
+              quality -= 0.15;
+            }
           }
+          if (finalByteSize > 0 && finalByteSize <= 9900) break;
+          currentDim -= 20;
         }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          let quality = 0.8;
-          let dataUrl = canvas.toDataURL('image/webp', quality);
-
-          while (dataUrl.length > 13500 && quality > 0.1) {
-            quality -= 0.1;
-            dataUrl = canvas.toDataURL('image/webp', quality);
-          }
-
-          const byteSize = Math.round((dataUrl.length * 3) / 4);
-          setAvatarCompressedSize(byteSize);
-          setFormData((prev) => ({ ...prev, avatarUrl: dataUrl }));
-        }
+        setAvatarCompressedSize(finalByteSize);
+        setFormData((prev) => ({ ...prev, avatarUrl: finalDataUrl }));
         setIsCompressingAvatar(false);
       };
       img.src = event.target?.result as string;
@@ -165,6 +170,8 @@ export default function RegisterFacultyClient() {
         try {
           const stored = JSON.parse(localStorage.getItem('cseel_custom_faculty') || '[]');
           localStorage.setItem('cseel_custom_faculty', JSON.stringify([newFacultyItem, ...stored]));
+          const storedProfiles = JSON.parse(localStorage.getItem('cseel_created_teacher_profiles') || '[]');
+          localStorage.setItem('cseel_created_teacher_profiles', JSON.stringify([newFacultyItem, ...storedProfiles]));
         } catch {}
       }
 
@@ -201,8 +208,9 @@ export default function RegisterFacultyClient() {
             </div>
 
             <div className="space-y-2">
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full uppercase tracking-wider">
-                Verified & Recorded
+              <span className="text-xs font-bold text-amber-800 bg-amber-50 border border-amber-300 px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1">
+                <Clock size={12} className="text-amber-600" />
+                <span>Under Verification (Pending Admin Review)</span>
               </span>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" style={{ color: '#003c6e' }}>
                 Thank you! Successfully submitted.
@@ -223,7 +231,10 @@ export default function RegisterFacultyClient() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
                     <h4 className="text-sm font-bold text-slate-900 truncate">{formData.name}</h4>
-                    <ShieldCheck size={14} className="text-emerald-600 shrink-0" />
+                    <span className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded font-bold inline-flex items-center gap-0.5">
+                      <Clock size={10} className="text-amber-600" />
+                      <span>Under Verification</span>
+                    </span>
                   </div>
                   <p className="text-xs text-slate-500 font-medium">
                     {formData.designation} in {formData.subject} ({formData.board})

@@ -2378,10 +2378,17 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
                                 {f.designation} &bull; {f.subject}
                               </span>
                               {!isTwoCol && (
-                                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0 font-['Montserrat',sans-serif]">
-                                  <ShieldCheck size={11} className="text-emerald-600" />
-                                  <span>SARAS</span>
-                                </span>
+                                f.verified ? (
+                                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0 font-['Montserrat',sans-serif]">
+                                    <ShieldCheck size={11} className="text-emerald-600" />
+                                    <span>Verified</span>
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full shrink-0 font-['Montserrat',sans-serif]">
+                                    <Clock size={11} className="text-amber-600" />
+                                    <span>Under Verification</span>
+                                  </span>
+                                )
                               )}
                             </div>
 
@@ -2463,12 +2470,21 @@ export default function TeachersDirectoryClient({ initialJobs }: TeachersDirecto
 
                         {/* Row 6: Standard Labster CTA Action Footer */}
                         <div className="pt-2 sm:pt-3 border-t border-[#E8E9E9] flex items-center justify-between gap-1.5 mt-auto">
-                          <span className={`text-emerald-700 font-bold flex items-center gap-1 truncate font-['Montserrat',sans-serif] ${
-                            isTwoCol ? 'text-[10px] sm:text-[11px]' : 'text-[11px]'
-                          }`}>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span className="truncate">Verified</span>
-                          </span>
+                          {f.verified ? (
+                            <span className={`text-emerald-700 font-bold flex items-center gap-1 truncate font-['Montserrat',sans-serif] ${
+                              isTwoCol ? 'text-[10px] sm:text-[11px]' : 'text-[11px]'
+                            }`}>
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span className="truncate">Verified</span>
+                            </span>
+                          ) : (
+                            <span className={`text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 truncate font-['Montserrat',sans-serif] ${
+                              isTwoCol ? 'text-[9.5px] sm:text-[10.5px]' : 'text-[10.5px]'
+                            }`}>
+                              <Clock className="w-3 h-3 text-amber-600 shrink-0" />
+                              <span className="truncate">Under Verification</span>
+                            </span>
+                          )}
 
                           <div className="flex items-center gap-1.5">
                             <Link

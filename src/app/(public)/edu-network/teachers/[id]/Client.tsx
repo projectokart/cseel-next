@@ -19,12 +19,14 @@ import {
   Tag,
   User,
   Building2,
-  BookOpen
+  BookOpen,
+  Clock
 } from 'lucide-react';
 import { TeacherItem, ALL_TEACHERS, getTeacherById } from '@/lib/eduNetworkData';
 
 interface TeacherProfileClientProps {
   teacherId: string;
+  initialTeacher?: TeacherItem;
 }
 
 interface QualificationRecord {
@@ -214,8 +216,21 @@ function RenderBioContent({ teacher }: { teacher: TeacherItem }) {
   );
 }
 
-export default function TeacherProfileClient({ teacherId }: TeacherProfileClientProps) {
-  const teacher = getTeacherById(teacherId) || ALL_TEACHERS[0];
+export default function TeacherProfileClient({ teacherId, initialTeacher }: TeacherProfileClientProps) {
+  const [teacher, setTeacher] = React.useState<TeacherItem>(() => {
+    return initialTeacher || getTeacherById(teacherId) || ALL_TEACHERS[0];
+  });
+
+  React.useEffect(() => {
+    if (initialTeacher) {
+      setTeacher(initialTeacher);
+      return;
+    }
+    const local = getTeacherById(teacherId);
+    if (local) {
+      setTeacher(local);
+    }
+  }, [teacherId, initialTeacher]);
   const [copiedText, setCopiedText] = useState<string | null>(null);
   const [imgError, setImgError] = useState(false);
 
@@ -295,10 +310,17 @@ export default function TeacherProfileClient({ teacherId }: TeacherProfileClient
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 print:gap-4">
               {/* Left / Info */}
               <div className="space-y-3 print:space-y-1.5 flex-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200/60 rounded-full text-xs font-bold text-[#005689] print:py-0.5 print:px-2 print:text-[10px]">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 print:w-3 print:h-3" />
-                  <span>Verified Educator Profile</span>
-                </div>
+                {teacher.verified ? (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-xs font-bold text-emerald-800 print:py-0.5 print:px-2 print:text-[10px]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 print:w-3 print:h-3" />
+                    <span>Verified Educator Profile</span>
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-300 rounded-full text-xs font-bold text-amber-800 print:py-0.5 print:px-2 print:text-[10px]">
+                    <Clock className="w-3.5 h-3.5 text-amber-600 print:w-3 print:h-3" />
+                    <span>Under Verification (Pending Admin Review)</span>
+                  </div>
+                )}
 
                 {/* Faculty Name */}
                 <h1

@@ -1,6 +1,6 @@
 {
   "id": "physics_faculty_resume",
-  "name": "🎓 Physics Faculty Application",
+  "name": "\ud83c\udf93 Physics Faculty Application",
   "description": "2,034 Verified Delhi-NCR Schools for PGT Physics Faculty position",
   "sender_email": "resume@mailer.cseel.org",
   "from_name": "Devender Kaushik",
@@ -8,5 +8,5 @@
   "subject": "Application for physics faculty - {{school_name}}",
   "template_mode": "resume",
   "active_variant": "Official Physics Faculty Resume",
-  "total_contacts": 2034
+  "total_contacts": 1724
 }

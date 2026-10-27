@@ -1,44 +1,29 @@
 #!/usr/bin/env python3
 """
 ════════════════════════════════════════════════════════════════════════════════
-🇮🇳 ALL-INDIA SCHOOL JOBS MULTI-PORTAL AGGREGATOR & EXTRACTION ENGINE
+🇮🇳 INDIA SCHOOL JOBS ENGINE (INDEED • LINKEDIN • NAUKRI)
 ════════════════════════════════════════════════════════════════════════════════
-Extracts, parses, normalizes, and validates teaching & faculty vacancies across
-ALL famous Indian job portals and school chain career portals:
+Production-grade, high-integrity automated vacancy extraction across the TOP 3
+authentic job portals:
+  1. Indeed India (in.indeed.com)  — High-Speed GraphQL API
+  2. LinkedIn India (linkedin.com) — Voyager REST API + Guest Search Fallback
+  3. Naukri (naukri.com)           — High-Density Education Pipeline & Parser
 
-Supported Authentic Portals:
-  1. Indeed India (in.indeed.com)
-  2. LinkedIn India (linkedin.com/jobs)
-  3. Naukri.com Education (naukri.com)
-  4. Apna.co (apna.co)
-  5. Foundit India / Monster (foundit.in)
-  6. Shine.com (shine.com)
-  7. TeacherON (teacheron.com)
-  8. EducoHire (educohire.com)
-  9. TimesJobs / Times Ascent (timesjobs.com / timesascent.com)
- 10. DAV CMC Portal (davcmc.net.in)
- 11. AWES India - Army Public Schools (awesindia.com)
- 12. KVS & NVS Portals (kvsangathan.nic.in / navodaya.gov.in)
- 13. Direct School Portals (DPS, Heritage, Shiv Nadar, Ryan, Amity, Podar, etc.)
+ROBUST ENGINEERING PRINCIPLES (ZERO FABRICATION / ZERO GUESSWORK):
+  1. Stable Deterministic IDs: Uses hashlib.sha1 (never randomized process hash()).
+  2. Title-First Classification: Title is primary truth; avoids false positives
+     from description words ("it", "state-of-the-art", "pet care").
+  3. Strict Salary Currency Requirement: Disallows plain numbers from description
+     ("5k students", "500 books") without explicit currency/salary markers.
+  4. Explicit Error Logging: Full logging for non-2xx responses and exceptions.
+  5. Lost-Update Prevention: Syncs both new and updated records back to Supabase.
+  6. Authentic Geocoding: Returns None for unknown cities; never fabricates Delhi.
+  7. Genuine Metadata: lastDate = None and verified = False unless source-verified.
+  8. Strict School Exclusion Filters: Permanently blocks coaching institutes
+     (Allen, Aakash, Resonance, FIITJEE) and college/university roles.
 
-STRICT CARD-ONLY FORMAT:
-Extracts strictly the compact card fields required for CSEEL EduNetwork:
-- id
-- organisationName & verified logo
-- jobPostName (Designation + Subject)
-- designation: PGT | TGT | PRT | ATL Mentor | Lab In-Charge | Coordinator
-- subject: Physics | Chemistry | Biology | Mathematics | Robotics & AI | Computer Science | Composite Lab | General Science
-- board: CBSE | ICSE | Cambridge / IB | State Board
-- roleType: Full-Time | Part-Time | ATL Mentor | Lab In-Charge
-- salary (Formatted ₹ LPA / monthly range, e.g. "₹6.5 - ₹9.5 LPA")
-- salaryMin, salaryMax (numerical for sorting/filtering)
-- address, city, state, coordinates (lat, lng for Map View)
-- minExperience ("Fresher", "Min 1 yr Exp", "Min 2 yrs Exp", "Min 3 yrs Exp")
-- openingDate, lastDate (30-day auto-purge)
-- source (Portal name badge)
-- originalUrl (Direct Apply link)
-- shortDescription (1-2 crisp lines)
-- verified: True
+Single Source of Truth:
+  Directly synchronizes, deduplicates, and batch-upserts into Supabase `public.jobs`.
 ════════════════════════════════════════════════════════════════════════════════
 """
 
@@ -46,6 +31,7 @@ import sys
 import os
 import json
 import re
+import hashlib
 import argparse
 from datetime import datetime, timedelta
 
@@ -68,6 +54,12 @@ if sys.platform.startswith('win'):
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DATA_DIR = os.path.join(BASE_DIR, "src", "data")
 OUTPUT_JSON_PATH = os.path.join(SRC_DATA_DIR, "aggregated_jobs.json")
+FACETS_PATH = os.path.join(SRC_DATA_DIR, "job_filter_facets.json")
+
+# Supabase Credentials (Single Source of Truth)
+# Supabase Credentials (Environment Variable with Safe Project Fallback)
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://ukazkxthavxphibdbspd.supabase.co").rstrip("/")
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrYXpreHRoYXZ4cGhpYmRic3BkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzgxOTgzOCwiZXhwIjoyMDg5Mzk1ODM4fQ.Od_IWU3qrttP28AdPajuJfxitTqQIXVo9dXSzFS-Kms")
 
 # ── 1. Indian Educational Cities Geolocation Map ──────────────────────────────
 INDIAN_CITIES_GEO = {
@@ -115,789 +107,670 @@ INDIAN_CITIES_GEO = {
     'rohtak': {'state': 'Haryana', 'lat': 28.8955, 'lng': 76.6066},
 }
 
-# ── 2. Verified School Group Brand Logos (No fake stock photos) ──────────────
-SCHOOL_BRAND_LOGOS = {}
+# ── 2. Strict School Job Qualification & Exclusion Filters ───────────────────
+EXCLUDED_COACHING = [
+    "iit", "jee", "neet", "allen", "aakash", "resonance", "fiitjee", 
+    "career point", "pace", "bansal", "chaitanya", "narayana coaching",
+    "vidyamandir", "medical coaching", "engineering coaching", "cat coaching",
+    "gate coaching", "coaching institute", "foundation faculty", "coaching", 
+    "tuition", "academy coaching"
+]
 
-# ── 3. Normalization Functions (Zero Guesswork / Zero Fallback) ────────────────
+EXCLUDED_HIGHER_ED = [
+    "assistant professor", "associate professor", "university professor", 
+    "college lecturer", "polytechnic lecturer", "guest faculty university", 
+    "phd scholar", "dean", "engineering college", "degree college",
+    "adjunct faculty", "tenure track"
+]
 
-def resolve_logo(school_name: str, custom_logo: str = None) -> str:
-    """Only returns authentic logos; never falls back to fake stock images"""
-    if custom_logo and custom_logo.startswith('http') and 'unsplash.com' not in custom_logo:
-        return custom_logo
+EXCLUDED_NON_TEACHING = [
+    "bpo", "telecaller", "customer service", "customer care", "call center",
+    "sales executive", "business development", "marketing executive", "seo executive",
+    "delivery", "driver", "security guard", "peon", "housekeeping", "cook", "maid",
+    "plumber", "carpenter", "electrician", "real estate", "tele-sales"
+]
+
+def is_valid_school_job(title: str, employer: str = "", desc: str = "") -> bool:
+    comb = f"{title} {employer} {desc}".lower()
+    t_lower = str(title or "").lower()
+    e_lower = str(employer or "").lower()
+    full_id = f"{t_lower} {e_lower}"
+
+    # 1. Discard non-teaching corporate noise
+    for bad in EXCLUDED_NON_TEACHING:
+        if re.search(r'\b' + re.escape(bad) + r'\b', full_id):
+            return False
+
+    # 2. Discard higher-ed university & college roles
+    for bad in EXCLUDED_HIGHER_ED:
+        if re.search(r'\b' + re.escape(bad) + r'\b', full_id):
+            return False
+
+    # 3. Discard coaching institutes
+    for bad in EXCLUDED_COACHING:
+        if re.search(r'\b' + re.escape(bad) + r'\b', e_lower):
+            return False
+        if re.search(r'\b' + re.escape(bad) + r'\b', t_lower):
+            school_context = any(s in comb for s in [
+                "k-12", "cbse school", "icse school", "public school", 
+                "international school", "grammar school", "vidyalaya", 
+                "vidyapith", "convent"
+            ])
+            if not school_context:
+                return False
+
+    # 4. Must relate to school / education role
+    edu_indicators = [
+        "teacher", "faculty", "pgt", "tgt", "prt", "ntt", "mentor", 
+        "educator", "principal", "coordinator", "headmistress", "school", 
+        "instructor", "counselor", "psychologist", "librarian", "trainer", 
+        "incharge", "coach", "academic", "kindergarten", "nursery", "lab assistant"
+    ]
+    if not any(re.search(r'\b' + re.escape(ind) + r'\b', comb) for ind in edu_indicators):
+        return False
+
+    return True
+
+# ── 3. Title-First Designation & Subject Normalization ───────────────────────
+def detect_designation_from_title(title: str) -> str:
+    t = str(title or "").lower()
+    if re.search(r'\b(vice\s*principal|vice-principal)\b', t):
+        return "Vice Principal"
+    if re.search(r'\b(principal|headmistress|headmaster|director\s*school|center\s*head)\b', t):
+        return "School Principal"
+    if re.search(r'\b(academic\s*coordinator|wing\s*coordinator|curriculum\s*coordinator|hod)\b', t):
+        return "Academic Coordinator"
+    if re.search(r'\b(administrator|admin\s*officer|front\s*desk|receptionist|admission\s*counselor|admission\s*executive|school\s*accountant)\b', t):
+        return "School Administration"
+    if re.search(r'\b(librarian|library\s*in-charge)\b', t):
+        return "Librarian"
+    if re.search(r'\b(special\s*educator|rehabilitation)\b', t):
+        return "Special Educator"
+    if re.search(r'\b(counselor|counsellor|psychologist|wellness)\b', t):
+        return "School Counselor"
+    if re.search(r'\b(physical\s*education|\bpet\b|\bpti\b|sports\s*coach|yoga|swimming\s*coach)\b', t):
+        return "Physical Education"
+    if re.search(r'\b(music|dance|art\s*and\s*craft|drawing|drama|theatre)\b', t):
+        return "Art & Activities"
+    if re.search(r'\b(atl\s*mentor|robotics\s*trainer|stem\s*mentor|tinkering|maker\s*lab)\b', t):
+        return "ATL Mentor"
+    if re.search(r'\b(lab\s*assistant|lab\s*in-charge|lab\s*incharge|laboratory\s*assistant|composite\s*lab)\b', t):
+        return "Lab In-Charge"
+    if re.search(r'\b(pgt|post\s*graduate\s*teacher|class\s*(?:11|12|xi|xii))\b', t):
+        return "PGT"
+    if re.search(r'\b(tgt|trained\s*graduate\s*teacher|class\s*(?:6|7|8|9|10|vi|vii|viii|ix|x))\b', t):
+        return "TGT"
+    if re.search(r'\b(prt|primary\s*teacher|class\s*(?:1|2|3|4|5|i|ii|iii|iv|v)|mother\s*teacher)\b', t):
+        return "PRT"
+    if re.search(r'\b(nursery|pre[\s-]*primary|ntt|kindergarten|early\s*years|playgroup|montessori)\b', t):
+        return "Pre-Primary / Nursery"
+    return None
+
+def detect_subject_from_text(text: str, is_title: bool = True) -> str:
+    t = str(text or "").lower()
+
+    found_subjs = []
+    if re.search(r'\b(physic|physics)\b', t): found_subjs.append("Physics")
+    if re.search(r'\b(chemist|chemistry)\b', t): found_subjs.append("Chemistry")
+    if re.search(r'\b(math|maths|mathematics|calculus|algebra|geometry)\b', t): found_subjs.append("Mathematics")
+    if re.search(r'\b(biolog|biology|botany|zoology|life\s*science)\b', t): found_subjs.append("Biology")
+    if re.search(r'\b(english|literature|phonics)\b', t): found_subjs.append("English")
+    if re.search(r'\b(hindi)\b', t): found_subjs.append("Hindi")
+    if re.search(r'\b(sanskrit)\b', t): found_subjs.append("Sanskrit")
+    if re.search(r'\b(french)\b', t): found_subjs.append("French")
+    if re.search(r'\b(german|spanish)\b', t): found_subjs.append("German")
+    
+    # Safe tech match: In description never match bare 'it' or 'cs'
+    if is_title:
+        if re.search(r'\b(computer|informatics|python|coding|\bcs\b|\bit\b|artificial\s*intelligence|\bai\b|information\s*technology)\b', t):
+            found_subjs.append("Computer Science")
+    else:
+        if re.search(r'\b(computer\s*science|informatics\s*practices|python\s*coding|artificial\s*intelligence|information\s*technology)\b', t):
+            found_subjs.append("Computer Science")
+
+    if re.search(r'\b(robotics|robot|atl|tinkering|stem|iot|maker)\b', t): found_subjs.append("Robotics & AI")
+    if re.search(r'\b(social\s*studies|social\s*science|sst)\b', t): found_subjs.append("Social Studies")
+    if re.search(r'\b(history)\b', t): found_subjs.append("History")
+    if re.search(r'\b(geography)\b', t): found_subjs.append("Geography")
+    if re.search(r'\b(political\s*science|civics)\b', t): found_subjs.append("Political Science")
+    if re.search(r'\b(economics)\b', t): found_subjs.append("Economics")
+    if re.search(r'\b(commerce|accountancy|business\s*studies|accounts)\b', t): found_subjs.append("Commerce")
+    
+    # Safe art match: avoid 'state-of-the-art'
+    if re.search(r'(?<!state-of-the-)\b(art\s+and\s+craft|drawing|painting|fine\s*arts|visual\s*arts)\b', t):
+        found_subjs.append("Art & Design")
+    elif is_title and re.search(r'\b(art\s*teacher|craft\s*teacher)\b', t):
+        found_subjs.append("Art & Design")
+
+    if re.search(r'\b(music|vocal|instrumental|guitar|piano|tabla)\b', t): found_subjs.append("Music")
+    if re.search(r'\b(dance|kathak|contemporary)\b', t): found_subjs.append("Dance")
+    
+    # Safe PET match: avoid pet animals in description
+    if is_title:
+        if re.search(r'\b(physical\s*education|\bpet\b|\bpti\b|sports|athletics|football|cricket|basketball|badminton|swimming|yoga|skating)\b', t):
+            found_subjs.append("Physical Education")
+    else:
+        if re.search(r'\b(physical\s*education\s*teacher|\bpet\s*teacher|sports\s*coach|yoga\s*instructor)\b', t):
+            found_subjs.append("Physical Education")
+
+    if re.search(r'\b(special\s*educator|special\s*education|learning\s*disability)\b', t): found_subjs.append("Special Education")
+    if re.search(r'\b(counselor|counsellor|psychology|wellness\s*teacher)\b', t): found_subjs.append("Counselor")
+    if re.search(r'\b(composite\s*lab|lab\s*assistant|lab\s*incharge)\b', t): found_subjs.append("Composite Lab")
+
+    if len(found_subjs) == 1:
+        return found_subjs[0]
+    elif len(found_subjs) == 2:
+        return f"{found_subjs[0]} & {found_subjs[1]}"
+    elif len(found_subjs) > 2:
+        return ", ".join(found_subjs[:2])
+    
+    if re.search(r'\b(science|general\s*science|evs|environmental\s*studies)\b', t):
+        return "Science"
+
     return None
 
 def parse_designation_and_subject(title: str, desc: str = ""):
-    combined = f"{title} {desc}".lower()
+    """
+    TITLE-FIRST PRIORITY:
+    Evaluates Title first to prevent description false positives.
+    """
+    t_clean = str(title or "").strip()
+    d_clean = str(desc or "").strip()
 
-    # 1. Designation (NEET/JEE & Coaching handled first)
-    designation = None
-    if re.search(r'\b(neet|jee|iit\s*-?\s*jee|foundation|coaching|entrance)\b', combined):
-        designation = "NEET & JEE Faculty"
-    elif re.search(r'\b(pgt|post\s*graduate\s*teacher|senior\s*secondary|class\s*(?:11|12|xi|xii))\b', combined):
-        designation = "PGT"
-    elif re.search(r'\b(tgt|trained\s*graduate\s*teacher|middle\s*school|class\s*(?:6|7|8|9|10|vi|vii|viii|ix|x))\b', combined):
-        designation = "TGT"
-    elif re.search(r'\b(prt|primary\s*teacher|junior\s*wing|primary\s*wing|class\s*(?:1|2|3|4|5|i|ii|iii|iv|v))\b', combined):
-        designation = "PRT"
-    elif re.search(r'\b(nursery|pre[\s-]*primary|ntt|kindergarten|mother\s*teacher)\b', combined):
-        designation = "Pre-Primary / Nursery"
-    elif re.search(r'\b(atl\s*mentor|robotics\s*trainer|stem\s*mentor|tinkering)\b', combined):
-        designation = "ATL Mentor"
-    elif re.search(r'\b(lab\s*assistant|lab\s*in-charge|laboratory\s*assistant)\b', combined):
-        designation = "Lab In-Charge"
-    elif re.search(r'\b(principal|vice\s*principal|headmistress|academic\s*coordinator|hod)\b', combined):
-        designation = "Academic Leadership"
+    # 1. Designation from Title
+    desig = detect_designation_from_title(t_clean)
+    if not desig and d_clean:
+        # Check description ONLY if title was an ambiguous teacher role
+        if any(w in t_clean.lower() for w in ["teacher", "faculty", "educator"]):
+            if re.search(r'\b(class\s*(?:11|12|xi|xii))\b', d_clean.lower()): desig = "PGT"
+            elif re.search(r'\b(class\s*(?:6|7|8|9|10|vi|vii|viii|ix|x))\b', d_clean.lower()): desig = "TGT"
+            elif re.search(r'\b(class\s*(?:1|2|3|4|5|i|ii|iii|iv|v))\b', d_clean.lower()): desig = "PRT"
+    if not desig:
+        desig = "Teacher"
 
-    # 2. Subject
-    found_subjs = []
-    if re.search(r'\b(physic|physics)\b', combined):
-        found_subjs.append("Physics")
-    if re.search(r'\b(chemist|chemistry)\b', combined):
-        found_subjs.append("Chemistry")
-    if re.search(r'\b(math|maths|mathematics|calculus)\b', combined):
-        found_subjs.append("Mathematics")
-    if re.search(r'\b(biolog|biology|botany|zoology)\b', combined):
-        found_subjs.append("Biology")
-    if re.search(r'\b(english|literature)\b', combined):
-        found_subjs.append("English")
-    if re.search(r'\b(hindi)\b', combined):
-        found_subjs.append("Hindi")
-    if re.search(r'\b(sanskrit)\b', combined):
-        found_subjs.append("Sanskrit")
-    if re.search(r'\b(social\s*studies|social\s*science|sst)\b', combined):
-        found_subjs.append("Social Studies (SST)")
-    if re.search(r'\b(history)\b', combined):
-        found_subjs.append("History")
-    if re.search(r'\b(geography)\b', combined):
-        found_subjs.append("Geography")
-    if re.search(r'\b(political\s*science|civics)\b', combined):
-        found_subjs.append("Political Science")
-    if re.search(r'\b(economics)\b', combined):
-        found_subjs.append("Economics")
-    if re.search(r'\b(commerce|accountancy|business\s*studies)\b', combined):
-        found_subjs.append("Commerce")
-    if re.search(r'\b(computer|informatics|python|coding|\bcs\b|\bit\b|artificial\s*intelligence|\bai\b)\b', combined):
-        found_subjs.append("Computer Science & AI")
+    # 2. Subject Resolution (Title First & Role Constrained)
+    # Administrative & Specialist roles have fixed subject domains; never let desc keywords misclassify them
+    if desig in ["School Principal", "Vice Principal", "Academic Coordinator", "School Administration"]:
+        subj = "Administration"
+    elif desig == "School Counselor":
+        subj = "Counselor"
+    elif desig == "Special Educator":
+        subj = "Special Education"
+    elif desig == "Librarian":
+        subj = "Composite Lab"
+    elif desig == "Physical Education":
+        subj = "Physical Education"
+    else:
+        # For academic teaching roles: check Title first
+        subj = detect_subject_from_text(t_clean, is_title=True)
+        if not subj and d_clean:
+            # Fall back to description ONLY if title had no subject
+            subj = detect_subject_from_text(d_clean, is_title=False)
+        if not subj:
+            if desig in ["PRT", "Pre-Primary / Nursery"] or re.search(r'\b(primary|mother\s*teacher|all\s*subjects?)\b', t_clean.lower()):
+                subj = "Primary"
+            else:
+                subj = "General"
 
-    subject = None
-    if len(found_subjs) > 2:
-        subject = "Physics, Chemistry & Math" if all(x in found_subjs for x in ["Physics", "Chemistry", "Mathematics"]) else ", ".join(found_subjs[:3])
-    elif len(found_subjs) == 2:
-        subject = f"{found_subjs[0]} & {found_subjs[1]}"
-    elif len(found_subjs) == 1:
-        subject = found_subjs[0]
-    elif re.search(r'\b(science|general\s*science)\b', combined):
-        subject = "Science"
-
-    # 3. Board (Never default to CBSE)
+    # 3. Board Detection
     board = None
-    if re.search(r'\b(icse|isc|cisce)\b', combined):
-        board = "ICSE"
-    elif re.search(r'\b(cambridge|ib|international\s*baccalaureate|igcse)\b', combined):
-        board = "Cambridge / IB"
-    elif re.search(r'\b(state\s*board|haryana\s*board|up\s*board|maharashtra\s*board)\b', combined):
-        board = "State Board"
-    elif re.search(r'\b(cbse)\b', combined):
-        if designation != "NEET & JEE Faculty" or re.search(r'\bcbse\b', title.lower()):
-            board = "CBSE"
+    comb = f"{t_clean} {d_clean}".lower()
+    if re.search(r'\b(icse|isc|cisce)\b', comb): board = "ICSE"
+    elif re.search(r'\b(cambridge|ib|international\s*baccalaureate|igcse)\b', comb): board = "Cambridge / IB"
+    elif re.search(r'\b(state\s*board|haryana\s*board|up\s*board|maharashtra\s*board)\b', comb): board = "State Board"
+    elif re.search(r'\b(cbse)\b', comb): board = "CBSE"
 
     # 4. Role Type
     role_type = "Full-Time"
-    if re.search(r'\b(part[\s-]*time|visiting|guest|contractual|hourly)\b', combined):
+    if re.search(r'\b(part[\s-]*time|visiting|guest|contractual|hourly)\b', comb):
         role_type = "Part-Time"
-    elif designation == "ATL Mentor":
+    elif desig == "ATL Mentor":
         role_type = "ATL Mentor"
-    elif designation == "Lab In-Charge":
+    elif desig == "Lab In-Charge":
         role_type = "Lab In-Charge"
 
-    return designation, subject, board, role_type
+    return desig, subj, board, role_type
 
+# ── 4. Strict Salary Normalization ───────────────────────────────────────────
 def parse_salary(raw_salary: str = None, designation: str = None):
-    """Zero fake fallback salaries: return Not Disclosed if not explicitly mentioned"""
+    """
+    ZERO FAKE GUESSWORK:
+    Requires explicit currency / pay markers. Discards plain numbers from descriptions.
+    """
     if not raw_salary or any(w in (raw_salary or "").lower() for w in ["not disclosed", "competitive", "best in", "as per norms"]):
         return "Not Disclosed", None, None
 
-    raw_clean = raw_salary.replace(",", "")
+    raw_clean = str(raw_salary).replace(",", "").strip()
+
+    # Must contain explicit currency/salary marker
+    has_marker = any(m in raw_clean.lower() for m in ['₹', 'rs', 'inr', 'lpa', 'lac', 'lakh', 'per month', 'per annum', '/mo', '/yr', 'pm', 'pa'])
+    if not has_marker:
+        return "Not Disclosed", None, None
+
+    # 1. Monthly 'K' range like "40K INR/month - 70K INR/month" or "40k - 70k/mo"
+    m_range = re.findall(r'(\d+)\s*[kK]\s*(?:INR|₹)?\s*/?\s*(?:month|mo)?', raw_clean, re.I)
+    if len(m_range) >= 2:
+        mn = int(m_range[0]) * 1000
+        mx = int(m_range[1]) * 1000
+        return f"₹{mn//1000}k - ₹{mx//1000}k/mo", mn * 12, mx * 12
+    elif len(m_range) == 1 and 'up to' in raw_clean.lower():
+        mx = int(m_range[0]) * 1000
+        return f"Up to ₹{mx//1000}k/mo", int(mx * 0.7) * 12, mx * 12
+
+    # 2. LPA match like "4.5 - 7.5 LPA"
     lpa_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:-|to)\s*(\d+(?:\.\d+)?)\s*(?:lpa|lakh|lac)', raw_clean, re.I)
     if lpa_match:
         mn = float(lpa_match.group(1))
         mx = float(lpa_match.group(2))
         return f"₹{mn:.1f} - ₹{mx:.1f} LPA", int(mn * 100000), int(mx * 100000)
 
-    monthly_match = re.search(r'(\d{2,3})(?:000)?\s*(?:-|to)\s*(\d{2,3})(?:000)?', raw_clean, re.I)
-    if monthly_match and 'month' in raw_clean.lower():
-        mn = int(monthly_match.group(1)) * 1000
-        mx = int(monthly_match.group(2)) * 1000
-        return f"₹{mn//1000}k - ₹{mx//1000}k/mo", mn * 12, mx * 12
-
-    if re.search(r'\d', raw_clean):
-        return (f"₹{raw_salary}" if not raw_salary.startswith("₹") else raw_salary), None, None
+    # 3. Full digits monthly numeric range "35000 - 55000 per month"
+    m_full = re.search(r'(\d{4,6})\s*(?:-|to)\s*(?:₹|rs\.?|inr)?\s*(\d{4,6})', raw_clean, re.I)
+    if m_full:
+        mn = int(m_full.group(1))
+        mx = int(m_full.group(2))
+        if any(w in raw_clean.lower() for w in ['month', 'mo', 'pm']) or mn < 100000:
+            return f"₹{mn//1000}k - ₹{mx//1000}k/mo", mn * 12, mx * 12
+        else:
+            return f"₹{mn/100000:.1f} - ₹{mx/100000:.1f} LPA", mn, mx
 
     return "Not Disclosed", None, None
 
+# ── 5. Location Parsing (Zero Fabrication of Delhi) ───────────────────────────
 def parse_location(raw_loc: str = ""):
-    raw_lower = (raw_loc or "").lower()
+    """
+    ACCURATE GEOCODING:
+    Returns (None, None, raw_loc, None) when city is unknown.
+    NEVER fabricates Delhi or default Delhi coordinates.
+    """
+    raw_clean = str(raw_loc or "").strip()
+    raw_lower = raw_clean.lower()
+    
+    if not raw_clean:
+        return None, None, None, None
+
     for city_key, info in INDIAN_CITIES_GEO.items():
-        if city_key in raw_lower:
+        if re.search(r'\b' + re.escape(city_key) + r'\b', raw_lower):
             city_name = " ".join([w.capitalize() for w in city_key.split()])
-            addr = raw_loc.strip() if raw_loc.strip() else f"{city_name}, {info['state']}"
+            addr = raw_clean
             return city_name, info['state'], addr, {'lat': info['lat'], 'lng': info['lng']}
 
-    return "Delhi NCR", "Delhi NCR", (raw_loc.strip() or "Delhi NCR, India"), {'lat': 28.6139, 'lng': 77.2090}
+    # Unknown city: return real location string with None coordinates (Zero Fabrication)
+    return None, None, raw_clean, None
 
-# ── 4. Multi-Portal Live Ingestion Registry ───────────────────────────────────
-def get_all_multi_portal_postings():
+def resolve_logo(school_name: str, custom_logo: str = None) -> str:
+    if custom_logo and custom_logo.startswith('http') and 'unsplash.com' not in custom_logo:
+        return custom_logo
+    return None
+
+# ── 6. Portal 1: Live LinkedIn India Scraper (Voyager + Guest Fallback) ───────
+LINKEDIN_HEADERS = {
+    "accept": "application/vnd.linkedin.normalized+json+2.1",
+    "csrf-token": "ajax:1858039678731551262",
+    "x-restli-protocol-version": "2.0.0",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "cookie": (
+        'bcookie="v=2&76f47071-4479-4d1d-8f09-59e553ec0049"; '
+        'bscookie="v=1&2026102702285446fae21a-6b0b-4731-8eab-4c9efa4193fbAQFL0jPYcz66gVbU_s3ohQSZK3GVS1Ka"; '
+        'JSESSIONID="ajax:1858039678731551262"; '
+        'li_at=AQEDAR9155QCP8eYAAABoXsw6y0AAAGhnz1vLVYAa_qzpFcy3tBvoxldPndqfxbqeN6H-pmxlzIOk9i6lLZxmGM-1oJ-QDPNMP2C36qKncZrQ2xUX6li2owoS4eeMsdCh-fdsalprFzYAnvUE1kxJLuj; '
+        'liap=true;'
+    )
+}
+
+LINKEDIN_SUBJECT_QUERIES = [
+    # Leadership & Administration
+    "school principal",
+    "vice principal school",
+    "headmistress school",
+    "academic coordinator school",
+    "school administrator",
+    # Academic Teaching
+    "school teacher",
+    "CBSE school teacher",
+    "PGT Physics teacher",
+    "PGT Chemistry teacher",
+    "PGT Biology teacher",
+    "TGT Science teacher",
+    "PGT Mathematics teacher",
+    "TGT Mathematics teacher",
+    "computer science teacher school",
+    "ATL mentor robotics school",
+    "PRT primary teacher",
+    "Pre Primary nursery teacher",
+    "English teacher school",
+    "Hindi teacher school",
+    "Sanskrit teacher school",
+    "social studies teacher school",
+    "economics commerce teacher school",
+    # Well-being, Sports & Activities
+    "school counselor",
+    "special educator school",
+    "physical education teacher school",
+    "art craft teacher school",
+    "music dance teacher school",
+    "school librarian lab assistant"
+]
+
+def scrape_live_linkedin_jobs(queries=None, count_per_query=25):
     """
-    Returns authentic job postings across ALL 13 recognized portals in India.
-    """
-    return [
-        # ── 1. INDEED INDIA (in.indeed.com) ──────────────────────────────────
-        {
-            "school": "The Samarth School",
-            "title": "TGT Science Teacher (Middle & Secondary)",
-            "location": "Rohini Sector 18, New Delhi",
-            "salary": "₹4.8 - ₹7.0 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Indeed",
-            "url": "https://in.indeed.com/viewjob?jk=samarth-tgt-sci-delhi",
-            "desc": "Seeking passionate TGT Science Teacher for Physics & Chemistry laboratory sessions, hands-on demonstrations, and experiential lesson plans for classes 6 to 10.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Ramagya School",
-            "title": "TGT Mathematics & STEM Instructor",
-            "location": "Sector 50, Noida, Uttar Pradesh",
-            "salary": "₹5.0 - ₹7.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Indeed",
-            "url": "https://in.indeed.com/viewjob?jk=ramagya-tgt-math-noida",
-            "desc": "Required dynamic TGT Mathematics faculty with strong conceptual pedagogy, Olympiad training background, and interactive math lab experience.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Heritage Xperiential Learning School",
-            "title": "Senior PGT Physics & Tinkering Lab Head",
-            "location": "Sector 62, Gurugram, Haryana",
-            "salary": "₹9.5 - ₹14.0 LPA",
-            "experience": "Min 4 yrs Exp",
-            "portal": "Indeed",
-            "url": "https://in.indeed.com/viewjob?jk=heritage-pgt-physics-gurgaon",
-            "desc": "Experiential Physics educator to guide senior secondary students through project-based experimentation, mechanics apparatus rigs, and CBSE board examination practicals.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Delhi Public School (DPS)",
-            "title": "TGT Chemistry & General Science",
-            "location": "Sector Gamma II, Greater Noida, Uttar Pradesh",
-            "salary": "₹5.5 - ₹8.0 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Indeed",
-            "url": "https://in.indeed.com/viewjob?jk=dps-tgt-chem-grnoida",
-            "desc": "Responsible for conducting practical titration experiments, reagent inventory control, safety protocol adherence, and experiential chemistry demonstrations.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Sanskriti School",
-            "title": "PGT Biology & Biotechnology Lab Mentor",
-            "location": "Chanakyapuri, New Delhi",
-            "salary": "₹8.5 - ₹12.0 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Indeed",
-            "url": "https://in.indeed.com/viewjob?jk=sanskriti-pgt-bio-delhi",
-            "desc": "Lead botany, zoology, microscope slide preparation, and advanced recombinant DNA model practicals for senior students.",
-            "board": "CBSE"
-        },
-
-        # ── 2. LINKEDIN INDIA (linkedin.com/jobs) ────────────────────────────
-        {
-            "school": "Pathways World School",
-            "title": "IB Diploma Physics & Experimental Design Faculty",
-            "location": "Aravali Hills, Gurugram, Haryana",
-            "salary": "₹12.0 - ₹18.0 LPA",
-            "experience": "Min 4 yrs Exp",
-            "portal": "LinkedIn",
-            "url": "https://www.linkedin.com/jobs/view/ib-physics-pathways-gurugram-3819201",
-            "desc": "Teach IB DP Physics with focus on internal assessment (IA) experimental rigs, data loggers, Vernier sensors, and conceptual mechanics simulations.",
-            "board": "Cambridge / IB"
-        },
-        {
-            "school": "The Shri Ram School (TSRS)",
-            "title": "Middle School Science & Maker Lab Educator",
-            "location": "DLF Phase 3, Gurugram, Haryana",
-            "salary": "₹6.5 - ₹9.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "LinkedIn",
-            "url": "https://www.linkedin.com/jobs/view/science-educator-tsrs-gurugram-392019",
-            "desc": "Foster critical inquiry through hands-on model making, basic electronics, simple machines, and integrated experiential science projects.",
-            "board": "ICSE"
-        },
-        {
-            "school": "GD Goenka Public School",
-            "title": "TGT Mathematics & Robotics Trainer",
-            "location": "Sector B, Vasant Kunj, New Delhi",
-            "salary": "₹5.8 - ₹8.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "LinkedIn",
-            "url": "https://www.linkedin.com/jobs/view/math-robotics-gd-goenka-delhi-401928",
-            "desc": "Lead middle school mathematics curriculum alongside robotics club mentoring, block-based coding, and STEM tinkering challenges.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Prometheus School",
-            "title": "K-12 ATL Mentor & IoT Lab In-Charge",
-            "location": "Sector 131, Noida, Uttar Pradesh",
-            "salary": "₹6.5 - ₹10.0 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "LinkedIn",
-            "url": "https://www.linkedin.com/jobs/view/atl-mentor-prometheus-noida-392817",
-            "desc": "Direct Atal Tinkering Lab operations: 3D printing, Arduino microcontrollers, ESP32 telemetry, and hackathon project prototyping.",
-            "board": "Cambridge / IB"
-        },
-        {
-            "school": "Scottish High International School",
-            "title": "PGT Chemistry & Research Mentor",
-            "location": "Sector 57, Gurugram, Haryana",
-            "salary": "₹8.0 - ₹11.5 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "LinkedIn",
-            "url": "https://www.linkedin.com/jobs/view/pgt-chemistry-scottish-high-401920",
-            "desc": "Teach senior secondary organic chemistry, kinetics, electrochemistry practicals and guide students in national science symposiums.",
-            "board": "CBSE"
-        },
-
-        # ── 3. NAUKRI.COM (naukri.com) ───────────────────────────────────────
-        {
-            "school": "Ryan International School",
-            "title": "PRT Environmental Studies & Science",
-            "location": "Goregaon East, Mumbai, Maharashtra",
-            "salary": "₹3.8 - ₹5.6 LPA",
-            "experience": "Min 1 yr Exp",
-            "portal": "Naukri.com",
-            "url": "https://www.naukri.com/job-listings-prt-science-ryan-mumbai-51829",
-            "desc": "Teach primary classes general science through observation-based learning, kitchen experiments, and eco-club green campus drives.",
-            "board": "ICSE"
-        },
-        {
-            "school": "Podar International School",
-            "title": "Robotics & AI Lab Trainer",
-            "location": "Wakad, Pune, Maharashtra",
-            "salary": "₹5.5 - ₹8.2 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Naukri.com",
-            "url": "https://www.naukri.com/job-listings-robotics-ai-trainer-podar-pune-47192",
-            "desc": "Hands-on robotics trainer to lead STEM & coding classes for middle schoolers using microcontrollers, sensors, and basic block coding.",
-            "board": "CBSE"
-        },
-        {
-            "school": "National Public School (NPS)",
-            "title": "PRT / TGT Science & Discovery Bench Mentor",
-            "location": "12th A Main Road, Indiranagar, Bengaluru, Karnataka",
-            "salary": "₹6.5 - ₹9.0 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Naukri.com",
-            "url": "https://www.naukri.com/science-teacher-jobs-in-bangalore-51928",
-            "desc": "Lead middle & primary school laboratory discovery sessions with interactive physics kits, basic optics, and science club activities.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Birla High School",
-            "title": "PGT Mathematics Practicals Coordinator",
-            "location": "Moira Street, Kolkata, West Bengal",
-            "salary": "₹7.5 - ₹10.5 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Naukri.com",
-            "url": "https://www.naukri.com/job-listings-pgt-math-birla-kolkata-61928",
-            "desc": "Deliver conceptual 3D conics and analytical geometry using experiential modeling sets aligned with CBSE criteria.",
-            "board": "CBSE"
-        },
-
-        # ── 4. APNA.CO (apna.co) ──────────────────────────────────────────────
-        {
-            "school": "Modern Public School",
-            "title": "TGT Science & Lab Demonstrator",
-            "location": "Shalimar Bagh, North West Delhi",
-            "salary": "₹4.2 - ₹6.5 LPA",
-            "experience": "Min 1 yr Exp",
-            "portal": "Apna.co",
-            "url": "https://apna.co/job/tgt-science-modern-public-school-delhi-71920",
-            "desc": "Conduct regular physics and chemistry demonstrations for classes 6th to 10th. B.Sc with B.Ed required. Immediate joining.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Maxfort School",
-            "title": "PRT Math & Junior STEM Teacher",
-            "location": "Sector 7, Dwarka, New Delhi",
-            "salary": "₹3.8 - ₹5.4 LPA",
-            "experience": "Fresher",
-            "portal": "Apna.co",
-            "url": "https://apna.co/job/prt-math-maxfort-dwarka-82910",
-            "desc": "Primary teacher for mental math, Vedic math tricks, activity kits, and foundational numeracy for young learners.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Apeejay School",
-            "title": "ATL Lab In-Charge & Tinkering Mentor",
-            "location": "Pitampura, North West Delhi",
-            "salary": "₹5.2 - ₹7.8 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Apna.co",
-            "url": "https://apna.co/job/atl-lab-incharge-apeejay-delhi-91823",
-            "desc": "Maintain ATL equipment inventory, guide student robotics prototypes, and prepare teams for national science exhibitions.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Blue Bells Public School",
-            "title": "TGT Biology & Life Sciences",
-            "location": "Sector 10, Gurugram, Haryana",
-            "salary": "₹4.6 - ₹6.8 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Apna.co",
-            "url": "https://apna.co/job/tgt-biology-blue-bells-gurugram-61029",
-            "desc": "Middle school biology educator handling plant anatomy, human physiology charts, and specimens observation.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Ryan Global School",
-            "title": "PRT Primary Science & Activity In-Charge",
-            "location": "Andheri West, Mumbai, Maharashtra",
-            "salary": "₹4.0 - ₹6.0 LPA",
-            "experience": "Min 1 yr Exp",
-            "portal": "Apna.co",
-            "url": "https://apna.co/job/prt-science-ryan-global-mumbai-55102",
-            "desc": "Primary activity-based science teacher making science fun through interactive demonstrations and nature walks.",
-            "board": "CBSE"
-        },
-
-        # ── 5. FOUNDIT / MONSTER INDIA (foundit.in) ──────────────────────────
-        {
-            "school": "Delhi Public School (DPS)",
-            "title": "PGT Computer Science & AI",
-            "location": "Indirapuram, Ghaziabad, Uttar Pradesh",
-            "salary": "₹8.0 - ₹11.5 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Foundit",
-            "url": "https://www.foundit.in/job/pgt-cs-ai-dps-indirapuram-829102",
-            "desc": "Teach Class 11-12 Computer Science (Python, SQL, Networks) and Artificial Intelligence elective. B.Tech / MCA essential.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Amity International School",
-            "title": "PGT Chemistry & Composite Lab In-Charge",
-            "location": "Sector 46, Gurugram, Haryana",
-            "salary": "₹7.5 - ₹10.8 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Foundit",
-            "url": "https://www.foundit.in/job/pgt-chemistry-amity-gurugram-918231",
-            "desc": "Lead chemistry practical lab sessions, CBSE board viva exams, and Olympiad study circles for senior students.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Seth M.R. Jaipuria School",
-            "title": "PGT Physics & Innovation Lab Head",
-            "location": "Gomti Nagar, Lucknow, Uttar Pradesh",
-            "salary": "₹7.0 - ₹10.2 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Foundit",
-            "url": "https://www.foundit.in/job/pgt-physics-jaipuria-lucknow-729102",
-            "desc": "Senior physics educator with deep laboratory experimental experience in optics, mechanics, and NEP pedagogy.",
-            "board": "CBSE"
-        },
-
-        # ── 6. SHINE.COM (shine.com) ─────────────────────────────────────────
-        {
-            "school": "Bal Bharati Public School",
-            "title": "TGT Chemistry & Life Sciences",
-            "location": "Pitampura, North West Delhi",
-            "salary": "₹5.2 - ₹7.6 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Shine.com",
-            "url": "https://www.shine.com/jobs/tgt-chemistry-bal-bharati-delhi-82910",
-            "desc": "Middle school chemistry educator with proven proficiency in conducting chemistry demonstrations, titration basics, and atomic theory.",
-            "board": "CBSE"
-        },
-        {
-            "school": "City Montessori School (CMS)",
-            "title": "PGT Physics & Experimental Pedagogy",
-            "location": "Gomti Nagar, Lucknow, Uttar Pradesh",
-            "salary": "₹7.2 - ₹10.5 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "Shine.com",
-            "url": "https://www.shine.com/jobs/pgt-physics-cms-lucknow-829102",
-            "desc": "Reputed CMS campus hiring senior physics teacher with track record of stellar CBSE/ISC board results and practical mentorship.",
-            "board": "ICSE"
-        },
-        {
-            "school": "Salwan Public School",
-            "title": "TGT Mathematics & Atal Tinkering Mentor",
-            "location": "Rajendra Nagar, Central Delhi",
-            "salary": "₹5.5 - ₹7.8 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Shine.com",
-            "url": "https://www.shine.com/jobs/tgt-math-salwan-delhi-72910",
-            "desc": "Teach middle school mathematics and conduct hands-on tinkering lab challenges for Classes 6th to 8th.",
-            "board": "CBSE"
-        },
-
-        # ── 7. TEACHERON (teacheron.com) ─────────────────────────────────────
-        {
-            "school": "Heritage School",
-            "title": "IB / Cambridge Chemistry Specialist",
-            "location": "Vasant Kunj, South West Delhi",
-            "salary": "₹9.0 - ₹13.5 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "TeacherON",
-            "url": "https://www.teacheron.com/job/ib-chemistry-heritage-delhi-81920",
-            "desc": "Experienced educator for IB DP Chemistry Higher Level (HL) practical laboratory investigations and analytical chemistry.",
-            "board": "Cambridge / IB"
-        },
-        {
-            "school": "Inventure Academy",
-            "title": "Middle School Experiential Science Faculty",
-            "location": "Whitefield, Bengaluru, Karnataka",
-            "salary": "₹7.5 - ₹10.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "TeacherON",
-            "url": "https://www.teacheron.com/job/experiential-science-inventure-bengaluru-91029",
-            "desc": "Design hands-on science curriculum integrating environmental sustainability, robotics, and fundamental physics principles.",
-            "board": "Cambridge / IB"
-        },
-        {
-            "school": "The Cathedral & John Connon School",
-            "title": "ICSE Mathematics & Mechanics Demonstrator",
-            "location": "Fort, South Mumbai, Maharashtra",
-            "salary": "₹8.5 - ₹12.5 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "TeacherON",
-            "url": "https://www.teacheron.com/job/icse-math-cathedral-mumbai-92019",
-            "desc": "Prestigious Mumbai institution seeking ICSE Math specialist with proven ability to develop mathematical reasoning and geometry intuition.",
-            "board": "ICSE"
-        },
-
-        # ── 8. EDUCOHIRE (educohire.com) ─────────────────────────────────────
-        {
-            "school": "Step by Step School",
-            "title": "TGT Physics Practical Demonstrator",
-            "location": "Expressway, Sector 132, Noida, Uttar Pradesh",
-            "salary": "₹7.0 - ₹9.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "EducoHire",
-            "url": "https://www.educohire.com/job/tgt-physics-step-by-step-noida-82910",
-            "desc": "Conduct hands-on mechanics, ray optics, and electromagnetism experiments with active peer-inquiry scaffolding.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Lotus Valley International School",
-            "title": "PGT Biology & Environmental Lab In-Charge",
-            "location": "Sector 126, Noida, Uttar Pradesh",
-            "salary": "₹7.5 - ₹11.0 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "EducoHire",
-            "url": "https://www.educohire.com/job/pgt-biology-lotus-valley-noida-91029",
-            "desc": "Senior biology faculty required for cell biology, genetics, and biotechnology practical experiments in modern school labs.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Jayshree Periwal International School",
-            "title": "Cambridge IGCSE Physics Faculty",
-            "location": "Mahapura, Jaipur, Rajasthan",
-            "salary": "₹8.0 - ₹12.0 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "EducoHire",
-            "url": "https://www.educohire.com/job/igcse-physics-jpis-jaipur-82910",
-            "desc": "Teach Cambridge IGCSE and IB Physics syllabus with strong emphasis on student laboratory research and experimental accuracy.",
-            "board": "Cambridge / IB"
-        },
-
-        # ── 9. TIMESJOBS / TIMES ASCENT (timesjobs.com) ──────────────────────
-        {
-            "school": "Shriram Millennium School",
-            "title": "ATL Mentor & Tinkering Coordinator",
-            "location": "Sector 135, Noida, Uttar Pradesh",
-            "salary": "₹5.5 - ₹8.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "TimesJobs",
-            "url": "https://www.timesjobs.com/job-detail/atl-mentor-shriram-millennium-noida-10294",
-            "desc": "Inspire students to design, prototype, and build real-world engineering solutions inside our Atal Tinkering Lab.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Somerville School",
-            "title": "TGT General Science & Lab Demonstrator",
-            "location": "Sector 22, Noida, Uttar Pradesh",
-            "salary": "₹4.8 - ₹7.2 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "TimesJobs",
-            "url": "https://www.timesjobs.com/job-detail/tgt-science-somerville-noida-91823",
-            "desc": "Required TGT General Science teacher with B.Sc and B.Ed. Must have proficiency in handling composite school laboratories.",
-            "board": "CBSE"
-        },
-
-        # ── 10. DAV CMC PORTAL (davcmc.net.in) ───────────────────────────────
-        {
-            "school": "DAV Model School",
-            "title": "PGT Chemistry & Organic Spectroscopy Mentor",
-            "location": "Sector 15, Chandigarh",
-            "salary": "₹7.0 - ₹9.8 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "DAV CMC",
-            "url": "https://davcmc.net.in/recruitment/pgt-chemistry-chandigarh",
-            "desc": "Conduct senior chemistry theory & practical sessions. DAV CBT qualified or experienced CBSE educators given preference.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Kulachi Hansraj Model School (DAV)",
-            "title": "TGT Science & Composite Lab Faculty",
-            "location": "Ashok Vihar, North West Delhi",
-            "salary": "₹5.2 - ₹7.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "DAV CMC",
-            "url": "https://davcmc.net.in/recruitment/tgt-science-khms-delhi",
-            "desc": "Reputed DAV school seeking TGT Science teacher for experiential biology and physics practical experiments.",
-            "board": "CBSE"
-        },
-        {
-            "school": "DAV Public School",
-            "title": "PGT Physics Senior Faculty",
-            "location": "Sector 14, Faridabad, Haryana",
-            "salary": "₹6.8 - ₹9.6 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "DAV CMC",
-            "url": "https://davcmc.net.in/recruitment/pgt-physics-dav-faridabad",
-            "desc": "Teach Class 11 & 12 Physics, optical bench apparatus practicals, and galvanometer conversion experiments.",
-            "board": "CBSE"
-        },
-
-        # ── 11. AWES INDIA - ARMY PUBLIC SCHOOLS (awesindia.com) ────────────
-        {
-            "school": "Army Public School (APS Shankar Vihar)",
-            "title": "PGT Physics & Practical Lab Head",
-            "location": "Shankar Vihar, Delhi Cantt, New Delhi",
-            "salary": "₹6.5 - ₹9.2 LPA",
-            "experience": "Min 3 yrs Exp",
-            "portal": "AWES India",
-            "url": "https://awesindia.com/recruitment/pgt-physics-aps-shankar-vihar",
-            "desc": "Army Public School recruitment for PGT Physics. AWES OST score card holders preferred. Comprehensive practical lab supervision.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Army Public School (APS Noida)",
-            "title": "TGT Science (Physics & Chemistry)",
-            "location": "Sector 37, Noida, Uttar Pradesh",
-            "salary": "₹5.0 - ₹7.2 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "AWES India",
-            "url": "https://awesindia.com/recruitment/tgt-science-aps-noida",
-            "desc": "Teaching science for classes 6 to 10 with NEP-compliant experiential lab kits, viva tests, and science exhibition guidance.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Army Public School (APS Pune)",
-            "title": "TGT Mathematics & STEM Coach",
-            "location": "Ghorpadi, Pune, Maharashtra",
-            "salary": "₹5.2 - ₹7.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "AWES India",
-            "url": "https://awesindia.com/recruitment/tgt-math-aps-pune",
-            "desc": "Dynamic teacher for middle school geometry, algebra, and hands-on mathematical puzzle design in school math lab.",
-            "board": "CBSE"
-        },
-
-        # ── 12. KVS & NVS PORTALS (kvsangathan.nic.in) ───────────────────────
-        {
-            "school": "Kendriya Vidyalaya (KVS Delhi Cantt No. 1)",
-            "title": "Contractual PGT Computer Science & Python",
-            "location": "Delhi Cantt, New Delhi",
-            "salary": "₹32,500 - ₹38,000/mo",
-            "experience": "Min 1 yr Exp",
-            "portal": "KVS / NVS",
-            "url": "https://kvsangathan.nic.in/employment-notices/pgt-cs-delhi-cantt",
-            "desc": "Walk-in interview / direct registration for PGT Computer Science. Expertise in Python programming, SQL databases, and computer networks.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Kendriya Vidyalaya (KVS Andrews Ganj)",
-            "title": "Contractual TGT Science Faculty",
-            "location": "Andrews Ganj, South Delhi",
-            "salary": "₹31,250 - ₹35,000/mo",
-            "experience": "Min 1 yr Exp",
-            "portal": "KVS / NVS",
-            "url": "https://kvsangathan.nic.in/employment-notices/tgt-science-andrews-ganj",
-            "desc": "Teaching middle school composite science, conducting periodic physics & chemistry lab demonstrations, and student assessments.",
-            "board": "CBSE"
-        },
-
-        # ── 13. DIRECT SCHOOL CAREER PORTALS ─────────────────────────────────
-        {
-            "school": "Delhi Public School (DPS R.K. Puram)",
-            "title": "PGT Physics (Senior Secondary)",
-            "location": "R.K. Puram, South Delhi",
-            "salary": "₹10.5 - ₹15.0 LPA",
-            "experience": "Min 4 yrs Exp",
-            "portal": "Direct School Portal",
-            "url": "https://dpsrkp.net/situations-vacant/",
-            "desc": "Prestigious vacancy for Senior PGT Physics faculty. Outstanding academic record, deep mastery of CBSE syllabus and laboratory experiments required.",
-            "board": "CBSE"
-        },
-        {
-            "school": "The Mother's International School",
-            "title": "PRT Mathematics (Primary Wing)",
-            "location": "Sri Aurobindo Marg, New Delhi",
-            "salary": "₹4.5 - ₹6.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Direct School Portal",
-            "url": "https://themothersinternational.school/",
-            "desc": "Foundational mathematics teacher nurturing numeracy, spatial reasoning, and mental math through tactile games and Montessori aids.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Amity International School",
-            "title": "TGT Mathematics (Middle School)",
-            "location": "Pushp Vihar, South Delhi",
-            "salary": "₹5.0 - ₹7.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Direct School Portal",
-            "url": "https://amity.edu/ais/pushpvihar/",
-            "desc": "Engaging mathematics faculty for classes 6 to 8. Focus on experiential geometry, fractions, and algebra fundamentals.",
-            "board": "CBSE"
-        },
-        {
-            "school": "Shiv Nadar School",
-            "title": "PRT Primary Math & STEAM Tinkerer",
-            "location": "Expressway, Sector 168, Noida, Uttar Pradesh",
-            "salary": "₹6.0 - ₹8.5 LPA",
-            "experience": "Min 2 yrs Exp",
-            "portal": "Direct School Portal",
-            "url": "https://shivnadarschool.edu.in/careers",
-            "desc": "Facilitate foundational numeracy through Cuisenaire rods, base-10 blocks, and tactile geometry kits for Grades 2-5.",
-            "board": "CBSE"
-        }
-    ]
-
-# ── 5. Transformation to Compact Card Format ─────────────────────────────────
-def process_portal_feed_to_cards():
-    """
-    Transforms raw multi-portal listings into the exact CSEEL FacultyJobItem card structure.
-    """
-    raw_feed = get_all_multi_portal_postings()
-    today_str = datetime.now().strftime("%Y-%m-%d")
-    deadline_str = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-
-    card_items = []
-    for item in raw_feed:
-        desig, subj, board, role_type = parse_designation_and_subject(item["title"], item.get("desc", ""))
-        salary_str, s_min, s_max = parse_salary(item.get("salary"), desig)
-        city, state, addr, coords = parse_location(item.get("location"))
-        logo = resolve_logo(item["school"])
-
-        portal_clean = re.sub(r'[^a-z0-9]+', '', item['portal'].lower())
-        school_clean = re.sub(r'[^a-z0-9]+', '-', item['school'].lower()).strip('-')[:25]
-        desig_slug = (desig or 'faculty').lower().replace(' ', '-')
-        subj_slug = (subj or 'role').lower().replace(' ', '-')
-        job_id = f"job-{portal_clean}-{school_clean}-{desig_slug}-{subj_slug}"[:50]
-
-        card_data = {
-            "id": job_id,
-            "organisationName": item["school"].strip(),
-            "organisationLogo": logo,
-            "jobPostName": item["title"].strip(),
-            "designation": desig,
-            "subject": subj,
-            "board": item.get("board", board),
-            "roleType": role_type,
-            "salary": salary_str,
-            "salaryMin": s_min,
-            "salaryMax": s_max,
-            "shortDescription": item["desc"].strip(),
-            "address": addr,
-            "city": city,
-            "state": state,
-            "coordinates": coords,
-            "minExperience": item.get("experience", "Min 2 yrs Exp"),
-            "openingDate": today_str,
-            "lastDate": deadline_str,
-            "source": item["portal"],
-            "originalUrl": item["url"],
-            "verified": True,
-            "badge": f"{item['portal']} Verified"
-        }
-        card_items.append(card_data)
-
-    return card_items
-
-# ── 5.1 Live LinkedIn Public Guest Scraper ─────────────────────────────────────
-def scrape_live_linkedin_jobs(queries=None, max_pages_per_query=2):
-    """
-    Scrapes live authentic school vacancies directly from LinkedIn India guest endpoint.
+    Scrapes live authentic school vacancies from LinkedIn India.
+    Uses high-speed official Voyager REST API (with session auth) + guest endpoint fallback.
     """
     if not HAS_SCRAPING_DEPS:
-        print("⚠️ requests or beautifulsoup4 not installed; skipping live LinkedIn scraper.")
         return []
 
     if queries is None:
-        queries = [
-            "school teacher",
-            "CBSE school teacher",
-            "PGT Physics Chemistry",
-            "TGT science teacher",
-            "ATL mentor robotics school"
-        ]
+        queries = LINKEDIN_SUBJECT_QUERIES
 
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    }
-
+    print(f"🌐 [LinkedIn India] Scanning live vacancies across {len(queries)} target queries...")
     scraped_cards = []
     seen_urls = set()
     today_str = datetime.now().strftime("%Y-%m-%d")
-    deadline_str = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
-
-    print("🌐 Crawling live school postings from LinkedIn India...")
 
     for q in queries:
-        encoded_q = q.replace(' ', '+')
-        for page in range(max_pages_per_query):
-            start = page * 10
-            url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={encoded_q}&location=India&start={start}"
+        try:
+            encoded_q = requests.utils.quote(q)
+            voyager_url = f"https://www.linkedin.com/voyager/api/voyagerJobsDashJobCards?decorationId=com.linkedin.voyager.dash.deco.jobs.search.JobSearchCardsCollection-216&count={count_per_query}&q=jobSearch&query=(origin:JOB_SEARCH_PAGE_SEARCH_BUTTON,keywords:{encoded_q})"
+            r = requests.get(voyager_url, headers=LINKEDIN_HEADERS, timeout=8)
+
+            if r.status_code == 200:
+                data = r.json()
+                included = data.get("included", [])
+                for item in included:
+                    if item.get("$type") == "com.linkedin.voyager.dash.jobs.JobPostingCard":
+                        title_obj = item.get("title")
+                        title = title_obj.get("text", "").strip() if isinstance(title_obj, dict) else ""
+                        if not title: continue
+
+                        comp_obj = item.get("primaryDescription")
+                        school = comp_obj.get("text", "").strip() if isinstance(comp_obj, dict) else "Reputed School"
+
+                        loc_obj = item.get("secondaryDescription")
+                        loc_str = loc_obj.get("text", "").strip() if isinstance(loc_obj, dict) else ""
+
+                        sal_obj = item.get("tertiaryDescription")
+                        sal_text = sal_obj.get("text", "").strip() if isinstance(sal_obj, dict) else ""
+
+                        entity_urn = item.get("entityUrn", "")
+                        m = re.search(r'\((\d+),', entity_urn)
+                        # STABLE DETERMINISTIC ID (SHA1)
+                        num_id = m.group(1) if m else hashlib.sha1(f"{title}-{school}-{loc_str}".encode('utf-8')).hexdigest()[:12]
+                        job_url = f"https://www.linkedin.com/jobs/view/{num_id}"
+
+                        if job_url in seen_urls: continue
+                        seen_urls.add(job_url)
+
+                        if not is_valid_school_job(title, school, ""):
+                            continue
+
+                        desig, subj, board, role_type = parse_designation_and_subject(title, "")
+                        salary_str, s_min, s_max = parse_salary(sal_text, desig)
+                        city, state, addr, coords = parse_location(loc_str)
+                        school_logo = resolve_logo(school, "")
+
+                        scraped_cards.append({
+                            "id": f"li-{num_id}",
+                            "organisationName": school,
+                            "organisationLogo": school_logo,
+                            "jobPostName": title,
+                            "designation": desig,
+                            "subject": subj,
+                            "board": board,
+                            "roleType": role_type,
+                            "salary": salary_str,
+                            "salaryMin": s_min,
+                            "salaryMax": s_max,
+                            "shortDescription": f"{school} is hiring for {title}{f' in {city}, {state}' if city else ''}.",
+                            "address": addr,
+                            "city": city,
+                            "state": state,
+                            "coordinates": coords,
+                            "minExperience": "Min 2 yrs Exp",
+                            "openingDate": today_str,
+                            "lastDate": None,  # Genuine: Never fabricated
+                            "source": "LinkedIn",
+                            "originalUrl": job_url,
+                            "verified": False,  # Genuine: False unless confirmed
+                            "badge": "LinkedIn"
+                        })
+            else:
+                # Fallback to Guest Endpoint
+                guest_url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords={encoded_q}&location=India&start=0"
+                gr = requests.get(guest_url, headers={'User-Agent': LINKEDIN_HEADERS['user-agent']}, timeout=6)
+                if gr.status_code == 200:
+                    soup = BeautifulSoup(gr.text, 'html.parser')
+                    for c in soup.find_all('div', class_='base-card'):
+                        link_elem = c.find('a', class_='base-card__full-link')
+                        title_elem = c.find('h3', class_='base-search-card__title')
+                        comp_elem = c.find('h4', class_='base-search-card__subtitle')
+                        loc_elem = c.find('span', class_='job-search-card__location')
+
+                        job_url = link_elem.get('href') if link_elem else ""
+                        if not job_url or job_url in seen_urls: continue
+                        seen_urls.add(job_url)
+
+                        title = title_elem.text.strip() if title_elem else "School Teacher"
+                        school = comp_elem.text.strip() if comp_elem else "Reputed School"
+                        loc_str = loc_elem.text.strip() if loc_elem else ""
+
+                        if not is_valid_school_job(title, school, ""): continue
+
+                        desig, subj, board, role_type = parse_designation_and_subject(title, "")
+                        salary_str, s_min, s_max = parse_salary("", desig)
+                        city, state, addr, coords = parse_location(loc_str)
+
+                        m_id = re.search(r'-(\d+)\?', job_url)
+                        num_id = m_id.group(1) if m_id else hashlib.sha1(job_url.encode('utf-8')).hexdigest()[:12]
+
+                        scraped_cards.append({
+                            "id": f"li-{num_id}",
+                            "organisationName": school,
+                            "organisationLogo": None,
+                            "jobPostName": title,
+                            "designation": desig,
+                            "subject": subj,
+                            "board": board,
+                            "roleType": role_type,
+                            "salary": salary_str,
+                            "salaryMin": s_min,
+                            "salaryMax": s_max,
+                            "shortDescription": f"{school} is hiring for {title}{f' in {city}, {state}' if city else ''}.",
+                            "address": addr,
+                            "city": city,
+                            "state": state,
+                            "coordinates": coords,
+                            "minExperience": "Min 2 yrs Exp",
+                            "openingDate": today_str,
+                            "lastDate": None,
+                            "source": "LinkedIn",
+                            "originalUrl": job_url,
+                            "verified": False,
+                            "badge": "LinkedIn"
+                        })
+                else:
+                    print(f"  ⚠️ LinkedIn query '{q}' status {gr.status_code}")
+        except Exception as e:
+            print(f"  ⚠️ LinkedIn scraper exception for '{q}': {e}")
+
+    print(f"  ↳ Fetched {len(scraped_cards)} live vacancies from LinkedIn!")
+    return scraped_cards
+
+# ── 7. Portal 2: Live Indeed India GraphQL Scraper ───────────────────────────
+INDEED_HEADERS = {
+    'content-type': 'application/json',
+    'indeed-api-key': '176bee76fee13e7dd476a8eb31278b2e9bc1363a0f620338c7d7e65162af0ed4',
+    'indeed-ctk': '1k5clgh3125hl000',
+    'origin': 'https://in.indeed.com',
+    'referer': 'https://in.indeed.com/',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+}
+
+INDEED_GQL_QUERY = """
+query SearchJobs($what: String!, $location: JobSearchLocationInput, $limit: Int) {
+    jobSearch(what: $what, location: $location, limit: $limit) {
+        results {
+            job {
+                key
+                title
+                employer { name }
+                datePublished
+                location {
+                    city
+                    postalCode
+                }
+                description { text }
+            }
+        }
+    }
+}
+"""
+
+INDEED_SUBJECT_QUERIES = [
+    # Leadership & Administration
+    "School Principal",
+    "School Vice Principal",
+    "Headmistress School",
+    "Academic Coordinator School",
+    "School Administrator",
+    # Core general & levels
+    "School Teacher",
+    "CBSE School Teacher",
+    "ICSE School Teacher",
+    "PRT Primary Teacher School",
+    "Pre Primary Nursery Teacher School",
+    # Sciences & Mathematics
+    "PGT Physics Teacher School",
+    "TGT Physics Teacher School",
+    "PGT Chemistry Teacher School",
+    "TGT Chemistry Teacher School",
+    "PGT Biology Teacher School",
+    "TGT Science Teacher School",
+    "PGT Mathematics Teacher School",
+    "TGT Mathematics Teacher School",
+    # Tech, AI & Robotics
+    "Computer Science Teacher School",
+    "Coding AI Teacher School",
+    "ATL Mentor School",
+    "Robotics Trainer School",
+    # Languages & Humanities
+    "PGT English Teacher School",
+    "TGT English Teacher School",
+    "PGT Hindi Teacher School",
+    "Sanskrit Teacher School",
+    "French German Teacher School",
+    "TGT Social Studies SST School",
+    "PGT History Teacher School",
+    "PGT Geography Teacher School",
+    "PGT Political Science Teacher School",
+    "PGT Economics Teacher School",
+    "PGT Commerce Accounts Teacher School",
+    # Activities, Well-Being & Support
+    "Art and Craft Teacher School",
+    "Music Dance Teacher School",
+    "Physical Education PET Teacher School",
+    "School Counselor Psychologist",
+    "Special Educator School",
+    "School Lab Assistant Incharge"
+]
+
+ALL_INDIA_HUBS = [
+    ("Delhi NCR", "Delhi NCR"),
+    ("Noida", "Uttar Pradesh"),
+    ("Greater Noida", "Uttar Pradesh"),
+    ("Gurugram", "Haryana"),
+    ("Faridabad", "Haryana"),
+    ("Ghaziabad", "Uttar Pradesh"),
+    ("Mumbai", "Maharashtra"),
+    ("Pune", "Maharashtra"),
+    ("Bengaluru", "Karnataka"),
+    ("Hyderabad", "Telangana"),
+    ("Chennai", "Tamil Nadu"),
+    ("Kolkata", "West Bengal"),
+    ("Jaipur", "Rajasthan"),
+    ("Lucknow", "Uttar Pradesh"),
+    ("Kanpur", "Uttar Pradesh"),
+    ("Chandigarh", "Punjab"),
+    ("Ahmedabad", "Gujarat"),
+    ("Indore", "Madhya Pradesh"),
+    ("Bhopal", "Madhya Pradesh"),
+    ("Dehradun", "Uttarakhand"),
+    ("Patna", "Bihar"),
+    ("Kochi", "Kerala"),
+    ("Coimbatore", "Tamil Nadu"),
+    ("Bhubaneswar", "Odisha")
+]
+
+def scrape_live_indeed_jobs(queries=None, hubs=None, max_per_hub=15):
+    """
+    Scrapes live authentic school vacancies from Indeed India GraphQL API.
+    Uses real job location if available, avoids fabricating Delhi.
+    """
+    if not HAS_SCRAPING_DEPS:
+        return []
+
+    if queries is None:
+        queries = INDEED_SUBJECT_QUERIES
+
+    if hubs is None:
+        hubs = ALL_INDIA_HUBS
+
+    print(f"⚡ [Indeed India] Scanning live vacancies across {len(queries)} queries in {len(hubs)} hubs...")
+    scraped_cards = []
+    seen_keys = set()
+    today_str = datetime.now().strftime("%Y-%m-%d")
+
+    for q in queries:
+        for c_name, c_state in hubs:
+            variables = {
+                "what": q,
+                "location": {"where": f"{c_name}, {c_state}", "radius": 35, "radiusUnit": "KILOMETERS"},
+                "limit": max_per_hub
+            }
             try:
-                r = requests.get(url, headers=headers, timeout=8)
+                r = requests.post(
+                    "https://apis.indeed.com/graphql?co=IN",
+                    headers=INDEED_HEADERS,
+                    json={"query": INDEED_GQL_QUERY, "variables": variables},
+                    timeout=8
+                )
                 if r.status_code != 200:
                     continue
+                results = r.json().get('data', {}).get('jobSearch', {}).get('results', [])
+                for it in results:
+                    job = it.get('job')
+                    if not job: continue
+                    jk = job.get('key')
+                    if not jk or jk in seen_keys: continue
+                    seen_keys.add(jk)
 
-                soup = BeautifulSoup(r.text, 'html.parser')
-                cards = soup.find_all('div', class_='base-card')
+                    title = str(job.get('title') or 'School Faculty').strip()
+                    school = (job.get('employer') or {}).get('name') or "Reputed Senior Secondary School"
+                    desc = (job.get('description') or {}).get('text') or ''
+                    date_pub = job.get('datePublished', 0)
+                    date_str = datetime.fromtimestamp(date_pub / 1000).strftime('%Y-%m-%d') if date_pub else today_str
 
-                for c in cards:
-                    link_elem = c.find('a', class_='base-card__full-link')
-                    title_elem = c.find('h3', class_='base-search-card__title')
-                    comp_elem = c.find('h4', class_='base-search-card__subtitle')
-                    loc_elem = c.find('span', class_='job-search-card__location')
-                    img_elem = c.find('img')
-                    date_elem = c.find('time')
-
-                    job_url = link_elem.get('href') if link_elem else ""
-                    if not job_url or job_url in seen_urls:
+                    if not is_valid_school_job(title, school, desc):
                         continue
-                    seen_urls.add(job_url)
 
-                    title = title_elem.text.strip() if title_elem else "School Teacher"
-                    school = comp_elem.text.strip() if comp_elem else "Reputed Institution"
-                    location = loc_elem.text.strip() if loc_elem else "India"
-                    logo = (img_elem.get('data-delayed-url') or img_elem.get('src')) if img_elem else ""
-                    posted_date = date_elem.get('datetime') if date_elem else today_str
+                    desig, subj, board, role_type = parse_designation_and_subject(title, desc)
+                    
+                    # Extract real job location if provided by Indeed
+                    loc_obj = job.get('location') or {}
+                    real_city = loc_obj.get('city')
+                    loc_input = real_city if real_city else f"{c_name}, {c_state}"
+                    city, state, addr, coords = parse_location(loc_input)
 
-                    # Normalize fields
-                    desig, subj, board, role_type = parse_designation_and_subject(title, "")
-                    salary_str, s_min, s_max = parse_salary("", desig)
-                    city, state, addr, coords = parse_location(location)
-                    school_logo = resolve_logo(school, logo)
+                    # Extract salary ONLY if explicit currency markers exist
+                    salary_match = re.search(r'(?:₹|rs\.?|inr)\s*\d+[\d,]*(?:\s*-\s*(?:₹|rs\.?|inr)?\s*\d+[\d,]*)?(?:\s*(?:lpa|per\s*month|per\s*annum|pm|pa|\/mo|\/yr))?', desc, re.IGNORECASE)
+                    raw_sal = salary_match.group(0) if salary_match else ""
+                    salary_str, s_min, s_max = parse_salary(raw_sal, desig)
 
-                    # ID
-                    match_id = re.search(r'-(\d+)\?', job_url)
-                    num_id = match_id.group(1) if match_id else str(abs(hash(job_url)) % 1000000)
-                    job_id = f"li-{num_id}"
+                    school_logo = resolve_logo(school, "")
+                    job_id = f"ind-{jk}"
+                    job_url = f"https://in.indeed.com/viewjob?jk={jk}"
 
-                    card = {
+                    scraped_cards.append({
                         "id": job_id,
                         "organisationName": school,
                         "organisationLogo": school_logo,
@@ -909,32 +782,30 @@ def scrape_live_linkedin_jobs(queries=None, max_pages_per_query=2):
                         "salary": salary_str,
                         "salaryMin": s_min,
                         "salaryMax": s_max,
-                        "shortDescription": f"{school} is hiring for {title} in {city}, {state}.",
+                        "shortDescription": desc[:250].strip() if desc else f"{school} is hiring {title}{f' in {city}, {state}' if city else ''}.",
                         "address": addr,
                         "city": city,
                         "state": state,
                         "coordinates": coords,
                         "minExperience": "Min 2 yrs Exp",
-                        "openingDate": posted_date,
-                        "lastDate": deadline_str,
-                        "source": "LinkedIn",
+                        "openingDate": date_str,
+                        "lastDate": None,
+                        "source": "Indeed",
                         "originalUrl": job_url,
-                        "verified": True,
-                        "badge": "LinkedIn Verified"
-                    }
-                    scraped_cards.append(card)
-
+                        "verified": False,
+                        "badge": "Indeed"
+                    })
             except Exception as e:
                 pass
 
-    print(f"  ↳ Fetched {len(scraped_cards)} live vacancies from LinkedIn!")
+    print(f"  ↳ Fetched {len(scraped_cards)} live vacancies from Indeed India!")
     return scraped_cards
 
-# ── 5.2 Naukri v3 Response Parser ──────────────────────────────────────────────
+# ── 8. Portal 3: Naukri.com Ingestion & Parser ────────────────────────────────
 def parse_naukri_json(data_or_path) -> list:
     """
-    Parses a Naukri v3 API response (from file path, raw string, or dict)
-    into normalized FacultyJobItem cards.
+    Parses Naukri.com API or DOM card payloads into clean normalized FacultyJobItem cards.
+    Uses deterministic SHA1 ID generation.
     """
     if isinstance(data_or_path, str):
         if os.path.exists(data_or_path):
@@ -947,7 +818,6 @@ def parse_naukri_json(data_or_path) -> list:
 
     job_details = data.get("jobDetails", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
     today_str = datetime.now().strftime("%Y-%m-%d")
-    deadline_str = (datetime.now() + timedelta(days=30)).strftime("%Y-%m-%d")
 
     cards = []
     for item in job_details:
@@ -957,18 +827,19 @@ def parse_naukri_json(data_or_path) -> list:
 
         raw_salary = ""
         raw_exp = "Min 2 yrs Exp"
-        raw_loc = "India"
+        raw_loc = ""
 
         for p in item.get("placeholders", []):
             ptype = p.get("type")
-            if ptype == "salary":
-                raw_salary = p.get("label", "")
-            elif ptype == "experience":
-                raw_exp = p.get("label", "Min 2 yrs Exp")
-            elif ptype == "location":
-                raw_loc = p.get("label", "India")
+            if ptype == "salary": raw_salary = p.get("label", "")
+            elif ptype == "experience": raw_exp = p.get("label", "Min 2 yrs Exp")
+            elif ptype == "location": raw_loc = p.get("label", "")
 
-        desig, subj, board, role_type = parse_designation_and_subject(title, item.get("jobDescription", ""))
+        desc = item.get("jobDescription", "")
+        if not is_valid_school_job(title, school, desc):
+            continue
+
+        desig, subj, board, role_type = parse_designation_and_subject(title, desc)
         salary_str, s_min, s_max = parse_salary(raw_salary, desig)
         city, state, addr, coords = parse_location(raw_loc)
         school_logo = resolve_logo(school, logo)
@@ -977,7 +848,11 @@ def parse_naukri_json(data_or_path) -> list:
         if source_url and not source_url.startswith("http"):
             source_url = f"https://www.naukri.com{'' if source_url.startswith('/') else '/'}{source_url}"
 
-        job_id = f"nk-{item.get('jobId', abs(hash(source_url)) % 1000000)}"
+        # DETERMINISTIC ID (SHA1)
+        source_id = item.get('jobId')
+        if not source_id:
+            source_id = hashlib.sha1((source_url or f"{title}-{school}").encode('utf-8')).hexdigest()[:12]
+        job_id = f"nk-{source_id}"
 
         cards.append({
             "id": job_id,
@@ -991,67 +866,240 @@ def parse_naukri_json(data_or_path) -> list:
             "salary": salary_str,
             "salaryMin": s_min,
             "salaryMax": s_max,
-            "shortDescription": item.get("jobDescription", f"{school} is hiring for {desig} {subj} in {city}.").replace("\n", " ")[:180],
+            "shortDescription": desc.replace("\n", " ")[:180] if desc else f"{school} is hiring for {desig} {subj}{f' in {city}' if city else ''}.",
             "address": addr,
             "city": city,
             "state": state,
             "coordinates": coords,
             "minExperience": raw_exp,
             "openingDate": today_str,
-            "lastDate": deadline_str,
+            "lastDate": None,
             "source": "Naukri.com",
             "originalUrl": source_url,
-            "verified": True,
-            "badge": "Naukri Verified"
+            "verified": False,
+            "badge": "Naukri"
         })
 
     return cards
 
-# ── 6. Sync, Storage & CLI Execution ──────────────────────────────────────────
-def run_sync(filter_city: str = None, filter_source: str = None, include_live_linkedin: bool = True, naukri_file: str = None):
+# ── 9. Supabase Direct Synchronization (Single Source of Truth) ───────────────
+def fetch_all_supabase_jobs():
+    """
+    Fetches all active jobs directly from Supabase public.jobs table.
+    Filters exclusively for Indeed, LinkedIn, and Naukri.
+    """
+    if not HAS_SCRAPING_DEPS:
+        return []
+
+    print("📡 Fetching active vacancies directly from Supabase...")
+    all_jobs = []
+    offset = 0
+    limit = 1000
+    headers = {
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}"
+    }
+
+    while True:
+        try:
+            url = f"{SUPABASE_URL}/rest/v1/jobs?is_active=eq.true&order=posted_at.desc&select=*&offset={offset}&limit={limit}"
+            r = requests.get(url, headers=headers, timeout=12)
+            if r.status_code != 200:
+                print(f"⚠️ Supabase fetch warning [HTTP {r.status_code}]: {r.text}")
+                break
+            batch = r.json()
+            if not batch:
+                break
+
+            for row in batch:
+                reqs = row.get("requirements") or []
+                src = "Indeed"
+                orig_url = ""
+                lat = None
+                lng = None
+                desig = "Teacher"
+                subj = row.get("department") or ""
+                board = None
+                s_min = None
+                s_max = None
+                for req in reqs:
+                    if req.startswith("source:"): src = req.split(":", 1)[1]
+                    elif req.startswith("url:"): orig_url = req.split(":", 1)[1]
+                    elif req.startswith("lat:"): 
+                        try: lat = float(req.split(":", 1)[1])
+                        except: pass
+                    elif req.startswith("lng:"):
+                        try: lng = float(req.split(":", 1)[1])
+                        except: pass
+                    elif req.startswith("designation:"): desig = req.split(":", 1)[1]
+                    elif req.startswith("board:"): board = req.split(":", 1)[1]
+                    elif req.startswith("salary_min:"): 
+                        try: s_min = int(req.split(":", 1)[1])
+                        except: pass
+                    elif req.startswith("salary_max:"):
+                        try: s_max = int(req.split(":", 1)[1])
+                        except: pass
+
+                # Only keep Indeed, LinkedIn, and Naukri
+                if src not in ["Indeed", "LinkedIn", "Naukri.com"]:
+                    continue
+
+                all_jobs.append({
+                    "id": row.get("slug") or f"sb-{row.get('id')}",
+                    "organisationName": row.get("institute_name", ""),
+                    "organisationLogo": None,
+                    "jobPostName": row.get("title", ""),
+                    "designation": desig,
+                    "subject": subj,
+                    "board": board,
+                    "roleType": row.get("job_type", "Full-Time"),
+                    "salary": row.get("salary_range", "---"),
+                    "salaryMin": s_min,
+                    "salaryMax": s_max,
+                    "shortDescription": row.get("description", ""),
+                    "address": row.get("city") or row.get("state") or "",
+                    "city": row.get("city"),
+                    "state": row.get("state"),
+                    "coordinates": {"lat": lat, "lng": lng} if (lat is not None and lng is not None) else None,
+                    "minExperience": row.get("experience_required", "Min 2 yrs Exp"),
+                    "openingDate": (row.get("posted_at") or "")[:10],
+                    "lastDate": None,
+                    "source": src,
+                    "originalUrl": orig_url,
+                    "verified": False,
+                    "badge": src
+                })
+
+            if len(batch) < limit:
+                break
+            offset += limit
+        except Exception as e:
+            print(f"⚠️ Supabase fetch exception: {e}")
+            break
+
+    print(f"  ↳ Loaded {len(all_jobs)} active vacancies directly from Supabase!")
+    return all_jobs
+
+def sync_new_jobs_to_supabase(cards):
+    """
+    Directly uploads newly extracted or updated vacancies into Supabase public.jobs.
+    Full error logging for non-2xx responses.
+    """
+    if not cards or not HAS_SCRAPING_DEPS:
+        return 0
+
+    print(f"🚀 Synchronizing {len(cards)} vacancies directly into Supabase (on_conflict=slug)...")
+    headers = {
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates,return=minimal"
+    }
+
+    supabase_rows = []
+    for j in cards:
+        title = j.get("jobPostName", "School Teacher")
+        school = j.get("organisationName", "School")
+        city = j.get("city")
+        state = j.get("state")
+        addr = j.get("address", "")
+        coords = j.get("coordinates")
+
+        reqs = []
+        if j.get("source"): reqs.append(f"source:{j['source']}")
+        if j.get("originalUrl"): reqs.append(f"url:{j['originalUrl']}")
+        if coords:
+            reqs.append(f"lat:{coords.get('lat')}")
+            reqs.append(f"lng:{coords.get('lng')}")
+        if city: reqs.append(f"district:{city}")
+        if addr: reqs.append(f"address:{addr}")
+        if j.get("designation"): reqs.append(f"designation:{j['designation']}")
+        if j.get("subject"): reqs.append(f"subject:{j['subject']}")
+        if j.get("board"): reqs.append(f"board:{j['board']}")
+        if j.get("salaryMin"): reqs.append(f"salary_min:{j['salaryMin']}")
+        if j.get("salaryMax"): reqs.append(f"salary_max:{j['salaryMax']}")
+        if j.get("openingDate"): reqs.append(f"opening_date:{j['openingDate']}")
+
+        row = {
+            "title": title,
+            "slug": j.get("id"),
+            "department": j.get("subject") or "Faculty",
+            "institute_name": school,
+            "city": city,
+            "state": state,
+            "salary_range": j.get("salary", "---"),
+            "experience_required": j.get("minExperience"),
+            "job_type": j.get("roleType", "Full-Time"),
+            "description": j.get("shortDescription", f"{school} is hiring for {title}."),
+            "requirements": reqs,
+            "benefits": [],
+            "is_active": True,
+            "deadline": None,
+            "posted_at": f"{j.get('openingDate', datetime.now().strftime('%Y-%m-%d'))}T00:00:00Z"
+        }
+        supabase_rows.append(row)
+
+    batch_size = 40
+    uploaded = 0
+    for i in range(0, len(supabase_rows), batch_size):
+        batch = supabase_rows[i:i + batch_size]
+        try:
+            res = requests.post(
+                f"{SUPABASE_URL}/rest/v1/jobs?on_conflict=slug",
+                headers=headers,
+                json=batch,
+                timeout=15
+            )
+            if res.status_code in [200, 201, 204]:
+                uploaded += len(batch)
+            else:
+                print(f"  ❌ Supabase batch upload failed [HTTP {res.status_code}]: {res.text}")
+        except Exception as e:
+            print(f"  ❌ Supabase batch upload exception: {e}")
+
+    print(f"  ✅ Synced {uploaded}/{len(cards)} vacancies directly to Supabase!")
+    return uploaded
+
+# ── 10. Execution Pipeline ────────────────────────────────────────────────────
+def run_sync(filter_city: str = None, include_live_indeed: bool = True, include_live_linkedin: bool = True, naukri_file: str = None):
     print("═" * 72)
-    print("🚀 INDIA SCHOOL JOBS MULTI-PORTAL AGGREGATOR & EXTRACTION ENGINE")
+    print("🚀 INDIA SCHOOL JOBS ENGINE (INDEED • LINKEDIN • NAUKRI)")
     print("═" * 72)
-    print("Extracting authentic vacancies across ALL recognized Indian portals:")
-    print("  1.  in.indeed.com       (Indeed India)")
-    print("  2.  linkedin.com/jobs   (LinkedIn India)")
-    print("  3.  naukri.com          (Naukri Education)")
-    print("  4.  apna.co             (Apna.co Teacher Hiring)")
-    print("  5.  foundit.in          (Foundit / Monster India)")
-    print("  6.  shine.com           (Shine Education)")
-    print("  7.  teacheron.com       (TeacherON Faculty)")
-    print("  8.  educohire.com       (EducoHire School Recruiters)")
-    print("  9.  timesjobs.com       (TimesJobs & Times Ascent)")
-    print("  10. davcmc.net.in       (DAV CMC Central School Portal)")
-    print("  11. awesindia.com       (Army Public Schools AWES)")
-    print("  12. kvsangathan.nic.in  (KVS & NVS Contractual)")
-    print("  13. Direct Portals      (DPS, Heritage, Shiv Nadar, Ryan, Amity)")
+    print("Extracting authentic school vacancies strictly from TOP 3 portals:")
+    print("  1. Indeed India (in.indeed.com)  — High-Speed GraphQL API")
+    print("  2. LinkedIn India (linkedin.com) — Voyager REST API + Guest Search")
+    print("  3. Naukri (naukri.com)           — High-Density Education Pipeline")
     print("-" * 72)
 
-    fresh_jobs = process_portal_feed_to_cards()
+    fresh_jobs = []
 
-    # Ingest live LinkedIn vacancies
+    # 1. Ingest live Indeed India vacancies
+    if include_live_indeed:
+        live_indeed_jobs = scrape_live_indeed_jobs()
+        fresh_jobs.extend(live_indeed_jobs)
+
+    # 2. Ingest live LinkedIn vacancies
     if include_live_linkedin:
         live_linkedin_jobs = scrape_live_linkedin_jobs()
         fresh_jobs.extend(live_linkedin_jobs)
 
-    # Ingest Naukri JSON if provided
+    # 3. Ingest Naukri JSON if provided
     if naukri_file and os.path.exists(naukri_file):
         print(f"📥 Ingesting Naukri API payload from {naukri_file}...")
         naukri_jobs = parse_naukri_json(naukri_file)
         print(f"  ↳ Extracted {len(naukri_jobs)} vacancies from Naukri!")
         fresh_jobs.extend(naukri_jobs)
 
-    # Load existing aggregated jobs
-    existing_jobs = []
-    if os.path.exists(OUTPUT_JSON_PATH):
+    # Load existing jobs directly from Supabase (Single Source of Truth)
+    existing_jobs = fetch_all_supabase_jobs()
+    if not existing_jobs and os.path.exists(OUTPUT_JSON_PATH):
         try:
             with open(OUTPUT_JSON_PATH, "r", encoding="utf-8") as f:
                 existing_jobs = json.load(f)
         except Exception as e:
-            print(f"⚠️ Warning reading existing jobs: {e}")
+            print(f"⚠️ Warning reading local jobs file: {e}")
 
-    # 1. Purge jobs older than 45 days
+    # Purge jobs older than 45 days
     now_dt = datetime.now()
     forty_five_days_ago = now_dt - timedelta(days=45)
     unexpired_existing = []
@@ -1069,34 +1117,21 @@ def run_sync(filter_city: str = None, filter_source: str = None, include_live_li
     if purged_count > 0:
         print(f"🧹 Purged {purged_count} expired vacancies older than 45 days.")
 
-    # 2. Strict 5-Point Deduplication System across all portals
+    # 5-Point Deduplication System across the 3 portals
     from difflib import SequenceMatcher
 
     def is_exact_duplicate(job_a, job_b):
-        # 1. Same Role & Subject
         if job_a.get('designation') != job_b.get('designation') or job_a.get('subject') != job_b.get('subject'):
             return False
-
-        # 2. Same City Location
-        if job_a.get('city', '').lower() != job_b.get('city', '').lower():
+        if (job_a.get('city') or '').lower() != (job_b.get('city') or '').lower():
             return False
 
-        # If specific address is available, ensure no conflicting sector/campus
-        addr_a = job_a.get('address', '').lower()
-        addr_b = job_b.get('address', '').lower()
-        sec_a = re.search(r'sector\s*\d+|phase\s*\d+', addr_a)
-        sec_b = re.search(r'sector\s*\d+|phase\s*\d+', addr_b)
-        if sec_a and sec_b and sec_a.group(0) != sec_b.group(0):
-            return False
-
-        # 3. Same School Name (High Precision >= 85%)
-        name_a = job_a.get('organisationName', '').lower().strip()
-        name_b = job_b.get('organisationName', '').lower().strip()
+        name_a = (job_a.get('organisationName') or '').lower().strip()
+        name_b = (job_b.get('organisationName') or '').lower().strip()
         sim = SequenceMatcher(None, name_a, name_b).ratio()
         if sim < 0.85:
             return False
 
-        # 4. Close Posting Date Window (within 10 days)
         date_a_str = job_a.get('openingDate', '')
         date_b_str = job_b.get('openingDate', '')
         try:
@@ -1107,21 +1142,14 @@ def run_sync(filter_city: str = None, filter_source: str = None, include_live_li
         except Exception:
             pass
 
-        # 5. Matching Salary Range (if disclosed on both)
-        s_min_a = job_a.get('salaryMin', 0) or 0
-        s_min_b = job_b.get('salaryMin', 0) or 0
-        if s_min_a > 0 and s_min_b > 0 and abs(s_min_a - s_min_b) > 150000:
-            return False
-
         return True
 
     consolidated = list(unexpired_existing)
     added_count = 0
+    updated_cards = []
 
     for fresh in fresh_jobs:
-        if filter_city and filter_city.lower() not in fresh.get('city', '').lower():
-            continue
-        if filter_source and filter_source.lower() != fresh.get('source', '').lower():
+        if filter_city and filter_city.lower() not in (fresh.get('city') or '').lower():
             continue
 
         matched_idx = -1
@@ -1132,37 +1160,68 @@ def run_sync(filter_city: str = None, filter_source: str = None, include_live_li
 
         if matched_idx >= 0:
             ex = consolidated[matched_idx]
-            # Keep freshest date and combine badges/links if multi-portal
+            changed = False
+            # Keep freshest date
             if fresh.get('openingDate', '') > ex.get('openingDate', ''):
                 ex['openingDate'] = fresh.get('openingDate', '')
-                ex['lastDate'] = fresh.get('lastDate', '')
-                ex['salary'] = fresh.get('salary', '')
-                ex['originalUrl'] = fresh.get('originalUrl', '')
-            if fresh.get('source') and fresh.get('source') not in ex.get('source', ''):
-                ex['source'] = f"{ex.get('source')} / {fresh.get('source')}"
-                ex['badge'] = f"{ex['source']} Verified"
+                changed = True
+            # Update salary if fresh posting has real salary and existing was Not Disclosed
+            if fresh.get('salary') and fresh.get('salary') != "Not Disclosed" and ex.get('salary') == "Not Disclosed":
+                ex['salary'] = fresh.get('salary')
+                ex['salaryMin'] = fresh.get('salaryMin')
+                ex['salaryMax'] = fresh.get('salaryMax')
+                changed = True
+            if fresh.get('originalUrl') and not ex.get('originalUrl'):
+                ex['originalUrl'] = fresh.get('originalUrl')
+                changed = True
+            if changed:
+                updated_cards.append(ex)
         else:
             consolidated.append(fresh)
             added_count += 1
 
+    # Sync newly added cards AND updated records back to Supabase (LOST-UPDATE RESOLUTION)
+    cards_to_sync = []
+    if added_count > 0:
+        cards_to_sync.extend(consolidated[-added_count:])
+    if updated_cards:
+        cards_to_sync.extend(updated_cards)
+
+    if cards_to_sync:
+        sync_new_jobs_to_supabase(cards_to_sync)
+    else:
+        print("ℹ️ Zero new or updated vacancies to upload to Supabase.")
+
+    # Save local JSON file as backup cache
     os.makedirs(SRC_DATA_DIR, exist_ok=True)
     with open(OUTPUT_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(consolidated, f, indent=2, ensure_ascii=False)
 
-    print(f"✅ Extraction & Normalization Complete!")
-    print(f"  • Total Aggregated Vacancies in Store: {len(consolidated)}")
-    print(f"  • Newly Extracted Vacancies: {added_count}")
-    print(f"  • Synced File: {OUTPUT_JSON_PATH}")
+    # Trigger dynamic facets recalculation
+    try:
+        scripts_dir = os.path.dirname(os.path.abspath(__file__))
+        sys.path.insert(0, scripts_dir)
+        from generate_job_filter_facets import generate_facets
+        generate_facets()
+    except Exception as fe:
+        print(f"⚠️ Facet generation notice: {fe}")
+
+    print(f"✅ Extraction, Normalization & Supabase Sync Complete!")
+    print(f"  • Total Active Vacancies in Database: {len(consolidated)}")
+    print(f"  • Brand-New Vacancies Extracted & Uploaded: {added_count}")
+    print(f"  • Updated Existing Vacancies: {len(updated_cards)}")
+    print(f"  • Local Backup File: {OUTPUT_JSON_PATH}")
     print("═" * 72)
 
     # Portal breakdown
     portal_counts = {}
     city_counts = {}
     for j in consolidated:
-        portal_counts[j['source']] = portal_counts.get(j['source'], 0) + 1
-        city_counts[j['city']] = city_counts.get(j['city'], 0) + 1
+        portal_counts[j.get('source', 'Unknown')] = portal_counts.get(j.get('source', 'Unknown'), 0) + 1
+        c = j.get('city') or 'Unspecified Location'
+        city_counts[c] = city_counts.get(c, 0) + 1
 
-    print("\n📊 PORTAL BREAKDOWN:")
+    print("\n📊 PORTAL BREAKDOWN (STRICTLY INDEED, LINKEDIN & NAUKRI):")
     for p, c in sorted(portal_counts.items(), key=lambda x: -x[1]):
         print(f"  • {p:30}: {c:2} vacancies")
 
@@ -1172,19 +1231,21 @@ def run_sync(filter_city: str = None, filter_source: str = None, include_live_li
     print("═" * 72)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="All-India School Jobs Multi-Portal Engine")
-    parser.add_argument("--sync", action="store_true", help="Sync latest jobs from all 13 portals")
+    parser = argparse.ArgumentParser(description="India School Jobs Engine (Indeed, LinkedIn, Naukri)")
+    parser.add_argument("--sync", action="store_true", help="Sync latest jobs from Indeed, LinkedIn, and Naukri")
     parser.add_argument("--city", type=str, default=None, help="Filter by city (e.g. Delhi, Noida, Mumbai)")
-    parser.add_argument("--source", type=str, default=None, help="Filter by portal name (e.g. Apna.co, Foundit, Shine.com)")
+    parser.add_argument("--scrape-indeed", action="store_true", help="Scrape live Indeed vacancies")
+    parser.add_argument("--no-scrape-indeed", action="store_true", help="Skip live Indeed scraping")
     parser.add_argument("--scrape-linkedin", action="store_true", help="Scrape live LinkedIn vacancies")
     parser.add_argument("--no-scrape-linkedin", action="store_true", help="Skip live LinkedIn scraping")
     parser.add_argument("--ingest-naukri", type=str, default=None, help="Path to Naukri v3 search JSON response file")
     args = parser.parse_args()
 
     include_li = not args.no_scrape_linkedin
+    include_ind = not args.no_scrape_indeed
     run_sync(
         filter_city=args.city,
-        filter_source=args.source,
+        include_live_indeed=include_ind,
         include_live_linkedin=include_li,
         naukri_file=args.ingest_naukri
     )

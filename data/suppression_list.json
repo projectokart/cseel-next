@@ -37,107 +37,107 @@
   "info@ryaninternational.org": {
     "email": "info@ryaninternational.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:08:18 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:40:46 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@oxfordpublicschool.com": {
     "email": "info@oxfordpublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 20:58:11 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:42:50 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@mountfort.org": {
     "email": "info@mountfort.org",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:46:30 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:35:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@vidyasagar.org": {
     "email": "info@vidyasagar.org",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 20:58:08 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:33:02 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "contact@gdgoenkadwarka.in": {
     "email": "contact@gdgoenkadwarka.in",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:40:11 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:23:28 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@sdpublicschool.com": {
     "email": "info@sdpublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:24:23 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:07:32 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@radhakrishnanschool.in": {
     "email": "info@radhakrishnanschool.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:36:55 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:44:35 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@davmeerut.org": {
     "email": "info@davmeerut.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:00:05 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:09:44 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@goyalpublicschool.com": {
     "email": "info@goyalpublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:26:20 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:54:16 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@delhipublicschool.org": {
     "email": "info@delhipublicschool.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:17:59 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:03:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dhirubhai.net": {
     "email": "info@dhirubhai.net",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:01:41 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:09:04 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@airforceschool.org": {
     "email": "info@airforceschool.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:23:28 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:14:26 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@krmangalamnoida.com": {
     "email": "info@krmangalamnoida.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sun, 18 Oct 2026 00:02:21 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:41:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsrohtak.com": {
     "email": "info@dpsrohtak.com",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Sat, 17 Oct 2026 21:16:33 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Mon, 19 Oct 2026 22:41:15 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "career@gdgoenkadwarka.in": {
     "email": "career@gdgoenkadwarka.in",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:08:17 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:52:08 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "id_2127083@yahoo.co.in": {
     "email": "id_2127083@yahoo.co.in",
@@ -156,7 +156,7 @@
   "ghpsvv@gamil.com": {
     "email": "ghpsvv@gamil.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:25 -0700 (PDT)",
+    "timestamp": "Mon, 29 May 2023 20:18:13 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -212,7 +212,7 @@
   "delfaridbadsec1207a@narayanagroup.com": {
     "email": "delfaridbadsec1207a@narayanagroup.com",
     "reason": "Hard Bounce: 550 User does not exist / invalid address",
-    "timestamp": "Sat, 27 May 2023 20:00:38 -0700 (PDT)",
+    "timestamp": "Fri, 29 Mar 2024 08:01:26 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -225,22 +225,22 @@
   },
   "info@heritageglobal.ac.in": {
     "email": "info@heritageglobal.ac.in",
-    "reason": "Hard Bounce: 550 User does not exist / invalid address",
-    "timestamp": "Sat, 27 May 2023 20:00:38 -0700 (PDT)",
+    "reason": "Connection Timed Out: Recipient server unreachable",
+    "timestamp": "Mon, 01 Apr 2024 12:23:59 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "ektamattoo@yahoo.in": {
     "email": "ektamattoo@yahoo.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:26 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:34:20 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "dhmsrsecschool@yahoo.co.in": {
     "email": "dhmsrsecschool@yahoo.co.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:26 -0700 (PDT)",
+    "timestamp": "Tue, 18 Jun 2024 17:25:39 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -254,7 +254,7 @@
   "nhps_np@yahoo.co.in": {
     "email": "nhps_np@yahoo.co.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:26 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:34:21 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -303,28 +303,28 @@
   "info@bnpsramvihar.com": {
     "email": "info@bnpsramvihar.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Wed, 22 Mar 2023 19:28:39 -0700 (PDT)",
+    "timestamp": "Wed, 31 May 2023 20:57:03 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "truthful@faithacademy.in": {
     "email": "truthful@faithacademy.in",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Wed, 22 Mar 2023 22:39:53 -0700 (PDT)",
+    "timestamp": "Wed, 31 May 2023 23:03:02 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "dtea_pusaroad@yahoomail.co.in": {
     "email": "dtea_pusaroad@yahoomail.co.in",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sun, 19 Mar 2023 18:37:23 -0700 (PDT)",
+    "timestamp": "Sat, 03 Jun 2023 10:39:27 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "greenmeadossecondaryschool@gmail.com": {
     "email": "greenmeadossecondaryschool@gmail.com",
-    "reason": "Hard Bounce: 550 User does not exist / invalid address",
-    "timestamp": "Sun, 19 Mar 2023 18:37:23 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Sun, 28 May 2023 19:36:38 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -338,28 +338,28 @@
   "pupilsfoundation@gmail.com": {
     "email": "pupilsfoundation@gmail.com",
     "reason": "Hard Bounce: 550 User does not exist / invalid address",
-    "timestamp": "Sun, 19 Mar 2023 18:37:23 -0700 (PDT)",
+    "timestamp": "Sat, 09 Nov 2024 06:42:27 -0800 (PST)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "info@gitarattan.com": {
     "email": "info@gitarattan.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:24 -0700 (PDT)",
+    "timestamp": "Sun, 21 Apr 2024 17:32:05 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "raischool_chd@dataone.in": {
     "email": "raischool_chd@dataone.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:25 -0700 (PDT)",
+    "timestamp": "Sat, 03 Jun 2023 10:36:42 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "dhirajkhan10@gmail.com": {
     "email": "dhirajkhan10@gmail.com",
     "reason": "Hard Bounce: 550 User does not exist / invalid address",
-    "timestamp": "Sun, 19 Mar 2023 18:37:23 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:34:17 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -443,7 +443,7 @@
   "info@greenfieldspublicschool.com": {
     "email": "info@greenfieldspublicschool.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:24 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:36:38 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -478,14 +478,14 @@
   "karambirgersay@yahoo.com": {
     "email": "karambirgersay@yahoo.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:24 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:36:39 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "sgrr2buddhi_karnprayag@yahoo.co.in": {
     "email": "sgrr2buddhi_karnprayag@yahoo.co.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:27 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:36:42 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -541,7 +541,7 @@
   "nkmahajanca@yahoo.co.in": {
     "email": "nkmahajanca@yahoo.co.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:27 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:36:43 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -604,14 +604,14 @@
   "mbdischool@gmail.com": {
     "email": "mbdischool@gmail.com",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 27 Mar 2024 22:12:32 -0700 (PDT)",
+    "timestamp": "Tue, 19 Mar 2024 08:39:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "giessschool@yahoo.com": {
     "email": "giessschool@yahoo.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Wed, 27 Mar 2024 22:12:33 -0700 (PDT)",
+    "timestamp": "Tue, 19 Mar 2024 08:39:53 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -639,7 +639,7 @@
   "office@gdgoenakgurugram.in": {
     "email": "office@gdgoenakgurugram.in",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Wed, 27 Mar 2024 22:12:32 -0700 (PDT)",
+    "timestamp": "Tue, 19 Mar 2024 08:39:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -653,7 +653,7 @@
   "surajschoolgurugram@gmail.com": {
     "email": "surajschoolgurugram@gmail.com",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 27 Mar 2024 22:12:32 -0700 (PDT)",
+    "timestamp": "Tue, 19 Mar 2024 08:39:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -695,7 +695,7 @@
   "shyamvirpooniya@yahoo.in": {
     "email": "shyamvirpooniya@yahoo.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sat, 27 May 2023 20:00:43 -0700 (PDT)",
+    "timestamp": "Fri, 29 Mar 2024 08:01:30 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -716,7 +716,7 @@
   "info@generalrajschool.com": {
     "email": "info@generalrajschool.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:38:04 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:37:18 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -870,7 +870,7 @@
   "sudha-acharya@rediffmail.com": {
     "email": "sudha-acharya@rediffmail.com",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:26 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:36:42 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -940,7 +940,7 @@
   "headg_school@yahoo.co.in": {
     "email": "headg_school@yahoo.co.in",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:37:27 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:36:42 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -961,7 +961,7 @@
   "beena01bhardwaj@gmail.com": {
     "email": "beena01bhardwaj@gmail.com",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 22 Mar 2023 18:55:33 -0700 (PDT)",
+    "timestamp": "Wed, 31 May 2023 23:52:07 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -984,7 +984,7 @@
     "reason": "Delivery failure / bounce notice",
     "timestamp": "Sat, 27 May 2023 20:00:50 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "INBOX"
+    "folder": "[Gmail]/All Mail"
   },
   "info@adarshpublicschool.co.in": {
     "email": "info@adarshpublicschool.co.in",
@@ -1045,21 +1045,21 @@
   "info@gdgoenkadwarka.in": {
     "email": "info@gdgoenkadwarka.in",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:13:11 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:25:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "careers@airforceschool.org": {
     "email": "careers@airforceschool.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:22:53 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:45:11 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@paramhansaschool.com": {
     "email": "info@paramhansaschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:05:12 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:42:26 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "[Gmail]/Bin"
   },
@@ -1073,205 +1073,205 @@
   "info@laxmipublicschool.com": {
     "email": "info@laxmipublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:52:28 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:07:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpssonepat.com": {
     "email": "info@dpssonepat.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 20:50:02 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:06:34 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "direct@dpsfaridabad.in": {
     "email": "direct@dpsfaridabad.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:35:34 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:00:00 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@lawrencehigh.org": {
     "email": "info@lawrencehigh.org",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:50:57 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:51:19 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@krmangalamfaridabad.com": {
     "email": "info@krmangalamfaridabad.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:01:18 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 03:01:21 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "hr@dpsfaridabad.in": {
     "email": "hr@dpsfaridabad.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:20:14 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:41:43 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@littleflowerschool.in": {
     "email": "info@littleflowerschool.in",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Sat, 17 Oct 2026 22:05:09 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Mon, 19 Oct 2026 20:52:09 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@maxfort.com": {
     "email": "info@maxfort.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:08:31 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 03:32:16 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@pathwaysnoida.com": {
     "email": "info@pathwaysnoida.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:30:02 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:09:13 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@pathwaysgurgaon.com": {
     "email": "info@pathwaysgurgaon.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:53:05 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:21:47 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsfaridabad.in": {
     "email": "info@dpsfaridabad.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:09:34 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:41:58 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "contact@delhipublicschool.org": {
     "email": "contact@delhipublicschool.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:19:02 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:28:48 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@thepresidiumschool.com": {
     "email": "info@thepresidiumschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:41:12 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:02:27 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsdelhi.in": {
     "email": "info@dpsdelhi.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:46:52 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:03:00 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@vidyadevi.org": {
     "email": "info@vidyadevi.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:10:14 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:56:36 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@shivnadarschool.edu.in": {
     "email": "info@shivnadarschool.edu.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:07:00 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:52:39 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "[Gmail]/Bin"
   },
   "info@vidyabharti.org": {
     "email": "info@vidyabharti.org",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:56:33 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:59:17 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "adm@deepanshuschool.com": {
     "email": "adm@deepanshuschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:19:24 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:38:57 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@panchsheelpublicschool.com": {
     "email": "info@panchsheelpublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:05:44 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:14:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@gyandeeppublicschool.com": {
     "email": "info@gyandeeppublicschool.com",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 22:43:14 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:24:07 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@neweraschool.net": {
     "email": "info@neweraschool.net",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:07:37 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:12:37 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@brightfuture.in": {
     "email": "info@brightfuture.in",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:56:46 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:39:28 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "[Gmail]/Bin"
   },
   "info@motherspride.com": {
     "email": "info@motherspride.com",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:39:18 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:12:17 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@sandhyaschool.com": {
     "email": "info@sandhyaschool.com",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:02:33 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:07:55 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@jankidevipublicschool.com": {
     "email": "info@jankidevipublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:08:27 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:38:08 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@stcolumbas.net": {
     "email": "info@stcolumbas.net",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:31:25 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:08:04 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "admin@paramhansaschool.com": {
     "email": "admin@paramhansaschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:35:56 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:40:33 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@meenakshipublicschool.com": {
     "email": "info@meenakshipublicschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 20:49:34 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:02:19 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@kalkaeducationalsociety.com": {
     "email": "info@kalkaeducationalsociety.com",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Sat, 17 Oct 2026 20:51:32 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Tue, 20 Oct 2026 00:44:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "atrecruitment@lotusvalleygurgaon.com": {
     "email": "atrecruitment@lotusvalleygurgaon.com",
@@ -1423,16 +1423,16 @@
   "info@vedicinternationalschool.com": {
     "email": "info@vedicinternationalschool.com",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sun, 18 Oct 2026 00:35:53 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:45:06 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@patelschool.org": {
     "email": "info@patelschool.org",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sun, 18 Oct 2026 00:16:02 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:21:06 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsgurgaon.org": {
     "email": "info@dpsgurgaon.org",
@@ -3110,7 +3110,7 @@
   "kiranmemorialpublicschool@gmail.com.": {
     "email": "kiranmemorialpublicschool@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Mon, 28 Sep 2026 05:00:18 -0700 (PDT)",
+    "timestamp": "Sat, 26 Sep 2026 03:25:01 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3131,119 +3131,119 @@
   "info@ryaninternational.org.": {
     "email": "info@ryaninternational.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:08:18 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:40:46 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@oxfordpublicschool.com.": {
     "email": "info@oxfordpublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 20:58:11 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:42:50 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@mountfort.org.": {
     "email": "info@mountfort.org.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:46:30 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:35:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@vidyasagar.org.": {
     "email": "info@vidyasagar.org.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 20:58:08 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:33:02 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "contact@gdgoenkadwarka.in.": {
     "email": "contact@gdgoenkadwarka.in.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:40:11 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:23:28 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@sdpublicschool.com.": {
     "email": "info@sdpublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:24:23 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:07:32 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@radhakrishnanschool.in.": {
     "email": "info@radhakrishnanschool.in.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:36:55 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:44:35 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@davmeerut.org.": {
     "email": "info@davmeerut.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:00:05 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:09:44 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@goyalpublicschool.com.": {
     "email": "info@goyalpublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:26:20 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:54:16 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@delhipublicschool.org.": {
     "email": "info@delhipublicschool.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:17:59 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:03:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dhirubhai.net.": {
     "email": "info@dhirubhai.net.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:01:41 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:09:04 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@airforceschool.org.": {
     "email": "info@airforceschool.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:23:28 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:14:26 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@krmangalamnoida.com.": {
     "email": "info@krmangalamnoida.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sun, 18 Oct 2026 00:02:21 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:41:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsrohtak.com.": {
     "email": "info@dpsrohtak.com.",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Sat, 17 Oct 2026 21:16:33 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Mon, 19 Oct 2026 22:41:15 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "career@gdgoenkadwarka.in.": {
     "email": "career@gdgoenkadwarka.in.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:08:17 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:52:08 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "baburamsbv@gmail.com.": {
     "email": "baburamsbv@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Mon, 11 Nov 2024 07:28:50 -0800 (PST)",
+    "timestamp": "Tue, 12 Nov 2024 12:26:48 -0800 (PST)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "ghpsvv@gamil.com.": {
     "email": "ghpsvv@gamil.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Mon, 11 Nov 2024 09:54:06 -0800 (PST)",
+    "timestamp": "Tue, 12 Nov 2024 08:05:19 -0800 (PST)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3264,14 +3264,14 @@
   "stcolumbus11@gmail.com.": {
     "email": "stcolumbus11@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 31 May 2023 09:23:07 -0700 (PDT)",
+    "timestamp": "Tue, 30 May 2023 11:19:18 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "kvsec28rohini@gmail.com.": {
     "email": "kvsec28rohini@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 24 Apr 2024 20:23:16 -0700 (PDT)",
+    "timestamp": "Tue, 23 Apr 2024 18:15:58 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3285,7 +3285,7 @@
   "info@ppischool.com.": {
     "email": "info@ppischool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Wed, 24 Apr 2024 21:24:03 -0700 (PDT)",
+    "timestamp": "Mon, 22 Apr 2024 19:33:33 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3306,7 +3306,7 @@
   "kvdwk12@gmail.com.": {
     "email": "kvdwk12@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Sat, 20 Apr 2024 12:15:21 -0700 (PDT)",
+    "timestamp": "Thu, 18 Apr 2024 09:21:08 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3341,14 +3341,14 @@
   "mbdischool@gmail.com.": {
     "email": "mbdischool@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 27 Mar 2024 22:12:32 -0700 (PDT)",
+    "timestamp": "Tue, 19 Mar 2024 08:39:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "surajschoolgurugram@gmail.com.": {
     "email": "surajschoolgurugram@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 27 Mar 2024 22:12:32 -0700 (PDT)",
+    "timestamp": "Tue, 19 Mar 2024 08:39:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3397,14 +3397,14 @@
   "info@generalrajschool.com.": {
     "email": "info@generalrajschool.com.",
     "reason": "Delivery failure / bounce notice",
-    "timestamp": "Sun, 19 Mar 2023 18:38:04 -0700 (PDT)",
+    "timestamp": "Sun, 28 May 2023 19:37:18 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "accgsbv@gmail.com.": {
     "email": "accgsbv@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Sun, 17 Dec 2023 07:09:31 -0800 (PST)",
+    "timestamp": "Tue, 19 Dec 2023 11:00:03 -0800 (PST)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3418,21 +3418,21 @@
   "info@bnpsramvihar.com.": {
     "email": "info@bnpsramvihar.com.",
     "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Tue, 21 Mar 2023 20:16:34 -0700 (PDT)",
+    "timestamp": "Mon, 29 May 2023 19:54:02 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "truthful@faithacademy.in.": {
     "email": "truthful@faithacademy.in.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Tue, 21 Mar 2023 19:35:32 -0700 (PDT)",
+    "timestamp": "Tue, 30 May 2023 21:40:50 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "niti55551111@gmail.com.": {
     "email": "niti55551111@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Sun, 17 Dec 2023 09:09:42 -0800 (PST)",
+    "timestamp": "Tue, 19 Dec 2023 10:27:22 -0800 (PST)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3460,21 +3460,21 @@
   "premlatagarg.dav@gmail.com.": {
     "email": "premlatagarg.dav@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Wed, 31 May 2023 01:27:59 -0700 (PDT)",
+    "timestamp": "Tue, 30 May 2023 02:51:42 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "induagrawal31@gmail.com.": {
     "email": "induagrawal31@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Tue, 30 May 2023 22:39:33 -0700 (PDT)",
+    "timestamp": "Mon, 29 May 2023 20:28:50 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "beena01bhardwaj@gmail.com.": {
     "email": "beena01bhardwaj@gmail.com.",
     "reason": "Soft Bounce: 452 Recipient inbox full (Over Quota)",
-    "timestamp": "Mon, 20 Mar 2023 19:10:35 -0700 (PDT)",
+    "timestamp": "Mon, 29 May 2023 20:49:15 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
@@ -3497,42 +3497,42 @@
     "reason": "Delivery failure / bounce notice",
     "timestamp": "Sat, 27 May 2023 20:00:50 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "INBOX"
+    "folder": "[Gmail]/All Mail"
   },
   "info@adarshpublicschool.co.in.": {
     "email": "info@adarshpublicschool.co.in.",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Mon, 20 Mar 2023 19:47:53 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Wed, 22 Mar 2023 23:08:54 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
     "folder": "INBOX"
   },
   "info@meenakshipublicschool.com.": {
     "email": "info@meenakshipublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 20:49:34 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:02:19 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@kalkaeducationalsociety.com.": {
     "email": "info@kalkaeducationalsociety.com.",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Sat, 17 Oct 2026 20:51:32 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Tue, 20 Oct 2026 00:44:52 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@gdgoenkadwarka.in.": {
     "email": "info@gdgoenkadwarka.in.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:13:11 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:25:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "careers@airforceschool.org.": {
     "email": "careers@airforceschool.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:22:53 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:45:11 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@paramhansaschool.com.": {
     "email": "info@paramhansaschool.com.",
@@ -3544,121 +3544,121 @@
   "info@laxmipublicschool.com.": {
     "email": "info@laxmipublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:52:28 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:07:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpssonepat.com.": {
     "email": "info@dpssonepat.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 20:50:02 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:06:34 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "direct@dpsfaridabad.in.": {
     "email": "direct@dpsfaridabad.in.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:35:34 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:00:00 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@lawrencehigh.org.": {
     "email": "info@lawrencehigh.org.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 21:50:57 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:51:19 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@krmangalamfaridabad.com.": {
     "email": "info@krmangalamfaridabad.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:01:18 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 03:01:21 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "hr@dpsfaridabad.in.": {
     "email": "hr@dpsfaridabad.in.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:20:14 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:41:43 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@littleflowerschool.in.": {
     "email": "info@littleflowerschool.in.",
-    "reason": "Delivery Incomplete: Recipient server rejected/timed out",
-    "timestamp": "Sat, 17 Oct 2026 22:05:09 -0700 (PDT)",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Mon, 19 Oct 2026 20:52:09 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@maxfort.com.": {
     "email": "info@maxfort.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:08:31 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 03:32:16 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@pathwaysnoida.com.": {
     "email": "info@pathwaysnoida.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:30:02 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:09:13 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@pathwaysgurgaon.com.": {
     "email": "info@pathwaysgurgaon.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Mon, 19 Oct 2026 00:44:19 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:21:47 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsfaridabad.in.": {
     "email": "info@dpsfaridabad.in.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Mon, 19 Oct 2026 01:38:36 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:41:58 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "contact@delhipublicschool.org.": {
     "email": "contact@delhipublicschool.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 21:19:02 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:28:48 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@vedicinternationalschool.com.": {
     "email": "info@vedicinternationalschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sun, 18 Oct 2026 00:35:53 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:45:06 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@patelschool.org.": {
     "email": "info@patelschool.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sun, 18 Oct 2026 00:16:02 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:21:06 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@thepresidiumschool.com.": {
     "email": "info@thepresidiumschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:41:12 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:02:27 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@dpsdelhi.in.": {
     "email": "info@dpsdelhi.in.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 22:46:52 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 22:03:00 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@vidyadevi.org.": {
     "email": "info@vidyadevi.org.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:10:14 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:56:36 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@shivnadarschool.edu.in.": {
     "email": "info@shivnadarschool.edu.in.",
@@ -3670,37 +3670,37 @@
   "info@vidyabharti.org.": {
     "email": "info@vidyabharti.org.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:56:33 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:59:17 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "adm@deepanshuschool.com.": {
     "email": "adm@deepanshuschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:19:24 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:38:57 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@panchsheelpublicschool.com.": {
     "email": "info@panchsheelpublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:05:44 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 02:14:56 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@gyandeeppublicschool.com.": {
     "email": "info@gyandeeppublicschool.com.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 22:43:14 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 23:24:07 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@neweraschool.net.": {
     "email": "info@neweraschool.net.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:07:37 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:12:37 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@brightfuture.in.": {
     "email": "info@brightfuture.in.",
@@ -3712,42 +3712,1749 @@
   "info@motherspride.com.": {
     "email": "info@motherspride.com.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:39:18 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:12:17 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@sandhyaschool.com.": {
     "email": "info@sandhyaschool.com.",
     "reason": "DNS Error: MX record lookup failed (SERVFAIL)",
-    "timestamp": "Sat, 17 Oct 2026 23:02:33 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:07:55 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@jankidevipublicschool.com.": {
     "email": "info@jankidevipublicschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:08:27 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 00:38:08 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "info@stcolumbas.net.": {
     "email": "info@stcolumbas.net.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:31:25 -0700 (PDT)",
+    "timestamp": "Mon, 19 Oct 2026 21:08:04 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "admin@paramhansaschool.com.": {
     "email": "admin@paramhansaschool.com.",
     "reason": "Connection Timed Out: Recipient server unreachable",
-    "timestamp": "Sat, 17 Oct 2026 23:35:56 -0700 (PDT)",
+    "timestamp": "Tue, 20 Oct 2026 01:40:33 -0700 (PDT)",
     "bounce_type": "Permanent Bounce",
-    "folder": "[Gmail]/Bin"
+    "folder": "INBOX"
   },
   "homerton@homertongrammar.com": {
     "email": "homerton@homertongrammar.com",
     "reason": "(550, b'5.4.5 Daily user sending limit exceeded. For more information on Gmail\\n5.4.5 sending limits go to\\n5.4.5  https://support.google.com/a/answer/166852 a92af1059eb24-1831b37ce3fsm25815840c88.14 - gsmtp')",
     "timestamp": "2026-10-19 19:23:53",
     "bounce_type": "SMTP 550/553 Bounce"
+  },
+  "dev@mailer.cseel.org.": {
+    "email": "dev@mailer.cseel.org.",
+    "reason": "Connection Timed Out: Recipient server unreachable",
+    "timestamp": "Mon, 19 Oct 2026 21:23:25 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX"
+  },
+  "website@design.cseel.org.": {
+    "email": "website@design.cseel.org.",
+    "reason": "Connection Timed Out: Recipient server unreachable",
+    "timestamp": "Mon, 19 Oct 2026 21:23:25 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX"
+  },
+  "recruitment@ryaninternational.org.": {
+    "email": "recruitment@ryaninternational.org.",
+    "reason": "Connection Timed Out: Recipient server unreachable",
+    "timestamp": "Tue, 20 Oct 2026 00:09:18 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX"
+  },
+  "careers@modernschool.net": {
+    "email": "careers@modernschool.net",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Tue, 20 Oct 2026 00:19:58 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX"
+  },
+  "careers@modernschool.net.": {
+    "email": "careers@modernschool.net.",
+    "reason": "Delivery failure / bounce notice",
+    "timestamp": "Tue, 20 Oct 2026 00:19:58 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX"
+  },
+  "info@lawrenceschool.co": {
+    "email": "info@lawrenceschool.co",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of lawrenceschool.co responded with code NXDOMAIN",
+    "timestamp": "Mon, 19 Oct 2026 08:46:36 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "ch.mehersinghpublicschool@gmail.com": {
+    "email": "ch.mehersinghpublicschool@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 08:01:00 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "admin@gdgoenkajind.edu.in": {
+    "email": "admin@gdgoenkajind.edu.in",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of gdgoenkajind.edu.in responded with code NXDOMAIN",
+    "timestamp": "Mon, 19 Oct 2026 07:50:04 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "sgnc.bhuna2922@gmail.com": {
+    "email": "sgnc.bhuna2922@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 05:58:37 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "sector37c@narayanagroup.com": {
+    "email": "sector37c@narayanagroup.com",
+    "reason": "550 5.2.1 The email account that you tried to reach is inactive. For more information, go to https://support.google.com/mail",
+    "timestamp": "Mon, 19 Oct 2026 07:49:54 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "aadharshilavidyapeeth001@yahoo.com": {
+    "email": "aadharshilavidyapeeth001@yahoo.com",
+    "reason": "554 30 Sorry, your message to aadharshilavidyapeeth001@yahoo.com cannot be delivered. This mailbox is disabled (554.30).",
+    "timestamp": "Mon, 19 Oct 2026 05:23:15 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "info@oasisnnl.edu.in": {
+    "email": "info@oasisnnl.edu.in",
+    "reason": "smtp; Message rejected. For more information, go to https://support.google.com/mail/answer/69585",
+    "timestamp": "Mon, 19 Oct 2026 15:38:21 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "bspsngd@gmail.com": {
+    "email": "bspsngd@gmail.com",
+    "reason": "smtp; Message rejected. For more information, go to https://support.google.com/mail/answer/69585",
+    "timestamp": "Mon, 19 Oct 2026 17:28:26 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "modelschooljhajjar@gmail.com": {
+    "email": "modelschooljhajjar@gmail.com",
+    "reason": "Mailbox full / Over quota (552)",
+    "timestamp": "Mon, 19 Oct 2026 05:23:47 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "nigmoes@gmail.com": {
+    "email": "nigmoes@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 08:05:58 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "yogehwarschool78@gmail.com": {
+    "email": "yogehwarschool78@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 07:55:14 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "saurabh.malhotra@indusworldschool.com": {
+    "email": "saurabh.malhotra@indusworldschool.com",
+    "reason": "smtp; The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720",
+    "timestamp": "Tue, 20 Oct 2026 08:47:16 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "lakshayclass@gmail.com": {
+    "email": "lakshayclass@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 08:32:36 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "rahulsrsshaarma@gmail.com": {
+    "email": "rahulsrsshaarma@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 08:45:13 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "gurukulamjind@gmail.com": {
+    "email": "gurukulamjind@gmail.com",
+    "reason": "smtp; Message rejected. For more information, go to https://support.google.com/mail/answer/69585",
+    "timestamp": "Mon, 19 Oct 2026 06:12:11 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "hcsellenabad@gmail.com": {
+    "email": "hcsellenabad@gmail.com",
+    "reason": "Mailbox full / Over quota (552)",
+    "timestamp": "Mon, 19 Oct 2026 08:17:32 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "40309@cbsesiksha.in": {
+    "email": "40309@cbsesiksha.in",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of cbsesiksha.in responded with code NXDOMAIN",
+    "timestamp": "Mon, 19 Oct 2026 05:22:25 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "davps_barar@yahoo.com": {
+    "email": "davps_barar@yahoo.com",
+    "reason": "Mailbox full / Over quota (552)",
+    "timestamp": "Mon, 19 Oct 2026 05:51:49 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "theriseacademyschool@gmail.com": {
+    "email": "theriseacademyschool@gmail.com",
+    "reason": "Mailbox full / Over quota (552)",
+    "timestamp": "Mon, 19 Oct 2026 08:22:25 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "admin.rajound@birlaopenminds.com": {
+    "email": "admin.rajound@birlaopenminds.com",
+    "reason": "smtp; Message rejected. For more information, go to https://support.google.com/mail/answer/69585",
+    "timestamp": "Mon, 19 Oct 2026 17:06:40 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "gbpschool1985@gmail.com": {
+    "email": "gbpschool1985@gmail.com",
+    "reason": "smtp; Message rejected. For more information, go to https://support.google.com/mail/answer/69585",
+    "timestamp": "Mon, 19 Oct 2026 17:35:27 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "41547@cbseshikha.in": {
+    "email": "41547@cbseshikha.in",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of cbseshikha.in responded with code NXDOMAIN",
+    "timestamp": "Mon, 19 Oct 2026 08:32:54 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "pmpschooolkkr@gmail.com": {
+    "email": "pmpschooolkkr@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 08:04:36 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "info@ipssultanpur.com": {
+    "email": "info@ipssultanpur.com",
+    "reason": "554 5.7.1 <info@ipssultanpur.com>: Relay access denied",
+    "timestamp": "Mon, 19 Oct 2026 08:44:50 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "principal@mpskoppal.edu.in": {
+    "email": "principal@mpskoppal.edu.in",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of mpskoppal.edu.in responded with code NXDOMAIN",
+    "timestamp": "Tue, 20 Oct 2026 22:00:11 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "vidyabhartijind@gmail.com": {
+    "email": "vidyabhartijind@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 05:22:54 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "contact@stjohnsfatehabad.in": {
+    "email": "contact@stjohnsfatehabad.in",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of stjohnsfatehabad.in responded with code NXDOMAIN",
+    "timestamp": "Mon, 19 Oct 2026 07:55:35 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "info@aviraj.org": {
+    "email": "info@aviraj.org",
+    "reason": "550 No Such User Here",
+    "timestamp": "Mon, 19 Oct 2026 08:22:15 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "admin@cisschools.in": {
+    "email": "admin@cisschools.in",
+    "reason": "550 No Such User Here",
+    "timestamp": "Mon, 19 Oct 2026 08:48:59 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "kvmglobalschool.pai@gmail.com": {
+    "email": "kvmglobalschool.pai@gmail.com",
+    "reason": "smtp; Message rejected. For more information, go to https://support.google.com/mail/answer/69585",
+    "timestamp": "Mon, 19 Oct 2026 17:20:23 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "principal@capitolschooljakkur.com": {
+    "email": "principal@capitolschooljakkur.com",
+    "reason": "550 Mailbox is full / Blocks limit exceeded / Inode limit exceeded",
+    "timestamp": "Tue, 20 Oct 2026 22:00:33 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "spmemorail2@gmail.com": {
+    "email": "spmemorail2@gmail.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 07:44:41 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "info@srichaitanyaschool.com": {
+    "email": "info@srichaitanyaschool.com",
+    "reason": "550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address",
+    "timestamp": "Mon, 19 Oct 2026 08:27:43 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "info@shivalikconventschool.com": {
+    "email": "info@shivalikconventschool.com",
+    "reason": "smtp; DNS Error: DNS type 'mx' lookup of shivalikconventschool.com responded with code NXDOMAIN",
+    "timestamp": "Mon, 19 Oct 2026 08:39:36 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "rksdschool@hotmail.com": {
+    "email": "rksdschool@hotmail.com",
+    "reason": "Mailbox full / Over quota (552)",
+    "timestamp": "Mon, 19 Oct 2026 15:06:06 +0000",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Spam",
+    "discovered_from": "dev@mailer.cseel.org"
+  },
+  "recruitment@ryaninternational.org": {
+    "email": "recruitment@ryaninternational.org",
+    "reason": "smtp; The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720",
+    "timestamp": "Tue, 20 Oct 2026 00:09:18 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik101@gmail.com"
+  },
+  "website@design.cseel.org": {
+    "email": "website@design.cseel.org",
+    "reason": "smtp; The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720",
+    "timestamp": "Mon, 19 Oct 2026 21:23:25 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik101@gmail.com"
+  },
+  "hr@pathways.in": {
+    "email": "hr@pathways.in",
+    "reason": "550 5.7.193 UnifiedGroupAgent; Delivery failed because the sender isn't a group member or external senders aren't permitted",
+    "timestamp": "Sat, 17 Oct 2026 03:46:12 +0000",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Bin",
+    "discovered_from": "ptdevkaushik101@gmail.com"
+  },
+  "principal@dpsmathuraroad.com": {
+    "email": "principal@dpsmathuraroad.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@cambridgeschool.edu.in": {
+    "email": "resume@cambridgeschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@apeejay.edu": {
+    "email": "principal@apeejay.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@salwanschools.com": {
+    "email": "resume@salwanschools.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ahlconinternational.com": {
+    "email": "principal@ahlconinternational.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:30 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@stepbystep.school": {
+    "email": "recruitment@stepbystep.school",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 03:30:15 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@lancersinternationalschool.com": {
+    "email": "principal@lancersinternationalschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@shriram.edu.in": {
+    "email": "principal@shriram.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:32 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ryansonepat.org": {
+    "email": "principal@ryansonepat.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@silverline.edu.in": {
+    "email": "recruitment@silverline.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@scottishhigh.com": {
+    "email": "principal@scottishhigh.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:30 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@rdpsrohini.edu.in": {
+    "email": "principal@rdpsrohini.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@apsmeerut.in": {
+    "email": "principal@apsmeerut.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@hansrajmodelschool.org": {
+    "email": "principal@hansrajmodelschool.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment.gurgaon@gdgoenka.com": {
+    "email": "recruitment.gurgaon@gdgoenka.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsg.org": {
+    "email": "recruitment@dpsg.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@davgurgaon.org": {
+    "email": "principal@davgurgaon.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@themillenniumschool.com": {
+    "email": "principal@themillenniumschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:38 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@genesisglobalschool.edu.in": {
+    "email": "principal@genesisglobalschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:53:11 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@cambridgeschool.edu.in": {
+    "email": "principal@cambridgeschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsyamunanagar.com": {
+    "email": "principal@dpsyamunanagar.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ryangreaternoida.com": {
+    "email": "principal@ryangreaternoida.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@tss.edu.in": {
+    "email": "principal@tss.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@somerville.edu.in": {
+    "email": "recruitment@somerville.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsgreaterfaridabad.in": {
+    "email": "recruitment@dpsgreaterfaridabad.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@davfaridabad.in": {
+    "email": "principal@davfaridabad.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@sbps.ac.in": {
+    "email": "resume@sbps.ac.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@britishschool.in": {
+    "email": "principal@britishschool.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@heritagexperiential.org": {
+    "email": "principal@heritagexperiential.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@gdgoenka.com": {
+    "email": "resume@gdgoenka.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@lotusvalleynoida.com": {
+    "email": "principal@lotusvalleynoida.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@jaypeeschools.edu.in": {
+    "email": "principal@jaypeeschools.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ryanfaridabad.org": {
+    "email": "principal@ryanfaridabad.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@somervillevasantkunj.in": {
+    "email": "principal@somervillevasantkunj.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@stepbystep.school": {
+    "email": "principal@stepbystep.school",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 21:00:37 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@balvantray.org": {
+    "email": "principal@balvantray.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment.noida@lotusvalley.edu.in": {
+    "email": "recruitment.noida@lotusvalley.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@modernschool.net": {
+    "email": "recruitment@modernschool.net",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 22:35:48 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsrkp.net": {
+    "email": "recruitment@dpsrkp.net",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@shriram.edu.in": {
+    "email": "recruitment@shriram.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:32 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@genesisglobalschool.edu.in": {
+    "email": "recruitment@genesisglobalschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:53:11 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsg.org": {
+    "email": "principal@dpsg.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ryannoida.co.in": {
+    "email": "principal@ryannoida.co.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@gdgoenkafaridabad.com": {
+    "email": "principal@gdgoenkafaridabad.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:32 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@pathways.in": {
+    "email": "principal@pathways.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 21:47:37 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@stmarysfbd.com": {
+    "email": "principal@stmarysfbd.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsgreaternoida.com": {
+    "email": "principal@dpsgreaternoida.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@apeejay.edu": {
+    "email": "recruitment@apeejay.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsghaziabad.com": {
+    "email": "principal@dpsghaziabad.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@somervillegreaternoida.in": {
+    "email": "principal@somervillegreaternoida.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@euroschoolindia.com": {
+    "email": "principal@euroschoolindia.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpssec45.com": {
+    "email": "principal@dpssec45.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment.delhi@apeejay.edu": {
+    "email": "recruitment.delhi@apeejay.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@salwanschools.com": {
+    "email": "principal@salwanschools.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@faithacademy.edu.in": {
+    "email": "principal@faithacademy.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@silverline.edu.in": {
+    "email": "principal@silverline.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@tis.edu.in": {
+    "email": "recruitment@tis.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@fatheragnel.org": {
+    "email": "principal@fatheragnel.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@sbps.ac.in": {
+    "email": "recruitment@sbps.ac.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@aravali.edu.in": {
+    "email": "principal@aravali.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 21:51:22 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@itlpublicschool.com": {
+    "email": "principal@itlpublicschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:53:10 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@gdgoenka.com": {
+    "email": "recruitment@gdgoenka.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@arwachin.com": {
+    "email": "principal@arwachin.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@dpsnoida.co.in": {
+    "email": "resume@dpsnoida.co.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@gdgoenkagurgaon.com": {
+    "email": "principal@gdgoenkagurgaon.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:31 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@kingscollegeindia.in": {
+    "email": "principal@kingscollegeindia.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsgreaterfaridabad.in": {
+    "email": "principal@dpsgreaterfaridabad.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpspanipat.in": {
+    "email": "principal@dpspanipat.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@lotusvalley.edu.in": {
+    "email": "recruitment@lotusvalley.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsrajnagar.com": {
+    "email": "principal@dpsrajnagar.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@scottishhigh.com": {
+    "email": "recruitment@scottishhigh.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:30 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@springdales.com": {
+    "email": "principal@springdales.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 21:21:51 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@shikshantar.org": {
+    "email": "principal@shikshantar.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:39 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@shikshantar.org": {
+    "email": "recruitment@shikshantar.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:39 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@salwanschools.com": {
+    "email": "recruitment@salwanschools.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@silverline.edu.in": {
+    "email": "resume@silverline.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@lotusvalley.edu.in": {
+    "email": "principal@lotusvalley.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@sdpsmeerut.com": {
+    "email": "principal@sdpsmeerut.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsdwarka.com": {
+    "email": "principal@dpsdwarka.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@cambridge.edu.in": {
+    "email": "recruitment@cambridge.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ryangurgaon.co.in": {
+    "email": "principal@ryangurgaon.co.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@gdgoenka.com": {
+    "email": "principal@gdgoenka.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsghaziabad.com": {
+    "email": "recruitment@dpsghaziabad.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@balbharati.org": {
+    "email": "principal@balbharati.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:29 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "[Gmail]/Trash",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "mainoffice@dpsmathuraroad.org": {
+    "email": "mainoffice@dpsmathuraroad.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 06:57:04 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "nnabellepeters@nibs.edu": {
+    "email": "nnabellepeters@nibs.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 17:21:04 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "springdales@vsnl.com": {
+    "email": "springdales@vsnl.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 07 Dec 2024 05:55:15 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "geeta29nov@yahoo.com": {
+    "email": "geeta29nov@yahoo.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:45 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@krmangalam.com": {
+    "email": "resume@krmangalam.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 23:08:12 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@stcolumbas.edu.in": {
+    "email": "info@stcolumbas.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:43 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@stepbystep.school": {
+    "email": "resume@stepbystep.school",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 04:04:10 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@delhipublicschool.org": {
+    "email": "principal@delhipublicschool.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 20:57:12 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@thepresidiumschool.com": {
+    "email": "principal@thepresidiumschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 22:50:24 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "jasmeet@valueguyz.com": {
+    "email": "jasmeet@valueguyz.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Thu, 12 Dec 2024 08:50:30 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "contact@matardeischool.in": {
+    "email": "contact@matardeischool.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 22:38:27 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@tagoreint.com": {
+    "email": "principal@tagoreint.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@krmangalamnoida.com": {
+    "email": "principal@krmangalamnoida.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 21:00:22 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@sbps.ac.in": {
+    "email": "principal@sbps.ac.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@ryaninternational.org": {
+    "email": "principal@ryaninternational.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Tue, 20 Oct 2026 01:17:05 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@stcolumbas.net": {
+    "email": "principal@stcolumbas.net",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Tue, 20 Oct 2026 01:25:40 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "odg@thesamarthschool.edu": {
+    "email": "odg@thesamarthschool.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 16 Dec 2023 07:07:58 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@greenfieldspublicschool.com": {
+    "email": "principal@greenfieldspublicschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:43 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admissions@chinmayavvdelhi.ac.in": {
+    "email": "admissions@chinmayavvdelhi.ac.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:46 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "tgeorgeschool_alaknanda@yahoo.com": {
+    "email": "tgeorgeschool_alaknanda@yahoo.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 17:21:06 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "abhishekk13@iimb.ernet.in": {
+    "email": "abhishekk13@iimb.ernet.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Thu, 12 Dec 2024 08:50:33 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@shivnadarschool.edu.in": {
+    "email": "principal@shivnadarschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 22:57:44 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "matha_school@yahoo.com": {
+    "email": "matha_school@yahoo.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Tue, 19 Mar 2024 08:27:09 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "contact@mothermarysschoolmayurvihar.com": {
+    "email": "contact@mothermarysschoolmayurvihar.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 22:39:00 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "mncss@yahoo.in": {
+    "email": "mncss@yahoo.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 09 Nov 2024 06:44:51 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admissions@thelotusvedagroup.com": {
+    "email": "admissions@thelotusvedagroup.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:43 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "ardarpatelschool@rediffmail.com": {
+    "email": "ardarpatelschool@rediffmail.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 06:57:06 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpssonepat.com": {
+    "email": "principal@dpssonepat.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 22:10:55 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@pathwaysnoida.com": {
+    "email": "principal@pathwaysnoida.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 21:01:17 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsrohtak.com": {
+    "email": "principal@dpsrohtak.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 22:23:57 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@platopublicschool.in": {
+    "email": "info@platopublicschool.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:44 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "jaipalsk@bajajcapital.com": {
+    "email": "jaipalsk@bajajcapital.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Thu, 12 Dec 2024 08:50:31 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@navyandhraplayschool.in": {
+    "email": "info@navyandhraplayschool.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:43 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "davrkps.73@ymail.com": {
+    "email": "davrkps.73@ymail.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:45 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@pathwaysgurgaon.com": {
+    "email": "principal@pathwaysgurgaon.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 01:23:07 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsdelhi.in": {
+    "email": "principal@dpsdelhi.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 18 Oct 2026 23:43:05 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "devarajan@ifinltd.in": {
+    "email": "devarajan@ifinltd.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Thu, 12 Dec 2024 08:50:34 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@brahmpuripublicschool.com": {
+    "email": "info@brahmpuripublicschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 23:25:08 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "contact@manvipschool.edu.in": {
+    "email": "contact@manvipschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 22:38:17 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@krmangalam.com": {
+    "email": "principal@krmangalam.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 23:24:49 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "awsdwarka@yahoo.com": {
+    "email": "awsdwarka@yahoo.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:44 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@standrewsscots.com": {
+    "email": "info@standrewsscots.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 06 Dec 2024 01:22:34 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "reenakumari@bajajcapital.com": {
+    "email": "reenakumari@bajajcapital.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Thu, 12 Dec 2024 08:50:31 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "aacharankidscastle@yahoo.co.in": {
+    "email": "aacharankidscastle@yahoo.co.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 11:41:33 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsfaridabad.in": {
+    "email": "recruitment@dpsfaridabad.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 22:00:11 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@dpsfaridabad.in": {
+    "email": "principal@dpsfaridabad.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 23:18:14 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admissionenqiry@presidiumonline.com": {
+    "email": "admissionenqiry@presidiumonline.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 11:46:37 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "sipswr@siddharthschools.edu": {
+    "email": "sipswr@siddharthschools.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 16 Dec 2023 07:07:58 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "ps_siwas@yahoo.co.in": {
+    "email": "ps_siwas@yahoo.co.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 17:21:08 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "sumermalljainschool@rediffmail.com": {
+    "email": "sumermalljainschool@rediffmail.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:47 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@lpsnlp.com": {
+    "email": "info@lpsnlp.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:43 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "cjlpublicschool@yahoo.com": {
+    "email": "cjlpublicschool@yahoo.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 22:35:46 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@eantra.com": {
+    "email": "info@eantra.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 13 Dec 2024 10:06:53 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "school@sanskritischool.edu": {
+    "email": "school@sanskritischool.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 06:57:02 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "ndpsecondaryschool@yahoo.com": {
+    "email": "ndpsecondaryschool@yahoo.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 17:21:06 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "contact@msmschool.net": {
+    "email": "contact@msmschool.net",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:44 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admin@gltsbm.org": {
+    "email": "admin@gltsbm.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Thu, 05 Dec 2024 03:04:29 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@dpsgurgaon.org": {
+    "email": "resume@dpsgurgaon.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 22:21:13 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@airforceschool.org": {
+    "email": "principal@airforceschool.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 00:49:21 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "resume@dpsfaridabad.in": {
+    "email": "resume@dpsfaridabad.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 23:48:32 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "psgp@snps.edu": {
+    "email": "psgp@snps.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 17:21:04 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@matabhateedevi.edu.in": {
+    "email": "info@matabhateedevi.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 23:35:33 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admissionenquiry@mothersprideonline.com": {
+    "email": "admissionenquiry@mothersprideonline.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 11:46:48 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "stcolumbas@stcolumbas.edu": {
+    "email": "stcolumbas@stcolumbas.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 16 Dec 2023 07:07:58 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@shivnadarschool.edu.in": {
+    "email": "recruitment@shivnadarschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 23:07:37 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "office@agnel.org": {
+    "email": "office@agnel.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:46 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admin@dkconventschool.in": {
+    "email": "admin@dkconventschool.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 11:44:42 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "sipswr@siddharthschools.edu.in": {
+    "email": "sipswr@siddharthschools.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sun, 19 Mar 2023 19:05:25 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "mail@ahlconpublicschool.com": {
+    "email": "mail@ahlconpublicschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 07 Dec 2024 04:23:32 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpssonepat.com": {
+    "email": "recruitment@dpssonepat.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Mon, 19 Oct 2026 22:41:34 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsgreaternoida.com": {
+    "email": "recruitment@dpsgreaternoida.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "janakpuri@prudenceonline.in": {
+    "email": "janakpuri@prudenceonline.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:46 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principal@manavrachna.edu.in": {
+    "email": "principal@manavrachna.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Fri, 16 Oct 2026 20:52:28 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "burari@mothersprideonline.com": {
+    "email": "burari@mothersprideonline.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 22:32:15 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "stmichael@bol.net.in": {
+    "email": "stmichael@bol.net.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 01:28:45 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "ntact@pggs.edu": {
+    "email": "ntact@pggs.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 13 Apr 2024 17:21:04 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "satwikdas@jigyasu.co.in": {
+    "email": "satwikdas@jigyasu.co.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Tue, 01 Apr 2025 02:22:53 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "infodg@thesamarathschool.edu.in": {
+    "email": "infodg@thesamarathschool.edu.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:43 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@qmsmodeltown.com": {
+    "email": "info@qmsmodeltown.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:44 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@stmichaelprd.in": {
+    "email": "info@stmichaelprd.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:48 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "nfo@vasantvalley.edu": {
+    "email": "nfo@vasantvalley.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 16 Dec 2023 07:07:58 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "snpsgp@snps.edu": {
+    "email": "snpsgp@snps.edu",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Tue, 19 Mar 2024 08:27:08 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "recruitment@dpsgurgaon.org": {
+    "email": "recruitment@dpsgurgaon.org",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 17 Oct 2026 04:06:58 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "supervisoryhead_primus@davpushpanjali.com": {
+    "email": "supervisoryhead_primus@davpushpanjali.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 04 Dec 2024 00:58:44 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "principalrohini@maxfort.in": {
+    "email": "principalrohini@maxfort.in",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Sat, 09 Nov 2024 06:44:47 -0800 (PST)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "admin@sskkhalsaschool.com": {
+    "email": "admin@sskkhalsaschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 11:45:27 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
+  },
+  "info@satsahebpublicschool.com": {
+    "email": "info@satsahebpublicschool.com",
+    "reason": "Delivery Failure / Bounced in ptdevkaushik104",
+    "timestamp": "Wed, 28 May 2025 23:43:03 -0700 (PDT)",
+    "bounce_type": "Permanent Bounce",
+    "folder": "INBOX",
+    "discovered_from": "ptdevkaushik104@gmail.com"
   }
 }

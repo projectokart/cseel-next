@@ -117,6 +117,12 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        progress: {
+          "0%":   { transform: "scaleX(0)",   opacity: "1" },
+          "70%":  { transform: "scaleX(0.9)", opacity: "1" },
+          "100%": { transform: "scaleX(1)",   opacity: "0" },
+        },
+        fadeIn: { to: { opacity: "1" } },
         "accordion-down": {
           from: {
             height: "0",

@@ -42,6 +42,7 @@
         "@types/three": "^0.186.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "firebase": "^13.1.0",
         "framer-motion": "^12.35.2",
         "groq": "^6.17.0",
         "katex": "^0.18.4",

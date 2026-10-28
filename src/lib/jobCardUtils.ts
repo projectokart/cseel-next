@@ -437,3 +437,77 @@ export function maskPhonesInText(text?: string | null): string {
   if (!text) return '';
   return text.replace(/(?:\+91[\s-]?)?([6-9])\d{9}\b/g, '+91 $1*********');
 }
+
+export interface JobAgeInfo {
+  label: string;
+  badgeClass: string;
+  dotClass: string;
+  diffDays: number;
+  isExpired: boolean;
+}
+
+/**
+ * Calculates human-readable relative age and color-coded status badge:
+ * - Within 1 week (<= 7 days): GREEN badge ("Today", "1 Day old", "3 Days old")
+ * - 8 to 30 days: Neutral slate badge ("15 Days old")
+ * - 31 to 45 days: RED warning badge ("35 Days old")
+ * - > 45 days: Marked isExpired: true for automated purging
+ */
+export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
+  if (!dateStr) {
+    return {
+      label: 'Today',
+      badgeClass: 'text-emerald-700 bg-emerald-50 border-emerald-200/90 font-bold',
+      dotClass: 'bg-emerald-500 animate-pulse',
+      diffDays: 0,
+      isExpired: false,
+    };
+  }
+
+  const posted = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - posted.getTime();
+  const diffDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+
+  if (diffDays > 45) {
+    return {
+      label: `${diffDays} Days old (Expired)`,
+      badgeClass: 'text-slate-400 bg-slate-100 border-slate-200',
+      dotClass: 'bg-slate-400',
+      diffDays,
+      isExpired: true,
+    };
+  }
+
+  // Case 1: <= 7 Days (Within 1 week) -> GREEN
+  if (diffDays <= 7) {
+    const label = diffDays === 0 ? 'Today' : diffDays === 1 ? '1 Day old' : `${diffDays} Days old`;
+    return {
+      label,
+      badgeClass: 'text-emerald-700 bg-emerald-50 border-emerald-200 font-bold',
+      dotClass: 'bg-emerald-500 animate-pulse',
+      diffDays,
+      isExpired: false,
+    };
+  }
+
+  // Case 2: 8 to 30 Days -> NEUTRAL SLATE
+  if (diffDays <= 30) {
+    return {
+      label: `${diffDays} Days old`,
+      badgeClass: 'text-slate-600 bg-slate-100 border-slate-200/80 font-medium',
+      dotClass: 'bg-slate-400',
+      diffDays,
+      isExpired: false,
+    };
+  }
+
+  // Case 3: > 30 Days (31 to 45 Days) -> RED (Warning)
+  return {
+    label: `${diffDays} Days old`,
+    badgeClass: 'text-rose-700 bg-rose-50 border-rose-200 font-bold',
+    dotClass: 'bg-rose-500 animate-pulse',
+    diffDays,
+    isExpired: false,
+  };
+}

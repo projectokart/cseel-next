@@ -9,7 +9,7 @@ import {
   Sparkles, Award, ArrowLeft, RefreshCw
 } from 'lucide-react';
 import { FacultyJobItem } from '@/data/facultyJobsData';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress, getGoogleMapsSearchUrl, getJobAgeInfo } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 
 interface Props {
@@ -342,12 +342,18 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     </span>
                   </div>
 
-                  {job.openingDate && (
-                    <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                      <span className="text-slate-500">Opening Date</span>
-                      <span className="font-bold text-slate-700">{job.openingDate}</span>
-                    </div>
-                  )}
+                  {job.openingDate && (() => {
+                    const age = getJobAgeInfo(job.openingDate);
+                    return (
+                      <div className="flex items-center justify-between py-1 border-b border-slate-50">
+                        <span className="text-slate-500">Posting Status</span>
+                        <span className={`px-2 py-0.5 rounded-full border text-xs flex items-center gap-1.5 ${age.badgeClass}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${age.dotClass}`} />
+                          <span>{age.label} ({job.openingDate})</span>
+                        </span>
+                      </div>
+                    );
+                  })()}
 
                   {job.lastDate && (
                     <div className="flex items-center justify-between py-1">

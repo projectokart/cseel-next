@@ -41,7 +41,7 @@ import {
   isJobForLady
 } from '@/data/facultyJobsData';
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress, getJobAgeInfo } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 import { calculateDynamicFacets, DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
@@ -1677,17 +1677,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
             }
           ` : ''}
           @media (max-width: 767px) {
-            ${(viewMode === 'map' || isFullscreen) ? `
-              html, body {
-                overflow: hidden !important;
-                height: 100% !important;
-                height: 100dvh !important;
-                max-height: 100dvh !important;
-                position: fixed !important;
-                width: 100% !important;
-                overscroll-behavior: none !important;
-                touch-action: none !important;
-              }
+            ${isFullscreen ? `
               #site-topbar,
               .site-topbar,
               #site-navbar,
@@ -2205,7 +2195,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
           <div className="w-full flex items-start gap-4 sm:gap-5 mt-2 sm:mt-3">
             
             {/* Center Content: Cards Feed according to viewMode */}
-            <div className="flex-1 min-w-0 space-y-3 overflow-hidden">
+            <div className="flex-1 min-w-0 space-y-3 overflow-visible touch-pan-y">
               {/* ── MAP VIEW (IF TOGGLED) ── */}
               {viewMode === 'map' && (
                 <div className={`fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col bg-slate-50 overflow-hidden mb-4 ${
@@ -2281,7 +2271,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                       return (
                         <React.Fragment key={job.id}>
                           <div
-                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden select-none"
+                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-visible touch-pan-y"
                           >
                           <div className="space-y-2.5 min-w-0">
                             {/* Conditional Job Image Banner (Only if image_url is available) */}
@@ -2419,10 +2409,15 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
 
                           {/* Row 5: Footer (Post Date on Left, Share + Save + Details + Apply on Right) */}
                           <div className="pt-1.5 pb-0.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                            <div className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                              <Clock size={11} className="text-slate-400 shrink-0" />
-                              <span>{job.openingDate ? formatJobDisplayDate(job.openingDate) : 'Today'}</span>
-                            </div>
+                            {(() => {
+                              const age = getJobAgeInfo(job.openingDate);
+                              return (
+                                <div className={`text-[10.5px] sm:text-[11px] px-2 py-0.5 rounded-full border flex items-center gap-1.5 shrink-0 transition-colors ${age.badgeClass}`}>
+                                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${age.dotClass}`} />
+                                  <span>{age.label}</span>
+                                </div>
+                              );
+                            })()}
 
                             <div className="flex items-center gap-1.5 sm:gap-2">
                               {/* Share Button */}

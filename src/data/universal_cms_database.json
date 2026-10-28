@@ -771,5 +771,13 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-28T05:37:01.680Z",
     "updatedBy": "Auto Init"
+  },
+  "signup": {
+    "pageKey": "signup",
+    "title": "Signup",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-28T11:23:54.212Z",
+    "updatedBy": "Auto Init"
   }
 }

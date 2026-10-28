@@ -5,7 +5,7 @@ import { getActiveFacultyJobs, toLightweightJob } from '@/data/facultyJobsData';
 import { ALL_TEACHERS } from '@/lib/eduNetworkData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 
-export const revalidate = 60;
+export const revalidate = 3600; // Edge ISR cache for instant <100ms TTFB
 
 // Freshness dates for Google Rank #1 Priority Crawl
 const CURRENT_DATE = new Date();
@@ -60,11 +60,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function TeachersPage({
-  searchParams,
-}: {
-  searchParams?: { tab?: string };
-}) {
+export default async function TeachersPage() {
   let activeJobs = await SupabaseJobService.fetchJobsFromSupabase();
   if (!activeJobs || activeJobs.length === 0) {
     activeJobs = getActiveFacultyJobs();
@@ -172,15 +168,13 @@ export default async function TeachersPage({
     ],
   };
 
-  const initialTab = searchParams?.tab === 'faculty' ? 'faculty' : 'jobs';
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient initialJobs={activeJobs.map(toLightweightJob)} initialTab={initialTab} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
+      <TeachersClient initialJobs={activeJobs.map(toLightweightJob)} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
     </>
   );
 }

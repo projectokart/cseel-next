@@ -44,23 +44,15 @@ import {
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress, getJobAgeInfo } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
-import FacultyFilterSheet from '@/components/teachers/FacultyFilterSheet';
 import { calculateDynamicFacets, DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
 import { matchesJobFuzzy, filterAndRankJobsBySearch } from '@/lib/fuzzySearch';
-import FacultyAdBanner from '@/components/teachers/FacultyAdBanner';
 
-const POPULAR_CITIES = [
-  { name: 'Delhi NCR', icon: 'https://img.icons8.com/color/48/india-gate.png' },
-  { name: 'Gurugram', icon: 'https://img.icons8.com/color/48/city.png' },
-  { name: 'Noida', icon: 'https://img.icons8.com/color/48/building.png' },
-  { name: 'Mumbai', icon: 'https://img.icons8.com/color/48/gateway-of-india.png' },
-  { name: 'Pune', icon: 'https://img.icons8.com/color/48/city.png' },
-  { name: 'Bengaluru', icon: 'https://img.icons8.com/color/48/commercial.png' },
-  { name: 'Hyderabad', icon: 'https://img.icons8.com/color/48/charminar.png' },
-  { name: 'Jaipur', icon: 'https://img.icons8.com/color/48/hawa-mahal.png' },
-  { name: 'Chandigarh', icon: 'https://img.icons8.com/color/48/city.png' },
-  { name: 'Kolkata', icon: 'https://img.icons8.com/color/48/howrah-bridge.png' },
-];
+const FacultyFilterSheet = dynamic(() => import('@/components/teachers/FacultyFilterSheet'), {
+  ssr: false,
+});
+const FacultyAdBanner = dynamic(() => import('@/components/teachers/FacultyAdBanner'), {
+  ssr: false,
+});
 
 // Indian States & Districts Master Database for Auto-Populating Dependent District Select
 export const INDIAN_STATES_DISTRICTS: Record<string, string[]> = {
@@ -1116,9 +1108,9 @@ export default function TeachersDirectoryClient({
       .catch((err) => console.warn('[Client] Faculty sync notice:', err));
   }, []);
 
-  // ── PAGINATION (STRICT 50 ITEMS PER PAGE - SYNCED WITH MAP & CARDS) ──
+  // ── PAGINATION (25 ITEMS PER PAGE FOR OPTIMAL PERFORMANCE & FAST RENDERING) ──
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const JOBS_PER_PAGE = 50;
+  const JOBS_PER_PAGE = 25;
 
   // Reset page to 1 whenever any filter or search query changes
   useEffect(() => {
@@ -2957,7 +2949,7 @@ export default function TeachersDirectoryClient({
               )}
 
 
-              {/* ── CLEAN RESPONSIVE NUMBERED PAGINATION BAR (50 ITEMS PER PAGE) ── */}
+              {/* ── CLEAN RESPONSIVE NUMBERED PAGINATION BAR (25 ITEMS PER PAGE) ── */}
               {totalPages > 1 && (
                 <div className="mt-6 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
                   <div className="text-xs text-slate-500 font-medium text-center sm:text-left">

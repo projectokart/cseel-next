@@ -191,34 +191,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
           },
         ],
       },
-      {
-        id: 'col-materials-procurement',
-        categoryTitle: 'Procurement & Institutional Cart',
-        to: '/materials',
-        enabled: true,
-        items: [
-          {
-            id: 'item-instant-quotation',
-            label: 'Instant Quotation Generator',
-            to: '/materials',
-            desc: 'Generate instant GST-compliant formal estimates and quotations for school tenders.',
-            subItems: [
-              { label: 'Instant Quotation Download', to: '/materials', badge: 'Instant PDF' },
-              { label: 'GeM Procurement Assistance', to: '/schemes' },
-            ],
-          },
-          {
-            id: 'item-requisition-cart',
-            label: 'Requisition Cart & Checkout',
-            to: '/cart',
-            desc: 'Review selected school lab equipment and submit official purchase inquiries.',
-            subItems: [
-              { label: 'Open Material Cart', to: '/cart', badge: 'Cart' },
-              { label: 'Bulk School Purchase Request', to: '/contact-us' },
-            ],
-          },
-        ],
-      },
+
     ],
     featuredPanel: {
       eyebrow: 'Institutional Procurement',

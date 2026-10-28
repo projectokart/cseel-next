@@ -2057,11 +2057,8 @@ export default function TeachersDirectoryClient({
           
           {/* SEO Header & Immediate LCP Anchor */}
           <div className="mb-0.5">
-            <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <span>{activeTab === 'jobs' ? 'Daily School Teaching Vacancies' : 'Verified Faculty & STEM Educators'}</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#EBF3F8] text-[#004A75] border border-[#D0E6F5]">
-                {totalJobsCount.toLocaleString()} {activeTab === 'jobs' ? 'Active Posts' : 'Profiles'}
-              </span>
+            <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight">
+              {activeTab === 'jobs' ? 'Daily School Teaching Vacancies' : 'Verified Faculty & STEM Educators'}
             </h1>
             <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
               Top CBSE, ICSE & private school appointments updated daily with verified salary bands and direct apply links.

@@ -17,29 +17,32 @@ export interface UserProfileRecord {
   createdAt: string;
 }
 
-const PROFILES_FILE = path.join(process.cwd(), 'data', 'user_profiles.json');
+const PROFILES_FILE = process.env.VERCEL
+  ? path.join('/tmp', 'user_profiles.json')
+  : path.join(process.cwd(), 'data', 'user_profiles.json');
+
+const _memoryProfiles: Record<string, UserProfileRecord> = {};
 
 function readProfiles(): Record<string, UserProfileRecord> {
   try {
-    if (!fs.existsSync(PROFILES_FILE)) {
-      const dir = path.dirname(PROFILES_FILE);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(PROFILES_FILE, '{}', 'utf-8');
-      return {};
+    let fileProfiles: Record<string, UserProfileRecord> = {};
+    if (fs.existsSync(PROFILES_FILE)) {
+      const raw = fs.readFileSync(PROFILES_FILE, 'utf-8');
+      fileProfiles = JSON.parse(raw || '{}');
     }
-    const raw = fs.readFileSync(PROFILES_FILE, 'utf-8');
-    return JSON.parse(raw || '{}');
+    return { ..._memoryProfiles, ...fileProfiles };
   } catch (err) {
     console.error('[UserProfile API] Error reading profiles file:', err);
-    return {};
+    return _memoryProfiles;
   }
 }
 
 function writeProfiles(profiles: Record<string, UserProfileRecord>) {
   try {
+    Object.assign(_memoryProfiles, profiles);
     const dir = path.dirname(PROFILES_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(PROFILES_FILE, JSON.stringify(profiles, null, 2), 'utf-8');
+    fs.writeFileSync(PROFILES_FILE, JSON.stringify(_memoryProfiles, null, 2), 'utf-8');
   } catch (err) {
     console.error('[UserProfile API] Error writing profiles file:', err);
   }

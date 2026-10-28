@@ -62,6 +62,8 @@ const TopBar = () => {
     return () => { isCancelled = true; };
   }, [user]);
 
+  const [localProfile, setLocalProfile] = useState<any | null>(null);
+
   const meta = user?.user_metadata;
   const avatarUrl = meta?.avatar_url || meta?.picture || "";
   const displayName =
@@ -73,7 +75,11 @@ const TopBar = () => {
     user?.email?.split("@")[0] ||
     "User";
   const initials    = (displayName || "US").slice(0, 2).toUpperCase();
-  const primaryRole = userProfile?.role || ((roles && roles.length > 0) ? roles[0] : "teacher");
+  const primaryRole = userProfile?.role || localProfile?.role || ((roles && roles.length > 0) ? roles[0] : "teacher");
+  const hasProfile = Boolean(
+    (userProfile && userProfile.displayName && userProfile.displayName.trim().length > 1) ||
+    (localProfile && localProfile.displayName && localProfile.displayName.trim().length > 1)
+  );
 
   const isAdmin = primaryRole === 'moderator' || Boolean(user?.email && (user.email.endsWith('@cseel.org') || user.email.endsWith('@cseel.in')));
   const dashboardPath = isAdmin ? '/admin' : '/';
@@ -107,14 +113,18 @@ const TopBar = () => {
   const profileRef = React.useRef<HTMLDivElement | null>(null);
   const profileOpenTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const profileCloseTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-const [localProfile, setLocalProfile] = useState<any | null>(null);
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('cseel_user_profile');
-      if (stored) setLocalProfile(JSON.parse(stored));
+      if (user?.email) {
+        const stored = localStorage.getItem(`cseel_user_profile_${user.email.toLowerCase()}`) || localStorage.getItem('cseel_user_profile');
+        if (stored) setLocalProfile(JSON.parse(stored));
+      } else {
+        const stored = localStorage.getItem('cseel_user_profile');
+        if (stored) setLocalProfile(JSON.parse(stored));
+      }
     } catch (e) {}
-  }, [profileMenuOpen]);
+  }, [profileMenuOpen, user]);
 
   const clearProfileTimers = () => {
     if (profileOpenTimer.current) {
@@ -313,31 +323,31 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
                     )}
 
                     <div className="py-1 border-t border-gray-100">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          setIsProfileModalOpen(true);
-                        }}
-                        className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
-                      >
-                        <Edit3 className="mr-2.5 h-4 w-4 text-[#006FCC]" />
-                        <span>Edit Profile & Address</span>
-                      </button>
-                    </div>
-
-                    <div className="py-1 border-t border-gray-100">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          setIsProfileModalOpen(true);
-                        }}
-                        className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
-                      >
-                        <Edit3 className="mr-2.5 h-4 w-4 text-[#006FCC]" />
-                        <span>Edit Profile & Address</span>
-                      </button>
+                      {hasProfile ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            setIsProfileModalOpen(true);
+                          }}
+                          className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
+                        >
+                          <Edit3 className="mr-2.5 h-4 w-4 text-[#006FCC]" />
+                          <span>Edit Profile & Address</span>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            setIsProfileModalOpen(true);
+                          }}
+                          className="w-full flex items-center px-3.5 py-2.5 text-xs font-bold text-[#1A73E8] bg-blue-50/70 hover:bg-blue-100/70 cursor-pointer transition-colors"
+                        >
+                          <PlusCircle className="mr-2.5 h-4 w-4 text-[#1A73E8]" />
+                          <span>Create Your Profile</span>
+                        </button>
+                      )}
                     </div>
 
                     <div className="border-t border-gray-100 pt-1">

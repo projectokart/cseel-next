@@ -217,13 +217,11 @@ export default function RootLayout({
 
         {/* Non-Blocking Font Loading (Zero Render-Blocking Overhead) */}
         <link
-          rel="preload"
-          as="style"
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
-        />
-        <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+          media="print"
+          // @ts-ignore
+          onLoad="this.media='all'"
         />
         <noscript>
           <link
@@ -479,7 +477,9 @@ export default function RootLayout({
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap"
-          media="all"
+          media="print"
+          // @ts-ignore
+          onLoad="this.media='all'"
         />
 
         {/* Swiper & CDN Preconnects (From Labster UI Framework) */}
@@ -490,6 +490,9 @@ export default function RootLayout({
           integrity="sha512-1mKT2l92H6btoIkk6fIotzeArJ3G59u/xMsDyBb/XROahx4zpXeXucqzVYssrrK0AHSNjSfe4QVE/loSr85jfA=="
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
+          media="print"
+          // @ts-ignore
+          onLoad="this.media='all'"
         />
 
 
@@ -617,14 +620,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* Labster Typography: Google Fonts Montserrat & Lato (100-900) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic%7CMontserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic&display=swap"
-          media="all"
-        />
+
 
         {/* Labster-Style Rich VideoObject Schema: CSEEL Homepage Hero Video - Experiential Learning Lab & Hands-on STEM 2026 */}
         <script

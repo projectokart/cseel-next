@@ -185,10 +185,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const syncUserProfile = async (cleanEmail: string) => {
     try {
-      const res = await fetch(`/api/user/profile?email=${encodeURIComponent(cleanEmail)}`);
+      const lower = cleanEmail.toLowerCase();
+      // 1. Instant cache recovery from localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const cached = localStorage.getItem(`cseel_user_profile_${lower}`) || localStorage.getItem('cseel_user_profile');
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (parsed && parsed.displayName) {
+              setUserProfile(parsed);
+              setUser((prev) => {
+                if (!prev) return prev;
+                return {
+                  ...prev,
+                  displayName: parsed.displayName || prev.displayName,
+                  user_metadata: {
+                    ...prev.user_metadata,
+                    name: parsed.displayName,
+                    full_name: parsed.displayName,
+                    role: parsed.role,
+                    state: parsed.state,
+                    district: parsed.district,
+                    pincode: parsed.pincode,
+                    phone: parsed.phone,
+                  },
+                };
+              });
+              if (parsed.role) setRoles([parsed.role]);
+            }
+          }
+        } catch {}
+      }
+
+      // 2. Background sync with backend API
+      const res = await fetch(`/api/user/profile?email=${encodeURIComponent(lower)}`);
       const data = await res.json();
       if (data.success && data.profile) {
         setUserProfile(data.profile);
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem(`cseel_user_profile_${lower}`, JSON.stringify(data.profile));
+            localStorage.setItem('cseel_user_profile', JSON.stringify(data.profile));
+          } catch {}
+        }
         setUser((prev) => {
           if (!prev) return prev;
           return {
@@ -209,10 +248,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (data.profile.role) {
           setRoles([data.profile.role]);
         }
-      } else if (!data.hasCompletedProfile) {
-        // If user has not filled details, open modal
-        setIsProfileModalOpen(true);
       }
+      // Note: We intentionally DO NOT auto-open modal to avoid annoying popups
     } catch (err) {
       console.warn('[AuthContext] syncUserProfile notice:', err);
     }
@@ -223,17 +260,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return { success: false, error: 'User must be signed in to update profile.' };
     }
     try {
-      const res = await fetch('/api/user/profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email, ...data }),
-      });
-      const resData = await res.json();
-      if (!res.ok || !resData.success) {
-        return { success: false, error: resData.error || 'Failed to save profile.' };
+      const lower = user.email.toLowerCase();
+      const profilePayload = {
+        email: lower,
+        displayName: data.displayName,
+        role: data.role,
+        state: data.state || '',
+        district: data.district || '',
+        pincode: data.pincode || '',
+        phone: data.phone || '',
+        updatedAt: new Date().toISOString(),
+      };
+
+      // 1. Immediately cache locally for 0ms instant persistence
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(`cseel_user_profile_${lower}`, JSON.stringify(profilePayload));
+          localStorage.setItem('cseel_user_profile', JSON.stringify(profilePayload));
+          localStorage.setItem(`cseel_user_roles_${user.uid}`, JSON.stringify([data.role]));
+          localStorage.setItem(`cseel_user_metadata_${user.uid}`, JSON.stringify({
+            ...user.user_metadata,
+            name: data.displayName,
+            full_name: data.displayName,
+            role: data.role,
+            state: data.state,
+            district: data.district,
+            pincode: data.pincode,
+          }));
+        } catch {}
       }
 
-      setUserProfile(resData.profile);
+      setUserProfile(profilePayload);
       setUser((prev) => {
         if (!prev) return prev;
         return {
@@ -257,19 +314,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         updateProfile(auth.currentUser, { displayName: data.displayName }).catch(() => {});
       }
 
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem(`cseel_user_roles_${user.uid}`, JSON.stringify([data.role]));
-          localStorage.setItem(`cseel_user_metadata_${user.uid}`, JSON.stringify({
-            ...user.user_metadata,
-            name: data.displayName,
-            full_name: data.displayName,
-            role: data.role,
-            state: data.state,
-            district: data.district,
-            pincode: data.pincode,
-          }));
-        } catch {}
+      // 2. Persist to API
+      try {
+        await fetch('/api/user/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profilePayload),
+        });
+      } catch (e) {
+        console.warn('[saveUserProfile] API write fallback:', e);
       }
 
       setIsProfileModalOpen(false);

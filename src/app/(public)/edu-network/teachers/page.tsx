@@ -4,8 +4,7 @@ import { getActiveFacultyJobs } from '@/data/facultyJobsData';
 import { ALL_TEACHERS } from '@/lib/eduNetworkData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 // Freshness dates for Google Rank #1 Priority Crawl
 const CURRENT_DATE = new Date();
@@ -180,7 +179,7 @@ export default async function TeachersPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient initialJobs={activeJobs} initialTab={initialTab} />
+      <TeachersClient initialJobs={activeJobs.slice(0, 100)} initialTab={initialTab} />
     </>
   );
 }

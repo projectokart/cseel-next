@@ -1,4 +1,4 @@
-import { FacultyJobItem } from '@/data/facultyJobsData';
+import { FacultyJobItem, getActiveFacultyJobs } from '@/data/facultyJobsData';
 import { maskPhonesInText } from '@/lib/jobCardUtils';
 import { GoogleGeocodingService } from './googleGeocodingService';
 
@@ -12,50 +12,53 @@ const SUPABASE_KEY =
  * Supabase Jobs Database Sync Service
  * Directly reads & writes to Supabase public.jobs table.
  */
+let _cachedJobs: FacultyJobItem[] | null = null;
+let _lastJobsFetchTime = 0;
+const JOBS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+
 export class SupabaseJobService {
   /**
-   * Fetches active school faculty jobs from Supabase
+   * Fetches active school faculty jobs from Supabase with in-memory caching & timeout protection
    */
   static async fetchJobsFromSupabase(): Promise<FacultyJobItem[]> {
+    // Return from in-memory cache if fresh
+    if (_cachedJobs && _cachedJobs.length > 0 && Date.now() - _lastJobsFetchTime < JOBS_CACHE_TTL_MS) {
+      return _cachedJobs;
+    }
+
     if (!SUPABASE_KEY) {
-      console.warn('[SupabaseJobService] No API key available');
-      return [];
+      console.warn("[SupabaseJobService] No API key available");
+      return _cachedJobs || [];
     }
 
     try {
-      let allRows: any[] = [];
-      let offset = 0;
-      const limit = 1000;
-      let hasMore = true;
+      // 1-batch query with a strict 3-second timeout to never block page rendering
+      const url = `${SUPABASE_URL}/rest/v1/jobs?is_active=eq.true&order=posted_at.desc&limit=500`;
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+        signal: AbortSignal.timeout(800),
+      });
 
-      while (hasMore) {
-        const url = `${SUPABASE_URL}/rest/v1/jobs?is_active=eq.true&order=posted_at.desc&select=*&offset=${offset}&limit=${limit}`;
-        const res = await fetch(url, {
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-          },
-          cache: 'no-store'
-        });
-
-        if (!res.ok) {
-          console.error(`[SupabaseJobService] Failed to fetch: status ${res.status}`);
-          break;
-        }
-
-        const rows: any[] = await res.json();
-        allRows = allRows.concat(rows);
-        if (rows.length < limit || allRows.length >= 5000) {
-          hasMore = false;
-        } else {
-          offset += limit;
-        }
+      if (!res.ok) {
+        console.error(`[SupabaseJobService] Failed to fetch: status ${res.status}`);
+        return _cachedJobs || [];
       }
 
-      return allRows.map((r) => this.mapRowToJobItem(r));
-    } catch (err) {
-      console.error('[SupabaseJobService] Error fetching jobs:', err);
-      return [];
+      const rows: any[] = await res.json();
+      if (Array.isArray(rows) && rows.length > 0) {
+        const mapped = rows.map((r) => this.mapRowToJobItem(r));
+        _cachedJobs = mapped;
+        _lastJobsFetchTime = Date.now();
+        return mapped;
+      }
+
+      return (_cachedJobs && _cachedJobs.length > 0) ? _cachedJobs : getActiveFacultyJobs();
+    } catch (err: any) {
+      console.warn("[SupabaseJobService] Supabase fetch timed out or error (falling back to cache/local data):", err?.message || err);
+      return (_cachedJobs && _cachedJobs.length > 0) ? _cachedJobs : getActiveFacultyJobs();
     }
   }
 

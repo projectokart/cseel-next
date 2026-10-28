@@ -2290,6 +2290,8 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                                 <img
                                   src={job.image_url}
                                   alt={job.jobPostName}
+                                  loading="lazy"
+                                  decoding="async"
                                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
                                   onError={(e) => {
                                     const parent = (e.target as HTMLElement).parentElement;
@@ -2336,6 +2338,8 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                                   <img
                                     src={job.organisationLogo}
                                     alt={job.organisationName}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="w-full h-full object-contain"
                                     onError={(e) => {
                                       // Hide whole logo container if image fails to load so no space is wasted
@@ -2520,7 +2524,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                           <div className="flex items-start gap-3 min-w-0">
                             {/* Left: Avatar Div */}
                             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border border-slate-200 bg-slate-50 shrink-0 overflow-hidden shadow-2xs mt-0.5">
-                              <img src={f.avatar} alt={f.name} className="w-full h-full object-cover" />
+                              <img src={f.avatar} alt={f.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                             </div>
 
                             {/* Right: Content Div */}
@@ -2671,6 +2675,8 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                               <img
                                 src={f.avatar}
                                 alt={f.name}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover"
                               />
                             </Link>
@@ -2878,9 +2884,9 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
 
                     <div className="space-y-2">
                       {activeJobs.slice(0, 4).map((tj) => {
-                        const salaryDisplay = tj.salary.includes('LPA')
+                        const salaryDisplay = (tj.salary && tj.salary.includes('LPA'))
                           ? `${tj.salary.split('-')[0].trim()} LPA`
-                          : tj.salary;
+                          : (tj.salary || 'Best in Industry');
                         return (
                           <Link
                             key={tj.id}

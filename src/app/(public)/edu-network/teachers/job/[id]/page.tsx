@@ -6,7 +6,7 @@ import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
 import SingleJobClient from './SingleJobClient';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 interface Props {
   params: {

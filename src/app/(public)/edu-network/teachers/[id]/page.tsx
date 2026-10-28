@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import TeacherProfileClient from "./Client";
 import { fetchTeacherByIdOrSlug, ALL_TEACHERS, getTeacherSlug } from "@/lib/eduNetworkData";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const teacher = await fetchTeacherByIdOrSlug(params.id);

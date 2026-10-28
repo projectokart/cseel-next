@@ -713,6 +713,7 @@ const Navbar = () => {
                       </button>
                     ) : (
                       <Link
+                        prefetch={true}
                         href={item.to || '/'}
                         onMouseEnter={handleMouseLeave}
                         className="top-nav-link inline-flex items-center text-[14px] xl:text-[15px] 2xl:text-[15.5px] font-bold tracking-tight text-[#1B1F23] hover:text-[#006FCC] transition-colors duration-200 ease-in-out whitespace-nowrap shrink-0 h-[34px] px-2 lg:px-2 xl:px-2.5 2xl:px-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006FCC]"
@@ -785,6 +786,7 @@ const Navbar = () => {
                                 <div key={idx} className="group/item pb-1 transition-all">
                                   <div className="flex items-start justify-between gap-2">
                                     <Link
+                                      prefetch={true}
                                       href={sub.to}
                                       onClick={() => setOpenDropdown(null)}
                                       className="group block flex-1"
@@ -830,6 +832,7 @@ const Navbar = () => {
                                       {sub.subItems!.map((child, cIdx) => (
                                         <Link
                                           key={cIdx}
+                                          prefetch={true}
                                           href={child.to}
                                           onClick={() => setOpenDropdown(null)}
                                           className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[12px] font-semibold text-[#003C6E] hover:text-[#006FCC] transition-colors group/child font-['Montserrat',sans-serif]"
@@ -876,6 +879,7 @@ const Navbar = () => {
                                 <div key={idx} className="group/item pb-1 transition-all">
                                   <div className="flex items-start justify-between gap-2">
                                     <Link
+                                      prefetch={true}
                                       href={sub.to}
                                       onClick={() => setOpenDropdown(null)}
                                       className="group block flex-1"
@@ -921,6 +925,7 @@ const Navbar = () => {
                                       {sub.subItems!.map((child, cIdx) => (
                                         <Link
                                           key={cIdx}
+                                          prefetch={true}
                                           href={child.to}
                                           onClick={() => setOpenDropdown(null)}
                                           className="flex items-center justify-between py-1 px-1.5 rounded-md hover:bg-white text-[12px] font-semibold text-[#003C6E] hover:text-[#006FCC] transition-colors group/child font-['Montserrat',sans-serif]"
@@ -1128,6 +1133,7 @@ const Navbar = () => {
                                               {sub.subItems!.map((child: any, cIdx: number) => (
                                                 <Link
                                                   key={cIdx}
+                                                  prefetch={true}
                                                   href={child.to || '/'}
                                                   onClick={() => { isNavigatingRef.current = true; setMobileOpen(false); }}
                                                   className="flex items-center justify-between text-[12px] font-medium text-[#1B1F23] hover:text-[#006FCC] py-1 px-1.5 rounded hover:bg-white transition-colors"
@@ -1165,6 +1171,7 @@ const Navbar = () => {
                               </p>
                               <div className="pt-2.5">
                                 <Link
+                                  prefetch={true}
                                   href={item.featuredPanel.ctaHref}
                                   onClick={() => { isNavigatingRef.current = true; setMobileOpen(false); }}
                                   className="w-full h-10 px-4 text-[13.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-xs rounded-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2 font-['Montserrat',sans-serif] cursor-pointer"

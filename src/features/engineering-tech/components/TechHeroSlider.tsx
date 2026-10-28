@@ -60,7 +60,7 @@ export const TechHeroSlider: React.FC<TechHeroSliderProps> = ({ onBookDemo }) =>
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.1] transform scale-105 transition-transform duration-[6000ms]"
+                  className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.1] transform scale-105 transition-transform [transition-duration:6000ms]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#200f01]/95 via-[#2e1603]/85 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a0c01] via-transparent to-transparent" />

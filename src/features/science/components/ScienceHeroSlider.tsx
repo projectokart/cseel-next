@@ -72,7 +72,7 @@ export const ScienceHeroSlider: React.FC<ScienceHeroSliderProps> = ({ onBookDemo
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.1] transform scale-105 transition-transform duration-[6000ms]"
+                  className="w-full h-full object-cover object-center filter brightness-[0.38] contrast-[1.1] transform scale-105 transition-transform [transition-duration:6000ms]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#001f3f]/95 via-[#002b55]/85 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#001833] via-transparent to-transparent" />

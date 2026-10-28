@@ -3,8 +3,7 @@ import { parseSchoolsSeoQuery } from '@/lib/schoolsSeoParser';
 import { fetchSchoolsForDirectory } from '@/integrations/supabase/schoolsDirectoryDb';
 import SchoolsDirectoryClient from '@/components/schools/SchoolsDirectoryClient';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

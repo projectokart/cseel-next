@@ -41,7 +41,7 @@ export const EventsHeroSlider: React.FC<EventsHeroSliderProps> = ({ featuredEven
               <img
                 src={evt.bannerImage}
                 alt={evt.title}
-                className="w-full h-full object-cover object-center filter brightness-[0.35] contrast-[1.1] transform scale-105 transition-transform duration-[6000ms]"
+                className="w-full h-full object-cover object-center filter brightness-[0.35] contrast-[1.1] transform scale-105 transition-transform [transition-duration:6000ms]"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#001a33]/95 via-[#002b55]/85 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#001833] via-transparent to-transparent" />

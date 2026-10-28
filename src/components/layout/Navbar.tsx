@@ -1176,14 +1176,14 @@ const Navbar = () => {
                               <p className="text-[12px] text-[#5F6265] leading-relaxed line-clamp-2 font-['Lato',sans-serif]">
                                 {item.featuredPanel.desc}
                               </p>
-                              <div className="pt-1">
+                              <div className="pt-2.5">
                                 <Link
                                   href={item.featuredPanel.ctaHref}
                                   onClick={() => setMobileOpen(false)}
-                                  className="inline-flex items-center gap-1.5 text-[12px] font-bold text-[#006FCC] hover:text-[#005399] font-['Montserrat',sans-serif]"
+                                  className="w-full h-10 px-4 text-[13.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-xs rounded-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2 font-['Montserrat',sans-serif] cursor-pointer"
                                 >
                                   <span>{item.featuredPanel.ctaText}</span>
-                                  <ArrowRight className="w-3.5 h-3.5" />
+                                  <ArrowRight className="w-4 h-4 shrink-0" />
                                 </Link>
                               </div>
                             </div>

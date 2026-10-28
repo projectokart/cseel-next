@@ -528,15 +528,14 @@ const Navbar = () => {
 
 
 
-  const [drawerHeight, setDrawerHeight] = useState<string>('calc(100dvh - 54px)');
+  const [headerBottom, setHeaderBottom] = useState<number>(54);
 
-  // Safely lock body scroll and adapt drawer height when mobile menu is opened
+  // Safely lock body scroll and calculate exact header bottom when mobile menu is opened
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = 'hidden';
       if (headerRef.current) {
-        const bottom = Math.round(headerRef.current.getBoundingClientRect().bottom);
-        setDrawerHeight(`calc(100dvh - ${bottom}px)`);
+        setHeaderBottom(Math.round(headerRef.current.getBoundingClientRect().bottom));
       }
     } else {
       document.body.style.overflow = '';
@@ -627,7 +626,7 @@ const Navbar = () => {
       <header
         ref={headerRef}
         id="site-navbar"
-        className={`site-navbar relative w-full z-[400] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
+        className={`site-navbar sticky top-0 w-full z-[500] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
           isScrolled
             ? 'shadow-[0_4px_5px_0_rgba(0,0,0,0.14),0_1px_10px_0_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.2)]'
             : ''
@@ -977,14 +976,14 @@ const Navbar = () => {
         <div
           id="mobile-nav-drawer"
           style={{
-            height: drawerHeight,
+            top: `${headerBottom}px`,
             overscrollBehavior: 'contain',
             WebkitOverflowScrolling: 'touch',
           }}
-          className={`lg:hidden absolute top-full left-0 right-0 w-full bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl ${
+          className={`lg:hidden fixed inset-x-0 bottom-0 bg-white z-[550] flex flex-col justify-between overflow-hidden transition-opacity duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl ${
             mobileOpen
-              ? 'opacity-100 translate-y-0 visible pointer-events-auto'
-              : 'opacity-0 -translate-y-1 invisible pointer-events-none'
+              ? 'opacity-100 visible pointer-events-auto'
+              : 'opacity-0 invisible pointer-events-none'
           }`}
         >
           {/* Scrollable Navigation List */}

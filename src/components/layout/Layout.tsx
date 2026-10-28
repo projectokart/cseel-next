@@ -32,7 +32,7 @@ const LayoutContent = ({ children }: LayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col w-full max-w-[100vw] [overflow-x:clip] print:min-h-0 print:h-auto print:block print:w-auto print:max-w-none print:overflow-visible">
+    <div className="min-h-screen flex flex-col w-full max-w-[100vw] print:min-h-0 print:h-auto print:block print:w-auto print:max-w-none print:overflow-visible">
       {/* Empirical Research Announcement Ribbon at the very top of all pages */}
       <div className="print:hidden">
         <ResearchRibbonBanner />

@@ -1182,21 +1182,21 @@ const Navbar = () => {
                 </div>
               );
             })}
-          </div>
 
-          {/* ── Labster Pinned Bottom Action Button ── */}
-          <div className="p-4 sm:p-5 border-t border-[#E8E9E9] bg-white shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileOpen(false);
-                openDemoModal({ source: 'Navbar Mobile Drawer' });
-              }}
-              className="w-full h-12 px-6 text-[14.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-sm rounded-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2 font-['Montserrat',sans-serif] cursor-pointer"
-            >
-              <span>Book a Demo</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {/* ── Book a Demo Button: Placed at the end of the menu list (after last option) ── */}
+            <div className="pt-5 pb-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  openDemoModal({ source: 'Navbar Mobile Drawer' });
+                }}
+                className="w-full h-12 px-6 text-[14.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-sm rounded-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2 font-['Montserrat',sans-serif] cursor-pointer"
+              >
+                <span>Book a Demo</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </header>

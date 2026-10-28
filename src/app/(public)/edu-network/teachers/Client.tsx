@@ -860,8 +860,9 @@ export default function TeachersDirectoryClient({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Fetch trending searches
-  useEffect(() => {
+  // Fetch trending searches on-demand when user focuses search bar
+  const fetchTrendingSearches = useCallback(() => {
+    if (trendingSearches.length > 0) return;
     fetch('/api/search/record-query')
       .then((res) => res.json())
       .then((data) => {
@@ -870,7 +871,7 @@ export default function TeachersDirectoryClient({
         }
       })
       .catch(() => {});
-  }, []);
+  }, [trendingSearches.length]);
 
   const toggleDesignation = (id: string) => {
     setSelectedDesignations((prev) =>
@@ -1052,60 +1053,72 @@ export default function TeachersDirectoryClient({
     };
 
     if (typeof window !== 'undefined') {
-      const scheduleSync = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1200));
+      const scheduleSync = (cb: () => void) => {
+        const runner = () => {
+          if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(cb, { timeout: 6000 });
+          } else {
+            setTimeout(cb, 3500);
+          }
+        };
+        if (document.readyState === 'complete') {
+          setTimeout(runner, 2500);
+        } else {
+          window.addEventListener('load', () => setTimeout(runner, 2500), { once: true });
+        }
+      };
+
       scheduleSync(() => {
         syncJobsData();
-      });
-    } else {
-      syncJobsData();
-    }
 
-    // Fetch latest verified faculty from database
-    fetch('/api/admin/faculty')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.success && Array.isArray(data.faculty) && data.faculty.length > 0) {
-          setFacultyList((prev) => {
-            const updated = [...prev];
-            const verifiedUsers: string[] = typeof window !== 'undefined'
-              ? JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]')
-              : [];
+        // Fetch latest verified faculty from database after idle
+        fetch('/api/admin/faculty')
+          .then((res) => res.json())
+          .then((data) => {
+            if (data && data.success && Array.isArray(data.faculty) && data.faculty.length > 0) {
+              setFacultyList((prev) => {
+                const updated = [...prev];
+                const verifiedUsers: string[] = typeof window !== 'undefined'
+                  ? JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]')
+                  : [];
 
-            for (const f of data.faculty) {
-              const idx = updated.findIndex((x: any) => x.id === f.id || x.slug === f.slug);
-              const isVer = Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug));
-              if (idx !== -1) {
-                updated[idx] = { ...updated[idx], verified: isVer };
-              } else {
-                updated.unshift({
-                  id: f.id || f.slug,
-                  name: f.name,
-                  designation: f.designation || 'PGT',
-                  subject: f.subject || 'Faculty',
-                  board: f.board || 'CBSE',
-                  qualification: f.qualification || 'Post Graduate / B.Ed',
-                  experienceYears: f.experienceYears || 3,
-                  currentInstitute: f.currentInstitute || 'Senior Secondary School',
-                  city: f.city || 'Delhi NCR',
-                  state: f.state || 'Delhi NCR',
-                  coordinates: { lat: 28.6139, lng: 77.2090 },
-                  verified: isVer,
-                  nepCertified: false,
-                  rating: 5.0,
-                  reviewsCount: 0,
-                  avatar: f.avatar || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
-                  bio: f.bio || '',
-                  skills: Array.isArray(f.skills) ? f.skills : (f.skills ? f.skills.split(',').map((s: string) => s.trim()) : ['Pedagogy']),
-                  expectedSalary: f.expectedSalary || '₹6 - ₹9 LPA',
-                  isActivelySeekingJob: true,
-                });
-              }
+                for (const f of data.faculty) {
+                  const idx = updated.findIndex((x: any) => x.id === f.id || x.slug === f.slug);
+                  const isVer = Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug));
+                  if (idx !== -1) {
+                    updated[idx] = { ...updated[idx], verified: isVer };
+                  } else {
+                    updated.unshift({
+                      id: f.id || f.slug,
+                      name: f.name,
+                      designation: f.designation || 'PGT',
+                      subject: f.subject || 'Faculty',
+                      board: f.board || 'CBSE',
+                      qualification: f.qualification || 'Post Graduate / B.Ed',
+                      experienceYears: f.experienceYears || 3,
+                      currentInstitute: f.currentInstitute || 'Senior Secondary School',
+                      city: f.city || 'Delhi NCR',
+                      state: f.state || 'Delhi NCR',
+                      coordinates: { lat: 28.6139, lng: 77.2090 },
+                      verified: isVer,
+                      nepCertified: false,
+                      rating: 5.0,
+                      reviewsCount: 0,
+                      avatar: f.avatar || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200',
+                      bio: f.bio || '',
+                      skills: Array.isArray(f.skills) ? f.skills : (f.skills ? f.skills.split(',').map((s: string) => s.trim()) : ['Pedagogy']),
+                      expectedSalary: f.expectedSalary || '₹6 - ₹9 LPA',
+                      isActivelySeekingJob: true,
+                    });
+                  }
+                }
+                return updated;
+              });
             }
-            return updated;
-          });
-        }
-      })
-      .catch((err) => console.warn('[Client] Faculty sync notice:', err));
+          })
+          .catch((err) => console.warn('[Client] Faculty sync notice:', err));
+      });
+    }
   }, []);
 
   // ── PAGINATION (25 ITEMS PER PAGE FOR OPTIMAL PERFORMANCE & FAST RENDERING) ──
@@ -1735,7 +1748,7 @@ export default function TeachersDirectoryClient({
           placeholder={activeTab === 'jobs' ? "Search role, subject, school, location..." : "Search teacher, qualification..."}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          onFocus={() => setIsSearchFocused(true)}
+          onFocus={() => { setIsSearchFocused(true); fetchTrendingSearches(); }}
           onBlur={() => setTimeout(() => setIsSearchFocused(false), 250)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -2065,7 +2078,7 @@ export default function TeachersDirectoryClient({
                   placeholder={activeTab === 'jobs' ? "Search role, school, location..." : "Search teacher, qualification..."}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
+                  onFocus={() => { setIsSearchFocused(true); fetchTrendingSearches(); }}
                   onBlur={() => setTimeout(() => setIsSearchFocused(false), 250)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

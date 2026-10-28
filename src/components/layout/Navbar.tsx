@@ -528,59 +528,21 @@ const Navbar = () => {
 
 
 
-  // Prevent background scroll and overscroll chaining when mobile menu is open
+  const [drawerHeight, setDrawerHeight] = useState<string>('calc(100dvh - 54px)');
+
+  // Safely lock body scroll and adapt drawer height when mobile menu is opened
   useEffect(() => {
-    if (!mobileOpen) return;
-
-    const origHtmlOverflow = document.documentElement.style.overflow;
-    const origBodyOverflow = document.body.style.overflow;
-    const origBodyTouchAction = document.body.style.touchAction;
-
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
-
-    // Prevent wheel and touch dragging from escaping the drawer or scrolling the landing page
-    const handleTouchMove = (e: TouchEvent) => {
-      const target = e.target as HTMLElement | null;
-      const scrollable = target?.closest('.mobile-nav-scroll-container') as HTMLElement | null;
-      if (!scrollable) {
-        e.preventDefault();
-        return;
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+      if (headerRef.current) {
+        const bottom = Math.round(headerRef.current.getBoundingClientRect().bottom);
+        setDrawerHeight(`calc(100dvh - ${bottom}px)`);
       }
-      if (scrollable.scrollHeight <= scrollable.clientHeight) {
-        e.preventDefault();
-      }
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      const target = e.target as HTMLElement | null;
-      const scrollable = target?.closest('.mobile-nav-scroll-container') as HTMLElement | null;
-      if (!scrollable) {
-        e.preventDefault();
-        return;
-      }
-      if (scrollable.scrollHeight <= scrollable.clientHeight) {
-        e.preventDefault();
-        return;
-      }
-      if (scrollable.scrollTop <= 0 && e.deltaY < 0) {
-        e.preventDefault();
-      }
-      if (scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1 && e.deltaY > 0) {
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    window.addEventListener('wheel', handleWheel, { passive: false });
-
+    } else {
+      document.body.style.overflow = '';
+    }
     return () => {
-      document.documentElement.style.overflow = origHtmlOverflow;
-      document.body.style.overflow = origBodyOverflow;
-      document.body.style.touchAction = origBodyTouchAction;
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('wheel', handleWheel);
+      document.body.style.overflow = '';
     };
   }, [mobileOpen]);
 
@@ -1014,15 +976,22 @@ const Navbar = () => {
         {/* ── Mobile Drawer (Labster Design: Clean Full-Viewport Slide Drawer) ── */}
         <div
           id="mobile-nav-drawer"
-          style={{ height: 'calc(100dvh - 54px)' }}
-          className={`lg:hidden absolute top-full left-0 right-0 w-full bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out border-t border-[#E8E9E9] overscroll-none shadow-2xl ${
+          style={{
+            height: drawerHeight,
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch',
+          }}
+          className={`lg:hidden absolute top-full left-0 right-0 w-full bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl ${
             mobileOpen
               ? 'opacity-100 translate-y-0 visible pointer-events-auto'
               : 'opacity-0 -translate-y-1 invisible pointer-events-none'
           }`}
         >
           {/* Scrollable Navigation List */}
-          <div className="mobile-nav-scroll-container flex-1 overflow-y-auto px-5 sm:px-6 py-3 divide-y divide-[#E8E9E9] overscroll-contain">
+          <div
+            style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
+            className="mobile-nav-scroll-container flex-1 overflow-y-auto px-5 sm:px-6 py-3 divide-y divide-[#E8E9E9]"
+          >
             {visibleNavItems.map((item: any) => {
               const isCategoryOpen = openMobileCategories.includes(item.label);
 

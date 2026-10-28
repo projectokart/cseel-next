@@ -44,7 +44,7 @@ export class SupabaseJobService {
 
       if (!res.ok) {
         console.error(`[SupabaseJobService] Failed to fetch: status ${res.status}`);
-        return _cachedJobs || [];
+        return (_cachedJobs && _cachedJobs.length > 0) ? _cachedJobs : getActiveFacultyJobs();
       }
 
       const rows: any[] = await res.json();

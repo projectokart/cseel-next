@@ -154,7 +154,7 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
   };
 
   return (
-    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 sticky top-0 z-[500] shadow-xs pointer-events-auto font-['Hanken_Grotesk',sans-serif]">
+    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 relative w-full z-10 pointer-events-auto font-['Hanken_Grotesk',sans-serif]">
       <div className="container mx-auto px-2.5 sm:px-4 max-w-7xl">
         <div className="flex items-center justify-between py-0 gap-2 h-[26px] min-h-[26px] w-full">
           

@@ -45,11 +45,11 @@ const LayoutContent = ({ children }: LayoutProps) => {
         </div>
       )}
 
-      <div className="print:hidden sticky top-0 z-[500] w-full">
+      <div className="print:hidden sticky top-0 z-[500] w-full bg-white shadow-xs">
         <TopBar />
-        <OfferPopup />
         <Navbar />
       </div>
+      <OfferPopup />
 
       <DisabledRouteGuard>
         <main className="flex-1 min-w-0 w-full [overflow-x:clip] print:overflow-visible print:min-h-0 print:h-auto print:block">{children}</main>

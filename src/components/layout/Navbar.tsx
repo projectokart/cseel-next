@@ -544,18 +544,59 @@ const Navbar = () => {
     };
   }, []);
 
-  // Prevent background scroll when mobile menu is open
+  // Prevent background scroll and overscroll chaining when mobile menu is open
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-      if (headerRef.current) {
-        setHeaderBottom(headerRef.current.getBoundingClientRect().bottom);
+    if (!mobileOpen) return;
+
+    const origHtmlOverflow = document.documentElement.style.overflow;
+    const origBodyOverflow = document.body.style.overflow;
+    const origBodyTouchAction = document.body.style.touchAction;
+
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    // Prevent wheel and touch dragging from escaping the drawer or scrolling the landing page
+    const handleTouchMove = (e: TouchEvent) => {
+      const target = e.target as HTMLElement | null;
+      const scrollable = target?.closest('.mobile-nav-scroll-container') as HTMLElement | null;
+      if (!scrollable) {
+        e.preventDefault();
+        return;
       }
-    } else {
-      document.body.style.overflow = '';
-    }
+      if (scrollable.scrollHeight <= scrollable.clientHeight) {
+        e.preventDefault();
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      const target = e.target as HTMLElement | null;
+      const scrollable = target?.closest('.mobile-nav-scroll-container') as HTMLElement | null;
+      if (!scrollable) {
+        e.preventDefault();
+        return;
+      }
+      if (scrollable.scrollHeight <= scrollable.clientHeight) {
+        e.preventDefault();
+        return;
+      }
+      if (scrollable.scrollTop <= 0 && e.deltaY < 0) {
+        e.preventDefault();
+      }
+      if (scrollable.scrollTop + scrollable.clientHeight >= scrollable.scrollHeight - 1 && e.deltaY > 0) {
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('wheel', handleWheel, { passive: false });
+
     return () => {
-      document.body.style.overflow = '';
+      document.documentElement.style.overflow = origHtmlOverflow;
+      document.body.style.overflow = origBodyOverflow;
+      document.body.style.touchAction = origBodyTouchAction;
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('wheel', handleWheel);
     };
   }, [mobileOpen]);
 
@@ -989,15 +1030,15 @@ const Navbar = () => {
         {/* ── Mobile Drawer (Labster Design: Clean Full-Viewport Slide Drawer) ── */}
         <div
           id="mobile-nav-drawer"
-          style={{ top: `${headerBottom}px` }}
-          className={`lg:hidden fixed inset-x-0 bottom-0 bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-300 ease-in-out border-t border-[#E8E9E9] ${
+          style={{ height: 'calc(100dvh - 80px)' }}
+          className={`lg:hidden absolute top-full left-0 right-0 w-full bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out border-t border-[#E8E9E9] overscroll-none shadow-2xl ${
             mobileOpen
               ? 'opacity-100 translate-y-0 visible pointer-events-auto'
-              : 'opacity-0 -translate-y-2 invisible pointer-events-none'
+              : 'opacity-0 -translate-y-1 invisible pointer-events-none'
           }`}
         >
           {/* Scrollable Navigation List */}
-          <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-3 divide-y divide-[#E8E9E9]">
+          <div className="mobile-nav-scroll-container flex-1 overflow-y-auto px-5 sm:px-6 py-3 divide-y divide-[#E8E9E9] overscroll-contain">
             {visibleNavItems.map((item: any) => {
               const isCategoryOpen = openMobileCategories.includes(item.label);
 

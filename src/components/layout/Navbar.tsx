@@ -537,45 +537,7 @@ const Navbar = () => {
     setOpenDropdown(null);
   }, [pathname]);
 
-  // Complete background scroll freeze and seamless position restoration
-  useEffect(() => {
-    if (mobileOpen) {
-      const scrollY = window.scrollY;
-      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
-
-      // Lock both documentElement and body firmly at current scroll position
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.width = '100%';
-      if (scrollBarWidth > 0) {
-        document.body.style.paddingRight = `${scrollBarWidth}px`;
-      }
-      document.documentElement.style.overflow = 'hidden';
-
-      return () => {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        document.body.style.width = '';
-        document.body.style.paddingRight = '';
-        document.documentElement.style.overflow = '';
-
-        if (!isNavigatingRef.current) {
-          window.scrollTo({
-            top: scrollY,
-            left: 0,
-            behavior: 'instant' as ScrollBehavior,
-          });
-        }
-        isNavigatingRef.current = false;
-      };
-    }
-  }, [mobileOpen]);
+  // Mobile menu open state handling: naturally stays in flow with sticky navbar
 
   // Close mobile menu on Escape key
   useEffect(() => {
@@ -670,10 +632,8 @@ const Navbar = () => {
       <header
         ref={headerRef}
         id="site-navbar"
-        className={`site-navbar ${
-          mobileOpen ? 'fixed top-0 inset-x-0 z-[600]' : 'sticky top-0 z-[500]'
-        } w-full transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
-          isScrolled || mobileOpen
+        className={`site-navbar relative w-full transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
+          isScrolled
             ? 'shadow-[0_4px_5px_0_rgba(0,0,0,0.14),0_1px_10px_0_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.2)]'
             : ''
         }`}
@@ -776,18 +736,26 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <div className="lg:hidden flex items-center">
+          {/* Mobile Actions: Compact Book a Demo + Hamburger (Labster Exact Header Wrap) */}
+          <div className="lg:hidden flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => openDemoModal({ source: 'Navbar Mobile Header' })}
+              className="h-[32px] px-3 text-[12px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-xs rounded-[8px] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center font-['Montserrat',sans-serif] whitespace-nowrap cursor-pointer"
+            >
+              <span>Book a Demo</span>
+            </button>
+
             <button
               type="button"
               aria-label="Toggle navigation menu"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 -mr-1.5 rounded-xl text-[#1B1F23] hover:text-[#006FCC] hover:bg-slate-100 active:bg-slate-200 transition-all flex items-center justify-center cursor-pointer"
+              className="p-1.5 -mr-1 rounded-lg text-[#1B1F23] hover:text-[#006FCC] hover:bg-slate-100 active:bg-slate-200 transition-all flex items-center justify-center cursor-pointer"
             >
               {mobileOpen ? (
-                <X className="h-7 w-7 stroke-[2.3]" />
+                <X className="h-6 w-6 stroke-[2.3]" />
               ) : (
-                <Menu className="h-7 w-7 stroke-[2.3]" />
+                <Menu className="h-6 w-6 stroke-[2.3]" />
               )}
             </button>
           </div>
@@ -1024,14 +992,14 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* ── Mobile Drawer (Labster Design: Clean Full-Viewport Slide Drawer) ── */}
+        {/* ── Mobile Drawer (Labster Design: Clean Slide Drawer Attached to Navbar) ── */}
         <div
           id="mobile-nav-drawer"
           style={{
             overscrollBehavior: 'contain',
             WebkitOverflowScrolling: 'touch',
           }}
-          className={`lg:hidden fixed top-[54px] inset-x-0 bottom-0 bg-white z-[590] flex flex-col justify-between overflow-hidden transition-opacity duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl ${
+          className={`lg:hidden absolute top-full inset-x-0 bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl h-[calc(100dvh-54px)] ${
             mobileOpen
               ? 'opacity-100 visible pointer-events-auto'
               : 'opacity-0 invisible pointer-events-none'

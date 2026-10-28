@@ -50,8 +50,8 @@ const LayoutContent = ({ children }: LayoutProps) => {
         <TopBar />
       </div>
 
-      {/* Navbar Container */}
-      <div className="print:hidden z-[500] w-full">
+      {/* Navbar Container: Sticky at top-0 */}
+      <div className="print:hidden sticky top-0 z-[500] w-full bg-white">
         <Navbar />
       </div>
       <OfferPopup />

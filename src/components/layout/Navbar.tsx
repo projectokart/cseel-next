@@ -736,26 +736,18 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Mobile Actions: Compact Book a Demo + Hamburger (Labster Exact Header Wrap) */}
-          <div className="lg:hidden flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => openDemoModal({ source: 'Navbar Mobile Header' })}
-              className="h-[32px] px-3 text-[12px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-xs rounded-[8px] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center font-['Montserrat',sans-serif] whitespace-nowrap cursor-pointer"
-            >
-              <span>Book a Demo</span>
-            </button>
-
+          {/* Mobile Hamburger Button */}
+          <div className="lg:hidden flex items-center">
             <button
               type="button"
               aria-label="Toggle navigation menu"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-1.5 -mr-1 rounded-lg text-[#1B1F23] hover:text-[#006FCC] hover:bg-slate-100 active:bg-slate-200 transition-all flex items-center justify-center cursor-pointer"
+              className="p-2 -mr-1.5 rounded-xl text-[#1B1F23] hover:text-[#006FCC] hover:bg-slate-100 active:bg-slate-200 transition-all flex items-center justify-center cursor-pointer"
             >
               {mobileOpen ? (
-                <X className="h-6 w-6 stroke-[2.3]" />
+                <X className="h-7 w-7 stroke-[2.3]" />
               ) : (
-                <Menu className="h-6 w-6 stroke-[2.3]" />
+                <Menu className="h-7 w-7 stroke-[2.3]" />
               )}
             </button>
           </div>

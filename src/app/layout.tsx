@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import Providers from "./providers";
 import ThemeHeadScript from "@/features/theme-system/ThemeHeadScript";
 import AnalyticsScripts from "@/components/analytics/AnalyticsScripts";
@@ -855,9 +856,10 @@ export default function RootLayout({
 
 
 
-                {/* Google Tag Manager */}
-        <script
+        {/* Google Tag Manager - Lazy Loaded to prevent blocking initial paint & CPU */}
+        <Script
           id="google-tag-manager"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

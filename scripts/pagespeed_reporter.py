@@ -33,7 +33,7 @@ def audit_url(url=DEFAULT_URL, strategy='MOBILE'):
 
     req = urllib.request.Request(api_url, headers={'User-Agent': 'Mozilla/5.0'})
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=120) as resp:
             response = json.loads(resp.read().decode('utf-8'))
 
         lh = response.get('lighthouseResult', {})

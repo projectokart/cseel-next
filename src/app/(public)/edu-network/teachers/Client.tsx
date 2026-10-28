@@ -169,9 +169,14 @@ function getHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: nu
 interface TeachersDirectoryClientProps {
   initialJobs?: FacultyJobItem[];
   initialTab?: 'jobs' | 'faculty';
+  totalVacanciesCount?: number;
 }
 
-export default function TeachersDirectoryClient({ initialJobs, initialTab = 'jobs' }: TeachersDirectoryClientProps = {}) {
+export default function TeachersDirectoryClient({
+  initialJobs,
+  initialTab = 'jobs',
+  totalVacanciesCount = DEFAULT_JOB_FACETS.totalVacancies,
+}: TeachersDirectoryClientProps = {}) {
   const { user } = useAuth();
   const latestUpdatedDate = useMemo(() => {
     return new Date().toLocaleDateString('en-GB', {
@@ -954,9 +959,37 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
 
 
 
+  const hasActiveFilters = Boolean(
+    (searchQuery && searchQuery.trim() !== '') ||
+    (locationSearchInput && locationSearchInput.trim() !== '') ||
+    selectedDesignations.length > 0 ||
+    selectedSubjects.length > 0 ||
+    selectedBoards.length > 0 ||
+    selectedCities.length > 0 ||
+    selectedStates.length > 0 ||
+    selectedJobTypes.length > 0 ||
+    selectedPortals.length > 0 ||
+    minSalaryFilter > 0 ||
+    urgentOnly ||
+    forLadyOnly
+  );
+
   // Dynamic multi-dimensional drill-down filter counts
   const dynamicCounts = useMemo(() => {
     if (activeTab === 'jobs') {
+      // By default when NO search or filter is applied, return precomputed database facet counts!
+      if (!hasActiveFilters && DEFAULT_JOB_FACETS?.counts) {
+        return {
+          subjects: DEFAULT_JOB_FACETS.counts.subjects || {},
+          designations: DEFAULT_JOB_FACETS.counts.designations || {},
+          boards: DEFAULT_JOB_FACETS.counts.boards || {},
+          cities: DEFAULT_JOB_FACETS.counts.cities || {},
+          states: DEFAULT_JOB_FACETS.counts.states || {},
+          portals: DEFAULT_JOB_FACETS.counts.portals || {},
+          forLady: DEFAULT_JOB_FACETS.forLadyCount ?? 28,
+        };
+      }
+
       return calculateDynamicFacets(activeJobs, {
         selectedDesignations,
         selectedSubjects,
@@ -1207,17 +1240,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
     setUrgentOnly(false);
   };
 
-  const hasActiveFilters =
-    searchQuery !== '' ||
-    selectedDesignations.length > 0 ||
-    selectedSubjects.length > 0 ||
-    selectedBoards.length > 0 ||
-    selectedCities.length > 0 ||
-    selectedStates.length > 0 ||
-    selectedJobTypes.length > 0 ||
-    selectedPortals.length > 0 ||
-    minSalaryFilter > 0 ||
-    urgentOnly;
+// hasActiveFilters moved above dynamicCounts
 
   // 1-Click Share Permanent SEO URL
   const handleCopyJobUrl = (job: FacultyJobItem) => {
@@ -1490,35 +1513,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
     }
   };
 
-  const cityCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    const popularLower = POPULAR_CITIES.map(c => ({ name: c.name, lower: c.name.toLowerCase() }));
-    popularLower.forEach(c => { counts[c.name] = 0; });
-    const currentList = activeTab === 'jobs' ? activeJobs : VERIFIED_FACULTY_MEMBERS;
 
-    for (let i = 0; i < currentList.length; i++) {
-      const cityLower = (currentList[i].city || '').toLowerCase();
-      if (!cityLower) continue;
-      for (let j = 0; j < popularLower.length; j++) {
-        const c = popularLower[j];
-        if (cityLower.includes(c.lower) || (c.name === 'Delhi NCR' && cityLower.includes('delhi'))) {
-          counts[c.name]++;
-        }
-      }
-    }
-    return counts;
-  }, [activeTab, activeJobs]);
-
-  const stateCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    const currentList = activeTab === 'jobs' ? activeJobs : VERIFIED_FACULTY_MEMBERS;
-    currentList.forEach((item) => {
-      if (item.state) {
-        counts[item.state] = (counts[item.state] || 0) + 1;
-      }
-    });
-    return counts;
-  }, [activeTab, activeJobs]);
 
   const handleSelectCity = (cityName: string) => {
     setSelectedCities([cityName]);
@@ -1811,8 +1806,8 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
         <FacultyFilterSheet
           mode="sidebar"
           activeTab={activeTab}
-          totalCount={activeTab === 'jobs' ? activeJobs.length : VERIFIED_FACULTY_MEMBERS.length}
-          filteredCount={activeTab === 'jobs' ? filteredJobs.length : filteredFaculty.length}
+          totalCount={activeTab === 'jobs' ? totalVacanciesCount : VERIFIED_FACULTY_MEMBERS.length}
+          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : totalVacanciesCount) : filteredFaculty.length}
           selectedDesignations={selectedDesignations}
           toggleDesignation={toggleDesignation}
           selectedSubjects={selectedSubjects}
@@ -1849,8 +1844,8 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
           isOpen={isMobileFilterOpen}
           onClose={() => setIsMobileFilterOpen(false)}
           activeTab={activeTab}
-          totalCount={activeTab === 'jobs' ? activeJobs.length : VERIFIED_FACULTY_MEMBERS.length}
-          filteredCount={activeTab === 'jobs' ? filteredJobs.length : filteredFaculty.length}
+          totalCount={activeTab === 'jobs' ? totalVacanciesCount : VERIFIED_FACULTY_MEMBERS.length}
+          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : totalVacanciesCount) : filteredFaculty.length}
           selectedDesignations={selectedDesignations}
           toggleDesignation={toggleDesignation}
           selectedSubjects={selectedSubjects}
@@ -2182,7 +2177,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                     <Briefcase size={13} className={activeTab === 'jobs' ? 'text-[#004A75]' : 'text-slate-400'} />
                     <span>Vacancies</span>
                     <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
-                      {filteredJobs.length.toLocaleString()}
+                      {(hasActiveFilters ? filteredJobs.length : totalVacanciesCount).toLocaleString()}
                     </span>
                   </button>
 
@@ -2783,7 +2778,15 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
               {totalPages > 1 && (
                 <div className="mt-6 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
                   <div className="text-xs text-slate-500 font-medium text-center sm:text-left">
-                    Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
+                    {activeTab === 'jobs' ? (
+                      hasActiveFilters ? (
+                        <>Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> Filtered Vacancies</>
+                      ) : (
+                        <>Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> Loaded Vacancies (<span className="font-bold text-[#004A75]">{totalVacanciesCount.toLocaleString()}+</span> Total in Database)</>
+                      )
+                    ) : (
+                      <>Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> Faculty</>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">

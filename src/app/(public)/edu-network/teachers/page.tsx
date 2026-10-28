@@ -1,3 +1,4 @@
+import { DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
 import { Metadata } from 'next';
 import TeachersClient from './Client';
 import { getActiveFacultyJobs } from '@/data/facultyJobsData';
@@ -179,7 +180,7 @@ export default async function TeachersPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient initialJobs={activeJobs.slice(0, 100)} initialTab={initialTab} />
+      <TeachersClient initialJobs={activeJobs.slice(0, 500)} initialTab={initialTab} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
     </>
   );
 }

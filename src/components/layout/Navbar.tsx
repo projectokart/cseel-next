@@ -1064,8 +1064,8 @@ const Navbar = () => {
                               key={colIdx}
                               className={`${colIdx > 0 ? 'pt-3.5 border-t border-[#E8E9E9]' : ''} space-y-2.5`}
                             >
-                              {/* Labster Eyebrow Title */}
-                              <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#006FCC] font-['Montserrat',sans-serif] px-1">
+                              {/* Labster Category Title */}
+                              <div className="text-[13px] font-bold text-[#006FCC] font-['Montserrat',sans-serif] px-1">
                                 {col.categoryTitle}
                               </div>
 
@@ -1107,19 +1107,23 @@ const Navbar = () => {
                                         {hasSub && (
                                           <button
                                             type="button"
+                                            aria-label={isMobileSubOpen ? "Collapse sub-links" : "Expand sub-links"}
                                             onClick={(e) => {
                                               e.preventDefault();
                                               e.stopPropagation();
                                               toggleMobileSubItem(subKey);
                                             }}
-                                            className={`px-2 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 shrink-0 cursor-pointer transition-all mt-0.5 font-['Montserrat',sans-serif] ${
+                                            className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 cursor-pointer transition-all mt-0.5 ${
                                               isMobileSubOpen
                                                 ? 'bg-[#006FCC] text-white shadow-xs'
-                                                : 'bg-[#F4F6F8] text-[#006FCC] border border-[#E8E9E9] hover:bg-[#EDF5FA]'
+                                                : 'bg-[#F4F6F8] text-[#1B1F23] border border-[#E8E9E9] hover:bg-[#EDF5FA] hover:text-[#006FCC]'
                                             }`}
+                                            title="Toggle Sub-links"
                                           >
-                                            <span>{isMobileSubOpen ? 'Hide' : `${sub.subItems!.length} links`}</span>
-                                            <LabsterChevron isOpen={isMobileSubOpen} className="!w-2.5 !h-2.5" />
+                                            <LabsterChevron
+                                              isOpen={isMobileSubOpen}
+                                              className={`!w-3 !h-3 ${isMobileSubOpen ? '!text-white' : '!text-[#1B1F23]'}`}
+                                            />
                                           </button>
                                         )}
                                       </div>

@@ -227,18 +227,7 @@ export default function TeachersDirectoryClient({
     });
   }, []);
 
-  // Request User Location with user alert feedback
-  const requestUserLocation = () => {
-    if (typeof window === 'undefined' || !navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      (err) => alert("Please allow location access to find vacancies near you."),
-      { timeout: 8000, enableHighAccuracy: true }
-    );
-  };
+
 
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [isCompressingAvatar, setIsCompressingAvatar] = useState(false);
@@ -882,6 +871,48 @@ export default function TeachersDirectoryClient({
     initialJobs && initialJobs.length > 0 ? initialJobs : getActiveFacultyJobs()
   );
 
+  const [gpsErrorModalOpen, setGpsErrorModalOpen] = useState(false);
+  const [gpsErrorMessage, setGpsErrorMessage] = useState('');
+
+  // Intelligent Near Me handler:
+  // - If distance is already calculated: directly sort (0ms, no GPS request)
+  // - If not calculated: request GPS, calculate distance once, save in IndexedDB, and sort
+  // - If user denies: show prompt popup; when user taps again, re-prompt
+  const handleNearMeSort = useCallback(() => {
+    setIsSortMenuOpen(false);
+
+    // If any jobs already have distanceKm calculated and userCoords exists -> Instant sort!
+    const hasDistances = activeJobs.some((j) => typeof j.distanceKm === 'number');
+    if (hasDistances && userCoords) {
+      setSortBy('near_me');
+      return;
+    }
+
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      setGpsErrorMessage("Geolocation is not supported by your device or browser.");
+      setGpsErrorModalOpen(true);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      (err) => {
+        console.warn('[GPS Location Notice]', err.message);
+        if (err.code === 1) {
+          setGpsErrorMessage("Location access was disallowed. Please enable location permissions in your browser or device settings to view nearest vacancies.");
+        } else {
+          setGpsErrorMessage("Could not detect location. Please check if device GPS / Location is turned ON.");
+        }
+        setGpsErrorModalOpen(true);
+      },
+      { timeout: 8000, enableHighAccuracy: true }
+    );
+  }, [activeJobs, userCoords, applyGpsCoordinates]);
+
+  const requestUserLocation = handleNearMeSort;
+
   // Faculty list state initialized with custom registered faculty + admin verified overrides
   const [facultyList, setFacultyList] = useState<VerifiedFacultyItem[]>(() => {
     if (typeof window !== 'undefined') {
@@ -937,11 +968,25 @@ export default function TeachersDirectoryClient({
             if (jobsRes.ok) {
               const jobsData = await jobsRes.json();
               if (jobsData.success && Array.isArray(jobsData.jobs) && jobsData.jobs.length > 0) {
-                setActiveJobs(jobsData.jobs);
+                let freshJobs = jobsData.jobs;
+
+                // Pre-calculate distances for fresh jobs if pre-saved GPS exists
+                const savedGps = cached?.lastGps || userCoords || lastGpsCoordsRef.current;
+                if (savedGps && typeof savedGps.lat === 'number' && typeof savedGps.lng === 'number') {
+                  freshJobs = freshJobs.map((j: any) => {
+                    if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
+                      const d = getDistanceKm(savedGps.lat, savedGps.lng, j.coordinates.lat, j.coordinates.lng);
+                      return { ...j, distanceKm: d };
+                    }
+                    return j;
+                  });
+                }
+
+                setActiveJobs(freshJobs);
                 await JobsCacheStorage.saveCache(
-                  jobsData.jobs,
+                  freshJobs,
                   serverVersion,
-                  versionData.count || jobsData.jobs.length
+                  versionData.count || freshJobs.length
                 );
               }
             }
@@ -2061,11 +2106,7 @@ export default function TeachersDirectoryClient({
                       <div className="space-y-0.5">
                         <button
                           type="button"
-                          onClick={() => {
-                            setSortBy('near_me');
-                            setIsSortMenuOpen(false);
-                            if (!userCoords) requestUserLocation();
-                          }}
+                          onClick={handleNearMeSort}
                           className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
                             sortBy === 'near_me' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
                           }`}
@@ -2438,11 +2479,11 @@ export default function TeachersDirectoryClient({
                             </div>
 
                             {/* Row 3: Full Address & Distance */}
-                            {userCoords && job.coordinates?.lat && job.coordinates?.lng && (
+                            {typeof job.distanceKm === 'number' && (
                               <div className="pt-0.5">
-                                <span className="text-[11px] font-bold text-[#004A75] bg-[#EBF3F8] px-2 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0">
-                                  <MapPin size={10} className="text-[#004A75]" />
-                                  <span>{getDistanceKm(userCoords.lat, userCoords.lng, job.coordinates.lat, job.coordinates.lng)} km away</span>
+                                <span className="text-[11px] font-bold text-[#004A75] bg-[#EBF3F8] px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0 border border-[#D0E6F5]">
+                                  <MapPin size={11} className="text-[#004A75]" />
+                                  <span>{job.distanceKm} km away</span>
                                 </span>
                               </div>
                             )}
@@ -3800,6 +3841,39 @@ export default function TeachersDirectoryClient({
         )}
 
       </div>
+            {/* ─── GPS PERMISSION GUIDANCE MODAL ─── */}
+        {gpsErrorModalOpen && (
+          <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200">
+              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto border border-amber-100">
+                <MapPin size={26} />
+              </div>
+              <div className="space-y-1.5">
+                <h3 className="text-base font-bold text-slate-900">Enable Location Access</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{gpsErrorMessage}</p>
+              </div>
+              <div className="pt-2 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGpsErrorModalOpen(false);
+                    handleNearMeSort();
+                  }}
+                  className="w-full py-2.5 px-4 bg-[#004A75] hover:bg-[#003859] text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+                >
+                  Try Again / Allow
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGpsErrorModalOpen(false)}
+                  className="w-full py-2 px-4 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-xs font-semibold transition cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </PageTransition>
   );
 }

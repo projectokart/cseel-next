@@ -3,6 +3,7 @@ import aggregatedJobsData from './aggregated_jobs.json';
 
 export interface FacultyJobItem {
   id: string;
+  slug?: string;
   organisationName: string;
   organisationLogo?: string | null;
   image_url?: string | null;
@@ -39,6 +40,45 @@ export interface FacultyJobItem {
   badge?: string;
   forLady?: boolean;
   distanceKm?: number;
+  _dateMs?: number;
+}
+
+export function toLightweightJob(j: any): FacultyJobItem {
+  const openingDate = j.openingDate || '';
+  const dateMs = openingDate ? Date.parse(openingDate) || 0 : 0;
+  return {
+    id: j.id,
+    slug: j.slug || j.id,
+    organisationName: j.organisationName || j.institute_name || '',
+    organisationLogo: j.organisationLogo || null,
+    image_url: j.image_url || null,
+    jobPostName: j.jobPostName || j.title || '',
+    designation: j.designation || null,
+    subject: j.subject || null,
+    board: j.board || null,
+    roleType: j.roleType || j.job_type || null,
+    salary: j.salary || j.salary_range || 'Not Disclosed',
+    salaryMin: typeof j.salaryMin === 'number' ? j.salaryMin : null,
+    salaryMax: typeof j.salaryMax === 'number' ? j.salaryMax : null,
+    shortDescription: j.shortDescription ? j.shortDescription.slice(0, 120) : '',
+    address: j.address || '',
+    city: j.city || '',
+    state: j.state || '',
+    district: j.district || '',
+    coordinates: j.coordinates || { lat: 28.6139, lng: 77.209 },
+    minExperience: j.minExperience || j.experience_required || null,
+    openingDate,
+    lastDate: j.lastDate || j.deadline || '',
+    source: j.source || 'Direct School Portal',
+    originalUrl: j.originalUrl || j.applyUrl || '',
+    applyUrl: j.applyUrl || j.originalUrl || '',
+    rating: j.rating || null,
+    verified: Boolean(j.verified),
+    badge: j.badge || '',
+    forLady: Boolean(j.forLady),
+    distanceKm: typeof j.distanceKm === 'number' ? j.distanceKm : undefined,
+    _dateMs: typeof j._dateMs === 'number' ? j._dateMs : dateMs,
+  };
 }
 
 // Helper to enforce tag rules: max 20 chars per single tag, total cumulative length <= 60 chars (e.g. 3x20 chars or 4x15 chars)

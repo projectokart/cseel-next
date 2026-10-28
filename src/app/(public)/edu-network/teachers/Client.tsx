@@ -191,7 +191,7 @@ export default function TeachersDirectoryClient({
   const lastGpsCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
 
   // High-performance, non-blocking GPS distance application with 200m delta guard
-  const applyGpsCoordinates = useCallback((coords: { lat: number; lng: number }) => {
+  const applyGpsCoordinates = useCallback((coords: { lat: number; lng: number }, autoSort: boolean = true) => {
     setUserCoords(coords);
 
     const prev = lastGpsCoordsRef.current;
@@ -199,7 +199,7 @@ export default function TeachersDirectoryClient({
       const deltaKm = getDistanceKm(prev.lat, prev.lng, coords.lat, coords.lng);
       if (deltaKm < 0.2) {
         // Less than 200m difference -> Skip recalculation across all vacancies!
-        setSortBy('near_me');
+        if (autoSort) setSortBy('near_me');
         return;
       }
     }
@@ -223,9 +223,71 @@ export default function TeachersDirectoryClient({
         return updated;
       });
 
-      setSortBy('near_me');
+      if (autoSort) setSortBy('near_me');
     });
   }, []);
+
+  const [isLocationPromptOpen, setIsLocationPromptOpen] = useState(false);
+
+  const handleRequestLocation = useCallback(() => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      setGpsErrorMessage("Geolocation is not supported by your device or browser.");
+      setGpsErrorModalOpen(true);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }, false);
+      },
+      (err) => {
+        console.warn('[GPS Location Notice]', err.message);
+        if (err.code === 1) {
+          setGpsErrorMessage("Location access was disallowed. Please enable location permissions in your browser or device settings to view nearest vacancies.");
+        } else {
+          setGpsErrorMessage("Could not detect location. Please check if device GPS / Location is turned ON.");
+        }
+        setGpsErrorModalOpen(true);
+      },
+      { timeout: 8000, enableHighAccuracy: true }
+    );
+  }, [applyGpsCoordinates]);
+
+  // Initial check on mount: If GPS already saved, calculate distance silently; otherwise show prompt popup
+  useEffect(() => {
+    const checkInitialLocation = async () => {
+      try {
+        const cached = await JobsCacheStorage.getCache();
+        if (cached && cached.lastGps) {
+          applyGpsCoordinates(cached.lastGps, false);
+          return;
+        }
+
+        if (typeof navigator !== 'undefined' && 'permissions' in navigator) {
+          try {
+            const perm = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+            if (perm.state === 'granted') {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }, false),
+                () => {}
+              );
+              return;
+            }
+          } catch {}
+        }
+
+        const dismissed = sessionStorage.getItem('cseel_location_prompt_dismissed');
+        if (!dismissed) {
+          const timer = setTimeout(() => {
+            setIsLocationPromptOpen(true);
+          }, 1200);
+          return () => clearTimeout(timer);
+        }
+      } catch (e) {}
+    };
+
+    checkInitialLocation();
+  }, [applyGpsCoordinates]);
 
 
 
@@ -997,7 +1059,14 @@ export default function TeachersDirectoryClient({
       }
     };
 
-    syncJobsData();
+    if (typeof window !== 'undefined') {
+      const scheduleSync = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1200));
+      scheduleSync(() => {
+        syncJobsData();
+      });
+    } else {
+      syncJobsData();
+    }
 
     // Fetch latest verified faculty from database
     fetch('/api/admin/faculty')
@@ -1234,7 +1303,7 @@ export default function TeachersDirectoryClient({
         const salA = getAnnualSalaryNumber(a.salary, a.salaryMax).max;
         const salB = getAnnualSalaryNumber(b.salary, b.salaryMax).max;
         if (salB !== salA) return salB - salA; // Strictly Highest to Lowest in annual INR!
-        return new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime();
+        return (b._dateMs ?? 0) - (a._dateMs ?? 0);
       });
     }
     if (sortBy === 'deadline') {
@@ -1252,7 +1321,7 @@ export default function TeachersDirectoryClient({
       });
     }
     if (!searchQuery || !searchQuery.trim()) {
-      return [...results].sort((a, b) => new Date(b.openingDate || 0).getTime() - new Date(a.openingDate || 0).getTime());
+      return [...results].sort((a: any, b: any) => (b._dateMs ?? 0) - (a._dateMs ?? 0));
     }
     return results;
   }, [activeJobs, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, selectedStates, selectedJobTypes, selectedPortals, minSalaryFilter, distanceRadiusFilter, userCoords, urgentOnly, forLadyOnly, searchQuery, sortBy]);
@@ -1303,7 +1372,7 @@ export default function TeachersDirectoryClient({
     const p = Math.max(1, Math.min(newPage, totalPages));
     setCurrentPage(p);
     if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 380, behavior: 'smooth' });
+      window.scrollTo({ top: 380, behavior: window.innerWidth < 768 ? 'auto' : 'smooth' });
     }
   };
 
@@ -2478,15 +2547,25 @@ export default function TeachersDirectoryClient({
                               </div>
                             </div>
 
-                            {/* Row 3: Full Address & Distance */}
-                            {typeof job.distanceKm === 'number' && (
-                              <div className="pt-0.5">
+                            {/* Row 3: Full Address & Distance Badge (Always Visible) */}
+                            <div className="pt-0.5 flex items-center gap-2 flex-wrap">
+                              {typeof job.distanceKm === 'number' ? (
                                 <span className="text-[11px] font-bold text-[#004A75] bg-[#EBF3F8] px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0 border border-[#D0E6F5]">
                                   <MapPin size={11} className="text-[#004A75]" />
                                   <span>{job.distanceKm} km away</span>
                                 </span>
-                              </div>
-                            )}
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={handleRequestLocation}
+                                  className="text-[11px] font-semibold text-[#005689] bg-[#F0F7FB] hover:bg-[#E2F0F9] px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0 border border-[#CDE5F5] transition-colors cursor-pointer"
+                                  title="Tap to allow location & calculate exact distance"
+                                >
+                                  <Navigation size={10} className="text-[#005689]" />
+                                  <span>📍 Calculate Distance</span>
+                                </button>
+                              )}
+                            </div>
                             <div className="pt-0.5">
                               <a
                                 href={getGoogleMapsSearchUrl(job)}
@@ -3841,7 +3920,61 @@ export default function TeachersDirectoryClient({
         )}
 
       </div>
-            {/* ─── GPS PERMISSION GUIDANCE MODAL ─── */}
+            {/* ─── INITIAL LOCATION PERMISSION PROMPT MODAL ─── */}
+        {isLocationPromptOpen && (
+          <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200 relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLocationPromptOpen(false);
+                  sessionStorage.setItem('cseel_location_prompt_dismissed', 'true');
+                }}
+                className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="w-14 h-14 bg-sky-50 text-[#005689] rounded-2xl flex items-center justify-center mx-auto border border-sky-100">
+                <MapPin size={28} className="text-[#005689] animate-bounce" />
+              </div>
+
+              <div className="space-y-1.5">
+                <h3 className="text-base font-bold text-slate-900">Show Nearest Vacancies</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Allow location access to see the exact distance (in km) to every school & institute from your current location.
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLocationPromptOpen(false);
+                    handleRequestLocation();
+                  }}
+                  className="w-full py-2.5 px-4 bg-[#004A75] hover:bg-[#003859] text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <Navigation size={14} />
+                  <span>Allow Location</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLocationPromptOpen(false);
+                    sessionStorage.setItem('cseel_location_prompt_dismissed', 'true');
+                  }}
+                  className="w-full py-2 px-4 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-xs font-semibold transition cursor-pointer"
+                >
+                  Maybe Later
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ─── GPS PERMISSION GUIDANCE MODAL ─── */}
         {gpsErrorModalOpen && (
           <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
             <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200">

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { JobAggregatorStorage, JobCardExtractor, RawJobInput } from '@/lib/services/jobAggregatorEngine';
-import { getActiveFacultyJobs, FacultyJobItem } from '@/data/facultyJobsData';
+import { getActiveFacultyJobs, FacultyJobItem, toLightweightJob } from '@/data/facultyJobsData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 
 export const dynamic = 'force-dynamic';
@@ -129,7 +129,7 @@ export async function GET(req: NextRequest) {
         totalPages,
         hasMore,
         portalBreakdown: portalStats,
-        jobs: paginatedJobs,
+        jobs: paginatedJobs.map(toLightweightJob),
       },
       {
         headers: {

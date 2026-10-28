@@ -138,51 +138,38 @@ export default function FacultyFilterSheet({
     urgentOnly ||
     forLadyOnly;
 
-  // Dynamically sorted subjects based on current dynamic count or global facet list
+  // Stably ordered subjects (fixed sequence prevents items jumping on selection)
   const dynamicSubjects = useMemo(() => {
     const list = availableFacets.subjects.map((s) => ({
       ...s,
       currentCount: (dynamicCounts?.subjects && dynamicCounts.subjects[s.id] !== undefined) ? dynamicCounts.subjects[s.id] : 0,
     }));
 
-    // If search query is present, filter
-    let filtered = list;
     if (subjectQuery.trim()) {
       const q = subjectQuery.toLowerCase().trim();
-      filtered = list.filter((s) => s.label.toLowerCase().includes(q));
+      return list.filter((s) => s.label.toLowerCase().includes(q));
     }
 
-    // Sort: selected first, then by currentCount descending
-    return filtered.sort((a, b) => {
-      const aSel = selectedSubjects.includes(a.id) ? 1 : 0;
-      const bSel = selectedSubjects.includes(b.id) ? 1 : 0;
-      if (aSel !== bSel) return bSel - aSel;
-      return b.currentCount - a.currentCount;
-    });
-  }, [availableFacets.subjects, dynamicCounts.subjects, subjectQuery, selectedSubjects]);
+    return list;
+  }, [availableFacets.subjects, dynamicCounts?.subjects, subjectQuery]);
 
-  // Dynamically sorted designations
+  // Stably ordered designations (fixed sequence prevents items jumping on selection)
   const dynamicDesignations = useMemo(() => {
     return availableFacets.designations.map((d) => ({
       ...d,
       currentCount: (dynamicCounts?.designations && dynamicCounts.designations[d.id] !== undefined) ? dynamicCounts.designations[d.id] : 0,
-    })).sort((a, b) => {
-      const aSel = selectedDesignations.includes(a.id) ? 1 : 0;
-      const bSel = selectedDesignations.includes(b.id) ? 1 : 0;
-      if (aSel !== bSel) return bSel - aSel;
-      return b.currentCount - a.currentCount;
-    });
-  }, [availableFacets.designations, dynamicCounts.designations, selectedDesignations]);
+    }));
+  }, [availableFacets.designations, dynamicCounts?.designations]);
 
-  // Dynamically sorted boards
+  // Stably ordered boards (fixed sequence)
   const dynamicBoards = useMemo(() => {
     return availableFacets.boards.map((b) => ({
       ...b,
       currentCount: (dynamicCounts?.boards && dynamicCounts.boards[b.id] !== undefined) ? dynamicCounts.boards[b.id] : 0,
-    })).sort((a, b) => b.currentCount - a.currentCount);
-  }, [availableFacets.boards, dynamicCounts.boards]);
+    }));
+  }, [availableFacets.boards, dynamicCounts?.boards]);
 
-  // Dynamically sorted cities
+  // Stably ordered cities (fixed sequence prevents jumping on selection)
   const dynamicCities = useMemo(() => {
     let list = availableFacets.cities.map((c) => ({
       ...c,
@@ -191,39 +178,29 @@ export default function FacultyFilterSheet({
 
     if (cityQuery.trim()) {
       const q = cityQuery.toLowerCase().trim();
-      list = list.filter((c) => c.label.toLowerCase().includes(q));
+      return list.filter((c) => c.label.toLowerCase().includes(q));
     }
 
-    return list.sort((a, b) => {
-      const aSel = selectedCities.includes(a.id) ? 1 : 0;
-      const bSel = selectedCities.includes(b.id) ? 1 : 0;
-      if (aSel !== bSel) return bSel - aSel;
-      return b.currentCount - a.currentCount;
-    });
-  }, [availableFacets.cities, dynamicCounts.cities, cityQuery, selectedCities]);
+    return list;
+  }, [availableFacets.cities, dynamicCounts?.cities, cityQuery]);
 
-  // Dynamically sorted states
+  // Stably ordered states (fixed sequence prevents jumping on selection)
   const dynamicStates = useMemo(() => {
     return availableFacets.states.map((st) => ({
       ...st,
       currentCount: (dynamicCounts?.states && dynamicCounts.states[st.id] !== undefined) ? dynamicCounts.states[st.id] : 0,
-    })).sort((a, b) => {
-      const aSel = selectedStates.includes(a.id) ? 1 : 0;
-      const bSel = selectedStates.includes(b.id) ? 1 : 0;
-      if (aSel !== bSel) return bSel - aSel;
-      return b.currentCount - a.currentCount;
-    });
-  }, [availableFacets.states, dynamicCounts.states, selectedStates]);
+    }));
+  }, [availableFacets.states, dynamicCounts?.states]);
 
-  // Dynamically sorted portals
+  // Stably ordered portals (fixed sequence)
   const dynamicPortals = useMemo(() => {
     return availableFacets.portals
       .filter((p) => p.id !== 'Direct School Portal' && !p.id.toLowerCase().includes('direct school'))
       .map((p) => ({
-      ...p,
-      currentCount: (dynamicCounts?.portals && dynamicCounts.portals[p.id] !== undefined) ? dynamicCounts.portals[p.id] : 0,
-    })).sort((a, b) => b.currentCount - a.currentCount);
-  }, [availableFacets.portals, dynamicCounts.portals]);
+        ...p,
+        currentCount: (dynamicCounts?.portals && dynamicCounts.portals[p.id] !== undefined) ? dynamicCounts.portals[p.id] : 0,
+      }));
+  }, [availableFacets.portals, dynamicCounts?.portals]);
 
   const filterContent = (
     <div className="flex flex-col h-full min-h-full min-h-0 flex-1 bg-white rounded-none md:border-r md:border-b md:border-slate-200 shadow-none overflow-hidden">

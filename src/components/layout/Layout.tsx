@@ -45,8 +45,13 @@ const LayoutContent = ({ children }: LayoutProps) => {
         </div>
       )}
 
-      <div className="print:hidden sticky top-0 z-[500] w-full bg-white shadow-xs">
+      {/* TopBar: Normal non-sticky, scrolls away naturally */}
+      <div className="print:hidden">
         <TopBar />
+      </div>
+
+      {/* Navbar: Sticky at top-0 */}
+      <div className="print:hidden sticky top-0 z-[500] w-full bg-white">
         <Navbar />
       </div>
       <OfferPopup />

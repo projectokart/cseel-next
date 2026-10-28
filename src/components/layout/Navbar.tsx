@@ -526,23 +526,7 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const [headerBottom, setHeaderBottom] = useState<number>(86);
 
-  useEffect(() => {
-    const updateHeaderBottom = () => {
-      if (headerRef.current) {
-        const rect = headerRef.current.getBoundingClientRect();
-        setHeaderBottom(rect.bottom);
-      }
-    };
-    updateHeaderBottom();
-    window.addEventListener('resize', updateHeaderBottom);
-    window.addEventListener('scroll', updateHeaderBottom, { passive: true });
-    return () => {
-      window.removeEventListener('resize', updateHeaderBottom);
-      window.removeEventListener('scroll', updateHeaderBottom);
-    };
-  }, []);
 
   // Prevent background scroll and overscroll chaining when mobile menu is open
   useEffect(() => {
@@ -1030,7 +1014,7 @@ const Navbar = () => {
         {/* ── Mobile Drawer (Labster Design: Clean Full-Viewport Slide Drawer) ── */}
         <div
           id="mobile-nav-drawer"
-          style={{ height: 'calc(100dvh - 80px)' }}
+          style={{ height: 'calc(100dvh - 54px)' }}
           className={`lg:hidden absolute top-full left-0 right-0 w-full bg-white z-[550] flex flex-col justify-between overflow-hidden transition-all duration-200 ease-in-out border-t border-[#E8E9E9] overscroll-none shadow-2xl ${
             mobileOpen
               ? 'opacity-100 translate-y-0 visible pointer-events-auto'

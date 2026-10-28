@@ -268,13 +268,7 @@ export default function TeachersDirectoryClient({
           } catch {}
         }
 
-        const dismissed = sessionStorage.getItem('cseel_location_prompt_dismissed');
-        if (!dismissed) {
-          const timer = setTimeout(() => {
-            setIsLocationPromptOpen(true);
-          }, 1200);
-          return () => clearTimeout(timer);
-        }
+
       } catch (e) {}
     };
 

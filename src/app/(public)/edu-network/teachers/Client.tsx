@@ -195,16 +195,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
     );
   };
 
-  // Auto-request live GPS location on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined' && navigator.geolocation && !userCoords) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        (err) => console.log('[Client] Geolocation notice:', err.message),
-        { timeout: 7000 }
-      );
-    }
-  }, []);
+  // Geolocation is cleanly requested when user clicks 'Near Me' or uses distance filter.
 
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [isCompressingAvatar, setIsCompressingAvatar] = useState(false);
@@ -686,9 +677,15 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
   };
 
 
-  // Dynamically calculate navbar bottom so sidebar is always strictly attached without hiding under navbar
+  // Dynamically calculate navbar bottom so sidebar is always strictly attached without hiding under navbar (Desktop only)
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    let ticking = false;
     const updateOffset = () => {
+      // On mobile screens (< 768px), sidebar is in a slide drawer, no fixed desktop layout calculation needed
+      if (window.innerWidth < 768) return;
+
       if (isFullscreen) {
         setNavBottomOffset(0);
         return;
@@ -696,18 +693,34 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
       const navbar = document.getElementById('site-navbar');
       if (navbar) {
         const rect = navbar.getBoundingClientRect();
-        setNavBottomOffset(Math.max(0, Math.round(rect.bottom)));
+        const newOffset = Math.max(0, Math.round(rect.bottom));
+        setNavBottomOffset((prev) => (prev === newOffset ? prev : newOffset));
       } else {
-        setNavBottomOffset(54);
+        setNavBottomOffset((prev) => (prev === 54 ? prev : 54));
       }
     };
 
     updateOffset();
-    window.addEventListener('scroll', updateOffset, { passive: true });
-    window.addEventListener('resize', updateOffset, { passive: true });
+
+    const handleScroll = () => {
+      if (window.innerWidth >= 768 && !ticking) {
+        window.requestAnimationFrame(() => {
+          updateOffset();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const handleResize = () => {
+      updateOffset();
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => {
-      window.removeEventListener('scroll', updateOffset);
-      window.removeEventListener('resize', updateOffset);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
   }, [isFullscreen]);
 
@@ -857,14 +870,17 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
         }
       }
     } catch (e) {}
-    fetch('/api/jobs')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.success && Array.isArray(data.jobs) && data.jobs.length > 0) {
-          setActiveJobs(data.jobs);
-        }
-      })
-      .catch((err) => console.warn('[Client] Jobs fetch error:', err));
+    // Only fetch if initialJobs was not pre-populated from server
+    if (!initialJobs || initialJobs.length === 0) {
+      fetch('/api/jobs?limit=50&paginate=true')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.success && Array.isArray(data.jobs) && data.jobs.length > 0) {
+            setActiveJobs(data.jobs);
+          }
+        })
+        .catch((err) => console.warn('[Client] Jobs fetch error:', err));
+    }
 
     // Fetch latest verified faculty from database
     fetch('/api/admin/faculty')
@@ -1476,17 +1492,20 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
 
   const cityCounts = useMemo(() => {
     const counts: Record<string, number> = {};
+    const popularLower = POPULAR_CITIES.map(c => ({ name: c.name, lower: c.name.toLowerCase() }));
+    popularLower.forEach(c => { counts[c.name] = 0; });
     const currentList = activeTab === 'jobs' ? activeJobs : VERIFIED_FACULTY_MEMBERS;
-    currentList.forEach((item) => {
-      POPULAR_CITIES.forEach((c) => {
-        if (
-          item.city.toLowerCase().includes(c.name.toLowerCase()) ||
-          (c.name === 'Delhi NCR' && item.city.toLowerCase().includes('delhi'))
-        ) {
-          counts[c.name] = (counts[c.name] || 0) + 1;
+
+    for (let i = 0; i < currentList.length; i++) {
+      const cityLower = (currentList[i].city || '').toLowerCase();
+      if (!cityLower) continue;
+      for (let j = 0; j < popularLower.length; j++) {
+        const c = popularLower[j];
+        if (cityLower.includes(c.lower) || (c.name === 'Delhi NCR' && cityLower.includes('delhi'))) {
+          counts[c.name]++;
         }
-      });
-    });
+      }
+    }
     return counts;
   }, [activeTab, activeJobs]);
 
@@ -2195,7 +2214,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
           <div className="w-full flex items-start gap-4 sm:gap-5 mt-2 sm:mt-3">
             
             {/* Center Content: Cards Feed according to viewMode */}
-            <div className="flex-1 min-w-0 space-y-3 overflow-visible touch-pan-y">
+            <div className="flex-1 min-w-0 space-y-3 overflow-visible">
               {/* ── MAP VIEW (IF TOGGLED) ── */}
               {viewMode === 'map' && (
                 <div className={`fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col bg-slate-50 overflow-hidden mb-4 ${
@@ -2271,7 +2290,7 @@ export default function TeachersDirectoryClient({ initialJobs, initialTab = 'job
                       return (
                         <React.Fragment key={job.id}>
                           <div
-                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-visible touch-pan-y"
+                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-visible"
                           >
                           <div className="space-y-2.5 min-w-0">
                             {/* Conditional Job Image Banner (Only if image_url is available) */}

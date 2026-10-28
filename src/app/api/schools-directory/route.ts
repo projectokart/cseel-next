@@ -15,16 +15,23 @@ export async function GET(request: Request) {
     const parsedQuery = parseSchoolsSeoQuery([], searchParamsObj);
     const result = await fetchSchoolsForDirectory(parsedQuery);
 
-    return NextResponse.json({
-      success: true,
-      schools: result.schools,
-      totalCount: result.totalCount,
-      currentPage: result.currentPage,
-      totalPages: result.totalPages,
-      limit: result.limit,
-      hasMore: result.currentPage < result.totalPages,
-      stats: result.stats
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        schools: result.schools,
+        totalCount: result.totalCount,
+        currentPage: result.currentPage,
+        totalPages: result.totalPages,
+        limit: result.limit,
+        hasMore: result.currentPage < result.totalPages,
+        stats: result.stats,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        },
+      }
+    );
   } catch (error: any) {
     console.error('API /api/schools-directory error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

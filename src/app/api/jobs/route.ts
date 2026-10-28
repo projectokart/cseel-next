@@ -119,17 +119,24 @@ export async function GET(req: NextRequest) {
       hasMore = startIndex + limit < filtered.length;
     }
 
-    return NextResponse.json({
-      success: true,
-      totalCount: allJobs.length,
-      matchedCount: filtered.length,
-      page,
-      limit,
-      totalPages,
-      hasMore,
-      portalBreakdown: portalStats,
-      jobs: paginatedJobs,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        totalCount: allJobs.length,
+        matchedCount: filtered.length,
+        page,
+        limit,
+        totalPages,
+        hasMore,
+        portalBreakdown: portalStats,
+        jobs: paginatedJobs,
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=180, stale-while-revalidate=900',
+        },
+      }
+    );
   } catch (err: any) {
     console.error('[API /api/jobs GET] Error:', err);
     return NextResponse.json(

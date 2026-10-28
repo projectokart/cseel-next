@@ -80,6 +80,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      { source: '/register', destination: '/edu-network/teachers/register', permanent: false },
       { source: '/my-projects', destination: '/user/projects', permanent: true },
       { source: '/my-selections', destination: '/user/selections', permanent: true },
       { source: '/profile', destination: '/profile/setup', permanent: false },

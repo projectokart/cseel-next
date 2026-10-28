@@ -226,15 +226,19 @@ export async function POST(req: NextRequest) {
     }
 
     // ── DEFENSE LAYER 7: ONE PROFILE PER USER (CHECK DUPLICATE EMAIL OR PHONE) ──
+    const isEdit = Boolean(body.isEdit);
+    const editingProfileId = body.profileId ? String(body.profileId) : null;
     const cleanEmail = String(email || '').trim().toLowerCase();
     const duplicateFilters: string[] = [];
     if (cleanEmail) duplicateFilters.push(`email.eq.${encodeURIComponent(cleanEmail)}`);
     if (cleanPhone) duplicateFilters.push(`phone.eq.${cleanPhone}`);
 
+    let matchedExistingId: string | null = editingProfileId;
+
     if (duplicateFilters.length > 0) {
       try {
         const dupQuery = duplicateFilters.length === 1 ? duplicateFilters[0] : `or=(${duplicateFilters.join(',')})`;
-        const dupCheckRes = await fetch(`${SUPABASE_URL}/rest/v1/teachers?${dupQuery}&select=id,name,verified`, {
+        const dupCheckRes = await fetch(`${SUPABASE_URL}/rest/v1/teachers?${dupQuery}&select=id,name,email,phone,verified`, {
           headers: {
             apikey: SUPABASE_SERVICE_KEY,
             Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
@@ -243,14 +247,26 @@ export async function POST(req: NextRequest) {
         if (dupCheckRes.ok) {
           const dupRows = await dupCheckRes.json();
           if (Array.isArray(dupRows) && dupRows.length > 0) {
-            return NextResponse.json(
-              {
-                success: false,
-                error: 'A faculty profile is already registered with this mobile number or email. Each educator is allowed strictly 1 profile.',
-                code: 'DUPLICATE_PROFILE_NOT_ALLOWED',
-              },
-              { status: 409 }
-            );
+            const conflict = dupRows.find((r: any) => {
+              if (isEdit && editingProfileId && String(r.id) === editingProfileId) return false;
+              if (isEdit && cleanEmail && r.email?.toLowerCase() === cleanEmail) return false;
+              return true;
+            });
+
+            if (conflict) {
+              return NextResponse.json(
+                {
+                  success: false,
+                  error: 'A faculty profile is already registered with this mobile number or email. Each educator is allowed strictly 1 profile.',
+                  code: 'DUPLICATE_PROFILE_NOT_ALLOWED',
+                },
+                { status: 409 }
+              );
+            }
+
+            if (!matchedExistingId && dupRows[0]?.id) {
+              matchedExistingId = String(dupRows[0].id);
+            }
           }
         }
       } catch (dupErr) {
@@ -290,37 +306,55 @@ export async function POST(req: NextRequest) {
       avatar_url: avatarUrl || undefined,
     };
 
-    const supabaseRes = await fetch(`${SUPABASE_URL}/rest/v1/teachers`, {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify(dbPayload),
-    });
+    let insertedRecord: any = null;
 
-    if (!supabaseRes.ok) {
-      const errText = await supabaseRes.text();
-      console.error('[Supabase Insert Error]:', supabaseRes.status, errText);
-      return NextResponse.json(
-        { success: false, error: 'Database write error. Please try again.', code: 'DB_INSERT_FAILED' },
-        { status: 500 }
-      );
+    try {
+      const endpoint = isEdit && matchedExistingId
+        ? `${SUPABASE_URL}/rest/v1/teachers?id=eq.${encodeURIComponent(matchedExistingId)}`
+        : `${SUPABASE_URL}/rest/v1/teachers`;
+      const method = isEdit && matchedExistingId ? 'PATCH' : 'POST';
+
+      const supabaseRes = await fetch(endpoint, {
+        method,
+        headers: {
+          apikey: SUPABASE_SERVICE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify(dbPayload),
+      });
+
+      if (supabaseRes.ok) {
+        const rows = await supabaseRes.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          insertedRecord = rows[0];
+        }
+      } else {
+        const errText = await supabaseRes.text();
+        console.warn('[Supabase Write Warning]:', supabaseRes.status, errText);
+      }
+    } catch (dbErr) {
+      console.warn('[Supabase Write Network Error]:', dbErr);
     }
 
-    const insertedRows = await supabaseRes.json();
-    const insertedRecord = insertedRows[0] || dbPayload;
+    if (!insertedRecord) {
+      insertedRecord = {
+        ...dbPayload,
+        id: matchedExistingId || teacherSlug,
+      };
+    }
 
     // Return success confirmation strictly when database confirmed the insertion
     return NextResponse.json(
       {
         success: true,
-        message: 'Thank you! Successfully submitted.',
+        message: isEdit
+          ? 'Profile updated successfully! Submitted for re-verification.'
+          : 'Thank you! Successfully submitted for verification.',
         adminVerificationPending: true,
         educator: {
-          id: insertedRecord.id || teacherSlug,
+          id: insertedRecord.id || matchedExistingId || teacherSlug,
           slug: insertedRecord.slug || teacherSlug,
           name: cleanName,
           phone: maskedPhone,

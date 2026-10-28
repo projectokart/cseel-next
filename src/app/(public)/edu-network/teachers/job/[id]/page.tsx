@@ -1,8 +1,44 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getActiveFacultyJobs, FacultyJobItem } from '@/data/facultyJobsData';
+import fs from 'fs';
+import path from 'path';
+import { FacultyJobItem } from '@/data/facultyJobsData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
+import { decodeSlimJob } from '@/lib/jobs/feedDecoder';
+
+let _allJobsCache: FacultyJobItem[] | null = null;
+
+async function getAllJobsList(): Promise<FacultyJobItem[]> {
+  if (_allJobsCache && _allJobsCache.length > 0) return _allJobsCache;
+
+  try {
+    const supa = await SupabaseJobService.fetchJobsFromSupabase();
+    if (Array.isArray(supa) && supa.length > 0) {
+      _allJobsCache = supa;
+      return _allJobsCache;
+    }
+  } catch {}
+
+  try {
+    const feedPath = path.join(process.cwd(), 'public', 'jobs', 'jobs-feed.json');
+    if (fs.existsSync(feedPath)) {
+      const raw = fs.readFileSync(feedPath, 'utf8');
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) {
+        _allJobsCache = list.map(decodeSlimJob);
+        return _allJobsCache;
+      }
+    }
+  } catch {}
+
+  return [];
+}
+
+async function findJobById(id: string): Promise<FacultyJobItem | null> {
+  const all = await getAllJobsList();
+  return all.find((j) => j.id === id || (j as any).slug === id) || null;
+}
 import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
 import SingleJobClient from './SingleJobClient';
 
@@ -47,14 +83,7 @@ function parseNumericSalary(salaryRaw?: string | null): { min?: number; max?: nu
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const allJobs = getActiveFacultyJobs();
-  let job = allJobs.find((j) => j.id === params.id || (j as any).slug === params.id);
-  if (!job) {
-    try {
-      const supa = await SupabaseJobService.fetchJobsFromSupabase();
-      job = supa.find((j) => j.id === params.id || (j as any).slug === params.id);
-    } catch {}
-  }
+  const job = await findJobById(params.id);
 
   if (!job) {
     return {
@@ -113,14 +142,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SingleJobPage({ params }: Props) {
-  const allJobs = getActiveFacultyJobs();
-  let job = allJobs.find((j) => j.id === params.id || (j as any).slug === params.id);
-  if (!job) {
-    try {
-      const supa = await SupabaseJobService.fetchJobsFromSupabase();
-      job = supa.find((j) => j.id === params.id || (j as any).slug === params.id);
-    } catch {}
-  }
+  const allJobs = await getAllJobsList();
+  const job = allJobs.find((j) => j.id === params.id || (j as any).slug === params.id) || null;
 
   if (!job) {
     notFound();

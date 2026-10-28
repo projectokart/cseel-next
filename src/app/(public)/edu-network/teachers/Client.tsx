@@ -37,7 +37,6 @@ import {
 import {
   FacultyJobItem,
   VerifiedFacultyItem,
-  getActiveFacultyJobs,
   VERIFIED_FACULTY_MEMBERS,
   getJobFacilityTags,
   getJobRequirementTags,

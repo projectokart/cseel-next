@@ -1,4 +1,4 @@
-// NOTE: aggregated_jobs.json import removed — live feed served from /jobs/jobs-feed.json
+// NOTE: aggregated_jobs.json import removed - live feed served from /jobs/jobs-feed.json
 // The 4.2 MB static bundle is no longer loaded; IndexedDB progressive caching is used instead.
 
 export interface FacultyJobItem {
@@ -312,9 +312,7 @@ export function mapRawRowToFacultyJobItem(r: any): FacultyJobItem {
 }
 
 export function getActiveFacultyJobs(): FacultyJobItem[] {
-  // NOTE: aggregated_jobs.json (4.2 MB) kept for reference only.
-  // Live feed now served from /jobs/jobs-feed.json via IndexedDB cache.
-  // Returning [] prevents 4.2 MB bundle from blocking JS main thread on mobile.
+  // Live feed is now loaded client-side via IndexedDB from /jobs/jobs-feed.json (< 1 MB)
   return [];
 }
 

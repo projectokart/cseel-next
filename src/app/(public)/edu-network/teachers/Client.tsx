@@ -19,7 +19,7 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import PageTransition from '@/components/shared/PageTransition';
+
 import { useAuth } from '@/contexts/AuthContext';
 import {
   MoreVertical,
@@ -1835,7 +1835,7 @@ export default function TeachersDirectoryClient({
   );
 
   return (
-    <PageTransition>
+    <>
       <div className="min-h-screen bg-[#F8FAFC] text-slate-900 pb-28 relative">
 
         {/* ─── TOAST NOTIFICATION ─── */}
@@ -2061,6 +2061,19 @@ export default function TeachersDirectoryClient({
           isSidebarMinimized ? 'md:ml-14' : 'md:ml-[272px] lg:ml-[296px]'
         }`}>
           
+          {/* SEO Header & Immediate LCP Anchor */}
+          <div className="mb-0.5">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <span>{activeTab === 'jobs' ? 'Daily School Teaching Vacancies' : 'Verified Faculty & STEM Educators'}</span>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#EBF3F8] text-[#004A75] border border-[#D0E6F5]">
+                {totalJobsCount.toLocaleString()} {activeTab === 'jobs' ? 'Active Posts' : 'Profiles'}
+              </span>
+            </h1>
+            <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+              Top CBSE, ICSE & private school appointments updated daily with verified salary bands and direct apply links.
+            </p>
+          </div>
+
           {/* ── Top Bar Search & Control Card (Exact User Spec Design) ── */}
           <div className={`bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 transition-all duration-300 relative ${
             viewMode === 'map'
@@ -4012,6 +4025,6 @@ export default function TeachersDirectoryClient({
             </div>
           </div>
         )}
-    </PageTransition>
+    </>
   );
 }

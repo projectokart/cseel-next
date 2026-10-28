@@ -1071,99 +1071,34 @@ const Navbar = () => {
 
                               {/* Links list */}
                               <div className="space-y-2.5">
-                                {col.items?.map((sub: any, sIdx: number) => {
-                                  const subKey = `${item.label}::${col.categoryTitle}::${sub.label}`;
-                                  const isMobileSubOpen = openMobileSubItems.includes(subKey);
-                                  const hasSub = Boolean(sub.subItems && sub.subItems.length > 0);
-
-                                  return (
-                                    <div
-                                      key={sIdx}
-                                      className="p-2.5 rounded-xl hover:bg-[#F7F8F8] transition-colors"
+                                {col.items?.map((sub: any, sIdx: number) => (
+                                  <div
+                                    key={sIdx}
+                                    className="p-2 rounded-xl hover:bg-[#F7F8F8] transition-colors"
+                                  >
+                                    <Link
+                                      href={sub.to || '/'}
+                                      onClick={() => setMobileOpen(false)}
+                                      className="block group"
                                     >
-                                      <div className="flex items-start justify-between gap-2">
-                                        <Link
-                                          href={sub.to || '/'}
-                                          onClick={() => setMobileOpen(false)}
-                                          className="block flex-1 min-w-0 group"
-                                        >
-                                          <div className="flex items-center gap-1.5 flex-wrap">
-                                            <span className="text-[14px] font-bold text-[#1B1F23] group-hover:text-[#006FCC] transition-colors font-['Montserrat',sans-serif] leading-snug">
-                                              {sub.label}
-                                            </span>
-                                            {sub.badge && (
-                                              <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#EDF5FA] text-[#006FCC] border border-[#006FCC]/20 shrink-0">
-                                                {sub.badge}
-                                              </span>
-                                            )}
-                                          </div>
-                                          {sub.desc && (
-                                            <p className="text-[12px] text-[#5F6265] leading-relaxed line-clamp-2 mt-0.5 font-['Lato',sans-serif]">
-                                              {sub.desc}
-                                            </p>
-                                          )}
-                                        </Link>
-
-                                        {hasSub && (
-                                          <button
-                                            type="button"
-                                            aria-label={isMobileSubOpen ? "Collapse sub-links" : "Expand sub-links"}
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                              toggleMobileSubItem(subKey);
-                                            }}
-                                            className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 cursor-pointer transition-all mt-0.5 ${
-                                              isMobileSubOpen
-                                                ? 'bg-[#006FCC] text-white shadow-xs'
-                                                : 'bg-[#F4F6F8] text-[#1B1F23] border border-[#E8E9E9] hover:bg-[#EDF5FA] hover:text-[#006FCC]'
-                                            }`}
-                                            title="Toggle Sub-links"
-                                          >
-                                            <LabsterChevron
-                                              isOpen={isMobileSubOpen}
-                                              className={`!w-3 !h-3 ${isMobileSubOpen ? '!text-white' : '!text-[#1B1F23]'}`}
-                                            />
-                                          </button>
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        <span className="text-[14.5px] font-bold text-[#1B1F23] group-hover:text-[#006FCC] transition-colors font-['Montserrat',sans-serif] leading-snug">
+                                          {sub.label}
+                                        </span>
+                                        {sub.badge && (
+                                          <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-[#EDF5FA] text-[#006FCC] border border-[#006FCC]/20 shrink-0">
+                                            {sub.badge}
+                                          </span>
                                         )}
                                       </div>
-
-                                      {/* Sub-item child links */}
-                                      {hasSub && (
-                                        <div
-                                          className="grid overflow-hidden transition-[grid-template-rows,opacity] duration-250 ease-out"
-                                          style={{
-                                            gridTemplateRows: isMobileSubOpen ? '1fr' : '0fr',
-                                            opacity: isMobileSubOpen ? 1 : 0,
-                                          }}
-                                        >
-                                          <div className="overflow-hidden min-h-0">
-                                            <div className="mt-2.5 ml-1 pl-3 border-l-2 border-[#006FCC] space-y-1 bg-[#F7F8F8] p-2.5 rounded-r-xl border border-l-0 border-[#E8E9E9]">
-                                              <div className="text-[9.5px] font-bold uppercase tracking-wider text-[#006FCC] px-1 font-['Montserrat',sans-serif]">
-                                                {getSubmenuHeading(sub.label)}
-                                              </div>
-                                              {sub.subItems!.map((child: any, cIdx: number) => (
-                                                <Link
-                                                  key={cIdx}
-                                                  href={child.to || '/'}
-                                                  onClick={() => setMobileOpen(false)}
-                                                  className="flex items-center justify-between text-[12px] font-medium text-[#1B1F23] hover:text-[#006FCC] py-1 px-1.5 rounded hover:bg-white transition-colors"
-                                                >
-                                                  <span className="truncate">{child.label}</span>
-                                                  {child.badge && (
-                                                    <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white text-[#006FCC] border border-[#006FCC]/20 shrink-0 ml-1">
-                                                      {child.badge}
-                                                    </span>
-                                                  )}
-                                                </Link>
-                                              ))}
-                                            </div>
-                                          </div>
-                                        </div>
+                                      {sub.desc && (
+                                        <p className="text-[12.5px] text-[#5F6265] leading-relaxed line-clamp-2 mt-0.5 font-['Lato',sans-serif]">
+                                          {sub.desc}
+                                        </p>
                                       )}
-                                    </div>
-                                  );
-                                })}
+                                    </Link>
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           ))}

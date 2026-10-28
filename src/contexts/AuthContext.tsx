@@ -382,20 +382,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { data: null, error: null };
       }
 
-      console.warn('[Firebase Google Auth] Notice (' + fbErr?.code + '), activating direct Google OAuth flow...');
-
-      // Fallback: Direct Google OAuth redirect (bypasses browser popup blockers and third-party iframe cookie issues)
-      const clientId = "820798087354-39uth50rnu5ttnhikmh03d5mptnldjhc.apps.googleusercontent.com";
-      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-      const redirectUri = `${origin}/login`;
-      const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?response_type=id_token&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20email%20profile&nonce=${Date.now()}`;
-
-      if (typeof window !== 'undefined') {
-        window.location.href = googleAuthUrl;
+      console.warn('[Firebase Google Auth] Notice (' + fbErr?.code + '), activating Firebase redirect flow...');
+      try {
+        await signInWithRedirect(auth, googleProvider);
         return { data: null, error: null };
+      } catch (redirErr: any) {
+        return { data: null, error: redirErr || fbErr };
       }
-
-      return { data: null, error: fbErr };
     }
   };
 

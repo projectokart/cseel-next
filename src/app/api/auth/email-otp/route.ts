@@ -199,6 +199,8 @@ export async function POST(req: NextRequest) {
       `;
 
       const mailResult = await sendEmail({
+        from: '"CSEEL Security & Verification" <auth@mailer.cseel.org>',
+        replyTo: 'support@mailer.cseel.org',
         to: email,
         subject: `Your CSEEL Login OTP: ${otp}`,
         html,

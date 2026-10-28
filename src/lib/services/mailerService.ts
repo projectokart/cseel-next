@@ -23,9 +23,27 @@ export interface SendEmailResult {
 
 /**
  * Returns a configured Nodemailer transporter.
- * Prioritizes direct Gmail App Password SMTP for instant, unsandboxed delivery to all recipient domains.
+ * Prioritizes authenticated AWS SES on mailer.cseel.org for 100% DKIM/SPF compliance.
  */
 export function getEmailTransporter() {
+  const sesUser = process.env.SES_SMTP_USER;
+  const sesPass = process.env.SES_SMTP_PASS;
+
+  if (sesUser && sesPass) {
+    return nodemailer.createTransport({
+      host: process.env.SES_SMTP_HOST || 'email-smtp.ap-southeast-2.amazonaws.com',
+      port: Number(process.env.SES_SMTP_PORT) || 587,
+      secure: false,
+      auth: {
+        user: sesUser,
+        pass: sesPass,
+      },
+      tls: {
+        rejectUnauthorized: true,
+      },
+    });
+  }
+
   const gmailUser = process.env.SMTP_USER;
   const gmailPass = process.env.SMTP_PASS;
 
@@ -41,33 +59,13 @@ export function getEmailTransporter() {
     });
   }
 
-  const host = process.env.SES_SMTP_HOST || 'email-smtp.ap-southeast-2.amazonaws.com';
-  const port = Number(process.env.SES_SMTP_PORT) || 587;
-  const user = process.env.SES_SMTP_USER;
-  const pass = process.env.SES_SMTP_PASS;
-
-  if (!user || !pass) {
-    console.warn('[mailerService] SMTP credentials not configured.');
-    return null;
-  }
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: {
-      user,
-      pass,
-    },
-    tls: {
-      rejectUnauthorized: true,
-    },
-  });
+  console.warn('[mailerService] SMTP credentials not configured.');
+  return null;
 }
 
 export function getDefaultFrom(): string {
   const name = process.env.MAIL_FROM_NAME || 'CSEEL Security & Verification';
-  const email = process.env.SMTP_USER || process.env.MAIL_FROM_EMAIL || 'ptdevkaushik104@gmail.com';
+  const email = process.env.MAIL_FROM_EMAIL || 'auth@mailer.cseel.org';
   return `"${name}" <${email}>`;
 }
 
@@ -76,12 +74,12 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
   if (!transporter) {
     return {
       success: false,
-      error: 'SMTP credentials missing. Please configure SMTP_USER and SMTP_PASS in environment variables.',
+      error: 'SMTP credentials missing. Please configure SES_SMTP_USER and SES_SMTP_PASS in environment variables.',
     };
   }
 
   const from = options.from || getDefaultFrom();
-  const replyTo = options.replyTo || process.env.SMTP_USER || 'ptdevkaushik104@gmail.com';
+  const replyTo = options.replyTo || process.env.MAIL_REPLY_TO || 'auth@mailer.cseel.org';
 
   try {
     const info = await transporter.sendMail({

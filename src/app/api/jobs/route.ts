@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 import { JobAggregatorStorage, JobCardExtractor, RawJobInput } from '@/lib/services/jobAggregatorEngine';
 import { getActiveFacultyJobs, FacultyJobItem, toLightweightJob } from '@/data/facultyJobsData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
@@ -34,6 +36,22 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
+
+    // Fast-path for raw edge-cached feeds
+    const format = searchParams.get('format');
+    if (format === 'feed' || format === 'top50') {
+      const fileName = format === 'top50' ? 'jobs-top50.json' : 'jobs-feed.json';
+      const filePath = path.join(process.cwd(), 'public', 'jobs', fileName);
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        return new NextResponse(content, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': format === 'top50' ? 'public, s-maxage=300' : 'public, max-age=31536000, immutable',
+          },
+        });
+      }
+    }
     const q = searchParams.get('q')?.toLowerCase() || '';
     const city = searchParams.get('city')?.toLowerCase() || '';
     const state = searchParams.get('state')?.toLowerCase() || '';

@@ -1,5 +1,8 @@
 'use client';
 import { JobsCacheStorage } from '@/lib/services/jobsCacheStorage';
+import { decodeSlimFeed, decodeSlimJob } from '@/lib/jobs/feedDecoder';
+import { FeedCache, LinksCache } from '@/lib/jobs/indexedDBCache';
+import { haversineKm, hasMovedBeyondThreshold } from '@/lib/jobs/haversine';
 
 function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
@@ -993,52 +996,108 @@ export default function TeachersDirectoryClient({
         }
       }
     } catch (e) {}
-    // 1. IndexedDB Cache-First & Background Version Sync
+    // 1. Dual-phase Ultra-slow (10 KB/s) Progressive Loading & Background Sync
     const syncJobsData = async () => {
       try {
-        // Read local IndexedDB cache first for instant 0.01s load
+        // Step A: Read local IndexedDB cache first for instant 0ms load
+        let hasLocalCache = false;
         const cached = await JobsCacheStorage.getCache();
         if (cached && cached.jobs && cached.jobs.length > 0) {
+          hasLocalCache = true;
           setActiveJobs(cached.jobs);
           if (cached.lastGps) {
             lastGpsCoordsRef.current = cached.lastGps;
           }
+        } else {
+          // Check FeedCache (v2)
+          const feedPayload = await FeedCache.get();
+          if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length > 0) {
+            hasLocalCache = true;
+            const decoded = decodeSlimFeed(feedPayload.jobs);
+            setActiveJobs(decoded);
+          }
         }
 
-        // Tiny 80-byte check to server: has database updated?
-        const versionRes = await fetch('/api/jobs/version');
-        if (versionRes.ok) {
-          const versionData = await versionRes.json();
-          const serverVersion = versionData.version;
+        // Step B: On Cold Start with zero cache on 10 KB/s network, fetch lightweight top-50 chunk (~16KB)
+        if (!hasLocalCache) {
+          try {
+            const top50Res = await fetch('/jobs/jobs-top50.json');
+            if (top50Res.ok) {
+              const top50Slim = await top50Res.json();
+              if (Array.isArray(top50Slim) && top50Slim.length > 0) {
+                const decodedTop50 = decodeSlimFeed(top50Slim);
+                setActiveJobs(decodedTop50);
+              }
+            }
+          } catch (e) {
+            console.warn('[Client] top-50 chunk load notice:', e);
+          }
+        }
 
-          // If database has new version, or no local cache exists, fetch full dataset
-          if (!cached || cached.version !== serverVersion) {
+        // Step C: Background Silent Sync — check manifest and download full 1MB feed
+        let serverVersion = '';
+        try {
+          const manifestRes = await fetch('/jobs/latest.json', { cache: 'no-cache' });
+          if (manifestRes.ok) {
+            const manifest = await manifestRes.json();
+            serverVersion = manifest.version || '';
+          }
+        } catch {}
+
+        if (!serverVersion) {
+          const versionRes = await fetch('/api/jobs/version');
+          if (versionRes.ok) {
+            const versionData = await versionRes.json();
+            serverVersion = versionData.version || '';
+          }
+        }
+
+        // Only fetch full feed if cache is missing or server version changed
+        if (!cached || cached.version !== serverVersion) {
+          let freshJobs: FacultyJobItem[] = [];
+
+          // Try fetching static edge-cached slim feed first
+          try {
+            const feedRes = await fetch('/jobs/jobs-feed.json');
+            if (feedRes.ok) {
+              const slimData = await feedRes.json();
+              if (Array.isArray(slimData) && slimData.length > 0) {
+                freshJobs = decodeSlimFeed(slimData);
+                FeedCache.save(slimData, serverVersion).catch(() => {});
+              }
+            }
+          } catch {}
+
+          // Fallback to /api/jobs if static feed unavailable
+          if (freshJobs.length === 0) {
             const jobsRes = await fetch('/api/jobs');
             if (jobsRes.ok) {
               const jobsData = await jobsRes.json();
               if (jobsData.success && Array.isArray(jobsData.jobs) && jobsData.jobs.length > 0) {
-                let freshJobs = jobsData.jobs;
-
-                // Pre-calculate distances for fresh jobs if pre-saved GPS exists
-                const savedGps = cached?.lastGps || userCoords || lastGpsCoordsRef.current;
-                if (savedGps && typeof savedGps.lat === 'number' && typeof savedGps.lng === 'number') {
-                  freshJobs = freshJobs.map((j: any) => {
-                    if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
-                      const d = getDistanceKm(savedGps.lat, savedGps.lng, j.coordinates.lat, j.coordinates.lng);
-                      return { ...j, distanceKm: d };
-                    }
-                    return j;
-                  });
-                }
-
-                setActiveJobs(freshJobs);
-                await JobsCacheStorage.saveCache(
-                  freshJobs,
-                  serverVersion,
-                  versionData.count || freshJobs.length
-                );
+                freshJobs = jobsData.jobs;
               }
             }
+          }
+
+          if (freshJobs.length > 0) {
+            // Pre-calculate distances if user GPS is already saved
+            const savedGps = cached?.lastGps || userCoords || lastGpsCoordsRef.current;
+            if (savedGps && typeof savedGps.lat === 'number' && typeof savedGps.lng === 'number') {
+              freshJobs = freshJobs.map((j: any) => {
+                if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
+                  const d = getDistanceKm(savedGps.lat, savedGps.lng, j.coordinates.lat, j.coordinates.lng);
+                  return { ...j, distanceKm: d };
+                }
+                return j;
+              });
+            }
+
+            setActiveJobs(freshJobs);
+            await JobsCacheStorage.saveCache(
+              freshJobs,
+              serverVersion,
+              freshJobs.length
+            );
           }
         }
       } catch (err) {

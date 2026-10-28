@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import facetsJson from '@/data/job_filter_facets.json';
+import fs from 'fs';
+import path from 'path';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +16,31 @@ const CACHE_TTL_MS = 60 * 1000; // 1 minute in-memory cache
 
 export async function GET() {
   try {
+    // 1. Check disk manifest first for ultra-fast response
+    try {
+      const manifestPath = path.join(process.cwd(), 'public', 'jobs', 'latest.json');
+      if (fs.existsSync(manifestPath)) {
+        const raw = fs.readFileSync(manifestPath, 'utf-8');
+        const manifest = JSON.parse(raw);
+        if (manifest.version) {
+          return NextResponse.json(
+            {
+              success: true,
+              version: manifest.version,
+              count: manifest.count || facetsJson.totalVacancies,
+              feedUrl: manifest.feedUrl || '/jobs/jobs-feed.json',
+              top50Url: manifest.top50Url || '/jobs/jobs-top50.json',
+            },
+            {
+              headers: {
+                'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+              },
+            }
+          );
+        }
+      }
+    } catch {}
+
     const now = Date.now();
     if (_cachedVersionInfo && now - _cachedVersionInfo.lastChecked < CACHE_TTL_MS) {
       return NextResponse.json(

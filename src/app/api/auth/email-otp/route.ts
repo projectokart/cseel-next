@@ -26,9 +26,10 @@ const ipRateLimits = new Map<string, number[]>();
 
 // Configuration Limits
 const COOLDOWN_SECONDS = 60; // 60s cooldown between dispatches
-const MAX_PER_HOUR_EMAIL = 5; // Max 5 OTPs per email per 60 minutes
+const MAX_PER_DAY_EMAIL = 5; // Global daily limit: max 5 verification emails per 24 hours
 const MAX_PER_HOUR_IP = 15; // Max 15 OTP requests per IP per 60 minutes
 const MAX_FAILED_ATTEMPTS = 5; // Max 5 incorrect guesses before invalidation
+const DAILY_WINDOW_MS = 24 * 60 * 60 * 1000; // 24-hour daily window
 
 // Helper to extract client IP
 function getClientIp(req: NextRequest): string {
@@ -43,16 +44,17 @@ function getClientIp(req: NextRequest): string {
 setInterval(() => {
   const now = Date.now();
   const oneHourAgo = now - 60 * 60 * 1000;
+  const twentyFourHoursAgo = now - 24 * 60 * 60 * 1000;
 
   // Cleanup expired OTPs
   for (const [email, item] of otpStore.entries()) {
     if (now > item.expiresAt) otpStore.delete(email);
   }
 
-  // Cleanup rate limits
+  // Cleanup rate limits (24 hours window)
   for (const [email, tracker] of emailRateLimits.entries()) {
-    tracker.timestamps = tracker.timestamps.filter(t => t > oneHourAgo);
-    if (tracker.timestamps.length === 0 && now - tracker.lastSent > oneHourAgo) {
+    tracker.timestamps = tracker.timestamps.filter(t => t > twentyFourHoursAgo);
+    if (tracker.timestamps.length === 0 && now - tracker.lastSent > twentyFourHoursAgo) {
       emailRateLimits.delete(email);
     }
   }
@@ -96,9 +98,10 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Rule 2: Check Email rate limit (max 5/hour & 60s cooldown)
+      // Rule 2: Check Email rate limit (Daily limit max 5 per day & 60s cooldown)
+      const twentyFourHoursAgo = now - DAILY_WINDOW_MS;
       const emailTracker = emailRateLimits.get(email) || { timestamps: [], lastSent: 0 };
-      const freshEmailTimestamps = emailTracker.timestamps.filter(t => t > oneHourAgo);
+      const freshEmailTimestamps = emailTracker.timestamps.filter(t => t > twentyFourHoursAgo);
 
       // Check 60s cooldown
       const elapsedSinceLast = now - emailTracker.lastSent;
@@ -113,12 +116,14 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Check max per hour for email
-      if (freshEmailTimestamps.length >= MAX_PER_HOUR_EMAIL) {
+      // Check max 5 requests per day for email
+      if (freshEmailTimestamps.length >= MAX_PER_DAY_EMAIL) {
+        const oldestTimestamp = freshEmailTimestamps[0] || now;
+        const hoursRemaining = Math.max(1, Math.ceil((oldestTimestamp + DAILY_WINDOW_MS - now) / (60 * 60 * 1000)));
         return NextResponse.json(
           {
             success: false,
-            error: 'Hourly verification limit reached for this email (max 5). Please try again after 1 hour or sign in with your password.',
+            error: `Daily verification limit reached (5/5 requests used). Please try again tomorrow (resets in ~${hoursRemaining}h) or sign in with your password.`,
           },
           { status: 429 }
         );

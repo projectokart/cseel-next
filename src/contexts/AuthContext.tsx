@@ -83,7 +83,7 @@ interface AuthContextType {
   sendFirebaseSignInLink: (email: string, redirectTo?: string) => Promise<{ success: boolean; error?: string }>;
   completeSignInWithEmailLink: (email?: string, url?: string) => Promise<{ success: boolean; error?: string; user?: UnifiedUser }>;
   sendVerificationEmail: () => Promise<{ success: boolean; error?: string }>;
-  signUp: (email: string, password: string, role: AppRole, opts?: SignUpOptions) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, role: AppRole, opts?: SignUpOptions) => Promise<{ error: any; isExistingUser?: boolean }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   verifyUser: (identifier: string) => void;
@@ -567,6 +567,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         return { error: null };
       } catch (err: any) {
+        // Check for duplicate account / email already registered
+        if (
+          err.code === 'auth/email-already-in-use' ||
+          err.message?.includes('EMAIL_EXISTS') ||
+          err.message?.includes('email-already-in-use') ||
+          err.message?.includes('already in use')
+        ) {
+          const friendlyErr = new Error('An account with this email already exists. Please sign in instead.');
+          (friendlyErr as any).code = 'auth/email-already-in-use';
+          return { error: friendlyErr, isExistingUser: true };
+        }
+
         // If Firebase Console has Email/Password disabled, provide 100% seamless fallback
         if (
           err.code === 'auth/operation-not-allowed' ||
@@ -574,6 +586,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           err.message?.includes('PASSWORD_LOGIN_DISABLED')
         ) {
           console.warn('[Firebase Auth] Notice: Email/Password provider disabled in Firebase Console. Registering user via unified store...');
+
+          if (typeof window !== 'undefined') {
+            try {
+              const registered = JSON.parse(localStorage.getItem('cseel_registered_users') || '{}');
+              if (registered[cleanEmail]) {
+                const friendlyErr = new Error('An account with this email already exists. Please sign in instead.');
+                (friendlyErr as any).code = 'auth/email-already-in-use';
+                return { error: friendlyErr, isExistingUser: true };
+              }
+            } catch {}
+          }
 
           const uid = 'cseel_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
           const mapped: UnifiedUser = {

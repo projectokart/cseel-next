@@ -153,12 +153,31 @@ export default function SignupClient() {
     }
 
     setLoading(true);
-    const { error } = await signUp(cleanEmail, cleanPass, role, {
+    const { error, isExistingUser } = await signUp(cleanEmail, cleanPass, role, {
       displayName: cleanName,
     });
     setLoading(false);
 
     if (error) {
+      const isEmailTaken =
+        isExistingUser ||
+        error.code === 'auth/email-already-in-use' ||
+        error.message?.includes('already exists') ||
+        error.message?.includes('already in use') ||
+        error.message?.includes('EMAIL_EXISTS');
+
+      if (isEmailTaken) {
+        toast({
+          title: 'Account Already Exists',
+          description: 'An account with this email is already registered. Redirecting to Sign In...',
+          variant: 'destructive',
+        });
+        setTimeout(() => {
+          router.push(`/login?email=${encodeURIComponent(cleanEmail)}&redirect=${encodeURIComponent(targetDestination)}`);
+        }, 1200);
+        return;
+      }
+
       toast({
         title: 'Sign Up Failed',
         description: error.message || 'Could not create account. Please try again.',

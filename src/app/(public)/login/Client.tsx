@@ -85,6 +85,11 @@ export default function LoginClient() {
     const queryEmail = searchParams.get('email');
     const queryOtp = searchParams.get('otp');
 
+    // Pre-populate email field if passed in query param
+    if (queryEmail && !email) {
+      setEmail(queryEmail);
+    }
+
     // 1. If 1-click magic link with OTP code
     if (queryEmail && queryOtp && !user) {
       setEmail(queryEmail);

@@ -121,7 +121,7 @@ export default function LoginClient() {
         .then((res) => {
           if (res.success) {
             toast({
-              title: "Authenticated with Firebase!",
+              title: "Signed in successfully!",
               description: "Redirecting...",
             });
             window.location.href = returnUrl;
@@ -286,7 +286,7 @@ export default function LoginClient() {
     } else {
       toast({
         title: "Reset link sent!",
-        description: `Check ${cleanEmail} for password reset instructions from Firebase.`,
+        description: `Check ${cleanEmail} for password reset instructions.`,
       });
       setForgotMode(false);
     }
@@ -336,7 +336,7 @@ export default function LoginClient() {
               </button>
               <h2 className="text-2xl font-bold mb-1 text-[#1f1f1f]">Reset Password</h2>
               <p className="text-[#444746] text-xs sm:text-sm mb-5">
-                We'll dispatch a secure reset link directly from Firebase to your email address.
+                We'll dispatch a secure password reset link to your email address.
               </p>
               <form onSubmit={handleForgot} className="space-y-4">
                 <div className="space-y-1.5">
@@ -355,7 +355,7 @@ export default function LoginClient() {
                   className="w-full bg-[#003c6e] hover:bg-[#002b50] text-white font-bold h-11"
                   disabled={loading}
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send Reset Link via Firebase"}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send Reset Link"}
                 </Button>
               </form>
             </div>
@@ -392,7 +392,7 @@ export default function LoginClient() {
                     window.location.href = returnUrl;
                   }}
                 >
-                  Continue &rarr;
+                  Continue
                 </M3Button>
                 <M3Button
                   variant="outlined"
@@ -411,7 +411,7 @@ export default function LoginClient() {
           {!user && !forgotMode && (
             <div>
               <div className="mb-5">
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#1f1f1f]">
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1f1f1f]">
                   Sign In to CSEEL
                 </h2>
                 <p className="text-[#444746] text-xs sm:text-sm mt-1">
@@ -464,7 +464,7 @@ export default function LoginClient() {
                   }`}
                 >
                   <Sparkles className="w-3.5 h-3.5 text-[#005689]" />
-                  <span>Passwordless OTP / Link</span>
+                  <span>Email Code</span>
                 </button>
                 <button
                   type="button"
@@ -517,7 +517,7 @@ export default function LoginClient() {
                             <Loader2 className="h-4 w-4 animate-spin" /> Sending Secure Code...
                           </span>
                         ) : (
-                          "Send Login Code & Magic Link &rarr;"
+                          "Send Code"
                         )}
                       </Button>
                     </form>
@@ -561,7 +561,7 @@ export default function LoginClient() {
                             <Loader2 className="h-4 w-4 animate-spin" /> Authenticating...
                           </span>
                         ) : (
-                          "Verify & Sign In &rarr;"
+                          "Verify & Sign In"
                         )}
                       </Button>
 
@@ -651,7 +651,7 @@ export default function LoginClient() {
                     className="w-full bg-[#003c6e] hover:bg-[#002b50] text-white font-bold h-11"
                     disabled={loading}
                   >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign In &rarr;"}
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign In"}
                   </Button>
                 </form>
               )}
@@ -659,7 +659,7 @@ export default function LoginClient() {
               {/* ── SECURITY BADGE & FOOTER ── */}
               <div className="mt-6 pt-5 border-t border-[#c4c7c5]/60 flex items-center justify-center gap-2 text-[11px] text-[#444746]">
                 <ShieldCheck className="w-4 h-4 text-[#137333]" />
-                <span>Protected by Firebase Secure Cloud Infrastructure</span>
+                <span>Protected by CSEEL Security & TLS 1.3</span>
               </div>
 
               <p className="text-center text-sm text-[#444746] mt-5">

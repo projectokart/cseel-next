@@ -88,6 +88,10 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<{ error: any }>;
   verifyUser: (identifier: string) => void;
   unverifyUser: (identifier: string) => void;
+  userProfile: any | null;
+  isProfileModalOpen: boolean;
+  setIsProfileModalOpen: (open: boolean) => void;
+  saveUserProfile: (data: { displayName: string; role: AppRole; state?: string; district?: string; pincode?: string; phone?: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -173,6 +177,105 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRoles(['teacher']);
     } finally {
       setRolesLoading(false);
+    }
+  };
+
+  const [userProfile, setUserProfile] = useState<any | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  const syncUserProfile = async (cleanEmail: string) => {
+    try {
+      const res = await fetch(`/api/user/profile?email=${encodeURIComponent(cleanEmail)}`);
+      const data = await res.json();
+      if (data.success && data.profile) {
+        setUserProfile(data.profile);
+        setUser((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            displayName: data.profile.displayName || prev.displayName,
+            user_metadata: {
+              ...prev.user_metadata,
+              name: data.profile.displayName,
+              full_name: data.profile.displayName,
+              role: data.profile.role,
+              state: data.profile.state,
+              district: data.profile.district,
+              pincode: data.profile.pincode,
+              phone: data.profile.phone,
+            },
+          };
+        });
+        if (data.profile.role) {
+          setRoles([data.profile.role]);
+        }
+      } else if (!data.hasCompletedProfile) {
+        // If user has not filled details, open modal
+        setIsProfileModalOpen(true);
+      }
+    } catch (err) {
+      console.warn('[AuthContext] syncUserProfile notice:', err);
+    }
+  };
+
+  const saveUserProfile = async (data: { displayName: string; role: AppRole; state?: string; district?: string; pincode?: string; phone?: string }) => {
+    if (!user || !user.email) {
+      return { success: false, error: 'User must be signed in to update profile.' };
+    }
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, ...data }),
+      });
+      const resData = await res.json();
+      if (!res.ok || !resData.success) {
+        return { success: false, error: resData.error || 'Failed to save profile.' };
+      }
+
+      setUserProfile(resData.profile);
+      setUser((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          displayName: data.displayName,
+          user_metadata: {
+            ...prev.user_metadata,
+            name: data.displayName,
+            full_name: data.displayName,
+            role: data.role,
+            state: data.state,
+            district: data.district,
+            pincode: data.pincode,
+            phone: data.phone,
+          },
+        };
+      });
+      setRoles([data.role]);
+
+      if (auth && auth.currentUser) {
+        updateProfile(auth.currentUser, { displayName: data.displayName }).catch(() => {});
+      }
+
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(`cseel_user_roles_${user.uid}`, JSON.stringify([data.role]));
+          localStorage.setItem(`cseel_user_metadata_${user.uid}`, JSON.stringify({
+            ...user.user_metadata,
+            name: data.displayName,
+            full_name: data.displayName,
+            role: data.role,
+            state: data.state,
+            district: data.district,
+            pincode: data.pincode,
+          }));
+        } catch {}
+      }
+
+      setIsProfileModalOpen(false);
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Error updating profile.' };
     }
   };
 
@@ -270,6 +373,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(mapped);
           setSession({ user: mapped, provider: 'firebase' });
           fetchRoles(fbUser.uid);
+          if (fbUser.email) syncUserProfile(fbUser.email);
         } else {
           // Check if session was saved via OTP login
           try {
@@ -279,6 +383,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               setUser(parsed);
               setSession({ user: parsed, provider: 'firebase-otp' });
               fetchRoles(parsed.uid);
+              if (parsed.email) syncUserProfile(parsed.email);
             } else {
               setUser(null);
               setSession(null);
@@ -709,6 +814,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         resetPassword,
         verifyUser,
         unverifyUser,
+        userProfile,
+        isProfileModalOpen,
+        setIsProfileModalOpen,
+        saveUserProfile,
       }}
     >
       {children}

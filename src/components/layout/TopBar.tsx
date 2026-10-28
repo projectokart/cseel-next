@@ -32,7 +32,7 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const TopBar = () => {
-  const { user, isTeacher, isStudent, isOrganisation, signOut, roles } = useAuth();
+  const { user, isTeacher, isStudent, isOrganisation, signOut, roles, setIsProfileModalOpen, userProfile } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -65,13 +65,15 @@ const TopBar = () => {
   const meta = user?.user_metadata;
   const avatarUrl = meta?.avatar_url || meta?.picture || "";
   const displayName =
+    userProfile?.displayName ||
     meta?.full_name ||
     meta?.name ||
     meta?.display_name ||
+    user?.displayName ||
     user?.email?.split("@")[0] ||
     "User";
   const initials    = (displayName || "US").slice(0, 2).toUpperCase();
-  const primaryRole = (roles && roles.length > 0) ? roles[0] : "user";
+  const primaryRole = userProfile?.role || ((roles && roles.length > 0) ? roles[0] : "teacher");
 
   const isAdmin = primaryRole === 'moderator' || Boolean(user?.email && (user.email.endsWith('@cseel.org') || user.email.endsWith('@cseel.in')));
   const dashboardPath = isAdmin ? '/admin' : '/';
@@ -154,7 +156,7 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
   };
 
   return (
-    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 relative w-full z-10 pointer-events-auto font-['Hanken_Grotesk',sans-serif]">
+    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 relative w-full z-[9999] pointer-events-auto font-['Hanken_Grotesk',sans-serif]">
       <div className="container mx-auto px-2.5 sm:px-4 max-w-7xl">
         <div className="flex items-center justify-between py-0 gap-2 h-[26px] min-h-[26px] w-full">
           
@@ -280,7 +282,7 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
                   <div
                     onMouseEnter={clearProfileTimers}
                     onMouseLeave={handleProfileMouseLeave}
-                    className="absolute right-0 top-full mt-1.5 w-52 rounded-xl bg-white text-[#3C4043] shadow-lg border border-gray-200 py-1.5 z-[700] animate-in fade-in duration-150"
+                    className="absolute right-0 top-full mt-1.5 w-60 rounded-xl bg-white text-[#3C4043] shadow-2xl border border-gray-200 py-1.5 z-[99999] animate-in fade-in duration-150"
                   >
                     <div className="px-3 py-2 border-b border-gray-100">
                       <p className="text-sm font-bold text-[#202124] truncate">{displayName}</p>
@@ -309,6 +311,34 @@ const [localProfile, setLocalProfile] = useState<any | null>(null);
                         </button>
                       </div>
                     )}
+
+                    <div className="py-1 border-t border-gray-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          setIsProfileModalOpen(true);
+                        }}
+                        className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
+                      >
+                        <Edit3 className="mr-2.5 h-4 w-4 text-[#006FCC]" />
+                        <span>Edit Profile & Address</span>
+                      </button>
+                    </div>
+
+                    <div className="py-1 border-t border-gray-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          setIsProfileModalOpen(true);
+                        }}
+                        className="w-full flex items-center px-3.5 py-2.5 text-xs font-semibold text-[#202124] hover:bg-[#F1F3F4] cursor-pointer transition-colors"
+                      >
+                        <Edit3 className="mr-2.5 h-4 w-4 text-[#006FCC]" />
+                        <span>Edit Profile & Address</span>
+                      </button>
+                    </div>
 
                     <div className="border-t border-gray-100 pt-1">
                       <button

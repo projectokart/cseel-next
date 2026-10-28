@@ -342,7 +342,7 @@ export default function SignupClient() {
                     window.location.href = targetDestination;
                   }}
                 >
-                  Continue &rarr;
+                  Continue
                 </M3Button>
                 <M3Button
                   variant="outlined"
@@ -368,7 +368,7 @@ export default function SignupClient() {
               </div>
 
               <div className="mb-5">
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#1f1f1f]">
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1f1f1f]">
                   {role === 'teacher' ? 'Create Educator Account' : 'Create Free Account'}
                 </h2>
                 <p className="text-[#444746] text-xs sm:text-sm mt-1">
@@ -571,7 +571,7 @@ export default function SignupClient() {
                         <Loader2 className="h-4 w-4 animate-spin" /> Creating Account...
                       </span>
                     ) : (
-                      `Create ${role === 'teacher' ? 'Educator' : ''} Account &rarr;`
+                      `Create ${role === 'teacher' ? 'Educator' : ''} Account`
                     )}
                   </Button>
                 </form>
@@ -628,7 +628,7 @@ export default function SignupClient() {
                             <Loader2 className="h-4 w-4 animate-spin" /> Sending Verification Code...
                           </span>
                         ) : (
-                          "Send Verification Code &rarr;"
+                          "Send Code"
                         )}
                       </Button>
                     </form>
@@ -672,7 +672,7 @@ export default function SignupClient() {
                             <Loader2 className="h-4 w-4 animate-spin" /> Verifying & Activating...
                           </span>
                         ) : (
-                          `Verify & Create ${role === 'teacher' ? 'Educator' : ''} Account &rarr;`
+                          `Verify & Create Account`
                         )}
                       </Button>
 
@@ -707,7 +707,7 @@ export default function SignupClient() {
               {/* Security info */}
               <div className="mt-6 pt-5 border-t border-[#c4c7c5]/60 flex items-center justify-center gap-2 text-[11px] text-[#444746]">
                 <ShieldCheck className="w-4 h-4 text-[#137333]" />
-                <span>Protected by Firebase Secure Cloud Infrastructure</span>
+                <span>Protected by CSEEL Security & TLS 1.3</span>
               </div>
             </div>
           )}

@@ -174,7 +174,7 @@ export default async function TeachersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient initialJobs={activeJobs.map(toLightweightJob)} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
+      <TeachersClient initialJobs={activeJobs.slice(0, 30).map(toLightweightJob)} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
     </>
   );
 }

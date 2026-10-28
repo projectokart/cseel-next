@@ -115,6 +115,7 @@ export class SupabaseJobService {
           Authorization: `Bearer ${SUPABASE_KEY}`,
           Prefer: 'return=representation',
         },
+        signal: AbortSignal.timeout(4000),
       });
 
       if (res.ok) {

@@ -3,8 +3,9 @@ import Client from './Client';
 import { supabase } from '@/integrations/supabase/client';
 import { getBlogBySlug } from '@/lib/blogsData';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const local = getBlogBySlug(params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } | Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await Promise.resolve(params);
+  const local = getBlogBySlug(slug);
   if (local) {
     const title = `${local.title} | CSEEL Science Blog`;
     const description = local.summary.slice(0, 160);
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const { data } = await (supabase as any)
       .from('blog_posts')
       .select('title, excerpt, cover_image_url')
-      .eq('slug', params.slug)
+      .eq('slug', slug)
       .maybeSingle();
 
     if (data) {
@@ -45,11 +46,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       return {
         title,
         description,
-        alternates: { canonical: `https://www.cseel.org/blog/${params.slug}` },
+        alternates: { canonical: `https://www.cseel.org/blog/${slug}` },
         openGraph: {
           title,
           description,
-          url: `https://www.cseel.org/blog/${params.slug}`,
+          url: `https://www.cseel.org/blog/${slug}`,
           type: 'article',
           images: [{ url: image }],
         },

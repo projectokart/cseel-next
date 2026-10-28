@@ -267,15 +267,19 @@ async function sendEmailNotification(enquiry: SchoolWebsiteEnquiry) {
 
   // 2. Gmail SMTP Fallback
   try {
-    const gmailTransporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        user: 'ptdevkaushik104@gmail.com',
-        pass: 'xjbnlepfuodgeclx',
-      },
-    });
+    const gmailUser = process.env.GMAIL_SMTP_USER || process.env.SMTP_USER;
+    const gmailPass = process.env.GMAIL_SMTP_PASS || process.env.SMTP_PASS;
+
+    if (gmailUser && gmailPass) {
+      const gmailTransporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: Number(process.env.SMTP_PORT) || 465,
+        secure: true,
+        auth: {
+          user: gmailUser,
+          pass: gmailPass,
+        },
+      });
 
     await gmailTransporter.sendMail({
       from: `"D.S Sharma • School Web Specialist" <${SENDER_EMAIL}>`,
@@ -286,7 +290,9 @@ async function sendEmailNotification(enquiry: SchoolWebsiteEnquiry) {
     });
 
     console.log('[school-website-enquiry] Delivered successfully via Gmail SMTP');
-    return true;
+      return true;
+    }
+    return false;
   } catch (err) {
     console.error('[school-website-enquiry] Email delivery error:', err);
     return false;

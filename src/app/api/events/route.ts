@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { eventsRepository } from '@/features/events/db/eventsRepository';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,6 +27,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(request)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin privileges required' }, { status: 401 });
+    }
     const body = await request.json();
     if (!body.title || !body.date) {
       return NextResponse.json({ success: false, error: 'Missing required fields: title, date' }, { status: 400 });

@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { MaterialOrder, TrackingStep } from '@/features/materials/types/materialTypes';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
 
 // In-memory orders store (pluggable with separate DB)
 const ORDERS_DB: MaterialOrder[] = [];
@@ -16,6 +17,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
       }
       return NextResponse.json({ success: true, data: order });
+    }
+
+    if (!isAuthorizedAdmin(request)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin privileges required to list all orders' }, { status: 401 });
     }
 
     return NextResponse.json({ success: true, data: ORDERS_DB });

@@ -1,9 +1,13 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { supportRepository } from '@/features/support/db/supportRepository';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
 
 export async function GET(request: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(request)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin privileges required' }, { status: 401 });
+    }
     const { searchParams } = new URL(request.url);
     const searchQuery = searchParams.get('q') || '';
     const status = (searchParams.get('status') as any) || 'all';

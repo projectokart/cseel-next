@@ -30,11 +30,15 @@ const DEFAULT_TRENDING = [
 ];
 
 function ensureDataFile() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(LOG_FILE)) {
-    fs.writeFileSync(LOG_FILE, JSON.stringify(DEFAULT_TRENDING, null, 2), 'utf-8');
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(LOG_FILE)) {
+      fs.writeFileSync(LOG_FILE, JSON.stringify(DEFAULT_TRENDING, null, 2), 'utf-8');
+    }
+  } catch (err) {
+    // In serverless read-only environment, file creation is skipped gracefully
   }
 }
 
@@ -76,7 +80,11 @@ export async function POST(req: NextRequest) {
       logs = logs.slice(0, 1000);
     }
 
-    fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2), 'utf-8');
+    } catch (err) {
+      // In serverless environments, fs write is safely caught
+    }
 
     return NextResponse.json({
       success: true,

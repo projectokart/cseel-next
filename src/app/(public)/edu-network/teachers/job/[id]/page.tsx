@@ -47,7 +47,9 @@ export const revalidate = 300;
 interface Props {
   params: {
     id: string;
-  };
+  } | Promise<{
+    id: string;
+  }>;
 }
 
 const CURRENT_DATE = new Date();
@@ -83,7 +85,8 @@ function parseNumericSalary(salaryRaw?: string | null): { min?: number; max?: nu
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const job = await findJobById(params.id);
+  const { id } = await Promise.resolve(params);
+  const job = await findJobById(id);
 
   if (!job) {
     return {
@@ -142,8 +145,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SingleJobPage({ params }: Props) {
+  const { id } = await Promise.resolve(params);
   const allJobs = await getAllJobsList();
-  const job = allJobs.find((j) => j.id === params.id || (j as any).slug === params.id) || null;
+  const job = allJobs.find((j) => j.id === id || (j as any).slug === id) || null;
 
   if (!job) {
     notFound();

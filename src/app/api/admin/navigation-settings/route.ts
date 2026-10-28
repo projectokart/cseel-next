@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { DEFAULT_NAV_3STAGE_DATA, NavStage1Category } from '@/lib/navigationData';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data');
 const NAV_FILE = path.join(DATA_DIR, 'navigation_cms.json');
@@ -54,6 +55,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin privileges required' }, { status: 401 });
+    }
     const body = await req.json();
     if (body && Array.isArray(body.settings)) {
       saveNavData(body.settings);

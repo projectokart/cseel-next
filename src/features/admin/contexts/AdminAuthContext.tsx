@@ -247,8 +247,8 @@ export function useAdminAuth(): AdminAuthContextType {
       currentAdmin: INITIAL_ADMIN_USERS[0],
       currentRole: 'super_admin',
       activeModule: 'overview',
-      adminUsers: INITIAL_ADMIN_USERS,
-      auditLogs: INITIAL_AUDIT_LOGS,
+      adminUsers: authed ? INITIAL_ADMIN_USERS : [],
+      auditLogs: authed ? INITIAL_AUDIT_LOGS : [],
       login: () => ({ success: true, redirectUrl: '/admin' }),
       logout: () => {
         try {
@@ -259,7 +259,7 @@ export function useAdminAuth(): AdminAuthContextType {
       quickDemoLogin: () => {},
       switchRole: () => {},
       setActiveModule: () => {},
-      hasAccess: () => true,
+      hasAccess: () => authed,
       addAuditLog: () => {},
       addNewAdminUser: () => {},
       updateAdminStatus: () => {},

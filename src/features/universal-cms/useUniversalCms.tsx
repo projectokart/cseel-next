@@ -51,6 +51,7 @@ export const UniversalCmsProvider: React.FC<{ children: React.ReactNode; initial
   // Check admin auth state strictly from localStorage
   useEffect(() => {
     try {
+      if (typeof window === 'undefined') return;
       const auth = localStorage.getItem('cseel_admin_auth');
       const isAuthed = auth === 'true';
       setIsAdminLoggedIn(isAuthed);

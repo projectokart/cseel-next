@@ -1,16 +1,17 @@
 import type { Metadata } from 'next';
 import Client from './Client';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { id: string } | Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await Promise.resolve(params);
   const title = `Channel Topic | CSEEL Science Community`;
   return {
     title,
     description: "Join the discussion on CSEEL's Science Community.",
-    alternates: { canonical: `https://www.cseel.org/channels/${params.id}` },
+    alternates: { canonical: `https://www.cseel.org/channels/${id}` },
     openGraph: {
       title,
       description: "Join the discussion on CSEEL's Science Community.",
-      url: `https://www.cseel.org/channels/${params.id}`,
+      url: `https://www.cseel.org/channels/${id}`,
       type: "website",
       images: [{ url: "https://www.cseel.org/images/cseel-social-preview.jpg" }],
     },

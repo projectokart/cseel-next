@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { JobCardExtractor, JobAggregatorStorage, RawJobInput } from '@/lib/services/jobAggregatorEngine';
 import { FacultyJobItem } from '@/data/facultyJobsData';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,6 +50,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(req)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin privileges required' }, { status: 401 });
+    }
     const body = await req.json();
     const action = body.action || 'sync';
 

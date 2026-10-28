@@ -23,6 +23,7 @@ import { AdSlotId, MarketingPromotion } from '@/features/marketing/types';
 import { useMarketingCampaigns } from '@/features/marketing/useMarketingCampaigns';
 import { CSEELHtmlJsInjector } from '@/features/marketing/CSEELSlotRuntime';
 import { M3Button, M3IconButton } from '@/components/google-ui';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 
 interface OffersSectionProps {
   slotId?: AdSlotId;
@@ -192,7 +193,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
             )}
             <div
               className="text-sm text-white/85 leading-relaxed max-w-xl"
-              dangerouslySetInnerHTML={{ __html: item.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }}
             />
             <div className="pt-2 flex items-center gap-5 flex-wrap">
               {(oldPrice || newPrice) && (
@@ -351,7 +352,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
         >
           <div
             style={{ margin: '0 0 10px 0' }}
-            dangerouslySetInnerHTML={{ __html: item.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.content) }}
           />
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <Link

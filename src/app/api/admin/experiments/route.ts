@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { INITIAL_EXPERIMENTS } from '@/data/experimentsSeed';
 import { ExperimentItem } from '@/types/experiment';
+import { isAuthorizedAdmin } from '@/lib/auth/adminAuth';
 
 const DATA_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'experiments_custom.json');
 
@@ -81,6 +82,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isAuthorizedAdmin(request)) {
+      return NextResponse.json({ success: false, error: 'Unauthorized: Admin privileges required' }, { status: 401 });
+    }
     const body = await request.json();
 
     // Check if bulk add

@@ -12,8 +12,9 @@ export function generateStaticParams() {
   return Array.from(ids).map((id) => ({ id }));
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const student = getStudentById(params.id);
+export async function generateMetadata({ params }: { params: { id: string } | Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await Promise.resolve(params);
+  const student = getStudentById(id);
   if (!student) {
     return {
       title: 'Student Profile Not Found | CSEEL EduNetwork',
@@ -64,8 +65,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default function StudentPage({ params }: { params: { id: string } }) {
-  const student = getStudentById(params.id);
+export default async function StudentPage({ params }: { params: { id: string } | Promise<{ id: string }> }) {
+  const { id } = await Promise.resolve(params);
+  const student = getStudentById(id);
   if (!student) {
     notFound();
   }

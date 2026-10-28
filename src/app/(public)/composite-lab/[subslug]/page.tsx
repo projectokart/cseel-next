@@ -4,15 +4,16 @@ import { COMPOSITE_LAB_SUBPAGES } from '@/lib/compositeSopData';
 import SubslugClient from './Client';
 
 interface Props {
-  params: { subslug: string };
+  params: { subslug: string } | Promise<{ subslug: string }>;
 }
 
 export function generateStaticParams() {
   return Object.keys(COMPOSITE_LAB_SUBPAGES).map((subslug) => ({ subslug }));
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const data = COMPOSITE_LAB_SUBPAGES[params.subslug];
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { subslug } = await Promise.resolve(params);
+  const data = COMPOSITE_LAB_SUBPAGES[subslug];
   if (!data) return { title: 'Not Found | CSEEL' };
 
   return {
@@ -40,8 +41,9 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function SubPage({ params }: Props) {
-  const data = COMPOSITE_LAB_SUBPAGES[params.subslug];
+export default async function SubPage({ params }: Props) {
+  const { subslug } = await Promise.resolve(params);
+  const data = COMPOSITE_LAB_SUBPAGES[subslug];
   if (!data) notFound();
 
   return <SubslugClient data={data} />;

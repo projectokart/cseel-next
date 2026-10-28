@@ -40,8 +40,8 @@ function getClientIp(req: NextRequest): string {
   return 'unknown';
 }
 
-// Clean up old entries periodically
-setInterval(() => {
+// Clean up old entries periodically (unref to avoid holding serverless lambdas open)
+const cleanupTimer = setInterval(() => {
   const now = Date.now();
   const oneHourAgo = now - 60 * 60 * 1000;
   const twentyFourHoursAgo = now - 24 * 60 * 60 * 1000;
@@ -64,7 +64,11 @@ setInterval(() => {
     if (fresh.length === 0) ipRateLimits.delete(ip);
     else ipRateLimits.set(ip, fresh);
   }
-}, 5 * 60 * 1000); // every 5 minutes
+}, 5 * 60 * 1000);
+
+if (cleanupTimer && typeof cleanupTimer.unref === 'function') {
+  cleanupTimer.unref();
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -274,33 +278,35 @@ export async function POST(req: NextRequest) {
       otpStore.delete(email);
 
       // Create or lookup user in Firebase Auth via IdentityToolkit
-      const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyBiaOs0DLw7ZuuGEj31Udev8bvGu4tIhW4';
+      const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.FIREBASE_API_KEY;
       let firebaseUid = '';
 
-      try {
-        const securePassword = `Cseel_Otp_${crypto.createHash('sha256').update(email + apiKey).digest('hex').slice(0, 16)}!`;
-        const signupRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password: securePassword, returnSecureToken: true }),
-        });
-
-        const signupData = await signupRes.json();
-        if (signupRes.ok && signupData.localId) {
-          firebaseUid = signupData.localId;
-        } else if (signupData.error?.message?.includes('EMAIL_EXISTS')) {
-          const signinRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`, {
+      if (apiKey) {
+        try {
+          const securePassword = `Cseel_Otp_${crypto.createHash('sha256').update(email + apiKey).digest('hex').slice(0, 16)}!`;
+          const signupRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password: securePassword, returnSecureToken: true }),
           });
-          const signinData = await signinRes.json();
-          if (signinData.localId) {
-            firebaseUid = signinData.localId;
+
+          const signupData = await signupRes.json();
+          if (signupRes.ok && signupData.localId) {
+            firebaseUid = signupData.localId;
+          } else if (signupData.error?.message?.includes('EMAIL_EXISTS')) {
+            const signinRes = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password: securePassword, returnSecureToken: true }),
+            });
+            const signinData = await signinRes.json();
+            if (signinData.localId) {
+              firebaseUid = signinData.localId;
+            }
           }
+        } catch (fbErr) {
+          console.warn('[API email-otp] Firebase user sync warning:', fbErr);
         }
-      } catch (fbErr) {
-        console.warn('[API email-otp] Firebase user sync warning:', fbErr);
       }
 
       return NextResponse.json({

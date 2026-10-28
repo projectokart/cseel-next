@@ -21,6 +21,7 @@ import {
   Play,
   Pause,
 } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/sanitizeHtml';
 import {
   MarketingPromotion,
   CouponVoucher,
@@ -716,7 +717,7 @@ export const MarketingAdminModule: React.FC = () => {
                       </h3>
                       <div
                         className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: p.content }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(p.content) }}
                       />
                       <div className="flex items-center gap-3 mt-2 flex-wrap text-xs">
                         {p.old_price && (
@@ -1562,7 +1563,7 @@ export const MarketingAdminModule: React.FC = () => {
             {previewPromo.design_style === 'custom_html' && previewPromo.custom_html ? (
               <div
                 className="w-full overflow-hidden rounded-2xl"
-                dangerouslySetInnerHTML={{ __html: previewPromo.custom_html }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(previewPromo.custom_html) }}
               />
             ) : (
               <div
@@ -1590,7 +1591,7 @@ export const MarketingAdminModule: React.FC = () => {
                 </div>
                 <div
                   className="text-sm text-[#222222] mb-4"
-                  dangerouslySetInnerHTML={{ __html: previewPromo.content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(previewPromo.content) }}
                 />
                 <div className="flex items-center justify-between pt-2">
                   <div>

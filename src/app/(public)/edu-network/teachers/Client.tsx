@@ -1144,9 +1144,12 @@ export default function TeachersDirectoryClient({
             if (data && data.success && Array.isArray(data.faculty) && data.faculty.length > 0) {
               setFacultyList((prev) => {
                 const updated = [...prev];
-                const verifiedUsers: string[] = typeof window !== 'undefined'
-                  ? JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]')
-                  : [];
+                let verifiedUsers: string[] = [];
+                if (typeof window !== 'undefined') {
+                  try {
+                    verifiedUsers = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
+                  } catch {}
+                }
 
                 for (const f of data.faculty) {
                   const idx = updated.findIndex((x: any) => x.id === f.id || x.slug === f.slug);

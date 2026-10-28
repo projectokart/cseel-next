@@ -14,8 +14,9 @@ export function generateStaticParams() {
   return Array.from(ids).map((id) => ({ id }));
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const org = getOrganizationById(params.id);
+export async function generateMetadata({ params }: { params: { id: string } | Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await Promise.resolve(params);
+  const org = getOrganizationById(id);
   if (!org) {
     return {
       title: "Organization Not Found | CSEEL EduNetwork",
@@ -66,8 +67,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default function OrgProfilePage({ params }: { params: { id: string } }) {
-  const org = getOrganizationById(params.id) || ALL_ORGANIZATIONS[0];
+export default async function OrgProfilePage({ params }: { params: { id: string } | Promise<{ id: string }> }) {
+  const { id } = await Promise.resolve(params);
+  const org = getOrganizationById(id) || ALL_ORGANIZATIONS[0];
 
   const slug = org.slug || getOrgSlug(org);
   const pageUrl = `https://www.cseel.org/edu-network/org/${slug}`;

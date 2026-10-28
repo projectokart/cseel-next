@@ -23,6 +23,16 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get('authorization') || req.headers.get('x-admin-key');
+    const secretKey = process.env.ADMIN_SECRET_KEY || process.env.CRON_SECRET;
+
+    if (!secretKey || (authHeader !== `Bearer ${secretKey}` && authHeader !== secretKey)) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Admin key required to dispatch test emails' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const to = body.to || process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik104@gmail.com';
 

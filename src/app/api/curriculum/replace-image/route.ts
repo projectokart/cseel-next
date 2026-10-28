@@ -11,10 +11,10 @@ const SUPABASE_SERVICE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrYXpreHRoYXZ4cGhpYmRic3BkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzgxOTgzOCwiZXhwIjoyMDg5Mzk1ODM4fQ.Od_IWU3qrttP28AdPajuJfxitTqQIXVo9dXSzFS-Kms';
 
 const MASTER_ADMIN_EMAIL = 'ptdevkaushik101@gmail.com';
-const MASTER_ADMIN_KEY = process.env.ADMIN_SECRET_KEY || 'cseel_master_admin_2026';
+const MASTER_ADMIN_KEY = process.env.ADMIN_SECRET_KEY || '';
 
 /**
- * Checks if request is from ptdevkaushik101@gmail.com or authorized superadmin
+ * Checks if request is from authorized superadmin
  */
 function isAuthorizedAdmin(req: NextRequest, bodyEmail?: string, bodyKey?: string): boolean {
   const headerEmail = (
@@ -26,22 +26,20 @@ function isAuthorizedAdmin(req: NextRequest, bodyEmail?: string, bodyKey?: strin
 
   const authHeader = req.headers.get('authorization') || '';
   const adminKeyHeader = req.headers.get('x-admin-key') || '';
-  const cookieHeader = req.headers.get('cookie') || '';
   const providedKey = bodyKey || adminKeyHeader;
 
-  // 1. Strict match on ptdevkaushik101@gmail.com
+  // 1. Strict match on admin email
   const isMasterEmail = headerEmail === MASTER_ADMIN_EMAIL || headerEmail === 'ptdevkaushik104@gmail.com';
 
-  // 2. Secret key or session check
-  const isMasterKey =
-    providedKey === MASTER_ADMIN_KEY ||
-    providedKey === 'csl_admin_master_magic_key' ||
-    authHeader.includes(MASTER_ADMIN_KEY) ||
-    authHeader.includes('csl_admin_master_magic_key') ||
-    cookieHeader.includes('cseel_admin_auth=true') ||
-    cookieHeader.includes('cseel_admin_bypass=true');
+  // 2. Secret key check (requires actual ADMIN_SECRET_KEY to be configured in env)
+  const isMasterKey = Boolean(
+    MASTER_ADMIN_KEY && (
+      providedKey === MASTER_ADMIN_KEY ||
+      authHeader.includes(MASTER_ADMIN_KEY)
+    )
+  );
 
-  return isMasterEmail || (isMasterKey && (!headerEmail || headerEmail === MASTER_ADMIN_EMAIL));
+  return isMasterEmail || isMasterKey;
 }
 
 /**

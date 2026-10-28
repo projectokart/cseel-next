@@ -61,9 +61,12 @@ export const metadata: Metadata = {
 };
 
 export default async function TeachersPage() {
+  // Fetch a small number of jobs for JSON-LD structured data (SEO) only.
+  // The full job list is loaded client-side from the slim feed (/jobs/jobs-feed.json)
+  // via IndexedDB progressive caching — never serialized into the page HTML.
   let activeJobs = await SupabaseJobService.fetchJobsFromSupabase();
   if (!activeJobs || activeJobs.length === 0) {
-    activeJobs = getActiveFacultyJobs();
+    activeJobs = getActiveFacultyJobs(); // now returns [] — safe, no 4.2 MB parse
   }
 
   // Multi-Entity Structured Data: CollectionPage + ItemList + BreadcrumbList for Google for Jobs
@@ -174,7 +177,7 @@ export default async function TeachersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <TeachersClient initialJobs={activeJobs.slice(0, 30).map(toLightweightJob)} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
+      <TeachersClient initialJobs={[]} totalVacanciesCount={DEFAULT_JOB_FACETS.totalVacancies} />
     </>
   );
 }

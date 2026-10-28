@@ -1,5 +1,5 @@
-// Aggregated Multi-Portal Jobs (Indeed, LinkedIn, Naukri, CBSE/ICSE Direct Portals)
-import aggregatedJobsData from './aggregated_jobs.json';
+// NOTE: aggregated_jobs.json import removed � live feed served from /jobs/jobs-feed.json
+// The 4.2 MB static bundle is no longer loaded; IndexedDB progressive caching is used instead.
 
 export interface FacultyJobItem {
   id: string;
@@ -312,9 +312,10 @@ export function mapRawRowToFacultyJobItem(r: any): FacultyJobItem {
 }
 
 export function getActiveFacultyJobs(): FacultyJobItem[] {
-  // Returns clean, verified multi-portal vacancies directly mapped with valid titles & schools
-  const portalJobs = (aggregatedJobsData as any[]) || [];
-  return portalJobs.map(mapRawRowToFacultyJobItem);
+  // NOTE: aggregated_jobs.json (4.2 MB) kept for reference only.
+  // Live feed now served from /jobs/jobs-feed.json via IndexedDB cache.
+  // Returning [] prevents 4.2 MB bundle from blocking JS main thread on mobile.
+  return [];
 }
 
 // ── Verified Faculty Roster (Authentic Educators) ──────────────────────────────

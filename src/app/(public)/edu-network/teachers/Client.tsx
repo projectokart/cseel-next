@@ -918,9 +918,10 @@ export default function TeachersDirectoryClient({
     );
   };
 
-  // Active 45-Day Vacancies with real-time Supabase hydration
-  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(() => 
-    initialJobs && initialJobs.length > 0 ? initialJobs : getActiveFacultyJobs()
+  // Active 45-Day Vacancies — starts empty, hydrated asynchronously from slim feed / IndexedDB
+  // IMPORTANT: Never call getActiveFacultyJobs() here — it loads the 4.2 MB bundle on mobile main thread
+  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(
+    initialJobs && initialJobs.length > 0 ? initialJobs : []
   );
 
   const [gpsErrorModalOpen, setGpsErrorModalOpen] = useState(false);
@@ -996,45 +997,55 @@ export default function TeachersDirectoryClient({
         }
       }
     } catch (e) {}
-    // 1. Dual-phase Ultra-slow (10 KB/s) Progressive Loading & Background Sync
-    const syncJobsData = async () => {
+
+    // ─── PHASE 1: Immediate cache check (runs right away, no deferral) ───────────
+    // This is the critical path for cold-start performance on slow networks.
+    const loadCachedOrTop50 = async () => {
       try {
-        // Step A: Read local IndexedDB cache first for instant 0ms load
         let hasLocalCache = false;
-        const cached = await JobsCacheStorage.getCache();
-        if (cached && cached.jobs && cached.jobs.length > 0) {
+
+        // A. FeedCache v2 (slim, compressed IndexedDB — fastest path)
+        const feedPayload = await FeedCache.get();
+        if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length > 0) {
           hasLocalCache = true;
-          setActiveJobs(cached.jobs);
-          if (cached.lastGps) {
-            lastGpsCoordsRef.current = cached.lastGps;
-          }
+          const decoded = decodeSlimFeed(feedPayload.jobs);
+          setActiveJobs(decoded);
+          // Restore GPS cache from old JobsCacheStorage if available
+          const oldCached = await JobsCacheStorage.getCache();
+          if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         } else {
-          // Check FeedCache (v2)
-          const feedPayload = await FeedCache.get();
-          if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length > 0) {
+          // B. Legacy JobsCacheStorage fallback (old IndexedDB key)
+          const oldCached = await JobsCacheStorage.getCache();
+          if (oldCached && oldCached.jobs && oldCached.jobs.length > 0) {
             hasLocalCache = true;
-            const decoded = decodeSlimFeed(feedPayload.jobs);
-            setActiveJobs(decoded);
+            setActiveJobs(oldCached.jobs);
+            if (oldCached.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
           }
         }
 
-        // Step B: On Cold Start with zero cache on 10 KB/s network, fetch lightweight top-50 chunk (~16KB)
+        // C. Cold start — no cache → fetch ultra-lightweight top-50 chunk (~16 KB)
         if (!hasLocalCache) {
           try {
             const top50Res = await fetch('/jobs/jobs-top50.json');
             if (top50Res.ok) {
               const top50Slim = await top50Res.json();
               if (Array.isArray(top50Slim) && top50Slim.length > 0) {
-                const decodedTop50 = decodeSlimFeed(top50Slim);
-                setActiveJobs(decodedTop50);
+                setActiveJobs(decodeSlimFeed(top50Slim));
               }
             }
           } catch (e) {
             console.warn('[Client] top-50 chunk load notice:', e);
           }
         }
+      } catch (err) {
+        console.warn('[Client] Cache load warning:', err);
+      }
+    };
 
-        // Step C: Background Silent Sync — check manifest and download full 1MB feed
+    // ─── PHASE 2: Background full-feed sync (deferred until idle/load) ───────────
+    // Never runs before the page is interactive — uses requestIdleCallback.
+    const backgroundFullSync = async () => {
+      try {
         let serverVersion = '';
         try {
           const manifestRes = await fetch('/jobs/latest.json', { cache: 'no-cache' });
@@ -1045,31 +1056,37 @@ export default function TeachersDirectoryClient({
         } catch {}
 
         if (!serverVersion) {
-          const versionRes = await fetch('/api/jobs/version');
-          if (versionRes.ok) {
-            const versionData = await versionRes.json();
-            serverVersion = versionData.version || '';
-          }
-        }
-
-        // Only fetch full feed if cache is missing or server version changed
-        if (!cached || cached.version !== serverVersion) {
-          let freshJobs: FacultyJobItem[] = [];
-
-          // Try fetching static edge-cached slim feed first
           try {
-            const feedRes = await fetch('/jobs/jobs-feed.json');
-            if (feedRes.ok) {
-              const slimData = await feedRes.json();
-              if (Array.isArray(slimData) && slimData.length > 0) {
-                freshJobs = decodeSlimFeed(slimData);
-                FeedCache.save(slimData, serverVersion).catch(() => {});
-              }
+            const versionRes = await fetch('/api/jobs/version');
+            if (versionRes.ok) {
+              const versionData = await versionRes.json();
+              serverVersion = versionData.version || '';
             }
           } catch {}
+        }
 
-          // Fallback to /api/jobs if static feed unavailable
-          if (freshJobs.length === 0) {
+        const feedPayload = await FeedCache.get();
+        const cachedVersion = feedPayload?.version || '';
+
+        // Only download full feed if version changed or cache is empty
+        if (cachedVersion === serverVersion && feedPayload?.jobs?.length > 0) return;
+
+        let freshJobs: FacultyJobItem[] = [];
+
+        try {
+          const feedRes = await fetch('/jobs/jobs-feed.json');
+          if (feedRes.ok) {
+            const slimData = await feedRes.json();
+            if (Array.isArray(slimData) && slimData.length > 0) {
+              freshJobs = decodeSlimFeed(slimData);
+              FeedCache.save(slimData, serverVersion).catch(() => {});
+            }
+          }
+        } catch {}
+
+        // Fallback to /api/jobs if static feed unavailable
+        if (freshJobs.length === 0) {
+          try {
             const jobsRes = await fetch('/api/jobs');
             if (jobsRes.ok) {
               const jobsData = await jobsRes.json();
@@ -1077,52 +1094,49 @@ export default function TeachersDirectoryClient({
                 freshJobs = jobsData.jobs;
               }
             }
-          }
+          } catch {}
+        }
 
-          if (freshJobs.length > 0) {
-            // Pre-calculate distances if user GPS is already saved
-            const savedGps = cached?.lastGps || userCoords || lastGpsCoordsRef.current;
-            if (savedGps && typeof savedGps.lat === 'number' && typeof savedGps.lng === 'number') {
-              freshJobs = freshJobs.map((j: any) => {
-                if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
-                  const d = getDistanceKm(savedGps.lat, savedGps.lng, j.coordinates.lat, j.coordinates.lng);
-                  return { ...j, distanceKm: d };
-                }
-                return j;
-              });
-            }
-
-            setActiveJobs(freshJobs);
-            await JobsCacheStorage.saveCache(
-              freshJobs,
-              serverVersion,
-              freshJobs.length
-            );
+        if (freshJobs.length > 0) {
+          const savedGps = userCoords || lastGpsCoordsRef.current;
+          if (savedGps && typeof savedGps.lat === 'number' && typeof savedGps.lng === 'number') {
+            freshJobs = freshJobs.map((j: any) => {
+              if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
+                return { ...j, distanceKm: getDistanceKm(savedGps.lat, savedGps.lng, j.coordinates.lat, j.coordinates.lng) };
+              }
+              return j;
+            });
           }
+          setActiveJobs(freshJobs);
+          JobsCacheStorage.saveCache(freshJobs, serverVersion, freshJobs.length).catch(() => {});
         }
       } catch (err) {
-        console.warn('[Client] Cache sync warning:', err);
+        console.warn('[Client] Background sync warning:', err);
       }
     };
 
     if (typeof window !== 'undefined') {
+      // Phase 1 runs immediately (async — doesn't block paint)
+      loadCachedOrTop50();
+
+      // Phase 2 deferred until after page is fully loaded and idle
       const scheduleSync = (cb: () => void) => {
         const runner = () => {
           if ('requestIdleCallback' in window) {
-            (window as any).requestIdleCallback(cb, { timeout: 6000 });
+            (window as any).requestIdleCallback(cb, { timeout: 8000 });
           } else {
-            setTimeout(cb, 3500);
+            setTimeout(cb, 4000);
           }
         };
         if (document.readyState === 'complete') {
-          setTimeout(runner, 2500);
+          setTimeout(runner, 3000);
         } else {
-          window.addEventListener('load', () => setTimeout(runner, 2500), { once: true });
+          window.addEventListener('load', () => setTimeout(runner, 3000), { once: true });
         }
       };
 
       scheduleSync(() => {
-        syncJobsData();
+        backgroundFullSync();
 
         // Fetch latest verified faculty from database after idle
         fetch('/api/admin/faculty')
@@ -2490,24 +2504,50 @@ export default function TeachersDirectoryClient({
                     : "space-y-3 w-full mt-2 sm:mt-2.5"
                 }>
                   {filteredJobs.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-10 text-center border border-slate-200 shadow-2xs space-y-3 col-span-full">
-                      <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#005689] flex items-center justify-center mx-auto">
-                        <Briefcase className="w-6 h-6" />
+                    activeJobs.length === 0 ? (
+                      // Cold-start skeleton — data is loading from IndexedDB / top-50 chunk
+                      <>
+                        {Array.from({ length: 6 }).map((_, i) => (
+                          <div key={i} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-2xs animate-pulse col-span-1">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="w-10 h-10 rounded-xl bg-slate-200 shrink-0" />
+                              <div className="flex-1 space-y-1.5">
+                                <div className="h-3.5 bg-slate-200 rounded w-3/4" />
+                                <div className="h-3 bg-slate-100 rounded w-1/2" />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="h-3 bg-slate-100 rounded w-full" />
+                              <div className="h-3 bg-slate-100 rounded w-5/6" />
+                            </div>
+                            <div className="flex gap-2 mt-3">
+                              <div className="h-5 bg-slate-100 rounded-full w-16" />
+                              <div className="h-5 bg-slate-100 rounded-full w-20" />
+                              <div className="h-5 bg-slate-100 rounded-full w-14" />
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <div className="bg-white rounded-2xl p-10 text-center border border-slate-200 shadow-2xs space-y-3 col-span-full">
+                        <div className="w-12 h-12 rounded-xl bg-blue-50 text-[#005689] flex items-center justify-center mx-auto">
+                          <Briefcase className="w-6 h-6" />
+                        </div>
+                        <h4 className="text-base font-bold text-slate-900" style={{ color: '#003c6e' }}>
+                          No Vacancies Match Your Filters
+                        </h4>
+                        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                          We strictly purge vacancies older than 30 days. Try clearing filters to see active opportunities across India.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={resetAllFilters}
+                          className="px-4 py-2 bg-[#005689] text-white rounded-xl text-xs font-bold hover:bg-[#003c6e] transition-colors cursor-pointer"
+                        >
+                          Reset All Filters
+                        </button>
                       </div>
-                      <h4 className="text-base font-bold text-slate-900" style={{ color: '#003c6e' }}>
-                        No Vacancies Match Your Filters
-                      </h4>
-                      <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                        We strictly purge vacancies older than 30 days. Try clearing filters to see active opportunities across India.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={resetAllFilters}
-                        className="px-4 py-2 bg-[#005689] text-white rounded-xl text-xs font-bold hover:bg-[#003c6e] transition-colors cursor-pointer"
-                      >
-                        Reset All Filters
-                      </button>
-                    </div>
+                    )
                   ) : (
                     paginatedJobs.map((job, index) => {
                       const isSaved = savedJobIds.includes(job.id);

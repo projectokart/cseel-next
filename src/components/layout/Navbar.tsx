@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ChevronDown, Menu, X, ArrowRight, MapPin } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useNavVisibility } from '@/contexts/NavigationContext';
@@ -495,6 +496,8 @@ const Navbar = () => {
   const { navCategories } = useNavVisibility();
   const { openDemoModal } = useBookDemoModal();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const isNavigatingRef = useRef(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [expandedSubItem, setExpandedSubItem] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -528,22 +531,63 @@ const Navbar = () => {
 
 
 
-  const [headerBottom, setHeaderBottom] = useState<number>(54);
+  // Close mobile drawer and dropdown when route changes
+  useEffect(() => {
+    setMobileOpen(false);
+    setOpenDropdown(null);
+  }, [pathname]);
 
-  // Safely lock body scroll and calculate exact header bottom when mobile menu is opened
+  // Complete background scroll freeze and seamless position restoration
   useEffect(() => {
     if (mobileOpen) {
+      const scrollY = window.scrollY;
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      // Lock both documentElement and body firmly at current scroll position
       document.body.style.overflow = 'hidden';
-      if (headerRef.current) {
-        setHeaderBottom(Math.round(headerRef.current.getBoundingClientRect().bottom));
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
       }
-    } else {
-      document.body.style.overflow = '';
+      document.documentElement.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.paddingRight = '';
+        document.documentElement.style.overflow = '';
+
+        if (!isNavigatingRef.current) {
+          window.scrollTo({
+            top: scrollY,
+            left: 0,
+            behavior: 'instant' as ScrollBehavior,
+          });
+        }
+        isNavigatingRef.current = false;
+      };
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
   }, [mobileOpen]);
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (mobileOpen) setMobileOpen(false);
+        if (openDropdown) setOpenDropdown(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileOpen, openDropdown]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -626,8 +670,10 @@ const Navbar = () => {
       <header
         ref={headerRef}
         id="site-navbar"
-        className={`site-navbar sticky top-0 w-full z-[500] transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
-          isScrolled
+        className={`site-navbar ${
+          mobileOpen ? 'fixed top-0 inset-x-0 z-[600]' : 'sticky top-0 z-[500]'
+        } w-full transition-all duration-200 select-none bg-white border-b border-[rgba(0,0,0,0.12)] ${
+          isScrolled || mobileOpen
             ? 'shadow-[0_4px_5px_0_rgba(0,0,0,0.14),0_1px_10px_0_rgba(0,0,0,0.12),0_2px_4px_-1px_rgba(0,0,0,0.2)]'
             : ''
         }`}
@@ -640,6 +686,12 @@ const Navbar = () => {
           <Link
             href="/"
             aria-label="CSEEL - Home"
+            onClick={() => {
+              if (mobileOpen) {
+                isNavigatingRef.current = true;
+                setMobileOpen(false);
+              }
+            }}
             className="flex items-center hover:opacity-95 transition-opacity shrink-0 mr-3 xl:mr-5 py-0.5"
           >
             <img
@@ -976,11 +1028,10 @@ const Navbar = () => {
         <div
           id="mobile-nav-drawer"
           style={{
-            top: `${headerBottom}px`,
             overscrollBehavior: 'contain',
             WebkitOverflowScrolling: 'touch',
           }}
-          className={`lg:hidden fixed inset-x-0 bottom-0 bg-white z-[550] flex flex-col justify-between overflow-hidden transition-opacity duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl ${
+          className={`lg:hidden fixed top-[54px] inset-x-0 bottom-0 bg-white z-[590] flex flex-col justify-between overflow-hidden transition-opacity duration-200 ease-in-out border-t border-[#E8E9E9] shadow-2xl ${
             mobileOpen
               ? 'opacity-100 visible pointer-events-auto'
               : 'opacity-0 invisible pointer-events-none'
@@ -1013,7 +1064,7 @@ const Navbar = () => {
                     <Link
                       href={item.to || '/'}
                       className="block py-3.5 text-[16.5px] font-bold text-[#1B1F23] hover:text-[#006FCC] transition-colors tracking-tight font-['Montserrat',sans-serif]"
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => { isNavigatingRef.current = true; setMobileOpen(false); }}
                     >
                       {item.label}
                     </Link>
@@ -1055,7 +1106,7 @@ const Navbar = () => {
                                       <div className="flex items-start justify-between gap-2">
                                         <Link
                                           href={sub.to || '/'}
-                                          onClick={() => setMobileOpen(false)}
+                                          onClick={() => { isNavigatingRef.current = true; setMobileOpen(false); }}
                                           className="block flex-1 min-w-0 group"
                                         >
                                           <div className="flex items-center gap-1.5 flex-wrap">
@@ -1118,7 +1169,7 @@ const Navbar = () => {
                                                 <Link
                                                   key={cIdx}
                                                   href={child.to || '/'}
-                                                  onClick={() => setMobileOpen(false)}
+                                                  onClick={() => { isNavigatingRef.current = true; setMobileOpen(false); }}
                                                   className="flex items-center justify-between text-[12px] font-medium text-[#1B1F23] hover:text-[#006FCC] py-1 px-1.5 rounded hover:bg-white transition-colors"
                                                 >
                                                   <span className="truncate">{child.label}</span>
@@ -1155,7 +1206,7 @@ const Navbar = () => {
                               <div className="pt-2.5">
                                 <Link
                                   href={item.featuredPanel.ctaHref}
-                                  onClick={() => setMobileOpen(false)}
+                                  onClick={() => { isNavigatingRef.current = true; setMobileOpen(false); }}
                                   className="w-full h-10 px-4 text-[13.5px] font-bold bg-[#006FCC] text-white hover:bg-[#005399] shadow-xs rounded-xl transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-2 font-['Montserrat',sans-serif] cursor-pointer"
                                 >
                                   <span>{item.featuredPanel.ctaText}</span>

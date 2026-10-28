@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
         Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
       },
       cache: 'no-store',
+      signal: AbortSignal.timeout(3000),
     });
 
     if (!res.ok) {

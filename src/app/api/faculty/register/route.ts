@@ -243,6 +243,7 @@ export async function POST(req: NextRequest) {
             apikey: SUPABASE_SERVICE_KEY,
             Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
           },
+          signal: AbortSignal.timeout(3000),
         });
         if (dupCheckRes.ok) {
           const dupRows = await dupCheckRes.json();
@@ -323,6 +324,7 @@ export async function POST(req: NextRequest) {
           Prefer: 'return=representation',
         },
         body: JSON.stringify(dbPayload),
+        signal: AbortSignal.timeout(3000),
       });
 
       if (supabaseRes.ok) {

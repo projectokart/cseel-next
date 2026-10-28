@@ -1,4 +1,5 @@
 'use client';
+import { JobsCacheStorage } from '@/lib/services/jobsCacheStorage';
 
 function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
@@ -187,6 +188,45 @@ export default function TeachersDirectoryClient({
   }, []);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const lastGpsCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  // High-performance, non-blocking GPS distance application with 200m delta guard
+  const applyGpsCoordinates = useCallback((coords: { lat: number; lng: number }) => {
+    setUserCoords(coords);
+
+    const prev = lastGpsCoordsRef.current;
+    if (prev) {
+      const deltaKm = getDistanceKm(prev.lat, prev.lng, coords.lat, coords.lng);
+      if (deltaKm < 0.2) {
+        // Less than 200m difference -> Skip recalculation across all vacancies!
+        setSortBy('near_me');
+        return;
+      }
+    }
+
+    // Delta is >= 200m or initial GPS query -> Non-blocking background calculation
+    lastGpsCoordsRef.current = coords;
+
+    requestAnimationFrame(() => {
+      setActiveJobs((currentJobs) => {
+        const updated = currentJobs.map((j) => {
+          if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
+            const d = getDistanceKm(coords.lat, coords.lng, j.coordinates.lat, j.coordinates.lng);
+            return { ...j, distanceKm: d };
+          }
+          return j;
+        });
+
+        // Persist updated distances asynchronously in IndexedDB
+        JobsCacheStorage.updateDistances(updated, coords).catch(() => {});
+
+        return updated;
+      });
+
+      setSortBy('near_me');
+    });
+  }, []);
+
   // Request User Location with user alert feedback
   const requestUserLocation = () => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
@@ -194,13 +234,11 @@ export default function TeachersDirectoryClient({
       return;
     }
     navigator.geolocation.getCurrentPosition(
-      (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       (err) => alert("Please allow location access to find vacancies near you."),
       { timeout: 8000, enableHighAccuracy: true }
     );
   };
-
-  // Geolocation is cleanly requested when user clicks 'Near Me' or uses distance filter.
 
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [isCompressingAvatar, setIsCompressingAvatar] = useState(false);
@@ -481,7 +519,7 @@ export default function TeachersDirectoryClient({
     const isNearMe = searchQuery.toLowerCase().includes('near me') || searchQuery.toLowerCase().includes('nearby');
     if (isNearMe && !userCoords && typeof navigator !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (pos) => applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
         () => console.log('Geolocation permission denied')
       );
     }
@@ -875,17 +913,46 @@ export default function TeachersDirectoryClient({
         }
       }
     } catch (e) {}
-    // Only fetch if initialJobs was not pre-populated from server
-    if (!initialJobs || initialJobs.length === 0) {
-      fetch('/api/jobs?limit=50&paginate=true')
-        .then((res) => res.json())
-        .then((data) => {
-          if (data && data.success && Array.isArray(data.jobs) && data.jobs.length > 0) {
-            setActiveJobs(data.jobs);
+    // 1. IndexedDB Cache-First & Background Version Sync
+    const syncJobsData = async () => {
+      try {
+        // Read local IndexedDB cache first for instant 0.01s load
+        const cached = await JobsCacheStorage.getCache();
+        if (cached && cached.jobs && cached.jobs.length > 0) {
+          setActiveJobs(cached.jobs);
+          if (cached.lastGps) {
+            lastGpsCoordsRef.current = cached.lastGps;
           }
-        })
-        .catch((err) => console.warn('[Client] Jobs fetch error:', err));
-    }
+        }
+
+        // Tiny 80-byte check to server: has database updated?
+        const versionRes = await fetch('/api/jobs/version');
+        if (versionRes.ok) {
+          const versionData = await versionRes.json();
+          const serverVersion = versionData.version;
+
+          // If database has new version, or no local cache exists, fetch full dataset
+          if (!cached || cached.version !== serverVersion) {
+            const jobsRes = await fetch('/api/jobs');
+            if (jobsRes.ok) {
+              const jobsData = await jobsRes.json();
+              if (jobsData.success && Array.isArray(jobsData.jobs) && jobsData.jobs.length > 0) {
+                setActiveJobs(jobsData.jobs);
+                await JobsCacheStorage.saveCache(
+                  jobsData.jobs,
+                  serverVersion,
+                  versionData.count || jobsData.jobs.length
+                );
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[Client] Cache sync warning:', err);
+      }
+    };
+
+    syncJobsData();
 
     // Fetch latest verified faculty from database
     fetch('/api/admin/faculty')
@@ -1132,14 +1199,10 @@ export default function TeachersDirectoryClient({
         return timeA - timeB;
       });
     }
-    if (sortBy === 'near_me' && userCoords) {
+    if (sortBy === 'near_me') {
       return [...results].sort((a, b) => {
-        const distA = (a.coordinates?.lat && a.coordinates?.lng)
-          ? getDistanceKm(userCoords.lat, userCoords.lng, a.coordinates.lat, a.coordinates.lng)
-          : 99999;
-        const distB = (b.coordinates?.lat && b.coordinates?.lng)
-          ? getDistanceKm(userCoords.lat, userCoords.lng, b.coordinates.lat, b.coordinates.lng)
-          : 99999;
+        const distA = typeof a.distanceKm === 'number' ? a.distanceKm : 99999;
+        const distB = typeof b.distanceKm === 'number' ? b.distanceKm : 99999;
         return distA - distB;
       });
     }
@@ -2778,15 +2841,7 @@ export default function TeachersDirectoryClient({
               {totalPages > 1 && (
                 <div className="mt-6 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
                   <div className="text-xs text-slate-500 font-medium text-center sm:text-left">
-                    {activeTab === 'jobs' ? (
-                      hasActiveFilters ? (
-                        <>Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> Filtered Vacancies</>
-                      ) : (
-                        <>Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> Loaded Vacancies (<span className="font-bold text-[#004A75]">{totalVacanciesCount.toLocaleString()}+</span> Total in Database)</>
-                      )
-                    ) : (
-                      <>Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount}</span> Faculty</>
-                    )}
+                    Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount.toLocaleString()}</span> {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
                   </div>
 
                   <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">

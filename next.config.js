@@ -32,12 +32,12 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: `
       default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://www.clarity.ms https://*.clarity.ms https://apis.google.com https://accounts.google.com https://*.firebaseapp.com https://*.firebase.com https://*.google.com;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://www.clarity.ms https://*.clarity.ms https://apis.google.com https://accounts.google.com https://*.firebaseapp.com https://*.firebase.com https://*.google.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
       img-src 'self' data: blob: https: https://ukazkxthavxphibdbspd.supabase.co https://cdn.sanity.io https://images.unsplash.com https://cdn.prod.website-files.com https://www.cseel.org https://i.ytimg.com https://*.googleusercontent.com https://lh3.googleusercontent.com;
       font-src 'self' data: https://fonts.gstatic.com;
       frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://accounts.google.com https://*.firebaseapp.com https://*.google.com;
-      connect-src 'self' https://cdn.jsdelivr.net https://raw.githubusercontent.com https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org https://*.clarity.ms https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com https://*.google.com;
+      connect-src 'self' https://cdn.jsdelivr.net https://raw.githubusercontent.com https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org https://*.clarity.ms https://cloudflareinsights.com https://*.cloudflareinsights.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com https://*.google.com;
     `.replace(/\s{2,}/g, ' ').trim(),
   },
 ];

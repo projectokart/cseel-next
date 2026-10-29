@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: { params: { id: string } | Pr
     return {
       title: "Organization Not Found | CSEEL EduNetwork",
       description: "The requested school, university, or research laboratory profile could not be found.",
+      robots: { index: false, follow: false },
     };
   }
 
@@ -69,7 +70,10 @@ export async function generateMetadata({ params }: { params: { id: string } | Pr
 
 export default async function OrgProfilePage({ params }: { params: { id: string } | Promise<{ id: string }> }) {
   const { id } = await Promise.resolve(params);
-  const org = getOrganizationById(id) || ALL_ORGANIZATIONS[0];
+  const org = getOrganizationById(id);
+  if (!org) {
+    notFound();
+  }
 
   const slug = org.slug || getOrgSlug(org);
   const pageUrl = `https://www.cseel.org/edu-network/org/${slug}`;

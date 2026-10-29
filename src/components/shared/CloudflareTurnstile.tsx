@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 interface CloudflareTurnstileProps {
   onVerify: (token: string) => void;
@@ -9,83 +8,93 @@ interface CloudflareTurnstileProps {
   className?: string;
 }
 
+// Cloudflare Turnstile script injection (runs once)
+let scriptLoaded = false;
+function loadTurnstileScript() {
+  if (scriptLoaded || typeof window === 'undefined') return;
+  if (document.querySelector('script[src*="turnstile"]')) {
+    scriptLoaded = true;
+    return;
+  }
+  const script = document.createElement('script');
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+  scriptLoaded = true;
+}
+
 export default function CloudflareTurnstile({
   onVerify,
+  onExpire,
   className = '',
 }: CloudflareTurnstileProps) {
-  const [status, setStatus] = useState<'idle' | 'verifying' | 'verified'>('idle');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
 
-  const handleCheckboxClick = () => {
-    if (status === 'verifying' || status === 'verified') return;
+  // Site key: use env var or Cloudflare's official "always passes" test key
+  const siteKey =
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
-    setStatus('verifying');
+  const renderWidget = useCallback(() => {
+    if (
+      !containerRef.current ||
+      widgetIdRef.current !== null ||
+      typeof window === 'undefined' ||
+      !(window as any).turnstile
+    )
+      return;
 
-    // Human behavioral verification delay
-    setTimeout(() => {
-      const secureToken = `cf-verified-human-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-      setStatus('verified');
-      onVerify(secureToken);
-    }, 550);
-  };
+    widgetIdRef.current = (window as any).turnstile.render(containerRef.current, {
+      sitekey: siteKey,
+      callback: (token: string) => {
+        onVerify(token);
+      },
+      'expired-callback': () => {
+        widgetIdRef.current = null;
+        onExpire?.();
+      },
+      'error-callback': () => {
+        widgetIdRef.current = null;
+      },
+      theme: 'light',
+      language: 'auto',
+    });
+  }, [siteKey, onVerify, onExpire]);
+
+  useEffect(() => {
+    loadTurnstileScript();
+
+    // Poll until turnstile global is available, then render
+    let attempts = 0;
+    const poll = setInterval(() => {
+      attempts++;
+      if ((window as any).turnstile) {
+        clearInterval(poll);
+        renderWidget();
+      } else if (attempts > 40) {
+        // 4 seconds timeout — stop polling
+        clearInterval(poll);
+      }
+    }, 100);
+
+    return () => {
+      clearInterval(poll);
+      if (widgetIdRef.current !== null && (window as any).turnstile) {
+        try {
+          (window as any).turnstile.remove(widgetIdRef.current);
+        } catch {
+          /* ignore */
+        }
+        widgetIdRef.current = null;
+      }
+    };
+  }, [renderWidget]);
 
   return (
     <div className={`flex items-center justify-start py-2 ${className}`}>
-      {/* ── Ultra-Clean Cloudflare Turnstile Checkbox Card ── */}
-      <div
-        onClick={handleCheckboxClick}
-        className={`w-full max-w-[300px] bg-[#FAFAFA] border rounded-lg p-3 shadow-xs transition-all flex items-center justify-between gap-3 select-none ${
-          status === 'verified'
-            ? 'border-emerald-500 bg-emerald-50/50'
-            : status === 'verifying'
-            ? 'border-orange-300 bg-orange-50/30'
-            : 'border-slate-300 hover:border-slate-400 bg-white cursor-pointer active:scale-[0.99]'
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          {/* Interactive Checkbox */}
-          <div
-            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
-              status === 'verified'
-                ? 'border-emerald-600 bg-emerald-600 text-white'
-                : status === 'verifying'
-                ? 'border-[#F38020] bg-orange-50'
-                : 'border-slate-400 bg-white hover:border-[#005689]'
-            }`}
-          >
-            {status === 'verifying' && (
-              <Loader2 size={13} className="text-[#F38020] animate-spin" />
-            )}
-            {status === 'verified' && (
-              <CheckCircle2 size={15} className="text-white" />
-            )}
-          </div>
-
-          {/* Label: Exactly 'You are a human' as requested by user */}
-          <span
-            className={`text-xs font-semibold ${
-              status === 'verified'
-                ? 'text-emerald-800 font-bold'
-                : status === 'verifying'
-                ? 'text-orange-700 font-medium'
-                : 'text-slate-700'
-            }`}
-          >
-            {status === 'verified'
-              ? 'Verified human'
-              : status === 'verifying'
-              ? 'Verifying...'
-              : 'You are a human'}
-          </span>
-        </div>
-
-        {/* Cloudflare Emblem Branding */}
-        <div className="flex items-center gap-1.5 shrink-0 pl-2">
-          <svg className="w-5 h-5 text-[#F38020]" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" />
-          </svg>
-          <span className="text-[10px] font-black tracking-tight text-slate-600">Cloudflare</span>
-        </div>
-      </div>
+      {/* Real Cloudflare Turnstile widget — renders inside this div */}
+      <div ref={containerRef} />
     </div>
   );
 }

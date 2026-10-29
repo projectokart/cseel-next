@@ -167,44 +167,41 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Call Cloudflare siteverify API to validate token if it's an external Cloudflare token
-    const isHumanVerifiedToken = turnstileToken.startsWith('cf-verified-human-');
+    // ── Cloudflare Turnstile: ALWAYS verify via real CF siteverify API ──
+    // No bypass allowed — every token must be validated server-side
+    try {
+      const verifyParams = new URLSearchParams({
+        secret: TURNSTILE_SECRET_KEY,
+        response: turnstileToken,
+        remoteip: clientIp,
+      });
 
-    if (!isHumanVerifiedToken) {
-      try {
-        const verifyParams = new URLSearchParams({
-          secret: TURNSTILE_SECRET_KEY,
-          response: turnstileToken,
-          remoteip: clientIp,
-        });
+      const cfResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: verifyParams,
+      });
 
-        const cfResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: verifyParams,
-        });
+      const cfResult = await cfResponse.json();
 
-        const cfResult = await cfResponse.json();
-
-        if (!cfResult.success) {
-          console.warn(`[Security Armor] Cloudflare Turnstile verification rejected:`, cfResult);
-          return NextResponse.json(
-            {
-              success: false,
-              error: 'Cloudflare security verification failed. Invalid or expired token.',
-              code: 'TURNSTILE_VERIFICATION_FAILED',
-              details: cfResult['error-codes'] || [],
-            },
-            { status: 403 }
-          );
-        }
-      } catch (cfErr: any) {
-        console.error('[Security Armor] Error communicating with Cloudflare siteverify:', cfErr);
+      if (!cfResult.success) {
+        console.warn(`[Security Armor] Cloudflare Turnstile verification rejected:`, cfResult);
         return NextResponse.json(
-          { success: false, error: 'Verification service error. Bot rejected.', code: 'CF_SERVICE_ERROR' },
+          {
+            success: false,
+            error: 'Cloudflare security verification failed. Please refresh and try again.',
+            code: 'TURNSTILE_VERIFICATION_FAILED',
+            details: cfResult['error-codes'] || [],
+          },
           { status: 403 }
         );
       }
+    } catch (cfErr: any) {
+      console.error('[Security Armor] Error communicating with Cloudflare siteverify:', cfErr);
+      return NextResponse.json(
+        { success: false, error: 'Verification service unavailable. Please try again.', code: 'CF_SERVICE_ERROR' },
+        { status: 503 }
+      );
     }
 
     // ── DEFENSE LAYER 6: DATA VALIDATION & PHONE REGEX ──
@@ -243,7 +240,7 @@ export async function POST(req: NextRequest) {
             apikey: SUPABASE_SERVICE_KEY,
             Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
           },
-          signal: AbortSignal.timeout(3000),
+          signal: AbortSignal.timeout(5000),
         });
         if (dupCheckRes.ok) {
           const dupRows = await dupCheckRes.json();
@@ -324,7 +321,7 @@ export async function POST(req: NextRequest) {
           Prefer: 'return=representation',
         },
         body: JSON.stringify(dbPayload),
-        signal: AbortSignal.timeout(3000),
+        signal: AbortSignal.timeout(8000),
       });
 
       if (supabaseRes.ok) {
@@ -340,14 +337,20 @@ export async function POST(req: NextRequest) {
       console.warn('[Supabase Write Network Error]:', dbErr);
     }
 
+    // ── STRICT DB CONFIRMATION CHECK: No fake success allowed ──
     if (!insertedRecord) {
-      insertedRecord = {
-        ...dbPayload,
-        id: matchedExistingId || teacherSlug,
-      };
+      console.error('[Faculty Register] Supabase write failed — no record returned. Returning real error to client.');
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'We could not save your profile due to a server error. Please try again in a few moments.',
+          code: 'DB_WRITE_FAILED',
+        },
+        { status: 503 }
+      );
     }
 
-    // Return success confirmation strictly when database confirmed the insertion
+    // Return success ONLY when Supabase confirmed the insertion
     return NextResponse.json(
       {
         success: true,

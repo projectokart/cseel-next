@@ -1030,7 +1030,7 @@ export default function TeachersDirectoryClient({
 
         // A. FeedCache v2 (slim, compressed IndexedDB — fastest path)
         const feedPayload = await FeedCache.get();
-        if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length >= 3000) {
+        if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length > 0) {
           hasLocalCache = true;
           const decoded = decodeSlimFeed(feedPayload.jobs);
           setActiveJobs(decoded);
@@ -1038,8 +1038,6 @@ export default function TeachersDirectoryClient({
           const oldCached = await JobsCacheStorage.getCache();
           if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         } else {
-          // Stale cache (< 3000 jobs) detected — purge immediately to prevent flashing old 2,419 count!
-          FeedCache.clear().catch(() => {});
           const oldCached = await JobsCacheStorage.getCache();
           if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         }
@@ -1097,8 +1095,8 @@ export default function TeachersDirectoryClient({
         const feedPayload = await FeedCache.get();
         const cachedVersion = feedPayload?.version || '';
 
-        // Only skip if version matches AND cached dataset is the full 3000+ jobs
-        if (cachedVersion === serverVersion && feedPayload?.jobs && feedPayload.jobs.length >= 3000) return;
+        // If local cache version matches serverVersion and has data, skip re-download
+        if (serverVersion && cachedVersion === serverVersion && feedPayload?.jobs && feedPayload.jobs.length > 0) return;
 
         let freshJobs: FacultyJobItem[] = [];
 

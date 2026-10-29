@@ -1070,10 +1070,10 @@ export default function TeachersDirectoryClient({
         let serverVersion = '';
         let serverCount = 0;
         try {
-          // Real-time cache buster ensures 0-second latency check against Edge CDN / Same-origin
+          // Edge CDN raw pointer is prioritized for real-time 0-second version updates without Vercel deploy
           const manifestRes = await fetchCdnWithFallback([
-            `/jobs/latest.json?_t=${Date.now()}`,
             `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
+            `/jobs/latest.json?_t=${Date.now()}`,
             CDN_JOB_ENDPOINTS.manifestLocal,
           ], { cache: 'no-cache' });
 
@@ -1112,12 +1112,12 @@ export default function TeachersDirectoryClient({
         let freshJobs: FacultyJobItem[] = [];
 
         try {
-          // Prioritize same-origin feedLocal for 0 CORS overhead, fallback to Edge CDN
+          // Prioritize Global Edge CDN (jsDelivr / Raw GitHub) for real-time fresh feed, fallback to same-origin
           const versionParam = serverVersion ? `?v=${encodeURIComponent(serverVersion)}` : `?_t=${Date.now()}`;
           const feedRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
           ], { cache: 'no-cache' });
           if (feedRes && feedRes.ok) {
             const slimData = await feedRes.json();

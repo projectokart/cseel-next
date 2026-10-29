@@ -1046,9 +1046,9 @@ export default function TeachersDirectoryClient({
         if (!hasLocalCache) {
           try {
             const top50Res = await fetchCdnWithFallback([
-              CDN_JOB_ENDPOINTS.top50Local,
-              CDN_JOB_ENDPOINTS.top50Cdn,
-            ]);
+              `${CDN_JOB_ENDPOINTS.top50Local}?_t=${Date.now()}`,
+              `${CDN_JOB_ENDPOINTS.top50Cdn}?_t=${Date.now()}`,
+            ], { cache: 'no-cache' });
             if (top50Res && top50Res.ok) {
               const top50Slim = await top50Res.json();
               if (Array.isArray(top50Slim) && top50Slim.length > 0) {
@@ -1102,11 +1102,12 @@ export default function TeachersDirectoryClient({
 
         try {
           // Prioritize same-origin feedLocal for 0 CORS overhead, fallback to Edge CDN
+          const versionParam = serverVersion ? `?v=${encodeURIComponent(serverVersion)}` : `?_t=${Date.now()}`;
           const feedRes = await fetchCdnWithFallback([
-            CDN_JOB_ENDPOINTS.feedLocal,
-            CDN_JOB_ENDPOINTS.feedCdn,
-            CDN_JOB_ENDPOINTS.feedRaw,
-          ]);
+            `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
+          ], { cache: 'no-cache' });
           if (feedRes && feedRes.ok) {
             const slimData = await feedRes.json();
             if (Array.isArray(slimData) && slimData.length > 0) {

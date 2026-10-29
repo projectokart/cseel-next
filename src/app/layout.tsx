@@ -867,6 +867,47 @@ export default function RootLayout({
           }}
         />
         {/* End Google Tag Manager */}
+        {/* Next.js Deployment Chunk-Recovery & Mobile Scroll Unstuck Engine */}
+        <script
+          id="cseel-deployment-recovery"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                window.addEventListener('error', function(event) {
+                  var msg = (event && event.message) ? String(event.message).toLowerCase() : '';
+                  if (
+                    msg.indexOf('loading chunk') !== -1 ||
+                    msg.indexOf('chunkloaderror') !== -1 ||
+                    msg.indexOf('failed to fetch dynamically imported module') !== -1
+                  ) {
+                    var key = 'cseel_chunk_retry_' + window.location.pathname;
+                    if (!sessionStorage.getItem(key)) {
+                      sessionStorage.setItem(key, '1');
+                      window.location.reload();
+                    }
+                  }
+                });
+
+                function ensureScrollable() {
+                  if (typeof document !== 'undefined' && document.body) {
+                    var hasOpenModal = document.querySelector('[role="dialog"][data-state="open"], [aria-modal="true"]');
+                    if (!hasOpenModal && (document.body.style.overflow === 'hidden' || document.body.style.touchAction === 'none')) {
+                      document.body.style.overflow = '';
+                      document.body.style.touchAction = '';
+                    }
+                  }
+                }
+
+                if (typeof window !== 'undefined') {
+                  window.addEventListener('pageshow', ensureScrollable);
+                  window.addEventListener('load', ensureScrollable);
+                  setTimeout(ensureScrollable, 300);
+                  setTimeout(ensureScrollable, 1000);
+                }
+              })();
+            `,
+          }}
+        />
         <ThemeHeadScript />
       </head>
       <body className="antialiased text-slate-700 bg-white min-h-screen selection:bg-[#D6EDFF] selection:text-[#003C6E]" suppressHydrationWarning>

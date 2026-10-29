@@ -176,7 +176,7 @@ def main():
     print(f"    1 MB Limit: {'PASS' if limit_ok else 'FAIL'}")
 
     newest = deduped[0].get('openingDate', '')[:10] if deduped else ''
-    version = f"v_{len(slim)}_{datetime.now().strftime('%Y-%m-%d')}_v3"
+    version = f"v_{len(slim)}_{datetime.now().strftime('%Y-%m-%d')}_v4"
 
     facets_src = os.path.join(BASE_DIR, 'src', 'data', 'job_filter_facets.json')
     facets_dest = os.path.join(OUTPUT_DIR, 'jobs-facets.json')

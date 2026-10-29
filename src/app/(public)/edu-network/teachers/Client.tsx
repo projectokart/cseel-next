@@ -944,6 +944,10 @@ export default function TeachersDirectoryClient({
     initialJobs && initialJobs.length > 0 ? initialJobs : []
   );
 
+  const liveTotalVacancies = useMemo(() => {
+    return activeJobs.length > 0 ? activeJobs.length : (totalVacanciesCount || DEFAULT_JOB_FACETS.totalVacancies || 3131);
+  }, [activeJobs.length, totalVacanciesCount]);
+
   const [gpsErrorModalOpen, setGpsErrorModalOpen] = useState(false);
   const [gpsErrorMessage, setGpsErrorMessage] = useState('');
 
@@ -2078,8 +2082,8 @@ export default function TeachersDirectoryClient({
         <FacultyFilterSheet
           mode="sidebar"
           activeTab={activeTab}
-          totalCount={activeTab === 'jobs' ? totalVacanciesCount : VERIFIED_FACULTY_MEMBERS.length}
-          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : totalVacanciesCount) : filteredFaculty.length}
+          totalCount={activeTab === 'jobs' ? liveTotalVacancies : VERIFIED_FACULTY_MEMBERS.length}
+          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : liveTotalVacancies) : filteredFaculty.length}
           selectedDesignations={selectedDesignations}
           toggleDesignation={toggleDesignation}
           selectedSubjects={selectedSubjects}
@@ -2116,8 +2120,8 @@ export default function TeachersDirectoryClient({
           isOpen={isMobileFilterOpen}
           onClose={() => setIsMobileFilterOpen(false)}
           activeTab={activeTab}
-          totalCount={activeTab === 'jobs' ? totalVacanciesCount : VERIFIED_FACULTY_MEMBERS.length}
-          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : totalVacanciesCount) : filteredFaculty.length}
+          totalCount={activeTab === 'jobs' ? liveTotalVacancies : VERIFIED_FACULTY_MEMBERS.length}
+          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : liveTotalVacancies) : filteredFaculty.length}
           selectedDesignations={selectedDesignations}
           toggleDesignation={toggleDesignation}
           selectedSubjects={selectedSubjects}
@@ -2455,7 +2459,7 @@ export default function TeachersDirectoryClient({
                     <Briefcase size={13} className={activeTab === 'jobs' ? 'text-[#004A75]' : 'text-slate-400'} />
                     <span>Vacancies</span>
                     <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
-                      {(hasActiveFilters ? filteredJobs.length : totalVacanciesCount).toLocaleString()}
+                      {(hasActiveFilters ? filteredJobs.length : liveTotalVacancies).toLocaleString()}
                     </span>
                   </button>
 
@@ -2736,48 +2740,46 @@ export default function TeachersDirectoryClient({
                           </div>
 
                           {/* Row 5: Footer (Post Date on Left, Share + Save + Details + Apply on Right) */}
-                          <div className="pt-1.5 pb-0.5 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                          <div className="pt-2 pb-0.5 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-auto">
                             {(() => {
                               const age = getJobAgeInfo(job.openingDate);
                               return (
-                                <div className={`text-[10.5px] sm:text-[11px] px-2 py-0.5 rounded-full border flex items-center gap-1.5 shrink-0 transition-colors ${age.badgeClass}`}>
-                                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${age.dotClass}`} />
-                                  <span>{age.label}</span>
+                                <div className={`text-[10px] sm:text-[10.5px] px-2 py-0.5 rounded-md border font-semibold shrink-0 select-none ${age.badgeClass}`}>
+                                  {age.label}
                                 </div>
                               );
                             })()}
 
-                            <div className="flex items-center gap-1.5 sm:gap-2">
-                              {/* Share Button */}
+                            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                              {/* Share Button (Compact) */}
                               <button
                                 type="button"
                                 onClick={() => handleCopyJobUrl(job)}
-                                className="h-9 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold transition inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                                className="h-8 w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center shrink-0 cursor-pointer"
                                 title="Share Vacancy"
                               >
                                 {copiedJobId === job.id ? <CheckCheck size={13} className="text-emerald-600" /> : <Share2 size={13} className="text-slate-400" />}
-                                <span className="hidden sm:inline">Share</span>
                               </button>
 
-                              {/* Save Button (Icon Only) */}
+                              {/* Save Button (Icon Only - Compact) */}
                               <button
                                 type="button"
                                 onClick={() => toggleSaveJob(job.id)}
-                                className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center cursor-pointer shrink-0"
+                                className="h-8 w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center cursor-pointer shrink-0"
                                 title={isSaved ? "Saved" : "Save Vacancy"}
                               >
-                                <Bookmark size={14} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
+                                <Bookmark size={13} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
                               </button>
 
-                              {/* Details Button */}
+                              {/* Details Button (Compact) */}
                               <Link
                                 href={`/edu-network/teachers/job/${job.id}`}
-                                className="h-9 px-3.5 sm:px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition inline-flex items-center justify-center"
+                                className="h-8 px-2.5 sm:px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-[11.5px] font-semibold transition inline-flex items-center justify-center shrink-0"
                               >
                                 Details
                               </Link>
 
-                              {/* Apply Button */}
+                              {/* Apply Button (Guaranteed to stay inside card) */}
                               <a
                                 href={job.applyUrl || job.originalUrl}
                                 target="_blank"
@@ -2793,10 +2795,10 @@ export default function TeachersDirectoryClient({
                                     source: job.source,
                                   });
                                 }}
-                                className="h-9 px-4 sm:px-4.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-bold shadow-2xs transition inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                                className="h-8 px-3 sm:px-3.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-[12px] font-bold shadow-2xs transition inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer"
                               >
                                 <span>Apply</span>
-                                <ExternalLink size={12} className="shrink-0" />
+                                <ExternalLink size={11} className="shrink-0" />
                               </a>
                             </div>
                           </div>

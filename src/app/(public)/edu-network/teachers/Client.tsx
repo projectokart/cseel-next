@@ -56,6 +56,27 @@ const FacultyAdBanner = dynamic(() => import('@/components/teachers/FacultyAdBan
   ssr: false,
 });
 
+// Dual-Layer Global Edge CDN configuration
+const CDN_JOB_ENDPOINTS = {
+  manifestRaw: 'https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/latest.json',
+  manifestLocal: '/jobs/latest.json',
+  feedCdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-feed.json',
+  feedRaw: 'https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/jobs-feed.json',
+  feedLocal: '/jobs/jobs-feed.json',
+  top50Cdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-top50.json',
+  top50Local: '/jobs/jobs-top50.json',
+};
+
+async function fetchCdnWithFallback(urls: string[], options?: RequestInit): Promise<Response | null> {
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, options);
+      if (res && res.ok) return res;
+    } catch {}
+  }
+  return null;
+}
+
 // Indian States & Districts Master Database for Auto-Populating Dependent District Select
 export const INDIAN_STATES_DISTRICTS: Record<string, string[]> = {
   'Haryana': [
@@ -1025,8 +1046,11 @@ export default function TeachersDirectoryClient({
         // C. Cold start — no cache → fetch ultra-lightweight top-50 chunk (~16 KB)
         if (!hasLocalCache) {
           try {
-            const top50Res = await fetch('/jobs/jobs-top50.json');
-            if (top50Res.ok) {
+            const top50Res = await fetchCdnWithFallback([
+              CDN_JOB_ENDPOINTS.top50Cdn,
+              CDN_JOB_ENDPOINTS.top50Local,
+            ]);
+            if (top50Res && top50Res.ok) {
               const top50Slim = await top50Res.json();
               if (Array.isArray(top50Slim) && top50Slim.length > 0) {
                 setActiveJobs(decodeSlimFeed(top50Slim));
@@ -1041,14 +1065,18 @@ export default function TeachersDirectoryClient({
       }
     };
 
-    // ─── PHASE 2: Background full-feed sync (deferred until idle/load) ───────────
-    // Never runs before the page is interactive — uses requestIdleCallback.
+    // ─── PHASE 2: Background full-feed sync from Global Edge CDN ─────────────────
     const backgroundFullSync = async () => {
       try {
         let serverVersion = '';
         try {
-          const manifestRes = await fetch('/jobs/latest.json', { cache: 'no-cache' });
-          if (manifestRes.ok) {
+          // Real-time cache buster ensures 0-second latency check against Edge CDN
+          const manifestRes = await fetchCdnWithFallback([
+            `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
+            CDN_JOB_ENDPOINTS.manifestLocal,
+          ], { cache: 'no-cache' });
+
+          if (manifestRes && manifestRes.ok) {
             const manifest = await manifestRes.json();
             serverVersion = manifest.version || '';
           }
@@ -1057,7 +1085,7 @@ export default function TeachersDirectoryClient({
         if (!serverVersion) {
           try {
             const versionRes = await fetch('/api/jobs/version');
-            if (versionRes.ok) {
+            if (versionRes && versionRes.ok) {
               const versionData = await versionRes.json();
               serverVersion = versionData.version || '';
             }
@@ -1073,8 +1101,12 @@ export default function TeachersDirectoryClient({
         let freshJobs: FacultyJobItem[] = [];
 
         try {
-          const feedRes = await fetch('/jobs/jobs-feed.json');
-          if (feedRes.ok) {
+          const feedRes = await fetchCdnWithFallback([
+            CDN_JOB_ENDPOINTS.feedCdn,
+            CDN_JOB_ENDPOINTS.feedRaw,
+            CDN_JOB_ENDPOINTS.feedLocal,
+          ]);
+          if (feedRes && feedRes.ok) {
             const slimData = await feedRes.json();
             if (Array.isArray(slimData) && slimData.length > 0) {
               freshJobs = decodeSlimFeed(slimData);
@@ -1118,20 +1150,9 @@ export default function TeachersDirectoryClient({
       // Phase 1 runs immediately (async — doesn't block paint)
       loadCachedOrTop50();
 
-      // Phase 2 deferred until after page is fully loaded and idle
+      // Phase 2: Start background sync 500ms after load so mobile updates instantly
       const scheduleSync = (cb: () => void) => {
-        const runner = () => {
-          if ('requestIdleCallback' in window) {
-            (window as any).requestIdleCallback(cb, { timeout: 8000 });
-          } else {
-            setTimeout(cb, 4000);
-          }
-        };
-        if (document.readyState === 'complete') {
-          setTimeout(runner, 3000);
-        } else {
-          window.addEventListener('load', () => setTimeout(runner, 3000), { once: true });
-        }
+        setTimeout(cb, 500);
       };
 
       scheduleSync(() => {

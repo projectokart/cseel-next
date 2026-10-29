@@ -1121,9 +1121,9 @@ export default function TeachersDirectoryClient({
         // 1. Fetch fresh filter facets alongside jobs feed
         try {
           const facetsRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.facetsCdn}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.facetsRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.facetsLocal}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.facetsCdn}${versionParam}`,
           ], { cache: 'no-cache' });
           if (facetsRes && facetsRes.ok) {
             freshFacets = await facetsRes.json();
@@ -1137,9 +1137,9 @@ export default function TeachersDirectoryClient({
         // 2. Fetch fresh slim jobs feed
         try {
           const feedRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
           ], { cache: 'no-cache' });
           if (feedRes && feedRes.ok) {
             const slimData = await feedRes.json();

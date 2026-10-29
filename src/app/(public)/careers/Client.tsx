@@ -310,6 +310,8 @@ export default function CareersClient() {
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
+  const [applicationId, setApplicationId] = useState<string>('');
+  const [applyError, setApplyError] = useState<string>('');
 
   // Filter Jobs
   const filteredJobs = CSEEL_CAREERS_DATA.filter((job) => {
@@ -340,20 +342,45 @@ export default function CareersClient() {
     });
     setIsApplyModalOpen(true);
     setSubmitSuccess(false);
+    setApplicationId('');
+    setApplyError('');
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    trackCseelEvent('job_application_submitted', {
-      job_title: applyingJob?.title,
-      department: applyingJob?.department,
-      city: applyForm.currentCity,
-    });
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setApplyError('');
+
+    try {
+      const res = await fetch('/api/careers/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...applyForm,
+          jobId: applyingJob?.id,
+          jobTitle: applyingJob?.title,
+          department: applyingJob?.department,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setApplyError(data.error || 'Failed to submit application. Please try again.');
+        return;
+      }
+
+      setApplicationId(data.applicationId);
       setSubmitSuccess(true);
-    }, 1200);
+      trackCseelEvent('job_application_submitted', {
+        job_title: applyingJob?.title,
+        department: applyingJob?.department,
+        city: applyForm.currentCity,
+      });
+    } catch (err: any) {
+      setApplyError('Network error while submitting. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -1219,7 +1246,7 @@ export default function CareersClient() {
                       Application Submitted Successfully!
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                      Thank you, <strong className="text-slate-900">{applyForm.fullName || "Candidate"}</strong>. Your application for <strong className="text-[#006FCC]">{applyingJob.title}</strong> has been received with Application ID <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">CSEEL-2026-{(Math.random() * 9000 + 1000).toFixed(0)}</code>. Our academic talent team will review your profile and reach out within 48 hours.
+                      Thank you, <strong className="text-slate-900">{applyForm.fullName || "Candidate"}</strong>. Your application for <strong className="text-[#006FCC]">{applyingJob.title}</strong> has been successfully registered with Application ID <code className="bg-slate-100 text-[#003c6e] px-1.5 py-0.5 rounded font-mono font-bold tracking-wide">{applicationId}</code>. Our academic talent team will review your profile and reach out within 48 hours.
                     </p>
                     <button
                       onClick={() => setIsApplyModalOpen(false)}
@@ -1317,6 +1344,12 @@ export default function CareersClient() {
                         className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:border-[#006FCC] outline-none resize-none text-xs sm:text-sm"
                       />
                     </div>
+
+                    {applyError && (
+                      <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl font-medium">
+                        {applyError}
+                      </div>
+                    )}
 
                     <div className="pt-2">
                       <button

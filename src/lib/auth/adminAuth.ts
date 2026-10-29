@@ -24,12 +24,10 @@ export function isAuthorizedAdmin(req: NextRequest): boolean {
     }
   }
 
-  // 3. Check admin auth cookie
+  // 3. Check admin auth cookie (strictly must match configured adminSecret)
   const adminCookie = req.cookies.get('cseel_admin_auth')?.value;
-  if (adminCookie) {
-    if (!adminSecret || adminCookie === adminSecret || adminCookie === 'true') {
-      return true;
-    }
+  if (adminSecret && adminCookie && adminCookie === adminSecret) {
+    return true;
   }
 
   // If in development mode on localhost, allow bypass for convenience if explicit header is passed

@@ -7,7 +7,6 @@ import {
   checkRateLimitAndBots,
   isValid16CharMagicKeyFormat,
   MASTER_ADMIN_KEY,
-  MASTER_ADMIN_MAGIC_TOKEN,
 } from '@/lib/security/apiSecurityGuard';
 
 const CLAIMS_FILE = path.join(process.cwd(), 'src', 'data', 'school_claims.json');
@@ -92,7 +91,7 @@ export async function GET(req: NextRequest) {
     // 4. Verify whether the provided magicKey is a valid Admin-approved Magic Link key
     let isMagicKeyValid = false;
     if (magicKey) {
-      if (magicKey === MASTER_ADMIN_MAGIC_TOKEN || magicKey === MASTER_ADMIN_KEY) {
+      if (MASTER_ADMIN_KEY && magicKey === MASTER_ADMIN_KEY) {
         isMagicKeyValid = true;
       } else if (
         supabaseMagicAuth &&

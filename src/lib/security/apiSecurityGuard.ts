@@ -194,55 +194,37 @@ export function isValid16CharMagicKeyFormat(key: string | null | undefined): boo
 }
 
 // ── 4. Admin & Magic Link Authorization Verification ──
-export const MASTER_ADMIN_KEY = process.env.ADMIN_SECRET_KEY || 'cseel_master_admin_2026';
-export const MASTER_ADMIN_MAGIC_TOKEN = 'csl_admin_master_magic_key';
+export const MASTER_ADMIN_KEY = process.env.ADMIN_SECRET_KEY || '';
 export const ADMIN_EMAILS = new Set([
-  'ptdevkaushik101@gmail.com',
-  'ptdevkaushik104@gmail.com',
-  (process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik101@gmail.com').toLowerCase(),
+  (process.env.ADMIN_CLAIM_EMAIL || '').toLowerCase(),
   'admin@cseel.org',
   'super@cseel.org',
   'school@cseel.org',
-  'admin@123',
-]);
+].filter(Boolean));
 
 export function isSuperAdminEmail(email?: string | null): boolean {
   if (!email) return false;
   const clean = String(email).trim().toLowerCase();
   return (
-    clean === 'ptdevkaushik101@gmail.com' ||
-    clean === 'ptdevkaushik104@gmail.com' ||
     ADMIN_EMAILS.has(clean) ||
     clean.endsWith('@cseel.org')
   );
 }
 
 export function isAdminRequest(req: NextRequest | Request, bodyAdminCheck?: { adminKey?: string; adminEmail?: string }): boolean {
+  if (!MASTER_ADMIN_KEY) {
+    return false;
+  }
+
   const adminKeyHeader = req.headers.get('x-admin-key') || '';
   const authHeader = req.headers.get('authorization') || '';
-  const cookieHeader = req.headers.get('cookie') || '';
-  const adminEmailHeader = (
-    req.headers.get('x-admin-email') ||
-    req.headers.get('x-user-email') ||
-    bodyAdminCheck?.adminEmail ||
-    ''
-  ).toLowerCase().trim();
   const bodyKey = bodyAdminCheck?.adminKey || '';
 
   if (
-    adminKeyHeader === MASTER_ADMIN_KEY ||
-    adminKeyHeader === MASTER_ADMIN_MAGIC_TOKEN ||
-    bodyKey === MASTER_ADMIN_KEY ||
-    bodyKey === MASTER_ADMIN_MAGIC_TOKEN ||
-    authHeader.includes(MASTER_ADMIN_KEY) ||
-    authHeader.includes(MASTER_ADMIN_MAGIC_TOKEN) ||
-    cookieHeader.includes('cseel_admin_auth=true') ||
-    cookieHeader.includes('admin_session')
+    (adminKeyHeader && adminKeyHeader === MASTER_ADMIN_KEY) ||
+    (bodyKey && bodyKey === MASTER_ADMIN_KEY) ||
+    (authHeader.startsWith('Bearer ') && authHeader.substring(7).trim() === MASTER_ADMIN_KEY)
   ) {
-    return true;
-  }
-
-  if (adminEmailHeader && isSuperAdminEmail(adminEmailHeader)) {
     return true;
   }
 
@@ -260,21 +242,8 @@ export async function verifySchoolWriteAuth(
     userEmail?: string;
   }
 ): Promise<{ authorized: boolean; mode?: 'admin' | 'magic_link' | 'owner'; reason?: string }> {
-  const queryUserEmail = (
-    extra?.userEmail ||
-    extra?.adminEmail ||
-    req.headers.get('x-user-email') ||
-    req.headers.get('x-admin-email') ||
-    ''
-  ).trim().toLowerCase();
-
-  // Root Super Admin check: ptdevkaushik101@gmail.com has instant full edit access to any school
-  if (isSuperAdminEmail(queryUserEmail)) {
-    return { authorized: true, mode: 'admin' };
-  }
-
-  // 1. Check Admin Authorization first
-  if (isAdminRequest(req, { adminKey: extra?.adminKey, adminEmail: extra?.adminEmail || queryUserEmail })) {
+  // 1. Check Admin Authorization first (requires valid MASTER_ADMIN_KEY)
+  if (isAdminRequest(req, { adminKey: extra?.adminKey })) {
     return { authorized: true, mode: 'admin' };
   }
 
@@ -288,11 +257,12 @@ export async function verifySchoolWriteAuth(
     ''
   ).trim();
 
-  if (candidateKey === MASTER_ADMIN_MAGIC_TOKEN || candidateKey === MASTER_ADMIN_KEY) {
+  if (MASTER_ADMIN_KEY && candidateKey === MASTER_ADMIN_KEY) {
     return { authorized: true, mode: 'admin' };
   }
 
   const queryUserId = (extra?.userId || req.headers.get('x-user-id') || '').trim();
+  const queryUserEmail = (extra?.userEmail || '').trim().toLowerCase();
 
   // 2. Check Owner Authorization via local school_claims.json (Fast & Authoritative)
   if (cleanUdise) {

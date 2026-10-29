@@ -6,40 +6,27 @@ import sharp from 'sharp';
 export const dynamic = 'force-dynamic';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ukazkxthavxphibdbspd.supabase.co';
-const SUPABASE_SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrYXpreHRoYXZ4cGhpYmRic3BkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzgxOTgzOCwiZXhwIjoyMDg5Mzk1ODM4fQ.Od_IWU3qrttP28AdPajuJfxitTqQIXVo9dXSzFS-Kms';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-const MASTER_ADMIN_EMAIL = 'ptdevkaushik101@gmail.com';
 const MASTER_ADMIN_KEY = process.env.ADMIN_SECRET_KEY || '';
 
 /**
  * Checks if request is from authorized superadmin
  */
 function isAuthorizedAdmin(req: NextRequest, bodyEmail?: string, bodyKey?: string): boolean {
-  const headerEmail = (
-    req.headers.get('x-admin-email') ||
-    req.headers.get('x-user-email') ||
-    bodyEmail ||
-    ''
-  ).toLowerCase().trim();
+  if (!MASTER_ADMIN_KEY) {
+    return false;
+  }
 
   const authHeader = req.headers.get('authorization') || '';
   const adminKeyHeader = req.headers.get('x-admin-key') || '';
   const providedKey = bodyKey || adminKeyHeader;
 
-  // 1. Strict match on admin email
-  const isMasterEmail = headerEmail === MASTER_ADMIN_EMAIL || headerEmail === 'ptdevkaushik104@gmail.com';
-
-  // 2. Secret key check (requires actual ADMIN_SECRET_KEY to be configured in env)
-  const isMasterKey = Boolean(
-    MASTER_ADMIN_KEY && (
-      providedKey === MASTER_ADMIN_KEY ||
-      authHeader.includes(MASTER_ADMIN_KEY)
-    )
+  // Secret key check (requires actual ADMIN_SECRET_KEY to be configured in env)
+  return Boolean(
+    providedKey === MASTER_ADMIN_KEY ||
+    (authHeader.startsWith('Bearer ') && authHeader.substring(7).trim() === MASTER_ADMIN_KEY)
   );
-
-  return isMasterEmail || isMasterKey;
 }
 
 /**
@@ -242,7 +229,7 @@ export async function POST(req: NextRequest) {
         finalUrl: finalCloudUrl,
         format: 'avif',
         sizeKb: sizeKb,
-        updatedBy: MASTER_ADMIN_EMAIL,
+        updatedBy: process.env.ADMIN_CLAIM_EMAIL || 'admin',
         updatedAt: new Date().toISOString(),
       };
 
@@ -280,7 +267,7 @@ export async function POST(req: NextRequest) {
       finalUrl: finalCloudUrl,
       format: 'avif',
       sizeKb: sizeKb,
-      updatedBy: MASTER_ADMIN_EMAIL,
+      updatedBy: process.env.ADMIN_CLAIM_EMAIL || 'admin',
       message: `Image converted to AVIF (${sizeKb} KB < 10KB) and saved in Cloud Storage successfully!`,
     });
   } catch (err: any) {

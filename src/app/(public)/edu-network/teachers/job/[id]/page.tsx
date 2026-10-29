@@ -13,10 +13,14 @@ async function getAllJobsList(): Promise<FacultyJobItem[]> {
   if (_allJobsCache && _allJobsCache.length > 0) return _allJobsCache;
 
   try {
-    const supa = await SupabaseJobService.fetchJobsFromSupabase();
-    if (Array.isArray(supa) && supa.length > 0) {
-      _allJobsCache = supa;
-      return _allJobsCache;
+    const aggPath = path.join(process.cwd(), 'src', 'data', 'aggregated_jobs.json');
+    if (fs.existsSync(aggPath)) {
+      const raw = fs.readFileSync(aggPath, 'utf8');
+      const list = JSON.parse(raw);
+      if (Array.isArray(list) && list.length > 0) {
+        _allJobsCache = list;
+        return _allJobsCache;
+      }
     }
   } catch {}
 

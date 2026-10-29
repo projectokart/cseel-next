@@ -64,18 +64,32 @@ export interface FeedPayload {
   version:   string;
   savedAt:   number;
   jobs:      Record<string, any>[]; // slim encoded
+  facets?:   any;
 }
 
 export const FeedCache = {
   async get(): Promise<FeedPayload | null> {
     return idbGet<FeedPayload>('feed_payload');
   },
-  async save(jobs: Record<string, any>[], version: string): Promise<void> {
-    const payload: FeedPayload = { version, savedAt: Date.now(), jobs };
+  async save(jobs: Record<string, any>[], version: string, facets?: any): Promise<void> {
+    const payload: FeedPayload = { version, savedAt: Date.now(), jobs, facets };
     await idbSet('feed_payload', payload);
+    if (facets) {
+      await idbSet('facets_payload', facets);
+    }
   },
   async clear(): Promise<void> {
     await idbSet('feed_payload', null);
+  },
+};
+
+// ── Facets payload ──────────────────────────────────────────────────────────
+export const FacetsCache = {
+  async get(): Promise<any | null> {
+    return idbGet<any>('facets_payload');
+  },
+  async save(facets: any): Promise<void> {
+    await idbSet('facets_payload', facets);
   },
 };
 

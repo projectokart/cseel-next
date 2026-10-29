@@ -32,11 +32,14 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
 
   const openingDate = s.od || '';
   const dateMs = openingDate ? (Date.parse(openingDate) || 0) : 0;
+  const imgUrl = (s.im && typeof s.im === 'string' && s.im.trim() !== '') ? s.im.trim() : null;
 
   return {
     id,
     slug: id,
     organisationName: s.n || 'Educational Institution',
+    organisationLogo: imgUrl,
+    image_url:        imgUrl,
     jobPostName:      s.t || 'Teaching Position',
     designation:      s.g || null,
     subject:          s.s || null,

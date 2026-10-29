@@ -1,7 +1,7 @@
 'use client';
 import { JobsCacheStorage } from '@/lib/services/jobsCacheStorage';
 import { decodeSlimFeed, decodeSlimJob } from '@/lib/jobs/feedDecoder';
-import { FeedCache, LinksCache } from '@/lib/jobs/indexedDBCache';
+import { FeedCache, LinksCache, FacetsCache } from '@/lib/jobs/indexedDBCache';
 import { haversineKm, hasMovedBeyondThreshold } from '@/lib/jobs/haversine';
 
 function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -46,7 +46,7 @@ import {
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress, getJobAgeInfo } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
-import { calculateDynamicFacets, DEFAULT_JOB_FACETS } from '@/data/jobFilterFacets';
+import { calculateDynamicFacets, DEFAULT_JOB_FACETS, JobFilterFacetsData } from '@/data/jobFilterFacets';
 import { matchesJobFuzzy, filterAndRankJobsBySearch } from '@/lib/fuzzySearch';
 
 const FacultyFilterSheet = dynamic(() => import('@/components/teachers/FacultyFilterSheet'), {
@@ -63,6 +63,9 @@ const CDN_JOB_ENDPOINTS = {
   feedCdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-feed.json',
   feedRaw: 'https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/jobs-feed.json',
   feedLocal: '/jobs/jobs-feed.json',
+  facetsCdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-facets.json',
+  facetsRaw: 'https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/jobs-facets.json',
+  facetsLocal: '/jobs/jobs-facets.json',
   top50Cdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-top50.json',
   top50Local: '/jobs/jobs-top50.json',
 };
@@ -944,9 +947,11 @@ export default function TeachersDirectoryClient({
     initialJobs && initialJobs.length > 0 ? initialJobs : []
   );
 
+  const [facetsData, setFacetsData] = useState<JobFilterFacetsData>(DEFAULT_JOB_FACETS);
+
   const liveTotalVacancies = useMemo(() => {
-    return activeJobs.length > 0 ? activeJobs.length : (totalVacanciesCount || DEFAULT_JOB_FACETS.totalVacancies || 3131);
-  }, [activeJobs.length, totalVacanciesCount]);
+    return activeJobs.length > 0 ? activeJobs.length : (facetsData?.totalVacancies || totalVacanciesCount || DEFAULT_JOB_FACETS.totalVacancies || 2880);
+  }, [activeJobs.length, facetsData?.totalVacancies, totalVacanciesCount]);
 
   const [gpsErrorModalOpen, setGpsErrorModalOpen] = useState(false);
   const [gpsErrorMessage, setGpsErrorMessage] = useState('');
@@ -1034,10 +1039,21 @@ export default function TeachersDirectoryClient({
           hasLocalCache = true;
           const decoded = decodeSlimFeed(feedPayload.jobs);
           setActiveJobs(decoded);
+
+          // Restore cached filter facets if available
+          if (feedPayload.facets) {
+            setFacetsData(feedPayload.facets);
+          } else {
+            const cachedFacets = await FacetsCache.get();
+            if (cachedFacets) setFacetsData(cachedFacets);
+          }
+
           // Restore GPS cache from old JobsCacheStorage if available
           const oldCached = await JobsCacheStorage.getCache();
           if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         } else {
+          const cachedFacets = await FacetsCache.get();
+          if (cachedFacets) setFacetsData(cachedFacets);
           const oldCached = await JobsCacheStorage.getCache();
           if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         }
@@ -1084,17 +1100,6 @@ export default function TeachersDirectoryClient({
           }
         } catch {}
 
-        if (!serverVersion) {
-          try {
-            const versionRes = await fetch('/api/jobs/version');
-            if (versionRes && versionRes.ok) {
-              const versionData = await versionRes.json();
-              serverVersion = versionData.version || '';
-              serverCount = Number(versionData.count) || 0;
-            }
-          } catch {}
-        }
-
         const feedPayload = await FeedCache.get();
         const cachedVersion = feedPayload?.version || '';
         const cachedCount = feedPayload?.jobs?.length || 0;
@@ -1110,10 +1115,27 @@ export default function TeachersDirectoryClient({
         }
 
         let freshJobs: FacultyJobItem[] = [];
+        let freshFacets: any = null;
+        const versionParam = serverVersion ? `?v=${encodeURIComponent(serverVersion)}` : `?_t=${Date.now()}`;
 
+        // 1. Fetch fresh filter facets alongside jobs feed
         try {
-          // Prioritize Global Edge CDN (jsDelivr / Raw GitHub) for real-time fresh feed, fallback to same-origin
-          const versionParam = serverVersion ? `?v=${encodeURIComponent(serverVersion)}` : `?_t=${Date.now()}`;
+          const facetsRes = await fetchCdnWithFallback([
+            `${CDN_JOB_ENDPOINTS.facetsCdn}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.facetsRaw}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.facetsLocal}${versionParam}`,
+          ], { cache: 'no-cache' });
+          if (facetsRes && facetsRes.ok) {
+            freshFacets = await facetsRes.json();
+            if (freshFacets && freshFacets.totalVacancies) {
+              setFacetsData(freshFacets);
+              FacetsCache.save(freshFacets).catch(() => {});
+            }
+          }
+        } catch {}
+
+        // 2. Fetch fresh slim jobs feed
+        try {
           const feedRes = await fetchCdnWithFallback([
             `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
@@ -1123,23 +1145,10 @@ export default function TeachersDirectoryClient({
             const slimData = await feedRes.json();
             if (Array.isArray(slimData) && slimData.length > 0) {
               freshJobs = decodeSlimFeed(slimData);
-              FeedCache.save(slimData, serverVersion).catch(() => {});
+              FeedCache.save(slimData, serverVersion, freshFacets || facetsData).catch(() => {});
             }
           }
         } catch {}
-
-        // Fallback to /api/jobs if static feed unavailable
-        if (freshJobs.length === 0) {
-          try {
-            const jobsRes = await fetch('/api/jobs');
-            if (jobsRes.ok) {
-              const jobsData = await jobsRes.json();
-              if (jobsData.success && Array.isArray(jobsData.jobs) && jobsData.jobs.length > 0) {
-                freshJobs = jobsData.jobs;
-              }
-            }
-          } catch {}
-        }
 
         if (freshJobs.length > 0) {
           const savedGps = userCoords || lastGpsCoordsRef.current;
@@ -1267,15 +1276,16 @@ export default function TeachersDirectoryClient({
   const dynamicCounts = useMemo(() => {
     if (activeTab === 'jobs') {
       // By default when NO search or filter is applied, return precomputed database facet counts!
-      if (!hasActiveFilters && DEFAULT_JOB_FACETS?.counts) {
+      if (!hasActiveFilters && (facetsData?.counts || DEFAULT_JOB_FACETS?.counts)) {
+        const counts = facetsData?.counts || DEFAULT_JOB_FACETS.counts;
         return {
-          subjects: DEFAULT_JOB_FACETS.counts.subjects || {},
-          designations: DEFAULT_JOB_FACETS.counts.designations || {},
-          boards: DEFAULT_JOB_FACETS.counts.boards || {},
-          cities: DEFAULT_JOB_FACETS.counts.cities || {},
-          states: DEFAULT_JOB_FACETS.counts.states || {},
-          portals: DEFAULT_JOB_FACETS.counts.portals || {},
-          forLady: DEFAULT_JOB_FACETS.forLadyCount ?? 28,
+          subjects: counts.subjects || {},
+          designations: counts.designations || {},
+          boards: counts.boards || {},
+          cities: counts.cities || {},
+          states: counts.states || {},
+          portals: counts.portals || {},
+          forLady: facetsData?.forLadyCount ?? DEFAULT_JOB_FACETS.forLadyCount ?? 56,
         };
       }
 
@@ -2605,8 +2615,8 @@ export default function TeachersDirectoryClient({
                             className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-visible"
                           >
                           <div className="space-y-2.5 min-w-0">
-                            {/* Conditional Job Image Banner (Only if image_url is available) */}
-                            {job.image_url && job.image_url.trim() !== '' && (
+                            {/* Conditional Job Image Banner (Only if image_url is available AND distinct from organisation logo) */}
+                            {job.image_url && job.image_url.trim() !== '' && job.image_url !== job.organisationLogo && (
                               <div className="w-full aspect-[16/9] sm:aspect-[2/1] rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 mb-2.5 relative">
                                 <img
                                   src={job.image_url}
@@ -2654,10 +2664,10 @@ export default function TeachersDirectoryClient({
                               </div>
 
                               {/* School Logo: ONLY show if valid URL exists. If not available, completely hidden to not waste space */}
-                              {job.organisationLogo && job.organisationLogo.trim() !== '' ? (
+                              {(job.organisationLogo || job.image_url) && (job.organisationLogo || job.image_url)?.trim() !== '' ? (
                                 <div className="school-logo-box w-12 h-12 rounded-xl border border-slate-200/80 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs relative">
                                   <img
-                                    src={job.organisationLogo}
+                                    src={job.organisationLogo || job.image_url || ''}
                                     alt={job.organisationName}
                                     loading="lazy"
                                     decoding="async"

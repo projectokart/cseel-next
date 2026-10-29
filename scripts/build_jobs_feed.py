@@ -9,15 +9,16 @@ Split into:
 import json, os, sys, re
 from datetime import datetime, timedelta
 
-INPUT_FILE    = 'src/data/aggregated_jobs.json'
-OUTPUT_DIR    = 'public/jobs'
+BASE_DIR      = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+INPUT_FILE    = os.path.join(BASE_DIR, 'src', 'data', 'aggregated_jobs.json')
+OUTPUT_DIR    = os.path.join(BASE_DIR, 'public', 'jobs')
 OUTPUT_SLIM   = os.path.join(OUTPUT_DIR, 'jobs-feed.json')
 OUTPUT_LINKS  = os.path.join(OUTPUT_DIR, 'jobs-links.json')
 OUTPUT_TOP50  = os.path.join(OUTPUT_DIR, 'jobs-top50.json')
 OUTPUT_LATEST = os.path.join(OUTPUT_DIR, 'latest.json')
 
 MAX_AGE_DAYS  = 45
-TARGET_SIZE_B = 1_000_000   # 1 MB hard limit on jobs-feed.json
+TARGET_SIZE_B = 1_048_576   # 1 MB (1024 KB) target on jobs-feed.json
 
 BOARD_MAP = {'CBSE':'C','ICSE':'I','Cambridge / IB':'IB','State Board':'S','International':'INT'}
 SOURCE_MAP = {
@@ -112,6 +113,11 @@ def slim_job(j):
     if j.get('verified'): s['v'] = 1
     if j.get('forLady'): s['f'] = 1
 
+    img = j.get('organisationLogo') or j.get('image_url')
+    if img and isinstance(img, str) and (img.startswith('http://') or img.startswith('https://')):
+        img = re.sub(r'=w\d+-h\d+-k-no', '=s300', img)
+        s['im'] = img
+
     return s
 
 def link_entry(j):
@@ -170,7 +176,17 @@ def main():
     print(f"    1 MB Limit: {'PASS' if limit_ok else 'FAIL'}")
 
     newest = deduped[0].get('openingDate', '')[:10] if deduped else ''
-    version = f"v_{len(slim)}_{newest}"
+    version = f"v_{len(slim)}_{datetime.now().strftime('%Y-%m-%d')}_v3"
+
+    facets_src = os.path.join(BASE_DIR, 'src', 'data', 'job_filter_facets.json')
+    facets_dest = os.path.join(OUTPUT_DIR, 'jobs-facets.json')
+    if os.path.exists(facets_src):
+        with open(facets_src, 'r', encoding='utf-8') as f:
+            facets_data = json.load(f)
+        with open(facets_dest, 'w', encoding='utf-8') as f:
+            json.dump(facets_data, f, separators=(',', ':'), ensure_ascii=False)
+        facets_kb = len(json.dumps(facets_data, separators=(',', ':')).encode('utf-8')) / 1024
+        print(f"    jobs-facets.json:{facets_kb:.1f} KB")
 
     manifest = {
         "version": version,
@@ -179,6 +195,7 @@ def main():
         "feedUrl": "/jobs/jobs-feed.json",
         "top50Url": "/jobs/jobs-top50.json",
         "linksUrl": "/jobs/jobs-links.json",
+        "facetsUrl": "/jobs/jobs-facets.json",
         "feedSizeKb": round(feed_kb, 1),
         "linksSizeKb": round(links_kb, 1),
     }

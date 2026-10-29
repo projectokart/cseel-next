@@ -7,6 +7,7 @@ export interface FacultyJobItem {
   organisationName: string;
   organisationLogo?: string | null;
   image_url?: string | null;
+  imageUrl?: string | null;
   jobPostName: string;
   designation?: "PGT" | "TGT" | "PRT" | "Lab In-Charge" | "ATL Mentor" | "Coordinator" | "NEET & JEE Faculty" | "Pre-Primary / Nursery" | "Academic Leadership" | string | null;
   subject?: "Physics" | "Chemistry" | "Biology" | "Mathematics" | "Robotics & AI" | "Computer Science" | "Composite Lab" | "General Science" | "Science" | "English" | "Hindi" | "Social Studies (SST)" | string | null;

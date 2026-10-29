@@ -1068,6 +1068,7 @@ export default function TeachersDirectoryClient({
     const backgroundFullSync = async () => {
       try {
         let serverVersion = '';
+        let serverCount = 0;
         try {
           // Real-time cache buster ensures 0-second latency check against Edge CDN / Same-origin
           const manifestRes = await fetchCdnWithFallback([
@@ -1079,6 +1080,7 @@ export default function TeachersDirectoryClient({
           if (manifestRes && manifestRes.ok) {
             const manifest = await manifestRes.json();
             serverVersion = manifest.version || '';
+            serverCount = Number(manifest.count) || 0;
           }
         } catch {}
 
@@ -1088,15 +1090,24 @@ export default function TeachersDirectoryClient({
             if (versionRes && versionRes.ok) {
               const versionData = await versionRes.json();
               serverVersion = versionData.version || '';
+              serverCount = Number(versionData.count) || 0;
             }
           } catch {}
         }
 
         const feedPayload = await FeedCache.get();
         const cachedVersion = feedPayload?.version || '';
+        const cachedCount = feedPayload?.jobs?.length || 0;
 
-        // If local cache version matches serverVersion and has data, skip re-download
-        if (serverVersion && cachedVersion === serverVersion && feedPayload?.jobs && feedPayload.jobs.length > 0) return;
+        // Skip only if version matches AND cached dataset count matches the manifest count
+        if (
+          serverVersion &&
+          cachedVersion === serverVersion &&
+          cachedCount > 0 &&
+          (!serverCount || cachedCount === serverCount)
+        ) {
+          return;
+        }
 
         let freshJobs: FacultyJobItem[] = [];
 

@@ -47,6 +47,29 @@ export interface UseJobSearchReturn {
 
 const DEFAULT_PAGE_SIZE = 25;
 
+// Dual-Layer Global Edge CDN configuration (No Vercel redeployment needed for job updates)
+const CDN_JOB_ENDPOINTS = {
+  manifestRaw: 'https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/latest.json',
+  manifestLocal: '/jobs/latest.json',
+  feedCdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-feed.json',
+  feedRaw: 'https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/jobs-feed.json',
+  feedLocal: '/jobs/jobs-feed.json',
+  top50Cdn: 'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-top50.json',
+  top50Local: '/jobs/jobs-top50.json',
+};
+
+async function fetchWithFallback(urls: string[], options?: RequestInit): Promise<Response | null> {
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, options);
+      if (res && res.ok) return res;
+    } catch {
+      // try next fallback url
+    }
+  }
+  return null;
+}
+
 export function useJobSearch(initialJobs?: FacultyJobItem[]): UseJobSearchReturn {
   // Master in-memory RAM array
   const [masterJobs, setMasterJobs] = useState<FacultyJobItem[]>(() => initialJobs || []);
@@ -141,10 +164,13 @@ export function useJobSearch(initialJobs?: FacultyJobItem[]): UseJobSearchReturn
             lastCalculatedGpsRef.current = { lat: cachedGps.lat, lng: cachedGps.lng };
           }
         } else {
-          // 2. Cold Start: Fetch lightweight Initial Chunk (/jobs/jobs-top50.json)
+          // 2. Cold Start: Fetch lightweight Initial Chunk from CDN (fallback to local)
           try {
-            const top50Res = await fetch('/jobs/jobs-top50.json');
-            if (top50Res.ok && !isCancelled) {
+            const top50Res = await fetchWithFallback([
+              CDN_JOB_ENDPOINTS.top50Cdn,
+              CDN_JOB_ENDPOINTS.top50Local,
+            ]);
+            if (top50Res && !isCancelled) {
               const top50Slim = await top50Res.json();
               if (Array.isArray(top50Slim) && top50Slim.length > 0) {
                 const decodedTop50 = decodeSlimFeed(top50Slim);
@@ -158,13 +184,17 @@ export function useJobSearch(initialJobs?: FacultyJobItem[]): UseJobSearchReturn
           }
         }
 
-        // 3. Background Silent Sync: Fetch latest manifest & full dataset
+        // 3. Background Silent Sync: Fetch latest manifest & full dataset from Edge CDN
         const fetchFullFeedInBackground = async () => {
           try {
-            // Check version manifest
-            const manifestRes = await fetch('/jobs/latest.json', { cache: 'no-cache' });
+            // Check version manifest (cache buster query on raw URL ensures instant 0s cache detection)
+            const manifestRes = await fetchWithFallback([
+              `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
+              CDN_JOB_ENDPOINTS.manifestLocal,
+            ], { cache: 'no-cache' });
+
             let serverVersion = '';
-            if (manifestRes.ok) {
+            if (manifestRes) {
               const manifest = await manifestRes.json();
               serverVersion = manifest.version || '';
             }
@@ -172,8 +202,13 @@ export function useJobSearch(initialJobs?: FacultyJobItem[]): UseJobSearchReturn
             // Only fetch if version changed or not loaded
             const cachedPayload = await FeedCache.get();
             if (!cachedPayload || (serverVersion && cachedPayload.version !== serverVersion)) {
-              const feedRes = await fetch('/jobs/jobs-feed.json');
-              if (feedRes.ok && !isCancelled) {
+              const feedRes = await fetchWithFallback([
+                CDN_JOB_ENDPOINTS.feedCdn,
+                CDN_JOB_ENDPOINTS.feedRaw,
+                CDN_JOB_ENDPOINTS.feedLocal,
+              ]);
+
+              if (feedRes && !isCancelled) {
                 const fullSlim = await feedRes.json();
                 if (Array.isArray(fullSlim) && fullSlim.length > 0) {
                   const decodedFull = decodeSlimFeed(fullSlim);

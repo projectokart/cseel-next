@@ -74,6 +74,9 @@ export const FeedCache = {
     const payload: FeedPayload = { version, savedAt: Date.now(), jobs };
     await idbSet('feed_payload', payload);
   },
+  async clear(): Promise<void> {
+    await idbSet('feed_payload', null);
+  },
 };
 
 // ── Links payload ───────────────────────────────────────────────────────────

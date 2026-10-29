@@ -1030,7 +1030,7 @@ export default function TeachersDirectoryClient({
 
         // A. FeedCache v2 (slim, compressed IndexedDB — fastest path)
         const feedPayload = await FeedCache.get();
-        if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length > 0) {
+        if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length >= 3000) {
           hasLocalCache = true;
           const decoded = decodeSlimFeed(feedPayload.jobs);
           setActiveJobs(decoded);
@@ -1038,21 +1038,18 @@ export default function TeachersDirectoryClient({
           const oldCached = await JobsCacheStorage.getCache();
           if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         } else {
-          // B. Legacy JobsCacheStorage fallback (old IndexedDB key)
+          // Stale cache (< 3000 jobs) detected — purge immediately to prevent flashing old 2,419 count!
+          FeedCache.clear().catch(() => {});
           const oldCached = await JobsCacheStorage.getCache();
-          if (oldCached && oldCached.jobs && oldCached.jobs.length > 0) {
-            hasLocalCache = true;
-            setActiveJobs(oldCached.jobs);
-            if (oldCached.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
-          }
+          if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         }
 
-        // C. Cold start — no cache → fetch ultra-lightweight top-50 chunk (~16 KB)
+        // C. Cold start / Stale cache purge → fetch lightweight chunk or full feed
         if (!hasLocalCache) {
           try {
             const top50Res = await fetchCdnWithFallback([
-              CDN_JOB_ENDPOINTS.top50Cdn,
               CDN_JOB_ENDPOINTS.top50Local,
+              CDN_JOB_ENDPOINTS.top50Cdn,
             ]);
             if (top50Res && top50Res.ok) {
               const top50Slim = await top50Res.json();
@@ -1074,8 +1071,9 @@ export default function TeachersDirectoryClient({
       try {
         let serverVersion = '';
         try {
-          // Real-time cache buster ensures 0-second latency check against Edge CDN
+          // Real-time cache buster ensures 0-second latency check against Edge CDN / Same-origin
           const manifestRes = await fetchCdnWithFallback([
+            `/jobs/latest.json?_t=${Date.now()}`,
             `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
             CDN_JOB_ENDPOINTS.manifestLocal,
           ], { cache: 'no-cache' });
@@ -1099,16 +1097,17 @@ export default function TeachersDirectoryClient({
         const feedPayload = await FeedCache.get();
         const cachedVersion = feedPayload?.version || '';
 
-        // Only download full feed if version changed or cache is empty
-        if (cachedVersion === serverVersion && feedPayload?.jobs?.length > 0) return;
+        // Only skip if version matches AND cached dataset is the full 3000+ jobs
+        if (cachedVersion === serverVersion && feedPayload?.jobs && feedPayload.jobs.length >= 3000) return;
 
         let freshJobs: FacultyJobItem[] = [];
 
         try {
+          // Prioritize same-origin feedLocal for 0 CORS overhead, fallback to Edge CDN
           const feedRes = await fetchCdnWithFallback([
+            CDN_JOB_ENDPOINTS.feedLocal,
             CDN_JOB_ENDPOINTS.feedCdn,
             CDN_JOB_ENDPOINTS.feedRaw,
-            CDN_JOB_ENDPOINTS.feedLocal,
           ]);
           if (feedRes && feedRes.ok) {
             const slimData = await feedRes.json();

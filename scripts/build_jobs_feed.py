@@ -54,27 +54,27 @@ def slim_job(j):
     if jid: s['id'] = jid
 
     org = j.get('organisationName', '')
-    if org: s['n'] = org[:40]
+    if org: s['n'] = org.strip()
 
     title = j.get('jobPostName', '')
-    if title: s['t'] = title[:50]
+    if title: s['t'] = title.strip()
 
     desig = j.get('designation', '')
-    if desig: s['g'] = desig[:18]
+    if desig: s['g'] = desig.strip()
 
     subj = j.get('subject', '')
-    if subj: s['s'] = subj[:18]
+    if subj: s['s'] = subj.strip()
 
     board = j.get('board', '')
-    if board: s['b'] = BOARD_MAP.get(board, board[:8])
+    if board: s['b'] = BOARD_MAP.get(board, board.strip())
 
     role = j.get('roleType', '')
-    if role: s['r'] = ROLE_MAP.get(role, role[:2])
+    if role: s['r'] = ROLE_MAP.get(role, role.strip())
 
     sal = j.get('salary', '')
     skip_sal = {'Not Disclosed','Not Disclosed (On Merit / Negotiable)','---','','null','None'}
     if sal and sal not in skip_sal:
-        s['$'] = sal[:25]
+        s['$'] = sal.strip()
 
     smin = j.get('salaryMin')
     smax = j.get('salaryMax')
@@ -84,9 +84,9 @@ def slim_job(j):
     city = j.get('city', '')
     state = j.get('state', '')
     dist = j.get('district', '')
-    if city: s['c'] = city
-    if state: s['st'] = state
-    if dist and dist != city: s['dt'] = dist
+    if city: s['c'] = city.strip()
+    if state: s['st'] = state.strip()
+    if dist and dist != city: s['dt'] = dist.strip()
 
     coords = j.get('coordinates', {})
     if coords:
@@ -99,16 +99,16 @@ def slim_job(j):
             pass
 
     exp = j.get('minExperience', '')
-    if exp: s['x'] = str(exp)[:10]
+    if exp: s['x'] = str(exp).strip()
 
     od = j.get('openingDate', '')
     if od: s['od'] = od[:10]
 
     src = j.get('source', '')
-    if src: s['src'] = SOURCE_MAP.get(src, src[:8])
+    if src: s['src'] = SOURCE_MAP.get(src, src.strip())
 
     url = j.get('applyUrl') or j.get('originalUrl', '')
-    if url: s['u'] = url[:100]
+    if url: s['u'] = url.strip()
 
     if j.get('verified'): s['v'] = 1
     if j.get('forLady'): s['f'] = 1
@@ -116,17 +116,17 @@ def slim_job(j):
     img = j.get('organisationLogo') or j.get('image_url')
     if img and isinstance(img, str) and (img.startswith('http://') or img.startswith('https://')):
         img = re.sub(r'=w\d+-h\d+-k-no', '=s300', img)
-        s['im'] = img
+        s['im'] = img.strip()
 
     return s
 
 def link_entry(j):
-    """URL + short description for card detail view (loaded on demand)."""
+    """Full URL + full description for card detail view (loaded on demand, zero data loss)."""
     url = j.get('applyUrl') or j.get('originalUrl', '')
-    desc = j.get('shortDescription', '')[:120]
+    desc = j.get('shortDescription', '') or j.get('description', '')
     entry = {}
-    if url: entry['u'] = url[:200]
-    if desc: entry['d'] = desc
+    if url: entry['u'] = url.strip()
+    if desc: entry['d'] = desc.strip()
     return entry
 
 def main():

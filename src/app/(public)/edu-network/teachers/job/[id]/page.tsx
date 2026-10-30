@@ -8,40 +8,128 @@ import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 import { decodeSlimJob } from '@/lib/jobs/feedDecoder';
 
 let _allJobsCache: FacultyJobItem[] | null = null;
+let _fetchingPromise: Promise<FacultyJobItem[]> | null = null;
 
 async function getAllJobsList(): Promise<FacultyJobItem[]> {
   if (_allJobsCache && _allJobsCache.length > 0) return _allJobsCache;
+  if (_fetchingPromise) return _fetchingPromise;
 
-  try {
-    const aggPath = path.join(process.cwd(), 'src', 'data', 'aggregated_jobs.json');
-    if (fs.existsSync(aggPath)) {
-      const raw = fs.readFileSync(aggPath, 'utf8');
-      const list = JSON.parse(raw);
-      if (Array.isArray(list) && list.length > 0) {
-        _allJobsCache = list;
-        return _allJobsCache;
+  _fetchingPromise = (async () => {
+    // 1. Try local aggregated_jobs.json
+    try {
+      const aggPath = path.join(process.cwd(), 'src', 'data', 'aggregated_jobs.json');
+      if (fs.existsSync(aggPath)) {
+        const raw = fs.readFileSync(aggPath, 'utf8');
+        const list = JSON.parse(raw);
+        if (Array.isArray(list) && list.length > 0) {
+          _allJobsCache = list;
+          return _allJobsCache;
+        }
       }
-    }
-  } catch {}
+    } catch {}
 
-  try {
-    const feedPath = path.join(process.cwd(), 'public', 'jobs', 'jobs-feed.json');
-    if (fs.existsSync(feedPath)) {
-      const raw = fs.readFileSync(feedPath, 'utf8');
-      const list = JSON.parse(raw);
-      if (Array.isArray(list)) {
-        _allJobsCache = list.map(decodeSlimJob);
-        return _allJobsCache;
+    // 2. Try local jobs-feed.json
+    try {
+      const feedPath = path.join(process.cwd(), 'public', 'jobs', 'jobs-feed.json');
+      if (fs.existsSync(feedPath)) {
+        const raw = fs.readFileSync(feedPath, 'utf8');
+        const list = JSON.parse(raw);
+        if (Array.isArray(list) && list.length > 0) {
+          _allJobsCache = list.map(decodeSlimJob);
+          return _allJobsCache;
+        }
       }
-    }
-  } catch {}
+    } catch {}
 
-  return [];
+    // 3. Fallback to GitHub Raw CDN (main branch aggregated_jobs.json)
+    try {
+      const rawRes = await fetch(
+        'https://raw.githubusercontent.com/projectokart/cseel-next/main/src/data/aggregated_jobs.json',
+        { next: { revalidate: 3600 }, signal: AbortSignal.timeout(4000) }
+      );
+      if (rawRes.ok) {
+        const list = await rawRes.json();
+        if (Array.isArray(list) && list.length > 0) {
+          _allJobsCache = list;
+          return _allJobsCache;
+        }
+      }
+    } catch {}
+
+    // 4. Fallback to jsDelivr Edge CDN data-feed
+    try {
+      const cdnRes = await fetch(
+        'https://cdn.jsdelivr.net/gh/projectokart/cseel-next@data-feed/public/jobs/jobs-feed.json',
+        { next: { revalidate: 3600 }, signal: AbortSignal.timeout(4000) }
+      );
+      if (cdnRes.ok) {
+        const list = await cdnRes.json();
+        if (Array.isArray(list) && list.length > 0) {
+          _allJobsCache = list.map(decodeSlimJob);
+          return _allJobsCache;
+        }
+      }
+    } catch {}
+
+    return [];
+  })().finally(() => {
+    _fetchingPromise = null;
+  });
+
+  return _fetchingPromise;
 }
 
 async function findJobById(id: string): Promise<FacultyJobItem | null> {
+  const cleanId = decodeURIComponent(id || '').trim().replace(/\/+$/, '');
   const all = await getAllJobsList();
-  return all.find((j) => j.id === id || (j as any).slug === id) || null;
+  let job =
+    all.find(
+      (j) =>
+        j.id === cleanId ||
+        (j as any).slug === cleanId ||
+        j.id.toLowerCase() === cleanId.toLowerCase() ||
+        (j as any).slug?.toLowerCase() === cleanId.toLowerCase()
+    ) || null;
+
+  // If not found in cache, attempt live fallback fetch
+  if (!job) {
+    try {
+      const freshRes = await fetch(
+        'https://raw.githubusercontent.com/projectokart/cseel-next/main/src/data/aggregated_jobs.json',
+        { cache: 'no-store', signal: AbortSignal.timeout(4500) }
+      );
+      if (freshRes.ok) {
+        const list = await freshRes.json();
+        if (Array.isArray(list) && list.length > 0) {
+          _allJobsCache = list;
+          job =
+            list.find(
+              (j) =>
+                j.id === cleanId ||
+                (j as any).slug === cleanId ||
+                j.id.toLowerCase() === cleanId.toLowerCase() ||
+                (j as any).slug?.toLowerCase() === cleanId.toLowerCase()
+            ) || null;
+        }
+      }
+    } catch {}
+  }
+
+  // If job was decoded from slim format, enrich description and applyUrl from jobs-links.json
+  if (job && (!job.applyUrl || !job.shortDescription)) {
+    try {
+      const linksPath = path.join(process.cwd(), 'public', 'jobs', 'jobs-links.json');
+      if (fs.existsSync(linksPath)) {
+        const links = JSON.parse(fs.readFileSync(linksPath, 'utf8'));
+        if (links[job.id]) {
+          if (!job.applyUrl && links[job.id].u) job.applyUrl = links[job.id].u;
+          if (!job.shortDescription && links[job.id].d) job.shortDescription = links[job.id].d;
+        }
+      }
+    } catch {}
+  }
+
+  return job;
 }
 import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
 import SingleJobClient from './SingleJobClient';
@@ -150,12 +238,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SingleJobPage({ params }: Props) {
   const { id } = await Promise.resolve(params);
-  const allJobs = await getAllJobsList();
-  const job = allJobs.find((j) => j.id === id || (j as any).slug === id) || null;
+  const job = await findJobById(id);
 
   if (!job) {
     notFound();
   }
+
+  const allJobs = await getAllJobsList();
 
   const structuredLoc = formatStructuredAddress(job);
   const salaryParsed = parseNumericSalary(job.salary);

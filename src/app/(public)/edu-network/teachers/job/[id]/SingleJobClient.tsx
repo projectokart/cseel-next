@@ -50,8 +50,10 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
         {/* ─── VERY TOP RESPONSIVE FACULTY HIRING BANNER ─── */}
         <section className="w-full bg-slate-900 border-b border-slate-200">
           <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4">
-            <Link
-              href="/list-as-faculty"
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
               className="block w-full rounded-2xl overflow-hidden border border-slate-700/80 hover:border-[#0A66C2] transition-all duration-300 shadow-md hover:shadow-xl group relative cursor-pointer bg-slate-950"
               title="Are you a School Teacher? Join CSEEL as a Faculty"
             >
@@ -62,7 +64,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                   className="w-full h-full object-contain object-center group-hover:scale-[1.01] transition-transform duration-500"
                 />
               </div>
-            </Link>
+            </a>
           </div>
         </section>
 
@@ -349,7 +351,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                         <span className="text-slate-500">Posting Status</span>
                         <span className={`px-2 py-0.5 rounded-full border text-xs flex items-center gap-1.5 ${age.badgeClass}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${age.dotClass}`} />
-                          <span>{age.label} ({job.openingDate})</span>
+                          <span>{age.label}</span>
                         </span>
                       </div>
                     );

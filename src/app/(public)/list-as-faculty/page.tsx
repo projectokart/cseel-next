@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import RegisterClient from '../edu-network/teachers/register/RegisterClient';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'List as Faculty | Get Direct Interview Calls from 28,000+ Schools | CSEEL',
@@ -24,5 +24,5 @@ export const metadata: Metadata = {
 };
 
 export default function ListAsFacultyPage() {
-  return <RegisterClient />;
+  redirect('https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform');
 }

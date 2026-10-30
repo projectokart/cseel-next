@@ -51,6 +51,13 @@ const nextConfig = {
   },
   experimental: {
     webpackBuildWorker: true,
+    outputFileTracingIncludes: {
+      '/edu-network/teachers/job/[id]': [
+        './src/data/aggregated_jobs.json',
+        './public/jobs/jobs-feed.json',
+        './public/jobs/jobs-links.json',
+      ],
+    },
   },
   images: {
     formats: ['image/avif', 'image/webp'],

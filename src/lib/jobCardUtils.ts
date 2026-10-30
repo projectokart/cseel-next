@@ -456,7 +456,7 @@ export interface JobAgeInfo {
 export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
   if (!dateStr) {
     return {
-      label: 'Today',
+      label: 'Verified Active',
       badgeClass: 'text-emerald-700 bg-emerald-50 border-emerald-200/90 font-bold',
       dotClass: 'bg-emerald-500 animate-pulse',
       diffDays: 0,
@@ -471,7 +471,7 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
 
   if (diffDays > 45) {
     return {
-      label: `${diffDays} Days old (Expired)`,
+      label: 'Expired',
       badgeClass: 'text-slate-400 bg-slate-100 border-slate-200',
       dotClass: 'bg-slate-400',
       diffDays,
@@ -479,11 +479,10 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 1: <= 7 Days (Within 1 week) -> GREEN
-  if (diffDays <= 7) {
-    const label = diffDays === 0 ? 'Today' : diffDays === 1 ? '1 Day old' : `${diffDays} Days old`;
+  // Case 1: Today -> GREEN
+  if (diffDays === 0) {
     return {
-      label,
+      label: 'Today',
       badgeClass: 'text-emerald-700 bg-emerald-50 border-emerald-200 font-bold',
       dotClass: 'bg-emerald-500 animate-pulse',
       diffDays,
@@ -491,10 +490,21 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 2: 8 to 30 Days -> NEUTRAL SLATE
+  // Case 2: <= 7 Days (Within 1 week) -> GREEN Verified Active
+  if (diffDays <= 7) {
+    return {
+      label: 'Verified Active',
+      badgeClass: 'text-emerald-700 bg-emerald-50 border-emerald-200 font-bold',
+      dotClass: 'bg-emerald-500 animate-pulse',
+      diffDays,
+      isExpired: false,
+    };
+  }
+
+  // Case 3: 8 to 30 Days -> Active
   if (diffDays <= 30) {
     return {
-      label: `${diffDays} Days old`,
+      label: 'Active',
       badgeClass: 'text-slate-600 bg-slate-100 border-slate-200/80 font-medium',
       dotClass: 'bg-slate-400',
       diffDays,
@@ -502,11 +512,11 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 3: > 30 Days (31 to 45 Days) -> RED (Warning)
+  // Case 4: > 30 Days (31 to 45 Days) -> Closing Soon
   return {
-    label: `${diffDays} Days old`,
-    badgeClass: 'text-rose-700 bg-rose-50 border-rose-200 font-bold',
-    dotClass: 'bg-rose-500 animate-pulse',
+    label: 'Closing Soon',
+    badgeClass: 'text-amber-700 bg-amber-50 border-amber-200 font-bold',
+    dotClass: 'bg-amber-500 animate-pulse',
     diffDays,
     isExpired: false,
   };

@@ -779,7 +779,11 @@ export default function TeachersDirectoryClient({
   };
 
   const handleOpenListAsTeacher = () => {
-    window.location.href = '/edu-network/teachers/register';
+    window.open(
+      'https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform',
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
 
 
@@ -2446,14 +2450,16 @@ export default function TeachersDirectoryClient({
 
                       {/* Section 3: Action Buttons */}
                       <div className="space-y-2 pt-1 border-t border-slate-100">
-                        <Link
-                          href="/edu-network/teachers/register"
+                        <a
+                          href="https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           onClick={() => setIsMoreMenuOpen(false)}
                           className="w-full py-2.5 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer active:scale-98"
                         >
                           <GraduationCap size={14} />
                           <span>+ List as Faculty</span>
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   </>
@@ -2763,8 +2769,9 @@ export default function TeachersDirectoryClient({
                             {(() => {
                               const age = getJobAgeInfo(job.openingDate);
                               return (
-                                <div className={`text-[10px] sm:text-[10.5px] px-2 py-0.5 rounded-md border font-semibold shrink-0 select-none ${age.badgeClass}`}>
-                                  {age.label}
+                                <div className={`text-[10px] sm:text-[10.5px] px-2 py-0.5 rounded-md border font-semibold shrink-0 select-none inline-flex items-center gap-1.5 ${age.badgeClass}`}>
+                                  <span className={`w-1.5 h-1.5 rounded-full ${age.dotClass}`} />
+                                  <span>{age.label}</span>
                                 </div>
                               );
                             })()}
@@ -3207,13 +3214,15 @@ export default function TeachersDirectoryClient({
                       </p>
                     </div>
 
-                    <Link
-                      href="/edu-network/teachers/register"
+                    <a
+                      href="https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="w-full py-2.5 px-3 bg-[#005689] hover:bg-[#003c6e] text-white rounded-xl text-xs font-bold transition-all shadow-xs hover:shadow cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
                     >
                       <GraduationCap className="w-3.5 h-3.5" />
                       <span>+ List as Faculty</span>
-                    </Link>
+                    </a>
                   </div>
 
                   {/* Widget 2: Fresh Today Vacancies List */}

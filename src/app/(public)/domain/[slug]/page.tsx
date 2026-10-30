@@ -24,6 +24,7 @@ import {
   Wrench,
   Bot
 } from 'lucide-react';
+import { Telescope } from '@/lib/icons/googleMaterialIcons';
 import ExperimentBottomSheetDrawer from '@/components/experiment/ExperimentBottomSheetDrawer';
 import {
   M3Button,
@@ -157,10 +158,16 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
         image: '/images/categories/mathematics.jpg',
         link: '/subject/math',
       },
+      {
+        title: 'Antariksha Astronomy Lab',
+        desc: 'Step into "Antariksha" — CSEEL’s comprehensive Astronomy & Space Science Lab. Master telescope optics, lunar topography, solar observation, planetary orbits, constellations, and celestial astrophysics.',
+        image: '/images/categories/astronomy.jpg',
+        link: '/domain/astronomy',
+      },
     ],
     sampleEyebrow: 'The library',
     sampleHeading: 'Explore Experiments Across Science & Mathematics.',
-    filterStreams: ['All', 'Physics', 'Chemistry', 'Biology', 'Mathematics'],
+    filterStreams: ['All', 'Physics', 'Chemistry', 'Biology', 'Mathematics', 'Astronomy'],
     sampleModules: [
       {
         title: 'Cell Division & Mitosis Under Magnification',
@@ -234,6 +241,30 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
         image: '/images/categories/biology.jpg',
         link: '/subject/biology',
       },
+      {
+        title: "Kepler's Laws & Planetary Orbital Mechanics",
+        topic: 'Antariksha Astronomy Lab · Celestial Mechanics',
+        stream: 'Astronomy',
+        type: 'Interactive Simulation',
+        image: '/images/categories/astronomy.jpg',
+        link: '/domain/astronomy',
+      },
+      {
+        title: 'Solar Flares, Sunspots & H-Alpha Observation',
+        topic: 'Antariksha Astronomy Lab · Heliophysics',
+        stream: 'Astronomy',
+        type: 'Observation Practical',
+        image: '/images/hero/astronomy-hero.jpg',
+        link: '/domain/astronomy',
+      },
+      {
+        title: 'Astronomical Telescopes: Refractor vs Reflector Optics',
+        topic: 'Antariksha Astronomy Lab · Optics & Astrophysics',
+        stream: 'Astronomy',
+        type: 'Laboratory Practical',
+        image: '/images/categories/astronomy.jpg',
+        link: '/domain/astronomy',
+      },
     ],
     tutorEyebrow: 'Meet 7thi',
     tutorHeading: 'An AI tutor for every experiment.',
@@ -303,6 +334,7 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
       },
     ],
     otherDisciplines: [
+      { title: 'Antariksha Astronomy Lab', href: '/domain/astronomy' },
       { title: 'Engineering & Technology', href: '/domain/engineering' },
       { title: 'Art & Design STEAM', href: '/domain/art' },
     ],
@@ -642,6 +674,187 @@ const DOMAIN_DATA: Record<string, DomainConfig> = {
     ],
     ctaHeading: 'Experience creative STEAM labs in 30 minutes.',
     ctaSub: 'A walkthrough tailored to your institution, your art curriculum, and your student cohort.',
+  },
+
+  astronomy: {
+    slug: 'astronomy',
+    eyebrow: 'Antariksha Lab · Astronomy & Space Sciences',
+    titlePrefix: 'Experiential observatory & space science labs for ',
+    highlightWord: 'astronomy',
+    titleSuffix: ' education.',
+    lead: 'Welcome to Antariksha — India’s flagship turnkey Astronomy & Space Science Laboratory for K-12 schools. Equipped with computerized GoTo telescopes, digital planetarium simulators, solar H-Alpha observation filters, celestial spectroscopy spectrometers, and interactive 3D orbital simulators aligned with NEP 2020 & ISRO Space Tutor guidelines.',
+    heroImage: '/images/hero/astronomy-hero.jpg',
+    trustLine: 'Aligned with ISRO Space Tutor & NEP 2020 Guidelines · Turnkey School Setup · 10+ Years in STEM',
+    whyEyebrow: 'Why Antariksha',
+    whyHeading: 'Why Top Schools Set Up Antariksha Astronomy Labs.',
+    whyPoints: [
+      {
+        icon: Telescope,
+        title: 'Day & Night Celestial Observations',
+        desc: 'Solar H-alpha filters allow safe daytime sunspot & prominence tracking during school hours, while computerized GoTo tracking reflectors power night sky camps.',
+      },
+      {
+        icon: Sparkles,
+        title: 'Zero Light-Pollution Barrier',
+        desc: 'Interactive 3D spatial planetarium software gives urban metro students an unhindered, crystal-clear view of the cosmos right inside the classroom.',
+      },
+      {
+        icon: ShieldCheck,
+        title: 'Complete Eye Safety & Certification',
+        desc: 'Lab-grade ISO certified solar filters and optical shields ensure students safely view solar eclipses, transits, and chromospheric flares without risk.',
+      },
+      {
+        icon: BarChart3,
+        title: 'Curriculum-Aligned Data & Assessment',
+        desc: 'Students calculate real lunar crater depths, Keplerian orbital periods, and stellar spectral classes with structured observation logbooks and automated reporting.',
+      },
+    ],
+    libEyebrow: 'The Antariksha Divisions',
+    libHeading: 'Comprehensive Astronomy & Astrophysics Pillars.',
+    subjects: [
+      {
+        title: 'Observational Astronomy & Telescopes',
+        desc: 'Hands-on optical telescope engineering — Newtonian reflectors, achromatic refractors, Barlow lenses, solar projection screens, and astrophotography camera integration.',
+        image: '/images/hero/astronomy-hero.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Planetary Mechanics & Solar System',
+        desc: 'Explore gravitational orbital mechanics, Kepler’s three laws, retrograde planetary motion, asteroid belts, and real-time lunar phase geometry.',
+        image: '/images/categories/astronomy.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Stellar Evolution & Astrophysics',
+        desc: 'Study the life cycles of stars, Hertzsprung-Russell diagrams, stellar nucleosynthesis, white dwarfs, neutron stars, and black hole event horizons.',
+        image: '/images/hero/astronomy-hero.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Space Technology & Rocketry',
+        desc: 'Satellite orbital velocity calculations, rocket propulsion physics, CubeSat architecture, and mission telemetry analysis aligned with ISRO Space Tutor standards.',
+        image: '/images/categories/astronomy.jpg',
+        link: '/subject/astronomy',
+      },
+    ],
+    sampleEyebrow: 'Interactive Modules',
+    sampleHeading: 'Explore Core Antariksha Laboratory Practicals.',
+    filterStreams: ['All', 'Telescope Optics', 'Planetary Orbits', 'Astrophysics', 'Space Technology'],
+    sampleModules: [
+      {
+        title: "Kepler's Third Law & Planetary Velocity",
+        topic: 'Celestial Mechanics & Gravity',
+        stream: 'Planetary Orbits',
+        type: 'Interactive Simulation',
+        image: '/images/categories/astronomy.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Solar Flare & Sunspot Tracking with H-Alpha Filter',
+        topic: 'Solar Astronomy & Heliophysics',
+        stream: 'Telescope Optics',
+        type: 'Observation Practical',
+        image: '/images/hero/astronomy-hero.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Lunar Crater Depth via Shadow Trigonometry',
+        topic: 'Lunar Topography & Optics',
+        stream: 'Telescope Optics',
+        type: 'Laboratory Practical',
+        image: '/images/categories/astronomy.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Stellar Spectral Classification (OBAFGKM)',
+        topic: 'Astrophysics & Spectroscopy',
+        stream: 'Astrophysics',
+        type: 'Analytical Lab',
+        image: '/images/hero/astronomy-hero.jpg',
+        link: '/subject/astronomy',
+      },
+      {
+        title: 'Satellite Escape Velocity & Hohmann Transfer Orbit',
+        topic: 'Rocketry & Orbital Physics',
+        stream: 'Space Technology',
+        type: 'Simulation Model',
+        image: '/images/categories/astronomy.jpg',
+        link: '/subject/astronomy',
+      },
+    ],
+    tutorEyebrow: 'AI Space Tutor',
+    tutorHeading: 'Ask Any Celestial or Astrophysical Question.',
+    tutorLead: 'Antariksha AI space tutor guides students through complex astronomical calculations, constellation hunting, and telescope alignment.',
+    tutorChatLines: [
+      'How does a Newtonian reflector compare to a Schmidt-Cassegrain telescope for school observations?',
+      'How do we calculate the orbital speed of Jupiter’s Galilean moons using Kepler’s 3rd Law?',
+      'Why do solar prominence flares require an H-Alpha (656.3 nm) narrow-band filter to observe?',
+      'How does the Hertzsprung-Russell diagram help classify stellar life cycles from main sequence to black holes?',
+    ],
+    tutorImage: '/images/hero/astronomy-hero.jpg',
+    whoEyebrow: 'Who Is Antariksha For',
+    whoHeading: 'Designed for Schools, Inspiring the Next Generation of Astronomers.',
+    whoCards: [
+      {
+        icon: School,
+        title: 'For Progressive K-12 Schools',
+        desc: 'Establish a landmark rooftop or dedicated indoor astronomy laboratory that sets your institution apart and excites parents during admissions.',
+      },
+      {
+        icon: GraduationCap,
+        title: 'For Science & Physics Educators',
+        desc: 'Deliver curriculum-mapped practicals for CBSE, ICSE, and Cambridge boards with ready-to-use celestial observation manuals and stargazing schedules.',
+      },
+      {
+        icon: Users,
+        title: 'For Student Astronomy Clubs',
+        desc: 'Empower students to host community stargazing nights, solar eclipse workshops, and participate in national asteroid search campaigns.',
+      },
+    ],
+    standardsHeading: 'Aligned with NEP 2020 & National Space Education Goals.',
+    standardsLead: 'Antariksha Astronomy Lab directly implements the National Education Policy (NEP 2020) mandate for experiential, inquiry-driven STEM learning and mirrors the educational outreach vision of ISRO Space Tutor programs.',
+    faqs: [
+      {
+        q: 'What is the Antariksha Astronomy Lab?',
+        a: 'Antariksha is CSEEL’s comprehensive turnkey Astronomy & Space Science Laboratory designed specifically for schools. It integrates high-precision optical telescopes, safe solar observation filters, digital planetarium projection, and curriculum-aligned hands-on practicals for Classes 3 through 12.',
+      },
+      {
+        q: 'Does our school need dark rural skies to install the Antariksha Lab?',
+        a: 'No. Antariksha is purpose-built for both urban and rural campuses. For daytime learning during school hours, our solar H-Alpha filters allow safe observation of the Sun. For nighttime observations, our digital planetarium software and computerized GoTo telescopes filter and navigate urban skies with automated celestial alignment.',
+      },
+      {
+        q: 'What telescope equipment and instruments are included in Antariksha?',
+        a: 'The lab includes computerized GoTo reflector telescopes, wide-field refractor telescopes, specialized H-Alpha solar observation filters, astrophotography CCD cameras, digital planetarium domes, celestial planispheres, spectrometers, and structured student observation workbooks.',
+      },
+      {
+        q: 'Does CSEEL provide training for our school’s science teachers?',
+        a: 'Yes! Every Antariksha Lab setup includes certified educator training covering telescope assembly, polar alignment, solar safety, astrophotography, and how to conduct successful school night sky observation camps.',
+      },
+      {
+        q: 'Which school education boards does Antariksha support?',
+        a: 'Antariksha is strictly mapped to CBSE (Physics, Science & Skill Subject: Space Science), ICSE, Cambridge (IGCSE/A-Levels), and State Boards, fulfilling all practical and investigatory project requirements.',
+      },
+    ],
+    caseStudies: [
+      {
+        institute: 'Leading CBSE School in Delhi NCR',
+        title: 'Antariksha Astronomy Night Camp & Asteroid Hunt',
+        desc: 'Over 450 students observed Jupiter’s bands and Saturn’s rings, completing real lunar crater measurements as part of their Physics practicals.',
+        link: '/about',
+      },
+      {
+        institute: 'Top International School, Bengaluru',
+        title: 'NEP 2020 Space Science Skill Hub Pilot',
+        desc: 'Integrated solar heliophysics observation into middle school science, resulting in a 42% surge in STEM club participation.',
+        link: '/about',
+      },
+    ],
+    otherDisciplines: [
+      { title: 'Science & Mathematics Hub', href: '/domain/science' },
+      { title: 'Engineering & Technology Hub', href: '/domain/engineering' },
+    ],
+    ctaHeading: 'Bring the Antariksha Astronomy Lab to your campus.',
+    ctaSub: 'Schedule a tailored 30-minute demonstration with our astronomy specialists for your school leadership team.',
   },
 };
 

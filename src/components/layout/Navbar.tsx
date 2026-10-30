@@ -87,6 +87,7 @@ const navItems: NavItem[] = [
               { label: 'Physics Practicals & Mechanics', to: '/subject/physics' },
               { label: 'Chemistry Titration & Salt Analysis', to: '/subject/chemistry' },
               { label: 'Biology Microscopy & Specimen Slides', to: '/subject/biology' },
+              { label: 'Antariksha Astronomy Lab', to: '/domain/astronomy' },
               { label: 'Science Domain Hub', to: '/domain/science' },
             ],
           },

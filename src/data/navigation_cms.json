@@ -31,6 +31,10 @@
                 "to": "/subject/biology"
               },
               {
+                "label": "Antariksha Astronomy Lab",
+                "to": "/domain/astronomy"
+              },
+              {
                 "label": "Science Domain Hub",
                 "to": "/domain/science"
               }

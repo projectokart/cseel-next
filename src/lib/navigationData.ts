@@ -60,6 +60,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
               { label: 'Physics Practicals & Mechanics', to: '/subject/physics' },
               { label: 'Chemistry Titration & Salt Analysis', to: '/subject/chemistry' },
               { label: 'Biology Microscopy & Specimen Slides', to: '/subject/biology' },
+              { label: 'Antariksha Astronomy Lab', to: '/domain/astronomy' },
               { label: 'Science Domain Hub', to: '/domain/science' },
             ],
           },

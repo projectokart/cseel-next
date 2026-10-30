@@ -16717,6 +16717,136 @@ export const SUBJECTS_DATA: Record<string, SubjectMetadata> = {
         colorTheme: 'from-amber-600 to-orange-700'
       }
     ]
+  },
+  astronomy: {
+    slug: 'astronomy',
+    name: 'Antariksha Astronomy Activities',
+    tagline: 'Observe Celestial Bodies, Track Planetary Orbits & Analyze Deep Space in the Antariksha Lab',
+    heroGradient: 'from-blue-950 via-slate-900 to-indigo-950',
+    accentColor: '#005689',
+    badgeColor: 'bg-indigo-100 text-indigo-900 border-indigo-300',
+    iconName: 'Telescope',
+    activeCount: 4,
+    labType: 'Antariksha Space & Celestial Observatory Lab',
+    description: 'Immerse in hands-on planetary mechanics, solar flare spectroscopy, lunar crater trigonometry, and computerized telescope optics in CSEEL’s Antariksha Astronomy Laboratory aligned with NEP 2020 & ISRO guidelines.',
+    popularConcepts: ['Kepler’s Orbital Laws', 'Solar H-Alpha Sunspot Tracking', 'Telescope Optics & Magnification', 'Lunar Shadow Trigonometry', 'Stellar Spectral Classification'],
+    simulatorType: 'physics_pendulum',
+    activities: [
+      {
+        id: 'kepler-planetary-orbital-laws',
+        slug: 'kepler-planetary-orbital-laws',
+        title: "Kepler's Third Law: Harmonic Ratio of Planetary Periods and Semi-Major Axes",
+        subtitle: 'Verify T² = k × a³ across planetary orbits in the Solar System using real celestial observation data from the Antariksha Astronomy Lab.',
+        category: 'Antariksha Celestial Mechanics Laboratory',
+        gradeLevel: 'Class 11th & 12th',
+        difficulty: 'Intermediate',
+        duration: '45 Mins',
+        safetyLevel: 'Safe for Home',
+        description: 'Calculate the orbital period (T) and semi-major axis (a) of the eight major planets. Plot T² against a³ to establish Johannes Kepler’s Third Law of Planetary Motion and determine the constant of proportionality k.',
+        scientificPrinciple: 'Gravitational centripetal force balances planetary orbital momentum: (G × M_sun × m) / r² = m × (4π² / T²) × r, yielding T² / r³ = 4π² / (G × M_sun).',
+        materials: ['Antariksha Planetary Ephemeris Table', 'Log-Log Grid Graph', 'Vernier Caliper Simulator', 'Scientific Calculator'],
+        steps: [
+          'Tabulate the orbital period (T in Earth years) and semi-major axis (a in Astronomical Units AU) for Mercury through Neptune.',
+          'Compute T² and a³ for each celestial body.',
+          'Plot T² on the y-axis against a³ on the x-axis to verify the strict linear proportionality passing through origin.',
+          'Calculate the slope of the curve to determine the gravitational solar mass constant k = 1.00 yr²/AU³.'
+        ],
+        realWorldApplication: 'Interplanetary spacecraft navigation, exoplanet orbit verification, and geostationary satellite placement.',
+        tags: ['Astronomy', 'Kepler', 'Gravity', 'Planets', 'Antariksha'],
+        badge: 'Antariksha Masterclass',
+        image: '/images/categories/astronomy.jpg',
+        thumbnail_url: '/images/categories/astronomy.jpg',
+        colorTheme: 'from-blue-700 to-indigo-900',
+        formula: 'T^2 = \\frac{4\\pi^2}{GM_{\\odot}} a^3'
+      },
+      {
+        id: 'solar-sunspot-h-alpha-observation',
+        slug: 'solar-sunspot-h-alpha-observation',
+        title: 'Solar Heliophysics: Tracking Sunspot Number & Solar Rotation with H-Alpha Filter',
+        subtitle: 'Safely observe the solar chromosphere and photosphere through the Antariksha solar telescope to calculate the Sun’s differential rotation period.',
+        category: 'Antariksha Solar Observatory',
+        gradeLevel: 'Class 9th to 12th',
+        difficulty: 'Intermediate',
+        duration: '50 Mins',
+        safetyLevel: 'Lab Environment Required',
+        description: 'Mount an ISO certified H-Alpha (656.3 nm) solar filter on the Antariksha refractor telescope. Project the solar disk onto an observation grid and track sunspot active regions (AR) across consecutive days to measure solar rotation velocity.',
+        scientificPrinciple: 'Sunspots are cooler regions (3800 K) formed by concentrated magnetic flux loops that inhibit convective heat transport from the solar interior.',
+        materials: ['Antariksha 80mm Achromatic Refractor Telescope', 'ISO Certified H-Alpha 656.3nm Solar Filter', 'Solar Projection Screen & Stonyhurst Disk Grid', 'Observation Logbook'],
+        steps: [
+          'Verify complete eye safety shielding and firmly lock the solar H-Alpha filter onto the telescope objective.',
+          'Align telescope finder scope using shadow alignment (never look directly through an unfiltered finder scope).',
+          'Project the solar disk image onto the calibrated Stonyhurst grid to record heliographic latitude and longitude.',
+          'Count the Wolf Sunspot Number R = 10g + s where g is the number of sunspot groups and s is individual spots.',
+          'Compare spot coordinates over a 7-day period to compute equatorial solar rotation (~25 days).'
+        ],
+        precautions: [
+          'NEVER look through any telescope or viewfinder directly at the Sun without certified solar filtration.',
+          'Ensure solar filters are front-objective mounted and not eyepiece mounted.'
+        ],
+        realWorldApplication: 'Space weather forecasting, geomagnetic storm warning systems, and satellite communication protection.',
+        tags: ['Solar Science', 'Sunspots', 'H-Alpha', 'Telescope', 'Antariksha'],
+        badge: 'Solar Observatory',
+        image: '/images/hero/astronomy-hero.jpg',
+        thumbnail_url: '/images/hero/astronomy-hero.jpg',
+        colorTheme: 'from-amber-600 to-red-800'
+      },
+      {
+        id: 'telescope-optics-focal-length',
+        slug: 'telescope-optics-focal-length',
+        title: 'Astronomical Optics: Magnification, Focal Ratio & Resolving Power of Telescopes',
+        subtitle: 'Configure Newtonian reflectors and achromatic refractors to analyze Dawes’ Limit and celestial resolution in the Antariksha Lab.',
+        category: 'Antariksha Optics Practical',
+        gradeLevel: 'Class 10th to 12th',
+        difficulty: 'Intermediate',
+        duration: '40 Mins',
+        safetyLevel: 'Lab Environment Required',
+        description: 'Assemble optical eyepieces (Plössl 25mm, 10mm, 6mm) with the Antariksha 150mm parabolic mirror reflector. Calculate angular magnification M = f_objective / f_eyepiece and test resolving separation on an artificial binary star bench.',
+        scientificPrinciple: 'Diffraction at a circular aperture limits the minimum angular separation of two celestial objects: θ = 1.22 λ / D (Rayleigh Criterion).',
+        materials: ['150mm f/5 Newtonian Reflector Optical Tube', 'Plössl Eyepiece Set (25mm, 10mm, 6mm)', '2X Achromatic Barlow Lens', 'Artificial Binary Star Light Source'],
+        steps: [
+          'Measure the focal length of the objective mirror (750 mm) and calculate the focal ratio f/5.',
+          'Insert the 25mm Plössl eyepiece and compute baseline magnification: M = 750 / 25 = 30X.',
+          'Swap in the 10mm eyepiece (75X) and 6mm eyepiece (125X), noting the trade-off between magnification and field of view.',
+          'Insert the 2X Barlow lens to double the effective focal length to 1500 mm.',
+          'Determine the empirical Dawes Limit resolving power: R = 116 / D_mm = 116 / 150 = 0.77 arcseconds.'
+        ],
+        realWorldApplication: 'Observational astrophysics, satellite spy cameras, and deep space imaging systems.',
+        tags: ['Optics', 'Telescope', 'Magnification', 'Rayleigh', 'Antariksha'],
+        badge: 'Optics Lab',
+        image: '/images/categories/astronomy.jpg',
+        thumbnail_url: '/images/categories/astronomy.jpg',
+        colorTheme: 'from-slate-700 to-indigo-900',
+        formula: 'M = \\frac{f_{obj}}{f_{eye}}, \\quad \\theta = \\frac{1.22 \\lambda}{D}'
+      },
+      {
+        id: 'lunar-crater-shadow-trigonometry',
+        slug: 'lunar-crater-shadow-trigonometry',
+        title: 'Lunar Topography: Calculating Crater Wall Height via Shadow Trigonometry',
+        subtitle: 'Measure shadow lengths inside the Copernicus and Tycho craters to determine lunar rim elevation using the Antariksha Lab telescope.',
+        category: 'Antariksha Lunar Topography',
+        gradeLevel: 'Class 9th to 12th',
+        difficulty: 'Advanced',
+        duration: '45 Mins',
+        safetyLevel: 'Safe for Home',
+        description: 'Using high-resolution lunar photography captured through the Antariksha telescope during the First Quarter moon, apply trigonometry h = L × tan(α) where α is the solar incidence angle to compute the true depth of lunar impact craters.',
+        scientificPrinciple: 'At the lunar terminator (boundary between light and dark), sunlight strikes at a grazing angle, creating elongated shadows directly proportional to topographic elevation.',
+        materials: ['Antariksha High-Resolution Lunar Terminator CCD Map', 'Micrometer Reticle Scaler', 'Selenographic Coordinate Protractor'],
+        steps: [
+          'Locate the Copernicus crater (93 km diameter) near the lunar terminator.',
+          'Measure the length of the central peak shadow using the calibrated micrometer scale.',
+          'Calculate the local solar altitude angle α based on the crater’s selenographic longitude and current lunar phase angle.',
+          'Apply the trigonometric formula h = L × tan(α) to compute the height of the central mountain peak (~1.2 km).',
+          'Compare findings with NASA Lunar Reconnaissance Orbiter (LRO) laser altimeter benchmarks.'
+        ],
+        realWorldApplication: 'Planetary landing site hazard assessment, lunar rover navigation, and Chandrayaan landing mission planning.',
+        tags: ['Moon', 'Lunar', 'Trigonometry', 'Craters', 'Antariksha'],
+        badge: 'Lunar Science',
+        image: '/images/hero/astronomy-hero.jpg',
+        thumbnail_url: '/images/hero/astronomy-hero.jpg',
+        colorTheme: 'from-slate-800 to-blue-950',
+        formula: 'h = L \\cdot \\tan(\\alpha)'
+      }
+    ]
   }
 };
 

@@ -24,6 +24,8 @@ export async function GET() {
     { url: '/makerspace/curriculum/grade-7', priority: '0.85', changefreq: 'monthly' },
     { url: '/makerspace/curriculum/grade-8', priority: '0.85', changefreq: 'monthly' },
     { url: '/domain/science', priority: '0.9', changefreq: 'weekly' },
+    { url: '/domain/astronomy', priority: '0.9', changefreq: 'weekly' },
+    { url: '/subject/astronomy', priority: '0.9', changefreq: 'weekly' },
     { url: '/domain/engineering', priority: '0.9', changefreq: 'weekly' },
     { url: '/domain/art', priority: '0.9', changefreq: 'weekly' },
     { url: '/composite-lab', priority: '0.9', changefreq: 'weekly' },

@@ -25,7 +25,11 @@ const LayoutContent = ({ children }: LayoutProps) => {
   const isDedicated =
     pathname?.startsWith('/school-finder') ||
     pathname?.startsWith('/schoolsearch') ||
-    pathname?.startsWith('/school-template');
+    pathname?.startsWith('/school-template') ||
+    pathname === '/domain/astronomy' ||
+    pathname?.startsWith('/domain/astronomy') ||
+    pathname === '/antariksha' ||
+    pathname?.startsWith('/antariksha');
   const isHomePage = pathname === '/' || pathname === '';
 
   if (isAdmin || isDedicated) {

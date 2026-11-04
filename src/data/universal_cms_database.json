@@ -779,5 +779,29 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-10-28T11:23:54.212Z",
     "updatedBy": "Auto Init"
+  },
+  "domain:astronomy": {
+    "pageKey": "domain:astronomy",
+    "title": "Domain Astronomy",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-30T11:16:37.317Z",
+    "updatedBy": "Auto Init"
+  },
+  "antariksha": {
+    "pageKey": "antariksha",
+    "title": "Antariksha",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-10-30T12:01:01.442Z",
+    "updatedBy": "Auto Init"
+  },
+  "media-archive": {
+    "pageKey": "media-archive",
+    "title": "Media Archive",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-04T12:10:21.857Z",
+    "updatedBy": "Auto Init"
   }
 }

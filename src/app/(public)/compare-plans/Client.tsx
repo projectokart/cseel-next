@@ -63,33 +63,24 @@ const plans = [
   {
     name: "Cseel Explorer™",
     description: "Start your journey with hands-on learning in a real lab environment.",
-    price: "₹1,00,000",
-    priceNote: "Per School / Year",
-    subNote: "Annual term for high-impact learning.",
-    features: ["Access to 1000+ modules", "Teacher Dashboard", "Standard Support"],
-    cta: "Get Started",
+    features: ["Access to 1000+ modules", "Teacher Dashboard", "Standard Support", "CBSE & ICSE Lab Alignment"],
+    cta: "Request Plan Details",
     ctaLink: "/contact-us",
     popular: false,
   },
   {
     name: "Cseel Advanced",
     description: "Expand your reach with more experiments and flexible student engagement.",
-    price: "Custom",
-    priceNote: "Contact for Quote",
-    subNote: "Tailored for growing institutions.",
-    features: ["Everything in Explorer", "Advanced Analytics", "Priority Support", "LMS Integration"],
-    cta: "Contact Sales",
+    features: ["Everything in Explorer", "Advanced Analytics", "Priority Support", "LMS Integration", "Experiential Pedagogy Workshop"],
+    cta: "Request Plan Details",
     ctaLink: "/contact-us",
     popular: true,
   },
   {
     name: "Cseel Elite",
     description: "Full program support for institutions looking to transform STEM learning.",
-    price: "Enterprise",
-    priceNote: "Custom Solutions",
-    subNote: "Complete digital transformation.",
-    features: ["Everything in Advanced", "Custom Experiment Design", "On-site Training", "Dedicated Manager"],
-    cta: "Contact Sales",
+    features: ["Everything in Advanced", "Custom Experiment Design", "On-site Training", "Dedicated Lab Coordinator"],
+    cta: "Request Plan Details",
     ctaLink: "/contact-us",
     popular: false,
   },
@@ -136,12 +127,7 @@ const ComparePlans = () => {
                     <p className="text-xs text-slate-500 leading-relaxed font-medium">{plan.description}</p>
                   </div>
 
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-slate-900 tracking-tight">{plan.price}</span>
-                    </div>
-                    <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">{plan.priceNote}</p>
-                  </div>
+
 
                   <div className="flex-1 space-y-3.5 mb-8">
                     <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest opacity-50">Features</p>
@@ -170,7 +156,7 @@ const ComparePlans = () => {
         </section>
 
         {/* 2. HORIZONTAL SCROLL TESTIMONIALS SLIDER WITH SWIPER */}
-        <section className="py-16 sm:py-20 bg-white overflow-hidden border-b border-slate-100">
+        <section className="hidden py-16 sm:py-20 bg-white overflow-hidden border-b border-slate-100" style={{ display: 'none' }}>
           <div className="container mx-auto px-4">
             
             {/* Header with Navigation Controls */}

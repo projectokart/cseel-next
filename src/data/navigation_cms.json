@@ -114,46 +114,6 @@
                 "to": "/makerspace"
               }
             ]
-          },
-          {
-            "id": "item-projectokart",
-            "label": "Projectokart STEM Projects",
-            "to": "/projects",
-            "desc": "Student-led maker projects with circuit schematics, bill of materials & working builds.",
-            "subItems": [
-              {
-                "label": "Working Science Fair Prototypes",
-                "to": "/projects"
-              },
-              {
-                "label": "Innovation Schematics & BOM",
-                "to": "/projects"
-              },
-              {
-                "label": "Student Innovation Showcase",
-                "to": "/projects"
-              }
-            ]
-          },
-          {
-            "id": "item-art-craft",
-            "label": "Art, Design & Craft",
-            "to": "/domain/art",
-            "desc": "Creative STEAM studio, color physics, photochemistry, model making & design thinking.",
-            "subItems": [
-              {
-                "label": "Creative STEAM Studio",
-                "to": "/domain/art"
-              },
-              {
-                "label": "Color Physics & Optics Lab",
-                "to": "/domain/art"
-              },
-              {
-                "label": "Design Thinking & Prototyping",
-                "to": "/domain/art"
-              }
-            ]
           }
         ]
       }
@@ -609,11 +569,6 @@
             "badge": "Articles & Blog",
             "subItems": [
               {
-                "label": "Research Article: The Confidence Effect",
-                "to": "/online-stem-retention-research-preview",
-                "badge": "Article"
-              },
-              {
                 "label": "Academic STEM Blog (All Posts)",
                 "to": "/blog",
                 "badge": "Blog"
@@ -663,26 +618,9 @@
       {
         "id": "col-media-tour",
         "categoryTitle": "Media & Visual Showcase",
-        "to": "/virtual-lab-tour",
+        "to": "/media-archive",
         "enabled": true,
         "items": [
-          {
-            "id": "item-360-tour",
-            "label": "360\u00b0 Interactive Lab Tour",
-            "to": "/virtual-lab-tour",
-            "desc": "Take an interactive walkthrough inside modern composite science laboratories.",
-            "subItems": [
-              {
-                "label": "Launch 360\u00b0 Walkthrough",
-                "to": "/virtual-lab-tour",
-                "badge": "360\u00b0"
-              },
-              {
-                "label": "Lab Equipment Inspection",
-                "to": "/virtual-lab-tour"
-              }
-            ]
-          },
           {
             "id": "item-media-gallery",
             "label": "Media & Installations Gallery",
@@ -707,11 +645,11 @@
       }
     ],
     "featuredPanel": {
-      "eyebrow": "Interactive Tour",
-      "title": "Walk Through a Turnkey 600 Sq Ft Composite Science Lab",
-      "desc": "Experience our interactive 360\u00b0 virtual tour and browse high-resolution photos of school installations across India.",
-      "ctaText": "Launch 360\u00b0 Lab Tour",
-      "ctaHref": "/virtual-lab-tour"
+      "eyebrow": "Media Archive",
+      "title": "CSEEL Media & Press Archive",
+      "desc": "Browse official media, announcements, and news from CSEEL.",
+      "ctaText": "Visit Media Archive",
+      "ctaHref": "/media-archive"
     }
   }
 ]

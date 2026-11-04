@@ -292,7 +292,7 @@ export const SectionEditorDrawer: React.FC<SectionEditorDrawerProps> = ({
                   type="text"
                   value={secondaryCtaLink}
                   onChange={(e) => setSecondaryCtaLink(e.target.value)}
-                  placeholder="e.g. /virtual-lab-tour"
+                  placeholder="e.g. /virtual-lab"
                   className="w-full px-3 py-1.5 text-xs rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
                 />
               </div>

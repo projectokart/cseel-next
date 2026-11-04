@@ -1,27 +1,27 @@
 import type { Metadata } from 'next';
-import Client from './Client';
+import WhyCseelClient from './Client';
 
 export const metadata: Metadata = {
-  title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
-  description: "Discover why 28,000+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
-  keywords: "why CSEEL, best science lab India, benefits of live lab, experiential science education",
+  title: "Where Textbooks Come Alive | Why CSEEL Experiential Science Ecosystem",
+  description: "A Comprehensive Experiential Learning Ecosystem for Schools. India's first offline experiential science space transforming textbooks into hands-on discovery, real creation, and 21st century competencies.",
+  keywords: "why CSEEL, where textbooks come alive, experiential science learning ecosystem, school science lab setup, NEP 2020 science labs, Atal Tinkering Labs, Viksit Bharat 2047 science education",
   alternates: {
     canonical: "https://www.cseel.org/why-cseel",
   },
   openGraph: {
-    title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
-    description: "Discover why 28,000+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
+    title: "Where Textbooks Come Alive | Why CSEEL Experiential Science Ecosystem",
+    description: "A Comprehensive Experiential Learning Ecosystem for Schools. India's first offline experiential science space transforming textbooks into hands-on discovery.",
     url: "https://www.cseel.org/why-cseel",
     siteName: "CSEEL - Center for Scientific Exploration & Experiential Learning",
     locale: "en_IN",
     type: "website",
     images: [
       {
-        url: "https://www.cseel.org/images/cseel-social-preview.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Why Choose CSEEL - India's Leading Experiential Science Lab",
-        type: "image/jpeg",
+        url: "https://www.cseel.org/images/why-cseel/slide_1.png",
+        width: 636,
+        height: 900,
+        alt: "Where Textbooks Come Alive - CSEEL Experiential Science Ecosystem",
+        type: "image/png",
       },
     ],
   },
@@ -29,12 +29,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@cseel_org",
     creator: "@cseel_org",
-    title: "Why Choose CSEEL? | India's Leading Experiential Science Lab",
-    description: "Discover why 28,000+ schools and thousands of students trust CSEEL for experiential science labs, interactive hands-on experiments, and hands-on science kits.",
-    images: ["https://www.cseel.org/images/cseel-social-preview.jpg"],
+    title: "Where Textbooks Come Alive | Why CSEEL Experiential Science Ecosystem",
+    description: "A Comprehensive Experiential Learning Ecosystem for Schools. India's first offline experiential science space transforming textbooks into hands-on discovery.",
+    images: ["https://www.cseel.org/images/why-cseel/slide_1.png"],
   },
 };
 
 export default function Page() {
-  return <Client />;
+  return <WhyCseelClient />;
 }

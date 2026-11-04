@@ -27,60 +27,7 @@ const CATEGORIES = [
 ];
 
 const ITEMS_PER_PAGE = 6;
-const TOTAL_PAGES_COUNT = 29;
 
-// Generate 29 pages worth of rich articles by cycling and expanding ALL_BLOGS
-const EXPANDED_BLOGS: BlogPostItem[] = (() => {
-  const list: BlogPostItem[] = [...ALL_BLOGS];
-  const titles = [
-    "From Consideration to Enrollment: What Online STEM Students Want",
-    "How to Successfully Implement a Virtual Reality Lab in Higher Education: A Practical 7-Stage Framework",
-    "Can VR Labs Help Improve NAAC/NIRF/ABET Scores?",
-    "Teaching Total Station Operation in VR",
-    "How to Get Funding for VR Labs in Higher Education",
-    "VR for Traffic Training and Transportation Simulation in Universities",
-    "Cost of VR Lab Setup: A Budget Guide for Universities and Colleges",
-    "Microbiology Laboratory Practicals in 3D: Bacterial Gram Staining",
-    "Optics Bench Simulation: Convex Lenses, Focal Length & Ray Tracing",
-    "Acid-Base Titration Curves with Automated pH Sensor Logging",
-    "Neuroscience of Kinesthetic Discovery in School Science Laboratories",
-    "Designing Safe Chemistry Experiments for K-12 Classrooms",
-    "Atal Tinkering Lab Setup Checklist: 3D Printers, Soldering & Microcontrollers",
-    "Electromagnetic Induction & Faraday's Law in 3D Interactive Workbench",
-    "Genetics & DNA Electrophoresis Gel Running Simulation Guide",
-    "Thermal Expansion & Heat Transfer Practical Demonstration Protocols"
-  ];
-  const authors = [
-    { name: "Dev Sharma", role: "Founder & Lead Innovator", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop" },
-    { name: "Dr. Arvind Sharma", role: "Director of Curriculum", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop" },
-    { name: "Priya Nair", role: "ATL Robotics Engineer", avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop" },
-    { name: "Eva Jones", role: "STEM Educational Specialist", avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop" },
-    { name: "Dr. Rajesh Verma", role: "Head of 3D Simulation", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop" }
-  ];
-
-  while (list.length < TOTAL_PAGES_COUNT * ITEMS_PER_PAGE) {
-    const idx = list.length;
-    const base = ALL_BLOGS[idx % ALL_BLOGS.length];
-    const title = titles[idx % titles.length] + (idx > 20 ? ` (Part ${Math.floor(idx / 10)})` : '');
-    const author = authors[idx % authors.length];
-    const date = new Date(2025, 8 - Math.floor(idx / 15), 28 - (idx % 27));
-
-    list.push({
-      id: `blog-gen-${idx + 1}`,
-      slug: `${base.slug}-${idx + 1}`,
-      title: title,
-      summary: base.summary,
-      content: base.content,
-      category: base.category,
-      author: author,
-      publishedAt: date.toISOString(),
-      readTime: `${5 + (idx % 5)} min read`,
-      coverImage: base.coverImage,
-      tags: base.tags
-    });
-  }
-  return list;
-})();
 
 // Pre-seeded likes map for blogs
 const INITIAL_LIKES: Record<string, number> = {
@@ -176,7 +123,7 @@ export default function BlogClient() {
 
   // Filter posts based on category and search query
   const filteredPosts = useMemo(() => {
-    return EXPANDED_BLOGS.filter((post) => {
+    return ALL_BLOGS.filter((post) => {
       // Category check
       let matchesCategory = true;
       if (selectedCategory !== "View all") {
@@ -713,7 +660,7 @@ export default function BlogClient() {
                     className="text-color-white text-[32px] sm:text-[40px] font-extrabold tracking-tight leading-[1.15]"
                     style={{ color: '#FFFFFF' }}
                   >
-                    Pricing Built For You
+                    Institutional Plans Built For You
                   </h2>
                 </div>
 
@@ -726,7 +673,7 @@ export default function BlogClient() {
                     href="/contact-us"
                     className="button_primary w-button inline-flex items-center justify-center bg-[#006FCC] hover:bg-[#007ee8] text-white font-bold text-[15px] px-8 py-4 rounded-[12px] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
                   >
-                    Learn About Pricing
+                    Explore Plans
                   </Link>
 
                   <Link 

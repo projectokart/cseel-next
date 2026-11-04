@@ -127,26 +127,7 @@ const navItems: NavItem[] = [
               { label: 'Hand & Power Tools Workshop', to: '/makerspace' },
             ],
           },
-          {
-            label: 'Projectokart STEM Projects',
-            to: '/projects',
-            desc: 'Student-led maker projects with circuit schematics, bill of materials & working builds.',
-            subItems: [
-              { label: 'Working Science Fair Prototypes', to: '/projects' },
-              { label: 'Innovation Schematics & BOM', to: '/projects' },
-              { label: 'Student Innovation Showcase', to: '/projects' },
-            ],
-          },
-          {
-            label: 'Art, Design & Craft',
-            to: '/domain/art',
-            desc: 'Creative STEAM studio, color physics, photochemistry, model making & design thinking.',
-            subItems: [
-              { label: 'Creative STEAM Studio', to: '/domain/art' },
-              { label: 'Color Physics & Optics Lab', to: '/domain/art' },
-              { label: 'Design Thinking & Prototyping', to: '/domain/art' },
-            ],
-          },
+
         ],
       },
     ],
@@ -215,6 +196,7 @@ const navItems: NavItem[] = [
     id: 'edu-network',
     label: 'Edu Network',
     to: '/schools',
+    enabled: false,
     hasDropdown: true,
     columns: [
       {
@@ -277,7 +259,7 @@ const navItems: NavItem[] = [
     id: 'events-workshops',
     label: 'Events & Workshops',
     to: '/events',
-    hasDropdown: true,
+    hasDropdown: false,
     columns: [
       {
         categoryTitle: 'Student Competitions & Hackathons',
@@ -347,6 +329,7 @@ const navItems: NavItem[] = [
           {
             label: 'About CSEEL',
             to: '/about',
+            enabled: false,
             desc: 'Our mission to bring experiential hands-on science to every learner across India.',
             subItems: [
               { label: 'Our Mission & Vision', to: '/about' },
@@ -374,6 +357,7 @@ const navItems: NavItem[] = [
           {
             label: 'CSEEL for Stakeholders',
             to: '/for-institutions',
+            enabled: false,
             desc: 'Tailored experiential science solutions for school principals, educators and students.',
             subItems: [
               { label: 'For School Principals', to: '/for-institutions' },
@@ -418,7 +402,6 @@ const navItems: NavItem[] = [
             desc: 'Pedagogical research, empirical studies, CBSE practical guidelines, and NEP 2020 insights.',
             badge: 'Articles & Blog',
             subItems: [
-              { label: 'Research Article: The Confidence Effect', to: '/online-stem-retention-research-preview', badge: 'Article' },
               { label: 'Academic STEM Blog (All Posts)', to: '/blog', badge: 'Blog' },
               { label: 'STEM Research & Whitepapers', to: '/research', badge: 'Research' },
               { label: 'Experiential Learning Pedagogy', to: '/blog' },
@@ -442,33 +425,22 @@ const navItems: NavItem[] = [
         categoryTitle: 'Media & Visual Showcase',
         items: [
           {
-            label: '360° Interactive Lab Tour',
-            to: '/virtual-lab-tour',
-            desc: 'Take an interactive walkthrough inside modern composite science laboratories.',
-            subItems: [
-              { label: 'Launch 360° Walkthrough', to: '/virtual-lab-tour', badge: '360°' },
-              { label: 'Lab Equipment Inspection', to: '/virtual-lab-tour' },
-            ],
-          },
-          {
-            label: 'Media & Installations Gallery',
+            label: 'Media Archive',
             to: '/media-archive',
-            desc: 'Photos, video walkthroughs, and press coverage of real lab installations.',
+            desc: 'Official media announcements, releases, and coverage.',
             subItems: [
-              { label: 'School Lab Photo Gallery', to: '/media-archive' },
-              { label: 'Video Demonstrations', to: '/media-archive' },
-              { label: 'Press & Conclave Highlights', to: '/media-archive' },
+              { label: 'Media Archive', to: '/media-archive' },
             ],
           },
         ],
       },
     ],
     featuredPanel: {
-      eyebrow: 'Interactive Tour',
-      title: 'Walk Through a Turnkey 600 Sq Ft Composite Science Lab',
-      desc: 'Experience our interactive 360° virtual tour and browse high-resolution photos of school installations across India.',
-      ctaText: 'Launch 360° Lab Tour',
-      ctaHref: '/virtual-lab-tour',
+      eyebrow: 'Media Archive',
+      title: 'CSEEL Media & Press Archive',
+      desc: 'Browse official media, announcements, and news from CSEEL.',
+      ctaText: 'Visit Media Archive',
+      ctaHref: '/media-archive',
     },
   },
 ];
@@ -565,8 +537,19 @@ const Navbar = () => {
 
   // Read dynamic categories from NavigationContext (with fallback to default)
   const visibleNavItems: any[] = ((navCategories && navCategories.length > 0 ? navCategories : navItems) as any[]).filter(
-    (item) => item?.enabled !== false
-  );
+    (item) => item?.enabled !== false && item?.id !== 'edu-network' && item?.label !== 'Edu Network'
+  ).map((item: any) => {
+    let modified = (item?.id === 'events-workshops' || item?.label === 'Events & Workshops')
+      ? { ...item, hasDropdown: false, to: '/events' }
+      : { ...item };
+    if (modified.columns && Array.isArray(modified.columns)) {
+      modified.columns = modified.columns.map((col: any) => ({
+        ...col,
+        items: (col.items || []).filter((sub: any) => sub?.label !== 'CSEEL for Stakeholders' && sub?.enabled !== false && sub?.id !== 'item-about-cseel' && !((modified?.id === 'about-cseel' || modified?.label === 'About CSEEL') && sub?.label === 'About CSEEL')),
+      }));
+    }
+    return modified;
+  });
 
   const headerRef = useRef<HTMLElement | null>(null);
 

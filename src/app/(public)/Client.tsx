@@ -678,7 +678,7 @@ const Index = () => {
                   
                 </Link>
                 <Link
-                  href={heroConfig?.secondary_cta_link || "/virtual-lab-tour"}
+                  href={heroConfig?.secondary_cta_link || "/virtual-lab"}
                   className="w-full sm:w-auto inline-flex items-center justify-center px-7 py-3.5 bg-white hover:bg-slate-50 text-[#003C6E] font-bold rounded-xl text-sm sm:text-base border border-slate-300 shadow-xs transition-all active:scale-[0.98] gap-2"
                 >
                   <Play className="w-4 h-4 fill-[#003C6E]/20 text-[#003C6E]" />
@@ -738,11 +738,11 @@ const Index = () => {
         sectionId="partner_schools"
         sectionName="Verified Delhi Schools Network"
         isEditMode={isEditMode}
-        enabled={isSectionEnabled('partner_schools')}
+        enabled={false}
         onToggleVisibility={() => toggleSection('partner_schools')}
         onOpenEdit={() => handleOpenEditSection('partner_schools')}
       >
-        <section id="cseel-partner-schools-network-section" aria-labelledby="trust-h" className="cseel-partner-schools-section bg-white py-14 border-b border-[#E2E8F0] overflow-hidden w-full max-w-full">
+        <section id="cseel-partner-schools-network-section" aria-labelledby="trust-h" className="hidden cseel-partner-schools-section bg-white py-14 border-b border-[#E2E8F0] overflow-hidden w-full max-w-full" style={{ display: 'none' }}>
           <div className="max-w-[1280px] mx-auto px-6 lg:px-10 text-center mb-10">
             <p id="trust-h" className="font-semibold text-[#64748B] text-[14px]">
               {partnerConfig?.subtitle || partnerConfig?.title || "Trusted by 250+ schools & institutions across Delhi NCR and India"}
@@ -801,13 +801,13 @@ const Index = () => {
         sectionId="impact_metrics"
         sectionName="Key Impact Metrics & Numbers"
         isEditMode={isEditMode}
-        enabled={isSectionEnabled('impact_metrics')}
+        enabled={false}
         onToggleVisibility={() => toggleSection('impact_metrics')}
         onOpenEdit={() => handleOpenEditSection('impact_metrics')}
       >
         <section
-          className="py-16 bg-slate-50/70 border-b border-slate-200/80"
-          style={{ backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
+          className="hidden py-16 bg-slate-50/70 border-b border-slate-200/80"
+          style={{ display: 'none', backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
           ref={metricsReveal.ref as any}
         >
           <div className="container mx-auto px-4">
@@ -1094,7 +1094,7 @@ const Index = () => {
         sectionId="testimonials"
         sectionName="Educator & Student Testimonials"
         isEditMode={isEditMode}
-        enabled={isSectionEnabled('testimonials')}
+        enabled={false}
         onToggleVisibility={() => toggleSection('testimonials')}
         onOpenEdit={() => handleOpenEditSection('testimonials')}
       >
@@ -1178,7 +1178,7 @@ const Index = () => {
                     href={finalCtaConfig?.cta_link || "/compare-plans"}
                     className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-slate-100 text-[#003C6E] font-bold rounded-xl text-sm sm:text-base shadow-md hover:shadow-lg transition-all active:scale-[0.98] gap-2"
                   >
-                    <span>{finalCtaConfig?.cta_text || "Compare Plans & Pricing"}</span>
+                    <span>{(finalCtaConfig?.cta_text ? finalCtaConfig.cta_text.replace(/ & Pricing/i, "") : "Compare Plans")}</span>
                     
                   </Link>
                 </div>
@@ -1243,7 +1243,7 @@ function TestimonialSection() {
     <section
       id="cseel-teacher-testimonials-section"
       aria-label="Teacher Testimonials Across India"
-      className="cseel-testimonials-section py-20 overflow-hidden bg-white border-b border-slate-200/80 w-full max-w-full"
+      className="hidden cseel-testimonials-section py-20 overflow-hidden bg-white border-b border-slate-200/80 w-full max-w-full" style={{ display: 'none' }}
       ref={ref as any}
     >
       <div
@@ -1408,8 +1408,8 @@ function AwardsSection() {
   ];
   return (
     <section
-      className="py-16 bg-slate-50/70 border-b border-slate-200/80"
-      style={{ backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
+      className="hidden py-16 bg-slate-50/70 border-b border-slate-200/80"
+      style={{ display: 'none', backgroundColor: 'rgba(248, 250, 252, 0.7)' }}
       ref={ref as any}
     >
       <div className="container mx-auto px-4">

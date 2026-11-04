@@ -717,13 +717,6 @@ export default function VirtualLab3DClient() {
                 <p className="text-[10px] text-slate-400 truncate font-mono">@learn_lab</p>
               </div>
             </div>
-            <Link
-              href="/virtual-lab-tour"
-              className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition"
-              title="Switch to 360 Panoramic Tour"
-            >
-              <RotateCw size={14} />
-            </Link>
           </div>
 
           {/* Navigation Categories */}

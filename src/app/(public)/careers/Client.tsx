@@ -31,264 +31,7 @@ interface CseelCareerJob {
   skills: string[];
 }
 
-const CSEEL_CAREERS_DATA: CseelCareerJob[] = [
-  {
-    id: "cseel-curriculum-lead",
-    title: "Senior STEAM Curriculum Specialist (Physics & Chemistry)",
-    department: "Curriculum & Pedagogy",
-    roleType: "Full-Time",
-    location: "New Delhi (Hybrid / On-Site Lab)",
-    experience: "3 - 6 Years",
-    salary: "₹10,00,000 – ₹16,00,000 PA",
-    openings: 2,
-    isUrgent: true,
-    postedDate: "2 days ago",
-    shortDescription: "Lead the design of hands-on, inquiry-based practical science experiments, teacher activity manuals, and NEP-2020 competency frameworks for Grades 6 to 12.",
-    responsibilities: [
-      "Author experiential physics and chemistry lab activity blueprints aligning with CBSE, ICSE, and IB criteria.",
-      "Design safe, low-cost apparatus kits and verify physical experiments before national school rollouts.",
-      "Collaborate closely with live lab & interactive software engineers to translate real physics apparatus into WebGL interactive practicals.",
-      "Conduct masterclass teacher training workshops across partner schools in Delhi-NCR, Bangalore, and Bhubaneswar."
-    ],
-    requirements: [
-      "Master's degree (M.Sc. / M.Ed. / B.Tech) in Physics, Chemistry, or Science Education.",
-      "3+ years of experience in STEM curriculum writing, textbook development, or teaching at premier institutions.",
-      "Deep understanding of NEP-2020 pedagogical reforms and experimental inquiry methodologies.",
-      "Strong communication and scientific writing skills."
-    ],
-    perks: [
-      "Work directly with former ISRO/IISc scientific advisory mentors.",
-      "Generous prototype testing & science book purchase allowance.",
-      "Comprehensive medical health insurance for self & dependents.",
-      "Flexible hybrid work culture."
-    ],
-    skills: ["NEP-2020 Framework", "Experimental Physics", "Green Chemistry", "Curriculum Design", "Teacher Training"]
-  },
-  {
-    id: "cseel-3d-engineer",
-    title: "Senior 3D WebGL & Interactive Simulation Engineer",
-    department: "Interactive STEM Software & Live Labs",
-    roleType: "Full-Time",
-    location: "Remote (Pan-India) / Bengaluru",
-    experience: "3 - 7 Years",
-    salary: "₹14,00,000 – ₹22,00,000 PA",
-    openings: 2,
-    isUrgent: true,
-    postedDate: "3 days ago",
-    shortDescription: "Architect interactive, real-time 3D physics and chemistry laboratory simulations using Three.js, React-Three-Fiber, Next.js, and WebGL raycasting.",
-    responsibilities: [
-      "Build high-performance, browser-based 3D laboratory apparatus (optical benches, titrators, pendulums, particle accelerators).",
-      "Implement realistic physics kinematics, ray optics refraction, fluid dynamics, and molecular kinematics shaders.",
-      "Optimize rendering pipelines for smooth 60 FPS performance on lower-end school Chromebooks and mobile tablets.",
-      "Collaborate with science SMEs to ensure mathematical accuracy in practical experiment calculations."
-    ],
-    requirements: [
-      "Strong proficiency in JavaScript/TypeScript, React/Next.js, Three.js, React-Three-Fiber, and GLSL shaders.",
-      "Solid mathematical foundation in vector math, kinematics, and raycasting mechanics.",
-      "Experience with 3D modeling pipelines (Blender, GLTF/GLB optimization, Draco compression).",
-      "Track record of building complex interactive web applications or gamified 3D products."
-    ],
-    perks: [
-      "100% Remote-first work with top-tier M3 Max / RTX workstation setup allowance.",
-      "Annual conference & technical certification sponsorship.",
-      "Stock appreciation options (ESOPs).",
-      "Flexible working hours."
-    ],
-    skills: ["Three.js", "React-Three-Fiber", "TypeScript", "Next.js", "GLSL Shaders", "WebGL", "Blender"]
-  },
-  {
-    id: "cseel-robotics-mentor",
-    title: "Chief Atal Tinkering Lab & Robotics Mentor",
-    department: "Atal Tinkering & Robotics",
-    roleType: "Full-Time",
-    location: "Delhi-NCR / Bhubaneswar (Campus Lab)",
-    experience: "2 - 5 Years",
-    salary: "₹8,00,000 – ₹13,00,000 PA",
-    openings: 1,
-    isUrgent: false,
-    postedDate: "5 days ago",
-    shortDescription: "Oversee NITI Aayog ATL incubation setups, coach student robotics cohorts in Arduino/Raspberry Pi maker projects, and lead national science hackathons.",
-    responsibilities: [
-      "Train students and teachers on 3D printing, laser cutting, drone telemetry, and IoT sensor circuits.",
-      "Mentor student innovator teams for national events like CBSE Science Exhibition, IRIS National Fair, and Olympiads.",
-      "Curate hands-on maker challenges, electronics tinkering kits, and AI vision sensor modules.",
-      "Maintain laboratory equipment inventory and safety protocol standards across ATL hubs."
-    ],
-    requirements: [
-      "B.Tech / B.E in Electronics, Robotics, Mechatronics, or Computer Science.",
-      "Hands-on mastery of Arduino IDE, ESP32, Python, 3D CAD modeling, and soldering.",
-      "Prior experience conducting robotics bootcamps or managing Atal Tinkering Labs in schools.",
-      "High energy, enthusiasm, and passion for mentoring young school innovators."
-    ],
-    perks: [
-      "Complete access to high-end prototyping labs (industrial 3D printers, CNCs, laser cutters).",
-      "Travel allowance for national science competitions and school hackathons.",
-      "Performance incentives on school lab ratings.",
-      "Health & accidental insurance coverage."
-    ],
-    skills: ["Arduino", "Raspberry Pi", "IoT", "3D Printing", "Robotics", "Python", "ATL Guidelines"]
-  },
-  {
-    id: "cseel-biotech-specialist",
-    title: "Molecular Biology & Biotechnology Content Specialist",
-    department: "Curriculum & Pedagogy",
-    roleType: "Full-Time",
-    location: "Bengaluru / Hybrid",
-    experience: "2 - 5 Years",
-    salary: "₹9,00,000 – ₹14,00,000 PA",
-    openings: 1,
-    isUrgent: false,
-    postedDate: "1 week ago",
-    shortDescription: "Author cutting-edge genetics, microbiology, and plant physiology experiential practical protocols and interactive digital histology modules.",
-    responsibilities: [
-      "Develop safe bio-experiments for DNA extraction, gel electrophoresis, microscope slide preparation, and enzyme kinetics.",
-      "Author detailed student lab logbooks and interactive hands-on biology practical guides.",
-      "Review interactive 3D anatomical models and microbiological cell interactive practicals for pedagogical accuracy.",
-      "Coordinate with partner biotechnology labs for student internships and live workshop sessions."
-    ],
-    requirements: [
-      "M.Sc. or Ph.D. in Molecular Biology, Biotechnology, Genetics, or Life Sciences.",
-      "Demonstrated experience in academic practical pedagogy or educational content development.",
-      "Familiarity with standard BSL-1 laboratory safety guidelines and school biology curriculum.",
-      "Passion for making life sciences interactive and visually captivating."
-    ],
-    perks: [
-      "Research grant support and patent filing sponsorship.",
-      "Collaborative ecosystem with leading national biology research centers.",
-      "Flexible hybrid working options.",
-      "Comprehensive medical benefits."
-    ],
-    skills: ["Molecular Biology", "Biotechnology", "Genetics", "Histology", "NEP-2020 Bio-Practicals"]
-  },
-  {
-    id: "cseel-fullstack-dev",
-    title: "Full-Stack Platform Engineer (Next.js & Supabase)",
-    department: "Interactive STEM Software & Live Labs",
-    roleType: "Full-Time",
-    location: "Remote / New Delhi",
-    experience: "3 - 6 Years",
-    salary: "₹12,00,000 – ₹20,00,000 PA",
-    openings: 2,
-    isUrgent: true,
-    postedDate: "4 days ago",
-    shortDescription: "Scale the CSEEL EduNetwork ecosystem, institution job portal engines, real-time student experiment assessments, and school analytics dashboards.",
-    responsibilities: [
-      "Develop scalable full-stack features using Next.js 14 App Router, TypeScript, Tailwind CSS, and Supabase / PostgreSQL.",
-      "Architect fast, responsive UI components with clean server/client separation and real-time WebSockets.",
-      "Build robust role-based access control (RBAC) for Schools, Teachers, Students, and Administrators.",
-      "Optimize SEO, core web vitals, and database query performance across all dynamic routes."
-    ],
-    requirements: [
-      "3+ years of full-stack production experience with React, Next.js, Node.js, and SQL databases.",
-      "Strong command of TypeScript, state management, and modern CSS frameworks (Tailwind).",
-      "Experience with authentication, Supabase Row-Level Security (RLS), and REST/GraphQL APIs.",
-      "Clean code mindset, automated testing, and CI/CD deployment proficiency."
-    ],
-    perks: [
-      "Top-tier compensation with annual bonuses and equity upside.",
-      "Home office setup reimbursement & high-speed internet allowance.",
-      "Generous paid time off (PTO) and wellness leave.",
-      "Rapid career acceleration in a high-growth STEAM edtech venture."
-    ],
-    skills: ["Next.js", "React", "TypeScript", "Tailwind CSS", "PostgreSQL", "Supabase", "REST APIs"]
-  },
-  {
-    id: "cseel-field-trainer",
-    title: "Regional STEAM Lab Operations & Master Trainer",
-    department: "Atal Tinkering & Robotics",
-    roleType: "On-Campus",
-    location: "Mumbai / Pune / Delhi-NCR",
-    experience: "1 - 4 Years",
-    salary: "₹6,00,000 – ₹9,50,000 PA",
-    openings: 2,
-    isUrgent: false,
-    postedDate: "6 days ago",
-    shortDescription: "Conduct on-site science lab audits, deliver lively hands-on practical masterclasses for school educators, and ensure optimal lab kit readiness.",
-    responsibilities: [
-      "Visit partner schools to conduct immersive hands-on science workshops for teachers and students.",
-      "Perform periodic calibration and maintenance checks on physics, chemistry, and biology apparatus.",
-      "Collect teacher feedback and assist in the deployment of new experiment upgrade modules.",
-      "Inspire students through high-energy live science stage demonstrations and discovery days."
-    ],
-    requirements: [
-      "Bachelor's or Master's degree in Science (B.Sc. / B.Ed. / B.Tech).",
-      "Charismatic public presentation and teacher facilitation skills.",
-      "Willingness to travel locally and regionally to school campuses.",
-      "Strong fundamentals in experimental school science concepts."
-    ],
-    perks: [
-      "Full regional travel and daily accommodation allowances.",
-      "Quarterly incentive bonus based on school satisfaction scores.",
-      "Fast-track growth to Regional Operations Manager.",
-      "Health and personal accident insurance."
-    ],
-    skills: ["Science Demonstrations", "Teacher Training", "Lab Operations", "Public Speaking", "School Relations"]
-  },
-  {
-    id: "cseel-partnerships-lead",
-    title: "Institutional Partnerships & School Onboarding Lead",
-    department: "Academic Growth & Partnerships",
-    roleType: "Hybrid",
-    location: "New Delhi / Gurugram (Delhi-NCR)",
-    experience: "3 - 7 Years",
-    salary: "₹11,00,000 – ₹18,00,000 PA + Incentives",
-    openings: 1,
-    isUrgent: false,
-    postedDate: "1 week ago",
-    shortDescription: "Drive adoption of CSEEL experiential labs, EduNetwork memberships, and ATL turnkey setups across top CBSE, ICSE, and IB school groups.",
-    responsibilities: [
-      "Engage with School Principals, Trustees, and Academic Directors to present CSEEL's NEP-2020 lab solutions.",
-      "Lead high-value institutional contract negotiations, lab upgrade proposals, and onboarding roadmaps.",
-      "Represent CSEEL at national educational leadership summits, FICCI EdTech conferences, and school expos.",
-      "Manage client success relationships ensuring high renewal rates and multi-campus rollouts."
-    ],
-    requirements: [
-      "Proven 3+ years track record in B2B K-12 institutional sales, edtech school onboarding, or educational publishing.",
-      "Strong network and relationships with school principals and decision-makers across Delhi-NCR or North India.",
-      "Exceptional pitch, presentation, and consultative solution-selling abilities.",
-      "Self-driven, target-oriented mindset with high integrity."
-    ],
-    perks: [
-      "Lucrative uncapped quarterly performance incentives on school sign-ups.",
-      "Company car / conveyance allowance for institutional campus visits.",
-      "Executive leadership coaching and networking opportunities.",
-      "Comprehensive medical health insurance."
-    ],
-    skills: ["B2B School Sales", "Institutional Partnerships", "Client Negotiation", "K-12 Network", "EdTech Growth"]
-  },
-  {
-    id: "cseel-physics-incharge",
-    title: "Senior Physics & Ray Optics Lab In-Charge",
-    department: "Curriculum & Pedagogy",
-    roleType: "On-Campus",
-    location: "Rewari / Haryana Campus Lab",
-    experience: "2 - 5 Years",
-    salary: "₹7,00,000 – ₹11,00,000 PA",
-    openings: 1,
-    isUrgent: true,
-    postedDate: "Just now",
-    shortDescription: "Direct our flagship Physics & Optics laboratory, overseeing precision ray benches, laser diffraction apparatus, and senior secondary student cohorts.",
-    responsibilities: [
-      "Calibrate precision spectrometers, optical benches, cathode ray tubes, and galvanometer stations.",
-      "Conduct live experimental physics practicals for Class 11-12 visiting student batches.",
-      "Ensure 100% SARAS & CBSE composite science laboratory safety standards.",
-      "Author SOPs and troubleshooting manuals for lab apparatus maintenance."
-    ],
-    requirements: [
-      "M.Sc. in Physics or Applied Optics / Electronics.",
-      "Hands-on experience in high-school or university physical laboratories.",
-      "Rigorous attention to experimental protocol, precision, and student safety.",
-      "Fluent communication in Hindi and English."
-    ],
-    perks: [
-      "Campus accommodation facility available.",
-      "Full medical health insurance.",
-      "Annual apparatus prototyping stipend.",
-      "Direct mentorship from senior physics academicians."
-    ],
-    skills: ["Ray Optics", "Wave Mechanics", "Spectrometry", "Lab Safety SOPs", "CBSE Practicals"]
-  }
-];
+const CSEEL_CAREERS_DATA: CseelCareerJob[] = [];
 
 export default function CareersClient() {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All");
@@ -877,182 +620,47 @@ export default function CareersClient() {
 
         {/* ── 6. CURRENT OPEN POSITIONS / TALENT DIRECTORY ───────────────────────── */}
         <section id="open-positions" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
           {/* Section Header */}
-          <div className="space-y-2 text-left">
+          <div className="space-y-2 text-center max-w-2xl mx-auto">
             <div className="text-[11px] sm:text-xs font-bold text-[#006FCC] uppercase tracking-[0.2em]">
               CAREER OPPORTUNITIES
             </div>
             <h2
-              style={{ color: '#003c6e' }}
+              style={{ color: "#003c6e" }}
               className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-snug"
             >
               Current Job Openings
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 max-w-2xl font-normal">
-              Showing {filteredJobs.length} of {CSEEL_CAREERS_DATA.length} active roles across curriculum, engineering, and school operations.
-            </p>
           </div>
 
-          {/* Filter Bar */}
-          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.03)] space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              
-              {/* Department Pills */}
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-                {[
-                  "All",
-                  "Curriculum & Pedagogy",
-                  "Interactive STEM Software & Live Labs",
-                  "Atal Tinkering & Robotics",
-                  "Academic Growth & Partnerships"
-                ].map((dept) => (
-                  <button
-                    key={dept}
-                    onClick={() => setSelectedDepartment(dept)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                      selectedDepartment === dept
-                        ? "bg-[#006FCC] text-white shadow-sm"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    {dept}
-                  </button>
-                ))}
-              </div>
-
-              {/* Search Bar */}
-              <div className="relative w-full md:w-80 shrink-0">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search roles, skills (e.g. Physics, 3D)..."
-                  className="w-full pl-10 pr-9 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-300 focus:border-[#006FCC] rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all font-medium"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-
+          {/* Clean No Vacancies Card */}
+          <div className="text-center py-16 px-6 bg-white rounded-3xl border border-slate-200 shadow-sm max-w-3xl mx-auto space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-[#D6EDFF]/50 border border-[#BCE3FF] flex items-center justify-center mx-auto text-[#006FCC]">
+              <Briefcase className="w-8 h-8" />
+            </div>
+            <h3 style={{ color: "#003c6e" }} className="text-xl sm:text-2xl font-bold tracking-tight">
+              Currently No Open Vacancies
+            </h3>
+            <p className="text-sm sm:text-base text-slate-600 max-w-lg mx-auto leading-relaxed">
+              We currently do not have any open positions, but we are always eager to connect with passionate educators, STEM researchers, and innovators. Feel free to submit a spontaneous application!
+            </p>
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => handleOpenApply()}
+                className="px-6 py-3.5 bg-[#006FCC] hover:bg-[#005399] text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer"
+              >
+                Submit Spontaneous Application
+              </button>
+              <a
+                href="mailto:careers@cseel.org?subject=Spontaneous%20Application%20-%20CSEEL"
+                className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition-colors font-mono"
+              >
+                careers@cseel.org
+              </a>
             </div>
           </div>
 
-          {/* Job Cards Grid */}
-          <div className="space-y-4">
-            {filteredJobs.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 shadow-xs space-y-3">
-                <Briefcase className="w-12 h-12 text-slate-400 mx-auto" />
-                <h3 style={{ color: '#003c6e' }} className="text-lg font-bold">
-                  No Roles Found
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                  No openings match "{searchQuery}". Reset filters or submit a spontaneous application.
-                </p>
-                <button
-                  onClick={() => { setSelectedDepartment("All"); setSearchQuery(""); }}
-                  className="px-5 py-2.5 bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              filteredJobs.map((job) => (
-                <article
-                  key={job.id}
-                  className="bg-white rounded-3xl border border-slate-200 hover:border-[#006FCC]/50 p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:shadow-xl transition-all group"
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-                    
-                    {/* Role Info */}
-                    <div className="space-y-3 flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-3 py-1 bg-[#D6EDFF]/70 text-[#005689] border border-[#BCE3FF] text-[11px] font-bold uppercase rounded-lg tracking-wider">
-                          {job.department}
-                        </span>
-                        <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-semibold rounded-lg">
-                          {job.roleType}
-                        </span>
-                        {job.isUrgent && (
-                          <span className="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold uppercase rounded-lg flex items-center gap-1">
-                            ⚡ Urgently Hiring
-                          </span>
-                        )}
-                        <span className="text-[11px] text-slate-500 font-medium ml-1">
-                          Posted {job.postedDate}
-                        </span>
-                      </div>
-
-                      <h3
-                        style={{ color: '#003c6e' }}
-                        className="text-xl sm:text-2xl font-bold group-hover:text-[#006FCC] transition-colors leading-snug tracking-tight"
-                      >
-                        {job.title}
-                      </h3>
-
-                      <p className="text-sm text-slate-600 leading-relaxed max-w-4xl font-normal">
-                        {job.shortDescription}
-                      </p>
-
-                      {/* Meta Tags (Location, Experience, Salary) */}
-                      <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs text-slate-600 font-medium pt-1">
-                        <span className="flex items-center gap-1.5">
-                          <MapPin className="w-4 h-4 text-[#006FCC] shrink-0" />
-                          <span>{job.location}</span>
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4 text-slate-500 shrink-0" />
-                          <span>{job.experience} Experience</span>
-                        </span>
-                        <span className="flex items-center gap-1 text-[#137333] font-semibold bg-[#e6f4ea] px-3 py-0.5 rounded-lg border border-[#ceead6]">
-                          <DollarSign className="w-3.5 h-3.5 text-[#137333] shrink-0" />
-                          <span>{job.salary}</span>
-                        </span>
-                      </div>
-
-                      {/* Skill Chips */}
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {job.skills.map((skill, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex sm:flex-row lg:flex-col items-center gap-2.5 shrink-0 pt-2 lg:pt-0">
-                      <button
-                        onClick={() => handleOpenApply(job)}
-                        className="w-full sm:w-auto lg:w-44 px-6 py-3 bg-[#006FCC] hover:bg-[#005399] text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Apply Now</span>
-                      </button>
-
-                      <button
-                        onClick={() => setSelectedJob(job)}
-                        className="w-full sm:w-auto lg:w-44 px-5 py-3 bg-white hover:bg-slate-50 text-[#003c6e] border border-slate-300 rounded-xl text-xs sm:text-sm font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
-                      >
-                        <span>Role Details</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                  </div>
-                </article>
-              ))
-            )}
-          </div>
 
           {/* ── 7. LABSTER-STYLE LASTING IMPACT BANNER ───────────────────────────── */}
           <div className="bg-gradient-to-r from-[#003c6e] via-[#005689] to-[#086fa6] rounded-3xl p-8 sm:p-14 text-white text-center shadow-xl space-y-4 relative overflow-hidden mt-12">

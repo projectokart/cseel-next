@@ -247,12 +247,12 @@ const OfferPopup = () => {
                 {/* Secondary 360 Tour Quick Link & Dismiss */}
                 <div className="flex items-center justify-between pt-1 px-1">
                   <Link
-                    href="/virtual-lab-tour"
+                    href="/virtual-lab"
                     onClick={close}
                     className="inline-flex items-center gap-1.5 text-xs text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] px-3 py-1.5 rounded-full font-semibold transition-all duration-200 group"
                   >
                     <Compass size={14} className="text-[#0b57d0] group-hover:rotate-45 transition-transform" />
-                    <span>Explore 360° Virtual Lab</span>
+                    <span>Explore Virtual Lab</span>
                   </Link>
 
                   <button

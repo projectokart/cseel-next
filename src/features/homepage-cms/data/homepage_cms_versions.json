@@ -14,7 +14,7 @@
         "enabled": true,
         "order": 1,
         "badge_text": "LIVE CONCLAVE",
-        "title": "National Science Day Conclave 2026 Registration Open — Join 100+ Schools Across India.",
+        "title": "National Science Day Conclave 2026 Registration Open \u2014 Join 100+ Schools Across India.",
         "subtitle": "Special 20% discount on institutional ATL bulk lab kit bookings.",
         "cta_text": "Register Now",
         "cta_link": "/events",
@@ -33,7 +33,7 @@
         "cta_text": "Our Plans",
         "cta_link": "/compare-plans",
         "secondary_cta_text": "Live Lab Tour",
-        "secondary_cta_link": "/virtual-lab-tour",
+        "secondary_cta_link": "/virtual-lab",
         "updated_at": "2026-08-24T00:00:00Z"
       },
       {
@@ -53,7 +53,7 @@
         "name": "Featured Delhi Schools Showcase",
         "description": "Carousel showcasing verified premier Delhi schools with student strength and CBSE affiliation details.",
         "category": "social_proof",
-        "enabled": true,
+        "enabled": false,
         "order": 4,
         "badge_text": "DELHI VERIFIED SCHOOLS NETWORK",
         "title": "Featured Premier Schools in Delhi NCR",
@@ -67,7 +67,7 @@
         "name": "Key Impact Metrics & Numbers",
         "description": "Live statistics highlighting Active Learners, Concept Experiments, and Schools Empowered.",
         "category": "social_proof",
-        "enabled": true,
+        "enabled": false,
         "order": 5,
         "badge_text": "OUR IMPACT",
         "title": "CSEEL by the Numbers",
@@ -105,7 +105,7 @@
             "id": "f1",
             "title": "Students look forward to learning at their own pace",
             "subtitle": "No need for extra grading or planning time",
-            "description": "Educators assign CSEEL experimental labs to actively engage students—without increasing workloads. C- to B+ Grade Improvement & 82% Student Engagement."
+            "description": "Educators assign CSEEL experimental labs to actively engage students\u2014without increasing workloads. C- to B+ Grade Improvement & 82% Student Engagement."
           },
           {
             "id": "f2",
@@ -141,7 +141,7 @@
         "name": "Educator & Student Testimonials Carousel",
         "description": "Real feedback from science teachers, school principals, and Olympiad toppers across India.",
         "category": "social_proof",
-        "enabled": true,
+        "enabled": false,
         "order": 8,
         "badge_text": "TESTIMONIALS",
         "title": "What Educators & Students Say",
@@ -182,7 +182,7 @@
         "badge_text": "GET STARTED",
         "title": "Find the Plan That Works For You",
         "subtitle": "See our plan options, learn more about live labs, and find out how easy it is to get started with CSEEL.",
-        "cta_text": "Compare Plans & Pricing",
+        "cta_text": "Compare Plans",
         "cta_link": "/compare-plans",
         "updated_at": "2026-08-23T07:00:00Z"
       },

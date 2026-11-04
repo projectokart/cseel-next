@@ -107,28 +107,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
               { label: 'Hand & Power Tools Workshop', to: '/makerspace' },
             ],
           },
-          {
-            id: 'item-projectokart',
-            label: 'Projectokart STEM Projects',
-            to: '/projects',
-            desc: 'Student-led maker projects with circuit schematics, bill of materials & working builds.',
-            subItems: [
-              { label: 'Working Science Fair Prototypes', to: '/projects' },
-              { label: 'Innovation Schematics & BOM', to: '/projects' },
-              { label: 'Student Innovation Showcase', to: '/projects' },
-            ],
-          },
-          {
-            id: 'item-art-craft',
-            label: 'Art, Design & Craft',
-            to: '/domain/art',
-            desc: 'Creative STEAM studio, color physics, photochemistry, model making & design thinking.',
-            subItems: [
-              { label: 'Creative STEAM Studio', to: '/domain/art' },
-              { label: 'Color Physics & Optics Lab', to: '/domain/art' },
-              { label: 'Design Thinking & Prototyping', to: '/domain/art' },
-            ],
-          },
+
         ],
       },
     ],
@@ -206,7 +185,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
     id: 'edu-network',
     label: 'Edu Network',
     to: '/schools',
-    enabled: true,
+    enabled: false,
     hasDropdown: true,
     columns: [
       {
@@ -280,7 +259,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
     label: 'Events & Workshops',
     to: '/events',
     enabled: true,
-    hasDropdown: true,
+    hasDropdown: false,
     columns: [
       {
         id: 'col-competitions-hackathons',
@@ -365,6 +344,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
             id: 'item-about-cseel',
             label: 'About CSEEL',
             to: '/about',
+            enabled: false,
             desc: 'Our mission to bring experiential hands-on science to every learner across India.',
             subItems: [
               { label: 'Our Mission & Vision', to: '/about' },
@@ -396,6 +376,7 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
           {
             id: 'item-for-stakeholders',
             label: 'CSEEL for Stakeholders',
+            enabled: false,
             to: '/for-institutions',
             desc: 'Tailored experiential science solutions for school principals, educators and students.',
             subItems: [
@@ -447,7 +428,6 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
             desc: 'Pedagogical research, empirical studies, CBSE practical guidelines, and NEP 2020 insights.',
             badge: 'Articles & Blog',
             subItems: [
-              { label: 'Research Article: The Confidence Effect', to: '/online-stem-retention-research-preview', badge: 'Article' },
               { label: 'Academic STEM Blog (All Posts)', to: '/blog', badge: 'Blog' },
               { label: 'STEM Research & Whitepapers', to: '/research', badge: 'Research' },
               { label: 'Experiential Learning Pedagogy', to: '/blog' },
@@ -471,39 +451,27 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
       {
         id: 'col-media-tour',
         categoryTitle: 'Media & Visual Showcase',
-        to: '/virtual-lab-tour',
+        to: '/media-archive',
         enabled: true,
         items: [
           {
-            id: 'item-360-tour',
-            label: '360° Interactive Lab Tour',
-            to: '/virtual-lab-tour',
-            desc: 'Take an interactive walkthrough inside modern composite science laboratories.',
-            subItems: [
-              { label: 'Launch 360° Walkthrough', to: '/virtual-lab-tour', badge: '360°' },
-              { label: 'Lab Equipment Inspection', to: '/virtual-lab-tour' },
-            ],
-          },
-          {
             id: 'item-media-gallery',
-            label: 'Media & Installations Gallery',
+            label: 'Media Archive',
             to: '/media-archive',
-            desc: 'Photos, video walkthroughs, and press coverage of real lab installations.',
+            desc: 'Official media announcements, releases, and coverage.',
             subItems: [
-              { label: 'School Lab Photo Gallery', to: '/media-archive' },
-              { label: 'Video Demonstrations', to: '/media-archive' },
-              { label: 'Press & Conclave Highlights', to: '/media-archive' },
+              { label: 'Media Archive', to: '/media-archive' },
             ],
           },
         ],
       },
     ],
     featuredPanel: {
-      eyebrow: 'Interactive Tour',
-      title: 'Walk Through a Turnkey 600 Sq Ft Composite Science Lab',
-      desc: 'Experience our interactive 360° virtual tour and browse high-resolution photos of school installations across India.',
-      ctaText: 'Launch 360° Lab Tour',
-      ctaHref: '/virtual-lab-tour',
+      eyebrow: 'Media Archive',
+      title: 'CSEEL Media & Press Archive',
+      desc: 'Browse official media, announcements, and news from CSEEL.',
+      ctaText: 'Visit Media Archive',
+      ctaHref: '/media-archive',
     },
   },
 ];

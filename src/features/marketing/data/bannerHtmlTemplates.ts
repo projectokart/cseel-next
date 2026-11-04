@@ -168,7 +168,7 @@ export const BANNER_2_VR_IMMERSIVE_HTML = `<div class="cseel-tpl-2">
     </div>
     <h2 style="margin: 0 0 6px 0; font-size: clamp(18px, 2vw, 24px); font-weight: 800; line-height: 1.18; color: #ffffff !important; letter-spacing: -0.3px;">Immersive Virtual<br/>Reality Science Labs</h2>
     <p style="margin: 0 0 12px 0; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,0.92); max-width: 330px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">Step inside photorealistic 3D interactive labs. Conduct risk-free physics and chemistry experiments on any device.</p>
-    <a href="/virtual-lab-tour" aria-label="Take immersive 3D virtual science lab tour" style="display: inline-block; background-color: #ffffff; color: #023858; font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 8px 22px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.18);">START LAB TOUR →</a>
+    <a href="/virtual-lab" aria-label="Take immersive 3D virtual science lab" style="display: inline-block; background-color: #ffffff; color: #023858; font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 8px 22px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.18);">START LAB TOUR →</a>
   </div>
   <div class="cseel-tpl-2__mobile-img-wrap">
     <img class="cseel-tpl-2__mobile-img" src="/images/banners/banner-2-vr-clean-bg.webp" alt="Student using Virtual Reality Laboratory" width="400" height="160" loading="lazy" decoding="async" />

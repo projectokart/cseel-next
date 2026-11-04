@@ -62,21 +62,34 @@ const ContactUs = () => {
                   <div className="mb-8">
                     <h3 className="text-lg font-bold text-primary mb-2">Delhi (Headquarters)</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      <span className="font-semibold text-foreground">Mr. Dev Sharma</span><br />
-                      Phone / WhatsApp: <a href="tel:+919050778830" className="text-primary hover:underline font-medium">+91 9050778830</a><br />
-                      Connaught Place, Central Delhi<br />
-                      New Delhi - 110001, India
+                      690 GH14, Paschim Vihar<br />
+                      New Delhi - 110087, India
                     </p>
+                  </div>
+
+                  <div className="mb-8">
+                    <h3 className="text-lg font-bold text-primary mb-2">Contact Numbers</h3>
+                    <div className="flex flex-col gap-1.5 text-sm">
+                      <a href="tel:+917838337284" className="text-primary hover:underline font-medium flex items-center gap-2">
+                        <span>+91 7838337284</span>
+                      </a>
+                      <a href="tel:+919050778830" className="text-primary hover:underline font-medium flex items-center gap-2">
+                        <span>+91 9050778830</span>
+                      </a>
+                      <a href="tel:+917678198568" className="text-primary hover:underline font-medium flex items-center gap-2">
+                        <span>+91 7678198568</span>
+                      </a>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-8 mb-8">
                     <div>
-                      <h3 className="text-lg font-bold text-primary mb-2">Customer Support</h3>
-                      <a href="mailto:support@cseel.org" className="text-sm text-muted-foreground underline">support@cseel.org</a>
+                      <h3 className="text-lg font-bold text-primary mb-2">Email</h3>
+                      <a href="mailto:contact@cseel.org" className="text-sm text-muted-foreground underline font-medium">contact@cseel.org</a>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-primary mb-2">Help Center</h3>
-                      <a href="https://help.cseel.org" className="text-sm text-muted-foreground underline">help.cseel.org</a>
+                      <h3 className="text-lg font-bold text-primary mb-2">Customer Support</h3>
+                      <a href="mailto:support@cseel.org" className="text-sm text-muted-foreground underline">support@cseel.org</a>
                     </div>
                   </div>
 

@@ -273,25 +273,25 @@ export default function RootLayout({
                   "foundingDate": "2024",
                   "address": {
                     "@type": "PostalAddress",
-                    "streetAddress": "Connaught Place, Central Delhi",
+                    "streetAddress": "690 GH14, Paschim Vihar",
                     "addressLocality": "New Delhi",
                     "addressRegion": "Delhi",
-                    "postalCode": "110001",
+                    "postalCode": "110087",
                     "addressCountry": "IN"
                   },
                   "geo": {
                     "@type": "GeoCoordinates",
-                    "latitude": 28.6139,
-                    "longitude": 77.2090
+                    "latitude": 28.6692,
+                    "longitude": 77.0988
                   },
-                  "telephone": "+91-9050778830",
-                  "email": "support@cseel.org",
+                  "telephone": "+91-7838337284",
+                  "email": "contact@cseel.org",
                   "contactPoint": [
                     {
                       "@type": "ContactPoint",
                       "contactType": "customer support",
-                      "telephone": "+91-9050778830",
-                      "email": "support@cseel.org",
+                      "telephone": "+91-7838337284",
+                      "email": "contact@cseel.org",
                       "areaServed": "IN",
                       "availableLanguage": [
                         "English",
@@ -797,9 +797,9 @@ export default function RootLayout({
           "contactPoint": {
                     "@type": "ContactPoint",
                     "contactType": "Customer Support & Academic Advisory",
-                    "telephone": "+91-9050778830",
-                    "email": "support@cseel.org",
-                    "url": "https://www.cseel.org/contact",
+                    "telephone": "+91-7838337284",
+                    "email": "contact@cseel.org",
+                    "url": "https://www.cseel.org/contact-us",
                     "availableLanguage": [
                               "English",
                               "Hindi"

@@ -461,7 +461,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
     );
   };
 
-  const spv = settings.slides_per_view || 3;
+  const spv = Math.min(settings.slides_per_view || 3, Math.max(1, activeItems.length));
 
   return (
     <section
@@ -508,7 +508,8 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
           </div>
         )}
 
-        {/* Swiper Carousel */}
+        {/* Swiper Carousel or Single Banner Container */}
+        <div className={activeItems.length === 1 ? "max-w-2xl mx-auto" : "w-full"}>
         <Swiper
           key={`swiper-${slotId}-${spv}-${settings.autoplay}-${activeItems.length}`}
           modules={[Autoplay, Pagination, Navigation]}
@@ -556,6 +557,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({
             </SwiperSlide>
           ))}
         </Swiper>
+        </div>
 
         {settings.show_dots && activeItems.length > 1 && (
           <div className={`${paginationClass} !flex !justify-center !items-center !gap-1 !mt-6`} />

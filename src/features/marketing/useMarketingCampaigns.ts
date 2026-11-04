@@ -11,8 +11,8 @@ import {
   INITIAL_SLOT_SETTINGS,
 } from './data/marketingSeed';
 
-const PROMOS_STORAGE_KEY = 'cseel_marketing_promotions_v8';
-const SLOTS_STORAGE_KEY = 'cseel_marketing_slot_settings_v8';
+const PROMOS_STORAGE_KEY = 'cseel_marketing_promotions_v9';
+const SLOTS_STORAGE_KEY = 'cseel_marketing_slot_settings_v9';
 const SYNC_EVENT_NAME = 'cseel-marketing-sync';
 
 function readStoredPromotions(): MarketingPromotion[] {

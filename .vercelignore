@@ -5,12 +5,9 @@ node_modules
 .tmp
 dist
 scripts
-data/campaigns
-data/campaign_state.json*
-data/sent_history.json*
-data/resume_campaign_state.json*
-data/search_query_logs.json
-data/email_templates
+canva_pages
+canva_extracted.json
+data
 *.spec
 *.bat
 *.log

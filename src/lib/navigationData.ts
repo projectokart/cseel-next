@@ -337,22 +337,9 @@ export const DEFAULT_NAV_3STAGE_DATA: NavStage1Category[] = [
       {
         id: 'col-about-pedagogy',
         categoryTitle: 'Our Organization & Pedagogy',
-        to: '/about',
+        to: '/why-cseel',
         enabled: true,
         items: [
-          {
-            id: 'item-about-cseel',
-            label: 'About CSEEL',
-            to: '/about',
-            enabled: false,
-            desc: 'Our mission to bring experiential hands-on science to every learner across India.',
-            subItems: [
-              { label: 'Our Mission & Vision', to: '/about' },
-              { label: 'Our Story & Journey', to: '/our-story' },
-              { label: 'Leadership & Advisory Team', to: '/team' },
-              { label: 'Contact Us & Lab Advisory', to: '/contact-us' },
-            ],
-          },
           {
             id: 'item-why-cseel',
             label: 'Why CSEEL & Efficacy',

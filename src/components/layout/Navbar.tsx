@@ -327,18 +327,6 @@ const navItems: NavItem[] = [
         categoryTitle: 'Our Organization & Pedagogy',
         items: [
           {
-            label: 'About CSEEL',
-            to: '/about',
-            enabled: false,
-            desc: 'Our mission to bring experiential hands-on science to every learner across India.',
-            subItems: [
-              { label: 'Our Mission & Vision', to: '/about' },
-              { label: 'Our Story & Journey', to: '/our-story' },
-              { label: 'Leadership & Advisory Team', to: '/team' },
-              { label: 'Contact Us & Lab Advisory', to: '/contact-us' },
-            ],
-          },
-          {
             label: 'Why CSEEL & Efficacy',
             to: '/why-cseel',
             desc: 'Experiential learning architecture & hands-on practical methodology aligned with NEP 2020.',

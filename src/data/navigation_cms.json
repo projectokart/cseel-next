@@ -438,30 +438,6 @@
         "enabled": true,
         "items": [
           {
-            "id": "item-about-cseel",
-            "label": "About CSEEL",
-            "to": "/about",
-            "desc": "Our mission to bring experiential hands-on science to every learner across India.",
-            "subItems": [
-              {
-                "label": "Our Mission & Vision",
-                "to": "/about"
-              },
-              {
-                "label": "Our Story & Journey",
-                "to": "/our-story"
-              },
-              {
-                "label": "Leadership & Advisory Team",
-                "to": "/team"
-              },
-              {
-                "label": "Contact Us & Lab Advisory",
-                "to": "/contact-us"
-              }
-            ]
-          },
-          {
             "id": "item-why-cseel",
             "label": "Why CSEEL & Efficacy",
             "to": "/why-cseel",
@@ -604,7 +580,7 @@
                 "badge": "Govt Grant"
               },
               {
-                "label": "ATL \u20b920 Lakh Grant Blueprint",
+                "label": "ATL ₹20 Lakh Grant Blueprint",
                 "to": "/schemes/atl-grants"
               },
               {

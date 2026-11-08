@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-11-08T23:16:46.872467",
-  "totalVacancies": 2845,
+  "lastUpdated": "2026-11-08T23:25:15.262079",
+  "totalVacancies": 2846,
   "forLadyCount": 0,
   "subjects": [
     {
@@ -11,7 +11,7 @@
     {
       "id": "Pre-Primary",
       "label": "Pre-Primary",
-      "count": 309
+      "count": 310
     },
     {
       "id": "English",
@@ -108,7 +108,7 @@
     {
       "id": "Pre-Primary",
       "label": "Pre-Primary",
-      "count": 300
+      "count": 301
     },
     {
       "id": "Faculty / Lecturer",
@@ -171,7 +171,7 @@
     {
       "id": "Gurugram",
       "label": "Gurugram",
-      "count": 141
+      "count": 142
     },
     {
       "id": "New Delhi",
@@ -478,7 +478,7 @@
     {
       "id": "Haryana",
       "label": "Haryana",
-      "count": 208
+      "count": 209
     },
     {
       "id": "Gujarat",
@@ -580,7 +580,7 @@
     {
       "id": "Direct",
       "label": "Direct",
-      "count": 2845
+      "count": 2846
     }
   ],
   "salarySlabs": [
@@ -602,7 +602,7 @@
     {
       "id": "Below 3 LPA",
       "label": "Below 3 LPA",
-      "count": 361
+      "count": 362
     },
     {
       "id": "Not Disclosed",
@@ -612,7 +612,7 @@
   ],
   "counts": {
     "subjects": {
-      "Pre-Primary": 309,
+      "Pre-Primary": 310,
       "Computer Science & AI": 254,
       "General Teaching": 713,
       "Art & Music": 145,
@@ -631,7 +631,7 @@
       "Academic Leadership": 1
     },
     "designations": {
-      "Pre-Primary": 300,
+      "Pre-Primary": 301,
       "Lab / Activity": 209,
       "TGT": 738,
       "PRT": 373,
@@ -644,13 +644,13 @@
     },
     "boards": {},
     "cities": {
+      "Gurugram": 142,
       "Ghaziabad": 50,
       "Faridabad": 31,
       "Delhi": 74,
       "North West Delhi": 11,
       "New Delhi": 93,
       "Noida": 82,
-      "Gurugram": 141,
       "Gautam Buddha Nagar": 24,
       "Gautam Buddh Nagar": 7,
       "East Delhi": 3,
@@ -902,8 +902,8 @@
       "Belagavi": 1
     },
     "states": {
+      "Haryana": 209,
       "Uttar Pradesh": 256,
-      "Haryana": 208,
       "Delhi": 223,
       "Uttarakhand": 35,
       "Karnataka": 404,
@@ -930,12 +930,12 @@
       "Himachal Pradesh": 2
     },
     "portals": {
-      "Direct": 2845
+      "Direct": 2846
     }
   },
   "metadata": {
-    "total_jobs": 2845,
-    "generated_at": "2026-11-08T23:16:46.872477",
+    "total_jobs": 2846,
+    "generated_at": "2026-11-08T23:25:15.262099",
     "cutoff_days": 45
   }
 }

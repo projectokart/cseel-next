@@ -344,33 +344,16 @@ export default function TeachersDirectoryClient({
     phone: ''
   });
 
-  // Navigation Tabs: 'jobs' (Job Finder & Indexer) or 'faculty' (Verified Teachers)
-  const [activeTab, setActiveTab] = useState<'jobs' | 'faculty'>(initialTab);
+  // Navigation Tabs: 'jobs' (Job Finder & Indexer) - Faculty tab hidden from public
+  const [activeTab, setActiveTab] = useState<'jobs' | 'faculty'>('jobs');
 
   // Sync activeTab with URL without page reload and persist across refreshes
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const tabParam = params.get('tab');
-      if (tabParam === 'faculty') {
-        setActiveTab('faculty');
-      } else if (tabParam === 'jobs' || tabParam === 'vacancies') {
-        setActiveTab('jobs');
-      }
-    }
+    setActiveTab('jobs');
   }, []);
 
   const handleTabChange = React.useCallback((newTab: 'jobs' | 'faculty') => {
-    setActiveTab(newTab);
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      if (newTab === 'faculty') {
-        url.searchParams.set('tab', 'faculty');
-      } else {
-        url.searchParams.delete('tab');
-      }
-      window.history.replaceState({}, '', url.toString());
-    }
+    setActiveTab('jobs');
   }, []);
   
   // View Mode: 'grid' (2 cols), 'grid3' (3 cols), 'compact' (list), or 'map' (map) - Default: 'compact' (List Grid)
@@ -2376,36 +2359,7 @@ export default function TeachersDirectoryClient({
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)} />
                     <div className="absolute top-full right-0 mt-2 w-[270px] sm:w-[290px] bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-3.5 text-left animate-in fade-in zoom-in-95">
-                      {/* Section 1: Browse Category */}
-                      <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                        BROWSE CATEGORY
-                      </div>
-                      <div className="bg-[#F4F6F8] p-1 rounded-xl flex items-center gap-1 mb-3.5">
-                        <button
-                          type="button"
-                          onClick={() => { handleTabChange('jobs'); setIsMoreMenuOpen(false); }}
-                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
-                            activeTab === 'jobs'
-                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
-                              : 'text-slate-600 hover:text-slate-900 font-medium'
-                          }`}
-                        >
-                          Vacancies
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { handleTabChange('faculty'); setIsMoreMenuOpen(false); }}
-                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition text-center cursor-pointer ${
-                            activeTab === 'faculty'
-                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
-                              : 'text-slate-600 hover:text-slate-900 font-medium'
-                          }`}
-                        >
-                          Faculty
-                        </button>
-                      </div>
-
-                      {/* Section 2: View Mode */}
+                      {/* Section: View Mode */}
                       <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
                         VIEW MODE
                       </div>
@@ -2470,39 +2424,13 @@ export default function TeachersDirectoryClient({
             {/* Row 2: Category Tab Switcher (Vacancies / Faculty) & Updated Date */}
             <div className={`flex items-center justify-between pt-1 px-0.5 text-xs flex-wrap gap-2 ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                {/* Fast Category Toggle Pill Buttons */}
-                <div className="inline-flex items-center bg-[#F1F5F9] p-0.5 rounded-xl border border-slate-200/80">
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('jobs')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                      activeTab === 'jobs'
-                        ? 'bg-white text-[#004A75] shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    <Briefcase size={13} className={activeTab === 'jobs' ? 'text-[#004A75]' : 'text-slate-400'} />
-                    <span>Vacancies</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
-                      {(hasActiveFilters ? filteredJobs.length : liveTotalVacancies).toLocaleString()}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleTabChange('faculty')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                      activeTab === 'faculty'
-                        ? 'bg-white text-[#004A75] shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
-                  >
-                    <GraduationCap size={13} className={activeTab === 'faculty' ? 'text-[#004A75]' : 'text-slate-400'} />
-                    <span>Faculty</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">
-                      {filteredFaculty.length.toLocaleString()}
-                    </span>
-                  </button>
+                {/* Vacancies Indicator (Faculty tab hidden from public) */}
+                <div className="inline-flex items-center gap-1.5 bg-[#F1F5F9] px-3 py-1.5 rounded-xl border border-slate-200/80 text-xs font-bold text-[#004A75]">
+                  <Briefcase size={13} className="text-[#004A75]" />
+                  <span>Vacancies</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-white text-slate-700 shadow-2xs font-extrabold">
+                    {(hasActiveFilters ? filteredJobs.length : liveTotalVacancies).toLocaleString()}
+                  </span>
                 </div>
               </div>
 

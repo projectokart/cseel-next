@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-08T21:44:17.658619",
+  "lastUpdated": "2026-11-08T22:17:41.048066",
   "totalVacancies": 2845,
   "forLadyCount": 0,
   "subjects": [
@@ -82,6 +82,11 @@
       "id": "General Studies",
       "label": "General Studies",
       "count": 1
+    },
+    {
+      "id": "Academic Leadership",
+      "label": "Academic Leadership",
+      "count": 1
     }
   ],
   "designations": [
@@ -113,7 +118,7 @@
     {
       "id": "Principal / Leadership",
       "label": "Principal / Leadership",
-      "count": 245
+      "count": 246
     },
     {
       "id": "Lab / Activity",
@@ -128,7 +133,7 @@
     {
       "id": "Faculty / Teacher",
       "label": "Faculty / Teacher",
-      "count": 23
+      "count": 85
     },
     {
       "id": "Counselor",
@@ -622,16 +627,17 @@
       "Hindi": 121,
       "Physical Education": 87,
       "Physics & Chemistry": 1,
-      "General Studies": 1
+      "General Studies": 1,
+      "Academic Leadership": 1
     },
     "designations": {
       "Pre-Primary": 300,
       "Lab / Activity": 209,
       "TGT": 738,
       "PRT": 373,
-      "Principal / Leadership": 245,
+      "Principal / Leadership": 246,
       "PGT": 439,
-      "Faculty / Teacher": 23,
+      "Faculty / Teacher": 85,
       "Faculty / Lecturer": 275,
       "Teacher": 165,
       "Counselor": 15
@@ -697,7 +703,7 @@
       "Gandhinagar": 8,
       "Kottayam": 3,
       "Beed": 2,
-      "Tiruchirappalli": 3,
+      "Tiruchirappalli": 4,
       "Balotra": 1,
       "Gwalior": 1,
       "Vijayawada": 14,
@@ -930,7 +936,7 @@
   },
   "metadata": {
     "total_jobs": 2845,
-    "generated_at": "2026-11-08T21:44:17.658629",
+    "generated_at": "2026-11-08T22:17:41.048081",
     "cutoff_days": 45
   }
 }

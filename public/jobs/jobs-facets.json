@@ -1,491 +1,403 @@
 {
   "metadata": {
-    "total_jobs": 2929,
-    "generated_at": "2026-11-08T19:24:54.444313",
+    "total_jobs": 2845,
+    "generated_at": "2026-11-08T21:32:30.964719",
     "cutoff_days": 45
   },
   "subjects": [
     {
-      "name": "Primary",
-      "count": 303
+      "name": "General Teaching",
+      "count": 713
     },
     {
-      "name": "General",
-      "count": 298
+      "name": "Pre-Primary",
+      "count": 309
     },
     {
       "name": "English",
-      "count": 257
-    },
-    {
-      "name": "Mathematics",
-      "count": 196
-    },
-    {
-      "name": "Computer Science",
-      "count": 178
-    },
-    {
-      "name": "Physics",
-      "count": 163
-    },
-    {
-      "name": "Administration",
-      "count": 128
-    },
-    {
-      "name": "Science",
-      "count": 117
-    },
-    {
-      "name": "Hindi",
-      "count": 96
-    },
-    {
-      "name": "Art & Design",
-      "count": 94
-    },
-    {
-      "name": "Chemistry",
-      "count": 87
-    },
-    {
-      "name": "Social Studies",
-      "count": 76
-    },
-    {
-      "name": "General Teaching",
-      "count": 66
-    },
-    {
-      "name": "Biology",
-      "count": 60
-    },
-    {
-      "name": "Commerce",
-      "count": 38
-    },
-    {
-      "name": "Pre-Primary / Nursery",
-      "count": 30
-    },
-    {
-      "name": "Economics",
-      "count": 26
-    },
-    {
-      "name": "History",
-      "count": 25
-    },
-    {
-      "name": "Academic Leadership",
-      "count": 22
-    },
-    {
-      "name": "Robotics & AI",
-      "count": 22
-    },
-    {
-      "name": "General Science",
-      "count": 18
-    },
-    {
-      "name": "Primary / PRT",
-      "count": 18
-    },
-    {
-      "name": "Geography",
-      "count": 17
+      "count": 281
     },
     {
       "name": "Computer Science & AI",
-      "count": 16
+      "count": 254
     },
     {
-      "name": "Physical Education",
-      "count": 11
+      "name": "Mathematics",
+      "count": 215
     },
     {
-      "name": "Counselor",
-      "count": 10
+      "name": "Social Studies",
+      "count": 162
     },
     {
-      "name": "Robotics & STEM",
-      "count": 8
+      "name": "General Science",
+      "count": 152
     },
     {
       "name": "Art & Music",
-      "count": 6
+      "count": 145
     },
     {
-      "name": "Music",
-      "count": 5
+      "name": "Physics",
+      "count": 124
     },
     {
-      "name": "Social Science",
-      "count": 4
+      "name": "Commerce & Economics",
+      "count": 124
     },
     {
-      "name": "French",
-      "count": 3
+      "name": "Hindi",
+      "count": 121
     },
     {
-      "name": "Composite Lab",
-      "count": 3
+      "name": "Chemistry",
+      "count": 90
     },
     {
-      "name": "Economics & Commerce",
-      "count": 1
+      "name": "Physical Education",
+      "count": 87
     },
     {
-      "name": "Social Studies (SST)",
-      "count": 1
+      "name": "Biology",
+      "count": 65
     },
     {
       "name": "Physics & Chemistry",
+      "count": 1
+    },
+    {
+      "name": "General Studies",
       "count": 1
     }
   ],
   "designations": [
     {
-      "name": "Teacher",
-      "count": 1480
-    },
-    {
-      "name": "PRT",
-      "count": 262
+      "name": "TGT",
+      "count": 738
     },
     {
       "name": "PGT",
-      "count": 226
+      "count": 439
     },
     {
-      "name": "TGT",
-      "count": 205
-    },
-    {
-      "name": "Faculty / Teacher",
-      "count": 155
+      "name": "PRT",
+      "count": 373
     },
     {
       "name": "Pre-Primary",
+      "count": 300
+    },
+    {
+      "name": "Faculty / Lecturer",
+      "count": 275
+    },
+    {
+      "name": "Principal / Leadership",
+      "count": 245
+    },
+    {
+      "name": "Lab / Activity",
+      "count": 209
+    },
+    {
+      "name": "Teacher",
+      "count": 165
+    },
+    {
+      "name": "Faculty / Teacher",
       "count": 23
     },
     {
       "name": "Counselor",
-      "count": 19
-    },
-    {
-      "name": "Principal / Leadership",
-      "count": 12
-    },
-    {
-      "name": "Coordinator",
-      "count": 11
-    },
-    {
-      "name": "Lab Assistant",
-      "count": 5
-    },
-    {
-      "name": "ATL Mentor",
-      "count": 4
-    },
-    {
-      "name": "NEET & JEE Faculty",
-      "count": 2
+      "count": 15
     }
   ],
   "boards": [],
   "cities": [
     {
       "name": "Bengaluru",
-      "count": 314
-    },
-    {
-      "name": "Delhi",
-      "count": 235
+      "count": 370
     },
     {
       "name": "Mumbai",
-      "count": 232
-    },
-    {
-      "name": "India",
-      "count": 143
+      "count": 226
     },
     {
       "name": "Hyderabad",
-      "count": 124
+      "count": 186
     },
     {
       "name": "Pune",
-      "count": 121
+      "count": 153
     },
     {
       "name": "Chennai",
-      "count": 113
-    },
-    {
-      "name": "Noida",
-      "count": 97
+      "count": 152
     },
     {
       "name": "Gurugram",
-      "count": 85
+      "count": 141
+    },
+    {
+      "name": "New Delhi",
+      "count": 93
+    },
+    {
+      "name": "Noida",
+      "count": 82
     },
     {
       "name": "Kolkata",
-      "count": 61
+      "count": 76
+    },
+    {
+      "name": "Delhi",
+      "count": 74
     },
     {
       "name": "Jaipur",
-      "count": 49
-    },
-    {
-      "name": "Navi Mumbai",
-      "count": 45
-    },
-    {
-      "name": "Lucknow",
-      "count": 41
+      "count": 64
     },
     {
       "name": "Ahmedabad",
-      "count": 40
+      "count": 57
     },
     {
-      "name": "Ghaziabad",
-      "count": 35
-    },
-    {
-      "name": "Bhopal",
-      "count": 35
-    },
-    {
-      "name": "Coimbatore",
-      "count": 34
-    },
-    {
-      "name": "Patna",
-      "count": 28
-    },
-    {
-      "name": "Dehradun",
-      "count": 25
+      "name": "Navi Mumbai",
+      "count": 55
     },
     {
       "name": "Thane",
-      "count": 24
+      "count": 51
     },
     {
-      "name": "Faridabad",
-      "count": 23
+      "name": "Ghaziabad",
+      "count": 50
+    },
+    {
+      "name": "Lucknow",
+      "count": 47
+    },
+    {
+      "name": "Coimbatore",
+      "count": 46
+    },
+    {
+      "name": "Bhopal",
+      "count": 34
     },
     {
       "name": "Indore",
-      "count": 23
+      "count": 32
+    },
+    {
+      "name": "Faridabad",
+      "count": 31
+    },
+    {
+      "name": "Patna",
+      "count": 29
+    },
+    {
+      "name": "Dehradun",
+      "count": 26
+    },
+    {
+      "name": "All India",
+      "count": 26
     },
     {
       "name": "Surat",
-      "count": 21
+      "count": 25
+    },
+    {
+      "name": "Gautam Buddha Nagar",
+      "count": 24
     },
     {
       "name": "Ludhiana",
       "count": 21
     },
     {
-      "name": "Gurgaon",
-      "count": 19
-    },
-    {
-      "name": "Greater Noida",
-      "count": 18
-    },
-    {
-      "name": "Chandigarh",
-      "count": 18
-    },
-    {
-      "name": "Mohali",
+      "name": "Kota",
       "count": 17
     },
     {
-      "name": "Kochi",
-      "count": 15
-    },
-    {
-      "name": "Kota",
-      "count": 15
-    },
-    {
       "name": "Vadodara",
-      "count": 13
-    },
-    {
-      "name": "Amaravati",
-      "count": 11
-    },
-    {
-      "name": "Jodhpur",
-      "count": 10
-    },
-    {
-      "name": "Raipur",
-      "count": 9
+      "count": 16
     },
     {
       "name": "Bhubaneswar",
-      "count": 9
-    },
-    {
-      "name": "Ranchi",
-      "count": 9
-    },
-    {
-      "name": "Nagpur",
-      "count": 9
-    },
-    {
-      "name": "Haridwar",
-      "count": 7
-    },
-    {
-      "name": "Thiruvananthapuram",
-      "count": 7
+      "count": 15
     },
     {
       "name": "Vijayawada",
-      "count": 7
+      "count": 14
     },
     {
-      "name": "Kurla",
-      "count": 7
+      "name": "Mohali",
+      "count": 13
     },
     {
-      "name": "Penamaluru",
-      "count": 7
+      "name": "South Delhi",
+      "count": 12
+    },
+    {
+      "name": "Bengaluru Urban",
+      "count": 12
+    },
+    {
+      "name": "Jodhpur",
+      "count": 12
+    },
+    {
+      "name": "Chandigarh",
+      "count": 12
+    },
+    {
+      "name": "Greater Noida",
+      "count": 11
     },
     {
       "name": "Rajkot",
-      "count": 6
+      "count": 11
     },
     {
-      "name": "Gandhinagar",
-      "count": 6
+      "name": "Nagpur",
+      "count": 11
     },
     {
-      "name": "Telangana",
-      "count": 6
+      "name": "Namakkal",
+      "count": 11
     },
     {
-      "name": "Udaipur",
-      "count": 5
+      "name": "Kochi",
+      "count": 11
     },
     {
-      "name": "Sonipat",
-      "count": 5
+      "name": "North West Delhi",
+      "count": 10
     },
     {
-      "name": "Kozhikode",
-      "count": 5
+      "name": "Palghar",
+      "count": 10
     },
     {
-      "name": "Puducherry",
-      "count": 5
+      "name": "Panna",
+      "count": 10
+    },
+    {
+      "name": "Fatehgarh Sahib",
+      "count": 9
+    },
+    {
+      "name": "Central Delhi",
+      "count": 8
     },
     {
       "name": "Panchkula",
-      "count": 4
+      "count": 8
+    },
+    {
+      "name": "Raipur",
+      "count": 8
+    },
+    {
+      "name": "Gandhinagar",
+      "count": 8
+    },
+    {
+      "name": "Thiruvananthapuram",
+      "count": 8
+    },
+    {
+      "name": "Ranchi",
+      "count": 8
     }
   ],
   "states": [
     {
       "name": "Maharashtra",
-      "count": 554
+      "count": 547
     },
     {
       "name": "Karnataka",
-      "count": 420
-    },
-    {
-      "name": "Uttar Pradesh",
-      "count": 243
+      "count": 404
     },
     {
       "name": "Tamil Nadu",
-      "count": 234
+      "count": 261
     },
     {
-      "name": "Telangana",
-      "count": 205
-    },
-    {
-      "name": "Delhi NCR",
-      "count": 183
-    },
-    {
-      "name": "Haryana",
-      "count": 166
-    },
-    {
-      "name": "All India",
-      "count": 143
+      "name": "Uttar Pradesh",
+      "count": 256
     },
     {
       "name": "Delhi",
-      "count": 122
+      "count": 223
+    },
+    {
+      "name": "Telangana",
+      "count": 212
+    },
+    {
+      "name": "Haryana",
+      "count": 208
     },
     {
       "name": "Gujarat",
-      "count": 119
+      "count": 128
     },
     {
       "name": "Rajasthan",
-      "count": 107
+      "count": 114
     },
     {
       "name": "West Bengal",
-      "count": 95
+      "count": 99
     },
     {
       "name": "Madhya Pradesh",
-      "count": 84
+      "count": 94
     },
     {
       "name": "Punjab",
+      "count": 56
+    },
+    {
+      "name": "Kerala",
       "count": 46
+    },
+    {
+      "name": "Bihar",
+      "count": 39
+    },
+    {
+      "name": "Andhra Pradesh",
+      "count": 38
     },
     {
       "name": "Uttarakhand",
       "count": 35
     },
     {
-      "name": "Bihar",
-      "count": 35
-    },
-    {
-      "name": "Kerala",
-      "count": 35
-    },
-    {
-      "name": "Andhra Pradesh",
-      "count": 35
-    },
-    {
-      "name": "Chandigarh",
-      "count": 18
-    },
-    {
       "name": "Odisha",
+      "count": 19
+    },
+    {
+      "name": "All India",
       "count": 17
     },
     {
-      "name": "Jharkhand",
-      "count": 10
+      "name": "Chhattisgarh",
+      "count": 15
     },
     {
-      "name": "Chhattisgarh",
+      "name": "Chandigarh",
+      "count": 11
+    },
+    {
+      "name": "Jharkhand",
       "count": 9
     },
     {
@@ -493,11 +405,11 @@
       "count": 5
     },
     {
-      "name": "India",
+      "name": "Nagaland",
       "count": 3
     },
     {
-      "name": "Nagaland",
+      "name": "Jammu and Kashmir",
       "count": 2
     },
     {
@@ -512,35 +424,35 @@
   "portals": [
     {
       "name": "Direct",
-      "count": 2929
+      "count": 2845
     }
   ],
   "employment_types": [
     {
       "name": "Full-Time",
-      "count": 2929
+      "count": 2845
     }
   ],
   "salary_slabs": [
     {
       "name": "Above 8 LPA",
-      "count": 49
+      "count": 47
     },
     {
       "name": "5 - 8 LPA",
-      "count": 171
+      "count": 163
     },
     {
       "name": "3 - 5 LPA",
-      "count": 413
+      "count": 402
     },
     {
       "name": "Below 3 LPA",
-      "count": 346
+      "count": 361
     },
     {
       "name": "Not Disclosed",
-      "count": 1950
+      "count": 1872
     }
   ]
 }

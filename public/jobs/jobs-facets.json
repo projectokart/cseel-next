@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "total_jobs": 2917,
-    "generated_at": "2026-11-08T18:44:49.625910",
+    "total_jobs": 2929,
+    "generated_at": "2026-11-08T19:24:54.444313",
     "cutoff_days": 45
   },
   "subjects": [
@@ -15,11 +15,11 @@
     },
     {
       "name": "English",
-      "count": 255
+      "count": 257
     },
     {
       "name": "Mathematics",
-      "count": 193
+      "count": 196
     },
     {
       "name": "Computer Science",
@@ -27,7 +27,7 @@
     },
     {
       "name": "Physics",
-      "count": 162
+      "count": 163
     },
     {
       "name": "Administration",
@@ -67,7 +67,7 @@
     },
     {
       "name": "Pre-Primary / Nursery",
-      "count": 27
+      "count": 30
     },
     {
       "name": "Economics",
@@ -86,12 +86,12 @@
       "count": 22
     },
     {
-      "name": "Primary / PRT",
+      "name": "General Science",
       "count": 18
     },
     {
-      "name": "General Science",
-      "count": 17
+      "name": "Primary / PRT",
+      "count": 18
     },
     {
       "name": "Geography",
@@ -111,14 +111,14 @@
     },
     {
       "name": "Robotics & STEM",
-      "count": 7
-    },
-    {
-      "name": "Music",
-      "count": 5
+      "count": 8
     },
     {
       "name": "Art & Music",
+      "count": 6
+    },
+    {
+      "name": "Music",
       "count": 5
     },
     {
@@ -157,15 +157,15 @@
     },
     {
       "name": "PGT",
-      "count": 223
+      "count": 226
     },
     {
       "name": "TGT",
-      "count": 203
+      "count": 205
     },
     {
       "name": "Faculty / Teacher",
-      "count": 149
+      "count": 155
     },
     {
       "name": "Pre-Primary",
@@ -184,11 +184,11 @@
       "count": 11
     },
     {
-      "name": "ATL Mentor",
-      "count": 4
+      "name": "Lab Assistant",
+      "count": 5
     },
     {
-      "name": "Lab Assistant",
+      "name": "ATL Mentor",
       "count": 4
     },
     {
@@ -203,12 +203,12 @@
       "count": 314
     },
     {
-      "name": "Mumbai",
-      "count": 232
+      "name": "Delhi",
+      "count": 235
     },
     {
-      "name": "Delhi",
-      "count": 231
+      "name": "Mumbai",
+      "count": 232
     },
     {
       "name": "India",
@@ -228,11 +228,11 @@
     },
     {
       "name": "Noida",
-      "count": 95
+      "count": 97
     },
     {
       "name": "Gurugram",
-      "count": 83
+      "count": 85
     },
     {
       "name": "Kolkata",
@@ -279,6 +279,10 @@
       "count": 24
     },
     {
+      "name": "Faridabad",
+      "count": 23
+    },
+    {
       "name": "Indore",
       "count": 23
     },
@@ -289,10 +293,6 @@
     {
       "name": "Ludhiana",
       "count": 21
-    },
-    {
-      "name": "Faridabad",
-      "count": 20
     },
     {
       "name": "Gurgaon",
@@ -410,7 +410,7 @@
     },
     {
       "name": "Uttar Pradesh",
-      "count": 240
+      "count": 243
     },
     {
       "name": "Tamil Nadu",
@@ -426,19 +426,19 @@
     },
     {
       "name": "Haryana",
-      "count": 161
+      "count": 166
     },
     {
       "name": "All India",
       "count": 143
     },
     {
-      "name": "Gujarat",
-      "count": 119
+      "name": "Delhi",
+      "count": 122
     },
     {
-      "name": "Delhi",
-      "count": 118
+      "name": "Gujarat",
+      "count": 119
     },
     {
       "name": "Rajasthan",
@@ -512,13 +512,13 @@
   "portals": [
     {
       "name": "Direct",
-      "count": 2917
+      "count": 2929
     }
   ],
   "employment_types": [
     {
       "name": "Full-Time",
-      "count": 2917
+      "count": 2929
     }
   ],
   "salary_slabs": [
@@ -536,11 +536,11 @@
     },
     {
       "name": "Below 3 LPA",
-      "count": 337
+      "count": 346
     },
     {
       "name": "Not Disclosed",
-      "count": 1947
+      "count": 1950
     }
   ]
 }

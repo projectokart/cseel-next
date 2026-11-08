@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-11-08T22:36:20.619883",
+  "lastUpdated": "2026-11-08T22:51:31.372771",
   "totalVacancies": 2845,
   "forLadyCount": 0,
   "subjects": [
@@ -319,6 +319,11 @@
       "count": 12
     },
     {
+      "id": "North West Delhi",
+      "label": "North West Delhi",
+      "count": 11
+    },
+    {
       "id": "Greater Noida",
       "label": "Greater Noida",
       "count": 11
@@ -342,11 +347,6 @@
       "id": "Kochi",
       "label": "Kochi",
       "count": 11
-    },
-    {
-      "id": "North West Delhi",
-      "label": "North West Delhi",
-      "count": 10
     },
     {
       "id": "Palghar",
@@ -647,7 +647,7 @@
       "Ghaziabad": 50,
       "Faridabad": 31,
       "Delhi": 74,
-      "North Delhi": 1,
+      "North West Delhi": 11,
       "New Delhi": 93,
       "Noida": 82,
       "Gurugram": 141,
@@ -656,7 +656,6 @@
       "East Delhi": 3,
       "West Delhi": 4,
       "South Delhi": 12,
-      "North West Delhi": 10,
       "Central Delhi": 8,
       "South East Delhi": 1,
       "Haridwar": 7,
@@ -936,7 +935,7 @@
   },
   "metadata": {
     "total_jobs": 2845,
-    "generated_at": "2026-11-08T22:36:20.619893",
+    "generated_at": "2026-11-08T22:51:31.372781",
     "cutoff_days": 45
   }
 }

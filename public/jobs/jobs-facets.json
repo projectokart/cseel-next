@@ -1,458 +1,936 @@
 {
-  "metadata": {
-    "total_jobs": 2845,
-    "generated_at": "2026-11-08T21:32:30.964719",
-    "cutoff_days": 45
-  },
+  "lastUpdated": "2026-11-08T21:44:17.658619",
+  "totalVacancies": 2845,
+  "forLadyCount": 0,
   "subjects": [
     {
-      "name": "General Teaching",
+      "id": "General Teaching",
+      "label": "General Teaching",
       "count": 713
     },
     {
-      "name": "Pre-Primary",
+      "id": "Pre-Primary",
+      "label": "Pre-Primary",
       "count": 309
     },
     {
-      "name": "English",
+      "id": "English",
+      "label": "English",
       "count": 281
     },
     {
-      "name": "Computer Science & AI",
+      "id": "Computer Science & AI",
+      "label": "Computer Science & AI",
       "count": 254
     },
     {
-      "name": "Mathematics",
+      "id": "Mathematics",
+      "label": "Mathematics",
       "count": 215
     },
     {
-      "name": "Social Studies",
+      "id": "Social Studies",
+      "label": "Social Studies",
       "count": 162
     },
     {
-      "name": "General Science",
+      "id": "General Science",
+      "label": "General Science",
       "count": 152
     },
     {
-      "name": "Art & Music",
+      "id": "Art & Music",
+      "label": "Art & Music",
       "count": 145
     },
     {
-      "name": "Physics",
+      "id": "Physics",
+      "label": "Physics",
       "count": 124
     },
     {
-      "name": "Commerce & Economics",
+      "id": "Commerce & Economics",
+      "label": "Commerce & Economics",
       "count": 124
     },
     {
-      "name": "Hindi",
+      "id": "Hindi",
+      "label": "Hindi",
       "count": 121
     },
     {
-      "name": "Chemistry",
+      "id": "Chemistry",
+      "label": "Chemistry",
       "count": 90
     },
     {
-      "name": "Physical Education",
+      "id": "Physical Education",
+      "label": "Physical Education",
       "count": 87
     },
     {
-      "name": "Biology",
+      "id": "Biology",
+      "label": "Biology",
       "count": 65
     },
     {
-      "name": "Physics & Chemistry",
+      "id": "Physics & Chemistry",
+      "label": "Physics & Chemistry",
       "count": 1
     },
     {
-      "name": "General Studies",
+      "id": "General Studies",
+      "label": "General Studies",
       "count": 1
     }
   ],
   "designations": [
     {
-      "name": "TGT",
+      "id": "TGT",
+      "label": "TGT",
       "count": 738
     },
     {
-      "name": "PGT",
+      "id": "PGT",
+      "label": "PGT",
       "count": 439
     },
     {
-      "name": "PRT",
+      "id": "PRT",
+      "label": "PRT",
       "count": 373
     },
     {
-      "name": "Pre-Primary",
+      "id": "Pre-Primary",
+      "label": "Pre-Primary",
       "count": 300
     },
     {
-      "name": "Faculty / Lecturer",
+      "id": "Faculty / Lecturer",
+      "label": "Faculty / Lecturer",
       "count": 275
     },
     {
-      "name": "Principal / Leadership",
+      "id": "Principal / Leadership",
+      "label": "Principal / Leadership",
       "count": 245
     },
     {
-      "name": "Lab / Activity",
+      "id": "Lab / Activity",
+      "label": "Lab / Activity",
       "count": 209
     },
     {
-      "name": "Teacher",
+      "id": "Teacher",
+      "label": "Teacher",
       "count": 165
     },
     {
-      "name": "Faculty / Teacher",
+      "id": "Faculty / Teacher",
+      "label": "Faculty / Teacher",
       "count": 23
     },
     {
-      "name": "Counselor",
+      "id": "Counselor",
+      "label": "Counselor",
       "count": 15
     }
   ],
   "boards": [],
   "cities": [
     {
-      "name": "Bengaluru",
+      "id": "Bengaluru",
+      "label": "Bengaluru",
       "count": 370
     },
     {
-      "name": "Mumbai",
+      "id": "Mumbai",
+      "label": "Mumbai",
       "count": 226
     },
     {
-      "name": "Hyderabad",
+      "id": "Hyderabad",
+      "label": "Hyderabad",
       "count": 186
     },
     {
-      "name": "Pune",
+      "id": "Pune",
+      "label": "Pune",
       "count": 153
     },
     {
-      "name": "Chennai",
+      "id": "Chennai",
+      "label": "Chennai",
       "count": 152
     },
     {
-      "name": "Gurugram",
+      "id": "Gurugram",
+      "label": "Gurugram",
       "count": 141
     },
     {
-      "name": "New Delhi",
+      "id": "New Delhi",
+      "label": "New Delhi",
       "count": 93
     },
     {
-      "name": "Noida",
+      "id": "Noida",
+      "label": "Noida",
       "count": 82
     },
     {
-      "name": "Kolkata",
+      "id": "Kolkata",
+      "label": "Kolkata",
       "count": 76
     },
     {
-      "name": "Delhi",
+      "id": "Delhi",
+      "label": "Delhi",
       "count": 74
     },
     {
-      "name": "Jaipur",
+      "id": "Jaipur",
+      "label": "Jaipur",
       "count": 64
     },
     {
-      "name": "Ahmedabad",
+      "id": "Ahmedabad",
+      "label": "Ahmedabad",
       "count": 57
     },
     {
-      "name": "Navi Mumbai",
+      "id": "Navi Mumbai",
+      "label": "Navi Mumbai",
       "count": 55
     },
     {
-      "name": "Thane",
+      "id": "Thane",
+      "label": "Thane",
       "count": 51
     },
     {
-      "name": "Ghaziabad",
+      "id": "Ghaziabad",
+      "label": "Ghaziabad",
       "count": 50
     },
     {
-      "name": "Lucknow",
+      "id": "Lucknow",
+      "label": "Lucknow",
       "count": 47
     },
     {
-      "name": "Coimbatore",
+      "id": "Coimbatore",
+      "label": "Coimbatore",
       "count": 46
     },
     {
-      "name": "Bhopal",
+      "id": "Bhopal",
+      "label": "Bhopal",
       "count": 34
     },
     {
-      "name": "Indore",
+      "id": "Indore",
+      "label": "Indore",
       "count": 32
     },
     {
-      "name": "Faridabad",
+      "id": "Faridabad",
+      "label": "Faridabad",
       "count": 31
     },
     {
-      "name": "Patna",
+      "id": "Patna",
+      "label": "Patna",
       "count": 29
     },
     {
-      "name": "Dehradun",
+      "id": "Dehradun",
+      "label": "Dehradun",
       "count": 26
     },
     {
-      "name": "All India",
+      "id": "All India",
+      "label": "All India",
       "count": 26
     },
     {
-      "name": "Surat",
+      "id": "Surat",
+      "label": "Surat",
       "count": 25
     },
     {
-      "name": "Gautam Buddha Nagar",
+      "id": "Gautam Buddha Nagar",
+      "label": "Gautam Buddha Nagar",
       "count": 24
     },
     {
-      "name": "Ludhiana",
+      "id": "Ludhiana",
+      "label": "Ludhiana",
       "count": 21
     },
     {
-      "name": "Kota",
+      "id": "Kota",
+      "label": "Kota",
       "count": 17
     },
     {
-      "name": "Vadodara",
+      "id": "Vadodara",
+      "label": "Vadodara",
       "count": 16
     },
     {
-      "name": "Bhubaneswar",
+      "id": "Bhubaneswar",
+      "label": "Bhubaneswar",
       "count": 15
     },
     {
-      "name": "Vijayawada",
+      "id": "Vijayawada",
+      "label": "Vijayawada",
       "count": 14
     },
     {
-      "name": "Mohali",
+      "id": "Mohali",
+      "label": "Mohali",
       "count": 13
     },
     {
-      "name": "South Delhi",
+      "id": "South Delhi",
+      "label": "South Delhi",
       "count": 12
     },
     {
-      "name": "Bengaluru Urban",
+      "id": "Bengaluru Urban",
+      "label": "Bengaluru Urban",
       "count": 12
     },
     {
-      "name": "Jodhpur",
+      "id": "Jodhpur",
+      "label": "Jodhpur",
       "count": 12
     },
     {
-      "name": "Chandigarh",
+      "id": "Chandigarh",
+      "label": "Chandigarh",
       "count": 12
     },
     {
-      "name": "Greater Noida",
+      "id": "Greater Noida",
+      "label": "Greater Noida",
       "count": 11
     },
     {
-      "name": "Rajkot",
+      "id": "Rajkot",
+      "label": "Rajkot",
       "count": 11
     },
     {
-      "name": "Nagpur",
+      "id": "Nagpur",
+      "label": "Nagpur",
       "count": 11
     },
     {
-      "name": "Namakkal",
+      "id": "Namakkal",
+      "label": "Namakkal",
       "count": 11
     },
     {
-      "name": "Kochi",
+      "id": "Kochi",
+      "label": "Kochi",
       "count": 11
     },
     {
-      "name": "North West Delhi",
+      "id": "North West Delhi",
+      "label": "North West Delhi",
       "count": 10
     },
     {
-      "name": "Palghar",
+      "id": "Palghar",
+      "label": "Palghar",
       "count": 10
     },
     {
-      "name": "Panna",
+      "id": "Panna",
+      "label": "Panna",
       "count": 10
     },
     {
-      "name": "Fatehgarh Sahib",
+      "id": "Fatehgarh Sahib",
+      "label": "Fatehgarh Sahib",
       "count": 9
     },
     {
-      "name": "Central Delhi",
+      "id": "Central Delhi",
+      "label": "Central Delhi",
       "count": 8
     },
     {
-      "name": "Panchkula",
+      "id": "Panchkula",
+      "label": "Panchkula",
       "count": 8
     },
     {
-      "name": "Raipur",
+      "id": "Raipur",
+      "label": "Raipur",
       "count": 8
     },
     {
-      "name": "Gandhinagar",
+      "id": "Gandhinagar",
+      "label": "Gandhinagar",
       "count": 8
     },
     {
-      "name": "Thiruvananthapuram",
+      "id": "Thiruvananthapuram",
+      "label": "Thiruvananthapuram",
       "count": 8
     },
     {
-      "name": "Ranchi",
+      "id": "Ranchi",
+      "label": "Ranchi",
       "count": 8
+    },
+    {
+      "id": "Sonipat",
+      "label": "Sonipat",
+      "count": 8
+    },
+    {
+      "id": "Gautam Buddh Nagar",
+      "label": "Gautam Buddh Nagar",
+      "count": 7
+    },
+    {
+      "id": "Haridwar",
+      "label": "Haridwar",
+      "count": 7
+    },
+    {
+      "id": "Kollam",
+      "label": "Kollam",
+      "count": 7
+    },
+    {
+      "id": "Visakhapatnam",
+      "label": "Visakhapatnam",
+      "count": 7
+    },
+    {
+      "id": "Hosur",
+      "label": "Hosur",
+      "count": 6
+    },
+    {
+      "id": "Ernakulam",
+      "label": "Ernakulam",
+      "count": 6
+    },
+    {
+      "id": "Amritsar",
+      "label": "Amritsar",
+      "count": 6
+    },
+    {
+      "id": "Madurai",
+      "label": "Madurai",
+      "count": 6
+    },
+    {
+      "id": "Krishnagiri",
+      "label": "Krishnagiri",
+      "count": 5
     }
   ],
   "states": [
     {
-      "name": "Maharashtra",
+      "id": "Maharashtra",
+      "label": "Maharashtra",
       "count": 547
     },
     {
-      "name": "Karnataka",
+      "id": "Karnataka",
+      "label": "Karnataka",
       "count": 404
     },
     {
-      "name": "Tamil Nadu",
+      "id": "Tamil Nadu",
+      "label": "Tamil Nadu",
       "count": 261
     },
     {
-      "name": "Uttar Pradesh",
+      "id": "Uttar Pradesh",
+      "label": "Uttar Pradesh",
       "count": 256
     },
     {
-      "name": "Delhi",
+      "id": "Delhi",
+      "label": "Delhi",
       "count": 223
     },
     {
-      "name": "Telangana",
+      "id": "Telangana",
+      "label": "Telangana",
       "count": 212
     },
     {
-      "name": "Haryana",
+      "id": "Haryana",
+      "label": "Haryana",
       "count": 208
     },
     {
-      "name": "Gujarat",
+      "id": "Gujarat",
+      "label": "Gujarat",
       "count": 128
     },
     {
-      "name": "Rajasthan",
+      "id": "Rajasthan",
+      "label": "Rajasthan",
       "count": 114
     },
     {
-      "name": "West Bengal",
+      "id": "West Bengal",
+      "label": "West Bengal",
       "count": 99
     },
     {
-      "name": "Madhya Pradesh",
+      "id": "Madhya Pradesh",
+      "label": "Madhya Pradesh",
       "count": 94
     },
     {
-      "name": "Punjab",
+      "id": "Punjab",
+      "label": "Punjab",
       "count": 56
     },
     {
-      "name": "Kerala",
+      "id": "Kerala",
+      "label": "Kerala",
       "count": 46
     },
     {
-      "name": "Bihar",
+      "id": "Bihar",
+      "label": "Bihar",
       "count": 39
     },
     {
-      "name": "Andhra Pradesh",
+      "id": "Andhra Pradesh",
+      "label": "Andhra Pradesh",
       "count": 38
     },
     {
-      "name": "Uttarakhand",
+      "id": "Uttarakhand",
+      "label": "Uttarakhand",
       "count": 35
     },
     {
-      "name": "Odisha",
+      "id": "Odisha",
+      "label": "Odisha",
       "count": 19
     },
     {
-      "name": "All India",
+      "id": "All India",
+      "label": "All India",
       "count": 17
     },
     {
-      "name": "Chhattisgarh",
+      "id": "Chhattisgarh",
+      "label": "Chhattisgarh",
       "count": 15
     },
     {
-      "name": "Chandigarh",
+      "id": "Chandigarh",
+      "label": "Chandigarh",
       "count": 11
     },
     {
-      "name": "Jharkhand",
+      "id": "Jharkhand",
+      "label": "Jharkhand",
       "count": 9
     },
     {
-      "name": "Puducherry",
+      "id": "Puducherry",
+      "label": "Puducherry",
       "count": 5
     },
     {
-      "name": "Nagaland",
+      "id": "Nagaland",
+      "label": "Nagaland",
       "count": 3
     },
     {
-      "name": "Jammu and Kashmir",
+      "id": "Jammu and Kashmir",
+      "label": "Jammu and Kashmir",
       "count": 2
     },
     {
-      "name": "Assam",
+      "id": "Assam",
+      "label": "Assam",
       "count": 2
     },
     {
-      "name": "Himachal Pradesh",
+      "id": "Himachal Pradesh",
+      "label": "Himachal Pradesh",
       "count": 2
     }
   ],
   "portals": [
     {
-      "name": "Direct",
+      "id": "Direct",
+      "label": "Direct",
       "count": 2845
     }
   ],
-  "employment_types": [
+  "salarySlabs": [
     {
-      "name": "Full-Time",
-      "count": 2845
-    }
-  ],
-  "salary_slabs": [
-    {
-      "name": "Above 8 LPA",
+      "id": "Above 8 LPA",
+      "label": "Above 8 LPA",
       "count": 47
     },
     {
-      "name": "5 - 8 LPA",
+      "id": "5 - 8 LPA",
+      "label": "5 - 8 LPA",
       "count": 163
     },
     {
-      "name": "3 - 5 LPA",
+      "id": "3 - 5 LPA",
+      "label": "3 - 5 LPA",
       "count": 402
     },
     {
-      "name": "Below 3 LPA",
+      "id": "Below 3 LPA",
+      "label": "Below 3 LPA",
       "count": 361
     },
     {
-      "name": "Not Disclosed",
+      "id": "Not Disclosed",
+      "label": "Not Disclosed",
       "count": 1872
     }
-  ]
+  ],
+  "counts": {
+    "subjects": {
+      "Pre-Primary": 309,
+      "Computer Science & AI": 254,
+      "General Teaching": 713,
+      "Art & Music": 145,
+      "Mathematics": 215,
+      "English": 281,
+      "Physics": 124,
+      "Chemistry": 90,
+      "General Science": 152,
+      "Social Studies": 162,
+      "Commerce & Economics": 124,
+      "Biology": 65,
+      "Hindi": 121,
+      "Physical Education": 87,
+      "Physics & Chemistry": 1,
+      "General Studies": 1
+    },
+    "designations": {
+      "Pre-Primary": 300,
+      "Lab / Activity": 209,
+      "TGT": 738,
+      "PRT": 373,
+      "Principal / Leadership": 245,
+      "PGT": 439,
+      "Faculty / Teacher": 23,
+      "Faculty / Lecturer": 275,
+      "Teacher": 165,
+      "Counselor": 15
+    },
+    "boards": {},
+    "cities": {
+      "Ghaziabad": 50,
+      "Faridabad": 31,
+      "Delhi": 74,
+      "North Delhi": 1,
+      "New Delhi": 93,
+      "Noida": 82,
+      "Gurugram": 141,
+      "Gautam Buddha Nagar": 24,
+      "Gautam Buddh Nagar": 7,
+      "East Delhi": 3,
+      "West Delhi": 4,
+      "South Delhi": 12,
+      "North West Delhi": 10,
+      "Central Delhi": 8,
+      "South East Delhi": 1,
+      "Haridwar": 7,
+      "Bengaluru": 370,
+      "Panchkula": 8,
+      "Chennai": 152,
+      "Dehradun": 26,
+      "Patna": 29,
+      "Coimbatore": 46,
+      "Mumbai": 226,
+      "Pune": 153,
+      "Bengaluru Urban": 12,
+      "Medchal-Malkajgiri": 1,
+      "Hyderabad": 186,
+      "Ranga Reddy": 1,
+      "Kolkata": 76,
+      "Jaipur": 64,
+      "Ahmedabad": 57,
+      "Hosur": 6,
+      "Krishnagiri": 5,
+      "Lucknow": 47,
+      "Thane": 51,
+      "Navi Mumbai": 55,
+      "Ernakulam": 6,
+      "Kharghar": 1,
+      "Raigad": 5,
+      "North East Delhi": 4,
+      "Kanker": 1,
+      "Indore": 32,
+      "Bhopal": 34,
+      "Greater Noida": 11,
+      "Howrah": 4,
+      "Hooghly": 5,
+      "Tiruvallur": 1,
+      "Panvel": 2,
+      "Palghar": 10,
+      "Vaishali": 1,
+      "Dewas": 1,
+      "All India": 26,
+      "Raipur": 8,
+      "Rajkot": 11,
+      "Varanasi": 4,
+      "Ahmednagar": 4,
+      "Gandhinagar": 8,
+      "Kottayam": 3,
+      "Beed": 2,
+      "Tiruchirappalli": 3,
+      "Balotra": 1,
+      "Gwalior": 1,
+      "Vijayawada": 14,
+      "Thiruvananthapuram": 8,
+      "Shivpuri": 4,
+      "Tiruppur": 5,
+      "Kota": 17,
+      "Bhubaneswar": 15,
+      "Kanpur": 5,
+      "Kabirdham": 1,
+      "Ranchi": 8,
+      "Muzaffarpur": 1,
+      "Hanumangarh": 3,
+      "Jalna": 3,
+      "Mangaluru": 2,
+      "Surat": 25,
+      "Ludhiana": 21,
+      "Jodhpur": 12,
+      "Udaipur": 5,
+      "Mohali": 13,
+      "Meerut": 3,
+      "Amritsar": 6,
+      "Vadodara": 16,
+      "Agra": 4,
+      "Bhadradri Kothagudem": 1,
+      "Chandigarh": 12,
+      "Nagpur": 11,
+      "Tirupur": 1,
+      "Dindigul": 1,
+      "Ghazipur": 1,
+      "Namakkal": 11,
+      "Purba Champaran": 1,
+      "Warangal": 4,
+      "Sonipat": 8,
+      "Amaravati": 4,
+      "Mumbai Suburban": 4,
+      "Alwar": 2,
+      "Ballari": 1,
+      "Salem": 3,
+      "Fazilka": 1,
+      "Dakshin Dinajpur": 1,
+      "South 24 Parganas": 4,
+      "Nuh": 3,
+      "North 24 Parganas": 1,
+      "Rohtak": 2,
+      "Rayagada": 1,
+      "Jhunjhunu": 2,
+      "Bankura": 2,
+      "Betul": 3,
+      "Bulandshahr": 2,
+      "Damoh": 2,
+      "Poonch": 2,
+      "Rishikesh": 1,
+      "Arakonam": 1,
+      "Cuddalore": 2,
+      "Bilaspur": 1,
+      "Nagda": 1,
+      "Balaghat": 3,
+      "Kalaburagi": 1,
+      "Thoothukudi": 2,
+      "Purulia": 1,
+      "Raigarh": 3,
+      "Kozhikode": 5,
+      "Chittoor": 1,
+      "Robertsganj": 2,
+      "Kollam": 7,
+      "Saharanpur": 3,
+      "Tiruvannamalai": 1,
+      "Chandrapur": 1,
+      "Raebareli": 1,
+      "Jalandhar": 1,
+      "Kochi": 11,
+      "Mahabubnagar": 1,
+      "Visakhapatnam": 7,
+      "Ramanathapuram": 1,
+      "Madurai": 6,
+      "Sangareddy": 4,
+      "Lakhanpur": 1,
+      "Paravur": 1,
+      "Thrissur": 1,
+      "Banswara": 1,
+      "Karimnagar": 4,
+      "Chandauli": 1,
+      "Wokha": 1,
+      "Sirsa": 1,
+      "Jamui": 1,
+      "Jamnagar": 2,
+      "Hugli": 1,
+      "Ranipet": 1,
+      "Mandal": 1,
+      "Dimapur": 2,
+      "Nashik": 4,
+      "Sambalpur": 1,
+      "Azamgarh": 1,
+      "Rewari": 4,
+      "Peddapalli": 1,
+      "Mira Road": 1,
+      "Delhi Cantonment": 1,
+      "Panna": 10,
+      "Karera": 1,
+      "Nirmal": 1,
+      "Raiganj": 1,
+      "Mahuva": 4,
+      "Guwahati": 2,
+      "Bhadra": 2,
+      "Raichur": 4,
+      "Muzaffarnagar": 1,
+      "Shivamogga": 1,
+      "Puducherry": 5,
+      "Gir Somnath": 1,
+      "Bengaluru East": 1,
+      "Malegaon": 2,
+      "Vasai Virar": 2,
+      "Chamba": 1,
+      "Nellore": 1,
+      "Penamaluru": 5,
+      "Bengaluru Rural": 1,
+      "Ambasamudram": 1,
+      "Malappuram": 3,
+      "Thanjavur": 3,
+      "Faizabad": 2,
+      "Fatehabad": 2,
+      "Akola": 1,
+      "Yamunanagar": 1,
+      "Mysore": 2,
+      "Contai": 1,
+      "Bangalore": 1,
+      "Hubballi": 1,
+      "India": 2,
+      "Sikar": 1,
+      "Fatehgarh Sahib": 9,
+      "Kakinada": 1,
+      "Lakhisarai": 1,
+      "Bareilly": 2,
+      "Jabalpur": 1,
+      "Chengalpattu": 1,
+      "Solan": 1,
+      "Barnala": 1,
+      "Jhajjar": 2,
+      "Karnal": 2,
+      "Rangareddy": 2,
+      "Sitamarhi": 1,
+      "Krishna": 1,
+      "Bhavnagar": 2,
+      "Kawardha": 1,
+      "Sangli": 2,
+      "Dudu": 1,
+      "Kasaragod": 1,
+      "Thiruvallur": 1,
+      "Mysuru": 1,
+      "Roorkee": 1,
+      "Cuttack": 1,
+      "Guntur": 1,
+      "Panipat": 1,
+      "Warangal Rural": 2,
+      "Modinagar": 1,
+      "Arrah": 1,
+      "Gandhidham": 1,
+      "Suratgarh": 1,
+      "Dharmavaram": 1,
+      "Sadar": 1,
+      "Vapi": 1,
+      "Erode": 3,
+      "Alur": 1,
+      "Begusarai": 1,
+      "Mira Bhayandar": 1,
+      "Nizamabad": 1,
+      "Sas Nagar": 1,
+      "Barasat": 1,
+      "Anekal": 1,
+      "Haveli": 1,
+      "Rajpura": 1,
+      "Shirpur": 1,
+      "Shimoga": 1,
+      "Balangir": 1,
+      "Dhar": 1,
+      "East Champaran": 1,
+      "Samastipur": 1,
+      "Satara": 1,
+      "Kaithal": 2,
+      "Atmakur": 1,
+      "Sri Sathya Sai": 1,
+      "Rajasthan": 1,
+      "Ganganagar": 1,
+      "Orattanadu": 2,
+      "Karur": 1,
+      "Balapur": 1,
+      "Rahta": 1,
+      "Jamshedpur": 1,
+      "Kurla": 2,
+      "Devanahalli": 1,
+      "Yelahanka": 1,
+      "Palakoderu": 1,
+      "Tamluk": 1,
+      "Chinna Salem": 1,
+      "Patiala": 1,
+      "Belagavi": 1
+    },
+    "states": {
+      "Uttar Pradesh": 256,
+      "Haryana": 208,
+      "Delhi": 223,
+      "Uttarakhand": 35,
+      "Karnataka": 404,
+      "Tamil Nadu": 261,
+      "Bihar": 39,
+      "Maharashtra": 547,
+      "Telangana": 212,
+      "West Bengal": 99,
+      "Rajasthan": 114,
+      "Gujarat": 128,
+      "Kerala": 46,
+      "Chhattisgarh": 15,
+      "Madhya Pradesh": 94,
+      "All India": 17,
+      "Andhra Pradesh": 38,
+      "Odisha": 19,
+      "Jharkhand": 9,
+      "Punjab": 56,
+      "Jammu and Kashmir": 2,
+      "Nagaland": 3,
+      "Chandigarh": 11,
+      "Assam": 2,
+      "Puducherry": 5,
+      "Himachal Pradesh": 2
+    },
+    "portals": {
+      "Direct": 2845
+    }
+  },
+  "metadata": {
+    "total_jobs": 2845,
+    "generated_at": "2026-11-08T21:44:17.658629",
+    "cutoff_days": 45
+  }
 }

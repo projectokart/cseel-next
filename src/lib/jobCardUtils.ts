@@ -403,6 +403,20 @@ export function getSourceBadgeColor(source?: string | null): string {
   return 'bg-emerald-50 text-emerald-800 border-emerald-200';
 }
 
+/**
+ * Checks if an organisation name is a generic recruiter placeholder or confidential hiring phrase.
+ * (e.g. "Reputed Senior Secondary School", "Reputed CBSE School", "Leading School", "Confidential")
+ */
+export function isGenericSchoolName(name?: string | null): boolean {
+  if (!name) return true;
+  const n = name.trim().toLowerCase();
+  if (n.length < 3) return true;
+  return (
+    /^(?:a\s+)?(?:reputed|leading|top|renowned|prestigious|cbse|icse|ib|private|international|senior\s+secondary|convent|play|pre)?\s*(?:school|institution|academy|education\s+society|society|senior\s+secondary\s+school|preschool|day\s+care|k-?12\s+school|client\s+of\s+.*|confidential|anonymous)$/i.test(n) ||
+    /\b(reputed|confidential hiring|anonymous school|unnamed school|client of)\b/i.test(n)
+  );
+}
+
 export function getGoogleMapsSearchUrl(job: {
   organisationName?: string | null;
   address?: string | null;
@@ -411,8 +425,29 @@ export function getGoogleMapsSearchUrl(job: {
   state?: string | null;
   coordinates?: { lat: number; lng: number } | null;
 }): string {
+  const coords = job.coordinates;
+  const hasCoords = Boolean(
+    coords &&
+    typeof coords.lat === 'number' &&
+    typeof coords.lng === 'number' &&
+    coords.lat !== 0 &&
+    coords.lng !== 0
+  );
   const org = (job.organisationName || '').trim();
   const structured = formatStructuredAddress(job);
+  const isGeneric = isGenericSchoolName(org);
+
+  // If organization is generic or anonymous (e.g. "Reputed Senior Secondary School"):
+  if (isGeneric) {
+    if (hasCoords && coords) {
+      // Pin exact coordinates directly on Google Maps (zero ambiguity)
+      return `https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`;
+    }
+    // Fall back to clean structured locality/city search (e.g. "Gurugram, Haryana")
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(structured || 'India')}`;
+  }
+
+  // If a real school/institute name is present (e.g. "Vedanta Academy", "BVM Global School"):
   const parts = [org, structured].filter(Boolean);
   const query = parts.join(', ');
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;

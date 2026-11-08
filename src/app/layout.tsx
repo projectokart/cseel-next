@@ -111,6 +111,7 @@ export const metadata: Metadata = {
     ],
   },
   other: {
+    "google-adsense-account": "ca-pub-2314808699584572",
     "theme-color": "#ffffff",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
@@ -867,6 +868,14 @@ export default function RootLayout({
           }}
         />
         {/* End Google Tag Manager */}
+
+        {/* Google AdSense Monetisation - Auto Ads Engine */}
+        <meta name="google-adsense-account" content="ca-pub-2314808699584572" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2314808699584572"
+          crossOrigin="anonymous"
+        />
         {/* Next.js Deployment Chunk-Recovery & Mobile Scroll Unstuck Engine */}
         <script
           id="cseel-deployment-recovery"

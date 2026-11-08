@@ -11,7 +11,7 @@ let _allJobsCache: FacultyJobItem[] | null = null;
 let _fetchingPromise: Promise<FacultyJobItem[]> | null = null;
 
 async function getAllJobsList(): Promise<FacultyJobItem[]> {
-  if (_allJobsCache && _allJobsCache.length > 0) return _allJobsCache;
+  if (process.env.NODE_ENV !== 'development' && _allJobsCache && _allJobsCache.length > 0) return _allJobsCache;
   if (_fetchingPromise) return _fetchingPromise;
 
   _fetchingPromise = (async () => {
@@ -193,21 +193,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const schoolName = job.organisationName || 'Top School';
   const postName = job.jobPostName || 'Teaching Faculty';
 
-  // High-Intent Indian Keyword Engine targeting Rank #1
-  const title = `${schoolName} ${job.district || job.city || ''} Teacher Recruitment ${CURRENT_YEAR} - ${postName} | Apply Online`;
-  const description = `Apply Online for ${postName} vacancy at ${schoolName}, ${locationStr} (Updated ${CURRENT_MONTH} ${CURRENT_YEAR}). Salary: ${cleanSal}. Curriculum: ${job.board || 'CBSE/ICSE'}. Direct verified apply link with zero fees.`;
+  // High-Intent Indian Keyword Engine targeting Rank #1 and Maximum CTR
+  const locShort = job.city || job.district || '';
+  const title = `${postName} Teacher Vacancy - ${schoolName}${locShort ? ` (${locShort})` : ''} | Apply Direct - CSEEL`;
+  const description = `Direct Apply: ${postName} vacancy at ${schoolName}, ${locationStr} (Updated ${CURRENT_MONTH} ${CURRENT_YEAR}). Salary: ${cleanSal}. Board: ${job.board || 'CBSE/ICSE'}. Direct verified apply link with zero fees on CSEEL.`;
 
   return {
     title,
     description,
     keywords: [
+      `${postName} Teacher Vacancy Near Me`,
+      `${postName} Vacancy in ${locationStr}`,
       `${schoolName} Teacher Recruitment ${CURRENT_YEAR}`,
-      `${schoolName} ${locationStr} Vacancy Apply Online`,
+      `School Jobs Near Me ${locShort}`,
       `${postName} Jobs in ${locationStr}`,
       `School Teaching Vacancies ${CURRENT_MONTH} ${CURRENT_YEAR}`,
-      `Fresh School Jobs India Top Schools Daily Update`,
-      `CBSE School Teacher Recruitment 2026`,
-      `Govt & Private School Vacancies 2026 Registration`,
+      `CBSE School Teacher Recruitment ${CURRENT_YEAR}`,
     ],
     alternates: {
       canonical: `https://www.cseel.org/edu-network/teachers/job/${job.id}`,

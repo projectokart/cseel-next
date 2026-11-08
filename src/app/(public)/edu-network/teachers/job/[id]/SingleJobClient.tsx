@@ -9,7 +9,7 @@ import {
   Sparkles, Award, ArrowLeft, RefreshCw
 } from 'lucide-react';
 import { FacultyJobItem } from '@/data/facultyJobsData';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress, getGoogleMapsSearchUrl, getJobAgeInfo } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, extractPureLocalAddress, getGoogleMapsSearchUrl, getJobAgeInfo, isGenericSchoolName } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
 
 interface Props {
@@ -20,12 +20,44 @@ interface Props {
 export default function SingleJobClient({ job, relatedJobs }: Props) {
   const [copied, setCopied] = useState(false);
 
+  // Canonical defensive fallbacks for title, organization, salary, source, and apply link
+  const rawJob = job as any;
+  const displayTitle = job.jobPostName || rawJob.title || 'Teaching Faculty';
+  const displayOrg = job.organisationName || rawJob.institute_name || 'Reputed School';
+  const displaySalary = job.salary || rawJob.salary_range || '';
+  const displaySource =
+    job.source ||
+    (Array.isArray(rawJob.requirements) ? (rawJob.requirements.find((r: any) => typeof r === 'string' && r.startsWith('source:'))?.replace('source:', '').trim() || '') : '') ||
+    (job.id && job.id.startsWith('ind-') ? 'Indeed' : job.id && job.id.startsWith('naukri-') ? 'Naukri.com' : 'Direct / School');
+  const safeSource = (displaySource || '').trim();
+  const sourceBadgeText = safeSource && safeSource !== 'Direct / School' ? `Indexed via ${safeSource}` : 'Direct School Vacancy';
+  const applyButtonText = safeSource && safeSource !== 'Direct / School' ? `Apply on ${safeSource}` : 'Apply Directly';
+  const applyLink =
+    job.originalUrl ||
+    job.applyUrl ||
+    (Array.isArray(rawJob.requirements) ? (rawJob.requirements.find((r: any) => typeof r === 'string' && r.startsWith('url:'))?.replace('url:', '').trim() || '') : '') ||
+    '#';
+  const fullDescription = rawJob.description || job.shortDescription || '';
+  const showDesignationTag = Boolean(job.designation && job.designation.toLowerCase() !== job.jobPostName?.toLowerCase());
+
   const handleShare = () => {
     if (typeof window !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
+  };
+
+  const formatCleanDescription = (desc: string) => {
+    if (!desc) return '';
+    return desc
+      .replace(/\r\n/g, '\n')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/^[ \t]*[*•-][ \t]+/gm, '• ')
+      .replace(/\*+([^\n*]+?)\*+/g, (_match, p1) => p1.trim())
+      .replace(/\*+/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
   };
 
   const getSourceBadgeColor = (source: string) => {
@@ -76,7 +108,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
               <span className="text-slate-300">/</span>
               <Link href="/edu-network/teachers" className="hover:text-[#005689] transition-colors">STEM Faculty & Jobs</Link>
               <span className="text-slate-300">/</span>
-              <span className="text-slate-900 font-bold truncate">{job.jobPostName}</span>
+              <span className="text-slate-900 font-bold truncate">{displayTitle}</span>
             </div>
 
             <Link
@@ -110,33 +142,33 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 ) : null}
 
                 <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {job.designation && (
-                      <span className="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {showDesignationTag && (
+                      <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-900 border border-blue-200 text-[10.5px] sm:text-[11px] font-bold">
                         {job.designation}
                       </span>
                     )}
                     {job.subject && (
-                      <span className="px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-800 border border-purple-200 text-xs font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-purple-50 text-purple-900 border border-purple-200 text-[10.5px] sm:text-[11px] font-bold">
                         {job.subject}
                       </span>
                     )}
                     {job.board && (
-                      <span className="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-800 border border-cyan-200 text-xs font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-900 border border-cyan-200 text-[10.5px] sm:text-[11px] font-bold">
                         {job.board}
                       </span>
                     )}
                     {job.forLady && (
-                      <span className="px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold inline-flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[10.5px] sm:text-[11px] font-bold inline-flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                        Lady Only
+                        Lady Teacher Preferred
                       </span>
                     )}
-                    <span className={`px-2 py-0.5 rounded-md text-xs font-bold border ${getSourceBadgeColor(job.source)}`}>
-                      Indexed via {job.source}
+                    <span className={`px-2 py-0.5 rounded-md text-[10.5px] sm:text-[11px] font-bold border ${getSourceBadgeColor(displaySource)}`}>
+                      {sourceBadgeText}
                     </span>
                     {job.badge && (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-200 text-[10.5px] sm:text-[11px] font-bold">
                         {job.badge}
                       </span>
                     )}
@@ -149,7 +181,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs sm:text-sm text-slate-600 font-medium">
                     <span className="font-bold text-slate-900 flex items-center gap-1">
                       <Building2 className="w-4 h-4 text-[#005689]" />
-                      <span>{job.organisationName}</span>
+                      <span>{displayOrg}</span>
                     </span>
                     {(() => {
                       const structuredAddress = formatStructuredAddress(job);
@@ -175,7 +207,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 <div className="text-left md:text-right">
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Offered Compensation</div>
                   <div className={`text-xl sm:text-2xl font-black ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58]' : 'text-slate-700'}`}>
-                    {formatCleanSalary(job.salary, true)}
+                    {formatCleanSalary(displaySalary, true)}
                   </div>
                 </div>
 
@@ -199,7 +231,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                   </button>
 
                   <a
-                    href={job.originalUrl}
+                    href={applyLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
@@ -216,7 +248,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     className="flex-1 sm:flex-initial py-2.5 px-6 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98"
                   >
                     <ExternalLink className="w-4 h-4 shrink-0" />
-                    <span>Apply on {job.source}</span>
+                    <span>{applyButtonText}</span>
                   </a>
                 </div>
               </div>
@@ -226,75 +258,58 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
         </section>
 
         {/* ─── MAIN CONTENT TWO-COLUMN LAYOUT ─── */}
-        <section className="max-w-6xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             
             {/* Left 2 Columns: Job Overview & Requirements */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-5">
               
-              {/* Freshness & Validity Card */}
-              <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-4 flex items-center justify-between gap-4 text-xs">
-                <div className="flex items-center gap-2 text-[#005689] font-bold">
-                  <Clock className="w-4 h-4 shrink-0 text-[#005689]" />
-                  <span>Verified Active Vacancy (Within 45-Day Retention Policy)</span>
+              {/* Freshness & Validity Card - Clean, Responsive & Jargon-Free */}
+              <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                <div className="flex items-center gap-2 text-emerald-950 font-bold min-w-0">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="truncate">Verified School Vacancy</span>
+                  {job.openingDate && (
+                    <span className="text-slate-500 font-normal hidden sm:inline">• Posted on {job.openingDate}</span>
+                  )}
                 </div>
                 {job.lastDate ? (
-                  <div className="text-slate-600 font-semibold shrink-0">
+                  <div className="text-slate-600 font-semibold shrink-0 text-[11px] sm:text-xs">
                     Application Deadline: <strong className="text-slate-900">{job.lastDate}</strong>
                   </div>
                 ) : (
-                  <div className="text-slate-500 font-medium shrink-0">
-                    Application Status: <strong className="text-[#0F9D58]">Open & Active</strong>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Actively Hiring</span>
                   </div>
                 )}
               </div>
 
               {/* Detailed Job Description Section */}
               {job.shortDescription && job.shortDescription.trim() !== '' && (
-                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900" style={{ color: '#003c6e' }}>
-                      Detailed Job Description & Requirements
-                    </h3>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Verified Position
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+                  <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="w-1.5 h-4 bg-[#005689] rounded-full shrink-0"></span>
+                      <h2 className="text-sm sm:text-base font-bold text-slate-900 truncate" style={{ color: '#003c6e' }}>
+                        Job Description & Requirements
+                      </h2>
+                    </div>
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 whitespace-nowrap flex items-center gap-1">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                      <span>Verified</span>
                     </span>
                   </div>
-                  <div className="text-sm leading-relaxed text-slate-700 whitespace-pre-line space-y-3 font-normal">
-                    {job.shortDescription}
+                  <div className="text-xs sm:text-sm leading-relaxed text-slate-700 whitespace-pre-line space-y-2 font-normal">
+                    {formatCleanDescription(job.shortDescription)}
                   </div>
                 </div>
               )}
 
-              {/* Direct Apply Callout Box */}
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900" style={{ color: '#003c6e' }}>
-                      Ready to submit your application?
-                    </h4>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      This vacancy is hosted on {job.source}. Click below to visit the official portal and submit your application.
-                    </p>
-                  </div>
-                  <a
-                    href={job.applyUrl || job.originalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="py-2.5 px-5 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold inline-flex items-center gap-1.5 shrink-0 transition-all shadow-xs"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>Apply on {job.source}</span>
-                  </a>
-                </div>
-              </div>
-
-
-
             </div>
 
-            {/* Right Column: Key Vacancy Parameters & Direct Summary */}
-            <div className="space-y-6">
+            {/* Right Column: Key Vacancy Parameters & Direct Summary (Desktop Only to eliminate mobile redundancy) */}
+            <div className="hidden lg:block space-y-6">
               
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                 <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3" style={{ color: '#003c6e' }}>
@@ -337,10 +352,10 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                    <span className="text-slate-500">Compensation</span>
-                    <span className={`font-bold ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58]' : 'text-slate-700'}`}>
-                      {formatCleanSalary(job.salary, true)}
+                  <div className="flex items-start justify-between gap-3 py-1.5 border-b border-slate-50">
+                    <span className="text-slate-500 shrink-0">Compensation</span>
+                    <span className={`font-bold text-right text-xs ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58]' : 'text-slate-700'}`}>
+                      {formatCleanSalary(displaySalary, true)}
                     </span>
                   </div>
 
@@ -367,7 +382,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
 
                 <div className="pt-2">
                   <a
-                    href={job.originalUrl}
+                    href={applyLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
@@ -384,28 +399,20 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     className="w-full py-3 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-xs"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    <span>Apply on {job.source}</span>
+                    <span>{applyButtonText}</span>
                   </a>
                 </div>
               </div>
 
-              {/* Share & Index Notice */}
-              <div className="bg-slate-100/70 rounded-3xl p-5 border border-slate-200/80 space-y-3 text-xs">
-                <div className="flex items-center gap-2 text-slate-800 font-bold">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>CSEEL Real-Time Indexer</span>
+              {/* Reassurance Notice */}
+              <div className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/80 text-xs">
+                <div className="flex items-center gap-2 text-slate-800 font-bold mb-1">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>100% Free for Teachers</span>
                 </div>
-                <p className="text-slate-600 leading-relaxed text-[11px]">
-                  This vacancy is indexed from public educational job boards. CSEEL does not charge any fee from applicants. Always verify authentic school domains before sharing sensitive credentials.
+                <p className="text-slate-500 leading-relaxed text-[11px]">
+                  CSEEL does not charge any application or placement fees. Apply directly through the official institution portal.
                 </p>
-                <button
-                  type="button"
-                  onClick={handleShare}
-                  className="w-full py-2 px-3 rounded-xl bg-white hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all border border-slate-300 flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <Share2 className="w-3.5 h-3.5" />
-                  <span>{copied ? 'Link Copied!' : 'Copy Permanent Job Link'}</span>
-                </button>
               </div>
 
             </div>
@@ -525,7 +532,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
           <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
             <div className="min-w-0 flex-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block truncate">
-                {job.designation || 'Teaching Faculty'} • {formatCleanSalary(job.salary, true)}
+                {job.designation || 'Teaching Faculty'} • {formatCleanSalary(displaySalary, true)}
               </span>
               <span className="text-xs font-bold text-white truncate block">
                 {job.organisationName}
@@ -541,7 +548,7 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
               </button>
               <a
-                href={job.originalUrl}
+                href={applyLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => {

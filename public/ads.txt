@@ -1,0 +1,2 @@
+# Google AdSense Authorized Digital Sellers (ads.txt) for CSEEL (cseel.org)
+google.com, pub-2314808699584572, DIRECT, f08c47fec0942fa0

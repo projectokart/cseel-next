@@ -4,7 +4,7 @@ import { cookies, headers } from 'next/headers';
 import Client from './Client';
 import { getMaintenanceStatus } from '@/features/maintenance/maintenanceService';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR — revalidate every hour
 
 export const metadata: Metadata = {
   title: "CSEEL | India's #1 Experimental Science Learning Platform",

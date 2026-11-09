@@ -216,10 +216,10 @@ export default function RootLayout({
           fetchPriority="high"
         />
 
-        {/* Non-Blocking Font Loading (Zero Render-Blocking Overhead) */}
+        {/* Non-Blocking Font Loading (Zero Render-Blocking Overhead) — All fonts in single request */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Inter:wght@400;500;600;700&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
           media="print"
           // @ts-ignore
           onLoad="this.media='all'"
@@ -227,7 +227,7 @@ export default function RootLayout({
         <noscript>
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Inter:wght@400;500;600;700&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap"
           />
         </noscript>
         <style
@@ -473,15 +473,7 @@ export default function RootLayout({
             }),
           }}
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap"
-          media="print"
-          // @ts-ignore
-          onLoad="this.media='all'"
-        />
+        {/* Swiper & CDN Preconnects (From Labster UI Framework) */}
 
         {/* Swiper & CDN Preconnects (From Labster UI Framework) */}
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
@@ -856,7 +848,7 @@ export default function RootLayout({
         {/* Google Tag Manager - Lazy Loaded to prevent blocking initial paint & CPU */}
         <Script
           id="google-tag-manager"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

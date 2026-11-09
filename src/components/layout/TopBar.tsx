@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard,
   ArrowLeft, Home, Headphones, Mail, LogIn, Users, Briefcase,
-  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles
+  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles, GraduationCap
 } from "lucide-react";
 import dynamic from 'next/dynamic';
 import {
@@ -229,6 +229,26 @@ const TopBar = () => {
           {/* ── RIGHT SIDE: CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold">
             
+            {/* Priority Teaching Jobs Link with Live Pulsing Green Beacon */}
+            <Link
+              href="/edu-network/teachers"
+              aria-label="Teaching Jobs in India"
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 h-[20px] justify-center text-white font-bold bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400/40 hover:border-emerald-400 rounded-full active:scale-95 transition-all shrink-0 touch-manipulation group shadow-[0_0_8px_rgba(16,185,129,0.25)]"
+              title="Explore 2,000+ Verified Teaching Jobs Across India"
+            >
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_6px_#10B981]"></span>
+              </span>
+              <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0 hidden xs:inline" />
+              <span className="text-emerald-300 group-hover:text-white font-bold text-[11px] tracking-tight transition-colors">
+                Teaching Jobs
+              </span>
+              <span className="hidden md:inline-flex items-center text-[9px] font-extrabold uppercase bg-emerald-500 text-slate-950 px-1 py-[0.5px] rounded tracking-wider leading-none">
+                HOT
+              </span>
+            </Link>
+
             {/* Careers Link */}
             <Link
               href="/careers"

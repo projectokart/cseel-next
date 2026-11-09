@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import sharp from 'sharp';
+// dynamic import of sharp only when invoked in node environment
+// avoid hard top-level import so Cloudflare workers / esbuild don't fail bundling native .node binary
+
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +35,7 @@ function isAuthorizedAdmin(req: NextRequest, bodyEmail?: string, bodyKey?: strin
  * Convert any image buffer to AVIF and automatically compress under 10 KB
  */
 async function convertToAvifUnder10Kb(rawBuffer: Buffer): Promise<{ buffer: Buffer; sizeKb: number; quality: number }> {
+  const sharp = (await import('sharp')).default;
   let quality = 70;
   let maxDim = 360;
 

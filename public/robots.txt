@@ -1,0 +1,39 @@
+# cseel.org robots.txt
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /under-construction
+Disallow: /_next/
+
+# Sitemaps
+Sitemap: https://www.cseel.org/sitemap_index.xml
+Sitemap: https://www.cseel.org/sitemaps/static.xml
+Sitemap: https://www.cseel.org/sitemaps/jobs.xml
+Sitemap: https://www.cseel.org/sitemaps/materials.xml
+Sitemap: https://www.cseel.org/sitemap-schoolsearch-v2026-sec98a7f.xml
+
+# AI Crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /

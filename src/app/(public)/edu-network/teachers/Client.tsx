@@ -46,7 +46,13 @@ import {
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress, getJobAgeInfo } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
-import { calculateDynamicFacets, DEFAULT_JOB_FACETS, JobFilterFacetsData } from '@/data/jobFilterFacets';
+import {
+  calculateDynamicFacets,
+  DEFAULT_JOB_FACETS,
+  JobFilterFacetsData,
+  matchesJobFilter,
+  buildFacetsFromJobs,
+} from '@/data/jobFilterFacets';
 import { matchesJobFuzzy, filterAndRankJobsBySearch } from '@/lib/fuzzySearch';
 
 const FacultyFilterSheet = dynamic(() => import('@/components/teachers/FacultyFilterSheet'), {
@@ -1027,12 +1033,16 @@ export default function TeachersDirectoryClient({
           const decoded = decodeSlimFeed(feedPayload.jobs);
           setActiveJobs(decoded);
 
-          // Restore cached filter facets if available
+          // Restore cached filter facets or build dynamically from jobs
           if (feedPayload.facets) {
             setFacetsData(feedPayload.facets);
           } else {
             const cachedFacets = await FacetsCache.get();
-            if (cachedFacets) setFacetsData(cachedFacets);
+            if (cachedFacets) {
+              setFacetsData(cachedFacets);
+            } else {
+              setFacetsData(buildFacetsFromJobs(decoded));
+            }
           }
 
           // Restore GPS cache from old JobsCacheStorage if available
@@ -1148,6 +1158,10 @@ export default function TeachersDirectoryClient({
             });
           }
           setActiveJobs(freshJobs);
+          // Dynamically compute fresh facets directly from the live feed to ensure 100% sync
+          const liveFacets = buildFacetsFromJobs(freshJobs);
+          setFacetsData(liveFacets);
+          FacetsCache.save(liveFacets).catch(() => {});
           JobsCacheStorage.saveCache(freshJobs, serverVersion, freshJobs.length).catch(() => {});
         }
       } catch (err) {
@@ -1262,17 +1276,16 @@ export default function TeachersDirectoryClient({
   // Dynamic multi-dimensional drill-down filter counts
   const dynamicCounts = useMemo(() => {
     if (activeTab === 'jobs') {
-      // By default when NO search or filter is applied, return precomputed database facet counts!
-      if (!hasActiveFilters && (facetsData?.counts || DEFAULT_JOB_FACETS?.counts)) {
+      if (activeJobs.length === 0) {
         const counts = facetsData?.counts || DEFAULT_JOB_FACETS.counts;
         return {
-          subjects: counts.subjects || {},
-          designations: counts.designations || {},
-          boards: counts.boards || {},
-          cities: counts.cities || {},
-          states: counts.states || {},
-          portals: counts.portals || {},
-          forLady: facetsData?.forLadyCount ?? DEFAULT_JOB_FACETS.forLadyCount ?? 56,
+          subjects: counts?.subjects || {},
+          designations: counts?.designations || {},
+          boards: counts?.boards || {},
+          cities: counts?.cities || {},
+          states: counts?.states || {},
+          portals: counts?.portals || {},
+          forLady: facetsData?.forLadyCount ?? DEFAULT_JOB_FACETS.forLadyCount ?? 0,
         };
       }
 
@@ -1289,6 +1302,8 @@ export default function TeachersDirectoryClient({
         forLadyOnly,
         searchQuery,
         searchLocation: locationSearchInput,
+        distanceRadiusFilter,
+        userCoords,
       });
     } else {
       const desCounts: Record<string, number> = {};
@@ -1333,74 +1348,27 @@ export default function TeachersDirectoryClient({
 
   // Filtered Jobs
   const filteredJobs = useMemo(() => {
-    const candidates = activeJobs.filter((job) => {
-      if (selectedDesignations.length > 0 && !selectedDesignations.includes(job.designation)) return false;
-      if (selectedSubjects.length > 0 && !selectedSubjects.includes(job.subject)) return false;
-      if (selectedBoards.length > 0 && !selectedBoards.includes(job.board)) return false;
-      if (selectedCities.length > 0 && !selectedCities.some((c) => job.city.toLowerCase().includes(c.toLowerCase()))) return false;
-      if (selectedStates.length > 0 && !selectedStates.some((s) => (job.state || '').toLowerCase().includes(s.toLowerCase()))) return false;
-      
-      // Job Type / Work Mode filter (Full-Time, Part-Time, Remote/Online, Offline/On-site)
-      if (selectedJobTypes.length > 0) {
-        const matchesJobType = selectedJobTypes.some((jt) => {
-          const roleType = (job.roleType || '').toLowerCase();
-          const title = (job.jobPostName || '').toLowerCase();
-          const desc = (job.shortDescription || '').toLowerCase();
-          const fullText = `${roleType} ${title} ${desc}`;
-          if (jt === 'Remote') {
-            return fullText.includes('remote') || fullText.includes('online') || fullText.includes('work from home');
-          }
-          if (jt === 'On-site') {
-            return !fullText.includes('remote') && !fullText.includes('work from home');
-          }
-          if (jt === 'Part-Time') {
-            return fullText.includes('part-time') || fullText.includes('part time') || fullText.includes('visiting');
-          }
-          if (jt === 'Full-Time') {
-            return fullText.includes('full-time') || fullText.includes('full time') || roleType === 'full-time' || !roleType;
-          }
-          return roleType.includes(jt.toLowerCase());
-        });
-        if (!matchesJobType) return false;
-      }
-
-      // Portal Source Filter (Naukri, Indeed, LinkedIn, Direct Portal)
-      if (selectedPortals.length > 0) {
-        const src = (job.source || '').toLowerCase();
-        const matchesPortal = selectedPortals.some((p) => {
-          const pl = p.toLowerCase();
-          if (pl.includes('naukri')) return src.includes('naukri');
-          if (pl.includes('indeed')) return src.includes('indeed');
-          if (pl.includes('linkedin')) return src.includes('linkedin');
-          if (pl.includes('portal') || pl.includes('school') || pl.includes('direct')) {
-            return src.includes('direct') || src.includes('school') || src.includes('portal');
-          }
-          return src.includes(pl);
-        });
-        if (!matchesPortal) return false;
-      }
-
-      if (minSalaryFilter > 0) {
-        const annualMax = getAnnualSalaryNumber(job.salary, job.salaryMax).max;
-        if (annualMax < minSalaryFilter) return false;
-      }
-      if (urgentOnly && !job.badge?.includes('🔥')) return false;
-      if (forLadyOnly && !isJobForLady(job)) return false;
-
-      // Distance radius filter from user GPS location
-      if (distanceRadiusFilter > 0 && userCoords) {
-        if (job.coordinates?.lat && job.coordinates?.lng) {
-          const d = getDistanceKm(userCoords.lat, userCoords.lng, job.coordinates.lat, job.coordinates.lng);
-          if (d > distanceRadiusFilter) return false;
-        }
-      }
-
-      return true;
-    });
+    const candidates = activeJobs.filter((job) =>
+      matchesJobFilter(job, {
+        selectedDesignations,
+        selectedSubjects,
+        selectedBoards,
+        selectedCities,
+        selectedStates,
+        selectedJobTypes,
+        selectedPortals,
+        minSalaryFilter,
+        urgentOnly,
+        forLadyOnly,
+        searchLocation: locationSearchInput,
+        distanceRadiusFilter,
+        userCoords,
+      })
+    );
 
     let results = candidates;
     if (searchQuery && searchQuery.trim()) {
-      results = filterAndRankJobsBySearch(candidates, searchQuery) as FacultyJobItem[];
+      results = filterAndRankJobsBySearch(candidates, searchQuery.trim()) as FacultyJobItem[];
     }
 
     if (sortBy === 'salary') {
@@ -2087,6 +2055,7 @@ export default function TeachersDirectoryClient({
         {/* ── 2. Desktop Filter Sidebar Mode (>= 768px Full Sidebar) ── */}
         <FacultyFilterSheet
           mode="sidebar"
+          availableFacets={facetsData}
           activeTab={activeTab}
           totalCount={activeTab === 'jobs' ? liveTotalVacancies : VERIFIED_FACULTY_MEMBERS.length}
           filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : liveTotalVacancies) : filteredFaculty.length}
@@ -2123,6 +2092,7 @@ export default function TeachersDirectoryClient({
         {/* ── 3. Mobile Filter Drawer (< 768px) ── */}
         <FacultyFilterSheet
           mode="sheet"
+          availableFacets={facetsData}
           isOpen={isMobileFilterOpen}
           onClose={() => setIsMobileFilterOpen(false)}
           activeTab={activeTab}

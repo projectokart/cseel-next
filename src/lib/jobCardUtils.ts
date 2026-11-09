@@ -83,7 +83,7 @@ export function formatStructuredAddress(job: {
     }
   }
 
-    // Fallback to extractPureLocalAddress to detect branches/campuses (e.g. Kolathur) from description
+  // Fallback to extractPureLocalAddress to detect branches/campuses from description
   if (!local) {
     const fallback = extractPureLocalAddress(job);
     if (
@@ -123,7 +123,7 @@ export function formatStructuredAddress(job: {
     }
   }
 
-  // Local Address third (after District and State on same line, wraps if long)
+  // Local Address third
   if (local) {
     const localLower = local.toLowerCase();
     const alreadyIncluded = parts.some(
@@ -145,13 +145,10 @@ export function formatStructuredAddress(job: {
   return district || state || 'India';
 }
 
-
 /**
  * Extract Pure Local Address
  * Strips District, City, State, and Country from the full address so ONLY the Local Address
  * (Locality / Colony / Sector / Area / Street / Campus branch) remains.
- * If full address only had District and State, scans shortDescription for branch/campus mentions.
- * Falls back to "School Campus" if no specific local colony is available, never repeating District & State.
  */
 export function extractPureLocalAddress(job: {
   address?: string | null;
@@ -227,7 +224,6 @@ export function extractPureLocalAddress(job: {
     return s;
   };
 
-  // 1. Check parentheses in raw address (Naukri/Indeed format, e.g. "Coimbatore(Saibaba Colony", "New (Rohini")
   const parenMatches = rawAddress.match(/\(([^)]+)\)/g);
   if (parenMatches) {
     for (const p of parenMatches) {
@@ -242,13 +238,11 @@ export function extractPureLocalAddress(job: {
     if (cleaned) return cleaned;
   }
 
-  // 2. Strip district, city, state directly from rawAddress
   if (rawAddress) {
     const cleaned = cleanCandidate(rawAddress);
     if (cleaned) return cleaned;
   }
 
-  // 3. Check shortDescription for branch or campus mentions (e.g. Everwin's "branches in *Perambur*, *Kolathur*...")
   if (desc) {
     const branchMatch = desc.match(/(?:branches?|campus(?:es)?|centre|center)\s+(?:in|at)\s+([^\n\r:;.]+)/i);
     if (branchMatch && branchMatch[1]) {
@@ -263,8 +257,6 @@ export function extractPureLocalAddress(job: {
     }
   }
 
-  // 4. Fallback if no specific colony/sector/street is given:
-  // Return "School Campus" so we never repeat District & State
   return 'School Campus';
 }
 
@@ -296,12 +288,11 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
 
   // If accidentally passed a long text paragraph, extract salary/pay segment first
   if (s.length > 70) {
-    const payMatch = s.match(/(?:pay|salary|ctc|stipend|remuneration)\s*[:\-–]?\s*([^\n\r]{3,60})/i);
+    const payMatch = s.match(/(?:pay|salary|ctc|stipend|remuneration)\s*[:\-–—]?\s*([^\n\r]{3,60})/i);
     if (payMatch) {
       s = payMatch[1].trim();
     } else {
-      // Look for any ₹ pattern
-      const rMatch = s.match(/₹\s*[\d\.,]+\s*(?:[-–—to]+\s*₹?\s*[\d\.,]+)?(?:\s*(?:k|lpa|lacs?|lakhs?|per\s*(?:month|year)|p\.?a\.?|\/\s*(?:mo|month|yr)))?/i);
+      const rMatch = s.match(/[₹\$\u20B9]?\s*[\d\.,]+\s*(?:[-–—to]+\s*[₹\$\u20B9]?\s*[\d\.,]+)?(?:\s*(?:k|lpa|lacs?|lakhs?|per\s*(?:month|year)|p\.?a\.?|\/\s*(?:mo|month|yr)))?/i);
       if (rMatch) {
         s = rMatch[0].trim();
       } else {
@@ -311,7 +302,7 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
   }
 
   // 1. Pattern: Range in LPA / Lacs PA (e.g. ₹3.5 - 5 LPA, 4-6 Lacs PA, 2.5 - 3.5 Lakhs)
-  const lpaRange = s.match(/₹?\s*([\d\.]+)\s*(?:lpa|lakhs?|lacs?)?\s*[-–—to]+\s*₹?\s*([\d\.]+)\s*(?:lpa|lakhs?|lacs?)\s*(?:pa|p\.a\.|per\s*annum)?/i);
+  const lpaRange = s.match(/[₹\$\u20B9]?\s*([\d\.]+)\s*(?:lpa|lakhs?|lacs?)?\s*[-–—to]+\s*[₹\$\u20B9]?\s*([\d\.]+)\s*(?:lpa|lakhs?|lacs?)\s*(?:pa|p\.a\.|per\s*annum)?/i);
   if (lpaRange) {
     const v1 = parseFloat(lpaRange[1]);
     const v2 = parseFloat(lpaRange[2]);
@@ -326,7 +317,7 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
   }
 
   // 2. Pattern: Single LPA (e.g. 6 LPA, ₹5.5 Lakhs PA)
-  const singleLpa = s.match(/₹?\s*([\d\.]+)\s*(?:lpa|lakhs?|lacs?)\s*(?:pa|p\.a\.|per\s*annum)?/i);
+  const singleLpa = s.match(/[₹\$\u20B9]?\s*([\d\.]+)\s*(?:lpa|lakhs?|lacs?)\s*(?:pa|p\.a\.|per\s*annum)?/i);
   if (singleLpa) {
     const v = parseFloat(singleLpa[1]);
     if (!isNaN(v) && v < 100) {
@@ -336,7 +327,7 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
   }
 
   // 3. Pattern: Full Annual INR range (e.g. ₹3,00,000 - ₹5,00,000 per year / PA)
-  const annualRange = s.match(/₹?\s*([\d,]+(?:\.\d+)?)\s*[-–—to]+\s*₹?\s*([\d,]+(?:\.\d+)?)\s*(?:per\s*year|p\.?a\.?|per\s*annum|\/\s*yr)/i);
+  const annualRange = s.match(/[₹\$\u20B9]?\s*([\d,]+(?:\.\d+)?)\s*[-–—to]+\s*[₹\$\u20B9]?\s*([\d,]+(?:\.\d+)?)\s*(?:per\s*year|p\.?a\.?|per\s*annum|\/\s*yr)/i);
   if (annualRange) {
     const v1 = parseFloat(annualRange[1].replace(/,/g, ''));
     const v2 = parseFloat(annualRange[2].replace(/,/g, ''));
@@ -351,7 +342,7 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
   }
 
   // 4. Pattern: Monthly "k" shorthand (e.g. 40k - 50k / mo, ₹30k/mo)
-  const kMonthly = s.match(/₹?\s*(\d+)\s*k?\s*[-–—to]*\s*₹?\s*(\d*)\s*k\s*(?:\/\s*mo|\/\s*month|per\s*month)?/i);
+  const kMonthly = s.match(/[₹\$\u20B9]?\s*(\d+)\s*k?\s*[-–—to]*\s*[₹\$\u20B9]?\s*(\d*)\s*k\s*(?:\/\s*mo|\/\s*month|per\s*month)?/i);
   if (kMonthly) {
     let v1 = parseInt(kMonthly[1], 10);
     let v2 = kMonthly[2] ? parseInt(kMonthly[2], 10) : null;
@@ -363,8 +354,8 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
     return `₹${v1.toLocaleString('en-IN')} / month`;
   }
 
-  // 5. Pattern: Standard Monthly numeric range (e.g. ₹20,000.00 - ₹35,000.00 per month)
-  const numMonthly = s.match(/₹?\s*([\d,]+(?:\.\d+)?)\s*[-–—to]+\s*₹?\s*([\d,]+(?:\.\d+)?)\s*(?:per\s*month|\/\s*mo|\/\s*month|pm|p\.m\.)/i);
+  // 5. Pattern: Standard Monthly numeric range (e.g. ₹20,000 - ₹35,000 per month)
+  const numMonthly = s.match(/[₹\$\u20B9]?\s*([\d,]+(?:\.\d+)?)\s*[-–—to]+\s*[₹\$\u20B9]?\s*([\d,]+(?:\.\d+)?)\s*(?:per\s*month|\/\s*mo|\/\s*month|pm|p\.m\.)/i);
   if (numMonthly) {
     const v1 = Math.round(parseFloat(numMonthly[1].replace(/,/g, '')));
     const v2 = Math.round(parseFloat(numMonthly[2].replace(/,/g, '')));
@@ -375,7 +366,7 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
   }
 
   // 6. Pattern: Single numeric monthly (e.g. ₹35,000 per month)
-  const singleMonthly = s.match(/₹?\s*([\d,]+(?:\.\d+)?)\s*(?:per\s*month|\/\s*mo|\/\s*month|pm|p\.m\.)/i);
+  const singleMonthly = s.match(/[₹\$\u20B9]?\s*([\d,]+(?:\.\d+)?)\s*(?:per\s*month|\/\s*mo|\/\s*month|pm|p\.m\.)/i);
   if (singleMonthly) {
     const v = Math.round(parseFloat(singleMonthly[1].replace(/,/g, '')));
     return `₹${v.toLocaleString('en-IN')} / month`;
@@ -390,22 +381,30 @@ export function getSourceDisplayName(source?: string | null): string {
   if (s.includes('naukri')) return 'Naukri';
   if (s.includes('indeed')) return 'Indeed';
   if (s.includes('linkedin')) return 'LinkedIn';
-  if (s.includes('portal') || s.includes('school') || s.includes('direct')) return 'Direct Portal';
+  if (s.includes('direct') || s.includes('portal') || s.includes('school')) return 'Direct School';
+  if (s.includes('teacheron')) return 'TeacherON';
+  if (s.includes('apna')) return 'Apna';
+  if (s.includes('times')) return 'TimesJobs';
+  if (s.includes('shine')) return 'Shine';
+  if (s.includes('foundit')) return 'Foundit';
+  if (s.includes('kvs') || s.includes('nvs')) return 'KVS/NVS';
+  if (s.includes('dav')) return 'DAV';
+  if (s.includes('awes')) return 'AWES';
   return source;
 }
 
 export function getSourceBadgeColor(source?: string | null): string {
-  if (!source) return 'bg-slate-50 text-slate-700 border-slate-200';
+  if (!source) return 'bg-slate-100 text-slate-700 border-slate-200';
   const s = source.toLowerCase();
-  if (s.includes('naukri')) return 'bg-sky-50 text-[#006FCC] border-sky-200';
-  if (s.includes('indeed')) return 'bg-indigo-50 text-indigo-700 border-indigo-200';
-  if (s.includes('linkedin')) return 'bg-blue-50 text-[#0A66C2] border-blue-200';
-  return 'bg-emerald-50 text-emerald-800 border-emerald-200';
+  if (s.includes('linkedin')) return 'bg-[#0077b5]/10 text-[#0077b5] border-[#0077b5]/30';
+  if (s.includes('indeed')) return 'bg-[#2164f3]/10 text-[#2164f3] border-[#2164f3]/30';
+  if (s.includes('naukri')) return 'bg-[#004e92]/10 text-[#004e92] border-[#004e92]/30';
+  if (s.includes('direct') || s.includes('portal') || s.includes('school')) return 'bg-emerald-50 text-emerald-700 border-emerald-300';
+  return 'bg-blue-50 text-[#005689] border-blue-200';
 }
 
 /**
- * Checks if an organisation name is a generic recruiter placeholder or confidential hiring phrase.
- * (e.g. "Reputed Senior Secondary School", "Reputed CBSE School", "Leading School", "Confidential")
+ * Checks if school name is generic (e.g. "Reputed School", "Confidential")
  */
 export function isGenericSchoolName(name?: string | null): boolean {
   if (!name) return true;
@@ -437,17 +436,13 @@ export function getGoogleMapsSearchUrl(job: {
   const structured = formatStructuredAddress(job);
   const isGeneric = isGenericSchoolName(org);
 
-  // If organization is generic or anonymous (e.g. "Reputed Senior Secondary School"):
   if (isGeneric) {
     if (hasCoords && coords) {
-      // Pin exact coordinates directly on Google Maps (zero ambiguity)
       return `https://www.google.com/maps/search/?api=1&query=${coords.lat},${coords.lng}`;
     }
-    // Fall back to clean structured locality/city search (e.g. "Gurugram, Haryana")
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(structured || 'India')}`;
   }
 
-  // If a real school/institute name is present (e.g. "Vedanta Academy", "BVM Global School"):
   const parts = [org, structured].filter(Boolean);
   const query = parts.join(', ');
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -514,7 +509,6 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 1: Today -> GREEN
   if (diffDays === 0) {
     return {
       label: 'Today',
@@ -525,7 +519,6 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 2: <= 7 Days (Within 1 week) -> GREEN Verified Active
   if (diffDays <= 7) {
     return {
       label: 'Verified Active',
@@ -536,7 +529,6 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 3: 8 to 30 Days -> Active
   if (diffDays <= 30) {
     return {
       label: 'Active',
@@ -547,7 +539,6 @@ export function getJobAgeInfo(dateStr?: string | null): JobAgeInfo {
     };
   }
 
-  // Case 4: > 30 Days (31 to 45 Days) -> Closing Soon
   return {
     label: 'Closing Soon',
     badgeClass: 'text-amber-700 bg-amber-50 border-amber-200 font-bold',

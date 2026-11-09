@@ -18,8 +18,8 @@ const CURRENT_YEAR = CURRENT_DATE.getFullYear();
 const TODAY_ISO = CURRENT_DATE.toISOString().split('T')[0];
 
 export const metadata: Metadata = {
-  title: `Teacher Vacancy Near Me & School Jobs in India (${CURRENT_MONTH} ${CURRENT_YEAR}) | 2,800+ Vacancies - CSEEL`,
-  description: `🔥 2,880+ Verified Teacher Vacancies Near You & Top CBSE/ICSE School Jobs in India (Updated Today, ${CURRENT_MONTH} ${CURRENT_YEAR}). Direct apply, walk-in interviews & transparent salary for PGT, TGT, PRT & STEM Teachers with zero fees.`,
+  title: `Teacher Vacancy Near Me & School Jobs in India (${CURRENT_MONTH} ${CURRENT_YEAR}) | 2,700+ Vacancies - CSEEL`,
+  description: `🔥 2,700+ Verified Teacher Vacancies Near You & Top CBSE/ICSE School Jobs in India (Updated Today, ${CURRENT_MONTH} ${CURRENT_YEAR}). Direct apply, walk-in interviews & transparent salary for PGT, TGT, PRT & STEM Teachers with zero fees.`,
   keywords: [
     `Teacher Vacancy Near Me`,
     `School Jobs Near Me`,
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `Teacher Vacancy Near Me & School Jobs in India (${CURRENT_MONTH} ${CURRENT_YEAR}) | CSEEL`,
-    description: `🔥 2,880+ Active School Teaching Vacancies Across India. PGT, TGT, PRT, Science, Math & Coding Educators. Transparent salary bands & instant direct apply.`,
+    description: `🔥 2,700+ Active School Teaching Vacancies Across India. PGT, TGT, PRT, Science, Math & Coding Educators. Transparent salary bands & instant direct apply.`,
     url: 'https://www.cseel.org/edu-network/teachers',
     siteName: 'CSEEL EduNetwork',
     images: [
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR} | CSEEL`,
-    description: `Updated Today (${CURRENT_MONTH} ${CURRENT_YEAR}): Browse 3,130+ fresh school job vacancies across India with transparent salaries & direct apply links.`,
+    description: `Updated Today (${CURRENT_MONTH} ${CURRENT_YEAR}): Browse 2,700+ fresh school job vacancies across India with transparent salaries & direct apply links.`,
     images: ['https://www.cseel.org/images/cseel-social-preview.jpg'],
   },
 };
@@ -92,7 +92,7 @@ export default async function TeachersPage() {
         '@type': 'CollectionPage',
         '@id': 'https://www.cseel.org/edu-network/teachers#page',
         name: `Daily School Job Vacancies in India ${CURRENT_MONTH} ${CURRENT_YEAR} | CSEEL`,
-        description: `Explore 2,880+ verified teaching vacancies across CBSE, ICSE, and top private schools in India. Updated daily with direct application links.`,
+        description: `Explore 2,700+ verified teaching vacancies across CBSE, ICSE, and top private schools in India. Updated daily with direct application links.`,
         url: 'https://www.cseel.org/edu-network/teachers',
         dateModified: TODAY_ISO,
         isPartOf: {

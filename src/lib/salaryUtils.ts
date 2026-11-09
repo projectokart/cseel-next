@@ -12,14 +12,18 @@ export function getAnnualSalaryNumber(
   fallbackMax?: number | null
 ): { min: number; max: number } {
   if (!salaryStr || salaryStr === '---' || salaryStr.toLowerCase().includes('not disclosed')) {
+    if (fallbackMax && fallbackMax > 0) {
+      const annual = fallbackMax <= 150000 ? fallbackMax * 12 : fallbackMax;
+      return { min: annual, max: annual };
+    }
     return { min: 0, max: 0 };
   }
 
   const raw = salaryStr.toLowerCase();
   const isMonthly = /(?:\/mo|\/month|per\s*month|pm|p\.m\.)/.test(raw);
-  const clean = raw.replace(/[₹,\s]|rs\.?|inr/gi, '');
+  const clean = raw.replace(/[₹\$\u20B9,\s]|rs\.?|inr/gi, '');
 
-  // 1. LPA / Lakhs pattern: e.g. "₹12.0 - ₹18.0 LPA", "10.5 to 15 Lakhs", "8 LPA"
+  // 1. LPA / Lakhs pattern: e.g. "12.0 - 18.0 LPA", "10.5 to 15 Lakhs", "8 LPA"
   const lpaRange = clean.match(/(\d+(?:\.\d+)?)[-–—to]+(\d+(?:\.\d+)?)(?:lpa|lakh|lac)/);
   if (lpaRange) {
     const minLakh = parseFloat(lpaRange[1]);
@@ -77,7 +81,8 @@ export function getAnnualSalaryNumber(
   }
 
   if (fallbackMax && fallbackMax > 0) {
-    return { min: fallbackMax, max: fallbackMax };
+    const annual = fallbackMax <= 150000 ? fallbackMax * 12 : fallbackMax;
+    return { min: annual, max: annual };
   }
 
   return { min: 0, max: 0 };

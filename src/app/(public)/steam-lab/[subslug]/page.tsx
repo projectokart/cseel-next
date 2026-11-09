@@ -17,11 +17,7 @@ import {
   Cpu
 } from 'lucide-react';
 
-interface Props {
-  params: {
-    subslug: string;
-  };
-}
+interface Props { params: Promise<{ subslug: string }> | { subslug: string }; }
 
 const LAB_CONFIGS: Record<string, {
   title: string;
@@ -102,8 +98,10 @@ export function generateStaticParams() {
   ];
 }
 
-export function generateMetadata({ params }: Props): Metadata {
-  const lab = LAB_CONFIGS[params.subslug];
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const resolvedParams = await Promise.resolve(params);
+  const subslug = resolvedParams?.subslug || '';
+  const lab = LAB_CONFIGS[subslug];
   const title = lab ? lab.title : 'STEAM Lab Solution';
   return {
     title: `${title} | CSEEL STEM Directorate`,
@@ -111,9 +109,11 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function SteamLabSubpage({ params }: Props) {
-  const lab = LAB_CONFIGS[params.subslug] || {
-    title: params.subslug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+export default async function SteamLabSubpage({ params }: Props) {
+  const resolvedParams = await Promise.resolve(params);
+  const subslug = resolvedParams?.subslug || '';
+  const lab = LAB_CONFIGS[subslug] || {
+    title: subslug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
     category: 'STEAM Lab Innovation',
     subtitle: 'Turnkey Lab Setup & Equipment Curriculum',
     description: 'CSEEL STEM Directorate is currently calibrating this turnkey lab specification.',

@@ -3,26 +3,50 @@
  * Decodes abbreviated slim JSON fields back to full FacultyJobItem format.
  * Used on the client side after loading jobs-feed.json.
  */
-import { FacultyJobItem } from '@/data/facultyJobsData';
+import { FacultyJobItem, isJobForLady } from '@/data/facultyJobsData';
 
-// ── Reverse-lookup tables ──────────────────────────────────────────────────
+// ── Reverse-lookup tables ─────────────────────────────────────────────────────────────
 
 const BOARD_DECODE: Record<string, string> = {
-  C: 'CBSE', I: 'ICSE', IB: 'Cambridge / IB', S: 'State Board', INT: 'International',
+  C: 'CBSE',
+  I: 'ICSE',
+  IB: 'Cambridge / IB',
+  'IB/C': 'Cambridge / IB',
+  CAMB: 'Cambridge / IB',
+  S: 'State Board',
+  INT: 'International',
+};
+
+const DESIGNATION_DECODE: Record<string, string> = {
+  'Principal / Leadersh': 'Principal / Leadership',
 };
 
 const SOURCE_DECODE: Record<string, string> = {
-  LI: 'LinkedIn', IN: 'Indeed', NK: 'Naukri.com', DP: 'Direct School Portal',
-  AP: 'Apna.co', TO: 'TeacherON', TJ: 'TimesJobs', SH: 'Shine.com',
-  EH: 'EducoHire', FO: 'Foundit', KV: 'KVS / NVS', DV: 'DAV CMC', AW: 'AWES India',
+  LI: 'LinkedIn',
+  IN: 'Indeed',
+  NK: 'Naukri.com',
+  DP: 'Direct School Portal',
+  AP: 'Apna.co',
+  TO: 'TeacherON',
+  TJ: 'TimesJobs',
+  SH: 'Shine.com',
+  EH: 'EducoHire',
+  FO: 'Foundit',
+  KV: 'KVS / NVS',
+  DV: 'DAV CMC',
+  AW: 'AWES India',
 };
 
 const ROLE_DECODE: Record<string, string> = {
-  F: 'Full-Time', P: 'Part-Time', V: 'Visiting Faculty',
-  L: 'Lab In-Charge', A: 'ATL Mentor', C: 'Contractual',
+  F: 'Full-Time',
+  P: 'Part-Time',
+  V: 'Visiting Faculty',
+  L: 'Lab In-Charge',
+  A: 'ATL Mentor',
+  C: 'Contractual',
 };
 
-// ── Single job decoder ─────────────────────────────────────────────────────
+// ── Single job decoder ──────────────────────────────────────────────────────────────
 
 export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
   const id = s.id || '';
@@ -34,6 +58,28 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
   const dateMs = openingDate ? (Date.parse(openingDate) || 0) : 0;
   const imgUrl = (s.im && typeof s.im === 'string' && s.im.trim() !== '') ? s.im.trim() : null;
 
+  const rawDesig = s.g || null;
+  const designation = (rawDesig && DESIGNATION_DECODE[rawDesig]) ? DESIGNATION_DECODE[rawDesig] : rawDesig;
+  const board = BOARD_DECODE[s.b] || s.b || null;
+
+  const titleText = s.t || '';
+  const descText = s.d || '';
+  const orgText = s.n || '';
+
+  const isUrgent = Boolean(
+    s.urg ||
+    /\b(urgent|urgently|immediate|walk-?in)\b/i.test(`${titleText} ${descText}`)
+  );
+
+  const isLady = Boolean(
+    s.f ||
+    isJobForLady({
+      jobPostName: titleText,
+      shortDescription: descText,
+      organisationName: orgText,
+    })
+  );
+
   return {
     id,
     slug: id,
@@ -41,14 +87,14 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
     organisationLogo: imgUrl,
     image_url:        imgUrl,
     jobPostName:      s.t || 'Teaching Position',
-    designation:      s.g || null,
+    designation:      designation,
     subject:          s.s || null,
-    board:            BOARD_DECODE[s.b] || s.b || null,
+    board:            board,
     roleType:         ROLE_DECODE[s.r]  || s.r  || 'Full-Time',
     salary:           s['$'] || 'Not Disclosed',
     salaryMin:        typeof s['$n'] === 'number' ? s['$n'] : null,
     salaryMax:        typeof s['$x'] === 'number' ? s['$x'] : null,
-    shortDescription: s.d  || '',
+    shortDescription: descText,
     address:          `${s.c || ''}, ${s.dt || s.st || 'India'}`,
     city:             s.c  || 'India',
     state:            s.st || 'India',
@@ -61,20 +107,21 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
     originalUrl:      s.u  || 'https://www.cseel.org/edu-network/teachers',
     applyUrl:         s.u  || undefined,
     verified:         Boolean(s.v),
-    badge:            s.v ? `${SOURCE_DECODE[s.src] || s.src || 'Direct'} Verified` : '',
-    forLady:          Boolean(s.f),
+    urgent:           isUrgent,
+    badge:            isUrgent ? '🔥 Urgent Hiring' : (s.v ? `${SOURCE_DECODE[s.src] || s.src || 'Direct'} Verified` : ''),
+    forLady:          isLady,
     distanceKm:       undefined,
     _dateMs:          dateMs,
   };
 }
 
-// ── Batch decoder ──────────────────────────────────────────────────────────
+// ── Batch decoder ───────────────────────────────────────────────────────────────────
 
 export function decodeSlimFeed(slimJobs: Record<string, any>[]): FacultyJobItem[] {
   return slimJobs.map(decodeSlimJob);
 }
 
-// ── Apply link details (url + description) from jobs-links.json ────────────
+// ── Apply link details (url + description) from jobs-links.json ─────────────────────
 
 export function applyLinksToJobs(
   jobs: FacultyJobItem[],
@@ -92,7 +139,7 @@ export function applyLinksToJobs(
   });
 }
 
-// ── Apply coordinates from jobs-coords.json ────────────────────────────────
+// ── Apply coordinates from jobs-coords.json ─────────────────────────────────────────
 
 export function applyCoordsToJobs(
   jobs: FacultyJobItem[],

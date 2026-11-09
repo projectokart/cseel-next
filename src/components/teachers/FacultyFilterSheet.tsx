@@ -821,7 +821,7 @@ export default function FacultyFilterSheet({
               </span>
             </div>
             <span className="text-[11px] font-mono font-bold text-rose-700 bg-rose-100/80 px-1.5 py-0.2 rounded-full">
-              {dynamicCounts.forLady ?? 28}
+              {dynamicCounts.forLady ?? 0}
             </span>
           </label>
         </div>

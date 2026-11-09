@@ -497,13 +497,8 @@ export default function RootLayout({
           id="cseel-comprehensive-system-styles"
           dangerouslySetInnerHTML={{
             __html: `
-              /* CSEEL Fluid Responsive Font Scaling */
-              html { font-size: 1rem; }
-              @media screen and (max-width:1920px) { html { font-size: 1rem; } }
-              @media screen and (max-width:1440px) { html { font-size: calc(0.4375rem + 0.625vw); } }
-              @media screen and (max-width:1280px) { html { font-size: calc(0.75rem + 0.3125vw); } }
-              @media screen and (max-width:960px) { html { font-size: calc(0.875rem + 0.208vw); } }
-              @media screen and (max-width:479px) { html { font-size: calc(0.812rem + 0.629vw); } }
+              /* CSEEL Standard Universal Responsive Base */
+              html { font-size: 16px; width: 100%; max-width: 100%; overflow-x: hidden; }
 
               /* Text Crispness & Antialiasing */
               body {
@@ -913,7 +908,7 @@ export default function RootLayout({
         />
         <ThemeHeadScript />
       </head>
-      <body className="antialiased text-slate-700 bg-white min-h-screen selection:bg-[#D6EDFF] selection:text-[#003C6E]" suppressHydrationWarning>
+      <body className="antialiased text-slate-700 bg-white min-h-screen w-full max-w-full overflow-x-hidden selection:bg-[#D6EDFF] selection:text-[#003C6E]" suppressHydrationWarning>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -932,8 +927,8 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Providers>
-          <div className="flex flex-col min-h-screen">
-            <div id="main-content" className="flex-1 focus:outline-none" tabIndex={-1}>
+          <div className="flex flex-col min-h-screen w-full max-w-full overflow-x-hidden">
+            <div id="main-content" className="flex-1 w-full max-w-full overflow-x-hidden focus:outline-none" tabIndex={-1}>
               {children}
             </div>
           </div>

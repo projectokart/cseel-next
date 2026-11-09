@@ -5,8 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from "@/contexts/AuthContext";
 import {
   User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard,
-  ArrowLeft, Home, Headphones, Mail, LogIn, Users, Briefcase,
-  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles, GraduationCap
+  ArrowLeft, Home, Headphones, Mail, Users, Briefcase,
+  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles
 } from "lucide-react";
 import dynamic from 'next/dynamic';
 import {
@@ -166,9 +166,9 @@ const TopBar = () => {
   };
 
   return (
-    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 relative w-full z-[9999] pointer-events-auto font-['Hanken_Grotesk',sans-serif]">
-      <div className="container mx-auto px-2.5 sm:px-4 max-w-7xl">
-        <div className="flex items-center justify-between py-0 gap-2 h-[26px] min-h-[26px] w-full">
+    <div id="site-topbar" className="site-topbar bg-[#001C33] text-white text-[11px] border-b border-[#002F56]/80 relative w-full z-[9999] pointer-events-auto font-['Hanken_Grotesk',sans-serif] overflow-hidden">
+      <div className="container mx-auto px-2 sm:px-4 max-w-7xl">
+        <div className="flex items-center justify-between py-0 gap-1 sm:gap-2 h-[26px] min-h-[26px] w-full flex-nowrap">
           
           {/* ── LEFT SIDE: BACK BUTTON & BRAND / BREADCRUMBS ────────── */}
           <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 shrink-0">
@@ -176,7 +176,7 @@ const TopBar = () => {
               <button
                 type="button"
                 onClick={handleBack}
-                className="inline-flex items-center gap-1 text-white hover:text-white/80 active:scale-95 font-semibold text-[11px] transition-all shrink-0 cursor-pointer bg-transparent border-0 px-1.5 py-0.5 -ml-1 h-5 touch-manipulation group"
+                className="inline-flex items-center gap-1 text-white hover:text-white/80 active:scale-95 font-semibold text-[11px] transition-all shrink-0 cursor-pointer bg-transparent border-0 px-1 py-0.5 -ml-0.5 h-5 touch-manipulation group"
                 title="Go Back to Previous Page"
               >
                 <ArrowLeft className="w-3 h-3 text-white group-hover:-translate-x-0.5 transition-transform shrink-0" />
@@ -185,10 +185,11 @@ const TopBar = () => {
             ) : (
               <Link
                 href="/"
-                className="inline-flex items-center gap-1 text-white hover:text-white/80 font-bold text-[11px] shrink-0 transition-colors py-0.5 px-1 touch-manipulation"
+                className="inline-flex items-center gap-1 text-white hover:text-white/80 font-bold text-[11px] shrink-0 transition-colors py-0.5 px-0.5 touch-manipulation"
+                title="CSEEL Home"
               >
-                <Home className="w-3 h-3 text-white" />
-                <span className="text-white">CSEEL</span>
+                <Home className="w-3.5 h-3.5 text-white shrink-0" />
+                <span className="text-white hidden sm:inline font-bold">CSEEL</span>
               </Link>
             )}
 
@@ -227,7 +228,7 @@ const TopBar = () => {
           </div>
 
           {/* ── RIGHT SIDE: CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold min-w-0">
             
             {/* Priority Teaching Jobs Link with Live Pulsing Green Beacon */}
             <Link
@@ -240,8 +241,7 @@ const TopBar = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_6px_#10B981]"></span>
               </span>
-              <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0 hidden xs:inline" />
-              <span className="text-emerald-300 group-hover:text-white font-bold text-[11px] tracking-tight transition-colors">
+              <span className="text-emerald-300 group-hover:text-white font-bold text-[10.5px] xs:text-[11px] tracking-tight transition-colors whitespace-nowrap">
                 Teaching Jobs
               </span>
               <span className="hidden md:inline-flex items-center text-[9px] font-extrabold uppercase bg-emerald-500 text-slate-950 px-1 py-[0.5px] rounded tracking-wider leading-none">
@@ -253,18 +253,18 @@ const TopBar = () => {
             <Link
               href="/careers"
               aria-label="Careers at CSEEL"
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
+              className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
               title="Careers at CSEEL"
             >
               <Briefcase className="w-3 h-3 text-white shrink-0" />
-              <span className="hidden sm:inline text-white">Careers</span>
+              <span className="text-white">Careers</span>
             </Link>
 
             {/* Get Support */}
             <Link
               href="/get-support"
               aria-label="Student and Teacher Support"
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
+              className="hidden xs:inline-flex items-center gap-1 px-1.5 py-0.5 h-5 justify-center text-white/90 hover:text-white active:scale-95 transition-all shrink-0 touch-manipulation"
               title="Helpdesk & Student/Teacher Support"
             >
               <Headphones className="w-3 h-3 text-white shrink-0" />
@@ -389,10 +389,9 @@ const TopBar = () => {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1 py-0.5 px-2 text-white/95 hover:text-white active:scale-95 font-semibold text-[11px] transition-all shrink-0 whitespace-nowrap ml-1 cursor-pointer touch-manipulation bg-transparent border-0 h-5"
+                className="inline-flex items-center py-0.5 px-1.5 text-white/95 hover:text-white active:scale-95 font-semibold text-[11px] transition-all shrink-0 whitespace-nowrap ml-0.5 cursor-pointer touch-manipulation bg-transparent border-0 h-5"
                 title="Sign in to CSEEL Portal"
               >
-                <LogIn className="w-3 h-3 text-white shrink-0" />
                 <span className="text-white font-semibold">Login</span>
               </Link>
             )}

@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        xs: "420px",
+      },
       fontSize: {
         xs: ['0.8125rem', { lineHeight: '1.25rem' }],   // 13px (up from 12px)
         sm: ['0.9375rem', { lineHeight: '1.375rem' }],  // 15px (up from 14px)

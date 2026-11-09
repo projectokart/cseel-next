@@ -1,10 +1,5 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { cookies, headers } from 'next/headers';
 import Client from './Client';
-import { getMaintenanceStatus } from '@/features/maintenance/maintenanceService';
-
-export const revalidate = 3600; // ISR — revalidate every hour
 
 export const metadata: Metadata = {
   title: "CSEEL | India's #1 Experimental Science Learning Platform",
@@ -40,39 +35,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const isBypassQuery = searchParams?.bypass === 'true' || 
-                        searchParams?.bypass_maintenance === '1' || 
-                        searchParams?.edit === 'true' || 
-                        searchParams?.editMode === 'true';
-
-  if (!isBypassQuery) {
-    try {
-      const host = headers().get('host') || '';
-      const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
-
-      const cookieStore = cookies();
-      const hasBypassCookie = 
-        cookieStore.get('cseel_admin_bypass')?.value === 'true' ||
-        Boolean(cookieStore.get('cseel_admin_auth')?.value);
-
-      if (!hasBypassCookie && !isLocalhost) {
-        const maintenance = getMaintenanceStatus();
-        if (maintenance.isActive) {
-          redirect('/under-construction');
-        }
-      }
-    } catch (e: any) {
-      if (e?.digest?.startsWith?.('NEXT_REDIRECT')) {
-        throw e;
-      }
-      console.error('[HomePage] Maintenance check error:', e);
-    }
-  }
-
+export default function Page() {
   return <Client />;
 }

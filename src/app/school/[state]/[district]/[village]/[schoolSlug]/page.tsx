@@ -15,8 +15,7 @@ import SchoolProfileView from './SchoolProfileView';
 import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
 import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/templateConstants';
 import { redirect } from 'next/navigation';
-import fs from 'fs';
-import path from 'path';
+import schoolAiSyncTokens from '@/data/school_ai_sync_tokens.json';
 
 
 function isValidSchoolImage(img: any): boolean {
@@ -40,24 +39,9 @@ function resolveHeroImage(syncedHero: any, dbImage: any): string {
 // 7 Days On-Demand ISR Cache (revalidates in background with zero CPU timeout)
 export const revalidate = 604800;
 
-// In-memory cache for fast file reads and school records
-let cachedTokensStore: any = null;
-let cachedTokensMtime: number = 0;
-
+// Direct zero-CPU in-memory static tokens store (0ms file read)
 function getParsedTokensStore() {
-  try {
-    const tokensFile = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
-    if (!fs.existsSync(tokensFile)) return null;
-    const stat = fs.statSync(tokensFile);
-    if (!cachedTokensStore || stat.mtimeMs !== cachedTokensMtime) {
-      cachedTokensStore = JSON.parse(fs.readFileSync(tokensFile, 'utf8'));
-      cachedTokensMtime = stat.mtimeMs;
-    }
-    return cachedTokensStore;
-  } catch (err) {
-    console.warn('Error reading sync token store in page.tsx:', err);
-    return null;
-  }
+  return schoolAiSyncTokens;
 }
 
 // In-memory LRU cache for fetched school records to avoid redundant DB hits across metadata & page render

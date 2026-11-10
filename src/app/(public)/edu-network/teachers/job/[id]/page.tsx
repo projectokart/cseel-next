@@ -136,7 +136,7 @@ async function findJobById(id: string): Promise<FacultyJobItem | null> {
 import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
 import SingleJobClient from './SingleJobClient';
 
-export const revalidate = 300;
+
 
 interface Props {
   params: {

@@ -80,24 +80,6 @@ export default function SchoolContactDetailSection({
       email: displayAdmissionsEmail,
       color: 'bg-emerald-50 text-emerald-800 border-emerald-100',
     },
-    {
-      id: 'principal',
-      title: 'Principal & Leadership Desk',
-      sub: 'Special appointments & academic counsel',
-      icon: UserCheck,
-      phone: displayPrincipalPhone,
-      email: displayPrincipalEmail,
-      color: 'bg-amber-50 text-amber-800 border-amber-100',
-    },
-    {
-      id: 'careers',
-      title: 'Careers & Human Resources',
-      sub: 'Faculty recruitment & administrative jobs',
-      icon: Briefcase,
-      phone: displayCareersPhone,
-      email: displayCareersEmail,
-      color: 'bg-purple-50 text-purple-800 border-purple-100',
-    },
   ];
 
   return (
@@ -251,8 +233,6 @@ export default function SchoolContactDetailSection({
                 >
                   <option value="Admissions">Admissions &amp; Enrollment</option>
                   <option value="General">General Administration &amp; Transport</option>
-                  <option value="Principal">Principal Appointment</option>
-                  <option value="Careers">Careers &amp; Faculty Opportunities</option>
                 </select>
               </div>
 

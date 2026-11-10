@@ -77,15 +77,6 @@ const SchoolCampusTourSection = dynamic(() => import('@/components/schools/profi
 const SchoolImportantInfoSection = dynamic(() => import('@/components/schools/profile/SchoolImportantInfoSection'), {
   loading: () => <SectionSkeleton height="h-72" title="Important Information" />
 });
-const SchoolPrincipalMessageSection = dynamic(() => import('@/components/schools/profile/SchoolPrincipalMessageSection'), {
-  loading: () => <SectionSkeleton height="h-80" title="Principal's Desk" />
-});
-const SchoolManagementMessageSection = dynamic(() => import('@/components/schools/profile/SchoolManagementMessageSection'), {
-  loading: () => <SectionSkeleton height="h-80" title="Management Desk" />
-});
-const SchoolVisionMissionSection = dynamic(() => import('@/components/schools/profile/SchoolVisionMissionSection'), {
-  loading: () => <SectionSkeleton height="h-64" title="Vision & Mission" />
-});
 const SchoolFaqSection = dynamic(() => import('@/components/schools/template/SchoolFaqSection'), {
   loading: () => <SectionSkeleton height="h-96" title="Frequently Asked Questions" />
 });
@@ -108,9 +99,6 @@ const SchoolReviewsSection = dynamic(() => import('@/components/schools/profile/
 });
 const SchoolContactDetailSection = dynamic(() => import('@/components/schools/profile/SchoolContactDetailSection'), {
   loading: () => <TabSkeleton title="Loading Contact Desks" />
-});
-const SchoolCareersTab = dynamic(() => import('@/components/schools/profile/SchoolCareersTab'), {
-  loading: () => <TabSkeleton title="Loading Careers & Vacancies" />
 });
 const SchoolAddressMapSection = dynamic(() => import('@/components/schools/profile/SchoolAddressMapSection'), {
   ssr: false,
@@ -189,7 +177,6 @@ export type TabType =
   | 'gallery'
   | 'admissions'
   | 'reviews'
-  | 'careers'
   | 'faq'
   | 'contact';
 
@@ -199,7 +186,6 @@ const navTabs: { id: TabType; label: string; shortLabel: string; icon: React.Com
   { id: 'facilities', label: 'Facilities', shortLabel: 'Facilities', icon: Layers },
   { id: 'gallery', label: 'Campus Gallery', shortLabel: 'Gallery', icon: Eye },
   { id: 'admissions', label: 'Admissions & Fees', shortLabel: 'Admissions', icon: GraduationCap },
-  { id: 'careers', label: 'Careers & Faculty', shortLabel: 'Careers', icon: Briefcase },
   { id: 'reviews', label: 'Reviews & Ratings', shortLabel: 'Reviews', icon: Star },
   { id: 'faq', label: 'Frequently Asked Questions', shortLabel: 'FAQ', icon: HelpCircle },
   { id: 'contact', label: 'Contact Us', shortLabel: 'Contact', icon: Phone }
@@ -1690,57 +1676,6 @@ export default function SchoolProfileView({
             </div>
           )}
 
-          {/* 5. PRINCIPAL MESSAGE SECTION (LAZY VIEWPORT) */}
-          {isSectionVisible('principal') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="principal" sectionTitle="Principal Message" />
-              <LazySection id="principal-message" minHeight="420px">
-                <SchoolPrincipalMessageSection
-                  displayName={displayName}
-                  displayPrincipal={displayPrincipal}
-                  displayUdise={displayUdise}
-                  isLiveTemplate={isLiveTemplate}
-                  isEditMode={isEditMode}
-                  templateData={templateData}
-                  initialProfileData={initialProfileData}
-                />
-              </LazySection>
-            </div>
-          )}
-
-          {/* 6. MANAGEMENT MESSAGE SECTION (LAZY VIEWPORT) */}
-          {isSectionVisible('management') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="management" sectionTitle="Management Message" />
-              <LazySection id="management-message" minHeight="420px">
-                <SchoolManagementMessageSection
-                  displayName={displayName}
-                  displayManagementLabel={displayManagementLabel}
-                  displayUdise={displayUdise}
-                  isLiveTemplate={isLiveTemplate}
-                  isEditMode={isEditMode}
-                  templateData={templateData}
-                  initialProfileData={initialProfileData}
-                />
-              </LazySection>
-            </div>
-          )}
-
-          {/* 7. VISION & MISSION SECTION (LAZY VIEWPORT) */}
-          {isSectionVisible('vision_mission') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="vision_mission" sectionTitle="Vision & Mission" />
-              <LazySection id="vision-mission" minHeight="360px">
-                <SchoolVisionMissionSection
-                  isLiveTemplate={isLiveTemplate}
-                  isEditMode={isEditMode}
-                  templateData={templateData}
-                  initialProfileData={initialProfileData}
-                />
-              </LazySection>
-            </div>
-          )}
-
           {/* 8. FAQ SECTION (LAZY VIEWPORT) */}
           {isSectionVisible('faqs') && (
             <div className="relative group/sect">
@@ -1859,20 +1794,6 @@ export default function SchoolProfileView({
         <div key="tab-reviews" className="relative group/sect animate-fade-in transition-opacity duration-300">
           <SectionVisibilityToggle sectionId="reviews" sectionTitle="Reviews & Ratings" />
           <SchoolReviewsSection displayName={displayName} udiseCode={displayUdise} />
-        </div>
-      )}
-
-      {/* ─── TAB: CAREERS & FACULTY VACANCIES ─── */}
-      {activeTab === 'careers' && (
-        <div key="tab-careers" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="careers" sectionTitle="Careers & Vacancies" />
-          <SchoolCareersTab
-            displayName={displayName}
-            isLiveTemplate={isLiveTemplate}
-            isEditMode={isEditMode}
-            templateData={templateData}
-            careersData={templateData?.careers || initialProfileData?.careers}
-          />
         </div>
       )}
 

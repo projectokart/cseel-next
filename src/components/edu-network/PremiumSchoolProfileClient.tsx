@@ -459,13 +459,6 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                    <Link
-                      href={`/edu-network/organisation/school/${org.id}/vacancy`}
-                      className="flex-1 sm:flex-initial px-3 py-2 bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 shadow-2xs"
-                    >
-                      <Briefcase className="w-3.5 h-3.5 text-rose-600" />
-                      <span>Careers ({jobsList.length})</span>
-                    </Link>
                     <button
                       onClick={handleNativeShare}
                       className="px-3 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
@@ -626,20 +619,6 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                       <Trophy className="w-4 h-4 text-amber-500" />
                       <span>School Results</span>
                     </a>
-                  </li>
-                  <li>
-                    <Link
-                      href={`/edu-network/organisation/school/${org.id}/vacancy`}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg bg-rose-50 text-rose-700 font-bold hover:bg-rose-100 transition border border-rose-200"
-                    >
-                      <span className="flex items-center gap-2.5">
-                        <Briefcase className="w-4 h-4 text-rose-600" />
-                        <span>Careers & Vacancies</span>
-                      </span>
-                      <span className="text-[10px] bg-rose-600 text-white font-black px-1.5 py-0.5 rounded-full">
-                        {jobsList.length} Open
-                      </span>
-                    </Link>
                   </li>
                   <li>
                     <a href="#stem_live_labs_tab" className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-cyan-50 text-cyan-800 font-bold border border-cyan-200">
@@ -1935,7 +1914,6 @@ export default function PremiumSchoolProfileClient({ orgId, overrideOrg }: Premi
                 <a href="#fee_structure_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Wallet className="w-4 h-4 text-emerald-600" /><span>Fee Structure</span></a>
                 <a href="#academic_stats_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><GraduationCap className="w-4 h-4 text-indigo-600" /><span>Academic Stats</span></a>
                 <a href="#admission_criteria_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><FileText className="w-4 h-4 text-rose-600" /><span>Eligibility</span></a>
-                <Link href={`/edu-network/organisation/school/${org.id}/vacancy`} onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 font-bold"><Briefcase className="w-4 h-4 text-rose-600" /><span>Vacancies & Careers</span></Link>
                 <a href="#facilities_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Wand2 className="w-4 h-4 text-sky-600" /><span>Facilities</span></a>
                 <a href="#video_gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><Video className="w-4 h-4 text-red-600" /><span>Video Tour</span></a>
                 <a href="#gallery_tab" onClick={() => setIsMobileMenuOpen(false)} className="p-3 bg-slate-50 border rounded-xl flex items-center gap-2"><ImageIcon className="w-4 h-4 text-indigo-600" /><span>Gallery</span></a>

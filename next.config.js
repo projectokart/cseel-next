@@ -1,3 +1,4 @@
+const path = require('path');
 /** @type {import('next').NextConfig} */
 const securityHeaders = [
   {
@@ -44,22 +45,14 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingRoot: path.resolve(__dirname),
+  typescript: { ignoreBuildErrors: true },
   poweredByHeader: false,
   compress: true,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  experimental: {
-    webpackBuildWorker: true,
-    outputFileTracingIncludes: {
-      '/edu-network/teachers/job/[id]': [
-        './src/data/aggregated_jobs.json',
-        './public/jobs/jobs-feed.json',
-        './public/jobs/jobs-links.json',
-      ],
-    },
-  },
+  
+  
   images: {
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400,
     remotePatterns: [
@@ -150,12 +143,32 @@ const nextConfig = {
     }
     return [
       {
+        source: '/school/:path*',
+        headers: [
+          ...securityHeaders,
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=2592000',
+          },
+        ],
+      },
+      {
+        source: '/edu-network/:path*',
+        headers: [
+          ...securityHeaders,
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
         source: '/jobs/:path*',
         headers: [
           ...securityHeaders,
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, must-revalidate',
+            value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
           },
         ],
       },

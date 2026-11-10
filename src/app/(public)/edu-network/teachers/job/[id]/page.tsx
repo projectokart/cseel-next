@@ -7,6 +7,8 @@ import { FacultyJobItem } from '@/data/facultyJobsData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 import { decodeSlimJob } from '@/lib/jobs/feedDecoder';
 
+export const revalidate = 86400; // 1 Day Edge ISR cache
+
 let _allJobsCache: FacultyJobItem[] | null = null;
 let _fetchingPromise: Promise<FacultyJobItem[]> | null = null;
 

@@ -37,9 +37,8 @@ function resolveHeroImage(syncedHero: any, dbImage: any): string {
   return PLACEHOLDER_EMPTY_IMAGE;
 }
 
-// Zero caching: Refreshing or reopening browser fetches live from Supabase
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// 7 Days On-Demand ISR Cache (revalidates in background with zero CPU timeout)
+export const revalidate = 604800;
 
 // In-memory cache for fast file reads and school records
 let cachedTokensStore: any = null;

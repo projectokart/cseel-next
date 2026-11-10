@@ -5,7 +5,7 @@ import { getActiveFacultyJobs, toLightweightJob } from '@/data/facultyJobsData';
 import { ALL_TEACHERS } from '@/lib/eduNetworkData';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
 
-export const revalidate = 3600; // Edge ISR cache for instant <100ms TTFB
+export const revalidate = 86400; // 1 Day Edge ISR cache
 
 // Freshness dates for Google Rank #1 Priority Crawl
 const CURRENT_DATE = new Date();

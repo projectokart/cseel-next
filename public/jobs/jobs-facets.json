@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-11-08T23:25:15.262079",
-  "totalVacancies": 2846,
+  "lastUpdated": "2026-11-10T20:48:18.412717",
+  "totalVacancies": 3112,
   "forLadyCount": 0,
   "subjects": [
     {
@@ -31,7 +31,7 @@
     {
       "id": "Social Studies",
       "label": "Social Studies",
-      "count": 162
+      "count": 161
     },
     {
       "id": "General Science",
@@ -93,7 +93,7 @@
     {
       "id": "TGT",
       "label": "TGT",
-      "count": 738
+      "count": 737
     },
     {
       "id": "PGT",
@@ -216,7 +216,7 @@
     {
       "id": "Ghaziabad",
       "label": "Ghaziabad",
-      "count": 50
+      "count": 49
     },
     {
       "id": "Lucknow",
@@ -448,57 +448,57 @@
     {
       "id": "Maharashtra",
       "label": "Maharashtra",
-      "count": 547
+      "count": 562
     },
     {
       "id": "Karnataka",
       "label": "Karnataka",
-      "count": 404
-    },
-    {
-      "id": "Tamil Nadu",
-      "label": "Tamil Nadu",
-      "count": 261
-    },
-    {
-      "id": "Uttar Pradesh",
-      "label": "Uttar Pradesh",
-      "count": 256
+      "count": 424
     },
     {
       "id": "Delhi",
       "label": "Delhi",
-      "count": 223
+      "count": 378
+    },
+    {
+      "id": "Uttar Pradesh",
+      "label": "Uttar Pradesh",
+      "count": 278
+    },
+    {
+      "id": "Tamil Nadu",
+      "label": "Tamil Nadu",
+      "count": 276
     },
     {
       "id": "Telangana",
       "label": "Telangana",
-      "count": 212
+      "count": 225
     },
     {
       "id": "Haryana",
       "label": "Haryana",
-      "count": 209
+      "count": 218
     },
     {
       "id": "Gujarat",
       "label": "Gujarat",
-      "count": 128
+      "count": 130
     },
     {
       "id": "Rajasthan",
       "label": "Rajasthan",
-      "count": 114
+      "count": 117
     },
     {
       "id": "West Bengal",
       "label": "West Bengal",
-      "count": 99
+      "count": 104
     },
     {
       "id": "Madhya Pradesh",
       "label": "Madhya Pradesh",
-      "count": 94
+      "count": 97
     },
     {
       "id": "Punjab",
@@ -508,7 +508,7 @@
     {
       "id": "Kerala",
       "label": "Kerala",
-      "count": 46
+      "count": 47
     },
     {
       "id": "Bihar",
@@ -523,7 +523,7 @@
     {
       "id": "Uttarakhand",
       "label": "Uttarakhand",
-      "count": 35
+      "count": 36
     },
     {
       "id": "Odisha",
@@ -541,14 +541,14 @@
       "count": 15
     },
     {
-      "id": "Chandigarh",
-      "label": "Chandigarh",
+      "id": "Jharkhand",
+      "label": "Jharkhand",
       "count": 11
     },
     {
-      "id": "Jharkhand",
-      "label": "Jharkhand",
-      "count": 9
+      "id": "Chandigarh",
+      "label": "Chandigarh",
+      "count": 11
     },
     {
       "id": "Puducherry",
@@ -580,7 +580,7 @@
     {
       "id": "Direct",
       "label": "Direct",
-      "count": 2846
+      "count": 3112
     }
   ],
   "salarySlabs": [
@@ -607,7 +607,7 @@
     {
       "id": "Not Disclosed",
       "label": "Not Disclosed",
-      "count": 1872
+      "count": 2138
     }
   ],
   "counts": {
@@ -621,7 +621,7 @@
       "Physics": 124,
       "Chemistry": 90,
       "General Science": 152,
-      "Social Studies": 162,
+      "Social Studies": 161,
       "Commerce & Economics": 124,
       "Biology": 65,
       "Hindi": 121,
@@ -633,7 +633,7 @@
     "designations": {
       "Pre-Primary": 301,
       "Lab / Activity": 209,
-      "TGT": 738,
+      "TGT": 737,
       "PRT": 373,
       "Principal / Leadership": 246,
       "PGT": 439,
@@ -645,7 +645,7 @@
     "boards": {},
     "cities": {
       "Gurugram": 142,
-      "Ghaziabad": 50,
+      "Ghaziabad": 49,
       "Faridabad": 31,
       "Delhi": 74,
       "North West Delhi": 11,
@@ -902,25 +902,25 @@
       "Belagavi": 1
     },
     "states": {
-      "Haryana": 209,
-      "Uttar Pradesh": 256,
-      "Delhi": 223,
-      "Uttarakhand": 35,
-      "Karnataka": 404,
-      "Tamil Nadu": 261,
+      "Haryana": 218,
+      "Uttar Pradesh": 278,
+      "Delhi": 378,
+      "Uttarakhand": 36,
+      "Karnataka": 424,
+      "Tamil Nadu": 276,
       "Bihar": 39,
-      "Maharashtra": 547,
-      "Telangana": 212,
-      "West Bengal": 99,
-      "Rajasthan": 114,
-      "Gujarat": 128,
-      "Kerala": 46,
+      "Maharashtra": 562,
+      "Telangana": 225,
+      "West Bengal": 104,
+      "Rajasthan": 117,
+      "Gujarat": 130,
+      "Kerala": 47,
       "Chhattisgarh": 15,
-      "Madhya Pradesh": 94,
+      "Madhya Pradesh": 97,
       "All India": 17,
       "Andhra Pradesh": 38,
       "Odisha": 19,
-      "Jharkhand": 9,
+      "Jharkhand": 11,
       "Punjab": 56,
       "Jammu and Kashmir": 2,
       "Nagaland": 3,
@@ -930,12 +930,12 @@
       "Himachal Pradesh": 2
     },
     "portals": {
-      "Direct": 2846
+      "Direct": 3112
     }
   },
   "metadata": {
-    "total_jobs": 2846,
-    "generated_at": "2026-11-08T23:25:15.262099",
+    "total_jobs": 3112,
+    "generated_at": "2026-11-10T20:48:18.412902",
     "cutoff_days": 45
   }
 }

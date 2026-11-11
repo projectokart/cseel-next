@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-11-10T20:48:18.412717",
-  "totalVacancies": 3112,
+  "lastUpdated": "2026-11-11T06:13:54.356292",
+  "totalVacancies": 3132,
   "forLadyCount": 0,
   "subjects": [
     {
@@ -21,7 +21,7 @@
     {
       "id": "Computer Science & AI",
       "label": "Computer Science & AI",
-      "count": 254
+      "count": 253
     },
     {
       "id": "Mathematics",
@@ -123,7 +123,7 @@
     {
       "id": "Lab / Activity",
       "label": "Lab / Activity",
-      "count": 209
+      "count": 208
     },
     {
       "id": "Teacher",
@@ -448,22 +448,22 @@
     {
       "id": "Maharashtra",
       "label": "Maharashtra",
-      "count": 562
+      "count": 565
     },
     {
       "id": "Karnataka",
       "label": "Karnataka",
-      "count": 424
+      "count": 425
     },
     {
       "id": "Delhi",
       "label": "Delhi",
-      "count": 378
+      "count": 388
     },
     {
       "id": "Uttar Pradesh",
       "label": "Uttar Pradesh",
-      "count": 278
+      "count": 279
     },
     {
       "id": "Tamil Nadu",
@@ -478,7 +478,7 @@
     {
       "id": "Haryana",
       "label": "Haryana",
-      "count": 218
+      "count": 219
     },
     {
       "id": "Gujarat",
@@ -493,7 +493,7 @@
     {
       "id": "West Bengal",
       "label": "West Bengal",
-      "count": 104
+      "count": 107
     },
     {
       "id": "Madhya Pradesh",
@@ -513,12 +513,12 @@
     {
       "id": "Bihar",
       "label": "Bihar",
-      "count": 39
+      "count": 41
     },
     {
       "id": "Andhra Pradesh",
       "label": "Andhra Pradesh",
-      "count": 38
+      "count": 37
     },
     {
       "id": "Uttarakhand",
@@ -580,7 +580,7 @@
     {
       "id": "Direct",
       "label": "Direct",
-      "count": 3112
+      "count": 3132
     }
   ],
   "salarySlabs": [
@@ -607,13 +607,13 @@
     {
       "id": "Not Disclosed",
       "label": "Not Disclosed",
-      "count": 2138
+      "count": 2158
     }
   ],
   "counts": {
     "subjects": {
       "Pre-Primary": 310,
-      "Computer Science & AI": 254,
+      "Computer Science & AI": 253,
       "General Teaching": 713,
       "Art & Music": 145,
       "Mathematics": 215,
@@ -632,7 +632,7 @@
     },
     "designations": {
       "Pre-Primary": 301,
-      "Lab / Activity": 209,
+      "Lab / Activity": 208,
       "TGT": 737,
       "PRT": 373,
       "Principal / Leadership": 246,
@@ -737,7 +737,7 @@
       "Purba Champaran": 1,
       "Warangal": 4,
       "Sonipat": 8,
-      "Amaravati": 4,
+      "Amaravati": 3,
       "Mumbai Suburban": 4,
       "Alwar": 2,
       "Ballari": 1,
@@ -902,23 +902,23 @@
       "Belagavi": 1
     },
     "states": {
-      "Haryana": 218,
-      "Uttar Pradesh": 278,
-      "Delhi": 378,
+      "Haryana": 219,
+      "Uttar Pradesh": 279,
+      "Delhi": 388,
       "Uttarakhand": 36,
-      "Karnataka": 424,
+      "Karnataka": 425,
       "Tamil Nadu": 276,
-      "Bihar": 39,
-      "Maharashtra": 562,
+      "Bihar": 41,
+      "Maharashtra": 565,
       "Telangana": 225,
-      "West Bengal": 104,
+      "West Bengal": 107,
       "Rajasthan": 117,
       "Gujarat": 130,
       "Kerala": 47,
       "Chhattisgarh": 15,
       "Madhya Pradesh": 97,
       "All India": 17,
-      "Andhra Pradesh": 38,
+      "Andhra Pradesh": 37,
       "Odisha": 19,
       "Jharkhand": 11,
       "Punjab": 56,
@@ -930,12 +930,12 @@
       "Himachal Pradesh": 2
     },
     "portals": {
-      "Direct": 3112
+      "Direct": 3132
     }
   },
   "metadata": {
-    "total_jobs": 3112,
-    "generated_at": "2026-11-10T20:48:18.412902",
+    "total_jobs": 3132,
+    "generated_at": "2026-11-11T06:13:54.356303",
     "cutoff_days": 45
   }
 }

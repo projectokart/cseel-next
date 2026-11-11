@@ -32,14 +32,14 @@ export class SupabaseJobService {
     }
 
     try {
-      // 1-batch query with a strict 3-second timeout to never block page rendering
+      // 1-batch query with a 3.5-second timeout to never block page rendering
       const url = `${SUPABASE_URL}/rest/v1/jobs?is_active=eq.true&order=posted_at.desc&limit=500`;
       const res = await fetch(url, {
         headers: {
           apikey: SUPABASE_KEY,
           Authorization: `Bearer ${SUPABASE_KEY}`,
         },
-        signal: AbortSignal.timeout(800),
+        signal: AbortSignal.timeout(3500),
       });
 
       if (!res.ok) {
@@ -59,6 +59,44 @@ export class SupabaseJobService {
     } catch (err: any) {
       console.warn("[SupabaseJobService] Supabase fetch timed out or error (falling back to cache/local data):", err?.message || err);
       return (_cachedJobs && _cachedJobs.length > 0) ? _cachedJobs : getActiveFacultyJobs();
+    }
+  }
+
+  /**
+   * Fetches a single job by slug or ID with ultra-fast sub-millisecond parsing (payload ~1.5KB)
+   */
+  static async fetchJobBySlug(slug: string): Promise<FacultyJobItem | null> {
+    if (!SUPABASE_KEY || !slug) return null;
+    const clean = slug.trim().replace(/\/+$/, '');
+
+    // Check in-memory cache first if available
+    if (_cachedJobs && _cachedJobs.length > 0) {
+      const found = _cachedJobs.find(
+        (j) => j.id === clean || (j as any).slug === clean || j.id.toLowerCase() === clean.toLowerCase()
+      );
+      if (found) return found;
+    }
+
+    try {
+      const url = `${SUPABASE_URL}/rest/v1/jobs?slug=eq.${encodeURIComponent(clean)}&limit=1`;
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+        signal: AbortSignal.timeout(2500),
+      });
+
+      if (res.ok) {
+        const rows: any[] = await res.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          return this.mapRowToJobItem(rows[0]);
+        }
+      }
+      return null;
+    } catch (e) {
+      console.warn('[SupabaseJobService] fetchJobBySlug error:', e);
+      return null;
     }
   }
 

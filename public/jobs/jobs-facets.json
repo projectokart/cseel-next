@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-11-11T06:44:58.705610",
-  "totalVacancies": 3132,
+  "lastUpdated": "2026-11-11T12:10:14.485059",
+  "totalVacancies": 3155,
   "forLadyCount": 0,
   "subjects": [
     {
       "id": "General Teaching",
       "label": "General Teaching",
-      "count": 713
+      "count": 714
     },
     {
       "id": "Pre-Primary",
@@ -16,17 +16,17 @@
     {
       "id": "English",
       "label": "English",
-      "count": 281
+      "count": 285
     },
     {
       "id": "Computer Science & AI",
       "label": "Computer Science & AI",
-      "count": 253
+      "count": 255
     },
     {
       "id": "Mathematics",
       "label": "Mathematics",
-      "count": 215
+      "count": 218
     },
     {
       "id": "Social Studies",
@@ -36,17 +36,17 @@
     {
       "id": "General Science",
       "label": "General Science",
-      "count": 152
+      "count": 156
     },
     {
       "id": "Art & Music",
       "label": "Art & Music",
-      "count": 145
+      "count": 146
     },
     {
       "id": "Physics",
       "label": "Physics",
-      "count": 124
+      "count": 125
     },
     {
       "id": "Commerce & Economics",
@@ -71,7 +71,17 @@
     {
       "id": "Biology",
       "label": "Biology",
-      "count": 65
+      "count": 66
+    },
+    {
+      "id": "Academic Leadership",
+      "label": "Academic Leadership",
+      "count": 4
+    },
+    {
+      "id": "Pre-Primary / Nursery",
+      "label": "Pre-Primary / Nursery",
+      "count": 2
     },
     {
       "id": "Physics & Chemistry",
@@ -84,8 +94,8 @@
       "count": 1
     },
     {
-      "id": "Academic Leadership",
-      "label": "Academic Leadership",
+      "id": "Primary / PRT",
+      "label": "Primary / PRT",
       "count": 1
     }
   ],
@@ -448,37 +458,37 @@
     {
       "id": "Maharashtra",
       "label": "Maharashtra",
-      "count": 565
+      "count": 569
     },
     {
       "id": "Karnataka",
       "label": "Karnataka",
-      "count": 425
+      "count": 427
     },
     {
       "id": "Delhi",
       "label": "Delhi",
-      "count": 388
+      "count": 399
     },
     {
       "id": "Uttar Pradesh",
       "label": "Uttar Pradesh",
-      "count": 279
+      "count": 280
     },
     {
       "id": "Tamil Nadu",
       "label": "Tamil Nadu",
-      "count": 276
+      "count": 278
     },
     {
       "id": "Telangana",
       "label": "Telangana",
-      "count": 225
+      "count": 226
     },
     {
       "id": "Haryana",
       "label": "Haryana",
-      "count": 219
+      "count": 220
     },
     {
       "id": "Gujarat",
@@ -488,7 +498,7 @@
     {
       "id": "Rajasthan",
       "label": "Rajasthan",
-      "count": 117
+      "count": 118
     },
     {
       "id": "West Bengal",
@@ -580,7 +590,7 @@
     {
       "id": "Direct",
       "label": "Direct",
-      "count": 3132
+      "count": 3155
     }
   ],
   "salarySlabs": [
@@ -607,28 +617,30 @@
     {
       "id": "Not Disclosed",
       "label": "Not Disclosed",
-      "count": 2158
+      "count": 2181
     }
   ],
   "counts": {
     "subjects": {
       "Pre-Primary": 310,
-      "Computer Science & AI": 253,
-      "General Teaching": 713,
-      "Art & Music": 145,
-      "Mathematics": 215,
-      "English": 281,
-      "Physics": 124,
+      "Computer Science & AI": 255,
+      "General Teaching": 714,
+      "Art & Music": 146,
+      "Mathematics": 218,
+      "English": 285,
+      "Physics": 125,
       "Chemistry": 90,
-      "General Science": 152,
+      "General Science": 156,
       "Social Studies": 161,
       "Commerce & Economics": 124,
-      "Biology": 65,
+      "Biology": 66,
       "Hindi": 121,
       "Physical Education": 87,
       "Physics & Chemistry": 1,
       "General Studies": 1,
-      "Academic Leadership": 1
+      "Academic Leadership": 4,
+      "Primary / PRT": 1,
+      "Pre-Primary / Nursery": 2
     },
     "designations": {
       "Pre-Primary": 301,
@@ -902,17 +914,17 @@
       "Belagavi": 1
     },
     "states": {
-      "Haryana": 219,
-      "Uttar Pradesh": 279,
-      "Delhi": 388,
+      "Haryana": 220,
+      "Uttar Pradesh": 280,
+      "Delhi": 399,
       "Uttarakhand": 36,
-      "Karnataka": 425,
-      "Tamil Nadu": 276,
+      "Karnataka": 427,
+      "Tamil Nadu": 278,
       "Bihar": 41,
-      "Maharashtra": 565,
-      "Telangana": 225,
+      "Maharashtra": 569,
+      "Telangana": 226,
       "West Bengal": 107,
-      "Rajasthan": 117,
+      "Rajasthan": 118,
       "Gujarat": 130,
       "Kerala": 47,
       "Chhattisgarh": 15,
@@ -930,12 +942,12 @@
       "Himachal Pradesh": 2
     },
     "portals": {
-      "Direct": 3132
+      "Direct": 3155
     }
   },
   "metadata": {
-    "total_jobs": 3132,
-    "generated_at": "2026-11-11T06:44:58.705625",
+    "total_jobs": 3155,
+    "generated_at": "2026-11-11T12:10:14.485074",
     "cutoff_days": 45
   }
 }

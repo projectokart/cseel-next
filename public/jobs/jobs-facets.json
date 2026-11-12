@@ -1,22 +1,22 @@
 {
-  "lastUpdated": "2026-11-11T20:01:19.916552",
-  "totalVacancies": 3280,
+  "lastUpdated": "2026-11-12T10:27:58.619706",
+  "totalVacancies": 3311,
   "forLadyCount": 0,
   "subjects": [
     {
       "id": "General Teaching",
       "label": "General Teaching",
-      "count": 777
+      "count": 782
     },
     {
       "id": "English",
       "label": "English",
-      "count": 342
+      "count": 347
     },
     {
       "id": "Pre-Primary",
       "label": "Pre-Primary",
-      "count": 310
+      "count": 309
     },
     {
       "id": "Computer Science & AI",
@@ -26,17 +26,17 @@
     {
       "id": "Mathematics",
       "label": "Mathematics",
-      "count": 251
+      "count": 252
     },
     {
       "id": "General Science",
       "label": "General Science",
-      "count": 211
+      "count": 215
     },
     {
       "id": "Physics",
       "label": "Physics",
-      "count": 169
+      "count": 170
     },
     {
       "id": "Social Studies",
@@ -46,12 +46,12 @@
     {
       "id": "Art & Music",
       "label": "Art & Music",
-      "count": 156
+      "count": 158
     },
     {
       "id": "Hindi",
       "label": "Hindi",
-      "count": 129
+      "count": 131
     },
     {
       "id": "Commerce & Economics",
@@ -61,37 +61,37 @@
     {
       "id": "Chemistry",
       "label": "Chemistry",
-      "count": 102
+      "count": 103
     },
     {
       "id": "Physical Education",
       "label": "Physical Education",
-      "count": 101
+      "count": 102
     },
     {
       "id": "Biology",
       "label": "Biology",
-      "count": 70
+      "count": 71
     },
     {
       "id": "Academic Leadership",
       "label": "Academic Leadership",
-      "count": 45
+      "count": 49
     },
     {
       "id": "Pre-Primary / Nursery",
       "label": "Pre-Primary / Nursery",
-      "count": 24
+      "count": 27
     },
     {
       "id": "Primary / PRT",
       "label": "Primary / PRT",
-      "count": 11
+      "count": 12
     },
     {
       "id": "Economics & Commerce",
       "label": "Economics & Commerce",
-      "count": 10
+      "count": 11
     },
     {
       "id": "Robotics & STEM",
@@ -118,17 +118,17 @@
     {
       "id": "PGT",
       "label": "PGT",
-      "count": 472
+      "count": 471
     },
     {
       "id": "PRT",
       "label": "PRT",
-      "count": 388
+      "count": 387
     },
     {
       "id": "Pre-Primary",
       "label": "Pre-Primary",
-      "count": 305
+      "count": 304
     },
     {
       "id": "Faculty / Teacher",
@@ -148,17 +148,17 @@
     {
       "id": "Lab / Activity",
       "label": "Lab / Activity",
-      "count": 208
+      "count": 207
+    },
+    {
+      "id": "Full-Time",
+      "label": "Full-Time",
+      "count": 183
     },
     {
       "id": "Teacher",
       "label": "Teacher",
       "count": 165
-    },
-    {
-      "id": "Full-Time",
-      "label": "Full-Time",
-      "count": 148
     },
     {
       "id": "Counselor",
@@ -175,17 +175,17 @@
     {
       "id": "CBSE",
       "label": "CBSE",
-      "count": 1871
+      "count": 1892
     },
     {
       "id": "ICSE",
       "label": "ICSE",
-      "count": 1280
+      "count": 1289
     },
     {
       "id": "Cambridge / IB",
       "label": "Cambridge / IB",
-      "count": 110
+      "count": 111
     },
     {
       "id": "IB/Cambridge",
@@ -212,37 +212,37 @@
     {
       "id": "Bengaluru",
       "label": "Bengaluru",
-      "count": 406
+      "count": 407
     },
     {
       "id": "Delhi",
       "label": "Delhi",
-      "count": 316
+      "count": 328
     },
     {
       "id": "Mumbai",
       "label": "Mumbai",
-      "count": 246
+      "count": 250
     },
     {
       "id": "Hyderabad",
       "label": "Hyderabad",
-      "count": 202
+      "count": 204
     },
     {
       "id": "Chennai",
       "label": "Chennai",
-      "count": 172
+      "count": 175
     },
     {
       "id": "Pune",
       "label": "Pune",
-      "count": 168
+      "count": 171
     },
     {
       "id": "Gurugram",
       "label": "Gurugram",
-      "count": 152
+      "count": 153
     },
     {
       "id": "Noida",
@@ -257,7 +257,7 @@
     {
       "id": "Kolkata",
       "label": "Kolkata",
-      "count": 91
+      "count": 92
     },
     {
       "id": "Jaipur",
@@ -272,7 +272,7 @@
     {
       "id": "Ghaziabad",
       "label": "Ghaziabad",
-      "count": 59
+      "count": 58
     },
     {
       "id": "Navi Mumbai",
@@ -282,7 +282,7 @@
     {
       "id": "Thane",
       "label": "Thane",
-      "count": 51
+      "count": 52
     },
     {
       "id": "Coimbatore",
@@ -295,9 +295,14 @@
       "count": 50
     },
     {
-      "id": "Faridabad",
-      "label": "Faridabad",
-      "count": 35
+      "id": "Patna",
+      "label": "Patna",
+      "count": 36
+    },
+    {
+      "id": "Bhopal",
+      "label": "Bhopal",
+      "count": 36
     },
     {
       "id": "Indore",
@@ -305,14 +310,9 @@
       "count": 35
     },
     {
-      "id": "Bhopal",
-      "label": "Bhopal",
-      "count": 35
-    },
-    {
-      "id": "Patna",
-      "label": "Patna",
-      "count": 31
+      "id": "Faridabad",
+      "label": "Faridabad",
+      "count": 34
     },
     {
       "id": "Dehradun",
@@ -514,32 +514,32 @@
     {
       "id": "Maharashtra",
       "label": "Maharashtra",
-      "count": 582
+      "count": 590
     },
     {
       "id": "Delhi",
       "label": "Delhi",
-      "count": 465
+      "count": 476
     },
     {
       "id": "Karnataka",
       "label": "Karnataka",
-      "count": 440
-    },
-    {
-      "id": "Uttar Pradesh",
-      "label": "Uttar Pradesh",
-      "count": 288
+      "count": 441
     },
     {
       "id": "Tamil Nadu",
       "label": "Tamil Nadu",
-      "count": 285
+      "count": 288
+    },
+    {
+      "id": "Uttar Pradesh",
+      "label": "Uttar Pradesh",
+      "count": 287
     },
     {
       "id": "Telangana",
       "label": "Telangana",
-      "count": 228
+      "count": 230
     },
     {
       "id": "Haryana",
@@ -559,12 +559,12 @@
     {
       "id": "West Bengal",
       "label": "West Bengal",
-      "count": 114
+      "count": 115
     },
     {
       "id": "Madhya Pradesh",
       "label": "Madhya Pradesh",
-      "count": 98
+      "count": 99
     },
     {
       "id": "Punjab",
@@ -579,7 +579,7 @@
     {
       "id": "Bihar",
       "label": "Bihar",
-      "count": 41
+      "count": 46
     },
     {
       "id": "Andhra Pradesh",
@@ -646,12 +646,12 @@
     {
       "id": "LinkedIn",
       "label": "LinkedIn",
-      "count": 1283
+      "count": 1317
     },
     {
       "id": "Indeed",
       "label": "Indeed",
-      "count": 1211
+      "count": 1207
     },
     {
       "id": "Naukri.com",
@@ -661,7 +661,7 @@
     {
       "id": "Naukri",
       "label": "Naukri",
-      "count": 19
+      "count": 20
     },
     {
       "id": "Direct School Portal",
@@ -688,97 +688,97 @@
     {
       "id": "Below 3 LPA",
       "label": "Below 3 LPA",
-      "count": 362
+      "count": 361
     },
     {
       "id": "Not Disclosed",
       "label": "Not Disclosed",
-      "count": 2306
+      "count": 2338
     }
   ],
   "counts": {
     "subjects": {
-      "Pre-Primary": 310,
+      "Pre-Primary": 309,
+      "General Teaching": 782,
       "Computer Science & AI": 273,
-      "General Teaching": 777,
-      "Art & Music": 156,
-      "Mathematics": 251,
-      "English": 342,
-      "Physics": 169,
-      "Chemistry": 102,
-      "General Science": 211,
+      "Art & Music": 158,
+      "Mathematics": 252,
+      "English": 347,
+      "Physics": 170,
+      "Chemistry": 103,
+      "General Science": 215,
       "Social Studies": 167,
       "Commerce & Economics": 124,
-      "Biology": 70,
-      "Hindi": 129,
-      "Physical Education": 101,
+      "Biology": 71,
+      "Hindi": 131,
+      "Physical Education": 102,
       "Physics & Chemistry": 1,
       "General Studies": 1,
-      "Academic Leadership": 45,
+      "Academic Leadership": 49,
       "Robotics & STEM": 6,
-      "Primary / PRT": 11,
-      "Pre-Primary / Nursery": 24,
-      "Economics & Commerce": 10
+      "Primary / PRT": 12,
+      "Pre-Primary / Nursery": 27,
+      "Economics & Commerce": 11
     },
     "designations": {
-      "Pre-Primary": 305,
-      "Lab / Activity": 208,
+      "Pre-Primary": 304,
       "TGT": 752,
-      "PRT": 388,
+      "PRT": 387,
       "Principal / Leadership": 257,
-      "PGT": 472,
+      "PGT": 471,
       "Faculty / Teacher": 292,
+      "Lab / Activity": 207,
       "Faculty / Lecturer": 275,
       "Teacher": 165,
       "Counselor": 15,
       "Coordinator": 3,
-      "Full-Time": 148
+      "Full-Time": 183
     },
     "boards": {
-      "CBSE": 1871,
-      "ICSE": 1280,
-      "Cambridge / IB": 110,
+      "CBSE": 1892,
+      "ICSE": 1289,
+      "Cambridge / IB": 111,
       "IB/Cambridge": 7,
       "IB": 5,
       "State Board": 6,
       "Cambridge / IGCSE": 1
     },
     "cities": {
-      "Gurugram": 152,
-      "Ghaziabad": 59,
-      "Faridabad": 35,
-      "Delhi": 316,
+      "Gurugram": 153,
+      "Ghaziabad": 58,
+      "Delhi": 328,
       "North Delhi": 1,
+      "Faridabad": 34,
       "New Delhi": 93,
       "Noida": 102,
       "Gautam Buddha Nagar": 24,
       "Gautam Buddh Nagar": 7,
       "East Delhi": 3,
-      "West Delhi": 4,
+      "West Delhi": 3,
       "South Delhi": 12,
       "North West Delhi": 10,
       "Central Delhi": 8,
       "South East Delhi": 1,
       "Haridwar": 7,
-      "Bengaluru": 406,
+      "Bengaluru": 407,
       "Panchkula": 8,
-      "Chennai": 172,
+      "Chennai": 175,
       "Dehradun": 27,
-      "Patna": 31,
+      "Patna": 36,
       "Coimbatore": 50,
-      "Mumbai": 246,
-      "Pune": 168,
+      "Mumbai": 250,
+      "Pune": 171,
       "Bengaluru Urban": 12,
       "Medchal-Malkajgiri": 1,
-      "Hyderabad": 202,
+      "Hyderabad": 204,
       "Ranga Reddy": 1,
-      "Kolkata": 91,
+      "Kolkata": 92,
       "Jaipur": 71,
       "Ahmedabad": 61,
       "Hosur": 6,
       "Krishnagiri": 5,
       "Lucknow": 50,
-      "Thane": 51,
+      "Thane": 52,
       "Navi Mumbai": 55,
       "Ernakulam": 6,
       "Kharghar": 1,
@@ -786,7 +786,7 @@
       "North East Delhi": 4,
       "Kanker": 1,
       "Indore": 35,
-      "Bhopal": 35,
+      "Bhopal": 36,
       "Greater Noida": 11,
       "Howrah": 4,
       "Hooghly": 5,
@@ -1005,20 +1005,20 @@
     },
     "states": {
       "Haryana": 223,
-      "Uttar Pradesh": 288,
-      "Delhi": 465,
+      "Uttar Pradesh": 287,
+      "Delhi": 476,
       "Uttarakhand": 36,
-      "Karnataka": 440,
-      "Tamil Nadu": 285,
-      "Bihar": 41,
-      "Maharashtra": 582,
-      "Telangana": 228,
-      "West Bengal": 114,
+      "Karnataka": 441,
+      "Tamil Nadu": 288,
+      "Bihar": 46,
+      "Maharashtra": 590,
+      "Telangana": 230,
+      "West Bengal": 115,
       "Rajasthan": 121,
       "Gujarat": 132,
       "Kerala": 47,
       "Chhattisgarh": 15,
-      "Madhya Pradesh": 98,
+      "Madhya Pradesh": 99,
       "All India": 17,
       "Andhra Pradesh": 37,
       "Odisha": 19,
@@ -1032,16 +1032,16 @@
       "Himachal Pradesh": 2
     },
     "portals": {
-      "Indeed": 1211,
-      "LinkedIn": 1283,
+      "Indeed": 1207,
+      "LinkedIn": 1317,
       "Naukri.com": 765,
       "Direct School Portal": 2,
-      "Naukri": 19
+      "Naukri": 20
     }
   },
   "metadata": {
-    "total_jobs": 3280,
-    "generated_at": "2026-11-11T20:01:19.917311",
+    "total_jobs": 3311,
+    "generated_at": "2026-11-12T10:27:58.619720",
     "cutoff_days": 45
   }
 }

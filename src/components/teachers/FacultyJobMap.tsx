@@ -160,18 +160,52 @@ function generatePopupHtml(item: any, activeTab: 'jobs' | 'faculty'): string {
 }
 
 const getPointLat = (item: any): number => {
-  if (item?.coordinates && typeof item.coordinates.lat === 'number') return item.coordinates.lat;
-  if (typeof item?.lat === 'number') return item.lat;
-  if (typeof item?.latitude === 'number') return item.latitude;
-  if (typeof item?.coordinates?.lat === 'string') return parseFloat(item.coordinates.lat) || 0;
+  if (!item) return 0;
+  if (Array.isArray(item.co) && item.co.length >= 2) {
+    const v = Number(item.co[0]);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (Array.isArray(item.coordinates) && item.coordinates.length >= 2) {
+    const v = Number(item.coordinates[0]);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (item.coordinates && typeof item.coordinates === 'object') {
+    const v = Number(item.coordinates.lat || item.coordinates.latitude);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (item.lat !== undefined) {
+    const v = Number(item.lat);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (item.latitude !== undefined) {
+    const v = Number(item.latitude);
+    if (!isNaN(v) && v > 5) return v;
+  }
   return 0;
 };
 
 const getPointLng = (item: any): number => {
-  if (item?.coordinates && typeof item.coordinates.lng === 'number') return item.coordinates.lng;
-  if (typeof item?.lng === 'number') return item.lng;
-  if (typeof item?.longitude === 'number') return item.longitude;
-  if (typeof item?.coordinates?.lng === 'string') return parseFloat(item.coordinates.lng) || 0;
+  if (!item) return 0;
+  if (Array.isArray(item.co) && item.co.length >= 2) {
+    const v = Number(item.co[1]);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (Array.isArray(item.coordinates) && item.coordinates.length >= 2) {
+    const v = Number(item.coordinates[1]);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (item.coordinates && typeof item.coordinates === 'object') {
+    const v = Number(item.coordinates.lng || item.coordinates.longitude);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (item.lng !== undefined) {
+    const v = Number(item.lng);
+    if (!isNaN(v) && v > 5) return v;
+  }
+  if (item.longitude !== undefined) {
+    const v = Number(item.longitude);
+    if (!isNaN(v) && v > 5) return v;
+  }
   return 0;
 };
 

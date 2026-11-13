@@ -16,16 +16,34 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=60, s-maxage=300, must-revalidate"
+          "value": "no-cache, no-store, must-revalidate"
         }
       ]
     },
     {
-      "source": "/jobs/(.*\\.json)",
+      "source": "/jobs/jobs-facets.json",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/jobs/jobs-feed.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=600"
+        }
+      ]
+    },
+    {
+      "source": "/jobs/jobs-top50.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, s-maxage=300, stale-while-revalidate=600"
         }
       ]
     },

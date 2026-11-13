@@ -1229,6 +1229,7 @@ export default function TeachersDirectoryClient({
         if (!hasLocalCache) {
           try {
             const top50Res = await fetchCdnWithFallback([
+              `https://raw.githubusercontent.com/projectokart/cseel-next/data-feed/public/jobs/jobs-top50.json?_t=${Date.now()}`,
               `${CDN_JOB_ENDPOINTS.top50Local}?_t=${Date.now()}`,
               `${CDN_JOB_ENDPOINTS.top50Cdn}?_t=${Date.now()}`,
             ], { cache: 'no-cache' });
@@ -1271,11 +1272,11 @@ export default function TeachersDirectoryClient({
         let serverVersion = '';
         let serverCount = 0;
         try {
-          // Prioritize local manifest/feed first for immediate local development and latest deployed bundles
+          // Prioritize raw GitHub data-feed manifest first so feed updates propagate instantly without Vercel/CDN stale locks
           const manifestRes = await fetchCdnWithFallback([
+            `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
             `/jobs/latest.json?_t=${Date.now()}`,
             CDN_JOB_ENDPOINTS.manifestLocal,
-            `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
           ], { cache: 'no-cache' });
 
           if (manifestRes && manifestRes.ok) {
@@ -1306,12 +1307,12 @@ export default function TeachersDirectoryClient({
         let freshFacets: any = null;
         const versionParam = serverVersion ? `?v=${encodeURIComponent(serverVersion)}` : `?_t=${Date.now()}`;
 
-        // 1. Fetch fresh filter facets alongside jobs feed
+        // 1. Fetch fresh filter facets alongside jobs feed (prioritizing live raw GitHub feed)
         try {
           const facetsRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.facetsLocal}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.facetsRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.facetsCdn}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.facetsLocal}${versionParam}`,
           ], { cache: 'no-cache' });
           if (facetsRes && facetsRes.ok) {
             freshFacets = await facetsRes.json();
@@ -1322,12 +1323,12 @@ export default function TeachersDirectoryClient({
           }
         } catch {}
 
-        // 2. Fetch fresh slim jobs feed
+        // 2. Fetch fresh slim jobs feed (prioritizing live raw GitHub feed)
         try {
           const feedRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
           ], { cache: 'no-cache' });
           if (feedRes && feedRes.ok) {
             const slimData = await feedRes.json();

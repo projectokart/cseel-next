@@ -69,12 +69,13 @@ export interface FeedPayload {
 }
 
 export const FeedCache = {
-  async get(): Promise<FeedPayload | null> {
+  async get(allowStaleFallback = false): Promise<FeedPayload | null> {
     const payload = await idbGet<FeedPayload>('feed_payload');
     if (!payload) return null;
 
-    // Automatic purge if older than 24 hours (1 day validity)
-    if (payload.savedAt && (Date.now() - payload.savedAt > ONE_DAY_MS)) {
+    // Strict 24-Hour (1 day) validity check:
+    const isExpired = Boolean(payload.savedAt && (Date.now() - payload.savedAt > ONE_DAY_MS));
+    if (isExpired && !allowStaleFallback) {
       await idbSet('feed_payload', null);
       await idbSet('facets_payload', null);
       return null;
@@ -82,6 +83,7 @@ export const FeedCache = {
     return payload;
   },
   async save(jobs: Record<string, any>[], version: string, facets?: any): Promise<void> {
+    // Atomically save fresh jobs and reset TTL timestamp to now
     const payload: FeedPayload = { version, savedAt: Date.now(), jobs, facets };
     await idbSet('feed_payload', payload);
     if (facets) {
@@ -90,6 +92,7 @@ export const FeedCache = {
   },
   async clear(): Promise<void> {
     await idbSet('feed_payload', null);
+    await idbSet('facets_payload', null);
   },
 };
 

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   User, Settings, HelpCircle, LogOut, ChevronDown, LayoutDashboard,
   ArrowLeft, Home, Headphones, Mail, Users, Briefcase,
-  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles
+  Edit3, PlusCircle, Clock, ShieldCheck, Sparkles, School
 } from "lucide-react";
 import dynamic from 'next/dynamic';
 import {
@@ -227,9 +227,22 @@ const TopBar = () => {
             )}
           </div>
 
-          {/* ── RIGHT SIDE: CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
+          {/* ── RIGHT SIDE: CBSE SCHOOLS | TEACHING JOBS | CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold min-w-0">
             
+            {/* CBSE Schools Direct Directory Link */}
+            <Link
+              href="/schools"
+              aria-label="CBSE Schools Directory"
+              className="inline-flex items-center gap-1 px-2 py-0.5 h-[20px] justify-center text-white/95 hover:text-white font-bold bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/35 hover:border-sky-400 rounded-full active:scale-95 transition-all shrink-0 touch-manipulation group"
+              title="Explore 33,000+ Verified CBSE Schools Across India"
+            >
+              <School className="w-3 h-3 text-sky-400 group-hover:text-white transition-colors shrink-0" />
+              <span className="text-sky-300 group-hover:text-white font-bold text-[10.5px] xs:text-[11px] tracking-tight transition-colors whitespace-nowrap">
+                CBSE Schools
+              </span>
+            </Link>
+
             {/* Priority Teaching Jobs Link with Live Pulsing Green Beacon */}
             <Link
               href="/edu-network/teachers"

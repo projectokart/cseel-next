@@ -396,8 +396,9 @@ export default function TeachersDirectoryClient({
   const [minSalaryFilter, setMinSalaryFilter] = useState<number>(0);
   const [urgentOnly, setUrgentOnly] = useState<boolean>(false);
   const [forLadyOnly, setForLadyOnly] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'newest' | 'salary' | 'deadline' | 'experience' | 'rating' | 'near_me'>('newest');
+  const [sortBy, setSortBy] = useState<'newest' | 'salary' | 'deadline' | 'experience' | 'rating' | 'near_me' | 'alpha_asc' | 'alpha_desc'>('newest');
   const [distanceRadiusFilter, setDistanceRadiusFilter] = useState<number>(0);
+  const [isFiltersHydrated, setIsFiltersHydrated] = useState<boolean>(false);
 
   // Mobile Filter Drawer & Menu States
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
@@ -428,6 +429,81 @@ export default function TeachersDirectoryClient({
       } catch {}
     }
   }, []);
+
+  // 1. Load permanent user filters & sort options from localStorage on mount (never resets on page refresh)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const saved = localStorage.getItem('cseel_teacher_filters_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed.selectedDesignations)) setSelectedDesignations(parsed.selectedDesignations);
+        if (Array.isArray(parsed.selectedSubjects)) setSelectedSubjects(parsed.selectedSubjects);
+        if (Array.isArray(parsed.selectedBoards)) setSelectedBoards(parsed.selectedBoards);
+        if (Array.isArray(parsed.selectedCities)) setSelectedCities(parsed.selectedCities);
+        if (Array.isArray(parsed.selectedStates)) setSelectedStates(parsed.selectedStates);
+        if (Array.isArray(parsed.selectedJobTypes)) setSelectedJobTypes(parsed.selectedJobTypes);
+        if (Array.isArray(parsed.selectedPortals)) setSelectedPortals(parsed.selectedPortals);
+        if (typeof parsed.minSalaryFilter === 'number') setMinSalaryFilter(parsed.minSalaryFilter);
+        if (typeof parsed.urgentOnly === 'boolean') setUrgentOnly(parsed.urgentOnly);
+        if (typeof parsed.forLadyOnly === 'boolean') setForLadyOnly(parsed.forLadyOnly);
+        if (typeof parsed.distanceRadiusFilter === 'number') setDistanceRadiusFilter(parsed.distanceRadiusFilter);
+        if (
+          typeof parsed.sortBy === 'string' &&
+          ['newest', 'salary', 'deadline', 'experience', 'rating', 'near_me', 'alpha_asc', 'alpha_desc'].includes(parsed.sortBy)
+        ) {
+          setSortBy(parsed.sortBy as any);
+        }
+        if (typeof parsed.viewMode === 'string' && ['grid', 'grid3', 'compact', 'map'].includes(parsed.viewMode)) {
+          setViewMode(parsed.viewMode as any);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to hydrate saved teacher filters:', e);
+    } finally {
+      setIsFiltersHydrated(true);
+    }
+  }, []);
+
+  // 2. Persist user filter & sort options to localStorage whenever they change
+  useEffect(() => {
+    if (!isFiltersHydrated || typeof window === 'undefined') return;
+    try {
+      const stateToPersist = {
+        selectedDesignations,
+        selectedSubjects,
+        selectedBoards,
+        selectedCities,
+        selectedStates,
+        selectedJobTypes,
+        selectedPortals,
+        minSalaryFilter,
+        urgentOnly,
+        forLadyOnly,
+        distanceRadiusFilter,
+        sortBy,
+        viewMode,
+      };
+      localStorage.setItem('cseel_teacher_filters_v2', JSON.stringify(stateToPersist));
+    } catch (e) {
+      console.warn('Failed to save teacher filters:', e);
+    }
+  }, [
+    isFiltersHydrated,
+    selectedDesignations,
+    selectedSubjects,
+    selectedBoards,
+    selectedCities,
+    selectedStates,
+    selectedJobTypes,
+    selectedPortals,
+    minSalaryFilter,
+    urgentOnly,
+    forLadyOnly,
+    distanceRadiusFilter,
+    sortBy,
+    viewMode,
+  ]);
 
   // Unified single-column search suggestions (combining local user cache + Supabase sync)
   const searchSuggestions = useMemo(() => {
@@ -1105,7 +1181,17 @@ export default function TeachersDirectoryClient({
       try {
         let hasLocalCache = false;
 
-        // A. FeedCache v2 (slim, compressed IndexedDB — fastest path)
+        // Clean up legacy bloated localStorage job caches to preserve phone storage
+        if (typeof window !== 'undefined') {
+          try {
+            const oldKeys = ['cseel_jobs_feed_v3', 'cseel_jobs_feed', 'vacancies_payload', 'cseel_all_jobs'];
+            for (const k of oldKeys) {
+              if (localStorage.getItem(k)) localStorage.removeItem(k);
+            }
+          } catch {}
+        }
+
+        // A. FeedCache v2 (slim, compressed IndexedDB — 24h strict validity)
         const feedPayload = await FeedCache.get();
         if (feedPayload && Array.isArray(feedPayload.jobs) && feedPayload.jobs.length > 0) {
           hasLocalCache = true;
@@ -1194,12 +1280,15 @@ export default function TeachersDirectoryClient({
           }
         } catch {}
 
-        const feedPayload = await FeedCache.get();
+        const feedPayload = await FeedCache.get(true);
         const cachedVersion = feedPayload?.version || '';
         const cachedCount = feedPayload?.jobs?.length || 0;
+        const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+        const isCacheStale = !feedPayload?.savedAt || (Date.now() - feedPayload.savedAt > ONE_DAY_MS);
 
-        // Skip only if version matches AND cached dataset count matches the manifest count
+        // Skip only if cache is fresh (< 24h) AND version matches AND cached dataset count matches the manifest count
         if (
+          !isCacheStale &&
           serverVersion &&
           cachedVersion === serverVersion &&
           cachedCount > 0 &&
@@ -1490,6 +1579,20 @@ export default function TeachersDirectoryClient({
         return distA - distB;
       });
     }
+    if (sortBy === 'alpha_asc') {
+      return [...results].sort((a, b) => {
+        const titleA = (a.jobPostName || (a as any).title || '').trim().toLowerCase();
+        const titleB = (b.jobPostName || (b as any).title || '').trim().toLowerCase();
+        return titleA.localeCompare(titleB, 'en', { sensitivity: 'base' });
+      });
+    }
+    if (sortBy === 'alpha_desc') {
+      return [...results].sort((a, b) => {
+        const titleA = (a.jobPostName || (a as any).title || '').trim().toLowerCase();
+        const titleB = (b.jobPostName || (b as any).title || '').trim().toLowerCase();
+        return titleB.localeCompare(titleA, 'en', { sensitivity: 'base' });
+      });
+    }
     if (!searchQuery || !searchQuery.trim()) {
       return [...results].sort((a: any, b: any) => (b._dateMs ?? 0) - (a._dateMs ?? 0));
     }
@@ -1520,6 +1623,8 @@ export default function TeachersDirectoryClient({
     }).sort((a, b) => {
       if (sortBy === 'experience') return b.experienceYears - a.experienceYears;
       if (sortBy === 'rating') return b.rating - a.rating;
+      if (sortBy === 'alpha_asc') return (a.name || '').localeCompare(b.name || '', 'en', { sensitivity: 'base' });
+      if (sortBy === 'alpha_desc') return (b.name || '').localeCompare(a.name || '', 'en', { sensitivity: 'base' });
       return b.rating - a.rating;
     });
   }, [facultyList, selectedDesignations, selectedSubjects, selectedBoards, selectedCities, searchQuery, sortBy]);
@@ -1585,6 +1690,13 @@ export default function TeachersDirectoryClient({
     setSelectedPortals([]);
     setMinSalaryFilter(0);
     setUrgentOnly(false);
+    setForLadyOnly(false);
+    setDistanceRadiusFilter(0);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cseel_teacher_filters_v2');
+      }
+    } catch {}
   };
 
 // hasActiveFilters moved above dynamicCounts
@@ -2027,7 +2139,7 @@ export default function TeachersDirectoryClient({
               max-height: ${isFullscreen ? '100vh' : `calc(100vh - ${navBottomOffset}px)`} !important;
             }
           }
-          ${isFullscreen ? `
+          ${(viewMode === 'map' || isFullscreen) ? `
             #site-topbar,
             .site-topbar,
             #site-navbar,
@@ -2037,24 +2149,19 @@ export default function TeachersDirectoryClient({
             header.fixed,
             nav.fixed,
             header,
+            nav,
+            .mobile-bottom-nav,
+            #mobile-bottom-nav,
             .announcement-bar,
-            [id*="admin-bar"] {
+            [id*="admin-bar"],
+            [id*="bottom-nav"],
+            footer {
               display: none !important;
             }
+            body {
+              overflow: hidden !important;
+            }
           ` : ''}
-          @media (max-width: 767px) {
-            ${isFullscreen ? `
-              #site-topbar,
-              .site-topbar,
-              #site-navbar,
-              .site-navbar,
-              #universal-admin-bar,
-              header.fixed,
-              nav.fixed {
-                display: none !important;
-              }
-            ` : ''}
-          }
           `}}
         />
 
@@ -2075,7 +2182,7 @@ export default function TeachersDirectoryClient({
         )}
 
         {/* ── 1. Minimized Desktop Sidebar Strip (Shown when minimized, exactly like School Listing) ── */}
-        {isSidebarMinimized && (
+        {isSidebarMinimized && viewMode !== 'map' && (
           <aside className="hidden md:flex flex-col w-12 shrink-0 md:fixed md:left-0 md:z-30 directory-sidebar-fixed rounded-none transition-all duration-300">
             <div className="bg-white rounded-none border-r border-b border-gray-200/90 shadow-xs h-full py-2.5 px-1.5 flex flex-col items-center justify-between">
               {/* Top: Expand Chevron Button */}
@@ -2155,41 +2262,43 @@ export default function TeachersDirectoryClient({
         )}
 
         {/* ── 2. Desktop Filter Sidebar Mode (>= 768px Full Sidebar) ── */}
-        <FacultyFilterSheet
-          mode="sidebar"
-          availableFacets={facetsData}
-          activeTab={activeTab}
-          totalCount={activeTab === 'jobs' ? liveTotalVacancies : VERIFIED_FACULTY_MEMBERS.length}
-          filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : liveTotalVacancies) : filteredFaculty.length}
-          selectedDesignations={selectedDesignations}
-          toggleDesignation={toggleDesignation}
-          selectedSubjects={selectedSubjects}
-          toggleSubject={toggleSubject}
-          selectedBoards={selectedBoards}
-          toggleBoard={toggleBoard}
-          selectedCities={selectedCities}
-          toggleCity={toggleCity}
-          selectedStates={selectedStates}
-          toggleState={toggleState}
-          selectedJobTypes={selectedJobTypes}
-          toggleJobType={toggleJobType}
-          selectedPortals={selectedPortals}
-          togglePortal={togglePortal}
-          minSalaryFilter={minSalaryFilter}
-          setMinSalaryFilter={setMinSalaryFilter}
-          urgentOnly={urgentOnly}
-          setUrgentOnly={setUrgentOnly}
-          forLadyOnly={forLadyOnly}
-          setForLadyOnly={setForLadyOnly}
-          dynamicCounts={dynamicCounts}
-          onResetAll={resetAllFilters}
-          isSidebarMinimized={isSidebarMinimized}
-          setIsSidebarMinimized={setIsSidebarMinimized}
-          distanceRadiusFilter={distanceRadiusFilter}
-          setDistanceRadiusFilter={setDistanceRadiusFilter}
-          userCoords={userCoords}
-          onRequestUserLocation={requestUserLocation}
-        />
+        {viewMode !== 'map' && (
+          <FacultyFilterSheet
+            mode="sidebar"
+            availableFacets={facetsData}
+            activeTab={activeTab}
+            totalCount={activeTab === 'jobs' ? liveTotalVacancies : VERIFIED_FACULTY_MEMBERS.length}
+            filteredCount={activeTab === 'jobs' ? (hasActiveFilters ? filteredJobs.length : liveTotalVacancies) : filteredFaculty.length}
+            selectedDesignations={selectedDesignations}
+            toggleDesignation={toggleDesignation}
+            selectedSubjects={selectedSubjects}
+            toggleSubject={toggleSubject}
+            selectedBoards={selectedBoards}
+            toggleBoard={toggleBoard}
+            selectedCities={selectedCities}
+            toggleCity={toggleCity}
+            selectedStates={selectedStates}
+            toggleState={toggleState}
+            selectedJobTypes={selectedJobTypes}
+            toggleJobType={toggleJobType}
+            selectedPortals={selectedPortals}
+            togglePortal={togglePortal}
+            minSalaryFilter={minSalaryFilter}
+            setMinSalaryFilter={setMinSalaryFilter}
+            urgentOnly={urgentOnly}
+            setUrgentOnly={setUrgentOnly}
+            forLadyOnly={forLadyOnly}
+            setForLadyOnly={setForLadyOnly}
+            dynamicCounts={dynamicCounts}
+            onResetAll={resetAllFilters}
+            isSidebarMinimized={isSidebarMinimized}
+            setIsSidebarMinimized={setIsSidebarMinimized}
+            distanceRadiusFilter={distanceRadiusFilter}
+            setDistanceRadiusFilter={setDistanceRadiusFilter}
+            userCoords={userCoords}
+            onRequestUserLocation={requestUserLocation}
+          />
+        )}
 
         {/* ── 3. Mobile Filter Drawer (< 768px) ── */}
         <FacultyFilterSheet
@@ -2229,25 +2338,31 @@ export default function TeachersDirectoryClient({
         />
 
         {/* ── 4. Main Content Area (Offset by fixed sidebar width) ── */}
-        <main className={`flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 pt-3 sm:pt-4 md:pt-4 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 ${
-          isSidebarMinimized ? 'md:ml-14' : 'md:ml-[272px] lg:ml-[296px]'
-        }`}>
+        <main className={
+          viewMode === 'map'
+            ? 'fixed inset-0 z-30 w-screen h-[100dvh] overflow-hidden m-0 p-0 flex flex-col'
+            : `flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 pt-3 sm:pt-4 md:pt-4 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 ${
+                isSidebarMinimized ? 'md:ml-14' : 'md:ml-[272px] lg:ml-[296px]'
+              }`
+        }>
           
           {/* SEO Header & Immediate LCP Anchor */}
-          <div className="mb-0.5">
-            <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight">
-              {activeTab === 'jobs' ? 'Daily School Teaching Vacancies' : 'Verified Faculty & STEM Educators'}
-            </h1>
-            <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-              Top CBSE, ICSE & private school appointments updated daily with verified salary bands and direct apply links.
-            </p>
-          </div>
+          {viewMode !== 'map' && (
+            <div className="mb-0.5">
+              <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight">
+                {activeTab === 'jobs' ? 'Daily School Teaching Vacancies' : 'Verified Faculty & STEM Educators'}
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                Top CBSE, ICSE & private school appointments updated daily with verified salary bands and direct apply links.
+              </p>
+            </div>
+          )}
 
           {/* ── Top Bar Search & Control Card (Exact User Spec Design) ── */}
-          <div className={`bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 transition-all duration-300 relative ${
+          <div className={`transition-all duration-300 ${
             viewMode === 'map'
-              ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md shadow-lg md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white'
-              : ''
+              ? 'fixed top-2.5 left-2.5 right-2.5 sm:left-4 sm:right-4 z-40 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-lg p-2.5 sm:p-3 max-w-2xl mx-auto flex flex-col gap-2 pointer-events-auto'
+              : 'bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 relative'
           }`}>
             {/* Row 1: 100% Full-Width Block Search Bar */}
             <div className="w-full relative">
@@ -2342,7 +2457,7 @@ export default function TeachersDirectoryClient({
             </div>
 
             {/* Row 2: Action Controls Bar (Jobs Count + Filters + Sort + View/Menu - Always single line) */}
-            <div className={`flex items-center justify-between pt-1 text-xs flex-nowrap gap-2 w-full ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
+            <div className="flex items-center justify-between pt-1 text-xs flex-nowrap gap-2 w-full">
               {/* Left Side: Jobs Counter Pill */}
               <div className="flex items-center gap-2 shrink-0 min-w-0">
                 <div className="inline-flex items-center gap-1.5 bg-[#F1F5F9] px-2.5 py-1.5 rounded-xl border border-slate-200/80 text-xs font-bold text-[#004A75] whitespace-nowrap">
@@ -2389,7 +2504,19 @@ export default function TeachersDirectoryClient({
                     className={`h-9 w-9 rounded-xl flex items-center justify-center border transition cursor-pointer active:scale-95 ${
                       isSortMenuOpen ? 'bg-slate-200 text-[#004A75] border-slate-300' : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 border-slate-200/70'
                     }`}
-                    title={`Sort: ${sortBy === 'newest' ? 'Newest' : sortBy === 'salary' ? 'Salary' : sortBy === 'near_me' ? 'Near Me' : 'Deadline'}`}
+                    title={`Sort: ${
+                      sortBy === 'newest'
+                        ? 'Newest'
+                        : sortBy === 'salary'
+                        ? 'Salary'
+                        : sortBy === 'near_me'
+                        ? 'Near Me'
+                        : sortBy === 'alpha_asc'
+                        ? 'Title (A to Z)'
+                        : sortBy === 'alpha_desc'
+                        ? 'Title (Z to A)'
+                        : 'Deadline'
+                    }`}
                     aria-label="Sort Jobs"
                   >
                     <ArrowUpDown size={15} className={sortBy !== 'newest' ? 'text-[#004A75]' : 'text-slate-600'} />
@@ -2427,6 +2554,28 @@ export default function TeachersDirectoryClient({
                           >
                             <span>Newest First</span>
                             {sortBy === 'newest' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('alpha_asc'); setIsSortMenuOpen(false); }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                              sortBy === 'alpha_asc' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span>Alphabetical (A to Z)</span>
+                            {sortBy === 'alpha_asc' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('alpha_desc'); setIsSortMenuOpen(false); }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                              sortBy === 'alpha_desc' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span>Alphabetical (Z to A)</span>
+                            {sortBy === 'alpha_desc' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
                           </button>
 
                           <button
@@ -2545,15 +2694,11 @@ export default function TeachersDirectoryClient({
             <div className="flex-1 min-w-0 space-y-3 overflow-visible">
               {/* ── MAP VIEW (IF TOGGLED) ── */}
               {viewMode === 'map' && (
-                <div className={`fixed inset-0 z-30 w-screen h-[100dvh] flex flex-col bg-slate-50 overflow-hidden mb-4 ${
-                  isFullscreen
-                    ? 'md:fixed md:inset-0 md:z-[9999] md:w-screen md:h-screen md:rounded-none'
-                    : 'md:relative md:inset-auto md:z-auto md:w-full md:rounded-3xl md:h-[620px]'
-                }`}>
+                <div className="fixed inset-0 z-0 w-screen h-[100dvh] bg-slate-50 overflow-hidden">
                   <FacultyJobMap
                     activeTab={activeTab}
-                    jobs={paginatedJobs}
-                    faculty={paginatedFaculty}
+                    jobs={filteredJobs}
+                    faculty={filteredFaculty}
                     currentPage={currentPage}
                     totalPages={totalPages}
                     totalJobsCount={totalJobsCount}

@@ -132,12 +132,12 @@ export default function SchoolFinderMap({
       let paddingBottom = 40;
 
       if (isMobile && mobileSheetState === 'half') {
-        // 75px clears floating search bar at top
-        paddingTop = 75;
+        // 45px clears compact floating search bar at top
+        paddingTop = 45;
         // 50% bottom sheet + 15px centers circle nicely slightly below the middle of the upper half
         paddingBottom = Math.round(containerHeight * 0.50) + 15;
       } else if (isMobile && mobileSheetState === 'full') {
-        paddingTop = 75;
+        paddingTop = 45;
         paddingBottom = Math.round(containerHeight * 0.86) + 15;
       }
 

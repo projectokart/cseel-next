@@ -138,8 +138,8 @@ export default function FacultyJobMap({
 
   const [isLocating, setIsLocating] = useState(false);
   const [displayMode, setDisplayMode] = useState<'points' | 'badges'>('points');
-  // Range: 0 to 200 km (default 50 km)
-  const [distanceRadius, setDistanceRadius] = useState<number>(50);
+  // Range: 0 to 200 km (default 0 = All matching vacancies from list)
+  const [distanceRadius, setDistanceRadius] = useState<number>(0);
   const [isDesktopSheetMinimized, setIsDesktopSheetMinimized] = useState(false);
   const [isDesktopSheetWide, setIsDesktopSheetWide] = useState(false);
   const [isDesktopSheetHidden, setIsDesktopSheetHidden] = useState(false);
@@ -150,28 +150,64 @@ export default function FacultyJobMap({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDesktopSheetOpen, setIsDesktopSheetOpen] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  // Auto Live Location on initial mount
+
+  // Mobile sheet drawer state: 'peek' (58px) | 'half' (50vh) | 'full' (86vh)
+  const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('peek');
+
+  // Dynamic offset calculation ensuring popups NEVER touch the top header or right-side sheet
+  const getOffsetLatLng = useCallback((lat: number, lng: number, zoom?: number) => {
+    if (!mapInstanceRef.current || !mapContainerRef.current) return [lat, lng] as [number, number];
+
+    const currentZoom = zoom ?? mapInstanceRef.current.getZoom();
+    const containerHeight = mapContainerRef.current.clientHeight;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    let offsetY = 0;
+    let offsetX = 0;
+
+    if (isMobile) {
+      if (mobileSheetState === 'half') {
+        offsetY = Math.round(containerHeight * 0.10);
+      } else if (mobileSheetState === 'full') {
+        offsetY = Math.round(containerHeight * 0.22);
+      } else {
+        offsetY = -20;
+      }
+    } else {
+      if (isDesktopSheetOpen) {
+        offsetX = 120;
+      }
+      offsetY = -15;
+    }
+
+    const targetPoint = mapInstanceRef.current.project([lat, lng], currentZoom);
+    const newCenterPoint = L.point(targetPoint.x + offsetX, targetPoint.y + offsetY);
+    const newCenterLatLng = mapInstanceRef.current.unproject(newCenterPoint, currentZoom);
+
+    return [newCenterLatLng.lat, newCenterLatLng.lng] as [number, number];
+  }, [mobileSheetState, isDesktopSheetOpen]);
+
+  // Auto Live Location on initial mount (High accuracy, centers map around user)
   useEffect(() => {
     if (typeof window === 'undefined' || !navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
-        if (mapInstanceRef.current) {
-          const zoom = 11;
-          const offsetLatLng = getOffsetLatLng(latitude, longitude, zoom);
-          mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 1.2 });
+        if (latitude && longitude) {
+          setUserLocation({ lat: latitude, lng: longitude });
+          if (mapInstanceRef.current) {
+            const zoom = 11;
+            const offsetLatLng = getOffsetLatLng(latitude, longitude, zoom);
+            mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 1.2 });
+          }
         }
       },
       (err) => {
         console.log('[FacultyJobMap] Auto-geolocation notice:', err.message);
       },
-      { timeout: 7000 }
+      { timeout: 8000, enableHighAccuracy: true, maximumAge: 60000 }
     );
-  }, []);
-
-  // Mobile sheet drawer state: 'peek' (58px) | 'half' (50vh) | 'full' (86vh)
-  const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('peek');
+  }, [getOffsetLatLng]);
 
   // Drag handling state for mobile bottom drawer
   const dragStartYRef = useRef<number | null>(null);
@@ -324,25 +360,6 @@ export default function FacultyJobMap({
       setActiveOpportunityIndex(filteredItems.length > 0 ? 0 : null);
     }
   }, [filteredItems, activeOpportunityIndex]);
-
-  // Auto-detect user's high-precision live GPS location on mount (School directory style)
-  useEffect(() => {
-    if (typeof window !== 'undefined' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const { latitude, longitude } = pos.coords;
-          if (latitude && longitude) {
-            setUserLocation({ lat: latitude, lng: longitude });
-            if (mapInstanceRef.current) {
-              mapInstanceRef.current.setView([latitude, longitude], 11);
-            }
-          }
-        },
-        () => {},
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
-      );
-    }
-  }, []);
 
   // Window resize & orientation change handler to prevent map clipping
   useEffect(() => {
@@ -634,45 +651,6 @@ export default function FacultyJobMap({
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 11 });
     }
   }, [filteredItems, displayMode, activeOpportunityIndex, distanceRadius, activeTab]);
-
-  // Dynamic offset calculation ensuring popups NEVER touch the top header or right-side sheet
-  const getOffsetLatLng = useCallback((lat: number, lng: number, zoom?: number) => {
-    if (!mapInstanceRef.current || !mapContainerRef.current) return [lat, lng] as [number, number];
-
-    const currentZoom = zoom ?? mapInstanceRef.current.getZoom();
-    const containerHeight = mapContainerRef.current.clientHeight;
-    const containerWidth = mapContainerRef.current.clientWidth;
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-
-    let offsetY = 0;
-    let offsetX = 0;
-
-    if (isMobile) {
-      if (mobileSheetState === 'half') {
-        // Leave comfortable headroom for popup card (~120px) under top header
-        offsetY = Math.round(containerHeight * 0.10);
-      } else if (mobileSheetState === 'full') {
-        offsetY = Math.round(containerHeight * 0.22);
-      } else {
-        // peek mode: shift center slightly down so popup has clearance below header
-        offsetY = -20;
-      }
-    } else {
-      // Desktop: if right sheet is open (410px), shift center to the right so marker displays in left visible zone
-      if (isDesktopSheetOpen) {
-        offsetX = 120;
-      }
-      // Top header clearance
-      offsetY = -15;
-    }
-
-    // Convert target lat/lng to container pixel point at current zoom
-    const targetPoint = mapInstanceRef.current.project([lat, lng], currentZoom);
-    const newCenterPoint = L.point(targetPoint.x + offsetX, targetPoint.y + offsetY);
-    const newCenterLatLng = mapInstanceRef.current.unproject(newCenterPoint, currentZoom);
-
-    return [newCenterLatLng.lat, newCenterLatLng.lng] as [number, number];
-  }, [mobileSheetState, isDesktopSheetOpen]);
 
   // Auto-center shift: smoothly re-center when mobileSheetState changes (e.g. user toggles Split / Half / Peek)
   useEffect(() => {
@@ -1169,7 +1147,7 @@ export default function FacultyJobMap({
         <div ref={mapContainerRef} className="w-full h-full z-0 flex-1 min-h-0" />
 
         {/* Floating Points vs Badges toggle on map */}
-        <div className="absolute top-3.5 right-16 z-20 hidden sm:flex items-center bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 p-0.5 shadow-md">
+        <div className="absolute top-28 right-16 sm:right-18 z-20 hidden sm:flex items-center bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 p-0.5 shadow-md">
           <button
             type="button"
             onClick={() => setDisplayMode('points')}
@@ -1198,8 +1176,8 @@ export default function FacultyJobMap({
           </button>
         </div>
 
-        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) - Top Placed with safe mobile margins */}
-        <div className="absolute top-20 right-2 sm:right-3.5 md:top-3.5 md:right-3.5 z-20 flex flex-col items-center gap-1.5 sm:gap-2 select-none pointer-events-auto">
+        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) - Cleanly Placed Below Top Search Bar */}
+        <div className="absolute top-28 right-2 sm:right-3.5 z-20 flex flex-col items-center gap-1.5 sm:gap-2 select-none pointer-events-auto">
           <div className="flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
             <button
               type="button"

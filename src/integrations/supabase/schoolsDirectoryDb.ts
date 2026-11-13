@@ -537,7 +537,7 @@ export async function fetchSchoolsForDirectory(seoQuery: SchoolSeoQuery): Promis
   }
 
   const page = Math.max(seoQuery.page || 1, 1);
-  const limit = Math.min(seoQuery.limit || 25, 25);
+  const limit = Math.min(seoQuery.limit || 50, 100);
   const offset = (page - 1) * limit;
 
   // Primary: Always load the authoritative 33,151 schools database

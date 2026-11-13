@@ -111,35 +111,41 @@ const CITY_COORDINATES: Record<string, { lat: number; lng: number }> = {
 
 import { FACILITY_CATEGORIES } from './FacilityData';
 
-// Helper to extract clean school name (everything before the first comma)
+// Helper to extract clean school name without cutting off branch/campus name
 export function getCleanSchoolName(rawName: string | null | undefined): string {
   if (!rawName) return 'School';
-  const trimmed = String(rawName).trim();
-  if (trimmed.includes(',')) {
-    return trimmed.split(',')[0].trim() || trimmed;
+  let name = String(rawName).trim();
+
+  // If all uppercase and length > 3, convert to Title Case while keeping standard acronyms
+  if (name === name.toUpperCase() && name.length > 3) {
+    name = name
+      .toLowerCase()
+      .split(/\s+/)
+      .map((word) => {
+        const w = word.trim();
+        const cleanWord = w.replace(/[^a-zA-Z0-9]/g, '');
+        if (['cbse', 'icse', 'kv', 'dps', 'dav', 'aps', 'jnv', 'pm'].includes(cleanWord)) {
+          return w.toUpperCase();
+        }
+        if (['sr', 'sec', 'no', 'dr', 'mr', 'mrs', 'st'].includes(cleanWord)) {
+          return w.charAt(0).toUpperCase() + w.slice(1);
+        }
+        if (/^(i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii)$/i.test(cleanWord)) {
+          return w.toUpperCase();
+        }
+        return w.charAt(0).toUpperCase() + w.slice(1);
+      })
+      .join(' ');
   }
-  return trimmed;
+
+  return name;
 }
 
-// Helper to format clean card location (Locality, District, State)
+// Helper to format clean card location (Locality / Street Address, District, State)
 export function formatCardLocation(school: SchoolRecord): string {
-  let loc = (school.village_ward || school.locality || '').trim();
-  if (
-    !loc ||
-    loc.toLowerCase() === 'main ward' ||
-    loc.toLowerCase() === 'main' ||
-    loc.toLowerCase() === 'null'
-  ) {
-    const raw = (school as any).raw_school_name || school.school_name || '';
-    if (raw.includes(',')) {
-      loc = raw.split(',').slice(1).join(', ').trim();
-    } else {
-      loc = '';
-    }
-  }
-
   const dist = (school.district_name || school.city || '').trim();
   const st = (school.state_name || school.state || '').trim();
+  let addr = (school.address || school.village_ward || school.locality || '').trim();
 
   let cleanDist = dist
     ? dist.toLowerCase().split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
@@ -160,19 +166,30 @@ export function formatCardLocation(school: SchoolRecord): string {
     cleanDist = 'Central Delhi';
   }
 
-  const parts: string[] = [];
-  if (loc) {
-    const cleanLoc = loc
-      .replace(new RegExp(`,?\\s*${cleanState}$`, 'i'), '')
-      .replace(new RegExp(`,?\\s*${cleanDist}$`, 'i'), '')
-      .trim();
-    if (cleanLoc && cleanLoc.toLowerCase() !== cleanDist.toLowerCase()) {
-      parts.push(cleanLoc);
-    }
+  if (!addr) {
+    return [cleanDist, cleanState].filter(Boolean).join(', ') || 'Delhi';
   }
 
-  if (cleanDist) parts.push(cleanDist);
-  if (cleanState && cleanState.toLowerCase() !== cleanDist.toLowerCase()) {
+  // Remove trailing pincode if present (e.g. 744103)
+  addr = addr.replace(/[\s,-]+\b\d{6}\b.*$/i, '').trim();
+
+  // If all uppercase, convert to readable Title Case
+  if (addr === addr.toUpperCase() && addr.length > 3) {
+    addr = addr
+      .toLowerCase()
+      .split(/\s+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+
+  const parts: string[] = [];
+  if (addr) {
+    parts.push(addr);
+  }
+  if (cleanDist && !addr.toLowerCase().includes(cleanDist.toLowerCase())) {
+    parts.push(cleanDist);
+  }
+  if (cleanState && !addr.toLowerCase().includes(cleanState.toLowerCase()) && cleanState.toLowerCase() !== cleanDist.toLowerCase()) {
     parts.push(cleanState);
   }
 
@@ -219,6 +236,21 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   
   // View mode supports 2 Cols, 3 Cols, Compact, and Map
   const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>('compact');
+
+  // Sync viewMode from URL query (?view=map) or user's saved preference
+  useEffect(() => {
+    try {
+      const urlView = searchParams?.get('view') as any;
+      if (['grid', 'grid3', 'compact', 'map'].includes(urlView)) {
+        setViewMode(urlView);
+        return;
+      }
+      const saved = localStorage.getItem('cseel_school_view_mode') as any;
+      if (['grid', 'grid3', 'compact', 'map'].includes(saved)) {
+        setViewMode(saved);
+      }
+    } catch {}
+  }, [searchParams]);
 
   // Load liked schools safely after hydration
   useEffect(() => {
@@ -361,23 +393,23 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen, isMapFullscreen]);
 
-  // ── Page-Based Pagination (Strictly Max 25 Schools Per Page) & Map +25 Point Accumulation ──
-  const [allLoadedSchools, setAllLoadedSchools] = useState<SchoolRecord[]>((initialData.schools || []).slice(0, 25));
+  // ── Page-Based Pagination (Strictly Max 50 Schools Per Page) & Map +50 Point Accumulation ──
+  const [allLoadedSchools, setAllLoadedSchools] = useState<SchoolRecord[]>((initialData.schools || []).slice(0, 50));
   const [currentPage, setCurrentPage] = useState<number>(initialData.currentPage || 1);
   const [totalPages, setTotalPages] = useState<number>(
-    initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 25))
+    initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 50))
   );
   const [mapLoadedPage, setMapLoadedPage] = useState<number>(initialData.currentPage || 1);
   const [totalSchoolsCount, setTotalSchoolsCount] = useState<number>(initialData.totalCount || 0);
   const [hasMoreSchools, setHasMoreSchools] = useState<boolean>(
-    (initialData.currentPage || 1) < (initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 25)))
+    (initialData.currentPage || 1) < (initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 50)))
   );
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 
   // Sync with initialData whenever user triggers a backend filter or SSR navigation
   useEffect(() => {
-    const pageSchools = (initialData.schools || []).slice(0, 25);
-    const calcTotalPages = initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 25));
+    const pageSchools = (initialData.schools || []).slice(0, 50);
+    const calcTotalPages = initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 50));
     const curPage = initialData.currentPage || 1;
     setAllLoadedSchools(pageSchools);
     setCurrentPage(curPage);
@@ -388,38 +420,49 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     setAccumulatedSchools(pageSchools);
   }, [initialData.schools, initialData.currentPage, initialData.totalCount, initialData.totalPages]);
 
-  // Load next 25 points for Map View accumulation (+25 points per click)
+  // ── Map View Batch Accumulation (Strictly 25 schools per click, Max 3,000 dots in 10 km region) ──
+  const MAX_MAP_DOTS_LIMIT = 3000;
+  const MAP_BATCH_SIZE = 25;
+
   const loadNextBatch = useCallback(async () => {
     if (isLoadingMore || !hasMoreSchools) return;
+    if (accumulatedSchools.length >= MAX_MAP_DOTS_LIMIT) return;
     setIsLoadingMore(true);
     try {
       const nextPage = mapLoadedPage + 1;
       const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
       params.set('page', String(nextPage));
-      params.set('limit', '25');
+      params.set('limit', String(MAP_BATCH_SIZE));
       const res = await fetch(`/api/schools-directory?${params.toString()}`);
       const data = await res.json();
       if (data.success && Array.isArray(data.schools)) {
-        const batch25 = data.schools.slice(0, 25);
+        const batch25 = data.schools.slice(0, MAP_BATCH_SIZE);
         setMapDisplayMode('accumulate');
         setAccumulatedSchools((prev) => {
           const base = prev.length > 0 ? prev : allLoadedSchools;
           const existingKeys = new Set(base.map((s) => String(s.udise_code || s.school_id || s.id)));
           const uniqueNew = batch25.filter((s: any) => !existingKeys.has(String(s.udise_code || s.school_id || s.id)));
-          return [...base, ...uniqueNew];
+          const combined = [...base, ...uniqueNew];
+          return combined.slice(0, MAX_MAP_DOTS_LIMIT);
         });
         setMapLoadedPage(nextPage);
-        const calcTotal = data.totalPages || Math.max(1, Math.ceil((data.totalCount || totalSchoolsCount) / 25));
-        setHasMoreSchools(nextPage < calcTotal);
+        const calcTotal = data.totalPages || Math.max(1, Math.ceil((data.totalCount || totalSchoolsCount) / MAP_BATCH_SIZE));
+        setHasMoreSchools(nextPage < calcTotal && (accumulatedSchools.length + batch25.length) < MAX_MAP_DOTS_LIMIT);
         if (data.totalCount) setTotalSchoolsCount(data.totalCount);
         if (data.totalPages) setTotalPages(data.totalPages);
       }
     } catch (err) {
-      console.warn('Failed to load next 25 map points:', err);
+      console.warn('Failed to load next 25 schools on map:', err);
     } finally {
       setIsLoadingMore(false);
     }
-  }, [isLoadingMore, hasMoreSchools, mapLoadedPage, searchParams, allLoadedSchools, totalSchoolsCount]);
+  }, [isLoadingMore, hasMoreSchools, mapLoadedPage, searchParams, allLoadedSchools, totalSchoolsCount, accumulatedSchools.length]);
+
+  // Navigate or step back through loaded batches on map
+  const loadPrevBatch = useCallback(() => {
+    if (mapLoadedPage <= 1) return;
+    setMapLoadedPage((prev) => Math.max(1, prev - 1));
+  }, [mapLoadedPage]);
 
   // Fetch all schools map points once when user activates all_dots mode
   useEffect(() => {
@@ -559,6 +602,10 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     setViewMode(mode);
     try {
       localStorage.setItem('cseel_school_view_mode', mode);
+      const params = new URLSearchParams(searchParams ? searchParams.toString() : '');
+      params.set('view', mode);
+      const target = pathname ? `${pathname}?${params.toString()}` : `?${params.toString()}`;
+      router.replace(target, { scroll: false });
     } catch {
       // Ignore storage errors
     }
@@ -957,14 +1004,14 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       }
     });
     params.set('page', '1');
-    params.set('limit', '25');
+    params.set('limit', '50');
     const target = pathname ? `${pathname}?${params.toString()}` : `?${params.toString()}`;
     router.push(target);
   };
 
   const handleLimitChange = (_newLimit: number) => {
-    // Strictly max 25 schools per page from backend
-    handleFilterChange({ limit: '25' });
+    // Strictly max 50 schools per page from backend
+    handleFilterChange({ limit: '50' });
   };
 
   const handleResetAll = useCallback(() => {
@@ -1061,15 +1108,15 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       if (searchTerm.trim() && searchMode === 'text') params.set('q', searchTerm.trim());
       if (sortBy && sortBy !== 'popularity_desc') params.set('sort', sortBy);
       params.set('page', String(newPage));
-      params.set('limit', '25');
+      params.set('limit', '50');
       const res = await fetch(`/api/schools-directory?${params.toString()}`);
       const data = await res.json();
       if (data.success && Array.isArray(data.schools)) {
-        const pageBatch = data.schools.slice(0, 25);
+        const pageBatch = data.schools.slice(0, 50);
         setAllLoadedSchools(pageBatch);
         const resolvedPage = Number(data.currentPage) || newPage;
         const resolvedTotalCount = typeof data.totalCount === 'number' ? data.totalCount : totalSchoolsCount;
-        const resolvedTotalPages = Number(data.totalPages) || Math.max(1, Math.ceil(resolvedTotalCount / 25));
+        const resolvedTotalPages = Number(data.totalPages) || Math.max(1, Math.ceil(resolvedTotalCount / 50));
         setCurrentPage(resolvedPage);
         setTotalPages(resolvedTotalPages);
         setTotalSchoolsCount(resolvedTotalCount);
@@ -1111,8 +1158,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   // Top Showing Bar (ONLY Showing Count & Loading, Always Visible, No Pagination Buttons, No Scrollbar)
   const renderTopShowingBar = () => {
     const pageCount = displayedSchools.length;
-    const startItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : (currentPage - 1) * 25 + 1;
-    const endItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : Math.min((currentPage - 1) * 25 + pageCount, totalSchoolsCount);
+    const startItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : (currentPage - 1) * 50 + 1;
+    const endItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : Math.min((currentPage - 1) * 50 + pageCount, totalSchoolsCount);
 
     return (
       <div className="w-full bg-white rounded-xl border border-slate-200/90 px-3.5 py-2.5 sm:px-4 sm:py-3 shadow-2xs flex items-center justify-between mb-2.5 transition-all">
@@ -1497,8 +1544,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         <div className="p-3.5 sm:p-4 flex-1 flex flex-col min-w-0 overflow-hidden">
           <div className="mb-1.5 min-w-0">
             <h2 
-              className="font-['Montserrat',sans-serif] font-bold text-[14.5px] sm:text-[15.5px] leading-snug tracking-tight line-clamp-2 break-words cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors"
-              style={{ fontSize: '15px', color: '#003C6E', lineHeight: '1.3' }}
+              className="font-['Montserrat',sans-serif] font-extrabold text-[13.5px] sm:text-[15px] leading-snug tracking-tight line-clamp-2 break-words cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors"
+              style={{ color: '#003C6E', lineHeight: '1.3' }}
             >
               <Link href={profileUrl} className="hover:text-[#006FCC] hover:underline transition-colors inline break-words">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
@@ -1677,26 +1724,26 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <div className="flex items-center gap-2 flex-wrap min-w-0">
               <Link 
                 href={profileUrl} 
-                className="font-['Montserrat',sans-serif] font-bold text-sm sm:text-base text-[#003C6E] leading-snug hover:text-[#006FCC] transition-colors break-words line-clamp-1 sm:line-clamp-2"
+                className="font-['Montserrat',sans-serif] font-extrabold text-[13px] sm:text-[14.5px] text-[#003C6E] leading-snug tracking-tight hover:text-[#006FCC] transition-colors break-words line-clamp-2"
                 title={school.school_name || school.name}
               >
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
-              <span className="inline-flex text-[9.5px] sm:text-[11px] font-bold text-[#006FCC] bg-[#EDF5FA] px-2 py-0.5 rounded-md border border-[#DDF0FC] shrink-0">
+              <span className="inline-flex text-[9px] sm:text-[10.5px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.5 rounded-md border border-[#DDF0FC] shrink-0">
                 {boardName}
               </span>
               {Boolean((school as any).admissions_open || (school as any).is_admissions_open) && (
-                <span className="text-[10px] sm:text-[11px] text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-2 py-0.5 rounded-md font-semibold flex items-center gap-1 shrink-0">
+                <span className="text-[9.5px] sm:text-[10.5px] text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-1.5 py-0.5 rounded-md font-bold flex items-center gap-1 shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#137333] animate-pulse" />
                   <span>Admissions Open</span>
                 </span>
               )}
             </div>
 
-            {/* Location: Full Address across the card */}
-            <div className="flex items-center gap-1.5 text-xs text-slate-600 leading-snug min-w-0">
-              <MapPin size={13} className="text-red-500 shrink-0" />
-              <span className="break-words line-clamp-1 sm:line-clamp-2">{locationStr}</span>
+            {/* Location: Full Address across the card (Local address + District + State) */}
+            <div className="flex items-start gap-1.5 text-xs text-slate-600 leading-snug min-w-0 pt-0.5">
+              <MapPin size={13} className="text-red-500 shrink-0 mt-0.5" />
+              <span className="break-words line-clamp-2 text-[11.5px] sm:text-xs text-slate-600">{locationStr}</span>
             </div>
 
             {/* Quick Info Tags */}
@@ -1799,7 +1846,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           
           {/* Right Group: Primary Actions (Icon-only Claim on mobile + label on larger screens, plus View) */}
           <div className="flex flex-nowrap items-center gap-1 sm:gap-2 shrink-0 ml-auto">
-            {/* Claim School CTA (Icon-only on narrow mobile, text visible on sm+) */}
+            {/* Claim School CTA (Icon and Claim text clearly visible on both mobile and desktop) */}
             <button
               type="button"
               onClick={(e) => {
@@ -1812,11 +1859,11 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 });
               }}
               aria-label="Claim this school profile"
-              className="h-7 w-7 sm:w-auto sm:h-8 sm:px-3 rounded-full sm:rounded-[12px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-[10.5px] sm:text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
+              className="h-7 sm:h-8 px-2 sm:px-3 rounded-full sm:rounded-[12px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-[10.5px] sm:text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
               title="Claim this school profile"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-[#006FCC] shrink-0" />
-              <span className="hidden sm:inline text-[11px]">Claim</span>
+              <span className="inline text-[10.5px] sm:text-[11px] font-bold">Claim</span>
             </button>
             
             {/* View CTA */}
@@ -1866,8 +1913,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         {/* Info */}
         <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
           <div>
-            <div className="flex items-center justify-between gap-1">
-              <h4 className="text-[12.5px] font-bold text-[#003C6E] truncate group-hover:text-[#006FCC] leading-tight font-['Montserrat',sans-serif]">
+            <div className="flex items-start justify-between gap-1">
+              <h4 className="text-[12.5px] font-extrabold text-[#003C6E] line-clamp-2 break-words group-hover:text-[#006FCC] leading-snug font-['Montserrat',sans-serif]">
                 {getCleanSchoolName(school.school_name || school.name)}
               </h4>
               {school.distance !== undefined && (
@@ -1877,7 +1924,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               )}
             </div>
 
-            <p className="text-[10.5px] text-slate-500 truncate mt-0.5 leading-tight">
+            <p className="text-[10.5px] text-slate-500 line-clamp-2 break-words mt-0.5 leading-snug">
               {formatCardLocation(school)}
             </p>
 
@@ -2017,15 +2064,15 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         {/* Compact Card Body */}
         <div className="p-3.5 flex-1 flex flex-col justify-between">
           <div>
-            <h2 className="font-['Montserrat',sans-serif] font-bold text-[14px] leading-snug mb-1 line-clamp-1 cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors" style={{ fontSize: '14.5px', color: '#003C6E' }}>
+            <h2 className="font-['Montserrat',sans-serif] font-extrabold text-[13.5px] leading-snug mb-1 line-clamp-2 break-words cursor-pointer text-[#003C6E] hover:text-[#006FCC] transition-colors" style={{ color: '#003C6E' }}>
               <Link href={profileUrl} className="hover:text-[#006FCC] hover:underline transition-colors inline">
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
             </h2>
 
-            <div className="text-[11px] text-slate-600 flex items-start gap-1 mb-2.5 leading-snug">
+            <div className="text-[11.5px] text-slate-600 flex items-start gap-1 mb-2.5 leading-snug">
               <MapPin size={11} className="text-red-500 shrink-0 mt-0.5" />
-              <span className="break-words">{locationStr}</span>
+              <span className="break-words line-clamp-2">{locationStr}</span>
             </div>
 
             {/* Quick Pills */}
@@ -2651,14 +2698,16 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           {!(isMapFullscreen && viewMode === 'map') && (
             <div className={`relative z-30 transition-all ${
               viewMode === 'map'
-                ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200/90 p-1.5 md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white md:rounded-t-none md:rounded-b-xl md:border-gray-200 md:shadow-xs md:p-2.5 flex flex-col gap-1.5'
+                ? 'fixed top-1.5 inset-x-2 z-40 bg-white/95 backdrop-blur-md rounded-xl shadow-md border border-gray-200/90 px-2 py-1 md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white md:rounded-t-none md:rounded-b-xl md:border-gray-200 md:shadow-xs md:p-2.5 flex flex-col gap-1'
                 : 'bg-white p-2 sm:p-2.5 rounded-t-none rounded-b-xl border border-gray-200 shadow-xs flex flex-col gap-1.5 relative z-30'
             }`}>
               {/* ─── MOBILE VIEW (< 768px): Maximum Space Search Input with City Icon, Filter & Menu Icons ─── */}
               <div className="md:hidden flex flex-col gap-1 w-full">
                 <div className="flex items-center gap-1 w-full">
                   {/* Unified Search Input Bar - takes maximum width */}
-                  <div className="relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 py-1.5 border border-gray-200 focus-within:bg-white focus-within:border-blue-500 transition-all min-w-0">
+                  <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border border-gray-200 focus-within:bg-white focus-within:border-blue-500 transition-all min-w-0 ${
+                    viewMode === 'map' ? 'h-8 py-0' : 'py-1.5'
+                  }`}>
                     {/* Select City Icon & Trigger */}
                     <button
                       type="button"
@@ -2666,13 +2715,13 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition shrink-0 pr-1.5 border-r border-gray-300 cursor-pointer"
                       title={selectedLocation ? `Selected City: ${selectedLocation}` : "Select City"}
                     >
-                      <MapPin size={15} className={selectedLocation ? 'text-blue-600' : 'text-gray-500'} />
+                      <MapPin size={14} className={selectedLocation ? 'text-blue-600' : 'text-gray-500'} />
                       {selectedLocation && (
-                        <span className="text-[11px] font-bold text-blue-600 max-w-[60px] truncate">
+                        <span className="text-[10.5px] font-bold text-blue-600 max-w-[55px] truncate">
                           {selectedLocation}
                         </span>
                       )}
-                      <ChevronDown size={11} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown size={10} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {/* Search Text Input */}
@@ -2686,7 +2735,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                           handleFilterChange({ q: searchTerm.trim() || undefined });
                         }
                       }}
-                      className="flex-1 bg-transparent px-2 py-0.5 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
+                      className="flex-1 bg-transparent px-2 py-0 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
                     />
 
                     {/* Clear Text Icon */}
@@ -2711,7 +2760,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       className="p-1 text-blue-600 hover:text-blue-700 active:scale-90 transition shrink-0 cursor-pointer"
                       title="Search"
                     >
-                      <Search size={16} />
+                      <Search size={15} />
                     </button>
 
                     {/* City Dropdown Menu for Mobile */}
@@ -2787,12 +2836,14 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   <button
                     type="button"
                     onClick={() => setIsMobileFilterOpen(true)}
-                    className="relative p-2 text-gray-700 hover:text-[#005689] active:scale-90 transition shrink-0 cursor-pointer rounded-xl bg-gray-100/90 hover:bg-blue-50 border border-gray-200"
+                    className={`relative text-gray-700 hover:text-[#005689] active:scale-90 transition shrink-0 cursor-pointer rounded-xl bg-gray-100/90 hover:bg-blue-50 border border-gray-200 ${
+                      viewMode === 'map' ? 'h-8 w-8 flex items-center justify-center p-0' : 'p-2'
+                    }`}
                     title="Open Filters"
                   >
-                    <Filter size={17} className={activeFiltersCount > 0 ? 'text-[#005689]' : 'text-gray-600'} />
+                    <Filter size={15} className={activeFiltersCount > 0 ? 'text-[#005689]' : 'text-gray-600'} />
                     {activeFiltersCount > 0 && (
-                      <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] rounded-full bg-[#005689] text-white text-[10px] font-black flex items-center justify-center px-1 shadow-xs border-2 border-white">
+                      <span className="absolute -top-1 -right-1 min-w-[15px] h-[15px] rounded-full bg-[#005689] text-white text-[9px] font-black flex items-center justify-center px-0.5 shadow-xs border border-white">
                         {activeFiltersCount}
                       </span>
                     )}
@@ -2803,12 +2854,14 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     <button
                       type="button"
                       onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                      className={`p-1.5 rounded-lg transition shrink-0 cursor-pointer ${
+                      className={`rounded-lg transition shrink-0 cursor-pointer ${
+                        viewMode === 'map' ? 'h-8 w-8 flex items-center justify-center p-0' : 'p-1.5'
+                      } ${
                         isMobileMenuOpen ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:text-blue-600 active:scale-90'
                       }`}
                       title="Directory Options"
                     >
-                      <MoreVertical size={20} />
+                      <MoreVertical size={18} />
                     </button>
 
                     {/* Google-Inspired Top-Right Compact Popover */}
@@ -3144,12 +3197,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   </div>
                 )}
               </div>
-
-
-
-              <Link href="/about" className="text-blue-500 hover:text-blue-700 hover:underline text-[11px] sm:text-xs font-semibold transition-colors inline-block w-fit">
-                What is Experiential Science Lab?
-              </Link>
             </div>
           )}
 
@@ -3375,42 +3422,57 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                             )}
                           </div>
 
-                          {/* Sheet Bottom Footer: Add Next 25 Points on Map */}
+                          {/* Sheet Bottom Footer: Next / Prev School Controls on Map */}
                           <div className="p-2.5 border-t border-gray-200 bg-slate-50 shrink-0 flex flex-col gap-1.5">
                             <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
                               <span>
-                                Map Points: <strong className="text-gray-900">{schoolsForMap.length}</strong> of{' '}
-                                <strong className="text-gray-900">{totalSchoolsCount}</strong>
+                                Schools on Map: <strong className="text-gray-900">{schoolsForMap.length}</strong> of{' '}
+                                <strong className="text-gray-900">{Math.min(totalSchoolsCount, 3000)}</strong>
                               </span>
                               <span className="text-[11px] text-emerald-700 font-semibold">
-                                (+25 pts / click)
+                                (+25 / click)
                               </span>
                             </div>
 
-                            {hasMoreSchools ? (
-                              <button
-                                type="button"
-                                onClick={loadNextBatch}
-                                disabled={isLoadingMore}
-                                className="w-full py-2 px-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-50 cursor-pointer"
-                              >
-                                {isLoadingMore ? (
-                                  <>
-                                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    <span>Adding 25 points...</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <PlusCircle size={14} />
-                                    <span>Add Next 25 Points on Map</span>
-                                  </>
-                                )}
-                              </button>
-                            ) : (
-                              <div className="text-center text-[11px] text-gray-500 font-semibold py-1">
-                                ✓ All {totalSchoolsCount} school points added on map
-                              </div>
-                            )}
+                            <div className="flex items-center gap-1.5 w-full">
+                              {mapLoadedPage > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={loadPrevBatch}
+                                  className="py-2 px-3 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center gap-1 shadow-2xs cursor-pointer shrink-0"
+                                  title="Previous Schools Batch"
+                                >
+                                  <ChevronLeft size={14} />
+                                  <span>Prev</span>
+                                </button>
+                              )}
+
+                              {hasMoreSchools && schoolsForMap.length < 3000 ? (
+                                <button
+                                  type="button"
+                                  onClick={loadNextBatch}
+                                  disabled={isLoadingMore}
+                                  className="flex-1 py-2 px-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs disabled:opacity-50 cursor-pointer"
+                                  title="Next School (Add next 25 schools on map)"
+                                >
+                                  {isLoadingMore ? (
+                                    <>
+                                      <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                      <span>Loading Next...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>Next School</span>
+                                      <ChevronRight size={14} />
+                                    </>
+                                  )}
+                                </button>
+                              ) : (
+                                <div className="text-center text-[11px] text-gray-500 font-semibold py-1 flex-1">
+                                  ✓ All {schoolsForMap.length >= 3000 ? '3,000 max' : totalSchoolsCount} schools displayed
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )}
@@ -3629,24 +3691,50 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       </div>
                     )}
 
-                    {/* Mobile Footer: Add Next 25 Points on Map */}
+                    {/* Mobile Footer: Next / Prev School Controls (Strictly 25/batch, Max 3,000 dots in 10 km) */}
                     {mobileSheetState !== 'peek' && (
                       <div className="p-2 border-t border-gray-100 bg-white flex items-center justify-between gap-2 shrink-0">
                         <span className="text-[11px] font-bold text-gray-700">
-                          {schoolsForMap.length} / {totalSchoolsCount} Points
+                          {schoolsForMap.length} / {Math.min(totalSchoolsCount, 3000)} Schools
                         </span>
-                        {hasMoreSchools ? (
-                          <button
-                            type="button"
-                            onClick={loadNextBatch}
-                            disabled={isLoadingMore}
-                            className="px-3 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1 disabled:opacity-50 cursor-pointer shadow-2xs"
-                          >
-                            {isLoadingMore ? 'Adding 25...' : '+ Add 25 Points'}
-                          </button>
-                        ) : (
-                          <span className="text-[10px] text-gray-500 font-medium">All points added</span>
-                        )}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {mapLoadedPage > 1 && (
+                            <button
+                              type="button"
+                              onClick={loadPrevBatch}
+                              className="px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs"
+                              title="Previous Schools Batch"
+                            >
+                              <ChevronLeft size={13} />
+                              <span>Prev</span>
+                            </button>
+                          )}
+                          {hasMoreSchools && schoolsForMap.length < 3000 ? (
+                            <button
+                              type="button"
+                              onClick={loadNextBatch}
+                              disabled={isLoadingMore}
+                              className="px-3.5 py-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-2xs"
+                              title="Next School (Add next 25 schools around 10 km)"
+                            >
+                              {isLoadingMore ? (
+                                <>
+                                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                  <span>Loading...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>Next School</span>
+                                  <ChevronRight size={13} />
+                                </>
+                              )}
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-gray-500 font-medium">
+                              {schoolsForMap.length >= 3000 ? 'Max 3,000 reached' : 'All schools added'}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -3985,51 +4073,53 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
         </div>
       )}
 
-      {/* ── Floating Key-Unlock Expandable "+ Add School" Floating Action Button ── */}
-      <aside aria-label="Add School Floating Button" className="fixed bottom-6 right-6 z-40 flex items-center gap-1.5 animate-in fade-in slide-in-from-bottom-3 duration-300">
-        <button
-          type="button"
-          onClick={() => {
-            if (isAddSchoolExpanded) {
-              handleAddSchoolClick();
-            } else {
-              setIsAddSchoolExpanded(true);
-            }
-          }}
-          className={`rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-2xl active:scale-95 border-2 border-white/50 ${
-            isAddSchoolExpanded
-              ? 'h-12 px-5 bg-gradient-to-r from-[#003c6e] via-[#005689] to-[#0284c7] text-white ring-4 ring-blue-500/30 gap-2 shadow-blue-900/40'
-              : 'w-12 h-12 bg-gradient-to-tr from-[#005689] to-[#0284c7] hover:from-[#003c6e] hover:to-[#005689] text-white hover:scale-105'
-          }`}
-          title={isAddSchoolExpanded ? "Click to open Add School page" : "Click to unlock Add School"}
-        >
-          {/* 90-degree key rotation animation like unlocking a lock key */}
-          <span
-            className={`inline-flex items-center justify-center transition-transform duration-300 ease-out ${
-              isAddSchoolExpanded ? 'rotate-90 text-amber-300' : 'rotate-0 text-white'
-            }`}
-          >
-            <Plus size={22} strokeWidth={2.8} />
-          </span>
-
-          {isAddSchoolExpanded && (
-            <span className="text-sm font-black tracking-wide whitespace-nowrap animate-in fade-in duration-200">
-              Add School
-            </span>
-          )}
-        </button>
-
-        {isAddSchoolExpanded && (
+      {/* ── Floating Key-Unlock Expandable "+ Add School" Floating Action Button (Hidden in Map View to avoid control overlay) ── */}
+      {viewMode !== 'map' && (
+        <aside aria-label="Add School Floating Button" className="fixed bottom-6 right-6 z-40 flex items-center gap-1.5 animate-in fade-in slide-in-from-bottom-3 duration-300">
           <button
             type="button"
-            onClick={() => setIsAddSchoolExpanded(false)}
-            className="w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-90"
-            title="Minimize Add School button"
+            onClick={() => {
+              if (isAddSchoolExpanded) {
+                handleAddSchoolClick();
+              } else {
+                setIsAddSchoolExpanded(true);
+              }
+            }}
+            className={`rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-2xl active:scale-95 border-2 border-white/50 ${
+              isAddSchoolExpanded
+                ? 'h-12 px-5 bg-gradient-to-r from-[#003c6e] via-[#005689] to-[#0284c7] text-white ring-4 ring-blue-500/30 gap-2 shadow-blue-900/40'
+                : 'w-12 h-12 bg-gradient-to-tr from-[#005689] to-[#0284c7] hover:from-[#003c6e] hover:to-[#005689] text-white hover:scale-105'
+            }`}
+            title={isAddSchoolExpanded ? "Click to open Add School page" : "Click to unlock Add School"}
           >
-            <X size={14} />
+            {/* 90-degree key rotation animation like unlocking a lock key */}
+            <span
+              className={`inline-flex items-center justify-center transition-transform duration-300 ease-out ${
+                isAddSchoolExpanded ? 'rotate-90 text-amber-300' : 'rotate-0 text-white'
+              }`}
+            >
+              <Plus size={22} strokeWidth={2.8} />
+            </span>
+
+            {isAddSchoolExpanded && (
+              <span className="text-sm font-black tracking-wide whitespace-nowrap animate-in fade-in duration-200">
+                Add School
+              </span>
+            )}
           </button>
-        )}
-      </aside>
+
+          {isAddSchoolExpanded && (
+            <button
+              type="button"
+              onClick={() => setIsAddSchoolExpanded(false)}
+              className="w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-90"
+              title="Minimize Add School button"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </aside>
+      )}
 
       {/* ── Add School Profile Modal ── */}
       <AddSchoolModal

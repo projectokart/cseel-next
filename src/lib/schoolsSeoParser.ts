@@ -206,7 +206,7 @@ export function parseSchoolsSeoQuery(
     country: 'India',
     sortBy: 'students',
     page: 1,
-    limit: 25,
+    limit: 50,
     companionDistrictPages: [],
     faqs: []
   };
@@ -228,7 +228,7 @@ export function parseSchoolsSeoQuery(
     if (typeof searchParams.facility === 'string') result.facility = searchParams.facility;
     if (typeof searchParams.sort === 'string') result.sortBy = searchParams.sort;
     if (searchParams.page) result.page = Math.max(Number(searchParams.page) || 1, 1);
-    if (searchParams.limit) result.limit = Math.min(Number(searchParams.limit) || 25, 25);
+    if (searchParams.limit) result.limit = Math.min(Number(searchParams.limit) || 50, 100);
   }
 
   // 2. Parse High-Intent 25 Category Slug Patterns

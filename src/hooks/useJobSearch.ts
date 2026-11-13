@@ -18,7 +18,7 @@ export interface JobFilterOptions {
   minSalary?: number;
   urgentOnly?: boolean;
   forLadyOnly?: boolean;
-  sortBy?: 'newest' | 'salary' | 'deadline' | 'experience' | 'rating' | 'near_me';
+  sortBy?: 'newest' | 'salary' | 'deadline' | 'experience' | 'rating' | 'near_me' | 'alpha_asc' | 'alpha_desc';
   radiusKm?: number;
 }
 
@@ -399,6 +399,10 @@ export function useJobSearch(initialJobs?: FacultyJobItem[]): UseJobSearchReturn
       sorted.sort((a, b) => (a.distanceKm ?? 99999) - (b.distanceKm ?? 99999));
     } else if (sortBy === 'salary') {
       sorted.sort((a, b) => (b.salaryMax || b.salaryMin || 0) - (a.salaryMax || a.salaryMin || 0));
+    } else if (sortBy === 'alpha_asc') {
+      sorted.sort((a, b) => (a.jobPostName || (a as any).title || '').trim().toLowerCase().localeCompare((b.jobPostName || (b as any).title || '').trim().toLowerCase(), 'en', { sensitivity: 'base' }));
+    } else if (sortBy === 'alpha_desc') {
+      sorted.sort((a, b) => (b.jobPostName || (b as any).title || '').trim().toLowerCase().localeCompare((a.jobPostName || (a as any).title || '').trim().toLowerCase(), 'en', { sensitivity: 'base' }));
     } else if (sortBy === 'newest') {
       sorted.sort((a, b) => (b._dateMs || 0) - (a._dateMs || 0));
     }

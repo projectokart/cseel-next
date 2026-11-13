@@ -32,6 +32,8 @@ function openDB(): Promise<IDBDatabase> {
   });
 }
 
+const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24-Hour (1 day) strict cache validity
+
 export class JobsCacheStorage {
   /**
    * Retrieves all cached vacancies and the cached version string from IndexedDB
@@ -40,14 +42,20 @@ export class JobsCacheStorage {
     try {
       const db = await openDB();
       return new Promise((resolve) => {
-        const tx = db.transaction(STORE_NAME, 'readonly');
+        const tx = db.transaction(STORE_NAME, 'readwrite');
         const store = tx.objectStore(STORE_NAME);
         const req = store.get('vacancies_payload');
 
         req.onsuccess = () => {
           const val = req.result as CachedDataPayload | undefined;
           if (val && Array.isArray(val.jobs) && val.jobs.length > 0) {
-            resolve(val);
+            // Automatic deletion after 24 hours (1 day)
+            if (val.savedAt && (Date.now() - val.savedAt > ONE_DAY_MS)) {
+              store.delete('vacancies_payload');
+              resolve(null);
+            } else {
+              resolve(val);
+            }
           } else {
             resolve(null);
           }

@@ -59,6 +59,7 @@ async function idbSet(key: string, value: unknown): Promise<void> {
 }
 
 // ── Feed payload ────────────────────────────────────────────────────────────
+const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24-Hour (1 day) strict cache validity
 
 export interface FeedPayload {
   version:   string;
@@ -69,7 +70,16 @@ export interface FeedPayload {
 
 export const FeedCache = {
   async get(): Promise<FeedPayload | null> {
-    return idbGet<FeedPayload>('feed_payload');
+    const payload = await idbGet<FeedPayload>('feed_payload');
+    if (!payload) return null;
+
+    // Automatic purge if older than 24 hours (1 day validity)
+    if (payload.savedAt && (Date.now() - payload.savedAt > ONE_DAY_MS)) {
+      await idbSet('feed_payload', null);
+      await idbSet('facets_payload', null);
+      return null;
+    }
+    return payload;
   },
   async save(jobs: Record<string, any>[], version: string, facets?: any): Promise<void> {
     const payload: FeedPayload = { version, savedAt: Date.now(), jobs, facets };

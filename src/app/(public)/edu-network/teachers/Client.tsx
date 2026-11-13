@@ -22,6 +22,7 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import AdSenseBanner, { AdSenseInFeedCard } from '@/components/ads/AdSenseBanner';
 
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -381,6 +382,10 @@ export default function TeachersDirectoryClient({
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const hasSearchText = searchInput.trim().length > 0;
+  // Active 45-Day Vacancies — starts empty, hydrated asynchronously from slim feed / IndexedDB
+  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(
+    initialJobs && initialJobs.length > 0 ? initialJobs : []
+  );
   const [selectedDesignations, setSelectedDesignations] = useState<string[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [selectedBoards, setSelectedBoards] = useState<string[]>([]);
@@ -404,22 +409,74 @@ export default function TeachersDirectoryClient({
   const [locationTab, setLocationTab] = useState<'districts' | 'states'>('districts');
   const [locationSearchInput, setLocationSearchInput] = useState<string>('');
 
-  // Search popover
+  // Search popover & persistent local cache ('job_search_queries')
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [trendingSearches, setTrendingSearches] = useState<{ query: string; count?: number }[]>([
-    { query: "PGT Physics Delhi", count: 142 },
-    { query: "TGT Chemistry CBSE", count: 118 },
-    { query: "ATL Robotics Mentor Gurugram", count: 96 },
-    { query: "PRT Primary Science", count: 85 },
-    { query: "Composite Lab In-Charge", count: 74 },
-    { query: "Class 11-12 Mathematics", count: 68 },
-    { query: "Computer Science AI Teacher", count: 57 },
-  ]);
+  const [trendingSearches, setTrendingSearches] = useState<{ query: string; count?: number }[]>([]);
+  const [localSearchQueries, setLocalSearchQueries] = useState<string[]>([]);
+
+  // Load permanent browser search cache on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('job_search_queries') || localStorage.getItem('cseel_job_search_queries');
+        if (raw) {
+          const list = JSON.parse(raw);
+          if (Array.isArray(list)) {
+            setLocalSearchQueries(list.filter((x) => typeof x === 'string' && x.trim().length > 0));
+          }
+        }
+      } catch {}
+    }
+  }, []);
+
+  // Unified single-column search suggestions (combining local user cache + Supabase sync)
+  const searchSuggestions = useMemo(() => {
+    const inputTrim = searchInput.trim().toLowerCase();
+    const suggestionsMap = new Map<string, number | undefined>();
+
+    // 1. Locally cached user search queries
+    for (const q of localSearchQueries) {
+      if (!inputTrim || q.toLowerCase().includes(inputTrim)) {
+        suggestionsMap.set(q, undefined);
+      }
+    }
+
+    // 2. Server-synchronized database queries
+    for (const item of trendingSearches) {
+      if (!inputTrim || item.query.toLowerCase().includes(inputTrim)) {
+        if (!suggestionsMap.has(item.query)) {
+          suggestionsMap.set(item.query, item.count);
+        }
+      }
+    }
+
+    return Array.from(suggestionsMap.entries())
+      .map(([query, count]) => ({ query, count }))
+      .slice(0, 8);
+  }, [searchInput, localSearchQueries, trendingSearches]);
 
   // Saved Jobs local state
   const [savedJobIds, setSavedJobIds] = useState<string[]>([]);
   const [copiedJobId, setCopiedJobId] = useState<string | null>(null);
   const [shareToastMessage, setShareToastMessage] = useState<string | null>(null);
+
+  // School Image Lightbox Preview Modal State
+  const [previewImage, setPreviewImage] = useState<{
+    src: string;
+    alt: string;
+    schoolName?: string;
+    title?: string;
+  } | null>(null);
+
+  // Close image preview modal on Escape key
+  useEffect(() => {
+    if (!previewImage) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPreviewImage(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [previewImage]);
 
   // Direct Connect Modal (for Schools to reach Faculty)
   const [selectedFacultyForConnect, setSelectedFacultyForConnect] = useState<VerifiedFacultyItem | null>(null);
@@ -516,6 +573,19 @@ export default function TeachersDirectoryClient({
     setIsSearchFocused(false);
 
     if (q.length >= 2) {
+      // 1. Save to permanent user local cache ('job_search_queries')
+      if (typeof window !== 'undefined') {
+        try {
+          const raw = localStorage.getItem('job_search_queries') || localStorage.getItem('cseel_job_search_queries');
+          const list: string[] = raw ? JSON.parse(raw) : [];
+          const updated = [q, ...list.filter((x) => x.toLowerCase() !== q.toLowerCase())].slice(0, 30);
+          localStorage.setItem('job_search_queries', JSON.stringify(updated));
+          localStorage.setItem('cseel_job_search_queries', JSON.stringify(updated));
+          setLocalSearchQueries(updated);
+        } catch {}
+      }
+
+      // 2. Sync to Supabase server database
       fetch('/api/search/record-query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -524,8 +594,20 @@ export default function TeachersDirectoryClient({
           timestamp: new Date().toISOString(),
         }),
       }).catch(() => {});
+
+      // 3. If cache is empty or cold start, fetch directly from Supabase /api/jobs
+      if (activeJobs.length === 0) {
+        fetch(`/api/jobs?q=${encodeURIComponent(q)}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data && Array.isArray(data.jobs) && data.jobs.length > 0) {
+              setActiveJobs(data.jobs);
+            }
+          })
+          .catch(() => {});
+      }
     }
-  }, [searchInput]);
+  }, [searchInput, activeJobs.length]);
 
   const handleClearSearch = useCallback(() => {
     setSearchInput('');
@@ -873,18 +955,19 @@ export default function TeachersDirectoryClient({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Fetch trending searches on-demand when user focuses search bar
-  const fetchTrendingSearches = useCallback(() => {
-    if (trendingSearches.length > 0) return;
-    fetch('/api/search/record-query')
+  // Fetch live search suggestions from Supabase on-demand
+  const fetchTrendingSearches = useCallback((q?: string) => {
+    const url = q && q.trim() ? `/api/search/record-query?q=${encodeURIComponent(q.trim())}` : '/api/search/record-query';
+    fetch(url)
       .then((res) => res.json())
       .then((data) => {
-        if (data.trending && Array.isArray(data.trending) && data.trending.length > 0) {
-          setTrendingSearches(data.trending.slice(0, 8));
+        const list = data.suggestions || data.trending;
+        if (Array.isArray(list)) {
+          setTrendingSearches(list.slice(0, 10));
         }
       })
       .catch(() => {});
-  }, [trendingSearches.length]);
+  }, []);
 
   const toggleDesignation = (id: string) => {
     setSelectedDesignations((prev) =>
@@ -934,11 +1017,7 @@ export default function TeachersDirectoryClient({
     );
   };
 
-  // Active 45-Day Vacancies — starts empty, hydrated asynchronously from slim feed / IndexedDB
-  // IMPORTANT: Never call getActiveFacultyJobs() here — it loads the 4.2 MB bundle on mobile main thread
-  const [activeJobs, setActiveJobs] = useState<FacultyJobItem[]>(
-    initialJobs && initialJobs.length > 0 ? initialJobs : []
-  );
+
 
   const [facetsData, setFacetsData] = useState<JobFilterFacetsData>(DEFAULT_JOB_FACETS);
 
@@ -1055,7 +1134,7 @@ export default function TeachersDirectoryClient({
           if (oldCached?.lastGps) lastGpsCoordsRef.current = oldCached.lastGps;
         }
 
-        // C. Cold start / Stale cache purge → fetch lightweight chunk or full feed
+        // C. Cold start / Stale cache purge (after 24 hours) → fetch fresh feed or live Supabase DB
         if (!hasLocalCache) {
           try {
             const top50Res = await fetchCdnWithFallback([
@@ -1067,9 +1146,27 @@ export default function TeachersDirectoryClient({
               if (Array.isArray(top50Slim) && top50Slim.length > 0) {
                 setActiveJobs(decodeSlimFeed(top50Slim));
               }
+            } else {
+              // Fetch live vacancies directly from Supabase /api/jobs
+              const dbRes = await fetch('/api/jobs');
+              if (dbRes.ok) {
+                const dbData = await dbRes.json();
+                if (Array.isArray(dbData.jobs) && dbData.jobs.length > 0) {
+                  setActiveJobs(dbData.jobs);
+                }
+              }
             }
           } catch (e) {
             console.warn('[Client] top-50 chunk load notice:', e);
+            try {
+              const dbRes = await fetch('/api/jobs');
+              if (dbRes.ok) {
+                const dbData = await dbRes.json();
+                if (Array.isArray(dbData.jobs) && dbData.jobs.length > 0) {
+                  setActiveJobs(dbData.jobs);
+                }
+              }
+            } catch {}
           }
         }
       } catch (err) {
@@ -1083,11 +1180,11 @@ export default function TeachersDirectoryClient({
         let serverVersion = '';
         let serverCount = 0;
         try {
-          // Edge CDN raw pointer is prioritized for real-time 0-second version updates without Vercel deploy
+          // Prioritize local manifest/feed first for immediate local development and latest deployed bundles
           const manifestRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
             `/jobs/latest.json?_t=${Date.now()}`,
             CDN_JOB_ENDPOINTS.manifestLocal,
+            `${CDN_JOB_ENDPOINTS.manifestRaw}?_t=${Date.now()}`,
           ], { cache: 'no-cache' });
 
           if (manifestRes && manifestRes.ok) {
@@ -1118,8 +1215,8 @@ export default function TeachersDirectoryClient({
         // 1. Fetch fresh filter facets alongside jobs feed
         try {
           const facetsRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.facetsRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.facetsLocal}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.facetsRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.facetsCdn}${versionParam}`,
           ], { cache: 'no-cache' });
           if (facetsRes && facetsRes.ok) {
@@ -1134,8 +1231,8 @@ export default function TeachersDirectoryClient({
         // 2. Fetch fresh slim jobs feed
         try {
           const feedRes = await fetchCdnWithFallback([
-            `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedLocal}${versionParam}`,
+            `${CDN_JOB_ENDPOINTS.feedRaw}${versionParam}`,
             `${CDN_JOB_ENDPOINTS.feedCdn}${versionParam}`,
           ], { cache: 'no-cache' });
           if (feedRes && feedRes.ok) {
@@ -1840,32 +1937,37 @@ export default function TeachersDirectoryClient({
           </button>
         )}
 
-        {/* Trending Searches Popover */}
-        {isSearchFocused && (
-          <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                <Flame className="w-3.5 h-3.5 text-orange-500" />
-                <span>Trending Searches</span>
+        {/* Search Suggestions Popover (Single-column list, Google style) */}
+        {isSearchFocused && searchSuggestions.length > 0 && (
+          <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-2.5 z-50 text-left animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between px-2 pb-2 mb-1.5 border-b border-slate-100">
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 font-['Montserrat',sans-serif]">
+                <Search className="w-3.5 h-3.5 text-[#005689]" />
+                <span>Search Suggestions</span>
               </span>
-              <span className="text-[10px] text-slate-400">Popular Roles</span>
+              <span className="text-[10px] font-semibold text-slate-400">Suggestions</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-48 overflow-y-auto">
-              {trendingSearches.map((item, idx) => (
+            <div className="flex flex-col gap-0.5 max-h-56 overflow-y-auto">
+              {searchSuggestions.map((item, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onMouseDown={() => {
                     handleExecuteSearch(item.query);
                   }}
-                  className="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 text-slate-700 text-xs text-left transition-colors cursor-pointer group"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 text-xs text-left transition-colors cursor-pointer group"
                 >
-                  <span className="truncate group-hover:text-[#005689] font-medium">{item.query}</span>
-                  {item.count && (
-                    <span className="text-[10px] text-slate-400 font-mono shrink-0 ml-1">
-                      {item.count}
+                  <Search size={13} className="text-slate-400 group-hover:text-[#005689] shrink-0 transition-colors" />
+                  <span className="truncate flex-1 font-medium text-slate-800 group-hover:text-[#005689]">
+                    {item.query}
+                  </span>
+                  {item.count ? (
+                    <span className="text-[10px] text-slate-400 group-hover:text-[#005689] font-mono shrink-0">
+                      {item.count}+
                     </span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 shrink-0">Recent</span>
                   )}
                 </button>
               ))}
@@ -2147,18 +2249,19 @@ export default function TeachersDirectoryClient({
               ? 'fixed top-2.5 inset-x-2.5 z-40 bg-white/95 backdrop-blur-md shadow-lg md:relative md:top-auto md:inset-x-auto md:z-30 md:bg-white'
               : ''
           }`}>
-            {/* Row 1: Search Input (flex-1) + Filter Button + Sort Button + 3-Dots Menu Button */}
-            <div className="flex items-center gap-2 w-full">
-              {/* Unified Search Input Bar */}
-              <div className="relative flex-1 flex items-center bg-[#F4F6F8] rounded-xl px-3 py-2 border border-slate-200/70 focus-within:bg-white focus-within:border-[#004A75] focus-within:ring-2 focus-within:ring-[#004A75]/15 transition-all min-w-0 h-10">
-                <Search size={15} className="text-slate-400 shrink-0 mr-2" />
+            {/* Row 1: 100% Full-Width Block Search Bar */}
+            <div className="w-full relative">
+              <div className="w-full flex items-center bg-[#F4F6F8] rounded-xl pl-3 sm:pl-4 pr-1.5 py-1.5 border border-slate-200/80 focus-within:bg-white focus-within:border-[#004A75] focus-within:ring-2 focus-within:ring-[#004A75]/15 transition-all h-11 sm:h-12 shadow-2xs">
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder={activeTab === 'jobs' ? "Search role, school, location..." : "Search teacher, qualification..."}
+                  placeholder={activeTab === 'jobs' ? "Search role, school, location... (e.g. PGT Physics, Delhi, CBSE)" : "Search teacher, qualification..."}
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onFocus={() => { setIsSearchFocused(true); fetchTrendingSearches(); }}
+                  onChange={(e) => {
+                    setSearchInput(e.target.value);
+                    fetchTrendingSearches(e.target.value);
+                  }}
+                  onFocus={() => { setIsSearchFocused(true); fetchTrendingSearches(searchInput); }}
                   onBlur={() => setTimeout(() => setIsSearchFocused(false), 250)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -2175,226 +2278,73 @@ export default function TeachersDirectoryClient({
                   <button
                     type="button"
                     onClick={handleClearSearch}
-                    className="p-1 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer ml-1"
+                    className="p-1.5 text-slate-400 hover:text-slate-600 shrink-0 cursor-pointer mr-1 rounded-full hover:bg-slate-200/60 transition"
                     title="Clear search"
                   >
-                    <X size={13} />
+                    <X size={14} />
                   </button>
                 )}
 
-                {/* Trending Searches Popover */}
-                {isSearchFocused && (
-                  <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left animate-in fade-in zoom-in-95">
-                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                        <Flame className="w-3.5 h-3.5 text-orange-500" />
-                        <span>Trending Searches</span>
-                      </span>
-                      <span className="text-[10px] text-slate-400">Popular Roles</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 max-h-48 overflow-y-auto">
-                      {trendingSearches.map((item, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onMouseDown={() => {
-                            handleExecuteSearch(item.query);
-                          }}
-                          className="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-slate-50 text-slate-700 text-xs text-left transition-colors cursor-pointer group"
-                        >
-                          <span className="truncate group-hover:text-[#005689] font-medium">{item.query}</span>
-                          {item.count && (
-                            <span className="text-[10px] text-slate-400 group-hover:text-[#005689] shrink-0 font-medium">
-                              {item.count}+
-                            </span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Filter Button (Mobile & Tablet only; hidden on Desktop where sidebar filter is already open) */}
-              <button
-                type="button"
-                onClick={() => setIsMobileFilterOpen(true)}
-                className="md:hidden w-10 h-10 rounded-xl bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 flex items-center justify-center border border-slate-200/70 transition cursor-pointer relative shrink-0 active:scale-95"
-                title="Filters"
-              >
-                <SlidersHorizontal size={15} />
-                {hasActiveFilters && (
-                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#004A75]" />
-                )}
-              </button>
-
-              {/* Sort Button with Dropdown (Screenshot 3) */}
-              <div className="relative shrink-0">
+                {/* Trigger Search Button (active blue when input has text, inactive when empty) */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsSortMenuOpen(!isSortMenuOpen);
-                    setIsMoreMenuOpen(false);
-                  }}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center border border-slate-200/70 transition cursor-pointer active:scale-95 ${
-                    isSortMenuOpen ? 'bg-slate-200 text-[#004A75]' : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700'
+                  disabled={!hasSearchText}
+                  onClick={() => handleExecuteSearch()}
+                  className={`h-8 sm:h-9 px-3 sm:px-4 rounded-lg flex items-center gap-1.5 transition-all shrink-0 font-['Montserrat',sans-serif] ${
+                    hasSearchText
+                      ? 'bg-[#005689] hover:bg-[#003c6e] text-white shadow-xs cursor-pointer active:scale-95 font-bold text-xs'
+                      : 'bg-slate-200/60 text-slate-400 cursor-not-allowed opacity-50 text-xs font-semibold'
                   }`}
-                  title="Sort List"
+                  title={hasSearchText ? "Search vacancies" : "Type keywords to search"}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="21" y1="6" x2="3" y2="6"/>
-                    <line x1="17" y1="12" x2="3" y2="12"/>
-                    <line x1="13" y1="18" x2="3" y2="18"/>
-                  </svg>
+                  <Search size={14} className={hasSearchText ? 'text-white' : 'text-slate-400'} />
+                  <span className="hidden sm:inline">Search</span>
                 </button>
-
-                {/* Sort Dropdown Menu (Screenshot 3) */}
-                {isSortMenuOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsSortMenuOpen(false)} />
-                    <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-2.5 text-left animate-in fade-in zoom-in-95">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1 mb-1">
-                        SORT LIST BY
-                      </div>
-                      <div className="space-y-0.5">
-                        <button
-                          type="button"
-                          onClick={handleNearMeSort}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                            sortBy === 'near_me' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          <div className="flex items-center gap-1.5">
-                            <MapPin size={13} className="text-[#004A75]" />
-                            <span>Near Me (Nearest First)</span>
-                          </div>
-                          {sortBy === 'near_me' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => { setSortBy('newest'); setIsSortMenuOpen(false); }}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                            sortBy === 'newest' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          <span>Newest First</span>
-                          {sortBy === 'newest' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => { setSortBy('salary'); setIsSortMenuOpen(false); }}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                            sortBy === 'salary' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          <span>Salary (Highest)</span>
-                          {sortBy === 'salary' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => { setSortBy('deadline'); setIsSortMenuOpen(false); }}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                            sortBy === 'deadline' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          <span>Deadline Soonest</span>
-                          {sortBy === 'deadline' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
               </div>
 
-              {/* 3-Dots Dark Blue Menu Button with Popover (Screenshot 2) */}
-              <div className="relative shrink-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMoreMenuOpen(!isMoreMenuOpen);
-                    setIsSortMenuOpen(false);
-                  }}
-                  className="w-10 h-10 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white flex items-center justify-center transition cursor-pointer shadow-sm active:scale-95"
-                  title="Browse Category & View Mode"
-                >
-                  <MoreVertical size={18} className="text-white" />
-                </button>
+              {/* Search Suggestions Popover (Single column list, Google style at 100% full width) */}
+              {isSearchFocused && searchSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-2.5 z-50 text-left animate-in fade-in zoom-in-95">
+                  <div className="flex items-center justify-between px-2 pb-2 mb-1.5 border-b border-slate-100">
+                    <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 font-['Montserrat',sans-serif]">
+                      <Search className="w-3.5 h-3.5 text-[#005689]" />
+                      <span>Search Suggestions</span>
+                    </span>
+                    <span className="text-[10px] font-semibold text-slate-400">Suggestions</span>
+                  </div>
 
-                {/* More Options Popover Menu (Screenshot 2) */}
-                {isMoreMenuOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)} />
-                    <div className="absolute top-full right-0 mt-2 w-[270px] sm:w-[290px] bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-3.5 text-left animate-in fade-in zoom-in-95">
-                      {/* Section: View Mode */}
-                      <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                        VIEW MODE
-                      </div>
-                      <div className="bg-[#F4F6F8] p-1 rounded-xl flex items-center justify-between gap-1 mb-4">
-                        <button
-                          type="button"
-                          onClick={() => { handleViewModeChange('compact'); setIsMoreMenuOpen(false); }}
-                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                            viewMode === 'compact'
-                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
-                              : 'text-slate-600 hover:text-slate-900 font-medium'
-                          }`}
-                        >
-                          <List size={13} />
-                          <span>List</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { handleViewModeChange('grid'); setIsMoreMenuOpen(false); }}
-                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                            viewMode === 'grid' || viewMode === 'grid3'
-                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
-                              : 'text-slate-600 hover:text-slate-900 font-medium'
-                          }`}
-                        >
-                          <LayoutGrid size={13} />
-                          <span>Grid</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { handleViewModeChange('map'); setIsMoreMenuOpen(false); }}
-                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                            viewMode === 'map'
-                              ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
-                              : 'text-slate-600 hover:text-slate-900 font-medium'
-                          }`}
-                        >
-                          <MapIcon size={13} />
-                          <span>Map</span>
-                        </button>
-                      </div>
-
-                      {/* Section 3: Action Buttons */}
-                      <div className="space-y-2 pt-1 border-t border-slate-100">
-                        <a
-                          href="https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => setIsMoreMenuOpen(false)}
-                          className="w-full py-2.5 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer active:scale-98"
-                        >
-                          <GraduationCap size={14} />
-                          <span>+ List as Faculty</span>
-                        </a>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
+                  <div className="flex flex-col gap-0.5 max-h-56 overflow-y-auto">
+                    {searchSuggestions.map((item, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onMouseDown={() => {
+                          handleExecuteSearch(item.query);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-slate-50 text-slate-700 text-xs sm:text-sm text-left transition-colors cursor-pointer group"
+                      >
+                        <Search size={13} className="text-slate-400 group-hover:text-[#005689] shrink-0 transition-colors" />
+                        <span className="truncate flex-1 font-medium text-slate-800 group-hover:text-[#005689]">
+                          {item.query}
+                        </span>
+                        {item.count ? (
+                          <span className="text-[10px] text-slate-400 group-hover:text-[#005689] font-mono shrink-0">
+                            {item.count}+
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 shrink-0">Recent</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Row 2: Category Tab Switcher (Vacancies / Faculty) & Updated Date */}
-            <div className={`flex items-center justify-between pt-1 px-0.5 text-xs flex-wrap gap-2 ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                {/* Vacancies Indicator (Faculty tab hidden from public) */}
+            {/* Row 2: Action Controls Bar (Vacancies Count + Filters + Sort + View/Menu) */}
+            <div className={`flex items-center justify-between pt-1 text-xs flex-wrap gap-2.5 ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
+              {/* Left Side: Vacancies Counter Pill & Active Filter count */}
+              <div className="flex items-center gap-2 flex-wrap">
                 <div className="inline-flex items-center gap-1.5 bg-[#F1F5F9] px-3 py-1.5 rounded-xl border border-slate-200/80 text-xs font-bold text-[#004A75]">
                   <Briefcase size={13} className="text-[#004A75]" />
                   <span>Vacancies</span>
@@ -2402,10 +2352,196 @@ export default function TeachersDirectoryClient({
                     {(hasActiveFilters ? filteredJobs.length : liveTotalVacancies).toLocaleString()}
                   </span>
                 </div>
+
+                <div className="text-[11.5px] text-slate-500 font-medium hidden sm:inline">
+                  Updated: <span className="text-slate-700 font-semibold">{latestUpdatedDate}</span>
+                </div>
               </div>
 
-              <div className="text-[12px] text-slate-500 font-medium">
-                Updated: <span className="text-slate-700 font-semibold">{latestUpdatedDate}</span>
+              {/* Right Side: Filters, Sort & More Menu Controls */}
+              <div className="flex items-center gap-2 ml-auto">
+                {/* 1. Filter Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className={`h-9 px-3 rounded-xl flex items-center gap-1.5 border transition cursor-pointer active:scale-95 font-semibold text-xs ${
+                    hasActiveFilters
+                      ? 'bg-[#EBF3F8] text-[#004A75] border-[#D0E6F5] font-bold'
+                      : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 border-slate-200/70'
+                  }`}
+                  title="Open Filters"
+                >
+                  <SlidersHorizontal size={14} className={hasActiveFilters ? 'text-[#004A75]' : 'text-slate-600'} />
+                  <span>Filters</span>
+                  {hasActiveFilters && (
+                    <span className="w-2 h-2 rounded-full bg-[#004A75]" />
+                  )}
+                </button>
+
+                {/* 2. Sort Button with Dropdown */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSortMenuOpen(!isSortMenuOpen);
+                      setIsMoreMenuOpen(false);
+                    }}
+                    className={`h-9 px-3 rounded-xl flex items-center gap-1.5 border transition cursor-pointer active:scale-95 font-semibold text-xs ${
+                      isSortMenuOpen ? 'bg-slate-200 text-[#004A75] border-slate-300' : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 border-slate-200/70'
+                    }`}
+                    title="Sort List"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="21" y1="6" x2="3" y2="6"/>
+                      <line x1="17" y1="12" x2="3" y2="12"/>
+                      <line x1="13" y1="18" x2="3" y2="18"/>
+                    </svg>
+                    <span>
+                      {sortBy === 'newest' ? 'Newest' : sortBy === 'salary' ? 'Salary' : sortBy === 'near_me' ? 'Near Me' : 'Deadline'}
+                    </span>
+                    <ChevronDown size={13} className={`transition-transform duration-200 ${isSortMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Sort Dropdown Menu */}
+                  {isSortMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setIsSortMenuOpen(false)} />
+                      <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-2.5 text-left animate-in fade-in zoom-in-95">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 py-1 mb-1">
+                          SORT LIST BY
+                        </div>
+                        <div className="space-y-0.5">
+                          <button
+                            type="button"
+                            onClick={handleNearMeSort}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                              sortBy === 'near_me' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <MapPin size={13} className="text-[#004A75]" />
+                              <span>Near Me (Nearest First)</span>
+                            </div>
+                            {sortBy === 'near_me' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('newest'); setIsSortMenuOpen(false); }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                              sortBy === 'newest' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span>Newest First</span>
+                            {sortBy === 'newest' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('salary'); setIsSortMenuOpen(false); }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                              sortBy === 'salary' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span>Salary (Highest)</span>
+                            {sortBy === 'salary' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => { setSortBy('deadline'); setIsSortMenuOpen(false); }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                              sortBy === 'deadline' ? 'bg-[#EDF5FA] text-[#004A75] font-bold' : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <span>Deadline Soonest</span>
+                            {sortBy === 'deadline' && <Check size={14} className="text-[#004A75] stroke-[2.5]" />}
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* 3. View Mode / Menu Button */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMoreMenuOpen(!isMoreMenuOpen);
+                      setIsSortMenuOpen(false);
+                    }}
+                    className="h-9 px-3 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white flex items-center gap-1.5 transition cursor-pointer shadow-sm active:scale-95 font-semibold text-xs"
+                    title="View Mode & Options"
+                  >
+                    {viewMode === 'compact' ? <List size={14} /> : viewMode === 'map' ? <MapIcon size={14} /> : <LayoutGrid size={14} />}
+                    <span className="hidden sm:inline capitalize">{viewMode}</span>
+                    <MoreVertical size={14} className="text-white/80" />
+                  </button>
+
+                  {/* More Options Popover Menu */}
+                  {isMoreMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)} />
+                      <div className="absolute top-full right-0 mt-2 w-[270px] sm:w-[290px] bg-white rounded-2xl shadow-xl border border-slate-200/90 z-50 p-3.5 text-left animate-in fade-in zoom-in-95">
+                        <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                          VIEW MODE
+                        </div>
+                        <div className="bg-[#F4F6F8] p-1 rounded-xl flex items-center justify-between gap-1 mb-4">
+                          <button
+                            type="button"
+                            onClick={() => { handleViewModeChange('compact'); setIsMoreMenuOpen(false); }}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                              viewMode === 'compact'
+                                ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                                : 'text-slate-600 hover:text-slate-900 font-medium'
+                            }`}
+                          >
+                            <List size={13} />
+                            <span>List</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { handleViewModeChange('grid'); setIsMoreMenuOpen(false); }}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                              viewMode === 'grid' || viewMode === 'grid3'
+                                ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                                : 'text-slate-600 hover:text-slate-900 font-medium'
+                            }`}
+                          >
+                            <LayoutGrid size={13} />
+                            <span>Grid</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { handleViewModeChange('map'); setIsMoreMenuOpen(false); }}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                              viewMode === 'map'
+                                ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
+                                : 'text-slate-600 hover:text-slate-900 font-medium'
+                            }`}
+                          >
+                            <MapIcon size={13} />
+                            <span>Map</span>
+                          </button>
+                        </div>
+
+                        <div className="space-y-2 pt-1 border-t border-slate-100">
+                          <a
+                            href="https://docs.google.com/forms/d/e/1FAIpQLScgKoheaC5BRHhpGPUQHSOFbaCJpuK2LCz82I7Ii7RIR_Z-RQ/viewform"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setIsMoreMenuOpen(false)}
+                            className="w-full py-2.5 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer active:scale-98"
+                          >
+                            <GraduationCap size={14} />
+                            <span>+ List as Faculty</span>
+                          </a>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -2502,8 +2638,8 @@ export default function TeachersDirectoryClient({
                     paginatedJobs.map((job, index) => {
                       const isSaved = savedJobIds.includes(job.id);
                       const structuredAddress = formatStructuredAddress(job);
-                      const sourceDisplayName = getSourceDisplayName(job.source);
-                      const sourceBadgeColor = getSourceBadgeColor(job.source);
+                      const sourceDisplayName = getSourceDisplayName(job.source, job.originalUrl || job.applyUrl);
+                      const sourceBadgeColor = getSourceBadgeColor(sourceDisplayName);
 
                       // Clean text tags (separated by dots just like Naukri SRP)
                       const cardTags = [
@@ -2515,76 +2651,92 @@ export default function TeachersDirectoryClient({
 
                       return (
                         <React.Fragment key={job.id}>
+                          {index > 0 && index % 6 === 0 && (
+                            <AdSenseInFeedCard cardType="job" />
+                          )}
                           <div
                             className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-visible"
                           >
                           <div className="space-y-2.5 min-w-0">
-                            {/* Conditional Job Image Banner (Only if image_url is available AND distinct from organisation logo) */}
-                            {job.image_url && job.image_url.trim() !== '' && job.image_url !== job.organisationLogo && (
-                              <div className="w-full aspect-[16/9] sm:aspect-[2/1] rounded-xl overflow-hidden bg-slate-100 border border-slate-200/80 mb-2.5 relative">
-                                <img
-                                  src={job.image_url}
-                                  alt={job.jobPostName}
-                                  loading="lazy"
-                                  decoding="async"
-                                  className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-300"
-                                  onError={(e) => {
-                                    const parent = (e.target as HTMLElement).parentElement;
-                                    if (parent) parent.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                            )}
+                            {/* Row 1: Title, School & Single Compact School Logo/Image Thumbnail */}
+                            {(() => {
+                              const rawImage = job.organisationLogo || job.image_url || (job as any).logo || (job as any).school_image;
+                              const isValidUrl = Boolean(
+                                rawImage &&
+                                typeof rawImage === 'string' &&
+                                rawImage.trim() !== '' &&
+                                !rawImage.includes('placeholder') &&
+                                (rawImage.startsWith('http') || rawImage.startsWith('/'))
+                              );
 
-                            {/* Row 1: Title, School & Optional Logo (Hide if no valid image URL) */}
-                            <div className="flex items-start justify-between gap-3 min-w-0">
-                              <div className="min-w-0 flex-1 space-y-1">
-                                <h2>
-                                  <Link
-                                    href={`/edu-network/teachers/job/${job.id}`}
-                                    className="font-['Montserrat',sans-serif] font-bold text-[15.5px] sm:text-[16.5px] text-slate-900 group-hover:text-[#0A66C2] leading-snug line-clamp-2 block transition-colors break-words"
-                                    title={job.jobPostName}
-                                  >
-                                    {job.jobPostName}
-                                  </Link>
-                                </h2>
+                              return (
+                                <div className="flex items-start justify-between gap-3 min-w-0">
+                                  <div className="min-w-0 flex-1 space-y-1">
+                                    <h2>
+                                      <Link
+                                        href={`/edu-network/teachers/job/${job.id}`}
+                                        className="font-['Montserrat',sans-serif] font-bold text-[15.5px] sm:text-[16.5px] text-slate-900 group-hover:text-[#0A66C2] leading-snug line-clamp-2 block transition-colors break-words"
+                                        title={job.jobPostName}
+                                      >
+                                        {job.jobPostName}
+                                      </Link>
+                                    </h2>
 
-                                {/* School Name + Very small source tag + Rating */}
-                                <div className="flex items-center gap-2 flex-wrap text-[13px] text-slate-700">
-                                  <span className="font-semibold text-slate-800" title={job.organisationName}>
-                                    {job.organisationName}
-                                  </span>
-                                  {/* Very small source tag */}
-                                  <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sourceBadgeColor}`}>
-                                    {sourceDisplayName}
-                                  </span>
-                                  {job.rating && (
-                                    <span className="flex items-center gap-1 text-[11.5px] font-semibold text-slate-600 shrink-0">
-                                      <Star size={11} className="fill-amber-400 text-amber-400" />
-                                      <span>{job.rating}</span>
-                                    </span>
-                                  )}
+                                    {/* School Name + Very small source tag + Rating */}
+                                    <div className="flex items-center gap-2 flex-wrap text-[13px] text-slate-700">
+                                      <span className="font-semibold text-slate-800" title={job.organisationName}>
+                                        {job.organisationName}
+                                      </span>
+                                      {/* Very small source tag */}
+                                      <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${sourceBadgeColor}`}>
+                                        {sourceDisplayName}
+                                      </span>
+                                      {job.rating && (
+                                        <span className="flex items-center gap-1 text-[11.5px] font-semibold text-slate-600 shrink-0">
+                                          <Star size={11} className="fill-amber-400 text-amber-400" />
+                                          <span>{job.rating}</span>
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Single Compact School Image / Logo thumbnail (Small rounded-2xl square; click to view full preview) */}
+                                  {isValidUrl ? (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setPreviewImage({
+                                          src: rawImage!,
+                                          alt: job.organisationName || 'School Image',
+                                          schoolName: job.organisationName,
+                                          title: job.jobPostName,
+                                        });
+                                      }}
+                                      className="school-logo-box w-12 h-12 sm:w-14 sm:h-14 rounded-2xl border border-slate-200/90 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs hover:border-[#0A66C2] hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer relative group/thumb"
+                                      title="Click to view full preview"
+                                      aria-label="View school image preview"
+                                    >
+                                      <img
+                                        src={rawImage!}
+                                        alt={job.organisationName || 'School'}
+                                        loading="lazy"
+                                        decoding="async"
+                                        className="w-full h-full object-contain rounded-xl"
+                                        onError={(e) => {
+                                          const box = (e.target as HTMLElement).closest('.school-logo-box') as HTMLElement;
+                                          if (box) box.style.display = 'none';
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 bg-black/0 group-hover/thumb:bg-black/15 transition-colors rounded-xl flex items-center justify-center opacity-0 group-hover/thumb:opacity-100">
+                                        <Maximize2 size={13} className="text-white drop-shadow-md" />
+                                      </div>
+                                    </button>
+                                  ) : null}
                                 </div>
-                              </div>
-
-                              {/* School Logo: ONLY show if valid URL exists. If not available, completely hidden to not waste space */}
-                              {(job.organisationLogo || job.image_url) && (job.organisationLogo || job.image_url)?.trim() !== '' ? (
-                                <div className="school-logo-box w-12 h-12 rounded-xl border border-slate-200/80 bg-white p-1 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs relative">
-                                  <img
-                                    src={job.organisationLogo || job.image_url || ''}
-                                    alt={job.organisationName}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                      // Hide whole logo container if image fails to load so no space is wasted
-                                      const box = (e.target as HTMLElement).closest('.school-logo-box') as HTMLElement;
-                                      if (box) box.style.display = 'none';
-                                    }}
-                                  />
-                                </div>
-                              ) : null}
-                            </div>
+                              );
+                            })()}
 
                             {/* Row 2: Parameters (Experience | Salary) */}
                             <div className="flex items-center gap-2 sm:gap-2.5 text-slate-600 text-[12px] sm:text-[12.5px] font-medium flex-wrap pt-0.5">
@@ -2728,24 +2880,9 @@ export default function TeachersDirectoryClient({
                           </div>
                         </div>
 
-                        {/* ── MID-FEED AD BANNER 1 (USER'S IMAGE BANNER) ── */}
-                        {index === 3 && paginatedJobs.length >= 4 && (
-                          <FacultyAdBanner
-                            bannerNumber={1}
-                            onRegisterClick={handleOpenListAsTeacher}
-                          />
-                        )}
                       </React.Fragment>
                       );
                     })
-                  )}
-
-                  {/* ── END OF FEED AD BANNER 2 (BOTTOM COMPANION BANNER) ── */}
-                  {paginatedJobs.length > 0 && (
-                    <FacultyAdBanner
-                      bannerNumber={2}
-                      onRegisterClick={handleOpenListAsTeacher}
-                    />
                   )}
                 </div>
               )}
@@ -3471,6 +3608,47 @@ export default function TeachersDirectoryClient({
                 >
                   Close
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* ─── SCHOOL IMAGE / LOGO LIGHTBOX PREVIEW MODAL ─── */}
+        {previewImage && (
+          <div
+            className="fixed inset-0 z-[100000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+            onClick={() => setPreviewImage(null)}
+          >
+            <div
+              className="relative max-w-2xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 bg-slate-50/90">
+                <div className="min-w-0 pr-3">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base truncate">
+                    {previewImage.schoolName || 'School Photo'}
+                  </h3>
+                  {previewImage.title && (
+                    <p className="text-xs text-slate-500 truncate mt-0.5">{previewImage.title}</p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewImage(null)}
+                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
+                  aria-label="Close image preview"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Modal Body: Full Image */}
+              <div className="p-4 sm:p-6 bg-slate-950 flex items-center justify-center overflow-hidden min-h-[260px]">
+                <img
+                  src={previewImage.src}
+                  alt={previewImage.alt}
+                  className="max-h-[65vh] w-auto max-w-full object-contain rounded-xl shadow-lg"
+                />
               </div>
             </div>
           </div>

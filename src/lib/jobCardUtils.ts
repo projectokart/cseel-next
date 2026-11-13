@@ -375,31 +375,40 @@ export function formatCleanSalary(raw?: string | null, isDetail = false): string
   return s;
 }
 
-export function getSourceDisplayName(source?: string | null): string {
-  if (!source) return 'Verified';
+export function getSourceDisplayName(source?: string | null, url?: string | null): string {
+  const u = (url || '').toLowerCase();
+  if (u.includes('linkedin')) return 'LinkedIn';
+  if (u.includes('indeed')) return 'Indeed';
+  if (u.includes('naukri')) return 'Naukri.com';
+  if (u.includes('timesjobs') || u.includes('times')) return 'TimesJobs';
+  if (u.includes('shine')) return 'Shine.com';
+  if (u.includes('teacheron')) return 'TeacherON';
+  if (u.includes('apna')) return 'Apna.co';
+
+  if (!source) return 'Naukri.com';
   const s = source.toLowerCase();
-  if (s.includes('naukri')) return 'Naukri';
-  if (s.includes('indeed')) return 'Indeed';
   if (s.includes('linkedin')) return 'LinkedIn';
-  if (s.includes('direct') || s.includes('portal') || s.includes('school')) return 'Direct School';
-  if (s.includes('teacheron')) return 'TeacherON';
-  if (s.includes('apna')) return 'Apna';
+  if (s.includes('indeed')) return 'Indeed';
+  if (s.includes('naukri')) return 'Naukri.com';
   if (s.includes('times')) return 'TimesJobs';
-  if (s.includes('shine')) return 'Shine';
+  if (s.includes('shine')) return 'Shine.com';
+  if (s.includes('teacheron')) return 'TeacherON';
+  if (s.includes('apna')) return 'Apna.co';
   if (s.includes('foundit')) return 'Foundit';
   if (s.includes('kvs') || s.includes('nvs')) return 'KVS/NVS';
   if (s.includes('dav')) return 'DAV';
   if (s.includes('awes')) return 'AWES';
+  if (s.includes('direct') || s.includes('portal') || s.includes('school')) return 'Naukri.com';
   return source;
 }
 
 export function getSourceBadgeColor(source?: string | null): string {
-  if (!source) return 'bg-slate-100 text-slate-700 border-slate-200';
+  if (!source) return 'bg-sky-50 text-sky-700 border-sky-200';
   const s = source.toLowerCase();
   if (s.includes('linkedin')) return 'bg-[#0077b5]/10 text-[#0077b5] border-[#0077b5]/30';
   if (s.includes('indeed')) return 'bg-[#2164f3]/10 text-[#2164f3] border-[#2164f3]/30';
-  if (s.includes('naukri')) return 'bg-[#004e92]/10 text-[#004e92] border-[#004e92]/30';
-  if (s.includes('direct') || s.includes('portal') || s.includes('school')) return 'bg-emerald-50 text-emerald-700 border-emerald-300';
+  if (s.includes('naukri')) return 'bg-sky-50 text-sky-700 border-sky-200';
+  if (s.includes('times')) return 'bg-red-50 text-red-700 border-red-200';
   return 'bg-blue-50 text-[#005689] border-blue-200';
 }
 

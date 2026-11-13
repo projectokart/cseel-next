@@ -1,4 +1,18 @@
 const path = require('path');
+
+// Strictly normalize Windows drive letter to uppercase so Webpack never generates duplicate module entries
+if (process.platform === 'win32') {
+  const cwd = process.cwd();
+  if (cwd && cwd.length >= 2 && cwd[1] === ':') {
+    const normalizedCwd = cwd[0].toUpperCase() + cwd.slice(1);
+    if (cwd !== normalizedCwd) {
+      try {
+        process.chdir(normalizedCwd);
+      } catch (e) {}
+    }
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const securityHeaders = [
   {
@@ -33,19 +47,20 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: `
       default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://www.clarity.ms https://*.clarity.ms https://apis.google.com https://accounts.google.com https://*.firebaseapp.com https://*.firebase.com https://*.google.com https://*.googlesyndication.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep2.adtrafficquality.google.com;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com https://www.clarity.ms https://*.clarity.ms https://apis.google.com https://accounts.google.com https://*.firebaseapp.com https://*.firebase.com https://*.google.com https://*.googlesyndication.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net https://*.adtrafficquality.google https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google.com https://ep2.adtrafficquality.google.com https://*.adservice.google.com https://*.googleadservices.com https://fundingchoicesmessages.google.com https://*.gstatic.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com;
       img-src 'self' data: blob: https: https://ukazkxthavxphibdbspd.supabase.co https://cdn.sanity.io https://images.unsplash.com https://cdn.prod.website-files.com https://www.cseel.org https://i.ytimg.com https://*.googleusercontent.com https://lh3.googleusercontent.com https://*.googlesyndication.com https://pagead2.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net;
       font-src 'self' data: https://fonts.gstatic.com;
-      frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://accounts.google.com https://*.firebaseapp.com https://*.google.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net;
-      connect-src 'self' https://cdn.jsdelivr.net https://raw.githubusercontent.com https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org https://*.clarity.ms https://cloudflareinsights.com https://*.cloudflareinsights.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com https://*.google.com https://*.googlesyndication.com https://pagead2.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net https://ep1.adtrafficquality.google.com https://ep2.adtrafficquality.google.com;
+      frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://accounts.google.com https://*.firebaseapp.com https://*.google.com https://www.google.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://*.adtrafficquality.google https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google.com https://ep2.adtrafficquality.google.com https://fundingchoicesmessages.google.com;
+      child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://*.google.com https://*.googlesyndication.com https://tpc.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://*.adtrafficquality.google;
+      connect-src 'self' https://cdn.jsdelivr.net https://raw.githubusercontent.com https://ukazkxthavxphibdbspd.supabase.co https://*.api.sanity.io https://www.google-analytics.com https://vitals.vercel-insights.com https://ipapi.co https://ipwhois.app https://*.openstreetmap.org https://*.clarity.ms https://cloudflareinsights.com https://*.cloudflareinsights.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com https://*.google.com https://*.googlesyndication.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.doubleclick.net https://googleads.g.doubleclick.net https://*.adtrafficquality.google https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google.com https://ep2.adtrafficquality.google.com https://*.adservice.google.com https://*.googleadservices.com https://fundingchoicesmessages.google.com https://csi.gstatic.com https://*.gstatic.com;
     `.replace(/\s{2,}/g, ' ').trim(),
   },
 ];
 
 const nextConfig = {
   reactStrictMode: true,
-  outputFileTracingRoot: path.resolve(__dirname),
+  outputFileTracingRoot: path.resolve(__dirname).replace(/^[a-z]:/i, m => m.toUpperCase()),
   typescript: { ignoreBuildErrors: true },
   poweredByHeader: false,
   compress: true,
@@ -196,12 +211,23 @@ const nextConfig = {
       },
     ];
   },
-  webpack: (config) => {
+  turbopack: {},
+  webpack: (config, { webpack }) => {
     const path = require('path');
+    const normalizedDirname = __dirname.replace(/^[a-z]:/i, m => m.toUpperCase());
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      'lucide-react': path.resolve(__dirname, 'src/lib/icons/googleMaterialIcons.tsx'),
+      'lucide-react': path.resolve(normalizedDirname, 'src/lib/icons/googleMaterialIcons.tsx'),
     };
+    if (process.platform === 'win32' && webpack) {
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(/^[a-z]:/i, (resource) => {
+          if (resource.request && /^[a-z]:/i.test(resource.request)) {
+            resource.request = resource.request[0].toUpperCase() + resource.request.slice(1);
+          }
+        })
+      );
+    }
     return config;
   },
 };

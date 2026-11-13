@@ -13,6 +13,7 @@ import {
   fetchBaseSchoolRow,
   extractSectionsFromData,
 } from '@/lib/schools/schoolSectionsManager';
+import { revalidateAndPurgePaths } from '@/lib/cache/cloudflarePurge';
 
 export async function POST(req: NextRequest) {
   const securityBlock = checkRateLimitAndBots(req, {
@@ -329,6 +330,24 @@ export async function POST(req: NextRequest) {
       writeSyncStore(store);
     } catch (e) {
       console.warn('[school-profile-save] local sync store update warning:', e);
+    }
+
+    // 5. Purge Next.js ISR + Cloudflare edge cache for this school profile & directory
+    try {
+      const toSeg = (val: string, fallback: string) =>
+        (val || fallback).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || fallback;
+      const stateSlug = toSeg(String(mergedProfileData.state || baseRow?.state_name || ''), 'delhi');
+      const districtSlug = toSeg(String(mergedProfileData.district || baseRow?.district_name || ''), 'delhi');
+      const villageSlug = toSeg(
+        String(mergedProfileData.village || mergedProfileData.city || baseRow?.village_ward || baseRow?.locality || ''),
+        'main'
+      );
+      const nameSlug = toSeg(String(mergedProfileData.schoolName || baseRow?.school_name || ''), '');
+      const basePath = `/school/${stateSlug}/${districtSlug}/${villageSlug}/${udiseCode}`;
+      const pathsToPurge = [basePath, ...(nameSlug ? [`${basePath}/${nameSlug}`] : []), '/schools'];
+      await revalidateAndPurgePaths(pathsToPurge);
+    } catch (purgeErr) {
+      console.warn('[school-profile-save] cache purge warning:', purgeErr);
     }
 
     return NextResponse.json({

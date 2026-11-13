@@ -162,7 +162,8 @@ export function getAllSchoolsFromDatabase(): SchoolRecord[] {
       return getLocallyRegisteredSchools();
     }
     const rawData = fs.readFileSync(dbPath, 'utf8');
-    const rawSchools: any[] = JSON.parse(rawData);
+    const cleanRawData = rawData.replace(/^\uFEFF/, '');
+    const rawSchools: any[] = JSON.parse(cleanRawData);
 
     // Get locally claimed schools
     const localClaimed = getLocallyRegisteredSchools();

@@ -251,11 +251,13 @@ export default function SchoolFaqSection({
     ctx?.data,
   ]);
 
-  // Use school's custom saved FAQs if present, otherwise fall back to authentic UDISE data
-  const faqs: SchoolFaqItem[] =
+  // Use school's custom saved FAQs if present, otherwise fall back to authentic UDISE data (capped to 5 concise questions)
+  const rawFaqs: SchoolFaqItem[] =
     ctx?.data?.faqs && ctx.data.faqs.length > 0
       ? ctx.data.faqs
       : defaultUdiseFaqs;
+
+  const faqs: SchoolFaqItem[] = isEditMode ? rawFaqs : rawFaqs.slice(0, 5);
 
   // Track which FAQ items are open (accordion)
   const [openFaqIds, setOpenFaqIds] = useState<Record<string, boolean>>(() => {
@@ -322,16 +324,13 @@ export default function SchoolFaqSection({
   }
 
   return (
-    <section id={id} className={`py-12 sm:py-20 bg-[#F7F8F8] border-b border-[#E8E9E9] relative overflow-hidden ${className}`}>
-      {/* Decorative ambient background */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/40 rounded-full blur-3xl pointer-events-none" />
-
+    <section id={id} className={`py-5 sm:py-7 bg-[#EEF2F6] border-b border-[#DCE2E8] relative overflow-hidden ${className}`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDF5FA] border border-[#D0E4F5] text-xs font-bold tracking-wider uppercase text-[#006FCC] mb-3 shadow-2xs font-['Montserrat',sans-serif]">
-            <HelpCircle className="w-4 h-4 text-[#006FCC]" />
+        {/* Compact Section Header */}
+        <div className="mb-4 sm:mb-5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EDF5FA] border border-[#D0E4F5] text-[10.5px] font-bold tracking-wider uppercase text-[#006FCC] mb-1.5 font-['Montserrat',sans-serif]">
+            <HelpCircle className="w-3 h-3 text-[#006FCC]" />
             <EditableText
               contentKey="faq_eyebrow"
               value="FREQUENTLY ASKED QUESTIONS"
@@ -340,88 +339,48 @@ export default function SchoolFaqSection({
             />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
+          <h2 className="text-[18px] sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-snug pl-2.5 border-l-[3px] border-[#006FCC] m-0">
             <EditableText
               contentKey="faq_heading"
               value={title}
               maxLength={60}
               className="inline-block"
             />
-            <span className="text-[#006FCC] block mt-1">Questions & Clear Answers</span>
           </h2>
-
-          <p className="mt-3 text-sm sm:text-base text-slate-600 font-normal leading-relaxed max-w-2xl mx-auto">
-            <EditableText
-              contentKey="faq_subtitle"
-              value={subtitle}
-              maxLength={180}
-              multiline
-              rows={2}
-              className="inline-block"
-            />
-          </p>
-
-          {/* Category Filter Pills (Only shown if > 1 category exists) */}
-          {availableCategories.length > 2 && (
-            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-              {availableCategories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-[10px] text-xs font-bold font-['Montserrat',sans-serif] transition-all cursor-pointer shadow-xs ${
-                    activeCategory === cat
-                      ? 'bg-[#006FCC] text-white shadow-md'
-                      : 'bg-white text-slate-600 hover:bg-slate-50 border border-[#E8E9E9]'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* FAQ Accordion List */}
-        <div className="space-y-3.5">
+        {/* Compact App-Style FAQ Accordion List (Max 5 Questions) */}
+        <div className="space-y-1.5 sm:space-y-2">
           {filteredFaqs.map((faq, idx) => {
             const isOpen = !!openFaqIds[faq.id];
 
             return (
               <div
                 key={faq.id || idx}
-                className={`rounded-[14px] border transition-all duration-300 overflow-hidden ${
+                className={`rounded-xl border transition-all duration-150 overflow-hidden ${
                   isOpen
-                    ? 'bg-white border-[#006FCC]/50 shadow-md ring-1 ring-[#006FCC]/20'
-                    : 'bg-white border-[#E8E9E9] shadow-xs hover:border-[#006FCC]/40 hover:shadow-sm'
+                    ? 'bg-white border-[#006FCC]/45 shadow-xs'
+                    : 'bg-white border-[#E8EAED] hover:border-[#006FCC]/35'
                 }`}
               >
                 {/* Accordion Header */}
                 <div
                   onClick={() => toggleFaq(faq.id)}
-                  className="w-full flex items-center justify-between p-4 sm:p-5 text-left cursor-pointer select-none group"
+                  className="w-full flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3 text-left cursor-pointer select-none group"
                 >
-                  <div className="flex items-start gap-3.5 pr-3 flex-1 min-w-0">
+                  <div className="flex items-center gap-2.5 pr-2 flex-1 min-w-0">
                     <div
-                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-[10px] flex items-center justify-center shrink-0 transition-colors shadow-2xs border ${
+                      className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors border ${
                         isOpen 
                           ? 'bg-[#006FCC] text-white border-[#006FCC]' 
                           : 'bg-[#EDF5FA] text-[#006FCC] border-[#D0E4F5] group-hover:bg-[#006FCC] group-hover:text-white'
                       }`}
                     >
-                      <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <HelpCircle className="w-3.5 h-3.5" />
                     </div>
 
-                    <div className="flex-1 min-w-0 pt-0.5">
-                      {faq.category && (
-                        <div className="mb-1.5">
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-[6px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] font-['Montserrat',sans-serif]">
-                            {faq.category}
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="text-sm sm:text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E] group-hover:text-[#006FCC] transition-colors leading-snug">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13.5px] sm:text-[14.5px] font-normal text-[#3C4043] group-hover:text-[#006FCC] transition-colors leading-snug">
                         {isEditMode ? (
                           <EditableText
                             contentKey={`faq_q_${faq.id}`}
@@ -437,7 +396,7 @@ export default function SchoolFaqSection({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {isEditMode && (
                       <button
                         type="button"
@@ -445,29 +404,29 @@ export default function SchoolFaqSection({
                           e.stopPropagation();
                           handleDeleteFaq(faq.id);
                         }}
-                        className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition"
+                        className="p-1 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
                         title="Delete question"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
 
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-200 ${
+                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-200 ${
                         isOpen 
-                          ? 'rotate-180 bg-[#EDF5FA] text-[#005689]' 
+                          ? 'rotate-180 bg-[#EDF5FA] text-[#006FCC]' 
                           : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
                       }`}
                     >
-                      <ChevronDown className="w-4 h-4 stroke-[2.5]" />
+                      <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" />
                     </div>
                   </div>
                 </div>
 
                 {/* Accordion Answer Content */}
                 {isOpen && (
-                  <div className="px-4 sm:px-6 pb-5 pt-0 border-t border-slate-100 mt-1">
-                    <div className="pl-12 sm:pl-14 pt-3 text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
+                  <div className="px-3 sm:px-4 pb-3 pt-0 border-t border-slate-100">
+                    <div className="pl-8.5 pt-2 !text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#3C4043] !leading-[1.68] font-normal">
                       {isEditMode ? (
                         <EditableText
                           contentKey={`faq_a_${faq.id}`}
@@ -479,7 +438,7 @@ export default function SchoolFaqSection({
                           className="inline-block"
                         />
                       ) : (
-                        <p>{faq.a}</p>
+                        <p className="m-0 !text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] !text-[#3C4043] !leading-[1.68] font-normal">{faq.a}</p>
                       )}
                     </div>
                   </div>

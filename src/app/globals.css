@@ -211,7 +211,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
     overflow-x: clip;
     width: 100%;
     max-width: 100%;
@@ -232,11 +231,9 @@
     text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     touch-action: pan-y;
-    overflow-x: hidden;
     overflow-x: clip;
     width: 100%;
     max-width: 100%;
-    position: relative;
     margin: 0;
     padding: 0;
   }
@@ -1633,4 +1630,54 @@ input.search-clean-input:active {
   outline-offset: 0 !important;
   border-radius: 0 !important;
   background-color: transparent !important;
+}
+
+/* Google Material & Editorial Readability Scale Scoped to School Profile View */
+@layer base {
+  :where(#school-profile-app) {
+    font-family: 'Lato', var(--font-roboto), Roboto, sans-serif;
+  }
+  :where(#school-profile-app) h1,
+  :where(#school-profile-app) h2,
+  :where(#school-profile-app) h3,
+  :where(#school-profile-app) h4 {
+    font-family: 'Montserrat', sans-serif;
+  }
+  :where(#school-profile-app) h1 {
+    font-size: clamp(1.375rem, 4vw, 2.125rem);
+    line-height: 1.24;
+    font-weight: 700;
+  }
+  :where(#school-profile-app) h2 {
+    font-size: clamp(1.1875rem, 3vw, 1.5625rem);
+    line-height: 1.28;
+    font-weight: 700;
+  }
+  :where(#school-profile-app) h3 {
+    font-size: clamp(1.0625rem, 2.2vw, 1.25rem);
+    line-height: 1.34;
+    font-weight: 700;
+  }
+  :where(#school-profile-app) h4 {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  :where(#school-profile-app) p,
+  :where(#school-profile-app) li {
+    font-family: 'Lato', var(--font-roboto), Roboto, sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.68;
+    font-weight: 400;
+    color: #3C4043;
+  }
+  :where(#school-profile-app) td,
+  :where(#school-profile-app) th {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+  :where(#school-profile-app) label {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
 }

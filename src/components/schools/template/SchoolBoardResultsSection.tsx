@@ -418,30 +418,30 @@ export default function SchoolBoardResultsSection({
   const active12thYearObj = c12Data.find((y) => y.year === selected12thYear) || c12Data[0];
 
   return (
-    <div id="board-results" className="my-10 scroll-mt-24">
+    <div id="board-results" className="scroll-mt-24">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-2.5 py-1 rounded-full mb-2.5 shadow-2xs font-['Montserrat',sans-serif]">
             <Award className="w-3.5 h-3.5 text-amber-500" />
             <span>Academic Performance Records</span>
           </div>
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 tracking-tight leading-tight">
+          <h3 className="text-[18px] sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-[1.3]">
             Verified Examination Records
-            <span className="text-[#005689] block mt-1">Board Examination Results &amp; Merit Analytics</span>
+            <span className="text-[#006FCC] block text-[15px] sm:text-lg font-semibold mt-0.5">Board Examination Results &amp; Merit Analytics</span>
           </h3>
-          <p className="text-sm text-slate-600 mt-2 font-medium">
-            Verified official {boardName} board results for {schoolName} (Up to 3 Academic Sessions).
+          <p className="!text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#5F6368] mt-1.5 font-normal !leading-[1.68] m-0">
+            Verified official {boardName} board results for {schoolName} covering up to three academic sessions.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-extrabold shadow-2xs">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             <span>Official Records</span>
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#EDF5FA] border border-[#D6EDFF] text-[#005689] text-xs font-bold shadow-2xs">
-            <Calendar className="w-3.5 h-3.5 text-[#005689]" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EDF5FA] border border-[#D0E4F5] text-[#006FCC] text-xs font-bold shadow-2xs">
+            <Calendar className="w-3.5 h-3.5 text-[#006FCC]" />
             <span>Up to 3 Years</span>
           </span>
         </div>
@@ -459,15 +459,12 @@ export default function SchoolBoardResultsSection({
                 <GraduationCap className="w-5 h-5 text-amber-300" />
               </div>
               <div>
-                <h4 className="font-black text-base sm:text-lg tracking-wide flex items-center gap-2.5">
-                  <span>Class 10th Board Results (Secondary Examination)</span>
+                <h4 className="font-black text-base sm:text-lg tracking-wide flex items-center gap-2.5 m-0">
+                  <span>Class 10th Result</span>
                   <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 uppercase tracking-wider">
-                    10th Board
+                    10th
                   </span>
                 </h4>
-                <p className="text-xs text-blue-100 mt-0.5 font-medium">
-                  Affiliated Curriculum: {boardName} | Pass rate auto-calculated from total appeared &amp; passed students
-                </p>
               </div>
             </div>
 
@@ -499,9 +496,9 @@ export default function SchoolBoardResultsSection({
               <tbody className="divide-y divide-slate-100 text-sm">
                 {displayedC10Rows.length === 0 ? (
                   <tr>
-                    <td colSpan={isEditMode ? 7 : 6} className="py-10 text-center">
+                    <td colSpan={isEditMode ? 7 : 6} className="py-10 px-4 text-center whitespace-normal">
                       <p className="text-xs text-slate-500 font-medium mb-3">
-                        Official Class 10th board examination performance records to be published by the institution.
+                        Official class 10th board examination performance records to be published by the institution.
                       </p>
                       {isEditMode && (
                         <div className="flex flex-wrap items-center justify-center gap-2.5">
@@ -701,15 +698,12 @@ export default function SchoolBoardResultsSection({
                   <Award className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div>
-                  <h4 className="font-black text-base sm:text-lg tracking-wide flex items-center gap-2.5">
-                    <span>Class 12th Board Results (Senior Secondary Examination)</span>
-                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-400 text-slate-950 uppercase tracking-wider">
-                      12th Board
+                  <h4 className="font-black text-base sm:text-lg tracking-wide flex items-center gap-2.5 m-0">
+                    <span>Class 12th Result</span>
+                    <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 uppercase tracking-wider">
+                      12th
                     </span>
                   </h4>
-                  <p className="text-xs text-emerald-100 mt-0.5 font-medium">
-                    Comprehensive School-Level &amp; Stream-Wise (Science, Commerce &amp; Humanities) Merit Records
-                  </p>
                 </div>
               </div>
 
@@ -741,9 +735,9 @@ export default function SchoolBoardResultsSection({
                 <tbody className="divide-y divide-slate-100 text-sm">
                   {displayedC12Rows.length === 0 ? (
                     <tr>
-                      <td colSpan={isEditMode ? 7 : 6} className="py-10 text-center">
+                      <td colSpan={isEditMode ? 7 : 6} className="py-10 px-4 text-center whitespace-normal">
                         <p className="text-xs text-slate-500 font-medium mb-3">
-                          Official Class 12th Senior Secondary board examination performance records to be published by the institution.
+                          Official class 12th senior secondary board examination performance records to be published by the institution.
                         </p>
                         {isEditMode && (
                           <div className="flex flex-wrap items-center justify-center gap-2.5">

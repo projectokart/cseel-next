@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { sanitizeSearchQuery } from '@/lib/searchSanitizer';
+import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
 
 interface SearchQueryLog {
   id: string;
@@ -17,29 +18,12 @@ interface SearchQueryLog {
 const DATA_DIR = path.join(process.cwd(), 'data');
 const LOG_FILE = path.join(DATA_DIR, 'search_query_logs.json');
 
-// Default initial high-value search queries for STEM intelligence
-const DEFAULT_TRENDING = [
-  { query: "PGT Physics Delhi", count: 142 },
-  { query: "TGT Chemistry CBSE", count: 118 },
-  { query: "ATL Robotics Mentor Gurugram", count: 96 },
-  { query: "PRT Primary Science", count: 85 },
-  { query: "Composite Lab In-Charge Mumbai", count: 74 },
-  { query: "Biology Faculty Class 12", count: 68 },
-  { query: "Mathematics Modeler Bengaluru", count: 62 },
-  { query: "Computer Science AI Teacher", count: 57 },
-];
-
 function ensureDataFile() {
   try {
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
-    if (!fs.existsSync(LOG_FILE)) {
-      fs.writeFileSync(LOG_FILE, JSON.stringify(DEFAULT_TRENDING, null, 2), 'utf-8');
-    }
-  } catch (err) {
-    // In serverless read-only environment, file creation is skipped gracefully
-  }
+  } catch {}
 }
 
 export async function POST(req: NextRequest) {
@@ -49,47 +33,79 @@ export async function POST(req: NextRequest) {
 
     // Strict sanitization, length checking, and abusive language blocking
     const { isValid, cleanQuery, reason } = sanitizeSearchQuery(query);
-    if (!isValid) {
+    if (!isValid || !cleanQuery) {
       return NextResponse.json({ success: false, message: reason || 'Invalid search query' }, { status: 400 });
     }
 
-    ensureDataFile();
-
-    let logs: any[] = [];
+    // 1. Sync to Supabase job_search_queries table (Primary Database)
     try {
-      const fileData = fs.readFileSync(LOG_FILE, 'utf-8');
-      logs = JSON.parse(fileData);
-    } catch {
-      logs = [];
+      const { error: rpcErr } = await schoolSearchSupabase.rpc('record_job_search_query', {
+        search_term: cleanQuery,
+      });
+
+      if (rpcErr) {
+        // Fallback to direct upsert if RPC function has an issue
+        const { data: existing } = await schoolSearchSupabase
+          .from('job_search_queries')
+          .select('id, search_count')
+          .ilike('query', cleanQuery)
+          .limit(1)
+          .maybeSingle();
+
+        if (existing) {
+          await schoolSearchSupabase
+            .from('job_search_queries')
+            .update({
+              search_count: (existing.search_count || 1) + 1,
+              last_searched_at: new Date().toISOString(),
+            })
+            .eq('id', existing.id);
+        } else {
+          await schoolSearchSupabase
+            .from('job_search_queries')
+            .insert({
+              query: cleanQuery,
+              search_count: 1,
+              last_searched_at: new Date().toISOString(),
+            });
+        }
+      }
+    } catch (dbErr) {
+      console.warn('[record-query API] Supabase query record notice:', dbErr);
     }
 
-    const newEntry: SearchQueryLog = {
-      id: `sq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      query: cleanQuery,
-      category: typeof category === 'string' ? category.slice(0, 30) : 'faculty_jobs',
-      filters: typeof filters === 'object' && filters !== null ? filters : {},
-      resultsCount: typeof resultsCount === 'number' ? resultsCount : 0,
-      timestamp: new Date().toISOString(),
-      ip: req.headers.get('x-forwarded-for')?.slice(0, 45) || 'local',
-      userAgent: req.headers.get('user-agent')?.slice(0, 150) || 'browser',
-    };
-
-    logs.unshift(newEntry);
-    // Keep last 1,000 queries for search engine intelligence
-    if (logs.length > 1000) {
-      logs = logs.slice(0, 1000);
-    }
-
+    // 2. Also keep a local JSON log backup
     try {
+      ensureDataFile();
+      let logs: any[] = [];
+      try {
+        if (fs.existsSync(LOG_FILE)) {
+          logs = JSON.parse(fs.readFileSync(LOG_FILE, 'utf-8'));
+        }
+      } catch {
+        logs = [];
+      }
+
+      const newEntry: SearchQueryLog = {
+        id: `sq-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+        query: cleanQuery,
+        category: typeof category === 'string' ? category.slice(0, 30) : 'faculty_jobs',
+        filters: typeof filters === 'object' && filters !== null ? filters : {},
+        resultsCount: typeof resultsCount === 'number' ? resultsCount : 0,
+        timestamp: new Date().toISOString(),
+        ip: req.headers.get('x-forwarded-for')?.slice(0, 45) || 'local',
+        userAgent: req.headers.get('user-agent')?.slice(0, 150) || 'browser',
+      };
+
+      logs.unshift(newEntry);
+      if (logs.length > 500) logs = logs.slice(0, 500);
       fs.writeFileSync(LOG_FILE, JSON.stringify(logs, null, 2), 'utf-8');
-    } catch (err) {
-      // In serverless environments, fs write is safely caught
-    }
+    } catch {}
 
     return NextResponse.json({
       success: true,
-      message: 'Search query recorded in search intelligence vault',
-      loggedId: newEntry.id
+      message: 'Search query recorded in search database',
+      query: cleanQuery,
     });
   } catch (error: any) {
     console.error('Error logging search query:', error);
@@ -97,32 +113,86 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
-  ensureDataFile();
+export async function GET(req: NextRequest) {
   try {
-    const fileData = fs.readFileSync(LOG_FILE, 'utf-8');
-    const logs = JSON.parse(fileData);
+    const { searchParams } = new URL(req.url);
+    const filterQuery = searchParams.get('q')?.trim() || '';
 
-    // Compute frequency map with sanitization check
-    const counts: Record<string, number> = {};
-    for (const item of logs) {
-      const rawQ = typeof item === 'string' ? item : item.query;
-      const { isValid, cleanQuery } = sanitizeSearchQuery(rawQ);
-      if (isValid && cleanQuery) {
-        counts[cleanQuery] = (counts[cleanQuery] || 0) + 1;
+    // 1. Fetch live search queries from Supabase
+    let supaQueries: { query: string; count: number }[] = [];
+    try {
+      let supaReq = schoolSearchSupabase
+        .from('job_search_queries')
+        .select('query, search_count, last_searched_at')
+        .order('search_count', { ascending: false })
+        .order('last_searched_at', { ascending: false })
+        .limit(15);
+
+      if (filterQuery) {
+        supaReq = supaReq.ilike('query', `%${filterQuery}%`);
       }
+
+      const { data, error } = await supaReq;
+      if (!error && Array.isArray(data) && data.length > 0) {
+        supaQueries = data.map((d: any) => ({
+          query: d.query,
+          count: d.search_count || 1,
+        }));
+      }
+    } catch (e) {
+      console.warn('[record-query GET] Supabase fetch notice:', e);
     }
 
-    const trending = Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8)
-      .map(([query, count]) => ({ query, count }));
+    // 2. If Supabase returned queries, return them! (Clean, 100% fresh, NO hardcoded mock strings)
+    if (supaQueries.length > 0) {
+      return NextResponse.json({
+        success: true,
+        suggestions: supaQueries,
+        trending: supaQueries, // backwards-compatible property
+      }, {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+        },
+      });
+    }
 
+    // 3. Fallback to local logs if database had no entries yet
+    try {
+      if (fs.existsSync(LOG_FILE)) {
+        const fileData = fs.readFileSync(LOG_FILE, 'utf-8');
+        const logs = JSON.parse(fileData);
+        const counts: Record<string, number> = {};
+        for (const item of logs) {
+          const rawQ = typeof item === 'string' ? item : item.query;
+          const { isValid, cleanQuery } = sanitizeSearchQuery(rawQ);
+          if (isValid && cleanQuery) {
+            if (!filterQuery || cleanQuery.toLowerCase().includes(filterQuery.toLowerCase())) {
+              counts[cleanQuery] = (counts[cleanQuery] || 0) + 1;
+            }
+          }
+        }
+        const localList = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([query, count]) => ({ query, count }));
+
+        if (localList.length > 0) {
+          return NextResponse.json({
+            success: true,
+            suggestions: localList,
+            trending: localList,
+          });
+        }
+      }
+    } catch {}
+
+    // 4. If zero queries have ever been made, return empty list (NO fake hardcoded strings!)
     return NextResponse.json({
       success: true,
-      trending: trending.length > 0 ? trending : DEFAULT_TRENDING
+      suggestions: [],
+      trending: [],
     });
   } catch {
-    return NextResponse.json({ success: true, trending: DEFAULT_TRENDING });
+    return NextResponse.json({ success: true, suggestions: [], trending: [] });
   }
 }

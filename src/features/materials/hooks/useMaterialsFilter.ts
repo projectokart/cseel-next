@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { ApparatusItem, MaterialSortOption } from '../types';
 
-export const PAGE_SIZE = 25;
+export const PAGE_SIZE = 50;
 
 export const SORT_OPTIONS: { label: string; value: MaterialSortOption }[] = [
   { label: 'Default Order', value: 'default' },
@@ -67,27 +67,13 @@ export function useMaterialsFilter(allProducts: ApparatusItem[]) {
     setVisibleCount(PAGE_SIZE);
   }, [search, activeChapter, activeSort]);
 
-  // Infinite scroll observer
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && visibleCount < filtered.length) {
-          setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filtered.length));
-        }
-      },
-      { rootMargin: '400px' }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [visibleCount, filtered.length]);
-
   const displayed = useMemo(() => {
     return filtered.slice(0, visibleCount);
   }, [filtered, visibleCount]);
 
-  const hasMore = visibleCount < filtered.length;
+  const remainingCount = Math.max(0, filtered.length - displayed.length);
+  const nextBatchCount = Math.min(PAGE_SIZE, remainingCount);
+  const hasMore = remainingCount > 0;
 
   const loadMore = () => {
     setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filtered.length));
@@ -105,6 +91,8 @@ export function useMaterialsFilter(allProducts: ApparatusItem[]) {
     filtered,
     displayed,
     hasMore,
+    remainingCount,
+    nextBatchCount,
     sentinelRef,
     loadMore,
     visibleCount,

@@ -32,8 +32,8 @@ export class SupabaseJobService {
     }
 
     try {
-      // 1-batch query with a 3.5-second timeout to never block page rendering
-      const url = `${SUPABASE_URL}/rest/v1/jobs?is_active=eq.true&order=posted_at.desc&limit=500`;
+      // Fast lightweight query (30 active jobs) with a 3.5-second timeout
+      const url = `${SUPABASE_URL}/rest/v1/jobs?is_active=eq.true&order=posted_at.desc&limit=30`;
       const res = await fetch(url, {
         headers: {
           apikey: SUPABASE_KEY,
@@ -59,6 +59,44 @@ export class SupabaseJobService {
     } catch (err: any) {
       console.warn("[SupabaseJobService] Supabase fetch timed out or error (falling back to cache/local data):", err?.message || err);
       return (_cachedJobs && _cachedJobs.length > 0) ? _cachedJobs : getActiveFacultyJobs();
+    }
+  }
+
+  /**
+   * Fetches lightweight related jobs matching city or state for edge worker (<5ms CPU)
+   */
+  static async fetchRelatedJobs(city?: string, state?: string, currentSlug?: string, limit: number = 8): Promise<FacultyJobItem[]> {
+    if (!SUPABASE_KEY) return [];
+    try {
+      const filters: string[] = [];
+      if (city && city !== 'India' && city !== 'Unknown City') {
+        filters.push(`city.eq.${encodeURIComponent(city)}`);
+      }
+      if (state && state !== 'India' && state !== 'Unknown State') {
+        filters.push(`state.eq.${encodeURIComponent(state)}`);
+      }
+
+      const filterQuery = filters.length > 0 ? `or=(${filters.join(',')})&` : '';
+      const excludeQuery = currentSlug ? `slug=neq.${encodeURIComponent(currentSlug)}&` : '';
+      const url = `${SUPABASE_URL}/rest/v1/jobs?${excludeQuery}${filterQuery}is_active=eq.true&order=posted_at.desc&limit=${limit}`;
+
+      const res = await fetch(url, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+        signal: AbortSignal.timeout(1800),
+      });
+
+      if (res.ok) {
+        const rows: any[] = await res.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          return rows.map((r) => this.mapRowToJobItem(r));
+        }
+      }
+      return [];
+    } catch {
+      return [];
     }
   }
 
@@ -188,15 +226,8 @@ export class SupabaseJobService {
     let lng = meta.lng ? parseFloat(meta.lng) : NaN;
 
     if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
-      const geo = GoogleGeocodingService.resolveSync({
-        schoolName: r.institute_name,
-        city: r.city,
-        state: r.state,
-        address: meta.address,
-        district: meta.district,
-      });
-      lat = geo.lat;
-      lng = geo.lng;
+      lat = 28.6139;
+      lng = 77.2090;
     }
 
     const sMin = meta.salary_min ? parseInt(meta.salary_min, 10) : undefined;

@@ -25,6 +25,7 @@ import AddSchoolModal from './AddSchoolModal';
 import ClaimSchoolModal from './ClaimSchoolModal';
 import SchoolFilterSheet from './SchoolFilterSheet';
 import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
+import AdSenseBanner, { AdSenseInFeedCard } from '@/components/ads/AdSenseBanner';
 
 const getSafeSchoolImage = (img?: string) => {
   if (
@@ -208,15 +209,7 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   const [stateSearchQuery, setStateSearchQuery] = useState('');
 
   // Interactive state
-  const [likedSchoolIds, setLikedSchoolIds] = useState<string[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const stored = localStorage.getItem('cseel_liked_school_ids');
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [likedSchoolIds, setLikedSchoolIds] = useState<string[]>([]);
   const [likesCounts, setLikesCounts] = useState<Record<string, number>>({});
   const [compareList, setCompareList] = useState<SchoolRecord[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
@@ -225,24 +218,17 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   
   // View mode supports 2 Cols, 3 Cols, Compact, and Map
-  // Initialized synchronously from URL param or localStorage to eliminate flash/layout shift on refresh
-  const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const paramView = new URLSearchParams(window.location.search).get('view');
-        if (paramView === 'map' || paramView === 'grid' || paramView === 'grid3' || paramView === 'compact') {
-          return paramView as 'grid' | 'grid3' | 'compact' | 'map';
-        }
-        const savedMode = localStorage.getItem('cseel_school_view_mode') as 'grid' | 'grid3' | 'compact' | 'map' | null;
-        if (savedMode === 'map' || savedMode === 'grid' || savedMode === 'grid3' || savedMode === 'compact') {
-          return savedMode;
-        }
-      } catch {
-        // Ignore storage errors in restricted contexts
+  const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>('compact');
+
+  // Load liked schools safely after hydration
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('cseel_liked_school_ids');
+      if (stored) {
+        setLikedSchoolIds(JSON.parse(stored));
       }
-    }
-    return 'compact';
-  });
+    } catch {}
+  }, []);
 
   // Map state
   const [mapSelectedSchool, setMapSelectedSchool] = useState<SchoolRecord | null>(null);
@@ -505,25 +491,21 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   const [googleLoading, setGoogleLoading] = useState(false);
 
   // Admin detection (super_admin / admin login session - only when ?admin=true or explicitly activated)
-  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    try {
-      return new URLSearchParams(window.location.search).get('admin') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // Admin switch: is school listing enabled?
-  const [isListingEnabledByAdmin, setIsListingEnabledByAdmin] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return true;
+  const [isListingEnabledByAdmin, setIsListingEnabledByAdmin] = useState<boolean>(true);
+
+  useEffect(() => {
     try {
+      const paramAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+      if (paramAdmin) setIsAdmin(true);
       const stored = localStorage.getItem('cseel_schools_listing_enabled');
-      return stored !== null ? stored === 'true' : true;
-    } catch {
-      return true;
-    }
-  });
+      if (stored !== null) {
+        setIsListingEnabledByAdmin(stored === 'true');
+      }
+    } catch {}
+  }, []);
 
   // Simulation mode for admin testing: 'normal' | 'simulate_public' | 'simulate_unverified'
   const [adminSimulateMode, setAdminSimulateMode] = useState<'normal' | 'simulate_public' | 'simulate_unverified'>('normal');
@@ -536,11 +518,11 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
     : Boolean(effectiveUser);
   const effectiveListingEnabled = isListingEnabledByAdmin;
 
-  // Access rules: Open directory browsing for parents and students by default
-  const isGuest = adminSimulateMode === 'simulate_public';
-  const isListingDisabled = !authLoading && Boolean(effectiveUser) && !effectiveListingEnabled;
-  const isUserUnverified = adminSimulateMode === 'simulate_unverified';
-  const canViewSchools = !isGuest && !isListingDisabled && !isUserUnverified;
+  // Access rules: Open directory browsing for all visitors
+  const isGuest = false;
+  const isListingDisabled = false;
+  const isUserUnverified = false;
+  const canViewSchools = true;
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -559,6 +541,11 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   // Persist viewMode in localStorage across page refreshes
   useEffect(() => {
     try {
+      const paramView = new URLSearchParams(window.location.search).get('view');
+      if (paramView === 'map' || paramView === 'grid' || paramView === 'grid3' || paramView === 'compact') {
+        setViewMode(paramView as 'grid' | 'grid3' | 'compact' | 'map');
+        return;
+      }
       const savedMode = localStorage.getItem('cseel_school_view_mode') as 'grid' | 'grid3' | 'compact' | 'map' | null;
       if (savedMode && (savedMode === 'grid' || savedMode === 'grid3' || savedMode === 'compact' || savedMode === 'map')) {
         setViewMode(savedMode);
@@ -1105,79 +1092,74 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     }
   }, [totalPages, currentPage, isLoadingMore, searchParams, pathname, router, totalSchoolsCount, selectedBoard, selectedResidential, selectedLocation, searchTerm, searchMode, sortBy]);
 
-  // Smart page numbers array for pagination
+  // Smart compact page numbers array for pagination: Prev 1 2 3 ... 1139 Next
   const paginationPages = useMemo(() => {
     const total = Math.max(1, totalPages);
     const current = Math.min(Math.max(1, currentPage), total);
-    if (total <= 7) {
+    if (total <= 5) {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
-    if (current <= 4) {
-      return [1, 2, 3, 4, 5, '...', total];
+    if (current <= 3) {
+      return [1, 2, 3, '...', total];
     }
-    if (current >= total - 3) {
-      return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+    if (current >= total - 2) {
+      return [1, '...', total - 2, total - 1, total];
     }
-    return [1, '...', current - 1, current, current + 1, '...', total];
+    return [1, '...', current, '...', total];
   }, [totalPages, currentPage]);
 
-  // Reusable Top & Bottom Pagination Bar (Labster Design System)
-  const renderPaginationBar = (position: 'top' | 'bottom') => {
+  // Top Showing Bar (ONLY Showing Count & Loading, Always Visible, No Pagination Buttons, No Scrollbar)
+  const renderTopShowingBar = () => {
     const pageCount = displayedSchools.length;
     const startItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : (currentPage - 1) * 25 + 1;
     const endItem = totalSchoolsCount === 0 || pageCount === 0 ? 0 : Math.min((currentPage - 1) * 25 + pageCount, totalSchoolsCount);
 
     return (
-      <div
-        className={`w-full bg-white rounded-2xl border border-[#E8E9E9] px-3.5 py-2.5 sm:px-5 sm:py-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 ${
-          position === 'top' ? 'mb-4' : 'mt-8'
-        }`}
-      >
-        {/* Left: Showing X-Y of Z Schools */}
-        <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-[10px] bg-[#EDF5FA] text-[#006FCC] font-bold text-[11px] border border-[#DDF0FC]">
-            Page {currentPage} of {totalPages}
-          </span>
+      <div className="w-full bg-white rounded-xl border border-slate-200/90 px-3.5 py-2.5 sm:px-4 sm:py-3 shadow-2xs flex items-center justify-between mb-2.5 transition-all">
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-medium">
           <span>
-            Showing <strong className="text-[#1B1F23] font-bold">{startItem}–{endItem}</strong> of{' '}
-            <strong className="text-[#1B1F23] font-bold">{totalSchoolsCount}</strong> Schools
-          </span>
-          <span className="hidden md:inline text-[11px] text-slate-500 font-medium">
-            (25 / page)
+            Showing <strong className="text-slate-900 font-bold">{startItem}–{endItem}</strong> of{' '}
+            <strong className="text-slate-900 font-bold">{Number(totalSchoolsCount).toLocaleString()}</strong> Schools
           </span>
           {isLoadingMore && (
-            <Loader2 size={14} className="animate-spin text-[#006FCC] ml-1" />
+            <Loader2 size={13} className="animate-spin text-[#006FCC] ml-0.5 shrink-0" />
           )}
         </div>
+      </div>
+    );
+  };
 
-        {/* Right: Prev + Page Numbers + Next (Labster 14px CTA Buttons) */}
-        <div className="flex items-center gap-1.5 flex-wrap justify-center">
+  // Bottom Pagination Bar (ONLY Pagination Buttons: Prev / Numbers / Next, No Showing Text, Centered, Always Visible, Zero Scrollbar, Mobile-Friendly)
+  const renderBottomPaginationBar = () => {
+    return (
+      <nav aria-label="School Directory Pagination" className="w-full bg-white rounded-xl border border-slate-200/90 px-3 py-3 sm:px-4 sm:py-3.5 shadow-2xs flex items-center justify-center mt-5 mb-3">
+        <div className="flex items-center justify-center gap-1 sm:gap-1.5 flex-wrap">
           <button
             type="button"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage <= 1 || isLoadingMore}
-            className="inline-flex items-center gap-1 h-9 px-3.5 rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-            title="Previous Page (25 Schools)"
+            className="inline-flex items-center gap-1 h-8 px-2.5 sm:px-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-[#EDF5FA] text-[#003C6E] text-xs font-bold transition duration-150 disabled:opacity-30 disabled:pointer-events-none cursor-pointer shrink-0"
+            title="Previous Page"
           >
             <ChevronLeft size={14} />
-            <span>Prev</span>
+            <span className="hidden xs:inline">Prev</span>
           </button>
 
           {paginationPages.map((p, idx) =>
             p === '...' ? (
-              <span key={`dots-${position}-${idx}`} className="px-1.5 text-xs text-slate-400 font-bold">
+              <span key={`dots-bottom-${idx}`} className="px-1 text-xs text-slate-400 font-bold shrink-0">
                 ...
               </span>
             ) : (
               <button
-                key={`page-${position}-${p}`}
+                key={`page-bottom-${p}`}
                 type="button"
                 onClick={() => handlePageChange(Number(p))}
                 disabled={isLoadingMore}
-                className={`min-w-[36px] h-9 px-3 rounded-[14px] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center ${
+                className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-bold transition duration-150 cursor-pointer flex items-center justify-center shrink-0 ${
                   currentPage === Number(p)
-                    ? 'bg-[#006FCC] hover:bg-[#005399] text-white shadow-xs border border-[#006FCC]'
-                    : 'bg-white hover:bg-[#F7F8F8] text-[#1B1F23] hover:text-[#006FCC] border border-[#E8E9E9]'
+                    ? 'bg-[#006FCC] text-white shadow-2xs border border-[#006FCC]'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-[#006FCC] border border-slate-200'
                 }`}
                 title={`Go to Page ${p}`}
               >
@@ -1190,14 +1172,14 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             type="button"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages || isLoadingMore}
-            className="inline-flex items-center gap-1 h-9 px-3.5 rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-            title="Next Page (25 Schools)"
+            className="inline-flex items-center gap-1 h-8 px-2.5 sm:px-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-[#EDF5FA] text-[#003C6E] text-xs font-bold transition duration-150 disabled:opacity-30 disabled:pointer-events-none cursor-pointer shrink-0"
+            title="Next Page"
           >
-            <span>Next</span>
+            <span className="hidden xs:inline">Next</span>
             <ChevronRight size={14} />
           </button>
         </div>
-      </div>
+      </nav>
     );
   };
 
@@ -1403,7 +1385,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
     
     // Labster Design System School Card
     return (
-      <div key={school.id || idx} className="bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 group flex flex-col w-full max-w-full box-border">
+      <div key={`school-card-${school.udise_code || school.id || 'item'}-${idx}`} className="bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all duration-300 group flex flex-col w-full max-w-full box-border">
         {/* Card Image Header - Compact with sleek single row overlay */}
         <div className="relative h-40 sm:h-44 w-full bg-slate-50 overflow-hidden">
           <img
@@ -1600,11 +1582,11 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           </div>
 
           {/* Card Actions - Labster 14px CTA Buttons */}
-          <div className="mt-auto pt-3 border-t border-[#E8E9E9] flex items-center gap-2">
+          <div className="mt-auto pt-2.5 sm:pt-3 border-t border-[#E8E9E9] flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-9 px-3 rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] hover:border-[#006FCC]/30 text-[#003C6E] hover:text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0 flex-1"
+              className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-[12px] sm:rounded-[14px] border border-[#E8E9E9] bg-[#F7F8F8] hover:bg-[#EDF5FA] hover:border-[#006FCC]/30 text-[#003C6E] hover:text-[#006FCC] text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 sm:gap-1.5 transition-all duration-200 active:scale-[0.98] cursor-pointer group whitespace-nowrap min-w-0 flex-1"
               title="Open location on Google Maps (Popup Window)"
             >
               <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -1625,7 +1607,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   udiseCode: school.udise_code || school.id || '',
                 });
               }}
-              className="h-9 px-3 rounded-[14px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0 cursor-pointer shrink-0"
+              className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-[12px] sm:rounded-[14px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0 cursor-pointer shrink-0"
               title="Claim this school profile to edit details & admissions"
             >
               <ShieldCheck size={13} className="text-[#006FCC] shrink-0" />
@@ -1634,7 +1616,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             
             <Link
               href={profileUrl}
-              className="h-9 px-3.5 rounded-[14px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 shadow-xs hover:shadow transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0 flex-1"
+              className="h-8 sm:h-9 px-3 sm:px-3.5 rounded-[12px] sm:rounded-[14px] bg-[#006FCC] hover:bg-[#005399] text-white text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] inline-flex items-center justify-center gap-1 shadow-xs hover:shadow transition-all duration-200 active:scale-[0.98] whitespace-nowrap min-w-0 flex-1"
             >
               <span className="truncate">View</span>
               <ArrowRight size={13} className="shrink-0" />
@@ -1658,20 +1640,20 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
     return (
       <div 
-        key={school.id || idx} 
-        className="bg-white rounded-2xl border border-[#E8E9E9] hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-4 group relative overflow-hidden w-full max-w-full box-border"
+        key={`compact-card-${school.udise_code || school.id || 'item'}-${idx}`} 
+        className="bg-white rounded-2xl border border-slate-200/90 hover:border-[#006FCC]/50 hover:shadow-md transition-all duration-300 p-3 sm:p-4 flex flex-col justify-between gap-2.5 sm:gap-3 group relative overflow-hidden w-full max-w-full box-border"
       >
-        {/* Top/Main block: Thumbnail + Info */}
-        <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+        {/* Top/Main block: Thumbnail on left + Full-width Info on right */}
+        <div className="flex items-start gap-3.5 sm:gap-4 w-full min-w-0">
           {/* Thumbnail with Rating and Distance at Bottom */}
-          <div className="relative w-20 h-20 min-w-[80px] max-w-[80px] sm:w-28 sm:h-24 sm:min-w-[112px] sm:max-w-[112px] rounded-[12px] bg-slate-50 border border-slate-100 overflow-hidden shrink-0 shadow-xs">
+          <div className="relative w-20 h-20 min-w-[80px] max-w-[80px] sm:w-28 sm:h-24 sm:min-w-[112px] sm:max-w-[112px] rounded-xl bg-slate-50 border border-slate-100 overflow-hidden shrink-0 shadow-xs">
             <img
               src={getSafeSchoolImage(school.image || (school as any).image_url)}
               alt={school.school_name || school.name || 'School'}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               onError={(e) => { e.currentTarget.src = PLACEHOLDER_EMPTY_IMAGE; }}
             />
-            {/* Bottom Row: Rating and Distance side-by-side with minimal padding & margin */}
+            {/* Bottom Row: Rating and Distance */}
             {((school.rating && Number(school.rating) > 0) || (school.distance !== undefined && school.distance > 0)) && (
               <div className="absolute bottom-1 inset-x-1 flex items-center justify-between gap-0.5 pointer-events-none z-10">
                 {school.rating && Number(school.rating) > 0 ? (
@@ -1689,53 +1671,52 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             )}
           </div>
 
-          {/* Info Details */}
-          <div className="flex-1 min-w-0 flex flex-col justify-center">
-            {/* Title & Iconic Verified Badge + Board */}
-            <div className="flex items-start sm:items-center gap-1.5 mb-1 flex-wrap min-w-0">
+          {/* Info Details (Spans the full remaining width!) */}
+          <div className="flex-1 min-w-0 flex flex-col justify-center space-y-1.5">
+            {/* Title & Board */}
+            <div className="flex items-center gap-2 flex-wrap min-w-0">
               <Link 
                 href={profileUrl} 
-                className="font-['Montserrat',sans-serif] font-bold text-sm sm:text-base text-[#003C6E] leading-snug hover:text-[#006FCC] transition-colors inline break-words line-clamp-2"
+                className="font-['Montserrat',sans-serif] font-bold text-sm sm:text-base text-[#003C6E] leading-snug hover:text-[#006FCC] transition-colors break-words line-clamp-1 sm:line-clamp-2"
                 title={school.school_name || school.name}
               >
                 {renderSchoolTitleWithVerified(school.school_name || school.name || 'School')}
               </Link>
-              <span className="inline-flex text-[9.5px] sm:text-[11px] font-bold text-[#006FCC] bg-[#EDF5FA] px-2 py-0.5 rounded-[8px] border border-[#DDF0FC] shrink-0 align-middle">
+              <span className="inline-flex text-[9.5px] sm:text-[11px] font-bold text-[#006FCC] bg-[#EDF5FA] px-2 py-0.5 rounded-md border border-[#DDF0FC] shrink-0">
                 {boardName}
               </span>
-            </div>
-
-            {/* Location: Full Address (no truncation) */}
-            <div className="flex items-start gap-1 text-[11px] sm:text-xs text-[#444746] mb-1.5 leading-snug">
-              <MapPin size={12} className="text-red-500 shrink-0 mt-0.5" />
-              <span className="break-words">{locationStr}</span>
-            </div>
-
-            {/* Quick Info Tags — Compact Numbers (e.g. Class 1st-12th) & Admissions Open (Toggle-controlled) */}
-            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-              <span className="text-[10px] sm:text-xs text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-[8px] font-semibold">
-                {formatCompactClasses(school.classes || (school as any).class_range)}
-              </span>
-              {/* Admissions Open Tag — Controlled by school profile toggle (default off/hidden) */}
               {Boolean((school as any).admissions_open || (school as any).is_admissions_open) && (
-                <span className="text-[10px] sm:text-xs text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-2 py-0.5 rounded-[8px] font-semibold flex items-center gap-1">
+                <span className="text-[10px] sm:text-[11px] text-[#137333] bg-[#e6f4ea] border border-[#ceead6] px-2 py-0.5 rounded-md font-semibold flex items-center gap-1 shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#137333] animate-pulse" />
                   <span>Admissions Open</span>
                 </span>
               )}
+            </div>
+
+            {/* Location: Full Address across the card */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 leading-snug min-w-0">
+              <MapPin size={13} className="text-red-500 shrink-0" />
+              <span className="break-words line-clamp-1 sm:line-clamp-2">{locationStr}</span>
+            </div>
+
+            {/* Quick Info Tags */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+              <span className="text-[10px] sm:text-xs text-[#444746] bg-[#eef3fc] px-2 py-0.5 rounded-md font-semibold">
+                {formatCompactClasses(school.classes || (school as any).class_range)}
+              </span>
               {school.facilities?.includes('Experiential Science Lab') && (
-                <span className="text-[10px] sm:text-xs text-[#0b57d0] bg-[#e8f0fe] border border-[#c2e7ff] px-2 py-0.5 rounded-[8px] font-medium hidden lg:inline-flex items-center gap-1">
-                  <FlaskConical size={10} /> Experiential Lab
+                <span className="text-[10px] sm:text-xs text-[#0b57d0] bg-[#e8f0fe] border border-[#c2e7ff] px-2 py-0.5 rounded-md font-medium inline-flex items-center gap-1">
+                  <FlaskConical size={11} /> Experiential Lab
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        {/* Action Buttons: Uniform M3 Pill & Icon Buttons */}
-        <div className="flex flex-wrap sm:flex-nowrap items-center justify-end gap-1 sm:gap-1.5 shrink-0 pt-2 sm:pt-0 border-t border-gray-100 sm:border-0 sm:pl-2 min-w-0">
-          {/* Secondary Actions group */}
-          <div className="flex items-center gap-1">
+        {/* Footer Row: Always single compact horizontal line on all screens */}
+        <div className="pt-2 sm:pt-2.5 border-t border-slate-100 flex flex-nowrap items-center justify-between gap-1 sm:gap-2 w-full mt-0.5 min-w-0">
+          {/* Left Group: Secondary Actions (Website, Directions, Share, Like, Compare) */}
+          <div className="flex flex-nowrap items-center gap-1 sm:gap-1.5 min-w-0 shrink">
             {/* Website Icon Button */}
             {hasWebsite ? (
               <a
@@ -1743,18 +1724,18 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="h-8 w-8 flex items-center justify-center rounded-full text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
+                className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
                 title="Visit Official School Website"
               >
-                <Globe size={13} />
+                <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </a>
             ) : (
               <button
                 disabled
-                className="h-8 w-8 flex items-center justify-center rounded-full text-gray-400 bg-gray-50 border border-gray-200 opacity-40 cursor-not-allowed select-none pointer-events-none shrink-0"
+                className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full text-gray-400 bg-gray-50 border border-gray-200 opacity-40 cursor-not-allowed select-none pointer-events-none shrink-0"
                 title="Website Not Available"
               >
-                <Globe size={13} />
+                <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </button>
             )}
 
@@ -1762,26 +1743,26 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => openGoogleMaps(school, e)}
-              className="h-8 w-8 flex items-center justify-center rounded-full text-[#444746] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
+              className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full text-[#444746] hover:bg-[#0b57d0]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] cursor-pointer shrink-0"
               title="Open location on Google Maps"
             >
-              <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" viewBox="0 0 24 24">
                 <path fill="#EA4335" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                 <circle cx="12" cy="9" r="2.8" fill="#FFFFFF"/>
               </svg>
             </button>
 
-            {/* Compare Button — Google Material Symbols Balance Icon (Temporarily Hidden) */}
+            {/* Compare Button */}
             {SHOW_COMPARE_BUTTON && (
               <button
                 type="button"
                 onClick={(e) => handleToggleCompare(school, e)}
-                className={`h-8 w-8 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border ${
+                className={`h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full text-xs transition-all duration-200 active:scale-[0.98] cursor-pointer border shrink-0 ${
                   isCompared ? 'bg-[#c2e7ff] text-[#001d35] border-transparent' : 'text-[#444746] hover:text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] border-[#c4c7c5]'
                 }`}
                 title="Compare School"
               >
-                <GoogleBalanceIcon size={14} />
+                <GoogleBalanceIcon size={13} />
               </button>
             )}
 
@@ -1789,10 +1770,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => handleShareSchool(school, e)}
-              className="h-8 w-8 flex items-center justify-center rounded-full text-xs text-[#444746] hover:text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] relative cursor-pointer shrink-0"
+              className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-full text-xs text-[#444746] hover:text-[#1f1f1f] hover:bg-[#1f1f1f]/[0.08] border border-[#c4c7c5] transition-all duration-200 active:scale-[0.98] relative cursor-pointer shrink-0"
               title="Share Profile"
             >
-              <Share2 size={13} />
+              <Share2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               {copiedToastId === school.id && (
                 <span className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-0.5 rounded shadow-lg whitespace-nowrap z-30">
                   Copied!
@@ -1804,42 +1785,49 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             <button
               type="button"
               onClick={(e) => handleToggleLike(school.id, e, school.udise_code || school.school_id)}
-              className={`h-8 px-2 flex items-center gap-1 rounded-full text-xs font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer border shrink-0 ${
+              className={`h-7 sm:h-8 flex items-center justify-center gap-1 rounded-full text-xs font-semibold transition-all duration-200 active:scale-[0.98] cursor-pointer border shrink-0 ${
+                cardLikesCount > 0 ? 'px-2 sm:px-2.5' : 'w-7 sm:w-8'
+              } ${
                 isLiked ? 'text-rose-600 bg-rose-50 border-rose-200' : 'text-[#444746] hover:text-rose-500 hover:bg-rose-50 border-[#c4c7c5]'
               }`}
               title={isLiked ? "Liked" : "Like School"}
             >
-              <Heart size={13} className={isLiked ? "fill-rose-500" : ""} />
+              <Heart className={`w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 ${isLiked ? "fill-rose-500" : ""}`} />
               {cardLikesCount > 0 && <span className="text-[10px] font-bold">{cardLikesCount}</span>}
             </button>
           </div>
           
-          {/* Claim School CTA */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setClaimModalData({
-                isOpen: true,
-                schoolName: school.school_name || school.name || 'School Profile',
-                udiseCode: school.udise_code || school.id || '',
-              });
-            }}
-            className="h-8 px-2.5 rounded-[12px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center gap-1 cursor-pointer"
-            title="Claim this school profile"
-          >
-            <ShieldCheck size={13} className="text-[#006FCC]" />
-            <span className="text-[11px]">Claim</span>
-          </button>
-          
-          {/* View CTA */}
-          <Link
-            href={profileUrl}
-            className="h-8 px-3.5 rounded-[12px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] shrink-0 inline-flex items-center justify-center shadow-xs whitespace-nowrap"
-          >
-            <span>View</span>
-          </Link>
+          {/* Right Group: Primary Actions (Icon-only Claim on mobile + label on larger screens, plus View) */}
+          <div className="flex flex-nowrap items-center gap-1 sm:gap-2 shrink-0 ml-auto">
+            {/* Claim School CTA (Icon-only on narrow mobile, text visible on sm+) */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setClaimModalData({
+                  isOpen: true,
+                  schoolName: school.school_name || school.name || 'School Profile',
+                  udiseCode: school.udise_code || school.id || '',
+                });
+              }}
+              aria-label="Claim this school profile"
+              className="h-7 w-7 sm:w-auto sm:h-8 sm:px-3 rounded-full sm:rounded-[12px] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] text-[#006FCC] text-[10.5px] sm:text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center sm:gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
+              title="Claim this school profile"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-[#006FCC] shrink-0" />
+              <span className="hidden sm:inline text-[11px]">Claim</span>
+            </button>
+            
+            {/* View CTA */}
+            <Link
+              href={profileUrl}
+              className="h-7 sm:h-8 px-2.5 sm:px-4 rounded-full sm:rounded-[12px] bg-[#006FCC] hover:bg-[#005399] text-white text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-200 active:scale-[0.98] inline-flex items-center justify-center gap-0.5 sm:gap-1 shadow-xs whitespace-nowrap shrink-0"
+            >
+              <span>View</span>
+              <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -1851,7 +1839,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
     return (
       <div
-        key={`map-card-${school.id || school.udise_code || idx}`}
+        key={`map-card-${school.udise_code || school.id || 'item'}-${idx}`}
         onClick={() => handleSelectSchoolFromList(school)}
         className={`p-2.5 rounded-2xl border transition-all duration-200 cursor-pointer flex gap-2.5 text-left group ${
           isSelected
@@ -1951,7 +1939,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
     return (
       <div 
-        key={`top-${school.id || idx}`}
+        key={`top-${school.udise_code || school.id || 'item'}-${idx}`}
         className="w-[260px] sm:w-[280px] shrink-0 snap-start bg-white rounded-2xl overflow-hidden border border-[#E8E9E9] hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 group flex flex-col"
       >
         {/* Compact Image */}
@@ -2957,23 +2945,14 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                   </div>
                 </div>
 
-                {/* Mobile Subline: Count & Quick Sort (Hidden in Map Mode) */}
-                {viewMode !== 'map' && (
+                {/* Mobile Subline: Active Location Filter (No duplicate count, count is displayed in pagination bar) */}
+                {viewMode !== 'map' && selectedLocation && (
                   <div className="flex items-center justify-between text-[11px] text-gray-500 px-0.5 gap-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span>
-                        <strong className="text-gray-900">
-                          {totalSchoolsCount === 0 || displayedSchools.length === 0
-                            ? '0'
-                            : `${(currentPage - 1) * 25 + 1}–${Math.min((currentPage - 1) * 25 + displayedSchools.length, totalSchoolsCount)}`}
-                        </strong> of <strong className="text-gray-900">{totalSchoolsCount}</strong> Schools
+                      <span className="inline-flex items-center gap-0.5 text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-medium text-[10px]">
+                        <MapPin size={9} />
+                        {selectedLocation}
                       </span>
-                      {selectedLocation && (
-                        <span className="inline-flex items-center gap-0.5 text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded font-medium text-[10px]">
-                          <MapPin size={9} />
-                          {selectedLocation}
-                        </span>
-                      )}
                     </div>
                   </div>
                 )}
@@ -2981,14 +2960,12 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
               {/* ─── DESKTOP VIEW (>= 768px): Fully Responsive Layout (Zero Overlap on any screen width) ─── */}
               <div className="hidden md:flex flex-col xl:flex-row xl:items-center justify-between gap-2.5 w-full min-w-0">
-                {/* Left/Top Group: Results count & View Mode Switcher + Banner Toggle */}
+                {/* Left/Top Group: Section Title & View Mode Switcher + Banner Toggle */}
                 <div className="flex items-center justify-between xl:justify-start gap-2.5 shrink-0 flex-wrap">
                   <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-                    {/* Result count */}
+                    {/* Section Title */}
                     <h2 className="text-xs sm:text-[13px] font-bold text-gray-800 whitespace-nowrap mr-0.5">
-                      {totalSchoolsCount === 0 || displayedSchools.length === 0
-                        ? '0 Schools'
-                        : `${(currentPage - 1) * 25 + 1}–${Math.min((currentPage - 1) * 25 + displayedSchools.length, totalSchoolsCount)} of ${totalSchoolsCount} Schools`}
+                      Verified Schools
                     </h2>
                     
                     {/* View Mode Switcher (Pure Iconic Form with Rich Hover Tooltips) */}
@@ -3176,100 +3153,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             </div>
           )}
 
-          {/* ── Conditional Display: Auth & Verification Gate vs School Cards ── */}
-          {isGuest ? (
-            /* 1. Public Visitor: NOT logged in ("Login first to see the school") */
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-lg p-6 sm:p-10 md:p-12 text-center my-4 space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#005689] to-[#0084cc] text-white flex items-center justify-center mx-auto shadow-lg shadow-blue-500/20">
-                <Lock className="w-8 h-8" />
-              </div>
-
-              <div className="space-y-2.5">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold uppercase tracking-wider">
-                  <ShieldAlert className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Member Access Only</span>
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  Sign in to Access School Directory
-                </h3>
-                <p className="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
-                  Please log in to explore comprehensive school profiles, fee structures, ratings, and academic facilities. Full directory details are accessible exclusively to verified members.
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 max-w-md mx-auto">
-                {/* Google Sign In Button */}
-                <button
-                  type="button"
-                  onClick={handleGoogleSignIn}
-                  disabled={googleLoading}
-                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2.5 px-5 py-3 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-sm shadow-xs hover:shadow transition-all cursor-pointer disabled:opacity-60"
-                >
-                  {googleLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
-                  ) : (
-                    <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                    </svg>
-                  )}
-                  <span>Login with Google</span>
-                </button>
-
-                {/* Email Sign In Button */}
-                <Link
-                  href="/login"
-                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#005689] hover:bg-[#003c6e] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>Sign In with Email</span>
-                </Link>
-              </div>
-            </div>
-          ) : isListingDisabled || isUserUnverified ? (
-            /* 2. Logged In, but Admin disabled list OR user unverified */
-            <div className="bg-white rounded-3xl border border-amber-200/90 bg-gradient-to-br from-amber-50/50 via-white to-orange-50/30 shadow-lg p-6 sm:p-10 md:p-12 text-center my-4 space-y-6">
-              <div className="w-16 h-16 rounded-2xl bg-amber-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-amber-500/20">
-                <RefreshCw className="w-8 h-8 animate-spin" />
-              </div>
-
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold uppercase tracking-wider">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
-                  <span>Verification in Progress</span>
-                </div>
-
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-snug">
-                  School Directory Verification in Progress
-                </h3>
-
-                <p className="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
-                  We are continuously auditing and verifying institutional profiles. The comprehensive school directory will be displayed here once administrative review is complete.
-                </p>
-
-                {effectiveUser && (
-                  <div className="bg-amber-50/90 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 text-left space-y-1.5 max-w-md mx-auto">
-                    <div className="font-bold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>Account Logged In: {effectiveUser.email}</span>
-                    </div>
-                    <p className="text-amber-800 text-[11px] pl-6">
-                      {isListingDisabled
-                        ? 'Administrative notice: School directory display is currently set to verification review mode by administrator.'
-                        : 'Your account is queued for admin approval. Once verified by our administration team, full directory access will be unlocked.'}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            /* 3. Authorized View: Display Schools & Pagination */
-            <>
-              {/* Top Pagination Bar (Strictly max 25 schools per page, shown above school cards) */}
-              {viewMode !== 'map' && renderPaginationBar('top')}
+          {/* ── School Directory Display (Public Direct Access) ── */}
+          <>
+            {/* Top Showing Bar (Strictly max 25 schools per page, count only) */}
+            {viewMode !== 'map' && renderTopShowingBar()}
 
               {/* School Cards: Map, Grid, or Compact List */}
               {viewMode === 'map' ? (
@@ -3766,15 +3653,36 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 </div>
               ) : viewMode === 'compact' ? (
                 <div className="flex flex-col gap-2.5 sm:gap-3 touch-pan-y overscroll-contain mt-2 sm:mt-2.5 w-full">
-                  {displayedSchools.slice(0, 25).map((school, idx) => renderCompactSchoolRow(school, idx))}
+                  {displayedSchools.slice(0, 25).map((school, idx) => (
+                    <React.Fragment key={`compact-frag-${school.udise_code || school.id || 'item'}-${idx}`}>
+                      {idx > 0 && idx % 7 === 0 && (
+                        <AdSenseBanner label="Sponsored Partner" className="my-2" />
+                      )}
+                      {renderCompactSchoolRow(school, idx)}
+                    </React.Fragment>
+                  ))}
                 </div>
               ) : viewMode === 'grid3' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-5 touch-pan-y overscroll-contain mt-2 sm:mt-2.5 w-full">
-                  {displayedSchools.slice(0, 25).map((school, idx) => renderSchoolCard(school, idx))}
+                  {displayedSchools.slice(0, 25).map((school, idx) => (
+                    <React.Fragment key={`grid3-frag-${school.udise_code || school.id || 'item'}-${idx}`}>
+                      {idx > 0 && idx % 6 === 0 && (
+                        <AdSenseInFeedCard cardType="school" />
+                      )}
+                      {renderSchoolCard(school, idx)}
+                    </React.Fragment>
+                  ))}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3.5 sm:gap-5 touch-pan-y overscroll-contain mt-2 sm:mt-2.5 w-full">
-                  {displayedSchools.slice(0, 25).map((school, idx) => renderSchoolCard(school, idx))}
+                  {displayedSchools.slice(0, 25).map((school, idx) => (
+                    <React.Fragment key={`grid-frag-${school.udise_code || school.id || 'item'}-${idx}`}>
+                      {idx > 0 && idx % 6 === 0 && (
+                        <AdSenseInFeedCard cardType="school" />
+                      )}
+                      {renderSchoolCard(school, idx)}
+                    </React.Fragment>
+                  ))}
                 </div>
               )}
 
@@ -3786,10 +3694,9 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 </div>
               )}
 
-              {/* Bottom Pagination Bar (Strictly max 25 schools per page, shown below school cards) */}
-              {viewMode !== 'map' && renderPaginationBar('bottom')}
+              {/* Bottom Pagination Bar (Strictly max 25 schools per page, pagination only) */}
+              {viewMode !== 'map' && renderBottomPaginationBar()}
             </>
-          )}
         </main>
       </div>
 
@@ -3835,10 +3742,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               </div>
             </div>
 
-            {/* Horizontal scroll container with compact cards */}
+            {/* Horizontal scroll container with compact cards (allows both horizontal swipe & vertical page scroll) */}
             <div
               id="top-schools-slider"
-              className="flex gap-4 overflow-x-auto pb-4 pt-1 custom-scrollbar snap-x snap-mandatory scroll-smooth w-full px-1.5 touch-pan-x overscroll-x-contain"
+              className="flex gap-4 overflow-x-auto overflow-y-hidden pb-4 pt-1 custom-scrollbar snap-x snap-proximity w-full px-1.5 [touch-action:pan-x_pan-y] overscroll-x-contain"
             >
               {topSchools.map((school, idx) => renderTopSchoolCard(school, idx))}
             </div>

@@ -78,9 +78,9 @@ export const SchoolCard: React.FC<SchoolCardProps> = ({ school, onClick, onConta
             e.stopPropagation();
             onContact?.();
           }}
-          className="px-3.5 py-1.5 rounded-full border border-[#dadce0] bg-white text-[#1a73e8] hover:bg-[#f8fafd] hover:border-[#1a73e8]/40 text-xs font-medium transition-colors inline-flex items-center gap-1.5 shadow-xs font-['Google_Sans',Roboto,sans-serif]"
+          className="px-3.5 py-1.5 rounded-full border border-[#dadce0] bg-white text-[#1a73e8] hover:bg-[#f8fafd] hover:border-[#1a73e8]/40 text-xs font-medium transition-colors inline-flex items-center gap-1.5 shadow-xs"
         >
-          <span>View Profile</span>
+          <span>View</span>
           <ArrowRight size={11} />
         </button>
       </div>

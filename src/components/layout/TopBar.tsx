@@ -386,15 +386,7 @@ const TopBar = () => {
                   </div>
                 )}
               </div>
-            ) : (
-              <Link
-                href="/login"
-                className="inline-flex items-center py-0.5 px-1.5 text-white/95 hover:text-white active:scale-95 font-semibold text-[11px] transition-all shrink-0 whitespace-nowrap ml-0.5 cursor-pointer touch-manipulation bg-transparent border-0 h-5"
-                title="Sign in to CSEEL Portal"
-              >
-                <span className="text-white font-semibold">Login</span>
-              </Link>
-            )}
+            ) : null}
 
           </div>
 

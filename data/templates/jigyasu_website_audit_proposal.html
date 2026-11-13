@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+<title>Technical Audit: Critical Accessibility, SEO, Schema & UX Blockers on jigyasu.com</title>
+<!--[if mso]>
+<style>
+* { font-family: Arial, sans-serif !important; }
+</style>
+<![endif]-->
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  background-color: transparent !important;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+table.wrap {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid #d3d8e0 !important;
+  background-color: #fbfaf7 !important;
+}
+img { border: 0; outline: none; text-decoration: none; }
+a { text-decoration: none; }
+@media only screen and (max-width: 600px) {
+  .wrap { width: 100% !important; margin: 0 auto !important; border: 1px solid #d3d8e0 !important; }
+  .px { padding-left: 14px !important; padding-right: 14px !important; }
+  .h1-title { font-size: 20px !important; line-height: 27px !important; margin-bottom: 8px !important; }
+  .subhead { font-size: 13px !important; line-height: 19px !important; margin-bottom: 12px !important; }
+  .btn-pill { width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }
+  .btn-pill-sec { width: 92% !important; display: block !important; margin: 8px auto !important; text-align: center !important; }
+}
+</style>
+</head>
+<body style="background-color: transparent; margin: 0; padding: 0; font-family: 'Google Sans', Roboto, Arial, sans-serif; color: #1f1f1f;">
+
+<div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent;">
+jigyasu.com website audit: Missing Schema markup, zero SEO reachability, login redirects on homepage, 404 footer links, and broken map. Modernized staging preview ready in 48 hours.
+</div>
+
+<div style="padding: 12px 8px;">
+
+  <!-- 1. PRIMARY GOOGLE CARD (HEADER & HERO) -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 24px 24px 0 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
+    <tbody>
+
+      <!-- BRAND HEADER -->
+      <tr>
+        <td align="center" style="padding: 18px 20px 8px 20px; background-color: #fbfaf7;">
+          <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.2px;">
+            <span style="color: #4285f4;">Web</span> <span style="color: #ea4335;">Systems</span> <span style="color: #34a853;">Architecture</span>
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 10.5px; font-weight: 500; color: #5f6368; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px;">
+            Confidential Technical Audit &bull; Jigyasu.com
+          </div>
+        </td>
+      </tr>
+
+      <!-- SUBTLE DIVIDER -->
+      <tr>
+        <td style="padding: 0 24px; background-color: #fbfaf7;">
+          <div style="border-top: 1px solid #dadce0; height: 1px; line-height: 1px;"></div>
+        </td>
+      </tr>
+
+      <!-- HERO INTRO -->
+      <tr>
+        <td class="px" align="center" style="padding: 14px 24px 4px 24px; background-color: #fbfaf7;">
+          
+          <!-- Category Alert Chip -->
+          <table border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin-bottom: 12px;">
+            <tr>
+              <td style="background-color: #fce8e6; color: #c5221f; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.3px; padding: 4px 14px; border-radius: 50px;">
+                &#9888;&#65039; Urgent: Critical Technical &amp; Reachability Audit
+              </td>
+            </tr>
+          </table>
+
+          <!-- Main Heading -->
+          <div class="h1-title" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 21px; font-weight: 400; line-height: 1.32; text-align: center; color: #1f1f1f; max-width: 490px; margin: 0 auto 10px auto;">
+            Technical Audit: jigyasu.com Accessibility, Schema, SEO &amp; Structural UX Friction
+          </div>
+
+          <!-- Subheading / Paragraph -->
+          <div class="subhead" style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 1.55; text-align: center; color: #444746; max-width: 470px; margin: 0 auto 14px auto;">
+            A deep-scan of jigyasu.com revealed severe crawlability blockers: missing Schema markup, locked root URLs, unindexed products, broken footer legal routes, and zero organic search reachability.
+          </div>
+        </td>
+      </tr>
+
+      <!-- 1. HERO ERROR ILLUSTRATION -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 0 16px 8px 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/hero-offline.png" width="460" alt="Website audit status illustration" style="display: block; width: 100%; max-width: 460px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- CARD SEPARATOR -->
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+
+  <!-- 2. GREETING & AUDIT CALLOUT CARD -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
+    <tbody>
+      <tr>
+        <td class="px" style="padding: 16px 24px 8px 24px; background-color: #fbfaf7;">
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14.5px; line-height: 22px; color: #1f1f1f; padding-bottom: 12px;">
+            Dear Satwik Das (Founder) &amp; Core Science Studio Team,
+          </div>
+
+          <!-- Google Signature Blue Info Box -->
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #d3e3fd; border-radius: 16px;">
+            <tr>
+              <td width="40" valign="top" style="padding: 14px 0 14px 14px;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #0b57d0; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                      i
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td valign="top" style="padding: 14px 14px 14px 10px; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 20px; color: #041e49;">
+                During a recent technical and structural evaluation of STEM education web portals in India, we noticed that <strong style="font-weight: 600;">jigyasu.com suffers from fundamental discoverability, schema, and navigation flaws</strong> that prevent schools, educators, and search engines from reaching your content.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- FULL DETAILED PROBLEM BREAKDOWN (6 CRITICAL ISSUES) -->
+      <tr>
+        <td class="px" style="padding: 0 20px 14px 20px; background-color: #fbfaf7;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
+            <tr>
+              <td style="padding: 16px 18px 12px 18px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 20px; font-weight: 600; color: #1f1f1f; padding-bottom: 6px;">
+                  Complete Technical &amp; Structural Flaws Found:
+                </div>
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  
+                  <!-- 1. Zero Schema Markup -->
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                            &#10005;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 600;">
+                        No Schema Markup (Zero Structured Data)
+                      </div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">
+                        Missing <code>JSON-LD</code> structured data across all pages (no <code>EducationalOrganization</code>, <code>Product</code>, <code>LocalBusiness</code>, or <code>BreadcrumbList</code> schema). Google crawlers and AI search engines cannot understand what Jigyasu offers.
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 2. Zero SEO & Meta Tags -->
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                            &#10005;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 600;">
+                        Missing SEO &amp; Open Graph Previews
+                      </div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">
+                        Zero SEO optimization: missing meta descriptions, keyword targeting, and Open Graph tags. Sharing Jigyasu links on WhatsApp or LinkedIn displays generic empty cards with no image or preview text.
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 3. Zero Reachability / Login Redirect Wall -->
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                            &#10005;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 600;">
+                        Zero Public Reachability (Root URL Locked)
+                      </div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">
+                        Visiting <code>jigyasu.com/</code> immediately redirects to <code>/login</code> &mdash; new schools, students, and Googlebot are blocked from seeing any public homepage.
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 4. Header & Navigation Breakdown -->
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                            &#10005;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 600;">
+                        Header Navigation Locked (Products Inaccessible)
+                      </div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">
+                        Header links such as <code>/products</code> force authentication &mdash; prospective institutional clients cannot browse your science kits or request quotes.
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 5. Footer Broken Links (404 Trust Failure) -->
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                            &#10005;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 600;">
+                        Footer Trust Failure (404 Legal Routes)
+                      </div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">
+                        Footer compliance links (<code>/privacy</code>, <code>/terms</code>, <code>/disclaimer</code>) return HTTP 404 errors &mdash; damaging institutional trust and violating digital compliance.
+                      </div>
+                    </td>
+                  </tr>
+
+                  <!-- 6. Blank Contact Map & Broken Media -->
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                        <tr>
+                          <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #fce8e6; color: #c5221f; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">
+                            &#10005;
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 600;">
+                        Blank Contact Map &amp; Broken Event Graphics
+                      </div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">
+                        Contact page shows a raw empty gray placeholder stating <em>"Map would appear here"</em> instead of an interactive Bhubaneswar map, and workshop graphics fail to load.
+                      </div>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- CARD SEPARATOR -->
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+
+  <!-- 3. PROPOSED TRANSFORMATION CARD -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
+    <tbody>
+
+      <!-- PROMISE TEXT -->
+      <tr>
+        <td class="px" style="padding: 14px 24px 2px 24px; background-color: #fbfaf7;">
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 22px; color: #444746; text-align: center;">
+            We have engineered a complete, modernized architecture that resolves every issue &mdash; ready to launch on your domain in <strong style="font-weight: 600; color: #1f1f1f;">48 to 72 hours</strong>.
+          </div>
+        </td>
+      </tr>
+
+      <!-- RESTORE & LAUNCH ILLUSTRATION -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 0 16px 6px 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/restore-live.png" width="440" alt="Live restored portal preview" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- WHAT JIGYASU GETS -->
+      <tr>
+        <td class="px" style="padding: 0 20px 10px 20px; background-color: #fbfaf7;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; background-color: #f8fafd; border: 1px solid #e1e7f0; border-radius: 16px;">
+            <tr>
+              <td style="padding: 16px 18px 10px 18px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 14px; line-height: 20px; font-weight: 600; color: #1f1f1f; padding-bottom: 6px;">
+                  Complete Modernized Upgrades:
+                </div>
+                <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Full Schema Markup &amp; Rich Snippets</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">JSON-LD structured data implemented for EducationalOrganization, STEM Products, and LocalBusiness for rich Google search cards.</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Complete SEO &amp; Organic Reachability</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">High-speed on-page SEO, optimized meta tags, XML sitemaps, and dynamic Open Graph cards for WhatsApp and social previews.</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Open Public Showcase &amp; Clean Header</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Engaging public homepage with clear navigation (Labs, Workshops, Kits, About Us) without blocking visitors behind a login wall.</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Open STEM Products &amp; Kits Catalog</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Public catalog with filtering by grade, subject &amp; kit type with 1-click institution quotation inquiry.</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Interactive Campus Location Map</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Verified DAV CSPUR, Chandrasekharpur, Bhubaneswar studio campus with 1-click direction links.</div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td width="38" valign="top" style="padding: 8px 0;">
+                      <table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e6f4ea; color: #137333; font-family: Arial, sans-serif; font-size: 14px; line-height: 28px; font-weight: 700;">&#10003;</td></tr></table>
+                    </td>
+                    <td valign="middle" style="padding: 8px 0;">
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 19px; color: #1f1f1f; font-weight: 500;">Complete Footer Compliance &amp; Legal Trust</div>
+                      <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12px; line-height: 17px; color: #5f6368;">Indian DPDP Act 2023 compliant Privacy Policy, Terms of Service, Disclaimer, and institutional credentials.</div>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- BUMPER OFFER -->
+      <tr>
+        <td class="px" style="padding: 0 20px 14px 20px; background-color: #fbfaf7;">
+          <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse: separate; border: 1px solid #dadce0; border-radius: 16px; background-color: #fbfaf7;">
+            <tr>
+              <td width="40" valign="top" style="padding: 16px 0 16px 16px;">
+                <table border="0" cellpadding="0" cellspacing="0" role="presentation">
+                  <tr>
+                    <td width="28" height="28" align="center" valign="middle" style="width: 28px; height: 28px; border-radius: 50%; background-color: #e8f0fe; color: #0b57d0; font-family: Arial, sans-serif; font-size: 15px; line-height: 28px; font-weight: 700;">
+                      &#8377;
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td valign="top" style="padding: 16px 16px 16px 10px;">
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11px; line-height: 16px; font-weight: 600; color: #0b57d0; letter-spacing: 0.8px; text-transform: uppercase;">
+                  Bumper Offer
+                </div>
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 17px; line-height: 24px; font-weight: 500; color: #1f1f1f; padding-top: 2px;">
+                  Pay After Work First
+                </div>
+                <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13px; line-height: 19px; color: #5f6368; padding-top: 3px;">
+                  No agency charges &middot; Zero advance payment. Review your working website on a private live staging link first. Pay only if you are completely satisfied.
+                </div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- CARD SEPARATOR -->
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+
+  <!-- 4. ZERO RISK GUARANTEE & CALL TO ACTION CARD -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
+    <tbody>
+      
+      <!-- ZERO RISK GUARANTEE ILLUSTRATION -->
+      <tr>
+        <td style="line-height: 0; font-size: 0; padding: 12px 16px 0 16px; background-color: #fbfaf7;" align="center">
+          <img src="https://cdn.jsdelivr.net/gh/projectokart/cseel-next@87c0871/public/email_assets/school_template/zero-risk-guarantee.png" width="440" alt="Zero risk guarantee" style="display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto;" />
+        </td>
+      </tr>
+
+      <!-- FINAL CALL TO ACTION -->
+      <tr>
+        <td class="px" style="padding: 10px 24px 22px 24px; background-color: #fbfaf7;">
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 18px; line-height: 26px; font-weight: 500; color: #1f1f1f; padding-bottom: 6px; text-align: center;">
+            Review Your Live Staging Preview
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; line-height: 21px; color: #444746; padding-bottom: 16px; text-align: center; max-width: 440px; margin: 0 auto;">
+            Every day, educators and school partners seeking hands-on science programs arrive at a locked login screen. Simply reply to this email to receive your private staging preview link.
+          </div>
+          <div align="center">
+            <a href="mailto:webdesign@mailer.cseel.org?subject=Re:%20Jigyasu.com%20Staging%20Preview%20Request" class="btn-pill" style="display: inline-block; background-color: #0b57d0; color: #ffffff; font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 13.5px; font-weight: 500; line-height: 1.5; padding: 12px 30px; border-radius: 50px; text-decoration: none; box-sizing: border-box;">
+              Reply to Review Staging Link &rarr;
+            </a>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- CARD SEPARATOR -->
+  <div style="max-width:580px; margin:0 auto; background-color:#dfe5ee; height:4px; line-height:4px; font-size:4px; mso-line-height-rule:exactly;">&nbsp;</div>
+
+  <!-- 5. GOOGLE-STYLE IMPERSONAL FOOTER -->
+  <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wrap" style="border-collapse: separate !important; border-spacing: 0 !important; width: 100%; max-width: 580px; margin: 0 auto; border-radius: 0 0 24px 24px; border: 1px solid #d3d8e0; overflow: hidden; background-color: #fbfaf7;">
+    <tbody>
+      <tr>
+        <td class="px" align="center" style="background-color: #f1f3f4; padding: 22px 20px 28px 20px; border-radius: 0 0 24px 24px;">
+          <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 13.5px; line-height: 20px; font-weight: 600; color: #1f1f1f;">
+            Web Systems &amp; Architecture Team &bull; Educational Portals
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 17px; color: #5f6368; padding-top: 8px; max-width: 440px; margin: 0 auto;">
+            You are receiving this confidential technical audit regarding public accessibility, infrastructure performance, and institutional trust for Jigyasu Science Studio (jigyasu.com).
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 12.5px; line-height: 18px; font-weight: 500; padding-top: 14px;">
+            <a href="mailto:webdesign@mailer.cseel.org?subject=Re:%20Jigyasu.com%20Audit%20Inquiry" style="color: #0b57d0; text-decoration: none;">Email Technical Team</a>
+            <span style="color: #bdc1c6;">&nbsp;|&nbsp;</span>
+            <a href="https://cseel.org/privacy" target="_blank" style="color: #0b57d0; text-decoration: none;">Privacy Policy</a>
+          </div>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 17px; color: #5f6368; padding-top: 12px;">
+            <a href="mailto:webdesign@mailer.cseel.org?subject=Unsubscribe%20jigyasu.com" style="color: #5f6368; text-decoration: underline;">Unsubscribe</a>
+          </div>
+          <!-- POWERED BY CSEEL LOGO -->
+          <div style="font-family: 'Google Sans', Arial, sans-serif; font-size: 10.5px; line-height: 15px; font-weight: 500; color: #80868b; text-transform: uppercase; letter-spacing: 0.8px; padding-top: 18px;">
+            Powered by
+          </div>
+          <a href="https://www.cseel.org/" target="_blank" style="text-decoration: none; display: inline-block; padding-top: 6px;">
+            <img src="https://www.cseel.org/logo.png" alt="CSEEL" width="110" style="display: block; width: 110px; max-width: 100%; height: auto; border: 0; margin: 0 auto;" />
+          </a>
+          <div style="font-family: 'Google Sans', Roboto, Arial, sans-serif; font-size: 11.5px; line-height: 16px; padding-top: 4px;">
+            <a href="https://www.cseel.org/" target="_blank" style="color: #5f6368; text-decoration: none;">www.cseel.org</a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+</body>
+</html>

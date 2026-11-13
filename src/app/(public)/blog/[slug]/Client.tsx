@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { supabase } from "@/integrations/supabase/client";
 import PageTransition from "@/components/shared/PageTransition";
+import AdSenseBanner, { AdSenseInArticle } from "@/components/ads/AdSenseBanner";
 import { getBlogBySlug, ALL_BLOGS, BlogPostItem } from "@/lib/blogsData";
 import {
   ChevronRight,
@@ -73,65 +74,66 @@ function slugifyHeading(txt: string) {
 /** Minimal markdown → JSX renderer (handles **bold**, ## h2, ### h3, - lists, numbers) */
 function renderContent(raw: string) {
   const blocks = raw.split(/\n{2,}/);
+  const midIndex = blocks.length >= 4 ? Math.floor(blocks.length / 2) - 1 : -1;
   return blocks.map((block, bi) => {
     const trimmed = block.trim();
     if (!trimmed) return null;
+
+    let node: React.ReactNode = null;
 
     // h2
     const h2 = trimmed.match(/^### (.+)/);
     if (h2) {
       const label = h2[1];
-      return (
-        <h3 key={bi} id={slugifyHeading(label)}>
+      node = (
+        <h3 id={slugifyHeading(label)}>
           {inlineParse(label)}
         </h3>
       );
-    }
-    const h2b = trimmed.match(/^## (.+)/);
-    if (h2b) {
-      const label = h2b[1];
-      return (
-        <h2 key={bi} id={slugifyHeading(label)}>
-          {inlineParse(label)}
-        </h2>
-      );
-    }
-
-    // ordered list
-    if (/^\d+\.\s/.test(trimmed)) {
-      const items = trimmed.split("\n").filter(Boolean);
-      return (
-        <ol key={bi} className="list-decimal pl-6 mb-6 space-y-2">
-          {items.map((item, ii) => (
-            <li key={ii}>{inlineParse(item.replace(/^\d+\.\s/, ""))}</li>
-          ))}
-        </ol>
-      );
-    }
-
-    // unordered list
-    if (/^[-*]\s/.test(trimmed)) {
-      const items = trimmed.split("\n").filter(l => /^[-*]\s/.test(l));
-      return (
-        <ul key={bi}>
-          {items.map((item, ii) => (
-            <li key={ii}>{inlineParse(item.replace(/^[-*]\s/, ""))}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    // blockquote
-    if (trimmed.startsWith(">")) {
-      return (
-        <blockquote key={bi}>
-          {inlineParse(trimmed.replace(/^>\s?/, ""))}
-        </blockquote>
-      );
+    } else {
+      const h2b = trimmed.match(/^## (.+)/);
+      if (h2b) {
+        const label = h2b[1];
+        node = (
+          <h2 id={slugifyHeading(label)}>
+            {inlineParse(label)}
+          </h2>
+        );
+      } else if (/^\d+\.\s/.test(trimmed)) {
+        const items = trimmed.split("\n").filter(Boolean);
+        node = (
+          <ol className="list-decimal pl-6 mb-6 space-y-2">
+            {items.map((item, ii) => (
+              <li key={ii}>{inlineParse(item.replace(/^\d+\.\s/, ""))}</li>
+            ))}
+          </ol>
+        );
+      } else if (/^[-*]\s/.test(trimmed)) {
+        const items = trimmed.split("\n").filter(l => /^[-*]\s/.test(l));
+        node = (
+          <ul>
+            {items.map((item, ii) => (
+              <li key={ii}>{inlineParse(item.replace(/^[-*]\s/, ""))}</li>
+            ))}
+          </ul>
+        );
+      } else if (trimmed.startsWith(">")) {
+        node = (
+          <blockquote>
+            {inlineParse(trimmed.replace(/^>\s?/, ""))}
+          </blockquote>
+        );
+      } else {
+        node = <p>{inlineParse(trimmed)}</p>;
+      }
     }
 
-    // paragraph
-    return <p key={bi}>{inlineParse(trimmed)}</p>;
+    return (
+      <React.Fragment key={bi}>
+        {node}
+        {bi === midIndex && <AdSenseInArticle className="my-8 not-prose" />}
+      </React.Fragment>
+    );
   });
 }
 
@@ -329,6 +331,8 @@ const BlogDetail = () => {
           <article ref={articleRef} className="prose-article max-w-[680px]">
             {renderContent(post.content)}
 
+            <AdSenseInArticle className="my-8 not-prose" />
+
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
               <div className="pt-8 mt-10 border-t border-[#E2E8F0] flex flex-wrap items-center gap-2">
@@ -418,6 +422,8 @@ const BlogDetail = () => {
                 ))}
               </ul>
             </div>
+
+            <AdSenseBanner label="Sponsored" className="my-2" />
           </aside>
         </div>
       </section>

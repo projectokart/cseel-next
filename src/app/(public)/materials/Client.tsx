@@ -62,7 +62,7 @@ export default function MaterialsClient() {
     filtered,
     displayed,
     hasMore,
-    sentinelRef,
+    nextBatchCount,
     loadMore,
   } = useMaterialsFilter(products);
 
@@ -146,26 +146,24 @@ export default function MaterialsClient() {
               </div>
             )}
 
-            {/* Infinite Scroll Sentinel & Load More */}
-            <div ref={sentinelRef} className="py-8 flex flex-col items-center justify-center gap-3">
-              {hasMore && (
-                <>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 border-2 border-[#006FCC] border-t-transparent rounded-full animate-spin" />
-                    <span className="text-xs font-bold text-slate-500 font-['Montserrat',sans-serif]">
-                      Loading next 25 apparatuses... ({displayed.length} of {filtered.length})
-                    </span>
-                  </div>
+            {/* Load More Pagination (50 items per load, no numbered 1 2 3 buttons) */}
+            {filtered.length > 0 && (
+              <div className="py-8 flex flex-col items-center justify-center gap-3">
+                <p className="text-xs font-medium text-slate-500">
+                  Showing <span className="font-bold text-slate-700">{displayed.length}</span> of{' '}
+                  <span className="font-bold text-slate-700">{filtered.length}</span> materials
+                </p>
+                {hasMore && (
                   <button
                     type="button"
                     onClick={loadMore}
-                    className="px-5 py-2 text-xs font-bold text-[#006FCC] bg-white border border-[#006FCC]/30 hover:bg-[#EDF5FA] rounded-xl shadow-2xs transition active:scale-95 cursor-pointer"
+                    className="px-7 py-2.5 text-sm font-bold text-white bg-[#005689] hover:bg-[#00446d] rounded-full shadow-sm transition active:scale-95 cursor-pointer"
                   >
-                    Load Next 25 Apparatuses
+                    Load More ({nextBatchCount} more)
                   </button>
-                </>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </section>
 

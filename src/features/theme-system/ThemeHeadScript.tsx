@@ -41,5 +41,5 @@ export default function ThemeHeadScript() {
     })();
   `;
 
-  return <script dangerouslySetInnerHTML={{ __html: code }} />;
+  return <script dangerouslySetInnerHTML={{ __html: code }} suppressHydrationWarning />;
 }

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import PageTransition from '@/components/shared/PageTransition';
+import AdSenseBanner from '@/components/ads/AdSenseBanner';
 import {
   MapPin, Clock, ExternalLink, Share2, Check, CheckCheck,
   Building2, GraduationCap, Briefcase, Calendar, ShieldCheck,
@@ -306,6 +307,9 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 </div>
               )}
 
+              {/* In-Content AdSense Banner */}
+              <AdSenseBanner label="Sponsored Education & Career Partner" className="my-6" />
+
             </div>
 
             {/* Right Column: Key Vacancy Parameters & Direct Summary (Desktop Only to eliminate mobile redundancy) */}
@@ -414,6 +418,9 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                   CSEEL does not charge any application or placement fees. Apply directly through the official institution portal.
                 </p>
               </div>
+
+              {/* Sidebar AdSense Display */}
+              <AdSenseBanner label="Sponsored Links" className="my-4" />
 
             </div>
 

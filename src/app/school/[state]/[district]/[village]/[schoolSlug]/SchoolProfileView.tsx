@@ -8,17 +8,14 @@ import {
   Lock,
   ArrowRight,
   ChevronRight,
-  ChevronLeft,
   X,
-  Play,
   Home,
   BookOpen,
   Layers,
-  Eye,
   GraduationCap,
   Star,
   Phone,
-  HelpCircle,
+  Mail,
   User as UserIcon,
   LogIn,
   LogOut,
@@ -28,68 +25,60 @@ import {
   Menu,
   Briefcase,
   PlusCircle,
-  Clock
+  Clock,
+  MapPin,
+  Compass
 } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolTemplateContext';
+import AdSenseBanner from '@/components/ads/AdSenseBanner';
 import dynamic from 'next/dynamic';
 import VerifiedBadge from '@/components/schools/template/VerifiedBadge';
 import { cleanBoardName } from '@/integrations/supabase/schoolSearchClient';
 
-const AddSchoolModal = dynamic(() => import('@/components/schools/AddSchoolModal'), { ssr: false });
-
-// Critical Above-The-Fold Component (Instant Hydration)
-import SchoolHeroSection from '@/components/schools/profile/SchoolHeroSection';
+// Critical Above-The-Fold & Core Eager Components
 import SchoolStatsSection from '@/components/schools/profile/SchoolStatsSection';
-import SchoolAboutCardsSection from '@/components/schools/profile/SchoolAboutCardsSection';
+import SchoolAboutSection from '@/components/schools/profile/SchoolAboutSection';
+import SchoolFooterSection from '@/components/schools/profile/SchoolFooterSection';
+import SchoolProfileModals from '@/components/schools/profile/SchoolProfileModals';
 import LazySection from '@/components/schools/profile/LazySection';
 import SectionVisibilityToggle from '@/components/schools/template/SectionVisibilityToggle';
 import EditableImage from '@/components/schools/template/EditableImage';
 
-// Lightweight Loading Skeletons
-const SectionSkeleton = ({ height = 'h-72', title }: { height?: string; title?: string }) => (
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full animate-pulse">
-    <div className={`w-full ${height} rounded-3xl bg-slate-100/80 border border-slate-200/50 flex flex-col items-center justify-center p-6 text-center`}>
-      <div className="w-8 h-8 rounded-full border-2 border-slate-300 border-t-[#005689] animate-spin mb-3" />
-      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{title || 'Loading content...'}</span>
+const SectionSkeleton = ({ height = 'h-60', title }: { height?: string; title?: string }) => (
+  <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 w-full animate-pulse">
+    <div className={`w-full ${height} rounded-2xl bg-slate-100/80 border border-slate-200/50 flex flex-col items-center justify-center p-4 text-center`}>
+      <div className="w-7 h-7 rounded-full border-2 border-slate-300 border-t-[#005689] animate-spin mb-2" />
+      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{title || 'Loading...'}</span>
     </div>
   </div>
 );
 
 const TabSkeleton = ({ title }: { title: string }) => (
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full animate-pulse">
-    <div className="min-h-[400px] rounded-3xl bg-slate-50 border border-slate-200/60 flex flex-col items-center justify-center p-8 text-center">
-      <div className="w-10 h-10 rounded-full border-3 border-slate-200 border-t-[#005689] animate-spin mb-4" />
-      <h3 className="text-base font-extrabold text-slate-700 mb-1">{title}</h3>
+  <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-8 w-full animate-pulse">
+    <div className="min-h-[280px] rounded-2xl bg-slate-50 border border-slate-200/60 flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-[#005689] animate-spin mb-3" />
+      <h3 className="text-sm font-extrabold text-slate-700 mb-1">{title}</h3>
       <p className="text-xs text-slate-400">Loading verified data...</p>
     </div>
   </div>
 );
 
-// Below-The-Fold Home Sections (Dynamic Chunks, Browser-Cached)
-const SchoolAboutSection = dynamic(() => import('@/components/schools/profile/SchoolAboutSection'), {
-  loading: () => <SectionSkeleton height="h-96" title="About Institution" />
-});
-const SchoolCampusTourSection = dynamic(() => import('@/components/schools/profile/SchoolCampusTourSection'), {
-  loading: () => <SectionSkeleton height="h-80" title="Campus Tour" />
-});
-const SchoolImportantInfoSection = dynamic(() => import('@/components/schools/profile/SchoolImportantInfoSection'), {
-  loading: () => <SectionSkeleton height="h-72" title="Important Information" />
-});
-const SchoolFaqSection = dynamic(() => import('@/components/schools/template/SchoolFaqSection'), {
-  loading: () => <SectionSkeleton height="h-96" title="Frequently Asked Questions" />
-});
-
-// Dynamic Tab Components (Lazy-loaded upon clicking tab, then cached in memory)
-const SchoolAcademicsTab = dynamic(() => import('@/components/schools/profile/SchoolAcademicsTab'), {
-  loading: () => <TabSkeleton title="Loading Academics & Results" />
+// Home Sections (Below the fold)
+const SchoolCampusSection = dynamic(() => import('@/components/schools/profile/SchoolCampusSection'), {
+  loading: () => <SectionSkeleton height="h-72" title="Virtual Campus Tour & Gallery" />
 });
 const SchoolFacilitiesSection = dynamic(() => import('@/components/schools/profile/SchoolFacilitiesSection'), {
-  loading: () => <TabSkeleton title="Loading Campus Facilities" />
+  loading: () => <SectionSkeleton height="h-56" title="Campus Facilities" />
 });
-const SchoolCampusSection = dynamic(() => import('@/components/schools/profile/SchoolCampusSection'), {
-  loading: () => <TabSkeleton title="Loading Campus Life & Media" />
+const SchoolFaqSection = dynamic(() => import('@/components/schools/template/SchoolFaqSection'), {
+  loading: () => <SectionSkeleton height="h-64" title="Frequently Asked Questions" />
+});
+
+// Dynamic Tab Components (Lazy-loaded on tab click)
+const SchoolAcademicsTab = dynamic(() => import('@/components/schools/profile/SchoolAcademicsTab'), {
+  loading: () => <TabSkeleton title="Loading Academics & Results" />
 });
 const SchoolFeeSection = dynamic(() => import('@/components/schools/profile/SchoolFeeSection'), {
   loading: () => <TabSkeleton title="Loading Fee Structure & Admissions" />
@@ -97,29 +86,6 @@ const SchoolFeeSection = dynamic(() => import('@/components/schools/profile/Scho
 const SchoolReviewsSection = dynamic(() => import('@/components/schools/profile/SchoolReviewsSection'), {
   loading: () => <TabSkeleton title="Loading Reviews & Ratings" />
 });
-const SchoolContactDetailSection = dynamic(() => import('@/components/schools/profile/SchoolContactDetailSection'), {
-  loading: () => <TabSkeleton title="Loading Contact Desks" />
-});
-const SchoolAddressMapSection = dynamic(() => import('@/components/schools/profile/SchoolAddressMapSection'), {
-  ssr: false,
-  loading: () => (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="h-80 rounded-3xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xs uppercase tracking-wider animate-pulse">
-        Loading Interactive Campus Map...
-      </div>
-    </div>
-  )
-});
-const SchoolFooterSection = dynamic(() => import('@/components/schools/profile/SchoolFooterSection'), {
-  loading: () => <div className="h-28 bg-slate-900" />
-});
-
-// Heavy Modals (Loaded strictly on user demand, ssr: false)
-const ClaimSchoolModal = dynamic(() => import('@/components/schools/ClaimSchoolModal'), { ssr: false });
-const AddCardModal = dynamic(() => import('@/components/schools/template/AddCardModal'), { ssr: false });
-const FacultyModal = dynamic(() => import('@/components/schools/template/FacultyModal'), { ssr: false });
-const GalleryModal = dynamic(() => import('@/components/schools/template/GalleryModal'), { ssr: false });
-const AwardModal = dynamic(() => import('@/components/schools/template/AwardModal'), { ssr: false });
 
 export interface SchoolProfileViewProps {
   state: string;
@@ -172,23 +138,14 @@ export type TabType =
   | 'home'
   | 'about'
   | 'academics'
-  | 'results'
-  | 'facilities'
-  | 'gallery'
   | 'admissions'
-  | 'reviews'
-  | 'faq'
-  | 'contact';
+  | 'reviews';
 
 const navTabs: { id: TabType; label: string; shortLabel: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'home', label: 'Home', shortLabel: 'Home', icon: Home },
   { id: 'academics', label: 'Academic & Results', shortLabel: 'Academics', icon: BookOpen },
-  { id: 'facilities', label: 'Facilities', shortLabel: 'Facilities', icon: Layers },
-  { id: 'gallery', label: 'Campus Gallery', shortLabel: 'Gallery', icon: Eye },
   { id: 'admissions', label: 'Admissions & Fees', shortLabel: 'Admissions', icon: GraduationCap },
   { id: 'reviews', label: 'Reviews & Ratings', shortLabel: 'Reviews', icon: Star },
-  { id: 'faq', label: 'Frequently Asked Questions', shortLabel: 'FAQ', icon: HelpCircle },
-  { id: 'contact', label: 'Contact Us', shortLabel: 'Contact', icon: Phone }
 ];
 
 export default function SchoolProfileView({
@@ -296,23 +253,23 @@ export default function SchoolProfileView({
     const normalized = normalizeFeeTable(custom);
     if (normalized) return normalized;
     return {
-      columns: ['Class', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Dev / Building Fee (Monthly)', 'Activity Fee (Monthly)', 'Total Annual (Est.)'],
+      columns: ['Class / Grade', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Annual Charges (One Time)', 'Total Annual (Est.)'],
       rows: [
-        ['Pre (Nursery)', '', '', '', '', ''],
-        ['LKG', '', '', '', '', ''],
-        ['UKG', '', '', '', '', ''],
-        ['Class 1', '', '', '', '', ''],
-        ['Class 2', '', '', '', '', ''],
-        ['Class 3', '', '', '', '', ''],
-        ['Class 4', '', '', '', '', ''],
-        ['Class 5', '', '', '', '', ''],
-        ['Class 6', '', '', '', '', ''],
-        ['Class 7', '', '', '', '', ''],
-        ['Class 8', '', '', '', '', ''],
-        ['Class 9', '', '', '', '', ''],
-        ['Class 10', '', '', '', '', ''],
-        ['Class 11', '', '', '', '', ''],
-        ['Class 12', '', '', '', '', ''],
+        ['Pre (Nursery)', '', '', '', ''],
+        ['LKG', '', '', '', ''],
+        ['UKG', '', '', '', ''],
+        ['Class 1', '', '', '', ''],
+        ['Class 2', '', '', '', ''],
+        ['Class 3', '', '', '', ''],
+        ['Class 4', '', '', '', ''],
+        ['Class 5', '', '', '', ''],
+        ['Class 6', '', '', '', ''],
+        ['Class 7', '', '', '', ''],
+        ['Class 8', '', '', '', ''],
+        ['Class 9', '', '', '', ''],
+        ['Class 10', '', '', '', ''],
+        ['Class 11', '', '', '', ''],
+        ['Class 12', '', '', '', ''],
       ]
     };
   });
@@ -387,7 +344,7 @@ export default function SchoolProfileView({
   const templateData = templateCtx?.data || initialProfileData || null;
   const isLiveTemplate = (isTemplate && !!templateCtx) || Boolean(initialProfileData);
   const isAdmissionsOpen = Boolean(templateData?.admissionsOpen);
-  const isEditMode = templateCtx ? templateCtx.isEditMode : false;
+  const isEditMode = false;
 
   useEffect(() => {
     let isCancelled = false;
@@ -493,16 +450,21 @@ export default function SchoolProfileView({
   const [editingAward, setEditingAward] = useState<any | null>(null);
 
   // Tab Switching
-  const handleTabSwitch = (tab: TabType) => {
+  const handleTabSwitch = (tab: TabType | 'contact' | 'gallery' | 'facilities') => {
     setIsMobileMenuOpen(false);
-    if (tab === 'about') {
+    if (tab === 'contact') {
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    if (tab === 'about' || tab === 'gallery' || tab === 'facilities') {
       setActiveTab('home');
+      const targetId = tab === 'gallery' ? 'campus-tour' : tab === 'facilities' ? 'facilities' : 'about';
       setTimeout(() => {
-        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
       }, 60);
       return;
     }
-    setActiveTab(tab);
+    setActiveTab(tab as TabType);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -551,10 +513,7 @@ export default function SchoolProfileView({
       if (elapsed > 600) return;
       if (Math.abs(diffY) > 60) return;
 
-      const isStrictEdgeSwipe = startX <= 30 && diffX > 40;
-      if (isStrictEdgeSwipe) {
-        setIsMobileMenuOpen(true);
-      } else if (diffX < -50 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX < -50 && Math.abs(diffX) > Math.abs(diffY)) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -568,14 +527,35 @@ export default function SchoolProfileView({
     };
   }, []);
 
+  const formatTitleCaseLabel = (raw: string): string => {
+    const text = String(raw || '').trim();
+    if (!text) return '';
+    const letters = text.replace(/[^a-zA-Z]/g, '');
+    const upperCount = (text.match(/[A-Z]/g) || []).length;
+    if (!letters || upperCount / letters.length < 0.7) return text;
+    const preserveUpper = new Set(['CBSE', 'ICSE', 'ISC', 'IB', 'IGCSE', 'DAV', 'DPS', 'KV', 'KVS', 'JNV', 'NVS', 'PM', 'II', 'III', 'IV']);
+    const minorWords = new Set(['of', 'and', 'in', 'at', 'for', 'the', 'to', 'by', 'on']);
+    return text
+      .split(/\s+/)
+      .map((word, idx) => {
+        const cleanUpper = word.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        if (preserveUpper.has(cleanUpper)) return word.toUpperCase();
+        const lower = word.toLowerCase();
+        if (idx > 0 && minorWords.has(lower)) return lower;
+        return lower.charAt(0).toUpperCase() + lower.slice(1);
+      })
+      .join(' ');
+  };
+
   // Display texts matching institutional records
-  const displayName = isLiveTemplate
+  const rawDisplayName = isLiveTemplate
     ? (templateData?.schoolName || 'School Name')
     : (isTemplate
       ? 'School Name'
       : ((!schoolName || /^\d+$/.test(schoolName.trim()) || (/^\d+[a-z0-9_-]*$/i.test(schoolName.trim()) && schoolName.trim().length <= 15 && /\d{5}/.test(schoolName)))
         ? 'School Profile'
         : schoolName));
+  const displayName = formatTitleCaseLabel(rawDisplayName);
 
   const actualSchoolLogo = isLiveTemplate
     ? (templateData?.logoImage || templateData?.imageOverrides?.['school_logo'] || imageUrl || '')
@@ -670,13 +650,17 @@ export default function SchoolProfileView({
   const realAffiliationNo = templateData?.affiliationNumber || (templateData as any)?.affiliation_number || affiliationNumber || '';
   const displayAffiliationNo = realAffiliationNo ? String(realAffiliationNo).trim() : '';
 
-  const displayDistrict = isLiveTemplate
-    ? (templateData?.district || district || 'District')
-    : (district || 'Campus');
+  const displayDistrict = formatTitleCaseLabel(
+    isLiveTemplate
+      ? (templateData?.district || district || 'District')
+      : (district || 'Campus')
+  );
 
-  const displayState = isLiveTemplate
-    ? (templateData?.state || state || 'State')
-    : (state || 'State');
+  const displayState = formatTitleCaseLabel(
+    isLiveTemplate
+      ? (templateData?.state || state || 'State')
+      : (state || 'State')
+  );
 
   const displayClassFrom = isLiveTemplate
     ? (templateData?.classFrom || classFrom || '')
@@ -822,368 +806,43 @@ export default function SchoolProfileView({
   const campusVideoUrl = templateData?.campusVideoUrl || initialProfileData?.campusVideoUrl;
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-clip">
+    <div id="school-profile-app" className="min-h-screen bg-white text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-clip">
       
-
-      {/* 1. CONTAINER 1: TOP BRANDING & ACTION BAR (Labster Midnight Navy • School Name & Actions) */}
-      <div id="school-top-bar" className="w-full bg-[#001C33] border-b border-[#002F56] text-white z-40 relative font-['Hanken_Grotesk',sans-serif]">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-2 flex items-center justify-between gap-3 sm:gap-4">
-          
-          {/* School Brand / Logo + Name & Location */}
-          <div className="flex items-center gap-2.5 sm:gap-3 group min-w-0 text-left shrink-0">
-            {/* School Logo */}
-            {isLiveTemplate ? (
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl overflow-hidden bg-white border border-white/20 shadow-xs flex items-center justify-center shrink-0">
-                <EditableImage
-                  imageKey="school_logo"
-                  alt={displayName}
-                  defaultSrc="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23003c6e'/><text x='50' y='62' font-size='42' font-family='sans-serif' font-weight='900' fill='white' text-anchor='middle'>S</text></svg>"
-                  src={actualSchoolLogo}
-                  className="w-full h-full object-cover"
-                  containerClassName="w-full h-full"
-                />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => handleTabSwitch('home')}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl overflow-hidden bg-white border border-white/20 shadow-xs flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-all"
-                title="Go to Home"
-              >
-                {actualSchoolLogo ? (
-                  <img
-                    src={actualSchoolLogo}
-                    alt={displayName}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23003c6e'/><text x='50' y='62' font-size='42' font-family='sans-serif' font-weight='900' fill='white' text-anchor='middle'>S</text></svg>";
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-[#003c6e] to-[#005689] text-white font-black text-sm sm:text-base flex items-center justify-center">
-                    {displayName ? displayName.charAt(0).toUpperCase() : 'S'}
-                  </div>
-                )}
-              </button>
-            )}
-
-            {/* School Title & District/State (Lowercase school name, clean white font, balanced size) */}
-            <div className="flex flex-col min-w-0 flex-1 justify-center max-w-[210px] xs:max-w-[280px] sm:max-w-md md:max-w-lg lg:max-w-xl">
-              {/* Row 1: School Name in Lowercase + Verified Badge */}
-              <div className="flex items-center gap-1.5 flex-nowrap min-w-0">
-                {isLiveTemplate && isEditMode ? (
-                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                    <span className="text-xs sm:text-sm font-bold tracking-tight text-white truncate lowercase">
-                      {(templateData?.schoolName || displayName)?.toLowerCase()}
-                    </span>
-                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300 select-none shadow-2xs shrink-0" title="Official School Name is locked to Government UDISE+ record">
-                      <Lock className="w-2.5 h-2.5 text-amber-800" />
-                      Locked
-                    </span>
-                    <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white fill-[#38bdf8] shrink-0 drop-shadow-2xs" />
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span
-                      onClick={() => handleTabSwitch('home')}
-                      className="text-xs sm:text-sm font-bold tracking-tight text-white truncate cursor-pointer hover:text-blue-200 transition-colors inline lowercase"
-                      title={displayName}
-                    >
-                      {displayName?.toLowerCase()}
-                    </span>
-                    <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white fill-[#38bdf8] shrink-0 drop-shadow-2xs" />
-                  </div>
-                )}
-              </div>
-
-              {/* Row 2: Location (District, State) */}
-              <div className="text-[10px] sm:text-[11px] font-medium text-blue-100/90 mt-0.5 flex items-center gap-1.5 flex-nowrap truncate leading-none">
-                <span className="font-semibold text-blue-100 truncate text-[10px] sm:text-[11px]">
-                  {displayDistrict}, {displayState}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Desktop Actions (Hidden on Mobile View): Claim School, Admission, Login/User, Update */}
-          <div className="hidden md:flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Edit Mode Active: Provide Save Draft & Publish to Live */}
-            {isEditMode && canEditSchool && (
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={handleSaveDraft}
-                  className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-white/15 hover:bg-white/25 text-white border border-white/30 transition-all cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap"
-                  title="Save working draft locally"
-                >
-                  <Save className="w-3 h-3" />
-                  <span>{draftSaved ? 'Draft Saved!' : 'Save Draft'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleSaveUpdates}
-                  disabled={isUpdating}
-                  className={`inline-flex items-center justify-center gap-1 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-black transition-all cursor-pointer shadow-xs active:scale-95 whitespace-nowrap ${
-                    updateSuccess
-                      ? 'bg-emerald-600 text-white'
-                      : isUpdating
-                      ? 'bg-slate-400 text-white cursor-wait'
-                      : 'bg-[#FBBC04] hover:bg-amber-400 text-slate-950'
-                  }`}
-                  title="Publish verified updates permanently to Supabase database"
-                >
-                  {updateSuccess ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                      <span>Published!</span>
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>{isUpdating ? 'Publishing...' : 'Publish'}</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-
-            {/* If Authorized but not currently in Edit Mode: Quick Edit Details Button */}
-            {!isEditMode && (canEditSchool || isSuperAdminUser) && (
-              <button
-                type="button"
-                onClick={() => templateCtx?.setIsEditMode(true)}
-                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-950 bg-[#FBBC04] hover:bg-amber-400 shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
-                title="Open School Profile in Edit Mode"
-              >
-                <Edit3 className="w-3.5 h-3.5 stroke-[2.2]" />
-                <span>Edit Details</span>
-              </button>
-            )}
-
-            {/* Super Admin Quick "+ Add School" Button in Desktop Header */}
-            {isSuperAdminUser && (
-              <button
-                type="button"
-                onClick={() => setIsAddSchoolModalOpen(true)}
-                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
-                title="Add and verify a new school profile instantly as Super Admin"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>+ Add School</span>
-              </button>
-            )}
-
-            {/* Claim School Button (Labster Tonal Style) */}
-            {!isTemplate && !isEditMode && !canEditSchool && !isSuperAdminUser && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (!user) {
-                    const ret = typeof window !== 'undefined' ? window.location.pathname : '/schools';
-                    window.location.href = `/login?returnUrl=${encodeURIComponent(ret)}`;
-                  } else {
-                    setIsAddSchoolModalOpen(true);
-                  }
-                }}
-                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-[12px] text-xs font-bold text-[#006FCC] bg-[#EDF5FA] hover:bg-[#DDF0FC] border border-[#DDF0FC] shadow-xs transition-all cursor-pointer whitespace-nowrap active:scale-95 font-['Montserrat',sans-serif]"
-                title="Are you an official representative? Register or claim management of this school profile."
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#006FCC] stroke-[2.4]" />
-                <span>Claim School</span>
-              </button>
-            )}
-
-            {/* Admission Status Button (Labster Primary CTA) */}
-            <button
-              type="button"
-              onClick={() => {
-                if (isAdmissionsOpen) {
-                  setIsApplyModalOpen(true);
-                } else {
-                  setIsAdmissionConfigModalOpen(true);
-                }
+      {/* 1. CONTAINER 1: SLIM LIGHT CSEEL TOP STRIP (School Logo/Name/Menu bar removed) */}
+      <div id="school-top-bar" className="w-full bg-white border-b border-slate-200 z-40 relative font-['Hanken_Grotesk',sans-serif]">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-2">
+          <Link
+            href="/"
+            className="inline-flex items-center hover:opacity-90 transition-opacity shrink-0"
+            title="CSEEL Home"
+          >
+            <img
+              src="/images/cseel-logo.svg"
+              alt="CSEEL"
+              className="h-5 sm:h-[22px] w-auto object-contain shrink-0"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = '/images/cseel-logo.png';
               }}
-              className={`inline-flex items-center justify-center gap-1.5 font-bold font-['Montserrat',sans-serif] px-3.5 sm:px-4 py-1.5 rounded-[12px] text-xs transition-all duration-200 shrink-0 whitespace-nowrap cursor-pointer active:scale-95 ${
-                isAdmissionsOpen
-                  ? 'bg-[#006FCC] hover:bg-[#005399] text-white shadow-xs'
-                  : 'bg-slate-900 hover:bg-slate-950 text-white border border-white/20 shadow-xs hover:border-amber-400'
-              }`}
-              title={isAdmissionsOpen ? 'Apply for admission now' : 'Click to configure and activate admissions'}
-            >
-              <span>{isAdmissionsOpen ? 'Apply Now' : 'Inactive (Activate)'}</span>
-              
-            </button>
+            />
+          </Link>
 
-            {/* Small Circular Login / User Avatar Icon */}
-            {user ? (
-              <div 
-                ref={userMenuRef}
-                className="relative ml-0.5"
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsUserMenuOpen(prev => !prev);
-                  }}
-                  className="w-8 h-8 rounded-full bg-white text-[#005689] border-2 border-white shadow-sm flex items-center justify-center text-xs font-black transition-transform cursor-pointer hover:scale-105 active:scale-95"
-                  title={user.email || 'My Account'}
-                >
-                  {(user.email?.charAt(0) || 'U').toUpperCase()}
-                </button>
-
-                {/* Dropdown Menu */}
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1.5 w-60 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 px-2.5 z-50 animate-in fade-in zoom-in-95 duration-100">
-                    <div className="px-2 py-1.5 border-b border-slate-100 mb-1.5">
-                      <p className="text-xs font-bold text-slate-900 truncate">
-                        {user.user_metadata?.full_name || 'Signed In'}
-                      </p>
-                      <p className="text-[10px] text-slate-500 font-mono truncate">
-                        {user.email}
-                      </p>
-                      {(canEditSchool || isSuperAdminUser) && (
-                        <span className={`inline-flex items-center gap-1 text-[9.5px] font-bold px-2 py-0.5 rounded-full mt-1 ${
-                          authRole === 'admin' || isSuperAdminUser
-                            ? 'text-amber-800 bg-amber-50 border border-amber-300'
-                            : 'text-emerald-700 bg-emerald-50 border border-emerald-200'
-                        }`}>
-                          <CheckCircle2 className="w-2.5 h-2.5 text-amber-600" />
-                          <span>{authRole === 'admin' || isSuperAdminUser ? 'Verified Super Admin' : 'Verified School Owner'}</span>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* RBAC Action 1: If authorized for THIS school or Super Admin, show Edit Mode Toggle */}
-                    {(canEditSchool || isSuperAdminUser) ? (
-                      <div className="px-2 py-1.5 bg-[#FEFBF3] border border-[#F4EBD9] rounded-xl flex items-center justify-between gap-2 mb-1.5">
-                        <div className="flex items-center gap-1.5">
-                          <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
-                          <span className="text-xs font-bold text-slate-800">Edit Mode</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (templateCtx) {
-                              templateCtx.setIsEditMode(!isEditMode);
-                            }
-                          }}
-                          className={`w-10 h-5 flex items-center rounded-full p-0.5 cursor-pointer transition-colors duration-200 ${
-                            isEditMode ? 'bg-[#005689]' : 'bg-slate-300'
-                          }`}
-                          title={isEditMode ? 'Disable Edit Mode' : 'Enable Edit Mode'}
-                        >
-                          <div
-                            className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-200 ${
-                              isEditMode ? 'translate-x-5' : 'translate-x-0'
-                            }`}
-                          />
-                        </button>
-                      </div>
-                    ) : null}
-
-                    {/* RBAC Action 2: Dynamic Button: Super Admin can always add school; owners can edit/claim */}
-                    {isSuperAdminUser ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          setIsAddSchoolModalOpen(true);
-                        }}
-                        className="w-full px-2 py-1.5 text-left text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex items-center gap-2 transition-colors cursor-pointer mb-1.5"
-                      >
-                        <PlusCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                        <span className="truncate">+ Add New School Profile</span>
-                      </button>
-                    ) : userSchoolClaim && userSchoolClaim.isApproved ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          if (userSchoolClaim.udise_code === displayUdise) {
-                            templateCtx?.setIsEditMode(true);
-                          } else if (userSchoolClaim.profile_path) {
-                            window.location.href = `${userSchoolClaim.profile_path}?edit=true`;
-                          }
-                        }}
-                        className="w-full px-2 py-1.5 text-left text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#D6EDFF] rounded-xl flex items-center gap-2 transition-colors cursor-pointer mb-1.5"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-[#005689] shrink-0" />
-                        <span className="truncate">Edit Your School Details</span>
-                      </button>
-                    ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
-                      <div className="px-2 py-1.5 text-left text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200/80 rounded-xl flex items-center gap-2 mb-1.5">
-                        <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                        <div className="min-w-0">
-                          <p className="truncate text-[11px] font-black">Registration Pending</p>
-                          <p className="text-[9.5px] font-medium text-amber-700 truncate">{userSchoolClaim.school_name || 'Admin verification in progress'}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUserMenuOpen(false);
-                          setIsAddSchoolModalOpen(true);
-                        }}
-                        className="w-full px-2 py-1.5 text-left text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl flex items-center gap-2 transition-colors cursor-pointer mb-1.5"
-                      >
-                        <PlusCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                        <span className="truncate">Add Your School Profile</span>
-                      </button>
-                    )}
-
-                    {/* Log Out Button */}
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        await signOut();
-                        setIsUserMenuOpen(false);
-                      }}
-                      className="w-full px-2 py-1.5 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-2 transition-colors cursor-pointer"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                      <span>Log Out</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link
-                href={typeof window !== 'undefined' ? `/login?returnUrl=${encodeURIComponent(window.location.pathname)}` : '/login'}
-                className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white border border-white/30 shadow-2xs hover:shadow flex items-center justify-center transition-all cursor-pointer shrink-0 hover:scale-105 active:scale-95 ml-0.5"
-                title="Login to CSEEL"
-              >
-                <LogIn className="w-3.5 h-3.5 text-white" />
-              </Link>
-            )}
-          </div>
-
-          {/* Mobile Actions: Clean Hamburger Menu Button (Buttons move to Side Drawer) */}
-          <div className="flex md:hidden items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 active:bg-white/30 text-white border border-white/20 transition-all cursor-pointer flex items-center justify-center shadow-xs"
-              aria-label="Open mobile navigation menu"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
-
+          <Link
+            href="/schools"
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#EDF5FA] hover:bg-[#D6EDFF] border border-[#006FCC]/25 text-[10.5px] sm:text-xs font-bold text-[#005689] transition-all active:scale-95 whitespace-nowrap shrink-0"
+          >
+            See More School
+          </Link>
         </div>
       </div>
 
       {/* 2. CONTAINER 2: DEDICATED STICKY NAVIGATION TAB BAR (Labster Design System) */}
       <nav 
         id="school-tab-navigation-bar" 
-        className={`sticky ${Boolean(isTemplate && templateCtx) ? 'top-[52px]' : 'top-0'} z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E8E9E9] shadow-xs transition-all`}
+        className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-[#E8E9E9] shadow-xs transition-all"
         aria-label="School sections navigation"
       >
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-1.5 sm:py-2">
-          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth touch-pan-x">
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-1 sm:py-1.5">
+          <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [touch-action:pan-x_pan-y]">
             {effectiveNavTabs.map((tab) => {
               const isActive = activeTab === tab.id;
               const Icon = tab.icon;
@@ -1192,14 +851,14 @@ export default function SchoolProfileView({
                   key={tab.id}
                   type="button"
                   onClick={() => handleTabSwitch(tab.id)}
-                  className={`inline-flex items-center gap-1 sm:gap-1.5 px-3 py-1.5 rounded-[12px] text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-150 shrink-0 cursor-pointer select-none active:scale-[0.98] ${
+                  className={`inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 rounded-xl text-[11px] sm:text-xs font-bold font-['Montserrat',sans-serif] transition-all duration-150 shrink-0 cursor-pointer select-none active:scale-[0.98] ${
                     isActive
                       ? 'text-white bg-[#006FCC] hover:bg-[#005399] shadow-xs'
                       : 'text-[#1B1F23] hover:text-[#006FCC] hover:bg-[#F7F8F8] border border-[#E8E9E9] bg-white'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                  <span className="whitespace-nowrap leading-none text-xs">
+                  <span className="whitespace-nowrap leading-none text-[11px] sm:text-xs">
                     {/* Short Name on Mobile, Full Name on Desktop */}
                     <span className="inline md:hidden">{tab.shortLabel}</span>
                     <span className="hidden md:inline">{tab.label}</span>
@@ -1268,6 +927,25 @@ export default function SchoolProfileView({
               Quick Actions
             </span>
 
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="py-2 px-2.5 rounded-xl text-[11px] font-bold bg-[#001C33] text-white hover:bg-[#002B4F] flex items-center justify-center gap-1.5 shadow-2xs transition-all"
+              >
+                <Home className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
+                <span className="truncate">CSEEL Home</span>
+              </Link>
+              <Link
+                href="/schools"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="py-2 px-2.5 rounded-xl text-[11px] font-bold bg-[#EDF5FA] text-[#005689] border border-[#D6EDFF] hover:bg-[#D6EDFF] flex items-center justify-center gap-1.5 shadow-2xs transition-all"
+              >
+                <Compass className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">More Schools</span>
+              </Link>
+            </div>
+
             {/* Admission Status Button */}
             <button
               type="button"
@@ -1325,25 +1003,6 @@ export default function SchoolProfileView({
                   <span>Claim School Profile</span>
                 </span>
                 <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
-              </button>
-            )}
-
-            {/* Save Profile Updates Button (if in edit mode) */}
-            {isEditMode && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handleSaveUpdates();
-                }}
-                disabled={isUpdating}
-                className="w-full py-2.5 px-3 rounded-xl text-xs font-black bg-[#FBBC04] hover:bg-amber-400 text-slate-950 flex items-center justify-between shadow-xs transition-all cursor-pointer"
-              >
-                <span className="flex items-center gap-2">
-                  <Save className="w-4 h-4" />
-                  <span>{isUpdating ? 'Saving Changes...' : 'Save Profile Updates'}</span>
-                </span>
-                <Check className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -1415,35 +1074,7 @@ export default function SchoolProfileView({
                 </div>
               )}
 
-              {/* Edit Mode Toggle Switch (Strictly for Authorized Users Only) */}
-              {(canEditSchool || isSuperAdminUser) && (
-                <div className="p-2 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
-                    Edit Mode
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (templateCtx) {
-                        templateCtx.setIsEditMode(!isEditMode);
-                      }
-                    }}
-                    className={`w-9 h-5 flex items-center rounded-full p-0.5 cursor-pointer transition-colors ${
-                      isEditMode ? 'bg-[#005689]' : 'bg-slate-300'
-                    }`}
-                  >
-                    <div
-                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${
-                        isEditMode ? 'translate-x-4' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
-                </div>
-              )}
-
-              {/* Dynamic Button: Super Admin can always add school; owners can edit/claim */}
+              {/* Dynamic Button: Super Admin can always add school; owners can view status */}
               {isSuperAdminUser ? (
                 <button
                   type="button"
@@ -1458,25 +1089,6 @@ export default function SchoolProfileView({
                     <span>+ Add New School Profile</span>
                   </span>
                   <ChevronRight className="w-3.5 h-3.5 text-emerald-700" />
-                </button>
-              ) : userSchoolClaim && userSchoolClaim.isApproved ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    if (userSchoolClaim.udise_code === displayUdise) {
-                      templateCtx?.setIsEditMode(true);
-                    } else if (userSchoolClaim.profile_path) {
-                      window.location.href = `${userSchoolClaim.profile_path}?edit=true`;
-                    }
-                  }}
-                  className="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-[#005689] bg-[#EDF5FA] hover:bg-[#D6EDFF] border border-[#D6EDFF] flex items-center justify-between transition-colors cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <Edit3 className="w-3.5 h-3.5 text-[#005689]" />
-                    <span>Edit Your School Details</span>
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-[#005689]" />
                 </button>
               ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
                 <div className="p-2.5 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
@@ -1516,16 +1128,7 @@ export default function SchoolProfileView({
                 <span>Sign Out</span>
               </button>
             </div>
-          ) : (
-            <Link
-              href={typeof window !== 'undefined' ? `/login?returnUrl=${encodeURIComponent(window.location.pathname)}` : '/login'}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="w-full py-2.5 px-3 rounded-xl bg-[#005689] hover:bg-[#004168] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Login to School Portal</span>
-            </Link>
-          )}
+          ) : null}
         </div>
       </aside>
 
@@ -1536,45 +1139,33 @@ export default function SchoolProfileView({
       {/* ─── TAB 1: HOME ─── */}
       {activeTab === 'home' && (
         <div key="tab-home" className="animate-fade-in transition-opacity duration-300 space-y-0">
-          {/* 1. HERO SECTION (INSTANT, ABOVE THE FOLD) */}
-          {isSectionVisible('hero') && (
-            <SchoolHeroSection
-              displayName={displayName}
-              displayBoard={displayBoard}
-              displayUdise={displayUdise}
-              isAdmissionsOpen={isAdmissionsOpen}
-              isLiveTemplate={isLiveTemplate}
-              isEditMode={isEditMode}
-              templateData={templateData}
-              totalStudents={totalStudents}
-              totalTeachers={totalTeachers}
-              classroomsCount={classroomsCount}
-              schoolCategory={schoolCategory}
-              classFrom={classFrom}
-              classTo={classTo}
-              imageUrl={imageUrl}
-              actualSchoolLogo={actualSchoolLogo}
-              flipbookSlides={flipbookSlides}
-              residentialSchool={residentialSchool}
-              onApplyClick={() => setIsApplyModalOpen(true)}
-              onTourClick={() => {
-                const el = document.getElementById('campus-tour');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  setIsTourModalOpen(true);
-                }
-              }}
-              onExploreClick={() => handleTabSwitch('academics')}
-              onTabSwitch={handleTabSwitch}
-            />
+          {/* 1. ABOUT OUR INSTITUTION (ABOVE-THE-FOLD REPLACING HERO SECTION) */}
+          {isSectionVisible('about') && (
+            <div className="relative group/sect">
+              <SectionVisibilityToggle sectionId="about" sectionTitle="About Institution" />
+              <SchoolAboutSection
+                displayName={displayName}
+                displayUdise={displayUdise}
+                displayBoard={displayBoard}
+                isLiveTemplate={isLiveTemplate}
+                isEditMode={isEditMode}
+                templateData={templateData}
+                initialProfileData={initialProfileData}
+                imageUrl={imageUrl}
+                displayEstablished={displayEstablished}
+                displayStudents={displayStudents}
+                displayTeachers={displayTeachers}
+                displayCampusArea={displayCampusArea}
+                onApplyClick={() => setIsApplyModalOpen(true)}
+              />
+            </div>
           )}
 
-          {/* 1.5. DEDICATED STATISTICAL CARDS SECTION (BELOW HERO SECTION - LAZY VIEWPORT) */}
+          {/* 1.5. DEDICATED STATISTICAL CARDS SECTION (SINGLE SOURCE OF TRUTH) */}
           {isSectionVisible('stats') && (
             <div className="relative group/sect">
               <SectionVisibilityToggle sectionId="stats" sectionTitle="Key Statistics" />
-              <LazySection id="stats" minHeight="240px">
+              <LazySection id="stats" minHeight="160px">
                 <SchoolStatsSection
                   displayBoard={displayBoard}
                   displayUdise={displayUdise}
@@ -1589,98 +1180,59 @@ export default function SchoolProfileView({
                   schoolType={management}
                   medium={medium}
                   genderType={genderType}
+                  establishedYear={displayEstablished}
+                  campusArea={displayCampusArea}
+                  affiliationNumber={displayAffiliationNo}
                 />
               </LazySection>
             </div>
           )}
 
-          {/* 2. ABOUT SECTION (LAZY VIEWPORT) */}
-          {isSectionVisible('about') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="about" sectionTitle="About Institution" />
-              <LazySection id="about" minHeight="420px">
-                <SchoolAboutSection
-                  displayName={displayName}
-                  isLiveTemplate={isLiveTemplate}
-                  isEditMode={isEditMode}
-                  templateData={templateData}
-                  initialProfileData={initialProfileData}
-                  imageUrl={imageUrl}
-                  displayEstablished={displayEstablished}
-                  displayStudents={displayStudents}
-                  displayTeachers={displayTeachers}
-                  displayCampusArea={displayCampusArea}
-                  onApplyClick={() => setIsApplyModalOpen(true)}
-                />
-              </LazySection>
+          {/* AdSense In-Profile Sponsor Banner */}
+          <div className="bg-white border-b border-[#E8EAED] py-3 sm:py-4">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+              <AdSenseBanner label="Sponsored Education Partner" responsive={true} />
+            </div>
+          </div>
+
+          {/* 3. VIRTUAL CAMPUS TOUR & GALLERY UNIFIED SECTION */}
+          {(isSectionVisible('campus_tour') || isSectionVisible('gallery')) && (
+            <div id="campus-tour" className="relative group/sect">
+              <SectionVisibilityToggle sectionId="campus_tour" sectionTitle="Virtual Campus Tour & Gallery" />
+              <SchoolCampusSection
+                displayName={displayName}
+                videoUrl={campusVideoUrl}
+                onUpdateVideoUrl={(url) => {
+                  templateCtx?.updateField('campusVideoUrl' as any, url);
+                }}
+                isLiveTemplate={isLiveTemplate}
+                isEditMode={isEditMode}
+                templateData={templateData}
+                templateCtx={templateCtx}
+                onAddMediaClick={() => setIsGalleryModalOpen(true)}
+                onTourClick={() => setIsTourModalOpen(true)}
+                onApplyClick={() => setIsApplyModalOpen(true)}
+              />
             </div>
           )}
 
-          {/* 2.5. DEDICATED ABOUT CARDS SECTION (4 FLOATING 3D CARDS - LAZY VIEWPORT) */}
-          {isSectionVisible('about') && isSectionVisible('about_cards') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="about_cards" sectionTitle="Heritage Cards" />
-              <LazySection id="about-cards" minHeight="300px">
-                <SchoolAboutCardsSection
-                  displayName={displayName}
-                  isLiveTemplate={isLiveTemplate}
-                  isEditMode={isEditMode}
-                  templateData={templateData}
-                  displayEstablished={displayEstablished}
-                  displayStudents={displayStudents}
-                  displayTeachers={displayTeachers}
-                  displayCampusArea={displayCampusArea}
-                />
-              </LazySection>
+          {/* 4. CAMPUS FACILITIES SECTION (ONE-SCREEN GLANCE INSIDE HOME TAB BEFORE FAQ) */}
+          {isSectionVisible('facilities') && (
+            <div id="facilities" className="relative group/sect">
+              <SectionVisibilityToggle sectionId="facilities" sectionTitle="School Facilities" />
+              <SchoolFacilitiesSection
+                isEditMode={isEditMode}
+                effectiveFacilities={effectiveFacilities}
+                templateCtx={templateCtx}
+              />
             </div>
           )}
 
-          {/* 3. CAMPUS TOUR SECTION (LAZY VIEWPORT) */}
-          {isSectionVisible('campus_tour') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="campus_tour" sectionTitle="Campus Tour Video" />
-              <LazySection id="campus-tour" minHeight="450px">
-                <SchoolCampusTourSection
-                  displayName={displayName}
-                  videoUrl={campusVideoUrl}
-                  isEditMode={isEditMode}
-                  onUpdateVideoUrl={(url) => {
-                    templateCtx?.updateField('campusVideoUrl' as any, url);
-                  }}
-                />
-              </LazySection>
-            </div>
-          )}
-
-          {/* 4. IMPORTANT INFO SECTION (LAZY VIEWPORT) */}
-          {isSectionVisible('important_info') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="important_info" sectionTitle="Important Information" />
-              <LazySection id="important-info" minHeight="380px">
-                <SchoolImportantInfoSection
-                  isLiveTemplate={isLiveTemplate}
-                  isEditMode={isEditMode}
-                  templateData={templateData}
-                  displayBoard={displayBoard}
-                  boardsList={boardsList}
-                  displayAffiliationNo={displayAffiliationNo}
-                  displayUdise={displayUdise}
-                  displayManagementLabel={displayManagementLabel}
-                  displayMedium={displayMedium}
-                  mediumsList={mediumsList}
-                  classFrom={displayClassFrom}
-                  classTo={displayClassTo}
-                  displayClasses={displayClasses}
-                />
-              </LazySection>
-            </div>
-          )}
-
-          {/* 8. FAQ SECTION (LAZY VIEWPORT) */}
+          {/* 5. FAQ SECTION (COMPACT MAX 5 QUESTIONS) */}
           {isSectionVisible('faqs') && (
             <div className="relative group/sect">
               <SectionVisibilityToggle sectionId="faqs" sectionTitle="Frequently Asked Questions" />
-              <LazySection id="home-faq" minHeight="480px">
+              <LazySection id="home-faq" minHeight="320px">
                 <SchoolFaqSection
                   id="home-faq"
                   schoolName={displayName}
@@ -1727,36 +1279,7 @@ export default function SchoolProfileView({
         </div>
       )}
 
-      {/* ─── TAB 3: FACILITIES ─── */}
-      {activeTab === 'facilities' && (
-        <div key="tab-facilities" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="facilities" sectionTitle="School Facilities" />
-          <SchoolFacilitiesSection
-            isEditMode={isEditMode}
-            effectiveFacilities={effectiveFacilities}
-            templateCtx={templateCtx}
-          />
-        </div>
-      )}
-
-      {/* ─── TAB 4: GALLERY / CAMPUS ─── */}
-      {activeTab === 'gallery' && (
-        <div key="tab-gallery" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="gallery" sectionTitle="Campus Gallery" />
-          <SchoolCampusSection
-            displayName={displayName}
-            isLiveTemplate={isLiveTemplate}
-            isEditMode={isEditMode}
-            templateData={templateData}
-            templateCtx={templateCtx}
-            onAddMediaClick={() => setIsGalleryModalOpen(true)}
-            onTourClick={() => setIsTourModalOpen(true)}
-            onApplyClick={() => setIsApplyModalOpen(true)}
-          />
-        </div>
-      )}
-
-      {/* ─── TAB 5: ADMISSIONS & FEES ─── */}
+      {/* ─── TAB 3: ADMISSIONS & FEES ─── */}
       {activeTab === 'admissions' && (
         <div key="tab-admissions" className="relative group/sect animate-fade-in transition-opacity duration-300">
           <SectionVisibilityToggle sectionId="admissions" sectionTitle="Admissions & Fees" />
@@ -1785,6 +1308,7 @@ export default function SchoolProfileView({
             setFeesTable={setFeesTable}
             extraChargesTable={extraChargesTable}
             setExtraChargesTable={setExtraChargesTable}
+            templateCtx={templateCtx}
           />
         </div>
       )}
@@ -1797,517 +1321,311 @@ export default function SchoolProfileView({
         </div>
       )}
 
-      {/* ─── TAB: FREQUENTLY ASKED QUESTIONS (FAQS) ─── */}
-      {activeTab === 'faq' && (
-        <div key="tab-faq" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="faqs" sectionTitle="Frequently Asked Questions" />
-          <SchoolFaqSection
-            id="faq-tab"
-            schoolName={displayName}
-            board={displayBoard}
-            udiseCode={displayUdise}
-            address={displayAddress}
-            state={state}
-            district={district}
-            village={village}
-            pincode={pincode}
-            classFrom={displayClassFrom}
-            classTo={displayClassTo}
-            schoolCategory={schoolCategory}
-            management={displayManagementLabel}
-            medium={displayMedium}
-            genderType={genderType}
-            totalStudents={totalStudents}
-            totalTeachers={totalTeachers}
-            workingSmartBoards={workingSmartBoards}
-            computerIctLab={computerIctLab}
-            atalStemLab={atalStemLab}
-            playgroundAvailable={playgroundAvailable}
-          />
-        </div>
-      )}
+      {/* NEARBY LOCATION-BASED SCHOOLS MINI-CARDS & STRUCTURED CSEEL NAVIGATION (ABOVE FOOTER) */}
+      {(() => {
+        const toSlug = (val: string, fallback: string) =>
+          (val || fallback)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || fallback;
 
-      {/* ─── TAB 7: CONTACT DETAILS & ADDRESS MAP ─── */}
-      {activeTab === 'contact' && (
-        <div key="tab-contact" className="relative group/sect animate-fade-in transition-opacity duration-300 space-y-12">
-          <SectionVisibilityToggle sectionId="contact" sectionTitle="Contact Information" />
-          <SchoolContactDetailSection
-            displayName={displayName}
-            isLiveTemplate={isLiveTemplate}
-            isEditMode={isEditMode}
-            templateData={templateData}
-            displayGeneralPhone={displayGeneralPhone}
-            displayGeneralEmail={displayGeneralEmail}
-            displayAdmissionsPhone={displayAdmissionsPhone}
-            displayAdmissionsEmail={displayAdmissionsEmail}
-            displayPrincipalPhone={displayPrincipalPhone}
-            displayPrincipalEmail={displayPrincipalEmail}
-            displayCareersPhone={displayCareersPhone}
-            displayCareersEmail={displayCareersEmail}
-          />
-          <SchoolAddressMapSection
-            displayName={displayName}
-            displayAddress={displayAddress}
-            displayWebsiteUrl={website}
-            lat={lat}
-            lng={lng}
-          />
-        </div>
-      )}
+        const rawNearby = [...(districtSchools || []), ...(clusterSchools || [])];
+        const seenCodes = new Set<string>();
+        const nearbyList = rawNearby.filter((s: any) => {
+          const name = String(s?.school_name || s?.name || '').trim();
+          const code = String(s?.udise_code || s?.school_id || '').trim();
+          if (!name) return false;
+          if (code && displayUdise && code === displayUdise) return false;
+          if (name.toLowerCase() === displayName.toLowerCase()) return false;
+          const key = code || name.toLowerCase();
+          if (seenCodes.has(key)) return false;
+          seenCodes.add(key);
+          return true;
+        }).slice(0, 10);
 
-      {/* FOOTER SECTION (LAZY VIEWPORT) */}
-      <LazySection minHeight="240px">
-        <SchoolFooterSection
-          displayName={displayName}
-          actualSchoolLogo={actualSchoolLogo}
-          templateData={templateData}
-          displayAddress={displayAddress}
-          displayPhone={displayPhone}
-          displayEmail={displayEmail}
-          onTabSwitch={handleTabSwitch}
-        />
-      </LazySection>
+        const districtDirectorySlug = displayDistrict && displayDistrict.toLowerCase() !== 'district'
+          ? toSlug(displayDistrict, '')
+          : '';
+        const districtListingHref = districtDirectorySlug
+          ? `/schools/schools-in-${districtDirectorySlug}`
+          : '/schools';
+
+        return (
+          <section
+            aria-label="Nearby Schools & CSEEL Directory Navigation"
+            className="bg-white border-b border-[#E8EAED] py-4 sm:py-5"
+          >
+            <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 space-y-3.5">
+              {/* Compact Heading + Directory / Home Links */}
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <MapPin className="w-3.5 h-3.5 text-[#006FCC] shrink-0" />
+                  <h3 className="!text-xs sm:!text-sm !font-medium !text-slate-700 truncate m-0">
+                    Nearby Schools{displayDistrict && displayDistrict.toLowerCase() !== 'district' ? ` in ${displayDistrict}` : (displayState ? ` in ${displayState}` : '')}
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    href="/schools"
+                    className="inline-flex items-center gap-1 text-[10.5px] sm:text-xs font-bold text-[#006FCC] hover:underline whitespace-nowrap"
+                  >
+                    <span>Visit School Listing</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                  <span className="text-slate-300 text-[10px]">|</span>
+                  <Link
+                    href="/"
+                    className="inline-flex items-center gap-1 text-[10.5px] sm:text-xs font-bold text-slate-700 hover:text-[#006FCC] whitespace-nowrap"
+                  >
+                    <Home className="w-3 h-3 text-[#006FCC]" />
+                    <span>CSEEL Home</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Single Horizontal Swipeable Row: Image at Top, Text Below */}
+              {nearbyList.length > 0 && (
+                <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
+                  {nearbyList.map((s: any, idx: number) => {
+                    const sName = String(s.school_name || s.name || 'School').trim();
+                    const sState = String(s.state_name || displayState || 'delhi').trim();
+                    const sDist = String(s.district_name || displayDistrict || 'delhi').trim();
+                    const sVill = String(s.village_name || village || 'main').trim();
+                    const sCode = String(s.udise_code || s.school_id || '').trim();
+                    const sBoard = cleanBoardName(String(s.board_10th || '')) || 'School';
+                    const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
+                    const nameSlug = toSlug(sName, 'school');
+                    const href = sCode
+                      ? `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${toSlug(sVill, 'main')}/${encodeURIComponent(sCode)}/${nameSlug}`
+                      : `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${toSlug(sVill, 'main')}/${nameSlug}`;
+
+                    return (
+                      <Link
+                        key={sCode || `${nameSlug}-${idx}`}
+                        href={href}
+                        className="group w-[138px] sm:w-[162px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
+                        title={`${sName} — ${sVill}, ${sDist}`}
+                      >
+                        <div className="relative w-full h-[78px] sm:h-[90px] bg-slate-100 overflow-hidden shrink-0">
+                          <img
+                            src={sImg}
+                            alt={sName}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = '/images/default-school-placeholder.png?v=3';
+                            }}
+                          />
+                        </div>
+                        <div className="p-2 sm:p-2.5 flex flex-col justify-between flex-1 gap-1.5">
+                          <p className="!text-[11px] sm:!text-xs !font-medium !text-slate-700 group-hover:!text-[#006FCC] !leading-snug line-clamp-2 m-0">
+                            {sName}
+                          </p>
+                          <div className="flex items-center justify-between gap-1 pt-0.5">
+                            <span className="text-[9px] sm:text-[10px] text-slate-500 font-normal truncate">
+                              {sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist}
+                            </span>
+                            <span className="text-[8.5px] font-medium uppercase tracking-tight text-[#005689] bg-[#EDF5FA] px-1.5 py-0.5 rounded shrink-0">
+                              {sBoard}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Structured Step-by-Step Website Links Strip */}
+              <div className="pt-2.5 border-t border-slate-200/70 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px]">
+                <span className="font-bold text-slate-500 uppercase tracking-wider text-[9px] mr-1">
+                  Explore CSEEL:
+                </span>
+                <Link
+                  href="/"
+                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-[#006FCC] text-slate-700 hover:text-[#006FCC] font-semibold transition"
+                >
+                  CSEEL Official Home
+                </Link>
+                <Link
+                  href="/schools"
+                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-[#006FCC] text-slate-700 hover:text-[#006FCC] font-semibold transition"
+                >
+                  All Schools Listing
+                </Link>
+                {districtDirectorySlug && (
+                  <Link
+                    href={districtListingHref}
+                    className="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-[#006FCC] text-slate-700 hover:text-[#006FCC] font-semibold transition"
+                  >
+                    {displayDistrict} Schools
+                  </Link>
+                )}
+                <Link
+                  href="/domain/science"
+                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-[#006FCC] text-slate-700 hover:text-[#006FCC] font-semibold transition"
+                >
+                  Science Labs
+                </Link>
+                <Link
+                  href="/materials"
+                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-[#006FCC] text-slate-700 hover:text-[#006FCC] font-semibold transition"
+                >
+                  Lab Materials
+                </Link>
+                <Link
+                  href="/edu-network/teachers"
+                  className="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-[#006FCC] text-slate-700 hover:text-[#006FCC] font-semibold transition"
+                >
+                  Teaching Jobs
+                </Link>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* UNIFIED CONTACT, CAMPUS MAP & FOOTER SECTION (EAGERLY RENDERED FOR SSR & INSTANT ACCESS) */}
+      <SchoolFooterSection
+        displayName={displayName}
+        templateData={templateData}
+        displayAddress={displayAddress}
+        displayState={displayState}
+        displayDistrict={displayDistrict}
+        village={village}
+        pincode={pincode}
+        displayPhone={displayPhone}
+        displayEmail={displayEmail}
+        displayGeneralPhone={displayGeneralPhone}
+        displayGeneralEmail={displayGeneralEmail}
+        displayAdmissionsPhone={displayAdmissionsPhone}
+        displayAdmissionsEmail={displayAdmissionsEmail}
+        displayPrincipalPhone={displayPrincipalPhone}
+        displayPrincipalEmail={displayPrincipalEmail}
+        displayCareersPhone={displayCareersPhone}
+        displayCareersEmail={displayCareersEmail}
+        website={website}
+        lat={lat}
+        lng={lng}
+        onTabSwitch={handleTabSwitch}
+      />
 
       {/* ========================================================= */}
       {/* 3. MODALS (APPLY, TOUR, CLAIM, LIVE EDIT)                 */}
       {/* ========================================================= */}
 
-      {/* Admission Application Modal */}
-      {isApplyModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-gray-100">
-            <button
-              onClick={() => setIsApplyModalOpen(false)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            {isSubmitted ? (
-              <div className="py-8 text-center space-y-3">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-10 h-10" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-950">Application Received!</h3>
-                <p className="text-sm text-gray-600">
-                  Our admissions counselor will contact you at <strong>{applicantPhone}</strong> within 24 hours.
-                </p>
-              </div>
-            ) : (
-              <div>
-                <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] mb-1">
-                  <span className="w-4 h-1 bg-[#FBBC04] rounded-full inline-block" />
-                  <span>ADMISSION DESK 2026-27</span>
-                </div>
-
-                <h3 className="text-2xl font-black text-gray-950">Apply for Admission</h3>
-                <p className="text-xs text-gray-500 mt-1 mb-4">
-                  {displayName} • UDISE: {displayUdise || 'Verified'}
-                </p>
-
-                {!isAdmissionsOpen && (
-                  <div className="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
-                    <Lock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-xs font-bold text-amber-900">Online Admissions Currently Inactive</div>
-                      <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
-                        Online application submissions for this school are presently inactive. You may contact the admissions office directly or revisit during the next enrollment window.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <form onSubmit={isAdmissionsOpen ? handleApplySubmit : (e) => e.preventDefault()} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                      Student / Parent Name *
-                    </label>
-                    <input
-                      type="text"
-                      required={isAdmissionsOpen}
-                      disabled={!isAdmissionsOpen}
-                      placeholder="e.g. Rahul Sharma"
-                      value={applicantName}
-                      onChange={(e) => setApplicantName(e.target.value)}
-                      className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none ${
-                        !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
-                      }`}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        required={isAdmissionsOpen}
-                        disabled={!isAdmissionsOpen}
-                        placeholder="+91 98765 43210"
-                        value={applicantPhone}
-                        onChange={(e) => setApplicantPhone(e.target.value)}
-                        className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none ${
-                          !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                        Class Applying For *
-                      </label>
-                      <select
-                        value={applicantClass}
-                        disabled={!isAdmissionsOpen}
-                        onChange={(e) => setApplicantClass(e.target.value)}
-                        className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none bg-white ${
-                          !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                      >
-                        <option value="Nursery">Nursery / Pre-Primary</option>
-                        <option value="KG">Kindergarten (KG)</option>
-                        <option value="Class 1">Class 1</option>
-                        <option value="Class 2">Class 2</option>
-                        <option value="Class 3">Class 3</option>
-                        <option value="Class 4">Class 4</option>
-                        <option value="Class 5">Class 5</option>
-                        <option value="Class 6">Class 6</option>
-                        <option value="Class 7">Class 7</option>
-                        <option value="Class 8">Class 8</option>
-                        <option value="Class 9">Class 9</option>
-                        <option value="Class 10">Class 10</option>
-                        <option value="Class 11">Class 11 (Senior Secondary)</option>
-                        <option value="Class 12">Class 12 (Senior Secondary)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                      Email Address (Optional)
-                    </label>
-                    <input
-                      type="email"
-                      disabled={!isAdmissionsOpen}
-                      placeholder="parent@example.com"
-                      value={applicantEmail}
-                      onChange={(e) => setApplicantEmail(e.target.value)}
-                      className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none ${
-                        !isAdmissionsOpen ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'focus:ring-2 focus:ring-blue-500'
-                      }`}
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={!isAdmissionsOpen || isSubmittingEnquiry}
-                      className={`w-full font-bold py-3.5 rounded-xl text-sm transition-all shadow-md ${
-                        isAdmissionsOpen
-                          ? 'bg-[#005689] hover:bg-[#003c6e] text-white hover:shadow-lg active:scale-[0.99] cursor-pointer'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                    >
-                      {isSubmittingEnquiry ? 'Sending Inquiry to School...' : isAdmissionsOpen ? 'Submit Application' : 'Admissions Currently Inactive'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ADMISSION ACTIVATION & CONTACT CONFIGURATION MODAL */}
-      {isAdmissionConfigModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsAdmissionConfigModalOpen(false)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors z-10 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            {configSuccessMessage ? (
-              <div className="text-center py-6">
-                <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-7 h-7 stroke-[3]" />
-                </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">Admissions Activated!</h4>
-                <p className="text-xs text-gray-600 leading-relaxed">{configSuccessMessage}</p>
-              </div>
-            ) : (
-              <div>
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase text-[#005689] mb-1">
-                  <span className="w-4 h-1 bg-amber-400 rounded-full inline-block" />
-                  <span>INSTITUTIONAL ADMISSION SETUP</span>
-                </div>
-
-                <h3 className="text-2xl font-black text-gray-950">Activate Online Admissions</h3>
-                <p className="text-xs text-gray-500 mt-1 mb-6 leading-relaxed">
-                  Enter official admission contact details for <strong>{displayName}</strong>. When parents submit inquiries, an email alert with applicant data will be sent directly to this address and stored in the database.
-                </p>
-
-                <form onSubmit={handleSaveAdmissionConfig} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                      Admission Contact Person / Desk *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Admissions Coordinator / Principal Desk"
-                      value={admissionContactPerson}
-                      onChange={(e) => setAdmissionContactPerson(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#005689]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                      Admissions Email (Where inquiries will be sent) *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="e.g. admissions@school.edu.in or principal@school.com"
-                      value={admissionEmail}
-                      onChange={(e) => setAdmissionEmail(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#005689]"
-                    />
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      All new student admission applications &amp; phone contacts will be emailed directly here.
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
-                      Admissions Helpline Phone *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="+91 98765 43210"
-                      value={admissionPhone}
-                      onChange={(e) => setAdmissionPhone(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#005689]"
-                    />
-                  </div>
-
-                  <div className="pt-3">
-                    <button
-                      type="submit"
-                      disabled={isConfiguringAdmissions}
-                      className="w-full font-bold py-3.5 rounded-xl text-sm bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-md hover:shadow-lg active:scale-[0.99] cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <Check className="w-4 h-4 stroke-[2.5]" />
-                      <span>{isConfiguringAdmissions ? 'Activating Admissions...' : 'Activate Admissions & Save Contact'}</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Campus Video Tour Modal */}
-      {isTourModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl relative">
-            <button
-              onClick={() => setIsTourModalOpen(false)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors z-10"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <h3 className="text-xl font-bold text-gray-950 mb-4 flex items-center gap-2">
-              <Play className="w-5 h-5 text-blue-600 fill-current" />
-              <span>{displayName} Campus Walkthrough</span>
-            </h3>
-
-            {campusVideoUrl ? (
-              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black relative flex items-center justify-center">
-                <iframe
-                  className="w-full h-full"
-                  src={campusVideoUrl.includes('watch?v=') ? `https://www.youtube.com/embed/${campusVideoUrl.split('watch?v=')[1]?.split('&')[0]}` : campusVideoUrl}
-                  title="School Campus Walkthrough"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            ) : (
-              <div className="aspect-video w-full rounded-2xl bg-slate-900 flex flex-col items-center justify-center text-center p-6 text-white">
-                <Play className="w-12 h-12 text-[#38BDF8] mb-3 opacity-80" />
-                <h4 className="text-lg font-bold">Campus Video Walkthrough</h4>
-                <p className="text-xs text-slate-300 max-w-md mt-1.5">
-                  Official video tour for this school is being recorded and will be published once verified by the school administration.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Live Template WYSIWYG Editor Modals */}
-      {isLiveTemplate && (
-        <>
-          <AddCardModal
-            isOpen={isAddFacilityModalOpen}
-            onClose={() => {
-              setIsAddFacilityModalOpen(false);
-              setEditingFacility(null);
-            }}
-            cardType="facility"
-            initialData={editingFacility ? {
-              title: editingFacility.title || editingFacility.name || '',
-              desc: editingFacility.desc || editingFacility.details || '',
-              points: editingFacility.points || editingFacility._raw?.points || [],
-              icon: editingFacility.iconName || editingFacility._raw?.icon || (typeof editingFacility.icon === 'string' ? editingFacility.icon : 'TestTubes'),
-              illustration: editingFacility.illustration || editingFacility._raw?.illustration,
-              badge: editingFacility.badge || editingFacility.category
-            } : undefined}
-            onSave={(card) => {
-              const facilityPayload = {
-                title: card.title,
-                desc: card.desc || card.criteria || 'Standard school facility',
-                points: card.points,
-                icon: card.icon,
-                illustration: card.illustration,
-                badge: card.badge
-              };
-              if (editingFacility) {
-                templateCtx?.updateFacilityCard(editingFacility.id, facilityPayload);
-              } else {
-                templateCtx?.addFacilityCard(facilityPayload);
-              }
-            }}
-          />
-
-          <AddCardModal
-            isOpen={isAddAdmissionModalOpen}
-            onClose={() => {
-              setIsAddAdmissionModalOpen(false);
-              setEditingAdmission(null);
-            }}
-            cardType="admission"
-            initialData={editingAdmission ? {
-              title: editingAdmission.title || '',
-              criteria: editingAdmission.criteria || editingAdmission.desc || '',
-              points: editingAdmission.points || editingAdmission._raw?.points || [],
-              fees: editingAdmission.fees,
-              icon: editingAdmission.icon || 'GraduationCap',
-              illustration: editingAdmission.illustration,
-              badge: editingAdmission.badge
-            } : undefined}
-            onSave={(card) => {
-              const admissionPayload = {
-                title: card.title,
-                criteria: card.criteria || card.desc || 'Standard admission criteria',
-                points: card.points,
-                fees: card.fees,
-                icon: card.icon,
-                illustration: card.illustration,
-                badge: card.badge
-              };
-              if (editingAdmission) {
-                templateCtx?.updateAdmissionCard(editingAdmission.id, admissionPayload);
-              } else {
-                templateCtx?.addAdmissionCard(admissionPayload);
-              }
-            }}
-          />
-
-          <FacultyModal
-            isOpen={isFacultyModalOpen}
-            onClose={() => {
-              setIsFacultyModalOpen(false);
-              setEditingFaculty(null);
-            }}
-            initialData={editingFaculty}
-            onSave={(member) => {
-              if (editingFaculty) {
-                templateCtx?.updateFacultyCard(editingFaculty.id, member);
-              } else {
-                templateCtx?.addFacultyCard(member);
-              }
-            }}
-          />
-
-          <GalleryModal
-            isOpen={isGalleryModalOpen}
-            onClose={() => setIsGalleryModalOpen(false)}
-            onSave={(item) => {
-              templateCtx?.addGalleryItem(item);
-            }}
-          />
-
-          <AwardModal
-            isOpen={isAwardModalOpen}
-            onClose={() => {
-              setIsAwardModalOpen(false);
-              setEditingAward(null);
-            }}
-            initialData={editingAward}
-            onSave={(award) => {
-              if (editingAward) {
-                templateCtx?.updateAwardCard(editingAward.id, award);
-              } else {
-                templateCtx?.addAwardCard(award);
-              }
-            }}
-          />
-        </>
-      )}
-
-      {/* Claim This School Modal */}
-      <ClaimSchoolModal
-        isOpen={isClaimModalOpen}
-        onClose={() => setIsClaimModalOpen(false)}
-        schoolName={displayName}
-        udiseCode={displayUdise}
+      <SchoolProfileModals
+        displayName={displayName}
+        displayUdise={displayUdise}
+        campusVideoUrl={campusVideoUrl}
+        isAdmissionsOpen={isAdmissionsOpen}
+        isLiveTemplate={isLiveTemplate}
+        templateCtx={templateCtx}
+        isApplyModalOpen={isApplyModalOpen}
+        setIsApplyModalOpen={setIsApplyModalOpen}
+        isSubmitted={isSubmitted}
+        applicantName={applicantName}
+        setApplicantName={setApplicantName}
+        applicantPhone={applicantPhone}
+        setApplicantPhone={setApplicantPhone}
+        applicantClass={applicantClass}
+        setApplicantClass={setApplicantClass}
+        applicantEmail={applicantEmail}
+        setApplicantEmail={setApplicantEmail}
+        isSubmittingEnquiry={isSubmittingEnquiry}
+        handleApplySubmit={handleApplySubmit}
+        isAdmissionConfigModalOpen={isAdmissionConfigModalOpen}
+        setIsAdmissionConfigModalOpen={setIsAdmissionConfigModalOpen}
+        configSuccessMessage={configSuccessMessage}
+        admissionContactPerson={admissionContactPerson}
+        setAdmissionContactPerson={setAdmissionContactPerson}
+        admissionEmail={admissionEmail}
+        setAdmissionEmail={setAdmissionEmail}
+        admissionPhone={admissionPhone}
+        setAdmissionPhone={setAdmissionPhone}
+        isConfiguringAdmissions={isConfiguringAdmissions}
+        handleSaveAdmissionConfig={handleSaveAdmissionConfig}
+        isTourModalOpen={isTourModalOpen}
+        setIsTourModalOpen={setIsTourModalOpen}
+        isAddFacilityModalOpen={isAddFacilityModalOpen}
+        setIsAddFacilityModalOpen={setIsAddFacilityModalOpen}
+        editingFacility={editingFacility}
+        setEditingFacility={setEditingFacility}
+        isAddAdmissionModalOpen={isAddAdmissionModalOpen}
+        setIsAddAdmissionModalOpen={setIsAddAdmissionModalOpen}
+        editingAdmission={editingAdmission}
+        setEditingAdmission={setEditingAdmission}
+        isFacultyModalOpen={isFacultyModalOpen}
+        setIsFacultyModalOpen={setIsFacultyModalOpen}
+        editingFaculty={editingFaculty}
+        setEditingFaculty={setEditingFaculty}
+        isGalleryModalOpen={isGalleryModalOpen}
+        setIsGalleryModalOpen={setIsGalleryModalOpen}
+        isAwardModalOpen={isAwardModalOpen}
+        setIsAwardModalOpen={setIsAwardModalOpen}
+        editingAward={editingAward}
+        setEditingAward={setEditingAward}
+        isClaimModalOpen={isClaimModalOpen}
+        setIsClaimModalOpen={setIsClaimModalOpen}
+        isAddSchoolModalOpen={isAddSchoolModalOpen}
+        setIsAddSchoolModalOpen={setIsAddSchoolModalOpen}
       />
 
-      {/* Add / Register School Profile Modal */}
-      <AddSchoolModal
-        isOpen={isAddSchoolModalOpen}
-        onClose={() => setIsAddSchoolModalOpen(false)}
-        defaultUdise={displayUdise}
-        defaultSchoolName={displayName}
-      />
-
-      {/* ─── MOBILE STICKY FLOATING ACTION BAR (High-Converting B2B & Parent Lead Engine) ─── */}
-      <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-4 py-3 shadow-2xl safe-bottom">
-        <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
-          <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block truncate">
-              {displayBoard || 'CBSE'} • Verified Campus
-            </span>
-            <span className="text-xs font-bold text-white truncate block">
-              {displayName}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {displayPhone && (
-              <a
-                href={`tel:${displayPhone.replace(/[^0-9+]/g, '')}`}
-                aria-label="Call School"
-                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 active:scale-95 transition-all"
-              >
-                <Phone className="w-4 h-4" />
-              </a>
-            )}
-            <button
-              type="button"
-              onClick={() => setIsClaimModalOpen(true)}
-              className="py-2.5 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold shadow-lg shadow-blue-900/30 active:scale-95 transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer"
+      {/* ─── STICKY FLOATING ACTION BAR (Call Icon + WhatsApp + Mail + Claim Profile) ─── */}
+      <div className="fixed bottom-0 inset-x-0 z-50 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-3 py-2 shadow-2xl safe-bottom">
+        <div className="flex items-center justify-center gap-2 max-w-lg mx-auto">
+          {displayPhone ? (
+            <a
+              href={`tel:${displayPhone.replace(/[^0-9+]/g, '')}`}
+              aria-label="Call School"
+              title={`Call School: ${displayPhone}`}
+              className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 active:scale-95 transition-all"
             >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Claim Profile</span>
-            </button>
-          </div>
+              <Phone className="w-4 h-4" />
+            </a>
+          ) : (
+            <a
+              href="#contact"
+              aria-label="Contact School"
+              title="Contact School"
+              className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 active:scale-95 transition-all"
+            >
+              <Phone className="w-4 h-4" />
+            </a>
+          )}
+
+          {/* WhatsApp Support Button (9050778830) */}
+          <a
+            href="https://wa.me/919050778830?text=Hi%20CSEEL%2C%20I%20have%20an%20inquiry%20regarding%20school%20profile"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp"
+            title="Chat on WhatsApp: 9050778830"
+            className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] border border-[#25D366]/40 active:scale-95 transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.57 20.15 9.12 19.76 7.85 19L7.55 18.82L4.43 19.64L5.26 16.6L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.05 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.05 20.15ZM16.57 14.36C16.32 14.23 15.1 13.63 14.88 13.55C14.65 13.47 14.49 13.43 14.32 13.68C14.16 13.93 13.68 14.49 13.53 14.66C13.39 14.82 13.24 14.84 12.99 14.72C12.75 14.59 11.95 14.33 11 13.49C10.26 12.83 9.76 12.02 9.61 11.77C9.47 11.53 9.6 11.39 9.72 11.27C9.83 11.16 9.97 10.98 10.1 10.83C10.22 10.68 10.26 10.58 10.34 10.41C10.43 10.25 10.38 10.1 10.32 9.98C10.26 9.85 9.77 8.65 9.56 8.16C9.36 7.68 9.16 7.74 9.01 7.73C8.87 7.73 8.71 7.72 8.54 7.72C8.38 7.72 8.11 7.78 7.89 8.03C7.66 8.27 7.02 8.87 7.02 10.1C7.02 11.32 7.91 12.5 8.03 12.67C8.16 12.83 9.78 15.34 12.27 16.41C12.86 16.67 13.32 16.82 13.68 16.94C14.28 17.13 14.82 17.1 15.26 17.04C15.75 16.97 16.76 16.42 16.97 15.83C17.18 15.24 17.18 14.74 17.11 14.63C17.05 14.52 16.82 14.48 16.57 14.36Z" />
+            </svg>
+          </a>
+
+          {/* Mail Button (update@mailer.cseel.org) */}
+          <a
+            href="mailto:update@mailer.cseel.org?subject=School%20Profile%20Update%20Inquiry"
+            aria-label="Email Us"
+            title="Email: update@mailer.cseel.org"
+            className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 border border-sky-500/40 active:scale-95 transition-all"
+          >
+            <Mail className="w-4 h-4" />
+          </a>
+
+          <button
+            type="button"
+            onClick={() => setIsClaimModalOpen(true)}
+            className="flex-1 py-2.5 px-3.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold shadow-lg shadow-blue-900/30 active:scale-95 transition-all whitespace-nowrap inline-flex items-center justify-center gap-1.5 cursor-pointer font-['Montserrat',sans-serif]"
+          >
+            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <span>Claim Profile</span>
+          </button>
         </div>
       </div>
 

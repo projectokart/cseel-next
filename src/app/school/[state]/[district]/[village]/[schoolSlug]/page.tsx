@@ -597,10 +597,37 @@ export default async function SchoolPage({ params }: PageProps) {
     }
   }
 
-  // 3. Populate sibling and cluster schools instantly from local verified dataset
-  const currentUdise = schoolData?.udise_code || preliminaryUdise;
+  // 3. Populate nearby location-matched sibling and cluster schools (Supabase district/state + local verified fallback)
+  const currentUdise = String(schoolData?.udise_code || preliminaryUdise || '').trim();
   const currentName = (schoolData?.school_name || fallbackSchoolName).toLowerCase();
-  const rawDistLower = rawDistrict.toLowerCase();
+  const resolvedDistrictForNearby = (schoolData?.district_name || rawDistrict || '').trim();
+  const resolvedStateForNearby = (schoolData?.state_name || rawState || '').trim();
+  const rawDistLower = resolvedDistrictForNearby.toLowerCase();
+  const rawStateLower = resolvedStateForNearby.toLowerCase();
+
+  let dbNearbyRows: any[] = [];
+  try {
+    if (resolvedDistrictForNearby && rawDistLower !== 'district') {
+      const { data: distRows } = await schoolSearchSupabase
+        .from('udise_private_schools')
+        .select('*')
+        .ilike('district_name', `%${resolvedDistrictForNearby}%`)
+        .limit(12);
+      if (Array.isArray(distRows)) {
+        dbNearbyRows = distRows;
+      }
+    }
+    if (dbNearbyRows.length < 6 && resolvedStateForNearby) {
+      const { data: stateRows } = await schoolSearchSupabase
+        .from('udise_private_schools')
+        .select('*')
+        .ilike('state_name', `%${resolvedStateForNearby}%`)
+        .limit(12);
+      if (Array.isArray(stateRows)) {
+        dbNearbyRows = [...dbNearbyRows, ...stateRows];
+      }
+    }
+  } catch {}
 
   const districtMatches = SCHOOLS_DATA.filter((s) => {
     const sU = s.udise_code || s.udiseCode;
@@ -609,37 +636,60 @@ export default async function SchoolPage({ params }: PageProps) {
     return sU !== currentUdise && sN !== currentName && (dN.includes(rawDistLower) || rawDistLower.includes(dN));
   });
 
+  const stateMatches = SCHOOLS_DATA.filter((s) => {
+    const sU = s.udise_code || s.udiseCode;
+    const sN = (s.school_name || s.name || '').toLowerCase();
+    const stN = (s.state_name || s.state || '').toLowerCase();
+    return sU !== currentUdise && sN !== currentName && !districtMatches.includes(s) && rawStateLower && stN.includes(rawStateLower);
+  });
+
   const remainingMatches = SCHOOLS_DATA.filter((s) => {
     const sU = s.udise_code || s.udiseCode;
     const sN = (s.school_name || s.name || '').toLowerCase();
-    return sU !== currentUdise && sN !== currentName && !districtMatches.includes(s);
+    return sU !== currentUdise && sN !== currentName && !districtMatches.includes(s) && !stateMatches.includes(s);
   });
 
-  const allCandidateSiblings = [...districtMatches, ...remainingMatches];
+  const normalizeNearby = (s: any) => {
+    const rawImg = String(s.image_url || s.image || s.banner_url || s.logo_url || '').trim();
+    const safeImg = isValidSchoolImage(rawImg) ? rawImg : PLACEHOLDER_EMPTY_IMAGE;
+    return {
+      school_id: s.school_id || s.id || s.udise_code || s.udiseCode,
+      school_name: s.school_name || s.name || '',
+      district_name: s.district_name || s.city || resolvedDistrictForNearby || rawDistrict,
+      village_name: s.village_name || s.village_ward || s.locality || rawVillage,
+      state_name: s.state_name || s.state || resolvedStateForNearby || rawState,
+      udise_code: s.udise_code || s.udiseCode || '',
+      total_students: s.total_students || 0,
+      board_10th: s.board_10th || s.board_secondary_10th || s.board || '',
+      management_desc: s.management_desc || s.management_desc_state || s.management_type || '',
+      image_url: safeImg,
+      image: safeImg,
+    };
+  };
 
-  const districtSchools = allCandidateSiblings.slice(0, 4).map((s) => ({
-    school_id: s.school_id || s.id,
-    school_name: s.school_name || s.name,
-    district_name: s.district_name || rawDistrict,
-    village_name: s.village_ward || rawVillage,
-    state_name: s.state_name || rawState,
-    udise_code: s.udise_code || s.udiseCode,
-    total_students: s.total_students,
-    board_10th: s.board_secondary_10th || s.board,
-    management_desc: s.management_desc_state || s.management_type,
-  }));
+  const mergedRaw = [
+    ...dbNearbyRows.map(normalizeNearby),
+    ...districtMatches.map(normalizeNearby),
+    ...stateMatches.map(normalizeNearby),
+    ...remainingMatches.map(normalizeNearby),
+  ];
 
-  const clusterSchools = allCandidateSiblings.slice(4, 7).map((s) => ({
-    school_id: s.school_id || s.id,
-    school_name: s.school_name || s.name,
-    district_name: s.district_name || rawDistrict,
-    village_name: s.village_ward || rawVillage,
-    state_name: s.state_name || rawState,
-    udise_code: s.udise_code || s.udiseCode,
-    total_students: s.total_students,
-    board_10th: s.board_secondary_10th || s.board,
-    management_desc: s.management_desc_state || s.management_type,
-  }));
+  const seenNearbyKeys = new Set<string>();
+  const allCandidateSiblings: any[] = [];
+  for (const item of mergedRaw) {
+    const itemUdise = String(item.udise_code || '').trim();
+    const itemNameLower = String(item.school_name || '').trim().toLowerCase();
+    if (!itemNameLower || itemNameLower === currentName) continue;
+    if (itemUdise && currentUdise && itemUdise === currentUdise) continue;
+    const dedupKey = itemUdise || itemNameLower;
+    if (seenNearbyKeys.has(dedupKey)) continue;
+    seenNearbyKeys.add(dedupKey);
+    allCandidateSiblings.push(item);
+    if (allCandidateSiblings.length >= 12) break;
+  }
+
+  const districtSchools = allCandidateSiblings.slice(0, 6);
+  const clusterSchools = allCandidateSiblings.slice(6, 10);
 
   let dbProfileJson: any = null;
   if (profRow) {

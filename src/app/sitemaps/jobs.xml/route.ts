@@ -19,20 +19,24 @@ export async function GET() {
     console.error('Error loading jobs for sitemap:', err);
   }
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${jobs
-  .map((j) => {
-    const loc = `${baseUrl}/edu-network/teachers/job/${encodeURIComponent(j.id)}`;
-    const lastmod = j.openingDate && /^\d{4}-\d{2}-\d{2}$/.test(j.openingDate) ? j.openingDate : today;
-    return `  <url>
+  const validUrls = jobs
+    .map((j) => {
+      const jobId = (j.id || j.slug || j.source_id || '').trim();
+      if (!jobId || jobId === 'undefined' || jobId === 'null') return null;
+      const loc = `${baseUrl}/edu-network/teachers/job/${encodeURIComponent(jobId)}`;
+      const lastmod = j.openingDate && /^\d{4}-\d{2}-\d{2}$/.test(j.openingDate) ? j.openingDate : today;
+      return `  <url>
     <loc>${loc}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>`;
-  })
-  .join('\n')}
+    })
+    .filter(Boolean);
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${validUrls.join('\n')}
 </urlset>`;
 
   return new NextResponse(xml, {

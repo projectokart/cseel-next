@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import PageTransition from "@/components/shared/PageTransition";
+import AdSenseBanner from "@/components/ads/AdSenseBanner";
 import { ALL_BLOGS, BlogPostItem } from "@/lib/blogsData";
 import { 
   Heart, 
@@ -561,6 +562,7 @@ export default function BlogClient() {
                 {/* ========================================================================= */}
                 {/* 4. PAGINATION: Exact Labster Pagination Bar                               */}
                 {/* ========================================================================= */}
+                <AdSenseBanner label="Sponsored Partner" className="mt-10" />
                 {totalPages > 1 && (
                   <div className="pagination-wrapper pagination mt-14 flex flex-col items-center gap-3">
                     <p className="text-[12.5px] font-medium text-[#5F6265]">

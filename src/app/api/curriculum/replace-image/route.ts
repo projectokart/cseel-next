@@ -35,7 +35,19 @@ function isAuthorizedAdmin(req: NextRequest, bodyEmail?: string, bodyKey?: strin
  * Convert any image buffer to AVIF and automatically compress under 10 KB
  */
 async function convertToAvifUnder10Kb(rawBuffer: Buffer): Promise<{ buffer: Buffer; sizeKb: number; quality: number }> {
-  const sharp = (await import('sharp')).default;
+  let sharp: any = null;
+  try {
+    const dynamicRequire = eval("require");
+    sharp = dynamicRequire('sharp');
+  } catch {
+    // In edge / Cloudflare Worker environment where sharp C++ bindings are not supported
+    return { buffer: rawBuffer, sizeKb: Number((rawBuffer.length / 1024).toFixed(2)), quality: 100 };
+  }
+
+  if (!sharp) {
+    return { buffer: rawBuffer, sizeKb: Number((rawBuffer.length / 1024).toFixed(2)), quality: 100 };
+  }
+
   let quality = 70;
   let maxDim = 360;
 

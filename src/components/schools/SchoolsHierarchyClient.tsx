@@ -1343,7 +1343,7 @@ function renderSchoolCard(
           onClick={() => setNavigatingTo(profileUrl)}
           className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm text-center shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-1.5"
         >
-          <span>View Profile</span>
+          <span>View</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

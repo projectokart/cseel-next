@@ -57,6 +57,7 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
   const openingDate = s.od || '';
   const dateMs = openingDate ? (Date.parse(openingDate) || 0) : 0;
   const imgUrl = (s.im && typeof s.im === 'string' && s.im.trim() !== '') ? s.im.trim() : null;
+  const logoUrl = (s.lg && typeof s.lg === 'string' && s.lg.trim() !== '') ? s.lg.trim() : null;
 
   const rawDesig = s.g || null;
   const designation = (rawDesig && DESIGNATION_DECODE[rawDesig]) ? DESIGNATION_DECODE[rawDesig] : rawDesig;
@@ -80,12 +81,36 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
     })
   );
 
+  const isLogoLike = Boolean(imgUrl && (imgUrl.includes('logo') || imgUrl.includes('crest') || imgUrl.includes('100_100') || imgUrl.includes('avatar')));
+
+  const rawUrl = (s.u || '').toLowerCase();
+  let authenticSource = 'Naukri.com';
+  if (rawUrl.includes('linkedin')) {
+    authenticSource = 'LinkedIn';
+  } else if (rawUrl.includes('indeed')) {
+    authenticSource = 'Indeed';
+  } else if (rawUrl.includes('naukri')) {
+    authenticSource = 'Naukri.com';
+  } else if (rawUrl.includes('timesjobs') || rawUrl.includes('times')) {
+    authenticSource = 'TimesJobs';
+  } else if (rawUrl.includes('shine')) {
+    authenticSource = 'Shine.com';
+  } else if (rawUrl.includes('teacheron')) {
+    authenticSource = 'TeacherON';
+  } else if (rawUrl.includes('apna')) {
+    authenticSource = 'Apna.co';
+  } else if (s.src && SOURCE_DECODE[s.src] && !SOURCE_DECODE[s.src].includes('Direct')) {
+    authenticSource = SOURCE_DECODE[s.src];
+  } else if (s.src && typeof s.src === 'string' && !s.src.toLowerCase().includes('direct') && !s.src.toLowerCase().includes('school')) {
+    authenticSource = s.src;
+  }
+
   return {
     id,
     slug: id,
     organisationName: s.n || 'Educational Institution',
-    organisationLogo: imgUrl,
-    image_url:        imgUrl,
+    organisationLogo: logoUrl || (isLogoLike ? imgUrl : null),
+    image_url:        imgUrl && !isLogoLike ? imgUrl : null,
     jobPostName:      s.t || 'Teaching Position',
     designation:      designation,
     subject:          s.s || null,
@@ -103,12 +128,12 @@ export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
     minExperience:    s.x  || null,
     openingDate,
     lastDate:         '',
-    source:           SOURCE_DECODE[s.src] || s.src || 'Direct School Portal',
+    source:           authenticSource,
     originalUrl:      s.u  || 'https://www.cseel.org/edu-network/teachers',
     applyUrl:         s.u  || undefined,
     verified:         Boolean(s.v),
     urgent:           isUrgent,
-    badge:            isUrgent ? '🔥 Urgent Hiring' : (s.v ? `${SOURCE_DECODE[s.src] || s.src || 'Direct'} Verified` : ''),
+    badge:            isUrgent ? '🔥 Urgent Hiring' : (s.v ? `${authenticSource} Verified` : ''),
     forLady:          isLady,
     distanceKm:       undefined,
     _dateMs:          dateMs,

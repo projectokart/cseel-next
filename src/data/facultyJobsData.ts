@@ -70,7 +70,13 @@ export function toLightweightJob(j: any): FacultyJobItem {
     minExperience: j.minExperience || j.experience_required || null,
     openingDate,
     lastDate: j.lastDate || j.deadline || '',
-    source: j.source || 'Direct School Portal',
+    source: (j.originalUrl || j.applyUrl || '').toLowerCase().includes('linkedin')
+      ? 'LinkedIn'
+      : (j.originalUrl || j.applyUrl || '').toLowerCase().includes('indeed')
+      ? 'Indeed'
+      : (j.source && !j.source.toLowerCase().includes('direct') && !j.source.toLowerCase().includes('school'))
+      ? j.source
+      : 'Naukri.com',
     originalUrl: j.originalUrl || j.applyUrl || '',
     applyUrl: j.applyUrl || j.originalUrl || '',
     rating: j.rating || null,
@@ -300,7 +306,15 @@ export function mapRawRowToFacultyJobItem(r: any): FacultyJobItem {
     minExperience: r.experience_required || r.minExperience || '0-3 Yrs',
     openingDate: meta.opening_date || (r.posted_at ? r.posted_at.split('T')[0] : 'Today'),
     lastDate: r.deadline || r.lastDate || undefined,
-    source: meta.source || r.source || 'Direct School Portal',
+    source: (meta.url || r.originalUrl || '').toLowerCase().includes('linkedin')
+      ? 'LinkedIn'
+      : (meta.url || r.originalUrl || '').toLowerCase().includes('indeed')
+      ? 'Indeed'
+      : (meta.source && !meta.source.toLowerCase().includes('direct') && !meta.source.toLowerCase().includes('school'))
+      ? meta.source
+      : (r.source && !r.source.toLowerCase().includes('direct') && !r.source.toLowerCase().includes('school'))
+      ? r.source
+      : 'Naukri.com',
     originalUrl: meta.url || r.originalUrl || 'https://www.cseel.org/edu-network/teachers',
     applyUrl: meta.apply_url || meta.url || r.applyUrl || undefined,
     verified: true,

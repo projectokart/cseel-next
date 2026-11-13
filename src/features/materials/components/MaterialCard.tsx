@@ -24,13 +24,13 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
   onToggleWishlist,
 }) => {
   const isSelected = quantity > 0;
-  const [imgSrc, setImgSrc] = useState<string>(product.image_url);
+  const [imgSrc, setImgSrc] = useState<string>(product.cdn_image_url || product.image_url);
   const [imgFailed, setImgFailed] = useState<boolean>(false);
 
   useEffect(() => {
-    setImgSrc(product.image_url);
+    setImgSrc(product.cdn_image_url || product.image_url);
     setImgFailed(false);
-  }, [product.image_url]);
+  }, [product.cdn_image_url, product.image_url]);
 
   const handleImageError = () => {
     if (product.cdn_image_url && imgSrc !== product.cdn_image_url) {

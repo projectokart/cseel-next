@@ -1,0 +1,114 @@
+{
+  "exportFormatVersion": 2,
+  "exportTime": "2026-10-24 08:20:00",
+  "containerVersion": {
+    "path": "accounts/6399607689/containers/283356441/versions/0",
+    "accountId": "6399607689",
+    "containerId": "283356441",
+    "container": {
+      "path": "accounts/6399607689/containers/283356441",
+      "accountId": "6399607689",
+      "containerId": "283356441",
+      "name": "cseel.org",
+      "publicId": "GTM-59C7X2VD",
+      "usageContext": [
+        "web"
+      ]
+    },
+    "tag": [
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "tagId": "1",
+        "name": "Google Analytics 4 - Web Stream",
+        "type": "googtag",
+        "parameter": [
+          {
+            "type": "template",
+            "key": "tagId",
+            "value": "G-LYST8M89SF"
+          }
+        ],
+        "firingTriggerId": [
+          "2147479553"
+        ],
+        "tagFiringOption": "oncePerEvent"
+      },
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "tagId": "2",
+        "name": "Microsoft Clarity - Heatmaps & Recordings",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "template",
+            "key": "html",
+            "value": "<script type=\"text/javascript\">\n(function(c,l,a,r,i,t,y){\nc[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};\nt=l.createElement(r);t.async=1;t.src=\"https://www.clarity.ms/tag/\"+i;\ny=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);\n})(window, document, \"clarity\", \"script\", \"z2ie9rhdco\");\n</script>"
+          },
+          {
+            "type": "boolean",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "firingTriggerId": [
+          "2147479553"
+        ],
+        "tagFiringOption": "oncePerEvent"
+      }
+    ],
+    "trigger": [
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "triggerId": "10",
+        "name": "CSEEL Lead Conversions (Custom Event)",
+        "type": "customEvent",
+        "customEventFilter": [
+          {
+            "type": "matchRegex",
+            "parameter": [
+              {
+                "type": "template",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "template",
+                "key": "arg1",
+                "value": "book_demo|contact_form_submit|lead_submission"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "builtInVariable": [
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "type": "pageUrl",
+        "name": "Page URL"
+      },
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "type": "pageHostname",
+        "name": "Page Hostname"
+      },
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "type": "pagePath",
+        "name": "Page Path"
+      },
+      {
+        "accountId": "6399607689",
+        "containerId": "283356441",
+        "type": "event",
+        "name": "Event"
+      }
+    ]
+  }
+}

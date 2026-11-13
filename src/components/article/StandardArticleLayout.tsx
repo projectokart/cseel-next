@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import PageTransition from '@/components/shared/PageTransition';
 import OtherLabSolutions from '@/components/composite/OtherLabSolutions';
+import { AdSenseInArticle } from '@/components/ads/AdSenseBanner';
 import { SchemeArticleData, SCHEMES_DATA } from '@/lib/schemesData';
 import { 
   ChevronRight, 
@@ -289,6 +290,7 @@ export default function StandardArticleLayout({ scheme }: Props) {
                 </div>
 
                 {/* Section 3: Financial & Grant Allocation Matrix */}
+                <AdSenseInArticle className="my-6" />
                 <div className="space-y-3 pt-4 border-t border-slate-100">
                   <div>
                     <h2 className="text-xl sm:text-2xl font-black" style={{ color: '#003c6e' }}>

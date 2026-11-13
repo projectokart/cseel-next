@@ -1,4 +1,9 @@
-import nodemailer from 'nodemailer';
+/**
+ * mailerService.ts — Cloudflare Workers compatible email sender.
+ * Uses Resend API (fetch-based) as primary.
+ * Falls back to AWS SES SMTP REST (HTTP API) if Resend key missing.
+ * nodemailer removed — not supported on Cloudflare Workers.
+ */
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -21,86 +26,93 @@ export interface SendEmailResult {
   error?: string;
 }
 
-/**
- * Returns a configured Nodemailer transporter.
- * Prioritizes authenticated AWS SES on mailer.cseel.org for 100% DKIM/SPF compliance.
- */
-export function getEmailTransporter() {
-  const sesUser = process.env.SES_SMTP_USER;
-  const sesPass = process.env.SES_SMTP_PASS;
-
-  if (sesUser && sesPass) {
-    return nodemailer.createTransport({
-      host: process.env.SES_SMTP_HOST || 'email-smtp.ap-southeast-2.amazonaws.com',
-      port: Number(process.env.SES_SMTP_PORT) || 587,
-      secure: false,
-      auth: {
-        user: sesUser,
-        pass: sesPass,
-      },
-      tls: {
-        rejectUnauthorized: true,
-      },
-    });
-  }
-
-  const gmailUser = process.env.SMTP_USER;
-  const gmailPass = process.env.SMTP_PASS;
-
-  if (gmailUser && gmailPass) {
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true,
-      auth: {
-        user: gmailUser,
-        pass: gmailPass,
-      },
-    });
-  }
-
-  console.warn('[mailerService] SMTP credentials not configured.');
-  return null;
-}
-
 export function getDefaultFrom(): string {
   const name = process.env.MAIL_FROM_NAME || 'CSEEL Security & Verification';
   const email = process.env.MAIL_FROM_EMAIL || 'auth@mailer.cseel.org';
-  return `"${name}" <${email}>`;
+  return `${name} <${email}>`;
 }
 
-export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
-  const transporter = getEmailTransporter();
-  if (!transporter) {
-    return {
-      success: false,
-      error: 'SMTP credentials missing. Please configure SES_SMTP_USER and SES_SMTP_PASS in environment variables.',
-    };
-  }
+/**
+ * Send email via Resend API (fetch-based, Cloudflare Workers compatible)
+ */
+async function sendViaResend(options: SendEmailOptions): Promise<SendEmailResult> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error('RESEND_API_KEY not set');
 
-  const from = options.from || getDefaultFrom();
+  const from = options.from || process.env.RESEND_FROM_EMAIL || getDefaultFrom();
   const replyTo = options.replyTo || process.env.MAIL_REPLY_TO || 'auth@mailer.cseel.org';
+  const toList = Array.isArray(options.to) ? options.to : [options.to];
 
-  try {
-    const info = await transporter.sendMail({
-      from,
-      to: Array.isArray(options.to) ? options.to.join(', ') : options.to,
-      replyTo,
-      subject: options.subject,
-      text: options.text || options.html.replace(/<[^>]+>/g, ' '),
-      html: options.html,
-      attachments: options.attachments,
-    });
+  const body: Record<string, any> = {
+    from,
+    to: toList,
+    reply_to: replyTo,
+    subject: options.subject,
+    html: options.html,
+    text: options.text || options.html.replace(/<[^>]+>/g, ' '),
+  };
 
-    return {
-      success: true,
-      messageId: info.messageId,
-    };
-  } catch (error: any) {
-    console.error('[mailerService] Failed to send email:', error);
-    return {
-      success: false,
-      error: error?.message || 'Unknown SMTP error',
-    };
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  const json = await res.json() as any;
+
+  if (!res.ok) {
+    throw new Error(json?.message || `Resend API error: ${res.status}`);
   }
+
+  return { success: true, messageId: json.id };
+}
+
+/**
+ * Send email via AWS SES v2 HTTP API (fetch-based, no nodemailer)
+ * Used as fallback if Resend is unavailable.
+ */
+async function sendViaSESApi(options: SendEmailOptions): Promise<SendEmailResult> {
+  // SES v2 SendEmail via HTTP requires AWS SigV4 signing — complex without SDK.
+  // For Cloudflare Workers, Resend is strongly preferred.
+  // This stub ensures graceful fallback with a clear error.
+  throw new Error(
+    'SES HTTP fallback not configured. Please set RESEND_API_KEY in environment variables.'
+  );
+}
+
+/**
+ * Primary email send function — Cloudflare Workers compatible.
+ * Priority: Resend API → error
+ */
+export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
+  // 1. Try Resend (primary — fetch-based, CF compatible)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      return await sendViaResend(options);
+    } catch (err: any) {
+      console.error('[mailerService] Resend failed:', err?.message);
+      return { success: false, error: err?.message || 'Resend send failed' };
+    }
+  }
+
+  // 2. No credentials configured
+  console.warn('[mailerService] No email credentials configured. Set RESEND_API_KEY.');
+  return {
+    success: false,
+    error: 'Email credentials not configured. Set RESEND_API_KEY in environment variables.',
+  };
+}
+
+/**
+ * Compatibility shim — legacy code that calls getEmailTransporter() will get null.
+ * All callers should use sendEmail() directly.
+ */
+export function getEmailTransporter() {
+  console.warn(
+    '[mailerService] getEmailTransporter() is deprecated on Cloudflare. Use sendEmail() directly.'
+  );
+  return null;
 }

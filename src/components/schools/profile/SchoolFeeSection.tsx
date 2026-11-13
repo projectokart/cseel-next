@@ -16,6 +16,8 @@ import {
   Sparkles,
   Info
 } from 'lucide-react';
+import EditorialMarkupRenderer from '@/components/schools/profile/EditorialMarkupRenderer';
+import EditorialMarkupEditor from '@/components/schools/profile/EditorialMarkupEditor';
 
 export interface FeeTermItem {
   id: string;
@@ -84,6 +86,7 @@ export interface SchoolFeeSectionProps {
   setExtraChargesTable: React.Dispatch<React.SetStateAction<{ columns: string[]; rows: string[][] }>>;
   feeTermsList?: FeeTermItem[];
   setFeeTermsList?: React.Dispatch<React.SetStateAction<FeeTermItem[]>>;
+  templateCtx?: any;
 }
 
 export default function SchoolFeeSection({
@@ -113,6 +116,7 @@ export default function SchoolFeeSection({
   setExtraChargesTable,
   feeTermsList: propFeeTermsList,
   setFeeTermsList: propSetFeeTermsList,
+  templateCtx,
 }: SchoolFeeSectionProps) {
   const [internalTermsList, setInternalTermsList] = useState<FeeTermItem[]>(() => {
     if (propFeeTermsList && propFeeTermsList.length > 0) return propFeeTermsList;
@@ -176,12 +180,20 @@ export default function SchoolFeeSection({
     data: { columns: string[]; rows: string[][] }, 
     setData: React.Dispatch<React.SetStateAction<{ columns: string[]; rows: string[][] }>>
   ) => {
-    const rawCols = Array.isArray(data?.columns) && data.columns.length > 0 ? data.columns : ['Grade Level', 'Monthly Tuition Fee', 'Quarterly Fee', 'Annualized Fee'];
-    const rawRows = Array.isArray(data?.rows) ? data.rows : [];
+    const rawCols = (
+      Array.isArray(data?.columns) && data.columns.length > 0
+        ? data.columns
+        : ['Class / Grade', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Annual Charges (One Time)', 'Total Annual (Est.)']
+    ).slice(0, 5);
+    const rawRows = (Array.isArray(data?.rows) ? data.rows : []).slice(0, 15);
     
-    // Normalize any rows that might be objects or malformed
+    // Normalize any rows that might be objects or malformed, capping at 5 columns & 15 rows
     const safeRows: string[][] = rawRows.map((r: any) => {
-      if (Array.isArray(r)) return r.map((c: any) => String(c ?? ''));
+      if (Array.isArray(r)) {
+        const sliced = r.slice(0, rawCols.length).map((c: any) => String(c ?? ''));
+        while (sliced.length < rawCols.length) sliced.push('');
+        return sliced;
+      }
       if (typeof r === 'object' && r !== null) {
         const mapped = rawCols.map((colName) => {
           const cn = colName.toLowerCase();
@@ -192,7 +204,7 @@ export default function SchoolFeeSection({
           return r[colName] || '';
         });
         if (mapped.every(v => !v)) {
-          return Object.values(r).map(v => String(v ?? ''));
+          return Object.values(r).slice(0, rawCols.length).map(v => String(v ?? ''));
         }
         return mapped;
       }
@@ -204,8 +216,8 @@ export default function SchoolFeeSection({
       rows: safeRows
     };
 
-    const maxCols = 10;
-    const maxRows = 20;
+    const maxCols = 5;
+    const maxRows = 15;
     const lastColIdx = safeData.columns.length - 1;
 
     const removeCol = (colIdx: number) => {
@@ -286,79 +298,77 @@ export default function SchoolFeeSection({
     };
 
     return (
-      <div className="bg-white/95 rounded-[32px] border border-[#F4EBD9] shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] overflow-hidden mb-8 max-w-5xl mx-auto w-full">
-        <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3 bg-gradient-to-r from-[#F8FAFC] to-[#EDF5FA]">
-          <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#005689]" />
-            <span>{title}</span>
-          </h3>
-          {isEditMode && (
-             <span className="text-[11px] text-[#005689] font-bold bg-white px-3 py-1 rounded-full border border-blue-200/80 shadow-2xs">
-               ✏️ Edit Mode Active • Columns, Rows &amp; Cells are editable
-             </span>
+      <div className="bg-white rounded-2xl border border-[#E8EAED] shadow-xs overflow-hidden w-full">
+        <div className="px-4 sm:px-5 py-3 border-b border-[#E8EAED] flex flex-wrap justify-between items-center gap-2 bg-[#F8FAFC]">
+          <div>
+            <h3 className="text-[16px] sm:text-lg font-bold font-['Montserrat',sans-serif] text-[#003C6E] flex items-center gap-2 m-0">
+              <span className="w-2 h-2 rounded-full bg-[#006FCC] shrink-0" />
+              <span>{title}</span>
+            </h3>
+            <p className="text-[12px] text-[#5F6368] mt-0.5 sm:hidden m-0">
+              Swipe horizontally to view all {safeData.columns.length} columns →
+            </p>
+          </div>
+          {isEditMode ? (
+            <span className="text-[11px] text-[#006FCC] font-bold bg-white px-3 py-1 rounded-full border border-[#D0E4F5]">
+              Cols: {safeData.columns.length}/{maxCols} • Rows: {safeData.rows.length}/{maxRows}
+            </span>
+          ) : (
+            <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full bg-[#EDF5FA] border border-[#D0E4F5] text-[#006FCC] text-[11px] font-bold">
+              Academic Session Fee Schedule
+            </span>
           )}
         </div>
 
-        {/* Billing Frequency Rule Note */}
-        <div className="px-5 py-2.5 bg-[#F7F8F8] border-b border-[#E8E9E9] flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 text-xs">
-          <div className="flex flex-wrap items-center gap-2 text-slate-700">
-            <span className="font-bold text-[#003C6E] bg-[#EDF5FA] border border-[#D0E4F5] px-2 py-0.5 rounded text-[10px] sm:text-[11px] uppercase tracking-wider font-['Montserrat',sans-serif]">
-              Note
-            </span>
-            <span className="text-slate-700 font-semibold text-[11px] sm:text-xs">
-              Annual total calculate karne ke liye column header me bracket <strong>( )</strong> me ye value likhna <span className="text-red-600 font-bold">MUST</span> hai:
+        {/* Billing Frequency Rule Note (Edit Mode Only) */}
+        {isEditMode && (
+          <div className="px-4 sm:px-5 py-2.5 bg-[#EDF5FA]/60 border-b border-[#E8EAED] flex flex-col lg:flex-row lg:items-center justify-between gap-2 text-xs">
+            <span className="text-[#3C4043] font-medium text-[11.5px]">
+              Auto-total hint: add <strong className="text-[#003C6E]">(Monthly)</strong>, <strong className="text-[#003C6E]">(Qtr)</strong>, <strong className="text-[#003C6E]">(Half Yearly)</strong>, or <strong className="text-[#003C6E]">(One Time)</strong> in column headers.
             </span>
           </div>
+        )}
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 bg-white border border-[#E8E9E9] text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#006FCC]">(Monthly)</span>
-              <span className="text-slate-500 font-semibold">= Monthly (×12)</span>
-            </span>
-            <span className="inline-flex items-center gap-1 bg-white border border-[#E8E9E9] text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#006FCC]">(Qtr)</span>
-              <span className="text-slate-500 font-semibold">= Quarterly (×4)</span>
-            </span>
-            <span className="inline-flex items-center gap-1 bg-white border border-[#E8E9E9] text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#006FCC]">(Half Yearly)</span>
-              <span className="text-slate-500 font-semibold">= Half Yearly (×2)</span>
-            </span>
-            <span className="inline-flex items-center gap-1 bg-white border border-slate-200 text-slate-800 font-bold px-2 py-0.5 rounded-md shadow-2xs text-[10px] sm:text-[11px]">
-              <span className="text-[#005689]">(One Time)</span>
-              <span className="text-slate-500 font-semibold">= One Time (×1)</span>
-            </span>
-          </div>
-        </div>
-        
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto w-full [touch-action:pan-x_pan-y]">
+          <table className="w-full min-w-[640px] text-left border-collapse">
             <thead>
-              <tr>
+              <tr className="bg-[#F8FAFC] border-b border-[#E8EAED]">
                 {safeData.columns.map((col, cIdx) => (
-                  <th key={cIdx} className={`px-2 py-2 border-r border-b border-[#EDF5FA] bg-white text-xs font-bold text-gray-700 ${cIdx === 0 ? 'w-36 min-w-[120px]' : cIdx === lastColIdx ? 'w-28 min-w-[100px] bg-green-50/30' : 'w-24 min-w-[90px]'}`}>
+                  <th
+                    key={cIdx}
+                    className={`px-3.5 py-3 border-r last:border-r-0 border-[#E8EAED] text-[12px] font-bold uppercase tracking-wider text-[#003C6E] ${
+                      cIdx === 0 ? 'min-w-[140px]' : cIdx === lastColIdx ? 'min-w-[130px] bg-emerald-50/50 text-emerald-800' : 'min-w-[130px]'
+                    }`}
+                  >
                     {isEditMode ? (
-                      <div className="flex items-center gap-0.5 bg-white border border-gray-200 rounded-md pr-0.5 focus-within:border-[#005689]">
-                        <input 
-                          type="text" 
-                          value={col} 
-                          onChange={e => updateCol(cIdx, e.target.value)} 
-                          className="w-full bg-transparent px-1 py-0.5 text-xs font-bold text-gray-700 focus:outline-none min-w-0"
+                      <div className="flex items-center gap-1 bg-white border border-slate-300 rounded-md pr-1 focus-within:border-[#006FCC]">
+                        <input
+                          type="text"
+                          value={col}
+                          onChange={e => updateCol(cIdx, e.target.value)}
+                          className="w-full bg-transparent px-2 py-1 text-xs font-bold text-[#003C6E] focus:outline-none min-w-0"
                         />
-                        {cIdx !== lastColIdx && (
-                          <button onClick={() => removeCol(cIdx)} className="text-red-400 hover:text-red-600 p-0.5 shrink-0">
+                        {cIdx !== lastColIdx && safeData.columns.length > 2 && (
+                          <button type="button" onClick={() => removeCol(cIdx)} className="text-red-400 hover:text-red-600 p-0.5 shrink-0 cursor-pointer">
                             <Trash2 className="w-3 h-3" />
                           </button>
                         )}
                       </div>
                     ) : (
-                      <span className={`px-1 py-0.5 block truncate ${cIdx === lastColIdx ? 'text-[#137333]' : ''}`} title={col}>{col}</span>
+                      <span className="block leading-snug" title={col}>{col}</span>
                     )}
                   </th>
                 ))}
                 {isEditMode && (
-                  <th className="px-1.5 py-1.5 border-b border-[#EDF5FA] bg-white w-12 text-center align-middle">
-                    <button onClick={addColBeforeTotal} disabled={safeData.columns.length >= maxCols} className="text-[#005689] hover:text-[#003c6e] p-1 rounded-md hover:bg-blue-50 transition-colors inline-block" title="Add column before Total">
-                      <Plus className="w-3.5 h-3.5" />
+                  <th className="px-2 py-2.5 bg-[#F8FAFC] w-12 text-center align-middle">
+                    <button
+                      type="button"
+                      onClick={addColBeforeTotal}
+                      disabled={safeData.columns.length >= maxCols}
+                      className="text-[#006FCC] hover:text-[#003C6E] disabled:opacity-35 p-1 rounded-md hover:bg-blue-50 transition-colors inline-block cursor-pointer"
+                      title={safeData.columns.length >= maxCols ? 'Max 5 columns allowed' : 'Add column before Total'}
+                    >
+                      <Plus className="w-4 h-4" />
                     </button>
                   </th>
                 )}
@@ -384,35 +394,50 @@ export default function SchoolFeeSection({
                 const breakdownTitle = breakdownParts.length > 0 ? breakdownParts.join('\n') : '';
 
                 return (
-                  <tr key={rIdx} className="hover:bg-[#F8FAFC] border-b border-[#EDF5FA] group transition-colors">
+                  <tr key={rIdx} className="hover:bg-[#F8FAFC] odd:bg-white even:bg-[#FAFBFD] border-b border-[#E8EAED] last:border-b-0 group transition-colors">
                     {row.map((cell, cIdx) => {
                       const isTotal = cIdx === safeData.columns.length - 1;
+                      const isFirst = cIdx === 0;
                       return (
-                        <td key={cIdx} className={`px-2 py-1.5 border-r border-[#EDF5FA] ${isTotal ? 'bg-green-50/60 font-bold text-[#137333]' : ''}`}>
+                        <td
+                          key={cIdx}
+                          className={`px-3.5 py-3 border-r last:border-r-0 border-[#E8EAED] text-[13.5px] sm:text-[14px] ${
+                            isTotal
+                              ? 'bg-emerald-50/50 font-semibold text-emerald-800'
+                              : isFirst
+                              ? 'font-semibold text-[#202124]'
+                              : 'text-[#3C4043]'
+                          }`}
+                        >
                           {isTotal ? (
                             <span
-                              className="text-xs font-bold text-[#137333] px-1.5 block"
+                              className="block whitespace-nowrap"
                               title={breakdownTitle || 'Enter fees to auto-calculate'}
                             >
                               {cell || '—'}
                             </span>
                           ) : isEditMode ? (
-                            <input 
-                              type="text" 
-                              value={cell} 
-                              onChange={e => updateCell(rIdx, cIdx, e.target.value)} 
-                              className="w-full bg-transparent border-b border-dashed border-transparent hover:border-gray-300 focus:border-[#005689] px-1.5 py-0.5 text-xs text-gray-700 focus:outline-none"
-                              placeholder={cIdx === 0 ? 'Class name' : '0'}
+                            <input
+                              type="text"
+                              value={cell}
+                              onChange={e => updateCell(rIdx, cIdx, e.target.value)}
+                              className="w-full bg-white border border-slate-200 rounded-md focus:border-[#006FCC] px-2.5 py-1.5 text-[13px] text-[#202124] focus:outline-none"
+                              placeholder={cIdx === 0 ? 'Class name' : '₹0'}
                             />
                           ) : (
-                            <span className="text-xs text-gray-700 px-1.5 block">{cell || '—'}</span>
+                            <span className="block whitespace-nowrap">{cell || '—'}</span>
                           )}
                         </td>
                       );
                     })}
                     {isEditMode && (
-                      <td className="px-1 py-1 text-center align-middle w-8">
-                        <button onClick={() => removeRow(rIdx)} className="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition-colors inline-block opacity-0 group-hover:opacity-100">
+                      <td className="px-2 py-2 text-center align-middle w-10">
+                        <button
+                          type="button"
+                          onClick={() => removeRow(rIdx)}
+                          className="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition-colors inline-block cursor-pointer"
+                          title="Delete row"
+                        >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </td>
@@ -425,13 +450,15 @@ export default function SchoolFeeSection({
         </div>
 
         {isEditMode && (
-          <div className="px-4 py-2 border-t border-[#EDF5FA] bg-[#F8FAFC] flex justify-end">
-            <button 
-              onClick={addRow} 
-              disabled={data.rows.length >= maxRows} 
-              className="px-3 py-1 bg-[#005689] text-white text-xs font-bold rounded-md hover:bg-[#003c6e] disabled:opacity-50 flex items-center gap-1 transition-colors shadow-2xs"
+          <div className="px-4 py-2.5 border-t border-[#E8EAED] bg-[#F8FAFC] flex items-center justify-between gap-2">
+            <span className="text-[11px] text-[#5F6368]">Max {maxCols} columns &amp; {maxRows} rows</span>
+            <button
+              type="button"
+              onClick={addRow}
+              disabled={safeData.rows.length >= maxRows}
+              className="px-3.5 py-1.5 bg-[#006FCC] text-white text-xs font-bold rounded-lg hover:bg-[#005399] disabled:opacity-45 flex items-center gap-1 transition-colors cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" /> Add Row
+              <Plus className="w-3.5 h-3.5" /> Add Row ({safeData.rows.length}/{maxRows})
             </button>
           </div>
         )}
@@ -440,224 +467,256 @@ export default function SchoolFeeSection({
   };
 
   return (
-    <section id="fee-structure" className="py-12 sm:py-20 bg-[#F7F8F8] border-b border-[#E8E9E9] relative overflow-hidden">
+    <section id="fee-structure" className="py-6 sm:py-10 bg-[#EEF2F6] border-b border-[#DCE2E8] relative overflow-hidden">
       {/* Decorative ambient background */}
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#EDF5FA]/50 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Header */}
-        <div className="text-center sm:text-left mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs font-['Montserrat',sans-serif]">
-            <span className="w-2 h-2 bg-[#006FCC] rounded-full inline-block animate-pulse" />
+        {/* Centered Header (Unified Tab Header Design matching Academics & Reviews) */}
+        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-2.5 py-1 rounded-full mb-2.5 shadow-2xs font-['Montserrat',sans-serif]">
+            <span className="w-1.5 h-1.5 bg-[#006FCC] rounded-full inline-block animate-pulse" />
             <span>ADMISSIONS &amp; COMPOSITE FEES</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-tight">
+          <h2 className="text-[20px] sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight leading-snug">
             Transparent Fee Structure &amp;
             <span className="text-[#006FCC] block mt-0.5">Admissions Guidelines</span>
           </h2>
 
-          <p className="mt-3 text-slate-600 font-normal max-w-2xl text-sm sm:text-base leading-relaxed">
+          <p className="mt-2 text-[#5F6368] font-['Lato',var(--font-roboto),Roboto,sans-serif] font-normal max-w-2xl mx-auto !text-[15px] !leading-[1.68] m-0">
             Review detailed grade-wise tuition schedules, transparent fee breakdowns, and direct contact channels for {displayName}.
           </p>
         </div>
 
-        <div className="flex flex-col gap-8 w-full">
+        <div className="flex flex-col gap-5 sm:gap-7 w-full">
           
-          {/* Top: Verified Official Fee & Admissions Links */}
-          <div className="w-full">
-            {((templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl) ||
-              (templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl)) && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
-                {(templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl) && (
-                  <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 border border-[#D0E4F5] shadow-xs">
-                        <FileText className="w-6 h-6 text-[#006FCC]" />
-                      </div>
-                      <div>
-                        <h4 className="text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Official School Fee Structure Page</h4>
-                        <p className="text-xs sm:text-sm text-slate-600 font-normal mt-0.5">
-                          Direct link to official fee schedule on school website
-                        </p>
-                      </div>
+          {/* 1. Verified Official Fee & Admissions Links (if available) */}
+          {((templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl) ||
+            (templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl)) && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {(templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl) && (
+                <div className="bg-white border border-[#E8EAED] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs hover:border-[#006FCC]/40 transition-all">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 border border-[#D0E4F5]">
+                      <FileText className="w-5 h-5 text-[#006FCC]" />
                     </div>
-                    <a
-                      href={templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all shrink-0 shadow-md hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                      <span>Official Fee Page</span>
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                )}
-
-                {(templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl) && (
-                  <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-xs hover:shadow-md hover:border-[#006FCC]/40 transition-all">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 border border-[#D0E4F5] shadow-xs">
-                        <ShieldCheck className="w-6 h-6 text-[#006FCC]" />
-                      </div>
-                      <div>
-                        <h4 className="text-base font-bold font-['Montserrat',sans-serif] text-[#003C6E]">Official School Admissions Portal</h4>
-                        <p className="text-xs sm:text-sm text-slate-600 font-normal mt-0.5">
-                          Direct link to official admissions &amp; registration page
-                        </p>
-                      </div>
+                    <div>
+                      <h4 className="text-sm sm:text-base font-semibold font-['Montserrat',sans-serif] text-[#003C6E] m-0">Official School Fee Structure Page</h4>
+                      <p className="text-xs sm:text-sm text-[#5F6368] font-normal mt-0.5 m-0">
+                        Direct link to official fee schedule on school website
+                      </p>
                     </div>
-                    <a
-                      href={templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[10px] bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold font-['Montserrat',sans-serif] transition-all shrink-0 shadow-md hover:-translate-y-0.5 active:translate-y-0"
-                    >
-                      <span>Official Admissions Page</span>
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
                   </div>
-                )}
-              </div>
-            )}
-
-            {feesTable.rows.some(r => r.some((c, idx) => idx > 0 && c && c.trim() !== '')) || isEditMode ? (
-              renderDynamicTable('Admission & Tuition Fees', feesTable, setFeesTable)
-            ) : (
-              <div className="bg-white border border-[#E8E9E9] rounded-[14px] p-8 sm:p-10 text-center max-w-4xl mx-auto mb-8 shadow-xs">
-                <div className="w-12 h-12 rounded-[12px] bg-[#EDF5FA] text-[#006FCC] border border-[#D0E4F5] flex items-center justify-center mx-auto mb-4 shadow-xs">
-                  <FileText className="w-6 h-6 text-[#006FCC]" />
-                </div>
-                <h4 className="text-lg font-bold font-['Montserrat',sans-serif] text-[#003C6E] mb-1.5">Official Fee Schedule Verification</h4>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-                  Class-wise tuition fee breakdown is officially published directly by the institution during the academic session. Parents are advised to consult the school admissions office for the latest fee structure.
-                </p>
-              </div>
-            )}
-
-            {(extraChargesTable.rows.some(r => r.some((c, idx) => idx > 0 && c && c.trim() !== '')) || isEditMode) && (
-              renderDynamicTable('Extra / Other Charges', extraChargesTable, setExtraChargesTable)
-            )}
-
-            {/* ─── TERMS, DUE DATES & INSTITUTIONAL GUIDELINES CARD ─── */}
-            <div className="bg-white rounded-[14px] border border-[#E8E9E9] shadow-xs overflow-hidden mb-8 max-w-5xl mx-auto w-full">
-              <div className="px-6 py-4 border-b border-[#E8E9E9] flex flex-wrap justify-between items-center gap-3 bg-[#F7F8F8]">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-[10px] bg-[#006FCC] text-white flex items-center justify-center shadow-xs">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-                      <span>Important Terms, Due Dates &amp; Guidelines</span>
-                    </h3>
-                    <p className="text-[11px] text-slate-500 font-medium">
-                      Fee cycles, payment dates, late fine policy, refund rules &amp; institutional guidelines
-                    </p>
-                  </div>
-                </div>
-
-                {isEditMode && (
-                  <button
-                    onClick={addTermItem}
-                    className="px-3.5 py-1.5 bg-[#005689] text-white text-xs font-bold rounded-full hover:bg-[#003c6e] flex items-center gap-1.5 shadow-2xs transition-transform active:scale-95 cursor-pointer"
+                  <a
+                    href={templateData?.officialFeeUrl || templateData?.fees?.official_fee_page_url || initialProfileData?.officialFeeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-semibold font-['Montserrat',sans-serif] transition-all shrink-0 shadow-xs"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Instruction / Rule</span>
-                  </button>
+                    <span>Official Fee Page</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+
+              {(templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl) && (
+                <div className="bg-white border border-[#E8EAED] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs hover:border-[#006FCC]/40 transition-all">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#EDF5FA] text-[#006FCC] flex items-center justify-center shrink-0 border border-[#D0E4F5]">
+                      <ShieldCheck className="w-5 h-5 text-[#006FCC]" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm sm:text-base font-semibold font-['Montserrat',sans-serif] text-[#003C6E] m-0">Official School Admissions Portal</h4>
+                      <p className="text-xs sm:text-sm text-[#5F6368] font-normal mt-0.5 m-0">
+                        Direct link to official admissions &amp; registration page
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={templateData?.officialAdmissionsUrl || templateData?.admissions?.official_admissions_page_url || initialProfileData?.officialAdmissionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-semibold font-['Montserrat',sans-serif] transition-all shrink-0 shadow-xs"
+                  >
+                    <span>Official Admissions Page</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 2. ONE Unified Horizontally Scrollable Fee Table (Max 5 Columns × 15 Rows) */}
+          {renderDynamicTable('Class-Wise Fee Structure', feesTable, setFeesTable)}
+
+          {/* 3. Additional / Extra Fees & Charges Section (Dedicated Spaced Card) */}
+          {(() => {
+            const legacyExtraRows = (extraChargesTable?.rows || [])
+              .filter((r) => Array.isArray(r) && r.some((cell) => String(cell || '').trim() !== ''))
+              .map((r) => `- **${r[0] || 'Extra Charge'}:** ${r[1] ? `**${r[1]}**` : ''}${r[2] ? ` — ${r[2]}` : ''}`);
+
+            const defaultExtraFeesNotes = [
+              `** Additional & Extra Fees (Optional / Other Charges)`,
+              `In addition to the regular class-wise fee table above, ${displayName} outlines applicable optional or conditional charges below:`,
+              ``,
+              ...(legacyExtraRows.length > 0
+                ? legacyExtraRows
+                : [
+                    `- **Transport / School Bus Fee:** Route and distance-based monthly charges (optional).`,
+                    `- **Registration & Admission Processing:** ==One-time charge== applicable at initial enrollment.`,
+                    `- **Books, Stationery & Uniform:** Charged separately as per the prescribed academic list.`,
+                    `- **Science, Computer & Activity Charges:** Applicable for practical laboratory and co-curricular workshops.`,
+                  ]),
+            ].join('\n');
+
+            const savedExtraNotes =
+              templateCtx?.getContent?.('additional_fees_notes', '') ||
+              templateData?.contentOverrides?.additional_fees_notes ||
+              initialProfileData?.contentOverrides?.additional_fees_notes ||
+              '';
+
+            const effectiveExtraNotes = savedExtraNotes.trim() ? savedExtraNotes : defaultExtraFeesNotes;
+
+            return (
+              <div className="bg-white rounded-2xl border border-[#E8EAED] shadow-xs p-4 sm:p-6 w-full">
+                {isEditMode ? (
+                  <EditorialMarkupEditor
+                    title="Additional & Extra Fees Editor"
+                    initialValue={effectiveExtraNotes}
+                    defaultValue={defaultExtraFeesNotes}
+                    rows={8}
+                    onSave={(val) => {
+                      if (templateCtx?.updateContentOverride) {
+                        templateCtx.updateContentOverride('additional_fees_notes', val);
+                      }
+                    }}
+                  />
+                ) : (
+                  <EditorialMarkupRenderer content={effectiveExtraNotes} />
                 )}
               </div>
+            );
+          })()}
 
-              {/* Terms Grid */}
-              <div className="p-6 sm:p-7 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                {termsList.map((item) => {
-                  const theme = getCategoryTheme(item.category);
-                  const IconComp = theme.icon;
+          {/* 4. TERMS, DUE DATES & INSTITUTIONAL GUIDELINES (Dedicated Compact Card) */}
+          <div className="bg-white rounded-2xl border border-[#E8EAED] shadow-xs overflow-hidden w-full">
+            <div className="px-4 sm:px-6 py-3.5 border-b border-[#E8EAED] flex flex-wrap justify-between items-center gap-3 bg-[#F8FAFC]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#EDF5FA] border border-[#D0E4F5] text-[#006FCC] flex items-center justify-center shrink-0">
+                  <Calendar className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="!text-[15px] sm:!text-base !font-bold font-['Montserrat',sans-serif] text-[#003C6E] m-0 leading-snug">
+                    Important Terms, Due Dates &amp; Guidelines
+                  </h3>
+                  <p className="text-[11.5px] text-[#5F6368] font-normal mt-0.5 m-0">
+                    Fee cycles, payment dates, late fine policy, refund rules &amp; institutional guidelines
+                  </p>
+                </div>
+              </div>
 
-                  return (
-                    <div
-                      key={item.id}
-                      className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-2xs hover:border-[#005689]/40 hover:shadow-xs transition-all relative group flex flex-col justify-between"
-                    >
-                      <div>
-                        {/* Header: Tag + Actions */}
-                        <div className="flex items-center justify-between gap-2 mb-2.5">
-                          {isEditMode ? (
-                            <select
-                              value={item.category}
-                              onChange={(e) => updateTermItem(item.id, 'category', e.target.value)}
-                              className="text-[11px] font-bold border border-slate-300 rounded-lg px-2 py-1 bg-white text-slate-800 focus:outline-none focus:border-[#005689]"
-                            >
-                              <option value="Due Date">Due Date</option>
-                              <option value="Payment Modes">Payment Modes</option>
-                              <option value="Refund & TC">Refund &amp; TC</option>
-                              <option value="Concessions">Concessions</option>
-                              <option value="Important Note">Important Note</option>
-                            </select>
-                          ) : (
-                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${theme.bg} ${theme.text} ${theme.border} uppercase tracking-wider`}>
-                              <IconComp className="w-3 h-3" />
-                              <span>{item.category}</span>
-                            </span>
-                          )}
+              {isEditMode && (
+                <button
+                  onClick={addTermItem}
+                  className="px-3.5 py-1.5 bg-[#005689] text-white text-xs font-bold rounded-full hover:bg-[#003c6e] flex items-center gap-1.5 shadow-2xs transition-transform active:scale-95 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Instruction / Rule</span>
+                </button>
+              )}
+            </div>
 
-                          {isEditMode && (
-                            <button
-                              onClick={() => removeTermItem(item.id)}
-                              className="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition-colors"
-                              title="Delete rule"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </div>
+            {/* Terms Grid */}
+            <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
+              {termsList.map((item) => {
+                const theme = getCategoryTheme(item.category);
+                const IconComp = theme.icon;
 
-                        {/* Title */}
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-[#FAFBFD] border border-[#E8EAED] rounded-xl p-3.5 sm:p-4 hover:border-[#006FCC]/35 transition-all relative group flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Header: Tag + Actions */}
+                      <div className="flex items-center justify-between gap-2 mb-2">
                         {isEditMode ? (
-                          <input
-                            type="text"
-                            value={item.title}
-                            onChange={(e) => updateTermItem(item.id, 'title', e.target.value)}
-                            placeholder="Rule / Due Date Title"
-                            className="w-full text-xs font-black text-slate-900 bg-white border border-slate-300 rounded-md px-2 py-1 mb-2 focus:border-[#005689] focus:outline-none"
-                          />
+                          <select
+                            value={item.category}
+                            onChange={(e) => updateTermItem(item.id, 'category', e.target.value)}
+                            className="text-[11px] font-semibold border border-slate-300 rounded-lg px-2 py-1 bg-white text-slate-800 focus:outline-none focus:border-[#005689]"
+                          >
+                            <option value="Due Date">Due Date</option>
+                            <option value="Payment Modes">Payment Modes</option>
+                            <option value="Refund & TC">Refund &amp; TC</option>
+                            <option value="Concessions">Concessions</option>
+                            <option value="Important Note">Important Note</option>
+                          </select>
                         ) : (
-                          <h4 className="text-xs sm:text-sm font-black text-slate-900 mb-1.5 flex items-center gap-1.5">
-                            <span>{item.title}</span>
-                          </h4>
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${theme.bg} ${theme.text} ${theme.border} uppercase tracking-wider`}>
+                            <IconComp className="w-3 h-3" />
+                            <span>{item.category}</span>
+                          </span>
                         )}
 
-                        {/* Description */}
-                        {isEditMode ? (
-                          <textarea
-                            value={item.description}
-                            onChange={(e) => updateTermItem(item.id, 'description', e.target.value)}
-                            placeholder="Enter specific terms, dates, penalty amounts or guidelines..."
-                            rows={3}
-                            className="w-full text-xs text-slate-700 bg-white border border-slate-300 rounded-md p-2 focus:border-[#005689] focus:outline-none resize-none font-medium"
-                          />
-                        ) : (
-                          <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                            {item.description}
-                          </p>
+                        {isEditMode && (
+                          <button
+                            onClick={() => removeTermItem(item.id)}
+                            className="text-red-400 hover:text-red-600 p-1 rounded-md hover:bg-red-50 transition-colors"
+                            title="Delete rule"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         )}
                       </div>
+
+                      {/* Title */}
+                      {isEditMode ? (
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => updateTermItem(item.id, 'title', e.target.value)}
+                          placeholder="Rule / Due Date Title"
+                          className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-300 rounded-md px-2 py-1 mb-2 focus:border-[#005689] focus:outline-none"
+                        />
+                      ) : (
+                        <h4 className="!text-[13.5px] sm:!text-sm !font-semibold text-[#202124] mb-1.5 leading-snug m-0">
+                          {item.title}
+                        </h4>
+                      )}
+
+                      {/* Description */}
+                      {isEditMode ? (
+                        <textarea
+                          value={item.description}
+                          onChange={(e) => updateTermItem(item.id, 'description', e.target.value)}
+                          placeholder="Enter specific terms, dates, penalty amounts or guidelines..."
+                          rows={3}
+                          className="w-full text-xs text-slate-700 bg-white border border-slate-300 rounded-md p-2 focus:border-[#005689] focus:outline-none resize-none font-normal"
+                        />
+                      ) : (
+                        <p className="!text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#3C4043] !leading-[1.68] font-normal m-0">
+                          {item.description}
+                        </p>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Admissions Inquiry Desk Card (Claymorphic) */}
-          <div className="w-full bg-white/95 border border-[#F4EBD9] rounded-[32px] sm:rounded-[36px] p-8 sm:p-12 text-center max-w-4xl mx-auto shadow-[0_12px_36px_rgba(0,35,70,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]">
-            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-[#005689] bg-[#EDF5FA] border border-[#D6EDFF] px-3.5 py-1.5 rounded-full mb-3 shadow-2xs">
+          {/* 5. Admissions Inquiry Desk */}
+          <div className="w-full bg-white border border-[#E8EAED] rounded-2xl p-5 sm:p-6 text-center max-w-4xl mx-auto shadow-xs">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wider uppercase text-[#006FCC] bg-[#EDF5FA] border border-[#D0E4F5] px-2.5 py-1 rounded-full mb-2.5">
               <span>ADMISSION HELPDESK</span>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-950 mb-2">
+            <h3 className="text-[18px] sm:text-2xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] mb-2">
               Have Questions About Admissions or Fees?
             </h3>
-            <p className="text-xs sm:text-sm text-slate-600 mb-8 max-w-xl mx-auto font-medium leading-relaxed">
+            <p className="!text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#5F6368] mb-5 max-w-xl mx-auto !leading-[1.68] font-normal">
               Our admissions team is available to assist you with registration guidelines, documentation, and enrollment procedures for {displayName}.
             </p>
 

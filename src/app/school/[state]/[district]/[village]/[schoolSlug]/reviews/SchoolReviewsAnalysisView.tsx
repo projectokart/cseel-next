@@ -8,7 +8,6 @@ import {
   ThumbsUp,
   MessageSquare,
   ArrowLeft,
-  Search,
   Filter,
   CheckCircle2,
   Sparkles,
@@ -53,8 +52,6 @@ export default function SchoolReviewsAnalysisView({
 }: SchoolReviewsAnalysisViewProps) {
   const [activeTab, setActiveTab] = useState('all'); // all, parent, alumni, student
   const [selectedRating, setSelectedRating] = useState<number | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'helpful' | 'recent' | 'highest'>('helpful');
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
   // New review form states
@@ -163,30 +160,16 @@ export default function SchoolReviewsAnalysisView({
 
   // Filter and sort reviews
   const filteredReviews = useMemo(() => {
-    return reviews
-      .filter((rev) => {
-        if (activeTab === 'parent' && rev.role !== 'Verified Parent') return false;
-        if (activeTab === 'alumni' && rev.role !== 'Student Alumni') return false;
-        if (activeTab === 'student' && !rev.role.includes('Student')) return false;
+    return reviews.filter((rev) => {
+      if (activeTab === 'parent' && rev.role !== 'Verified Parent') return false;
+      if (activeTab === 'alumni' && rev.role !== 'Student Alumni') return false;
+      if (activeTab === 'student' && !rev.role.includes('Student')) return false;
 
-        if (selectedRating !== 'all' && rev.rating !== selectedRating) return false;
+      if (selectedRating !== 'all' && rev.rating !== selectedRating) return false;
 
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase();
-          const matchAuthor = rev.author.toLowerCase().includes(q);
-          const matchComment = rev.comment.toLowerCase().includes(q);
-          const matchTitle = rev.title.toLowerCase().includes(q);
-          if (!matchAuthor && !matchComment && !matchTitle) return false;
-        }
-
-        return true;
-      })
-      .sort((a, b) => {
-        if (sortBy === 'helpful') return b.likes - a.likes;
-        if (sortBy === 'highest') return b.rating - a.rating;
-        return 0; // recent (default list order)
-      });
-  }, [reviews, activeTab, selectedRating, searchQuery, sortBy]);
+      return true;
+    });
+  }, [reviews, activeTab, selectedRating]);
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -414,7 +397,7 @@ export default function SchoolReviewsAnalysisView({
 
 
         {/* ========================================================= */}
-        {/* 3. REVIEWS LIST WITH FILTER & SEARCH BAR                  */}
+        {/* 3. REVIEWS LIST WITH FILTER RIBBON                        */}
         {/* ========================================================= */}
         <div className="space-y-6">
           
@@ -427,59 +410,28 @@ export default function SchoolReviewsAnalysisView({
                 Showing {filteredReviews.length} authenticated reviews
               </p>
             </div>
-
-            {/* Search Input */}
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search reviews by keyword..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full text-xs pl-10 pr-4 py-2.5 rounded-full bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
           </div>
 
           {/* Quick Filter Ribbon */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-            
-            {/* Role Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {[
-                { id: 'all', label: 'All Reviews' },
-                { id: 'parent', label: 'Verified Parents' },
-                { id: 'alumni', label: 'Alumni' },
-                { id: 'student', label: 'Students' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                    activeTab === tab.id
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-gray-500 font-semibold">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-white border border-gray-200 rounded-full px-3 py-1.5 font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-2">
+            {[
+              { id: 'all', label: 'All Reviews' },
+              { id: 'parent', label: 'Verified Parents' },
+              { id: 'alumni', label: 'Alumni' },
+              { id: 'student', label: 'Students' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
               >
-                <option value="helpful">Most Helpful</option>
-                <option value="highest">Highest Rating</option>
-                <option value="recent">Most Recent</option>
-              </select>
-            </div>
-
+                {tab.label}
+              </button>
+            ))}
           </div>
 
           {/* Reviews Cards Grid */}

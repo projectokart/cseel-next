@@ -8,7 +8,6 @@ import {
   X,
   Sparkles,
   Send,
-  Search,
   CheckCircle2,
   ThumbsUp,
   ChevronDown
@@ -25,9 +24,7 @@ export default function SchoolReviewsTab({
   const [isWriteReviewOpen, setIsWriteReviewOpen] = useState(false);
   const [reviewRoleFilter, setReviewRoleFilter] = useState<'all' | 'Parent' | 'Student' | 'Alumni'>('all');
   const [reviewStarFilter, setReviewStarFilter] = useState<number | 'all'>('all');
-  const [reviewSearchText, setReviewSearchText] = useState('');
   const [visibleReviewsCount, setVisibleReviewsCount] = useState(4);
-  const [reviewSortBy, setReviewSortBy] = useState<'recent' | 'highest' | 'helpful'>('recent');
   const [userLikesMap, setUserLikesMap] = useState<Record<number, boolean>>({});
 
   // 5-Point Questionnaire Ratings
@@ -87,13 +84,6 @@ export default function SchoolReviewsTab({
   const filteredReviewsList = reviewsList.filter((rev) => {
     if (reviewRoleFilter !== 'all' && rev.role !== reviewRoleFilter) return false;
     if (reviewStarFilter !== 'all' && rev.rating !== reviewStarFilter) return false;
-    if (reviewSearchText.trim()) {
-      const q = reviewSearchText.toLowerCase();
-      const matchAuthor = rev.author?.toLowerCase().includes(q);
-      const matchComment = rev.comment?.toLowerCase().includes(q);
-      const matchRole = rev.role?.toLowerCase().includes(q);
-      if (!matchAuthor && !matchComment && !matchRole) return false;
-    }
     return true;
   });
 
@@ -280,71 +270,59 @@ export default function SchoolReviewsTab({
                   {[
                     {
                       id: 'overall',
-                      q: '1. Overall School Experience & Recommendation',
-                      desc: 'Overall experience, discipline and whether you recommend this school to others',
+                      q: '1. Overall education and school experience',
                       value: ratingOverall,
                       setter: setRatingOverall,
-                      labels: ['Poor', 'Below Average', 'Average', 'Good', 'Excellent / Highly Recommended']
+                      labels: ['Poor', 'Fair', 'Good', 'Very Good', 'Exceptional / Top Class']
                     },
                     {
                       id: 'academics',
-                      q: '2. Academics & Faculty Teaching Quality',
-                      desc: 'Teacher dedication, teaching quality, doubt solving & CBSE/board results',
+                      q: '2. Academic rigor, faculty quality and student support',
                       value: ratingAcademics,
                       setter: setRatingAcademics,
                       labels: ['Needs Attention', 'Satisfactory', 'Good', 'Very Good', 'Outstanding & Dedicated']
                     },
                     {
                       id: 'infrastructure',
-                      q: '3. Campus Infrastructure, Classrooms & Science Labs',
-                      desc: 'Physics, Chemistry, Computer labs, library, smart digital classrooms & campus grounds',
+                      q: '3. Campus infrastructure, classroom and science lab',
                       value: ratingInfrastructure,
                       setter: setRatingInfrastructure,
                       labels: ['Inadequate', 'Basic', 'Decent', 'Modern & Equipped', 'World-Class & Advanced']
                     },
                     {
                       id: 'safety',
-                      q: '4. Student Safety, Discipline & Transport Care',
-                      desc: 'CCTV surveillance, student care, female conductors in buses & safe environment',
+                      q: '4. Student safety, discipline and transport care',
                       value: ratingSafety,
                       setter: setRatingSafety,
                       labels: ['Safety Concerns', 'Average', 'Safe & Disciplined', 'Very Safe', '100% Secure & Attentive']
                     },
                     {
                       id: 'sports',
-                      q: '5. Sports Coaching & Extracurricular Activities',
-                      desc: 'Playgrounds, sports coaching, cultural fests, debate, dance & arts',
+                      q: '5. Sports, coaching and extracurricular activity',
                       value: ratingSports,
                       setter: setRatingSports,
-                      labels: ['Minimal', 'Limited', 'Good Activities', 'Active & Regular', 'Top-Tier Sports Academy']
+                      labels: ['Minimal', 'Limited', 'Good Activities', 'Active & Regular', 'Top Sports Academy']
                     },
                     {
                       id: 'value',
-                      q: '6. Fee Justification & Value for Money',
-                      desc: 'Is the fee structure justified by the education, practical facilities and care provided?',
+                      q: '6. Fee justification and value for money',
                       value: ratingValue,
                       setter: setRatingValue,
                       labels: ['High / Overpriced', 'Expensive', 'Reasonable', 'Good Value', 'Exceptional Value']
                     }
                   ].map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-50/80 rounded-2xl border border-gray-200/80 hover:border-blue-200 transition-colors">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                        <div>
-                          <p className="text-[11px] sm:text-xs font-bold text-gray-900">{item.q}</p>
-                          <p className="text-[11px] text-gray-500">{item.desc}</p>
-                        </div>
-                        <span className="text-xs font-bold text-[#006FCC] shrink-0">
-                          {item.labels[item.value - 1]}
-                        </span>
+                    <div key={item.id} className="p-3.5 sm:p-4 bg-gray-50/80 rounded-2xl border border-gray-200/80 hover:border-blue-200 transition-colors space-y-1.5">
+                      <p className="text-xs sm:text-sm font-semibold text-gray-900 m-0">{item.q}</p>
+                      <div className="text-xs font-semibold text-[#006FCC]">
+                        {item.labels[item.value - 1]}
                       </div>
-
-                      <div className="flex items-center gap-1.5 text-amber-400 pt-1">
+                      <div className="flex items-center gap-1.5 text-amber-400 pt-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
                             type="button"
                             onClick={() => item.setter(star)}
-                            className="p-1 hover:scale-125 transition-transform cursor-pointer"
+                            className="p-0.5 hover:scale-125 transition-transform cursor-pointer"
                           >
                             <Star
                               className={`w-6 h-6 sm:w-7 sm:h-7 ${
@@ -353,9 +331,6 @@ export default function SchoolReviewsTab({
                             />
                           </button>
                         ))}
-                        <span className="ml-2 text-xs font-bold text-gray-800 bg-white px-2 py-0.5 rounded-md border border-gray-200">
-                          {item.value} / 5 Stars
-                        </span>
                       </div>
                     </div>
                   ))}
@@ -364,7 +339,7 @@ export default function SchoolReviewsTab({
                 {/* Detailed Review Comments */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5">
-                    Your Detailed Review / Feedback *
+                    Your detailed review feedback *
                   </label>
                   <textarea
                     required
@@ -383,7 +358,7 @@ export default function SchoolReviewsTab({
                     className="button_primary bg-[#006FCC] hover:bg-[#005499] text-white font-bold px-7 py-3 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
                   >
                     <Send className="w-4 h-4" />
-                    <span>{reviewSubmitted ? 'Review Published!' : 'Submit Verified Review'}</span>
+                    <span>{reviewSubmitted ? 'Submitted' : 'Submit'}</span>
                   </button>
                 </div>
               </form>
@@ -391,9 +366,9 @@ export default function SchoolReviewsTab({
           </div>
         )}
 
-        {/* Filter & Sort Bar */}
-        <div className="bg-gray-50/80 p-3 sm:p-4 rounded-2xl border border-gray-200/80 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+        {/* Filter Bar */}
+        <div className="bg-gray-50/80 p-3 sm:p-4 rounded-2xl border border-gray-200/80 mb-6 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 flex-wrap w-full">
             <span className="text-xs font-bold text-gray-500 uppercase">Filter:</span>
             {(['all', 'Parent', 'Student', 'Alumni'] as const).map((role) => (
               <button
@@ -412,32 +387,6 @@ export default function SchoolReviewsTab({
                 {role === 'all' ? 'All Reviews' : role}
               </button>
             ))}
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <select
-              value={reviewSortBy}
-              onChange={(e) => setReviewSortBy(e.target.value as any)}
-              className="text-xs font-semibold bg-white border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#006FCC]"
-            >
-              <option value="recent">Most Recent</option>
-              <option value="highest">Highest Rating</option>
-              <option value="helpful">Most Helpful</option>
-            </select>
-
-            <div className="relative flex-1 sm:w-48">
-              <input
-                type="text"
-                placeholder="Search reviews..."
-                value={reviewSearchText}
-                onChange={(e) => {
-                  setReviewSearchText(e.target.value);
-                  setVisibleReviewsCount(4);
-                }}
-                className="w-full text-xs pl-8 pr-3 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#006FCC]"
-              />
-              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" />
-            </div>
           </div>
         </div>
 
@@ -508,13 +457,12 @@ export default function SchoolReviewsTab({
 
           {filteredReviewsList.length === 0 && reviewsList.length > 0 && (
             <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200">
-              <p className="text-sm text-gray-500 font-medium">No reviews match your selected filter or search.</p>
+              <p className="text-sm text-gray-500 font-medium">No reviews match your selected filter.</p>
               <button
                 type="button"
                 onClick={() => {
                   setReviewRoleFilter('all');
                   setReviewStarFilter('all');
-                  setReviewSearchText('');
                 }}
                 className="mt-3 text-xs font-bold text-[#006FCC] hover:underline"
               >

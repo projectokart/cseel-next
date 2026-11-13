@@ -1556,23 +1556,7 @@ export default function SchoolFinderClient() {
                 </div>
               </div>
 
-              {/* Account Section (Clean Sign In text link) */}
-              <div className="pt-2 border-t border-slate-100">
-                <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Account
-                </p>
-                <Link
-                  href="/auth/signin"
-                  onClick={() => setIsLeftMenuOpen(false)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-800 hover:text-[#1a73e8] border border-slate-200 text-xs font-bold transition-all"
-                >
-                  <span className="flex items-center gap-2.5">
-                    <User size={15} className="text-[#1a73e8]" />
-                    <span>Sign in</span>
-                  </span>
-                  <ArrowRight size={13} className="text-slate-400" />
-                </Link>
-              </div>
+
             </div>
 
             {/* Drawer Footer */}

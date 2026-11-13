@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Share2, ArrowLeft, Send, Trash2, Calendar, MapPin, ExternalLink, MessageCircle, Loader2 } from "lucide-react";
 import PageTransition from "@/components/shared/PageTransition";
+import { AdSenseInArticle } from "@/components/ads/AdSenseBanner";
 
 const PostDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -199,6 +200,8 @@ const PostDetailPage = () => {
               </button>
             </div>
           </article>
+
+          <AdSenseInArticle className="my-6" />
 
           {/* Comments */}
           <div ref={commentsRef} id="comments" className="space-y-4">

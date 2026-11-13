@@ -23,7 +23,7 @@ export const ALL_MATERIALS: MaterialItem[] = (physicsMaterialsRaw as any[]).map(
   scientific_name: m.name,
   cbse_chapter: m.cbse_chapter || "Physics & Science Laboratory",
   description: m.description || "",
-  image_url: m.image_url || `/images/materials/physics/${m.sku || m.id}.jpg`,
+  image_url: m.cdn_image_url || m.image_url || `https://cdn.jsdelivr.net/gh/projectokart/cseel-next@main/public/images/materials/physics/${m.sku || m.id}.jpg`,
   cdn_image_url: m.cdn_image_url || `https://cdn.jsdelivr.net/gh/projectokart/cseel-next@main/public/images/materials/physics/${m.sku || m.id}.jpg`,
   admin_cost_ref: m.admin_cost_ref || 500,
   is_available: m.is_available ?? true,

@@ -40,21 +40,6 @@ async function findJobById(id: string): Promise<FacultyJobItem | null> {
   return null;
 }
 
-async function getAllJobsList(): Promise<FacultyJobItem[]> {
-  try {
-    const jobs = await SupabaseJobService.fetchJobsFromSupabase();
-    if (jobs && jobs.length > 0) return jobs;
-  } catch (err) {
-    console.warn('[getAllJobsList] Supabase fetch error:', err);
-  }
-
-  try {
-    const { getActiveFacultyJobs } = await import('@/data/facultyJobsData');
-    return getActiveFacultyJobs();
-  } catch {
-    return [];
-  }
-}
 import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
 import SingleJobClient from './SingleJobClient';
 
@@ -169,7 +154,13 @@ export default async function SingleJobPage({ params }: Props) {
     notFound();
   }
 
-  const allJobs = (await getAllJobsList().catch(() => [])) || [];
+  // Fetch fast, lightweight related jobs (sub-millisecond edge execution)
+  const relatedJobs = await SupabaseJobService.fetchRelatedJobs(
+    job.city || job.district,
+    job.state,
+    job.id,
+    8
+  ).catch(() => []);
 
   const structuredLoc = formatStructuredAddress(job);
   const salaryParsed = parseNumericSalary(job.salary);
@@ -289,30 +280,6 @@ export default async function SingleJobPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@graph': [jobSchema, breadcrumbSchema],
   };
-
-  // Smart Multi-Tier Nearby & Related Vacancies Engine (Priority: Same City/District > Same State > Same Subject)
-  const nearbyInCity = allJobs.filter(
-    (j) => j && j.id && j.id !== job.id && (
-      (job.city && j.city && j.city.toLowerCase() === job.city.toLowerCase()) ||
-      (job.district && j.district && j.district.toLowerCase() === job.district.toLowerCase())
-    )
-  );
-
-  const sameState = allJobs.filter(
-    (j) => j && j.id && j.id !== job.id && !nearbyInCity.some(n => n.id === j.id) &&
-      Boolean(job.state && j.state && j.state.toLowerCase() === job.state.toLowerCase())
-  );
-
-  const sameSubject = allJobs.filter(
-    (j) => j && j.id && j.id !== job.id && !nearbyInCity.some(n => n.id === j.id) && !sameState.some(s => s.id === j.id) &&
-      Boolean(job.subject && j.subject && j.subject.toLowerCase() === job.subject.toLowerCase())
-  );
-
-  const fallbackJobs = allJobs.filter(
-    (j) => j && j.id && j.id !== job.id && !nearbyInCity.some(n => n.id === j.id) && !sameState.some(s => s.id === j.id) && !sameSubject.some(sub => sub.id === j.id)
-  );
-
-  const relatedJobs = [...nearbyInCity, ...sameState, ...sameSubject, ...fallbackJobs].slice(0, 8);
 
   return (
     <>

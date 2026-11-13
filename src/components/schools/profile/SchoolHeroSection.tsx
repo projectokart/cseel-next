@@ -261,7 +261,7 @@ export default function SchoolHeroSection({
   };
 
   return (
-    <section id="home" className="relative overflow-hidden w-full bg-white border-b border-[#E8E9E9] py-4 sm:py-6 lg:py-8 min-h-auto lg:min-h-[calc(100vh-100px)] flex flex-col justify-center">
+    <section id="home" className="relative overflow-hidden w-full bg-white border-b border-[#E8E9E9] py-3 sm:py-5 lg:py-7 flex flex-col justify-center">
       
       {/* Subtle Educational Doodle / Sketch Background Overlay (Full Width) */}
       <div 
@@ -331,14 +331,14 @@ export default function SchoolHeroSection({
           {/* ═══════════════════════════════════════════════════════════ */}
           {/* MAIN HERO GRID: Typography Left • Circular Media Right     */}
           {/* ═══════════════════════════════════════════════════════════ */}
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center py-2 sm:py-3">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center py-1 sm:py-2">
             
-            {/* Left Column: Heading, Subtitle & Pill Buttons */}
+            {/* Left Column: Compact Mobile-App Heading, Subtitle & Pill Buttons */}
             <div className="lg:col-span-7 xl:col-span-6 text-left max-w-xl">
               
-              {/* Main Headline (Scaled for balanced readability and eye comfort) */}
-              <div className="mb-3.5 sm:mb-4">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight text-slate-950">
+              {/* Main Headline (Compact Mobile-App Scale) */}
+              <div className="mb-2 sm:mb-3">
+                <h1 className="text-[22px] sm:text-3xl md:text-4xl font-black tracking-tight leading-tight text-slate-950">
                   <EditableText
                     contentKey="hero_heading_line1"
                     value="Play, Learn and"
@@ -357,35 +357,35 @@ export default function SchoolHeroSection({
               </div>
 
               {/* Subtitle Description */}
-              <div className="mb-8 sm:mb-10 text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed font-normal">
+              <div className="mb-4 sm:mb-6 text-slate-700 text-xs sm:text-sm leading-relaxed font-normal">
                 <EditableText
                   contentKey="hero_desc_main"
                   value={`Empowering young minds at ${displayName} through experiential inquiry, modern STEM laboratories, foundational values, and holistic character building.`}
                   multiline={true}
                   rows={3}
-                  className="block text-slate-600"
+                  className="block text-slate-700"
                   showVerificationBadge={false}
                 />
               </div>
 
-              {/* Labster 14px CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              {/* Compact App Pill CTA Buttons */}
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
                 
-                {/* Primary Button: Labster Royal Blue */}
+                {/* Primary Button */}
                 <button
                   type="button"
                   onClick={onApplyClick}
-                  className="rounded-[14px] px-6 sm:px-8 py-3 sm:py-3.5 bg-[#006FCC] hover:bg-[#005399] text-white text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer inline-flex items-center gap-2 active:scale-[0.98]"
+                  className="rounded-xl px-4 sm:px-6 py-2 sm:py-3 bg-[#006FCC] hover:bg-[#005399] text-white text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5 active:scale-[0.98]"
                 >
                   <EditableText contentKey="hero_cta_enroll" value="Enroll Now" showVerificationBadge={false} />
                   
                 </button>
 
-                {/* Secondary Button: Labster Light Surface */}
+                {/* Secondary Button */}
                 <button
                   type="button"
                   onClick={onTourClick}
-                  className="rounded-[14px] px-6 sm:px-7 py-3 sm:py-3.5 bg-[#F7F8F8] hover:bg-[#EDF5FA] border border-[#E8E9E9] text-[#003C6E] hover:text-[#006FCC] text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] hover:shadow-md transition-all duration-200 cursor-pointer inline-flex items-center gap-2 active:scale-[0.98]"
+                  className="rounded-xl px-4 sm:px-6 py-2 sm:py-3 bg-[#F7F8F8] hover:bg-[#EDF5FA] border border-[#E8E9E9] text-[#003C6E] hover:text-[#006FCC] text-xs sm:text-sm font-bold font-['Montserrat',sans-serif] hover:shadow-sm transition-all duration-200 cursor-pointer inline-flex items-center gap-1.5 active:scale-[0.98]"
                 >
                   <Play className="w-3.5 h-3.5 fill-[#006FCC] stroke-[#006FCC]" />
                   <EditableText contentKey="hero_cta_video_pill" value="Watch Video" showVerificationBadge={false} />
@@ -394,14 +394,14 @@ export default function SchoolHeroSection({
 
             </div>
 
-            {/* Right Column: Iconic Circular Media Frame with Thick Ring Border */}
-            <div className="lg:col-span-5 xl:col-span-6 flex items-center justify-center lg:justify-end relative">
+            {/* Right Column: Full-Width Mobile Media Frame / Circular Desktop Frame */}
+            <div className="lg:col-span-5 xl:col-span-6 block lg:flex lg:items-center lg:justify-end relative">
               <div 
-                className="relative group w-[260px] h-[260px] sm:w-[340px] sm:h-[340px] md:w-[380px] md:h-[380px] lg:w-[390px] lg:h-[390px] xl:w-[430px] xl:h-[430px] rounded-full shrink-0 select-none"
+                className="relative group -mx-4 w-[calc(100%+2rem)] sm:mx-0 sm:w-full h-[250px] sm:h-[340px] md:h-[380px] lg:w-[390px] lg:h-[390px] xl:w-[430px] xl:h-[430px] rounded-none sm:rounded-2xl lg:rounded-full shrink-0 select-none"
                 onMouseEnter={() => setIsAutoPlay(false)}
                 onMouseLeave={() => setIsAutoPlay(true)}
               >
-                {/* Manage Media Floating Button - Positioned on Top of the Circular Frame in Edit Mode */}
+                {/* Manage Media Floating Button - Positioned on Top of the Media Frame in Edit Mode */}
                 {isLiveTemplate && isEditMode && (
                   <button
                     type="button"
@@ -410,18 +410,18 @@ export default function SchoolHeroSection({
                       setEditingMediaList(mediaItems);
                       setIsMediaModalOpen(true);
                     }}
-                    className="absolute -top-5 left-1/2 -translate-x-1/2 z-30 rounded-full px-4 sm:px-5 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 border-2 border-white shadow-xl font-black text-xs sm:text-sm inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap hover:scale-105 active:scale-95 transition-all"
+                    className="absolute top-3 lg:-top-5 left-1/2 -translate-x-1/2 z-30 rounded-full px-4 sm:px-5 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 border-2 border-white shadow-xl font-black text-xs sm:text-sm inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap hover:scale-105 active:scale-95 transition-all"
                   >
                     <Edit3 className="w-4 h-4 text-slate-900" />
                     <span>Manage Media ({mediaItems.length}/5)</span>
                   </button>
                 )}
                 
-                {/* Layer 1: Outer Soft Decorative Ring */}
-                <div className="absolute -inset-3 sm:-inset-4 rounded-full border-2 border-dashed border-[#005689]/25 pointer-events-none animate-spin-slow opacity-60" style={{ animationDuration: '60s' }} />
+                {/* Layer 1: Outer Soft Decorative Ring (Desktop Circular Frame Only) */}
+                <div className="hidden lg:block absolute -inset-4 rounded-full border-2 border-dashed border-[#005689]/25 pointer-events-none animate-spin-slow opacity-60" style={{ animationDuration: '60s' }} />
 
-                {/* Layer 2: Iconic Bold Ring Border (Matching Reference Image Frame) */}
-                <div className={`absolute inset-0 rounded-full border-[8px] sm:border-[12px] lg:border-[16px] border-[#005689] shadow-2xl overflow-hidden z-10 flex flex-col items-center justify-center ${
+                {/* Layer 2: Full-Width Mobile Frame / Iconic Desktop Circle Frame */}
+                <div className={`absolute inset-0 rounded-none sm:rounded-2xl lg:rounded-full border-y-[4px] sm:border-[8px] lg:border-[16px] border-[#005689] shadow-2xl overflow-hidden z-10 flex flex-col items-center justify-center ${
                   hasCustomMedia ? 'bg-slate-900' : 'bg-gradient-to-br from-[#EDF5FA] via-[#F8FBFE] to-[#E2EFF8]'
                 }`}>
                   

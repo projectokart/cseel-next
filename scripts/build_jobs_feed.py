@@ -112,6 +112,16 @@ def slim_job(j):
     if j.get('verified'): s['v'] = 1
     if j.get('forLady'): s['f'] = 1
 
+    img = j.get('image_url') or j.get('school_image') or ''
+    if img and isinstance(img, str) and img.strip() and not 'placeholder' in img and (img.startswith('http') or img.startswith('/')):
+        s['im'] = img.strip()
+
+    logo = j.get('organisationLogo') or j.get('logo') or ''
+    if logo and isinstance(logo, str) and logo.strip() and not 'placeholder' in logo and (logo.startswith('http') or logo.startswith('/')):
+        s['lg'] = logo.strip()
+        if not s.get('im'):
+            s['im'] = logo.strip()
+
     return s
 
 def link_entry(j):

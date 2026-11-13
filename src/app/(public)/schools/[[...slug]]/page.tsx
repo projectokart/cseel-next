@@ -146,13 +146,18 @@ export default async function SchoolsDirectoryPage({
     ],
   };
 
+  const initialView = (resolvedSearchParams?.view as string) || 'compact';
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
       />
-      <SchoolsDirectoryClient initialData={directoryData} />
+      <SchoolsDirectoryClient 
+        initialData={directoryData} 
+        initialViewMode={['grid', 'grid3', 'compact', 'map'].includes(initialView) ? (initialView as any) : undefined}
+      />
     </>
   );
 }

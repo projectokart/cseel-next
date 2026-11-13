@@ -72,6 +72,7 @@ const SHOW_COMPARE_BUTTON = false;
 
 interface Props {
   initialData: SchoolsDirectoryResult;
+  initialViewMode?: 'grid' | 'grid3' | 'compact' | 'map';
 }
 
 const HERO_IMAGES = [
@@ -196,7 +197,7 @@ export function formatCardLocation(school: SchoolRecord): string {
   return parts.join(', ') || (cleanDist ? `${cleanDist}, ${cleanState}` : 'East Delhi, Delhi');
 }
 
-export default function SchoolsDirectoryClient({ initialData }: Props) {
+export default function SchoolsDirectoryClient({ initialData, initialViewMode }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -235,7 +236,9 @@ export default function SchoolsDirectoryClient({ initialData }: Props) {
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   
   // View mode supports 2 Cols, 3 Cols, Compact, and Map
-  const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>('compact');
+  const [viewMode, setViewMode] = useState<'grid' | 'grid3' | 'compact' | 'map'>(() => {
+    return initialViewMode || 'compact';
+  });
 
   // Sync viewMode from URL query (?view=map) or user's saved preference
   useEffect(() => {

@@ -1,11 +1,11 @@
 {
-  "version": "v_3898_2026-11-13_v2",
-  "count": 3898,
-  "generatedAt": "2026-11-13T09:58:55.637631",
+  "version": "v_4246_2026-11-13_v2",
+  "count": 4246,
+  "generatedAt": "2026-11-13T11:35:50.529164",
   "feedUrl": "/jobs/jobs-feed.json",
   "top50Url": "/jobs/jobs-top50.json",
   "linksUrl": "/jobs/jobs-links.json",
   "facetsUrl": "/jobs/jobs-facets.json",
-  "feedSizeKb": 1647.2,
-  "linksSizeKb": 408.0
+  "feedSizeKb": 1785.4,
+  "linksSizeKb": 439.3
 }

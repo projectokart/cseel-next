@@ -26,7 +26,7 @@ import AdSenseBanner, { AdSenseInFeedCard } from '@/components/ads/AdSenseBanner
 
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  MoreVertical,
+  ArrowUpDown,
   GraduationCap, MapPin, Search, Star, CheckCircle2, ShieldCheck,
   Filter, Sparkles, Phone, Mail, Award, Clock, X, Check,
   Send, Users, BookOpen, ExternalLink, Briefcase, Building2,
@@ -2341,44 +2341,44 @@ export default function TeachersDirectoryClient({
               )}
             </div>
 
-            {/* Row 2: Action Controls Bar (Vacancies Count + Filters + Sort + View/Menu) */}
-            <div className={`flex items-center justify-between pt-1 text-xs flex-wrap gap-2.5 ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
-              {/* Left Side: Vacancies Counter Pill & Active Filter count */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="inline-flex items-center gap-1.5 bg-[#F1F5F9] px-3 py-1.5 rounded-xl border border-slate-200/80 text-xs font-bold text-[#004A75]">
-                  <Briefcase size={13} className="text-[#004A75]" />
-                  <span>Vacancies</span>
+            {/* Row 2: Action Controls Bar (Jobs Count + Filters + Sort + View/Menu - Always single line) */}
+            <div className={`flex items-center justify-between pt-1 text-xs flex-nowrap gap-2 w-full ${viewMode === 'map' ? 'hidden md:flex' : 'flex'}`}>
+              {/* Left Side: Jobs Counter Pill */}
+              <div className="flex items-center gap-2 shrink-0 min-w-0">
+                <div className="inline-flex items-center gap-1.5 bg-[#F1F5F9] px-2.5 py-1.5 rounded-xl border border-slate-200/80 text-xs font-bold text-[#004A75] whitespace-nowrap">
+                  <Briefcase size={13} className="text-[#004A75] shrink-0" />
+                  <span>Jobs</span>
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-white text-slate-700 shadow-2xs font-extrabold">
                     {(hasActiveFilters ? filteredJobs.length : liveTotalVacancies).toLocaleString()}
                   </span>
                 </div>
 
-                <div className="text-[11.5px] text-slate-500 font-medium hidden sm:inline">
+                <div className="text-[11px] text-slate-500 font-medium hidden md:inline truncate">
                   Updated: <span className="text-slate-700 font-semibold">{latestUpdatedDate}</span>
                 </div>
               </div>
 
-              {/* Right Side: Filters, Sort & More Menu Controls */}
-              <div className="flex items-center gap-2 ml-auto">
-                {/* 1. Filter Button */}
+              {/* Right Side: Filters (Icon Only), Sort (Icon Only), Menu (List Icon Only) */}
+              <div className="flex items-center gap-1.5 shrink-0 ml-auto">
+                {/* 1. Filter Button (Icon Only) */}
                 <button
                   type="button"
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className={`h-9 px-3 rounded-xl flex items-center gap-1.5 border transition cursor-pointer active:scale-95 font-semibold text-xs ${
+                  className={`relative h-9 w-9 rounded-xl flex items-center justify-center border transition cursor-pointer active:scale-95 ${
                     hasActiveFilters
-                      ? 'bg-[#EBF3F8] text-[#004A75] border-[#D0E6F5] font-bold'
+                      ? 'bg-[#EBF3F8] text-[#004A75] border-[#D0E6F5]'
                       : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 border-slate-200/70'
                   }`}
-                  title="Open Filters"
+                  title="Filters"
+                  aria-label="Open Filters"
                 >
-                  <SlidersHorizontal size={14} className={hasActiveFilters ? 'text-[#004A75]' : 'text-slate-600'} />
-                  <span>Filters</span>
+                  <SlidersHorizontal size={15} className={hasActiveFilters ? 'text-[#004A75]' : 'text-slate-600'} />
                   {hasActiveFilters && (
-                    <span className="w-2 h-2 rounded-full bg-[#004A75]" />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#004A75] ring-1.5 ring-white" />
                   )}
                 </button>
 
-                {/* 2. Sort Button with Dropdown */}
+                {/* 2. Sort Button with Dropdown (Icon Only) */}
                 <div className="relative">
                   <button
                     type="button"
@@ -2386,20 +2386,13 @@ export default function TeachersDirectoryClient({
                       setIsSortMenuOpen(!isSortMenuOpen);
                       setIsMoreMenuOpen(false);
                     }}
-                    className={`h-9 px-3 rounded-xl flex items-center gap-1.5 border transition cursor-pointer active:scale-95 font-semibold text-xs ${
+                    className={`h-9 w-9 rounded-xl flex items-center justify-center border transition cursor-pointer active:scale-95 ${
                       isSortMenuOpen ? 'bg-slate-200 text-[#004A75] border-slate-300' : 'bg-[#F4F6F8] hover:bg-slate-200/80 text-slate-700 border-slate-200/70'
                     }`}
-                    title="Sort List"
+                    title={`Sort: ${sortBy === 'newest' ? 'Newest' : sortBy === 'salary' ? 'Salary' : sortBy === 'near_me' ? 'Near Me' : 'Deadline'}`}
+                    aria-label="Sort Jobs"
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="21" y1="6" x2="3" y2="6"/>
-                      <line x1="17" y1="12" x2="3" y2="12"/>
-                      <line x1="13" y1="18" x2="3" y2="18"/>
-                    </svg>
-                    <span>
-                      {sortBy === 'newest' ? 'Newest' : sortBy === 'salary' ? 'Salary' : sortBy === 'near_me' ? 'Near Me' : 'Deadline'}
-                    </span>
-                    <ChevronDown size={13} className={`transition-transform duration-200 ${isSortMenuOpen ? 'rotate-180' : ''}`} />
+                    <ArrowUpDown size={15} className={sortBy !== 'newest' ? 'text-[#004A75]' : 'text-slate-600'} />
                   </button>
 
                   {/* Sort Dropdown Menu */}
@@ -2463,7 +2456,7 @@ export default function TeachersDirectoryClient({
                   )}
                 </div>
 
-                {/* 3. View Mode / Menu Button */}
+                {/* 3. View Mode / Menu Button (List Icon Only, No Vertical Dots) */}
                 <div className="relative">
                   <button
                     type="button"
@@ -2471,12 +2464,11 @@ export default function TeachersDirectoryClient({
                       setIsMoreMenuOpen(!isMoreMenuOpen);
                       setIsSortMenuOpen(false);
                     }}
-                    className="h-9 px-3 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white flex items-center gap-1.5 transition cursor-pointer shadow-sm active:scale-95 font-semibold text-xs"
-                    title="View Mode & Options"
+                    className="h-9 w-9 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white flex items-center justify-center transition cursor-pointer shadow-sm active:scale-95"
+                    title="View Options"
+                    aria-label="View Options"
                   >
-                    {viewMode === 'compact' ? <List size={14} /> : viewMode === 'map' ? <MapIcon size={14} /> : <LayoutGrid size={14} />}
-                    <span className="hidden sm:inline capitalize">{viewMode}</span>
-                    <MoreVertical size={14} className="text-white/80" />
+                    <List size={16} />
                   </button>
 
                   {/* More Options Popover Menu */}
@@ -3155,7 +3147,7 @@ export default function TeachersDirectoryClient({
               {totalPages > 1 && (
                 <div className="mt-6 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-2xs">
                   <div className="text-xs text-slate-500 font-medium text-center sm:text-left">
-                    Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount.toLocaleString()}</span> {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
+                    Showing <span className="font-bold text-slate-800">{(currentPage - 1) * JOBS_PER_PAGE + 1}</span> to <span className="font-bold text-slate-800">{Math.min(currentPage * JOBS_PER_PAGE, totalJobsCount)}</span> of <span className="font-bold text-slate-900">{totalJobsCount.toLocaleString()}</span> {activeTab === 'jobs' ? 'Jobs' : 'Faculty'}
                   </div>
 
                   <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">

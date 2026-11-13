@@ -56,5 +56,9 @@ scratch/
 data/smtp_providers.json
 data/user_profiles.json
 data/search_query_logs.json
+docs/API_AND_CREDENTIALS_MASTER.md
 .agents/
 skills-lock.json
+
+.vercel
+.env*

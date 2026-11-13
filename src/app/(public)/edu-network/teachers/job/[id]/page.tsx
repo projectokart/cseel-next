@@ -1,16 +1,75 @@
 import React from 'react';
+import fs from 'fs';
+import path from 'path';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { FacultyJobItem } from '@/data/facultyJobsData';
+import { decodeSlimJob } from '@/lib/jobs/feedDecoder';
 import { SupabaseJobService } from '@/lib/services/supabaseJobService';
+import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
+import SingleJobClient from './SingleJobClient';
 
 export const revalidate = 86400; // 1 Day Edge ISR cache
+
+// Fast in-memory map of decoded jobs from jobs-feed.json
+let cachedJobsMap: Map<string, FacultyJobItem> | null = null;
+let cachedLinksMap: Record<string, string> | null = null;
+
+function loadJobsFeed(): Map<string, FacultyJobItem> {
+  if (cachedJobsMap) return cachedJobsMap;
+  cachedJobsMap = new Map();
+
+  try {
+    const feedPath = path.join(process.cwd(), 'public', 'jobs', 'jobs-feed.json');
+    if (fs.existsSync(feedPath)) {
+      const raw = fs.readFileSync(feedPath, 'utf8');
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) {
+        for (const item of list) {
+          const decoded = decodeSlimJob(item);
+          if (decoded && decoded.id) {
+            cachedJobsMap.set(decoded.id, decoded);
+            if (decoded.id.startsWith('ind-')) {
+              cachedJobsMap.set(decoded.id.replace(/^ind-/, ''), decoded);
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[findJobById] Error loading jobs-feed.json:', err);
+  }
+
+  try {
+    const linksPath = path.join(process.cwd(), 'public', 'jobs', 'jobs-links.json');
+    if (fs.existsSync(linksPath)) {
+      const linksRaw = fs.readFileSync(linksPath, 'utf8');
+      cachedLinksMap = JSON.parse(linksRaw);
+    }
+  } catch {}
+
+  return cachedJobsMap;
+}
 
 async function findJobById(id: string): Promise<FacultyJobItem | null> {
   const cleanId = decodeURIComponent(id || '').trim().replace(/\/+$/, '');
   if (!cleanId) return null;
 
-  // 1. Direct indexed Supabase query (0.01ms CPU, ~1.5KB payload, ultra-fast)
+  // 1. First check in-memory jobs feed (covers all 4,246 jobs in 0.01ms)
+  const map = loadJobsFeed();
+  const feedJob = map.get(cleanId) || map.get(`ind-${cleanId}`) || map.get(`li-${cleanId}`) || map.get(`nk-${cleanId}`);
+  if (feedJob) {
+    if (cachedLinksMap && cachedLinksMap[feedJob.id]) {
+      const link = cachedLinksMap[feedJob.id];
+      if (typeof link === 'string') {
+        feedJob.originalUrl = link;
+        feedJob.applyUrl = link;
+      }
+    }
+    return feedJob;
+  }
+
+  // 2. Direct indexed Supabase query (for user-submitted / dynamically added jobs)
   try {
     const job = await SupabaseJobService.fetchJobBySlug(cleanId);
     if (job) return job;
@@ -18,7 +77,7 @@ async function findJobById(id: string): Promise<FacultyJobItem | null> {
     console.warn('[findJobById] Supabase lookup error:', err);
   }
 
-  // 2. Direct lookup for alternative slug format
+  // 3. Direct lookup for alternative slug format
   try {
     if (!cleanId.startsWith('ind-') && !cleanId.startsWith('li-') && !cleanId.startsWith('nk-') && !cleanId.startsWith('job-')) {
       const altJob = await SupabaseJobService.fetchJobBySlug(`ind-${cleanId}`);
@@ -29,7 +88,7 @@ async function findJobById(id: string): Promise<FacultyJobItem | null> {
     }
   } catch {}
 
-  // 3. In-memory fallback
+  // 4. In-memory fallback
   try {
     const { getActiveFacultyJobs } = await import('@/data/facultyJobsData');
     const active = getActiveFacultyJobs();
@@ -39,9 +98,6 @@ async function findJobById(id: string): Promise<FacultyJobItem | null> {
 
   return null;
 }
-
-import { formatStructuredAddress, formatCleanSalary } from '@/lib/jobCardUtils';
-import SingleJobClient from './SingleJobClient';
 
 
 
@@ -154,13 +210,23 @@ export default async function SingleJobPage({ params }: Props) {
     notFound();
   }
 
-  // Fetch fast, lightweight related jobs (sub-millisecond edge execution)
-  const relatedJobs = await SupabaseJobService.fetchRelatedJobs(
+  // Fetch related jobs (with memory fallback)
+  let relatedJobs: FacultyJobItem[] = await SupabaseJobService.fetchRelatedJobs(
     job.city || job.district,
     job.state,
     job.id,
     8
   ).catch(() => []);
+
+  if (!relatedJobs || relatedJobs.length === 0) {
+    const map = loadJobsFeed();
+    const all = Array.from(map.values()).filter(j => j.id !== job.id);
+    const sameRegion = all.filter(j => 
+      (j.city && job.city && j.city.toLowerCase() === job.city.toLowerCase()) || 
+      (j.state && job.state && j.state.toLowerCase() === job.state.toLowerCase())
+    );
+    relatedJobs = (sameRegion.length >= 4 ? sameRegion : all).slice(0, 8);
+  }
 
   const structuredLoc = formatStructuredAddress(job);
   const salaryParsed = parseNumericSalary(job.salary);

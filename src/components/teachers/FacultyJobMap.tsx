@@ -3,14 +3,14 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FacultyJobItem, VerifiedFacultyItem, getJobFacilityTags, getJobRequirementTags, getMinExperience } from '@/data/facultyJobsData';
+import { FacultyJobItem, VerifiedFacultyItem } from '@/data/facultyJobsData';
 import {
-  ExternalLink, MapPin, Share2, Navigation, Crosshair, ChevronLeft, ChevronRight,
-  X, Briefcase, IndianRupee, ShieldCheck, Mail, Sliders, CheckCheck, Compass, Sparkles,
-  Plus, Minus, Maximize2, Minimize2, List, Columns2, ChevronUp, ChevronDown, Bookmark, CheckCircle2, Globe, Search
+  Navigation, Crosshair, ChevronLeft, ChevronRight,
+  X, Briefcase, Plus, Minus, Maximize2, Minimize2, List, Columns2,
+  ChevronUp, ChevronDown, Search, Layers, RotateCcw
 } from 'lucide-react';
 import Link from 'next/link';
-import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
+import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getGoogleMapsSearchUrl } from '@/lib/jobCardUtils';
 
 // Helper to format ultra-compact per-month salary for 2-line map badges
 function getBadgeSalaryShort(raw?: string | null): string {
@@ -54,8 +54,6 @@ function getBadgeSalaryShort(raw?: string | null): string {
 
   return s.length > 11 ? s.slice(0, 10) : s;
 }
-
-
 
 interface FacultyJobMapProps {
   activeTab: 'jobs' | 'faculty';
@@ -109,6 +107,58 @@ function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   return R * c;
 }
 
+// Generate Rich Hover/Click Information Popup right ABOVE point
+function generatePopupHtml(item: any, activeTab: 'jobs' | 'faculty'): string {
+  if (activeTab === 'jobs') {
+    const j = item as FacultyJobItem;
+    const orgName = (j.organisationName || 'School').replace(/"/g, '&quot;');
+    const postName = (j.jobPostName || 'Teaching Faculty').replace(/"/g, '&quot;');
+    const salaryClean = formatCleanSalary(j.salary, false);
+    const addrClean = formatStructuredAddress(j).replace(/"/g, '&quot;');
+    const gMapsUrl = getGoogleMapsSearchUrl(j);
+    const applyUrl = j.applyUrl || j.originalUrl || `/edu-network/teachers/job/${j.id}`;
+    const logoUrl = j.organisationLogo || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80';
+    const srcName = getSourceDisplayName(j.source);
+
+    return `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 210px; max-width: 240px; padding: 2px;">
+        <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px;">
+          <img src="${logoUrl}" style="width: 30px; height: 30px; border-radius: 7px; object-fit: contain; border: 1px solid #e2e8f0; background: #fff; padding: 2px; shrink: 0;" alt="" />
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 700; font-size: 12px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${orgName}</div>
+            <div style="font-size: 9.5px; color: #0284c7; font-weight: 700;">${srcName} Verified</div>
+          </div>
+        </div>
+        <div style="font-size: 12px; font-weight: 800; color: #003c6e; margin-bottom: 3px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${postName}</div>
+        <div style="font-size: 11px; color: #16a34a; font-weight: 800; margin-bottom: 4px;">${salaryClean}</div>
+        <div style="display: flex; align-items: flex-start; gap: 4px; font-size: 10px; color: #64748b; margin-bottom: 7px; line-height: 1.3;">
+          <span style="color: #ef4444; font-size: 11px; line-height: 1;">📍</span>
+          <span style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${addrClean}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px; padding-top: 5px; border-top: 1px solid #f1f5f9;">
+          <a href="${gMapsUrl}" target="_blank" rel="noopener noreferrer" style="flex: 1; text-align: center; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; text-decoration: none; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 700;">Maps ↗</a>
+          <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" style="flex: 1.2; text-align: center; background: #0A66C2; color: #fff; text-decoration: none; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 700;">Apply ↗</a>
+        </div>
+      </div>
+    `;
+  } else {
+    const f = item as VerifiedFacultyItem;
+    return `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 200px; padding: 2px;">
+        <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 4px;">
+          <img src="${f.avatar}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;" alt="" />
+          <div>
+            <div style="font-weight: 800; font-size: 12.5px; color: #003c6e;">${f.name}</div>
+            <div style="font-size: 10px; color: #64748b;">${f.designation} • ${f.subject}</div>
+          </div>
+        </div>
+        <div style="font-size: 10.5px; color: #475569; margin-bottom: 6px;">${f.city} • ${f.experienceYears}+ Yrs Exp</div>
+        <a href="/edu-network/teachers/${f.id}" style="display: block; text-align: center; background: #005689; color: #fff; text-decoration: none; padding: 4px 0; border-radius: 6px; font-size: 10.5px; font-weight: 700;">View Profile</a>
+      </div>
+    `;
+  }
+}
+
 export default function FacultyJobMap({
   activeTab,
   jobs,
@@ -132,29 +182,48 @@ export default function FacultyJobMap({
 }: FacultyJobMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const canvasRendererRef = useRef<L.Canvas | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const circleLayerRef = useRef<L.Circle | null>(null);
   const centerMarkerRef = useRef<L.Marker | null>(null);
+  const mountedMarkersRef = useRef<Map<string, L.CircleMarker>>(new Map());
 
   const [isLocating, setIsLocating] = useState(false);
   const [displayMode, setDisplayMode] = useState<'points' | 'badges'>('points');
-  // Range: 0 to 200 km (default 0 = All matching vacancies from list)
-  const [distanceRadius, setDistanceRadius] = useState<number>(0);
+
+  // STRICT REQUIREMENT: Radius limit is strictly 1 to 50 km (default 25km). NO ZERO (All India dump removed)!
+  const [distanceRadius, setDistanceRadius] = useState<number>(25);
+
+  // Pagination / Batch Rendering State: Default batch size is 25 points
+  const MAP_BATCH_SIZE = 25;
+  const [visibleBatchCount, setVisibleBatchCount] = useState<number>(25);
+
+  // Custom User Location Pin dropped by tapping anywhere on map
+  const [customPin, setCustomPin] = useState<{ lat: number; lng: number } | null>(null);
+
   const [isDesktopSheetMinimized, setIsDesktopSheetMinimized] = useState(false);
   const [isDesktopSheetWide, setIsDesktopSheetWide] = useState(false);
   const [isDesktopSheetHidden, setIsDesktopSheetHidden] = useState(false);
-  const [mapDisplayMode, setMapDisplayMode] = useState<'page' | 'accumulate' | 'all_dots'>('page');
   const [mapListSearch, setMapListSearch] = useState('');
   const [activeOpportunityIndex, setActiveOpportunityIndex] = useState<number | null>(null);
   const mapWrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isDesktopSheetOpen, setIsDesktopSheetOpen] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // Mobile sheet drawer state: 'peek' (58px) | 'half' (50vh) | 'full' (86vh)
-  const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('peek');
+  const [mobileSheetState, setMobileSheetState] = useState<'peek' | 'half' | 'full'>('half');
 
-  // Dynamic offset calculation ensuring popups NEVER touch the top header or right-side sheet
+  // Active center coordinate: Priority -> Custom Tapped Pin > GPS Live Location > Selected City > Default Delhi NCR
+  const currentCenter = useMemo(() => {
+    if (customPin) return customPin;
+    if (userLocation) return userLocation;
+    if (selectedCity && CITY_COORDS[selectedCity]) {
+      return CITY_COORDS[selectedCity];
+    }
+    return { lat: 28.6139, lng: 77.2090 }; // Default Delhi NCR
+  }, [customPin, userLocation, selectedCity]);
+
+  // Dynamic offset calculation ensuring popups NEVER touch the top header or bottom sheet
   const getOffsetLatLng = useCallback((lat: number, lng: number, zoom?: number) => {
     if (!mapInstanceRef.current || !mapContainerRef.current) return [lat, lng] as [number, number];
 
@@ -167,15 +236,15 @@ export default function FacultyJobMap({
 
     if (isMobile) {
       if (mobileSheetState === 'half') {
-        offsetY = Math.round(containerHeight * 0.10);
+        offsetY = Math.round(containerHeight * 0.12);
       } else if (mobileSheetState === 'full') {
-        offsetY = Math.round(containerHeight * 0.22);
+        offsetY = Math.round(containerHeight * 0.25);
       } else {
-        offsetY = -20;
+        offsetY = -15;
       }
     } else {
-      if (isDesktopSheetOpen) {
-        offsetX = 120;
+      if (!isDesktopSheetHidden) {
+        offsetX = isDesktopSheetWide ? 200 : 140;
       }
       offsetY = -15;
     }
@@ -185,9 +254,9 @@ export default function FacultyJobMap({
     const newCenterLatLng = mapInstanceRef.current.unproject(newCenterPoint, currentZoom);
 
     return [newCenterLatLng.lat, newCenterLatLng.lng] as [number, number];
-  }, [mobileSheetState, isDesktopSheetOpen]);
+  }, [mobileSheetState, isDesktopSheetHidden, isDesktopSheetWide]);
 
-  // Auto Live Location on initial mount (High accuracy, centers map around user)
+  // Auto Live Location on initial mount (High accuracy)
   useEffect(() => {
     if (typeof window === 'undefined' || !navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -195,11 +264,6 @@ export default function FacultyJobMap({
         const { latitude, longitude } = pos.coords;
         if (latitude && longitude) {
           setUserLocation({ lat: latitude, lng: longitude });
-          if (mapInstanceRef.current) {
-            const zoom = 11;
-            const offsetLatLng = getOffsetLatLng(latitude, longitude, zoom);
-            mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 1.2 });
-          }
         }
       },
       (err) => {
@@ -207,50 +271,69 @@ export default function FacultyJobMap({
       },
       { timeout: 8000, enableHighAccuracy: true, maximumAge: 60000 }
     );
-  }, [getOffsetLatLng]);
+  }, []);
+
+  // Filter items STRICTLY within distanceRadius (Max 50 km from center)
+  const inRadiusItems = useMemo(() => {
+    const rawList = activeTab === 'jobs' ? jobs : faculty;
+    // Strict guard: minimum 1km, maximum 50km
+    const safeRadius = Math.min(Math.max(distanceRadius || 10, 1), 50);
+
+    return rawList.filter((item) => {
+      if (!item.coordinates || !item.coordinates.lat || !item.coordinates.lng) return false;
+      const d = getDistanceKm(
+        currentCenter.lat,
+        currentCenter.lng,
+        item.coordinates.lat,
+        item.coordinates.lng
+      );
+      return d <= safeRadius;
+    });
+  }, [activeTab, jobs, faculty, distanceRadius, currentCenter]);
+
+  // Batch rendering pagination: Limit visible items on map to visibleBatchCount (starts at 25)
+  const filteredItems = useMemo(() => {
+    return inRadiusItems.slice(0, visibleBatchCount);
+  }, [inRadiusItems, visibleBatchCount]);
+
+  // Filtered by in-list search term (Filter role, subject, school...)
+  const displayedListItems = useMemo(() => {
+    if (!mapListSearch.trim()) return filteredItems;
+    const q = mapListSearch.toLowerCase().trim();
+    return filteredItems.filter((item: any) => {
+      const title = (item.jobPostName || item.name || '').toLowerCase();
+      const school = (item.organisationName || item.currentInstitute || '').toLowerCase();
+      const loc = (item.city || item.state || '').toLowerCase();
+      const subj = (item.subject || '').toLowerCase();
+      return title.includes(q) || school.includes(q) || loc.includes(q) || subj.includes(q);
+    });
+  }, [filteredItems, mapListSearch]);
+
+  // Reset batch count when center or radius changes
+  useEffect(() => {
+    setVisibleBatchCount(25);
+    setActiveOpportunityIndex(null);
+  }, [distanceRadius, customPin]);
+
+  const handleSelectCard = useCallback((idx: number) => {
+    setActiveOpportunityIndex(idx);
+    const item: any = filteredItems[idx];
+    if (item && item.coordinates && mapInstanceRef.current) {
+      const zoom = Math.max(mapInstanceRef.current.getZoom(), 12);
+      const offsetLatLng = getOffsetLatLng(item.coordinates.lat, item.coordinates.lng, zoom);
+      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
+    }
+  }, [filteredItems, getOffsetLatLng]);
+
+  const handleFlyToPin = (item: any, idx: number) => {
+    handleSelectCard(idx);
+  };
 
   // Drag handling state for mobile bottom drawer
   const dragStartYRef = useRef<number | null>(null);
   const dragCurrentYRef = useRef<number | null>(null);
   const [isDraggingSheet, setIsDraggingSheet] = useState(false);
   const [dragDeltaY, setDragDeltaY] = useState(0);
-  // Fullscreen change listener for Esc / F11 sync
-  useEffect(() => {
-    const handleFsChange = () => {
-      const fs = !!document.fullscreenElement;
-      setIsFullscreen(fs);
-      setTimeout(() => {
-        mapInstanceRef.current?.invalidateSize();
-      }, 150);
-    };
-    document.addEventListener('fullscreenchange', handleFsChange);
-    return () => document.removeEventListener('fullscreenchange', handleFsChange);
-  }, []);
-
-  const toggleFullscreen = () => {
-    const el = mapWrapperRef.current;
-    if (!el) return;
-    if (!document.fullscreenElement) {
-      if (el.requestFullscreen) {
-        el.requestFullscreen().catch(() => {
-          setIsFullscreen((prev) => !prev);
-        });
-      } else {
-        setIsFullscreen((prev) => !prev);
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-    setTimeout(() => {
-      mapInstanceRef.current?.invalidateSize();
-    }, 150);
-    setTimeout(() => {
-      mapInstanceRef.current?.invalidateSize();
-    }, 400);
-  };
-
 
   const handleDragStart = (clientY: number) => {
     dragStartYRef.current = clientY;
@@ -273,25 +356,13 @@ export default function FacultyJobMap({
     }
 
     const diffY = dragCurrentYRef.current - dragStartYRef.current;
-    
-    // Dragged UP by more than 35px
     if (diffY < -35) {
-      if (mobileSheetState === 'peek') {
-        setMobileSheetState('half');
-      } else if (mobileSheetState === 'half') {
-        setMobileSheetState('full');
-      }
-    } 
-    // Dragged DOWN by more than 35px
-    else if (diffY > 35) {
-      if (mobileSheetState === 'full') {
-        setMobileSheetState('half');
-      } else if (mobileSheetState === 'half') {
-        setMobileSheetState('peek');
-      }
-    } 
-    // Small tap (less than 10px movement)
-    else if (Math.abs(diffY) <= 10) {
+      if (mobileSheetState === 'peek') setMobileSheetState('half');
+      else if (mobileSheetState === 'half') setMobileSheetState('full');
+    } else if (diffY > 35) {
+      if (mobileSheetState === 'full') setMobileSheetState('half');
+      else if (mobileSheetState === 'half') setMobileSheetState('peek');
+    } else if (Math.abs(diffY) <= 10) {
       setMobileSheetState((prev) => (prev === 'peek' ? 'half' : prev === 'half' ? 'full' : 'peek'));
     }
 
@@ -301,72 +372,32 @@ export default function FacultyJobMap({
     setDragDeltaY(0);
   };
 
-  // Active center coordinate: live GPS, or selected city, or default Delhi NCR
-  const currentCenter = useMemo(() => {
-    if (userLocation) return userLocation;
-    if (selectedCity && CITY_COORDS[selectedCity]) {
-      return CITY_COORDS[selectedCity];
+  // Fullscreen change listener
+  useEffect(() => {
+    const handleFsChange = () => {
+      const fs = !!document.fullscreenElement;
+      setIsFullscreen(fs);
+      setTimeout(() => mapInstanceRef.current?.invalidateSize(), 150);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    const el = mapWrapperRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen?.().catch(() => setIsFullscreen((prev) => !prev));
+    } else {
+      document.exitFullscreen?.().catch(() => {});
     }
-    return { lat: 28.6139, lng: 77.2090 }; // Default Delhi NCR
-  }, [userLocation, selectedCity]);
-
-  // Filter items by distance if distanceRadius > 0
-  const filteredItems = useMemo(() => {
-    const rawList = activeTab === 'jobs' ? jobs : faculty;
-
-    if (distanceRadius === 0) {
-      return rawList;
-    }
-
-    const withDist = rawList.filter((item) => {
-      if (!item.coordinates || !item.coordinates.lat || !item.coordinates.lng) return false;
-      const d = getDistanceKm(
-        currentCenter.lat,
-        currentCenter.lng,
-        item.coordinates.lat,
-        item.coordinates.lng
-      );
-      return d <= distanceRadius;
-    });
-
-    return withDist.length > 0 ? withDist : rawList;
-  }, [activeTab, jobs, faculty, distanceRadius, currentCenter]);
-
-  // Filtered by in-list search term (Filter role, subject, school...)
-  const displayedListItems = useMemo(() => {
-    if (!mapListSearch.trim()) return filteredItems;
-    const q = mapListSearch.toLowerCase().trim();
-    return filteredItems.filter((item: any) => {
-      const title = (item.jobPostName || item.name || '').toLowerCase();
-      const school = (item.organisationName || item.currentInstitute || '').toLowerCase();
-      const loc = (item.city || item.state || '').toLowerCase();
-      const subj = (item.subject || '').toLowerCase();
-      return title.includes(q) || school.includes(q) || loc.includes(q) || subj.includes(q);
-    });
-  }, [filteredItems, mapListSearch]);
-
-  const handleFlyToPin = (item: any, idx: number) => {
-    setActiveOpportunityIndex(idx);
-    if (item.coordinates && mapInstanceRef.current) {
-      const zoom = 13;
-      const offsetLatLng = getOffsetLatLng(item.coordinates.lat, item.coordinates.lng, zoom);
-      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
-    }
+    setTimeout(() => mapInstanceRef.current?.invalidateSize(), 150);
   };
 
-  // Reset active index if out of range
-  useEffect(() => {
-    if (activeOpportunityIndex !== null && activeOpportunityIndex >= filteredItems.length) {
-      setActiveOpportunityIndex(filteredItems.length > 0 ? 0 : null);
-    }
-  }, [filteredItems, activeOpportunityIndex]);
-
-  // Window resize & orientation change handler to prevent map clipping
+  // Window resize & orientation change handler
   useEffect(() => {
     const handleResize = () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.invalidateSize();
-      }
+      mapInstanceRef.current?.invalidateSize();
     };
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
@@ -376,18 +407,24 @@ export default function FacultyJobMap({
     };
   }, []);
 
-  // Initialize Map
+  // Initialize Map with Hardware-Accelerated Canvas Renderer & Click-to-Drop Pin
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
+    // Use Canvas renderer with padding to eliminate DOM overhead completely (supports 10,000+ points at 60fps)
+    const canvasRenderer = L.canvas({ padding: 0.5 });
+    canvasRendererRef.current = canvasRenderer;
+
     const map = L.map(mapContainerRef.current, {
       center: [currentCenter.lat, currentCenter.lng],
-      zoom: 9,
+      zoom: 11,
       zoomControl: false,
       attributionControl: false,
       maxZoom: 18,
       minZoom: 4,
+      renderer: canvasRenderer,
+      preferCanvas: true,
     });
 
     // Clean OpenStreetMap tiles
@@ -400,17 +437,25 @@ export default function FacultyJobMap({
     markersLayerRef.current = markersGroup;
     mapInstanceRef.current = map;
 
-    // Multi-stage invalidateSize to ensure 0 layout shift
+    // USER DIRECTIVE: Touch or Click anywhere on the map to drop a custom pin & draw radius circle!
+    map.on('click', (e: L.LeafletMouseEvent) => {
+      const { lat, lng } = e.latlng;
+      setCustomPin({ lat, lng });
+      setVisibleBatchCount(25);
+      setActiveOpportunityIndex(null);
+    });
+
     setTimeout(() => map.invalidateSize(), 80);
     setTimeout(() => map.invalidateSize(), 300);
 
     return () => {
       map.remove();
       mapInstanceRef.current = null;
+      mountedMarkersRef.current.clear();
     };
   }, []);
 
-  // Update center marker & radius circle on map (SchoolFinderMap radar style)
+  // Update Center Marker & Radius Circle (Radar Ring) around currentCenter
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -425,285 +470,192 @@ export default function FacultyJobMap({
       centerMarkerRef.current = null;
     }
 
-    if (distanceRadius > 0) {
-      // Draw Radius Circle (School page style: blue/sky filled circle)
-      const circle = L.circle([currentCenter.lat, currentCenter.lng], {
-        radius: distanceRadius * 1000,
-        color: '#005689',
-        weight: 1.5,
-        dashArray: '5, 5',
-        fillColor: '#005689',
-        fillOpacity: 0.08,
-      }).addTo(map);
+    const safeRadius = Math.min(Math.max(distanceRadius || 10, 1), 50);
 
-      circleLayerRef.current = circle;
+    // Draw Radius Circle (Blue dashed boundary ring)
+    const circle = L.circle([currentCenter.lat, currentCenter.lng], {
+      radius: safeRadius * 1000,
+      color: '#005689',
+      weight: 1.75,
+      dashArray: '6, 6',
+      fillColor: '#006FCC',
+      fillOpacity: 0.07,
+    }).addTo(map);
 
-      // SchoolFinderMap Red Pin with Blue Radar Pulse Rings
-      const centerPinHtml = `
-        <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-          <div class="live-gps-radar-ring" style="position: absolute; width: 40px; height: 40px; border-radius: 9999px; background: rgba(0, 111, 204, 0.28); border: 1.5px solid #006FCC;"></div>
-          <div style="width: 14px; height: 14px; background: #EA4335; border: 2.5px solid #ffffff; border-radius: 9999px; box-shadow: 0 2px 8px rgba(234,67,53,0.5); z-index: 2;"></div>
-        </div>
-      `;
-      const centerIcon = L.divIcon({
-        className: 'center-radar-pin',
-        html: centerPinHtml,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
-      });
+    circleLayerRef.current = circle;
 
-      const centerMarker = L.marker([currentCenter.lat, currentCenter.lng], { icon: centerIcon })
-        .bindTooltip(userLocation ? 'My Current Location' : (selectedCity || 'Search Center'), {
-          direction: 'top',
-          offset: [0, -18],
-        })
-        .addTo(map);
+    // Pin with Radar Pulse Ring at Center
+    const centerPinHtml = `
+      <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <div class="live-gps-radar-ring" style="position: absolute; width: 44px; height: 44px; border-radius: 9999px; background: rgba(0, 111, 204, 0.28); border: 1.5px solid #006FCC;"></div>
+        <div style="width: 14px; height: 14px; background: #EA4335; border: 2.5px solid #ffffff; border-radius: 9999px; box-shadow: 0 2px 8px rgba(234,67,53,0.5); z-index: 2;"></div>
+      </div>
+    `;
+    const centerIcon = L.divIcon({
+      className: 'center-radar-pin',
+      html: centerPinHtml,
+      iconSize: [44, 44],
+      iconAnchor: [22, 22],
+    });
 
-      centerMarkerRef.current = centerMarker;
+    const tooltipLabel = customPin
+      ? `Selected Pin (${safeRadius}km)`
+      : userLocation
+      ? `My Location (${safeRadius}km)`
+      : `${selectedCity || 'Search Center'} (${safeRadius}km)`;
 
-      // Smooth auto-fit to circle bounds when radius changes (accounting for bottom sheet height on mobile)
-      if (activeOpportunityIndex === null) {
-        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        const containerHeight = mapContainerRef.current?.clientHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
-        let paddingTop = 40;
-        let paddingBottom = 40;
-        if (isMobile && mobileSheetState === 'half') {
-          paddingTop = 75; // clears floating search bar at top
-          paddingBottom = Math.round(containerHeight * 0.50) + 15; // clears bottom half drawer
-        } else if (isMobile && mobileSheetState === 'full') {
-          paddingTop = 75;
-          paddingBottom = Math.round(containerHeight * 0.86) + 15;
-        }
+    const centerMarker = L.marker([currentCenter.lat, currentCenter.lng], { icon: centerIcon })
+      .bindTooltip(tooltipLabel, { direction: 'top', offset: [0, -18] })
+      .addTo(map);
 
-        map.fitBounds(circle.getBounds(), {
-          paddingTopLeft: [30, paddingTop],
-          paddingBottomRight: [30, paddingBottom],
-          maxZoom: 14,
-          animate: true,
-        });
+    centerMarkerRef.current = centerMarker;
+
+    // Smooth auto-fit to circle bounds when center or radius changes
+    if (activeOpportunityIndex === null) {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const containerHeight = mapContainerRef.current?.clientHeight || 800;
+      let paddingTop = 50;
+      let paddingBottom = 40;
+      if (isMobile && mobileSheetState === 'half') {
+        paddingTop = 60;
+        paddingBottom = Math.round(containerHeight * 0.50) + 10;
+      } else if (isMobile && mobileSheetState === 'full') {
+        paddingTop = 60;
+        paddingBottom = Math.round(containerHeight * 0.86) + 10;
       }
-    }
-  }, [currentCenter, distanceRadius, userLocation, selectedCity, activeOpportunityIndex, mobileSheetState]);
 
-  // Update Opportunity Markers
+      map.fitBounds(circle.getBounds(), {
+        paddingTopLeft: [25, paddingTop],
+        paddingBottomRight: [25, paddingBottom],
+        maxZoom: 13,
+        animate: true,
+      });
+    }
+  }, [currentCenter, distanceRadius, customPin, userLocation, selectedCity, mobileSheetState]);
+
+  // High-Performance Hardware-Accelerated Canvas Rendering & Incremental Point Mounting
   useEffect(() => {
     const map = mapInstanceRef.current;
     const markersGroup = markersLayerRef.current;
-    if (!map || !markersGroup) return;
+    const canvasRenderer = canvasRendererRef.current;
+    if (!map || !markersGroup || !canvasRenderer) return;
 
-    markersGroup.clearLayers();
-    const bounds = L.latLngBounds([]);
+    const currentKeyMap = new Map<string, { item: any; index: number }>();
+    filteredItems.forEach((item: any, idx: number) => {
+      const key = String(item.id || `idx-${idx}`);
+      currentKeyMap.set(key, { item, index: idx });
+    });
+
+    const mounted = mountedMarkersRef.current;
+
+    // 1. Unmount markers no longer in current batch
+    for (const [id, marker] of mounted.entries()) {
+      if (!currentKeyMap.has(id)) {
+        markersGroup.removeLayer(marker);
+        mounted.delete(id);
+      }
+    }
+
+    // 2. Mount new items or update selected state in place (Zero DOM churn)
     const coordCounts: Record<string, number> = {};
 
-    filteredItems.forEach((item: any, index: number) => {
+    currentKeyMap.forEach(({ item, index }, id) => {
       if (!item.coordinates || !item.coordinates.lat || !item.coordinates.lng) return;
 
       let { lat, lng } = item.coordinates;
-      const key = `${lat.toFixed(3)},${lng.toFixed(3)}`;
-      const offsetIndex = coordCounts[key] || 0;
-      coordCounts[key] = offsetIndex + 1;
+      const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
+      const offsetIndex = coordCounts[coordKey] || 0;
+      coordCounts[coordKey] = offsetIndex + 1;
 
       if (offsetIndex > 0) {
-        // Natural micro-offset within ~50 to 100 meters (golden angle) - keeps markers precisely at school campus, never shoots across districts!
         const angle = offsetIndex * 2.399963;
         const microRadius = 0.0006 * Math.sqrt(offsetIndex);
         lat += microRadius * Math.cos(angle);
         lng += microRadius * Math.sin(angle);
       }
 
-      bounds.extend([lat, lng]);
       const isSelected = activeOpportunityIndex === index;
 
-      let icon: L.DivIcon;
-
-      if (displayMode === 'points') {
-        // MODE 1: RED DOT POINT VIEW (Minimal, prevents map clutter)
-        const dotHtml = `
-          <div style="position: relative; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.25)'" onmouseout="this.style.transform='scale(1)'">
-            <div style="
-              width: ${isSelected ? '18px' : '11px'};
-              height: ${isSelected ? '18px' : '11px'};
-              background: ${isSelected ? '#dc2626' : '#ef4444'};
-              border: ${isSelected ? '2.5px solid #ffffff' : '1.5px solid #ffffff'};
-              border-radius: 9999px;
-              box-shadow: ${isSelected ? '0 0 0 4px rgba(220,38,38,0.35), 0 3px 8px rgba(0,0,0,0.3)' : '0 2px 5px rgba(239,68,68,0.4), 0 1px 2px rgba(0,0,0,0.2)'};
-            "></div>
-          </div>
-        `;
-
-        icon = L.divIcon({
-          className: `map-dot-${item.id}`,
-          html: dotHtml,
-          iconSize: isSelected ? [22, 22] : [14, 14],
-          iconAnchor: isSelected ? [11, 11] : [7, 7],
+      if (!mounted.has(id)) {
+        // Create Canvas Circle Marker: 0 DOM nodes, drawn in GPU canvas buffer
+        const circleMarker = L.circleMarker([lat, lng], {
+          renderer: canvasRenderer,
+          radius: isSelected ? 8.5 : 5.5,
+          fillColor: isSelected ? '#b91c1c' : '#ef4444',
+          color: '#ffffff',
+          weight: isSelected ? 2.5 : 1.5,
+          opacity: 1,
+          fillOpacity: isSelected ? 1 : 0.9,
         });
-      } else {
-        // MODE 2: 2-LINE SMALL POST BADGE (Line 1: Post like PGT Physics, Line 2: Salary with ₹ icon)
-        let line1 = '';
-        let line2 = '';
 
-        if (activeTab === 'jobs') {
-          const j = item as FacultyJobItem;
-          const des = j.designation || '';
-          const sub = j.subject ? j.subject.split(' ')[0] : '';
-          line1 = des && sub ? `${des} ${sub}` : (j.jobPostName || 'Teaching Job');
-          if (line1.length > 18) line1 = line1.slice(0, 16) + '..';
-          line2 = getBadgeSalaryShort(j.salary);
-        } else {
-          const f = item as VerifiedFacultyItem;
-          line1 = `${f.name.split(' ')[0]} (${f.designation})`;
-          line2 = `₹ ${f.expectedSalary || 'Exp'}`;
+        const popupContent = generatePopupHtml(item, activeTab);
+        circleMarker.bindPopup(popupContent, {
+          offset: [0, -6],
+          closeButton: true,
+          autoPan: true,
+          autoPanPadding: [24, 130]
+        });
+
+        circleMarker.on('click', (ev) => {
+          L.DomEvent.stopPropagation(ev);
+          handleSelectCard(index);
+          circleMarker.openPopup();
+        });
+
+        circleMarker.on('mouseover', () => {
+          circleMarker.openPopup();
+        });
+
+        markersGroup.addLayer(circleMarker);
+        mounted.set(id, circleMarker);
+      } else {
+        // Already mounted! Update style only for selected / deselected marker
+        const marker = mounted.get(id);
+        if (marker && 'setStyle' in marker) {
+          marker.setStyle({
+            radius: isSelected ? 8.5 : 5.5,
+            fillColor: isSelected ? '#b91c1c' : '#ef4444',
+            weight: isSelected ? 2.5 : 1.5,
+            fillOpacity: isSelected ? 1 : 0.9,
+          });
         }
-
-        const pinHtml = `
-          <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            <div style="background: ${isSelected ? '#00284d' : '#004c7d'}; color: #ffffff; padding: 2px 5.5px; border-radius: 6px; border: 1.5px solid #ffffff; box-shadow: 0 3px 8px rgba(0, 20, 45, 0.35); display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.15; white-space: nowrap;">
-              <div style="font-size: 8.5px; font-weight: 800; letter-spacing: 0.1px; max-width: 95px; overflow: hidden; text-overflow: ellipsis;">${line1}</div>
-              <div style="font-size: 8px; font-weight: 700; color: #4ade80; margin-top: 1px;">${line2}</div>
-            </div>
-            <div style="width: 0; height: 0; border-left: 3.5px solid transparent; border-right: 3.5px solid transparent; border-top: 4px solid ${isSelected ? '#00284d' : '#004c7d'}; margin-top: -1px;"></div>
-          </div>
-        `;
-
-        icon = L.divIcon({
-          className: `map-marker-${item.id}`,
-          html: pinHtml,
-          iconSize: [75, 28],
-          iconAnchor: [37.5, 28],
-        });
       }
-
-      const marker = L.marker([lat, lng], { icon });
-
-      // Generate Rich Hover/Click Information Popup right ABOVE pointer
-      let popupContent = '';
-      if (activeTab === 'jobs') {
-        const j = item as FacultyJobItem;
-        const orgName = (j.organisationName || 'School').replace(/"/g, '&quot;');
-        const postName = (j.jobPostName || 'Teaching Faculty').replace(/"/g, '&quot;');
-        const salaryClean = formatCleanSalary(j.salary, false);
-        const addrClean = formatStructuredAddress(j).replace(/"/g, '&quot;');
-        const gMapsUrl = getGoogleMapsSearchUrl(j);
-        const applyUrl = j.applyUrl || j.originalUrl;
-        const logoUrl = j.organisationLogo || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=80&auto=format&fit=crop&q=80';
-        const srcName = getSourceDisplayName(j.source);
-
-        popupContent = `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 210px; max-width: 240px; padding: 2px;">
-            <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 5px;">
-              <img src="${logoUrl}" style="width: 30px; height: 30px; border-radius: 7px; object-fit: contain; border: 1px solid #e2e8f0; background: #fff; padding: 2px; shrink: 0;" alt="" />
-              <div style="flex: 1; min-width: 0;">
-                <div style="font-weight: 700; font-size: 12px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${orgName}</div>
-                <div style="font-size: 9.5px; color: #0284c7; font-weight: 700;">${srcName} Verified</div>
-              </div>
-            </div>
-            <div style="font-size: 12px; font-weight: 800; color: #003c6e; margin-bottom: 3px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${postName}</div>
-            <div style="font-size: 11px; color: #16a34a; font-weight: 800; margin-bottom: 4px;">${salaryClean}</div>
-            <div style="display: flex; align-items: flex-start; gap: 4px; font-size: 10px; color: #64748b; margin-bottom: 7px; line-height: 1.3;">
-              <span style="color: #ef4444; font-size: 11px; line-height: 1;">📍</span>
-              <span style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${addrClean}</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px; padding-top: 5px; border-top: 1px solid #f1f5f9;">
-              <a href="${gMapsUrl}" target="_blank" rel="noopener noreferrer" style="flex: 1; text-align: center; background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; text-decoration: none; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 700;">Maps ↗</a>
-              <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" style="flex: 1.2; text-align: center; background: #0A66C2; color: #fff; text-decoration: none; padding: 4px 0; border-radius: 5px; font-size: 10px; font-weight: 700;">Apply ↗</a>
-            </div>
-          </div>
-        `;
-      } else {
-        const f = item as VerifiedFacultyItem;
-        popupContent = `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-width: 200px; padding: 2px;">
-            <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 4px;">
-              <img src="${f.avatar}" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;" alt="" />
-              <div>
-                <div style="font-weight: 800; font-size: 12.5px; color: #003c6e;">${f.name}</div>
-                <div style="font-size: 10px; color: #64748b;">${f.designation} • ${f.subject}</div>
-              </div>
-            </div>
-            <div style="font-size: 10.5px; color: #475569; margin-bottom: 6px;">${f.city} • ${f.experienceYears}+ Yrs Exp</div>
-            <a href="/edu-network/teachers/${f.id}" style="display: block; text-align: center; background: #005689; color: #fff; text-decoration: none; padding: 4px 0; border-radius: 6px; font-size: 10.5px; font-weight: 700;">View Profile</a>
-          </div>
-        `;
-      }
-
-      marker.bindPopup(popupContent, {
-        offset: displayMode === 'points' ? [0, -8] : [0, -24],
-        closeButton: true,
-        autoPan: true,
-        autoPanPaddingTopLeft: [24, 130],
-        autoPanPaddingBottomRight: [24, 80],
-        autoPanPadding: [24, 130]
-      });
-
-      marker.on('mouseover', () => {
-        marker.openPopup();
-      });
-
-      marker.on('click', () => {
-        handleSelectCard(index);
-        marker.openPopup();
-      });
-
-      markersGroup.addLayer(marker);
     });
+  }, [filteredItems, activeOpportunityIndex, activeTab, handleSelectCard]);
 
-    if (distanceRadius === 0 && bounds.isValid() && activeOpportunityIndex === null) {
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 11 });
-    }
-  }, [filteredItems, displayMode, activeOpportunityIndex, distanceRadius, activeTab]);
-
-  // Auto-center shift: smoothly re-center when mobileSheetState changes (e.g. user toggles Split / Half / Peek)
-  useEffect(() => {
-    if (!mapInstanceRef.current) return;
-    const target = (activeOpportunityIndex !== null && filteredItems[activeOpportunityIndex]?.coordinates)
-      ? { lat: Number(filteredItems[activeOpportunityIndex].coordinates.lat), lng: Number(filteredItems[activeOpportunityIndex].coordinates.lng) }
-      : currentCenter;
-
-    if (target && target.lat && target.lng) {
-      const zoom = mapInstanceRef.current.getZoom();
-      const offsetLatLng = getOffsetLatLng(target.lat, target.lng, zoom);
-      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.45 });
-    }
-  }, [mobileSheetState, getOffsetLatLng]);
-
-  const handleZoomIn = () => {
-    if (mapInstanceRef.current) mapInstanceRef.current.zoomIn();
+  // Handle batch increment / decrement
+  const handleLoadNextBatch = () => {
+    setVisibleBatchCount((prev) => Math.min(prev + MAP_BATCH_SIZE, inRadiusItems.length));
   };
 
-  const handleZoomOut = () => {
-    if (mapInstanceRef.current) mapInstanceRef.current.zoomOut();
+  const handlePrevBatch = () => {
+    setVisibleBatchCount((prev) => Math.max(MAP_BATCH_SIZE, prev - MAP_BATCH_SIZE));
   };
+
+  const handleShowAllInRadius = () => {
+    setVisibleBatchCount(Math.min(inRadiusItems.length, 3000));
+  };
+
+  const handleZoomIn = () => mapInstanceRef.current?.zoomIn();
+  const handleZoomOut = () => mapInstanceRef.current?.zoomOut();
 
   const fitToCurrentRadius = useCallback(() => {
-    if (!mapInstanceRef.current) return;
-    const map = mapInstanceRef.current;
+    if (!mapInstanceRef.current || !circleLayerRef.current) return;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const containerHeight = mapContainerRef.current?.clientHeight || (typeof window !== 'undefined' ? window.innerHeight : 800);
-
-    let paddingTop = 40;
+    const containerHeight = mapContainerRef.current?.clientHeight || 800;
+    let paddingTop = 50;
     let paddingBottom = 40;
-
     if (isMobile && mobileSheetState === 'half') {
-      paddingTop = 75; // clears floating search bar at top
-      paddingBottom = Math.round(containerHeight * 0.50) + 15; // clears bottom half drawer
-    } else if (isMobile && mobileSheetState === 'full') {
-      paddingTop = 75;
-      paddingBottom = Math.round(containerHeight * 0.86) + 15;
+      paddingTop = 60;
+      paddingBottom = Math.round(containerHeight * 0.50) + 10;
     }
-
-    if (circleLayerRef.current) {
-      map.fitBounds(circleLayerRef.current.getBounds(), {
-        paddingTopLeft: [30, paddingTop],
-        paddingBottomRight: [30, paddingBottom],
-        maxZoom: 14,
-        animate: true,
-      });
-    } else {
-      const zoom = 9;
-      const offsetLatLng = getOffsetLatLng(currentCenter.lat, currentCenter.lng, zoom);
-      map.flyTo(offsetLatLng, zoom, { duration: 0.5 });
-    }
-  }, [currentCenter, mobileSheetState, getOffsetLatLng]);
+    mapInstanceRef.current.fitBounds(circleLayerRef.current.getBounds(), {
+      paddingTopLeft: [25, paddingTop],
+      paddingBottomRight: [25, paddingBottom],
+      maxZoom: 13,
+      animate: true,
+    });
+  }, [mobileSheetState]);
 
   const handleLocateMe = () => {
     if (!navigator.geolocation || !mapInstanceRef.current) return;
@@ -713,6 +665,8 @@ export default function FacultyJobMap({
         setIsLocating(false);
         const { latitude, longitude } = pos.coords;
         setUserLocation({ lat: latitude, lng: longitude });
+        setCustomPin(null); // Reset any custom pin to live GPS
+        setVisibleBatchCount(25);
         const map = mapInstanceRef.current;
         if (map) {
           const zoom = 11;
@@ -720,45 +674,10 @@ export default function FacultyJobMap({
           map.flyTo(offsetLatLng, zoom, { duration: 1.2 });
         }
       },
-      () => {
-        setIsLocating(false);
-      },
+      () => setIsLocating(false),
       { timeout: 8000 }
     );
   };
-
-    const handlePrevSchool = () => {
-    if (displayedListItems.length === 0) return;
-    const currentIdx = activeOpportunityIndex ?? 0;
-    const prevIdx = currentIdx > 0 ? currentIdx - 1 : displayedListItems.length - 1;
-    handleSelectCard(prevIdx);
-  };
-
-  const handleNextSchool = () => {
-    if (displayedListItems.length === 0) return;
-    const currentIdx = activeOpportunityIndex ?? -1;
-    const nextIdx = currentIdx < displayedListItems.length - 1 ? currentIdx + 1 : 0;
-    handleSelectCard(nextIdx);
-  };
-
-  const handleSelectCard = (idx: number) => {
-    setActiveOpportunityIndex(idx);
-    const item: any = filteredItems[idx];
-    if (item && item.coordinates && mapInstanceRef.current) {
-      const zoom = Math.max(mapInstanceRef.current.getZoom(), 12);
-      const offsetLatLng = getOffsetLatLng(item.coordinates.lat, item.coordinates.lng, zoom);
-      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
-    }
-  };
-
-  const activeJob =
-    activeTab === 'jobs' && activeOpportunityIndex !== null
-      ? (filteredItems[activeOpportunityIndex] as FacultyJobItem)
-      : null;
-  const activeFaculty =
-    activeTab === 'faculty' && activeOpportunityIndex !== null
-      ? (filteredItems[activeOpportunityIndex] as VerifiedFacultyItem)
-      : null;
 
   const renderMapCard = (item: any, idx: number) => {
     const isJob = activeTab === 'jobs';
@@ -784,7 +703,7 @@ export default function FacultyJobMap({
             : 'bg-white border-[#E8E9E9] hover:border-[#006FCC]/50 hover:bg-[#F7F8F8] shadow-2xs'
         }`}
       >
-        {/* Compact Logo / Thumbnail */}
+        {/* Compact Logo */}
         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[10px] overflow-hidden bg-slate-50 border border-slate-100 shrink-0 relative flex items-center justify-center">
           {logoImg ? (
             <img
@@ -889,7 +808,7 @@ export default function FacultyJobMap({
         isFullscreen ? 'fixed inset-0 z-[9999] w-screen h-screen rounded-none max-h-none h-screen' : ''
       } ${className}`}
     >
-      {/* ─── DESKTOP SIDE SHEET (Left side of map, collapsible, pullable, minimizable) ─── */}
+      {/* ─── DESKTOP SIDE SHEET (Left side of map) ─── */}
       {!isDesktopSheetHidden && (
         <div
           className={`hidden md:flex flex-col bg-white/95 backdrop-blur-xl border-r border-slate-200 shadow-xl transition-all duration-300 z-20 shrink-0 h-full relative rounded-l-3xl overflow-hidden ${
@@ -900,7 +819,6 @@ export default function FacultyJobMap({
               : 'w-[320px] lg:w-[380px]'
           }`}
         >
-          {/* Minimized Vertical Bar */}
           {isDesktopSheetMinimized ? (
             <div className="flex flex-col items-center py-4 h-full justify-between">
               <button
@@ -918,7 +836,7 @@ export default function FacultyJobMap({
               <div className="[writing-mode:vertical-rl] rotate-180 text-xs font-bold text-gray-500 tracking-wider flex items-center gap-2">
                 <span>{displayedListItems.length} Points</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                <span>Batch {currentPage}/{totalPages || 1}</span>
+                <span>{distanceRadius}km Radius</span>
               </div>
 
               <button
@@ -931,11 +849,9 @@ export default function FacultyJobMap({
               </button>
             </div>
           ) : (
-            /* Expanded Desktop Sheet */
             <div className="flex flex-col h-full overflow-hidden">
               {/* Sheet Header */}
               <div className="p-3.5 border-b border-gray-200 bg-slate-50/70 shrink-0 space-y-2.5">
-                {/* Title & Action Handles */}
                 <div className="flex items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
@@ -943,15 +859,15 @@ export default function FacultyJobMap({
                     </div>
                     <div className="truncate">
                       <h3 className="text-xs font-bold text-gray-900 truncate">
-                        {activeTab === 'jobs' ? 'Jobs on Map' : 'Faculty on Map'}
+                        {activeTab === 'jobs' ? 'Vacancies on Map' : 'Faculty on Map'}
                       </h3>
                       <p className="text-[10px] text-gray-500 truncate">
-                        {totalJobsCount || filteredItems.length} total • {distanceRadius}km radius
+                        {inRadiusItems.length} available within {distanceRadius}km
                       </p>
                     </div>
                   </div>
 
-                  {/* Sheet Window Controls */}
+                  {/* Window Controls */}
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
@@ -965,7 +881,7 @@ export default function FacultyJobMap({
                       type="button"
                       onClick={() => setIsDesktopSheetWide(!isDesktopSheetWide)}
                       className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
-                      title={isDesktopSheetWide ? 'Narrow Sheet' : 'Widen Sheet (Pull)'}
+                      title={isDesktopSheetWide ? 'Narrow Sheet' : 'Widen Sheet'}
                     >
                       <Columns2 size={13} className={isDesktopSheetWide ? 'rotate-90' : ''} />
                     </button>
@@ -973,7 +889,7 @@ export default function FacultyJobMap({
                       type="button"
                       onClick={() => setIsDesktopSheetMinimized(true)}
                       className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 flex items-center justify-center transition cursor-pointer"
-                      title="Minimize to side strip"
+                      title="Minimize"
                     >
                       <Minus size={13} />
                     </button>
@@ -981,98 +897,59 @@ export default function FacultyJobMap({
                       type="button"
                       onClick={() => setIsDesktopSheetHidden(true)}
                       className="w-7 h-7 rounded-lg border border-gray-200 hover:bg-rose-50 hover:text-rose-600 text-gray-400 flex items-center justify-center transition cursor-pointer"
-                      title="Hide Sheet"
+                      title="Hide"
                     >
                       <X size={13} />
                     </button>
                   </div>
                 </div>
 
-                {/* Compact Control Row 1: Display Mode & Batch Info */}
+                {/* Batch Progress & Radius Options (5k, 10k, 25k, 50k - Strictly max 50km, NO 0) */}
                 <div className="flex items-center justify-between gap-1.5 flex-wrap">
-                  <div className="flex items-center bg-gray-200/80 p-0.5 rounded-lg text-[10px] font-bold">
-                    <button
-                      type="button"
-                      onClick={() => setMapDisplayMode('page')}
-                      className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
-                        mapDisplayMode === 'page'
-                          ? 'bg-white text-blue-600 shadow-2xs'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                      title="Show current page 50 vacancies"
-                    >
-                      50 Page
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMapDisplayMode('accumulate')}
-                      className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
-                        mapDisplayMode === 'accumulate'
-                          ? 'bg-white text-emerald-600 shadow-2xs'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                      title="Accumulate points on map"
-                    >
-                      +Add ({displayedListItems.length})
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMapDisplayMode('all_dots')}
-                      className={`px-2 py-0.5 rounded-md transition cursor-pointer ${
-                        mapDisplayMode === 'all_dots'
-                          ? 'bg-[#EA4335] text-white shadow-2xs'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                      title="Show all jobs as red dots"
-                    >
-                      All Dots
-                    </button>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-bold text-slate-500">Radius:</span>
+                    <div className="flex items-center bg-white p-0.5 rounded-lg border border-gray-200">
+                      {[5, 10, 25, 50].map((km) => (
+                        <button
+                          key={km}
+                          type="button"
+                          onClick={() => setDistanceRadius(km)}
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold transition cursor-pointer ${
+                            distanceRadius === km
+                              ? 'bg-[#004A75] text-white shadow-2xs'
+                              : 'text-gray-600 hover:bg-gray-100'
+                          }`}
+                        >
+                          {km}k
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100">
-                    50 pts / batch
+                    25 pts / batch
                   </span>
                 </div>
 
-                {/* Compact Control Row 2: In-list search & Radius */}
-                <div className="flex items-center gap-1.5">
-                  <div className="relative flex-1 min-w-0">
-                    <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={mapListSearch}
-                      onChange={(e) => setMapListSearch(e.target.value)}
-                      placeholder="Filter role, subject, school..."
-                      className="w-full pl-7 pr-6 py-1 bg-white border border-gray-200 rounded-lg text-xs placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                    {mapListSearch && (
-                      <button
-                        type="button"
-                        onClick={() => setMapListSearch('')}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
-                      >
-                        <X size={11} />
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-0.5 shrink-0 bg-white p-0.5 rounded-lg border border-gray-200">
-                    {[5, 10, 25, 50, 0].map((km) => (
-                      <button
-                        key={km}
-                        type="button"
-                        onClick={() => setDistanceRadius(km)}
-                        className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition cursor-pointer ${
-                          distanceRadius === km
-                            ? 'bg-gray-900 text-white shadow-2xs'
-                            : 'text-gray-600 hover:bg-gray-100'
-                        }`}
-                        title={km === 0 ? 'All India' : `${km} km radius`}
-                      >
-                        {km === 0 ? 'All' : `${km}k`}
-                      </button>
-                    ))}
-                  </div>
+                {/* In-list Search Filter */}
+                <div className="relative w-full">
+                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={mapListSearch}
+                    onChange={(e) => setMapListSearch(e.target.value)}
+                    placeholder="Filter role, subject, school..."
+                    className="w-full pl-7 pr-6 py-1 bg-white border border-gray-200 rounded-lg text-xs placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                  {mapListSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setMapListSearch('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                    >
+                      <X size={11} />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1082,49 +959,53 @@ export default function FacultyJobMap({
                   displayedListItems.map((item: any, idx: number) => renderMapCard(item, idx))
                 ) : (
                   <div className="p-8 text-center text-gray-400 text-xs">
-                    No vacancies match &quot;{mapListSearch}&quot;
+                    No vacancies found within {distanceRadius}km. Tap map to check another area.
                   </div>
                 )}
               </div>
 
-              {/* Sheet Bottom Footer: Add Next 20 Points on Map */}
-              {totalPages > 1 && onPageChange && (
-                <div className="p-2.5 border-t border-gray-200 bg-slate-50 shrink-0 flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
-                    <span>
-                      Map Points: <strong className="text-gray-900">{displayedListItems.length}</strong> of{' '}
-                      <strong className="text-gray-900">{totalJobsCount || filteredItems.length}</strong>
-                    </span>
-                    <span className="text-[11px] text-emerald-700 font-semibold">
-                      (+50 pts / page)
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
+              {/* Sheet Bottom Footer: Batch Add Points */}
+              <div className="p-2.5 border-t border-gray-200 bg-slate-50 shrink-0 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs text-gray-600 font-medium">
+                  <span>
+                    Showing <strong className="text-gray-900">{displayedListItems.length}</strong> of{' '}
+                    <strong className="text-gray-900">{inRadiusItems.length}</strong> points
+                  </span>
+                  {inRadiusItems.length > visibleBatchCount && (
                     <button
                       type="button"
-                      onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-                      disabled={currentPage <= 1}
-                      className="flex-1 py-1.5 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 disabled:opacity-40 transition flex items-center justify-center gap-1 cursor-pointer"
+                      onClick={handleShowAllInRadius}
+                      className="text-[11px] text-blue-600 hover:underline font-bold cursor-pointer"
                     >
-                      <ChevronLeft size={13} />
-                      <span>Prev</span>
+                      +Add All ({inRadiusItems.length})
                     </button>
-                    <span className="text-xs font-mono font-bold text-slate-700 px-2">
-                      {currentPage} / {totalPages}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-                      disabled={currentPage >= totalPages}
-                      className="flex-1 py-1.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:opacity-40 transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
-                    >
-                      <span>Next 50</span>
-                      <ChevronRight size={13} />
-                    </button>
-                  </div>
+                  )}
                 </div>
-              )}
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handlePrevBatch}
+                    disabled={visibleBatchCount <= MAP_BATCH_SIZE}
+                    className="flex-1 py-1.5 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 disabled:opacity-40 transition flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    <ChevronLeft size={13} />
+                    <span>Prev</span>
+                  </button>
+                  <span className="text-xs font-mono font-bold text-slate-700 px-2">
+                    {Math.min(visibleBatchCount, inRadiusItems.length)} / {inRadiusItems.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleLoadNextBatch}
+                    disabled={visibleBatchCount >= inRadiusItems.length}
+                    className="flex-1 py-1.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold disabled:opacity-40 transition flex items-center justify-center gap-1 cursor-pointer shadow-xs"
+                  >
+                    <span>Next Vacancies</span>
+                    <ChevronRight size={13} />
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -1144,45 +1025,37 @@ export default function FacultyJobMap({
 
       {/* ─── MAP CANVAS (Right side) ─── */}
       <div className="flex-1 h-full relative min-w-0 rounded-none md:rounded-r-3xl md:rounded-l-none overflow-hidden">
-        <div ref={mapContainerRef} className="w-full h-full z-0 flex-1 min-h-0" />
+        <div ref={mapContainerRef} className="w-full h-full z-0 flex-1 min-h-0 cursor-crosshair" />
 
-        {/* Floating Points vs Badges toggle on map */}
-        <div className="absolute top-28 right-16 sm:right-18 z-20 hidden sm:flex items-center bg-white/95 backdrop-blur-md rounded-xl border border-slate-200 p-0.5 shadow-md">
-          <button
-            type="button"
-            onClick={() => setDisplayMode('points')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-              displayMode === 'points'
-                ? 'bg-[#ef4444] text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-            title="Points view (red dots)"
-          >
-            <span className="w-2 h-2 rounded-full bg-current" />
-            <span>Points</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setDisplayMode('badges')}
-            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-              displayMode === 'badges'
-                ? 'bg-[#005689] text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-            title="Badge view"
-          >
-            <span>🏷️</span>
-            <span>Badges</span>
-          </button>
-        </div>
+        {/* Floating Custom Pin Indicator with Reset to GPS Button */}
+        {customPin && (
+          <div className="absolute top-2.5 left-2.5 sm:left-4 z-20 bg-white/95 backdrop-blur-md border border-[#006FCC]/40 rounded-xl px-2.5 py-1.5 shadow-md flex items-center gap-2 text-xs font-semibold text-slate-800 animate-in fade-in">
+            <div className="w-2 h-2 rounded-full bg-[#EA4335] shrink-0" />
+            <span className="truncate max-w-[170px] sm:max-w-xs text-[11px] sm:text-xs">
+              Pin ({customPin.lat.toFixed(2)}, {customPin.lng.toFixed(2)}) • {inRadiusItems.length} jobs
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setCustomPin(null);
+                setVisibleBatchCount(25);
+              }}
+              className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#006FCC] hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-md cursor-pointer transition shrink-0"
+              title="Reset center to live GPS"
+            >
+              <RotateCcw size={10} />
+              <span>Reset GPS</span>
+            </button>
+          </div>
+        )}
 
-        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) - Cleanly Placed Below Top Search Bar */}
-        <div className="absolute top-28 right-2 sm:right-3.5 z-20 flex flex-col items-center gap-1.5 sm:gap-2 select-none pointer-events-auto">
+        {/* Right-Side Floating Map Controls (Zoom, Fullscreen, Fit Radius, GPS) */}
+        <div className="absolute top-20 right-2 sm:right-3.5 z-20 flex flex-col items-center gap-1.5 select-none pointer-events-auto">
           <div className="flex flex-col shadow-[0_2px_8px_rgba(60,64,67,0.25)] rounded-2xl overflow-hidden bg-white/95 backdrop-blur-md border border-[#dadce0]">
             <button
               type="button"
               onClick={handleZoomIn}
-              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center border-b border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
               title="Zoom In"
             >
               <Plus size={15} />
@@ -1190,7 +1063,7 @@ export default function FacultyJobMap({
             <button
               type="button"
               onClick={handleZoomOut}
-              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 hover:bg-[#f8f9fa] text-[#3c4043] flex items-center justify-center transition-colors active:bg-slate-100 cursor-pointer"
               title="Zoom Out"
             >
               <Minus size={15} />
@@ -1198,7 +1071,7 @@ export default function FacultyJobMap({
             <button
               type="button"
               onClick={toggleFullscreen}
-              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
               title={isFullscreen ? "Exit Fullscreen" : "Full Screen View"}
             >
               {isFullscreen ? <Minimize2 size={15} className="text-[#006FCC]" /> : <Maximize2 size={14} />}
@@ -1206,51 +1079,43 @@ export default function FacultyJobMap({
             <button
               type="button"
               onClick={fitToCurrentRadius}
-              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 hover:bg-[#f8f9fa] text-[#5f6368] hover:text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer"
               title="Fit View to Search Radius Area"
             >
-              <svg className="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M3 7V5a2 2 0 0 1 2-2h2" />
-                <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-                <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
-                <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-              </svg>
+              <Crosshair size={14} />
             </button>
             <button
               type="button"
               onClick={handleLocateMe}
               disabled={isLocating}
-              className="w-8 h-8 sm:w-10 sm:h-10 hover:bg-[#f8f9fa] text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
+              className="w-8 h-8 sm:w-9 sm:h-9 hover:bg-[#f8f9fa] text-[#006FCC] flex items-center justify-center border-t border-[#dadce0] transition-colors active:bg-slate-100 cursor-pointer disabled:opacity-60"
               title="Locate Current Position"
             >
-              <Crosshair size={15} className={isLocating ? 'animate-spin' : ''} />
+              <Navigation size={14} className={isLocating ? 'animate-spin' : ''} />
             </button>
           </div>
 
-          {/* Vertical Distance Range Bar (0 to 200 km) */}
+          {/* Vertical Distance Range Bar (1 to 50 km - STRICT UPPER LIMIT 50km) */}
           <div className="flex flex-col items-center bg-white/95 backdrop-blur-md border border-[#dadce0] rounded-2xl py-1.5 px-1 sm:py-2 sm:px-1.5 shadow-[0_2px_8px_rgba(60,64,67,0.25)] select-none">
-            {/* Value badge at top */}
             <span className="text-[9.5px] font-extrabold text-[#006FCC] bg-[#eef3fc] px-1 py-0.5 rounded font-mono mb-1.5 whitespace-nowrap">
-              {distanceRadius === 0 ? 'All' : `${distanceRadius}k`}
+              {distanceRadius}k
             </span>
 
-            {/* Vertical Hairline Slider Track */}
-            <div className="relative h-22 sm:h-26 flex items-center justify-center">
+            <div className="relative h-20 sm:h-24 flex items-center justify-center">
               <input
                 type="range"
-                min="0"
-                max="200"
-                step="5"
+                min="1"
+                max="50"
+                step="1"
                 value={distanceRadius}
                 onChange={(e) => setDistanceRadius(Number(e.target.value))}
-                className="h-22 sm:h-26 w-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#006FCC]"
+                className="h-20 sm:h-24 w-1.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-[#006FCC]"
                 style={{
                   writingMode: 'vertical-lr',
                   WebkitAppearance: 'slider-vertical',
                   direction: 'rtl',
                 }}
-                title={`Search Radius: ${distanceRadius === 0 ? 'All India' : distanceRadius + ' km'}`}
+                title={`Radius: ${distanceRadius} km (Max 50 km)`}
               />
             </div>
 
@@ -1275,96 +1140,113 @@ export default function FacultyJobMap({
           onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
           onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
           onTouchEnd={handleDragEnd}
-          onPointerDown={(e) => {
-            (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-            handleDragStart(e.clientY);
-          }}
-          onPointerMove={(e) => {
-            if (isDraggingSheet) handleDragMove(e.clientY);
-          }}
-          onPointerUp={handleDragEnd}
           title="Drag up/down or tap to resize drawer"
         >
           <div className="w-14 h-1.5 bg-gray-300/90 group-hover:bg-gray-400 group-active:bg-[#006FCC] rounded-full transition-colors" />
         </div>
 
-        {/* Header Strip with Vacancies Count, Updated Date & Prev/Next School Stepper */}
+        {/* Header Strip with Radius Pills, Vacancy Count & Next School Stepper */}
         <div className="w-full px-2.5 py-1.5 flex items-center justify-between gap-1.5 border-b border-gray-100 shrink-0 bg-white/95">
-          {/* Left: Vacancy Count + Updated Date */}
+          {/* Left: Vacancy Count + Radius */}
           <div className="flex flex-col min-w-0 pr-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 leading-tight">
               <span className="font-extrabold text-[#004A75]">
-                {displayedListItems.length} {activeTab === 'jobs' ? 'Vacancies' : 'Faculty'}
+                {displayedListItems.length} of {inRadiusItems.length} {activeTab === 'jobs' ? 'Jobs' : 'Faculty'}
               </span>
-              {activeOpportunityIndex !== null && displayedListItems.length > 0 && (
-                <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded font-mono">
-                  {activeOpportunityIndex + 1}/{displayedListItems.length}
-                </span>
-              )}
+              <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded font-mono">
+                {distanceRadius}km
+              </span>
             </div>
             <div className="text-[10px] text-slate-400 font-medium truncate">
-              Updated: <span className="text-slate-600 font-semibold">{latestUpdatedDate || 'Today'}</span>
+              {customPin ? 'Tap map to move pin' : 'Around your location'}
             </div>
           </div>
 
-          {/* Right: Prev / Next School Stepper & Drawer Resize Controls */}
-          <div className="flex items-center gap-1 shrink-0">
-            {/* Prev School Button */}
+          {/* Radius Quick Pills (5k, 10k, 25k, 50k - strictly max 50km) */}
+          <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200 shrink-0">
+            {[5, 10, 25, 50].map((km) => (
+              <button
+                key={km}
+                type="button"
+                onClick={() => setDistanceRadius(km)}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition cursor-pointer ${
+                  distanceRadius === km
+                    ? 'bg-[#004A75] text-white shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {km}k
+              </button>
+            ))}
+          </div>
+
+          {/* Drawer Resize Controls */}
+          <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 ml-0.5 shrink-0">
             <button
               type="button"
-              onClick={handlePrevSchool}
-              disabled={displayedListItems.length === 0}
-              className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-0.5 disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-2xs"
-              title="Previous school in list"
+              onClick={() => {
+                if (mobileSheetState === 'peek') setMobileSheetState('half');
+                else if (mobileSheetState === 'half') setMobileSheetState('full');
+              }}
+              disabled={mobileSheetState === 'full'}
+              className="w-6 h-6 rounded flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
             >
-              <ChevronLeft size={13} strokeWidth={2.5} />
-              <span>Back</span>
+              <ChevronUp size={14} strokeWidth={2.5} />
             </button>
-
-            {/* Next School Button */}
             <button
               type="button"
-              onClick={handleNextSchool}
-              disabled={displayedListItems.length === 0}
-              className="px-2.5 py-1 rounded-lg bg-[#004A75] hover:bg-[#003859] text-white text-xs font-bold flex items-center gap-0.5 disabled:opacity-40 transition active:scale-95 cursor-pointer shadow-xs"
-              title="Next school in list"
+              onClick={() => {
+                if (mobileSheetState === 'full') setMobileSheetState('half');
+                else if (mobileSheetState === 'half') setMobileSheetState('peek');
+              }}
+              disabled={mobileSheetState === 'peek'}
+              className="w-6 h-6 rounded flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
             >
-              <span>Next</span>
-              <ChevronRight size={13} strokeWidth={2.5} />
+              <ChevronDown size={14} strokeWidth={2.5} />
             </button>
-
-            {/* Drawer Up/Down Controls */}
-            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-slate-200/80 ml-0.5">
-              <button
-                type="button"
-                onClick={() => {
-                  if (mobileSheetState === 'peek') setMobileSheetState('half');
-                  else if (mobileSheetState === 'half') setMobileSheetState('full');
-                }}
-                disabled={mobileSheetState === 'full'}
-                className="w-6 h-6 rounded flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
-              >
-                <ChevronUp size={14} strokeWidth={2.5} />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (mobileSheetState === 'full') setMobileSheetState('half');
-                  else if (mobileSheetState === 'half') setMobileSheetState('peek');
-                }}
-                disabled={mobileSheetState === 'peek'}
-                className="w-6 h-6 rounded flex items-center justify-center text-slate-600 disabled:opacity-30 transition cursor-pointer"
-              >
-                <ChevronDown size={14} strokeWidth={2.5} />
-              </button>
-            </div>
           </div>
         </div>
 
         {/* Mobile Scrollable Feed */}
         {mobileSheetState !== 'peek' && (
           <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar bg-slate-50/50">
-            {displayedListItems.map((item: any, idx: number) => renderMapCard(item, idx))}
+            {displayedListItems.length > 0 ? (
+              displayedListItems.map((item: any, idx: number) => renderMapCard(item, idx))
+            ) : (
+              <div className="p-8 text-center text-gray-400 text-xs">
+                No vacancies found within {distanceRadius}km. Tap anywhere on the map to inspect another region.
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mobile Bottom Footer: Next Vacancies / Next School Batch Button */}
+        {mobileSheetState !== 'peek' && (
+          <div className="p-2.5 border-t border-gray-200 bg-white shrink-0 flex items-center justify-between gap-2 shadow-xs">
+            <button
+              type="button"
+              onClick={handlePrevBatch}
+              disabled={visibleBatchCount <= MAP_BATCH_SIZE}
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold disabled:opacity-40 transition flex items-center gap-1 cursor-pointer"
+            >
+              <ChevronLeft size={13} />
+              <span>Back</span>
+            </button>
+
+            <span className="text-[11px] font-mono font-bold text-slate-600">
+              {Math.min(visibleBatchCount, inRadiusItems.length)} / {inRadiusItems.length}
+            </span>
+
+            <button
+              type="button"
+              onClick={handleLoadNextBatch}
+              disabled={visibleBatchCount >= inRadiusItems.length}
+              className="px-3.5 py-1.5 rounded-xl bg-[#004A75] hover:bg-[#003859] text-white text-xs font-bold disabled:opacity-40 transition flex items-center gap-1 cursor-pointer shadow-xs"
+              title="Next batch of 25 vacancies"
+            >
+              <span>Next Vacancies</span>
+              <ChevronRight size={13} />
+            </button>
           </div>
         )}
       </div>

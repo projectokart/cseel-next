@@ -19,6 +19,22 @@ function useAdSensePush(
   useEffect(() => {
     if (!clientId || !clientId.startsWith('ca-pub-') || pushedRef.current) return;
     if (typeof window === 'undefined') return;
+
+    // Suppress unhandled AdSense TagErrors from bubbling to Next.js dev overlay
+    if (!(window as any).__adsbygoogle_error_handler_installed) {
+      (window as any).__adsbygoogle_error_handler_installed = true;
+      window.addEventListener('error', (event) => {
+        if (
+          event?.message?.includes?.('adsbygoogle') ||
+          event?.message?.includes?.('TagError') ||
+          (event?.error && event.error.name === 'TagError')
+        ) {
+          event.stopImmediatePropagation?.();
+          event.preventDefault?.();
+        }
+      });
+    }
+
     const el = adRef.current;
     if (!el) return;
 
@@ -27,13 +43,23 @@ function useAdSensePush(
       return;
     }
 
+    // In local development or offline, avoid sending AdSense push which throws TagError
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      pushedRef.current = true;
+      return;
+    }
+
     // Defer push by one frame so container layout width is guaranteed > 0
     const rafId = window.requestAnimationFrame(() => {
       try {
+        if (el.getAttribute('data-adsbygoogle-status')) {
+          pushedRef.current = true;
+          return;
+        }
         ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
         pushedRef.current = true;
-      } catch (err) {
-        console.error('AdSense display error:', err);
+      } catch {
+        // Silently catch if AdSense tags already claimed
       }
     });
 

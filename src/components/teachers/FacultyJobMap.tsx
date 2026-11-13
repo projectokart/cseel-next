@@ -159,6 +159,22 @@ function generatePopupHtml(item: any, activeTab: 'jobs' | 'faculty'): string {
   }
 }
 
+const getPointLat = (item: any): number => {
+  if (item?.coordinates && typeof item.coordinates.lat === 'number') return item.coordinates.lat;
+  if (typeof item?.lat === 'number') return item.lat;
+  if (typeof item?.latitude === 'number') return item.latitude;
+  if (typeof item?.coordinates?.lat === 'string') return parseFloat(item.coordinates.lat) || 0;
+  return 0;
+};
+
+const getPointLng = (item: any): number => {
+  if (item?.coordinates && typeof item.coordinates.lng === 'number') return item.coordinates.lng;
+  if (typeof item?.lng === 'number') return item.lng;
+  if (typeof item?.longitude === 'number') return item.longitude;
+  if (typeof item?.coordinates?.lng === 'string') return parseFloat(item.coordinates.lng) || 0;
+  return 0;
+};
+
 export default function FacultyJobMap({
   activeTab,
   jobs,
@@ -273,19 +289,21 @@ export default function FacultyJobMap({
     );
   }, []);
 
-  // Filter items STRICTLY within distanceRadius (Max 50 km from center)
+  // Filter items within distanceRadius (Max 70 km from center)
   const inRadiusItems = useMemo(() => {
     const rawList = activeTab === 'jobs' ? jobs : faculty;
-    // Strict guard: minimum 1km, maximum 50km
-    const safeRadius = Math.min(Math.max(distanceRadius || 10, 1), 50);
+    // Capped at 70km per user directive
+    const safeRadius = Math.min(Math.max(distanceRadius || 25, 1), 70);
 
     return rawList.filter((item) => {
-      if (!item.coordinates || !item.coordinates.lat || !item.coordinates.lng) return false;
+      const lat = getPointLat(item);
+      const lng = getPointLng(item);
+      if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat < 5) return false;
       const d = getDistanceKm(
         currentCenter.lat,
         currentCenter.lng,
-        item.coordinates.lat,
-        item.coordinates.lng
+        lat,
+        lng
       );
       return d <= safeRadius;
     });
@@ -470,7 +488,7 @@ export default function FacultyJobMap({
       centerMarkerRef.current = null;
     }
 
-    const safeRadius = Math.min(Math.max(distanceRadius || 10, 1), 50);
+    const safeRadius = Math.min(Math.max(distanceRadius || 25, 1), 70);
 
     // Draw Radius Circle (Blue dashed boundary ring)
     const circle = L.circle([currentCenter.lat, currentCenter.lng], {
@@ -533,36 +551,25 @@ export default function FacultyJobMap({
     }
   }, [currentCenter, distanceRadius, customPin, userLocation, selectedCity, mobileSheetState]);
 
-  // High-Performance Hardware-Accelerated Canvas Rendering & Incremental Point Mounting
+  // High-Performance Hardware-Accelerated Canvas Rendering of all In-Radius Vacancies
   useEffect(() => {
     const map = mapInstanceRef.current;
-    const markersGroup = markersLayerRef.current;
-    const canvasRenderer = canvasRendererRef.current;
-    if (!map || !markersGroup || !canvasRenderer) return;
+    if (!map) return;
 
-    const currentKeyMap = new Map<string, { item: any; index: number }>();
-    filteredItems.forEach((item: any, idx: number) => {
-      const key = String(item.id || `idx-${idx}`);
-      currentKeyMap.set(key, { item, index: idx });
-    });
-
-    const mounted = mountedMarkersRef.current;
-
-    // 1. Unmount markers no longer in current batch
-    for (const [id, marker] of mounted.entries()) {
-      if (!currentKeyMap.has(id)) {
-        markersGroup.removeLayer(marker);
-        mounted.delete(id);
-      }
+    if (markersLayerRef.current) {
+      map.removeLayer(markersLayerRef.current);
+      markersLayerRef.current = null;
     }
 
-    // 2. Mount new items or update selected state in place (Zero DOM churn)
+    const canvasRenderer = canvasRendererRef.current || L.canvas({ padding: 0.5, tolerance: 8 });
+    const layerGroup = L.layerGroup();
     const coordCounts: Record<string, number> = {};
 
-    currentKeyMap.forEach(({ item, index }, id) => {
-      if (!item.coordinates || !item.coordinates.lat || !item.coordinates.lng) return;
+    filteredItems.forEach((item: any, idx: number) => {
+      let lat = getPointLat(item);
+      let lng = getPointLng(item);
+      if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat < 5) return;
 
-      let { lat, lng } = item.coordinates;
       const coordKey = `${lat.toFixed(3)},${lng.toFixed(3)}`;
       const offsetIndex = coordCounts[coordKey] || 0;
       coordCounts[coordKey] = offsetIndex + 1;
@@ -574,53 +581,50 @@ export default function FacultyJobMap({
         lng += microRadius * Math.sin(angle);
       }
 
-      const isSelected = activeOpportunityIndex === index;
+      const isSelected = activeOpportunityIndex === idx;
 
-      if (!mounted.has(id)) {
-        // Create Canvas Circle Marker: 0 DOM nodes, drawn in GPU canvas buffer
-        const circleMarker = L.circleMarker([lat, lng], {
-          renderer: canvasRenderer,
-          radius: isSelected ? 8.5 : 5.5,
-          fillColor: isSelected ? '#b91c1c' : '#ef4444',
-          color: '#ffffff',
-          weight: isSelected ? 2.5 : 1.5,
-          opacity: 1,
-          fillOpacity: isSelected ? 1 : 0.9,
-        });
+      const circleMarker = L.circleMarker([lat, lng], {
+        renderer: canvasRenderer,
+        radius: isSelected ? 8.5 : 6,
+        fillColor: isSelected ? '#b91c1c' : '#ea4335',
+        color: '#ffffff',
+        weight: isSelected ? 2.5 : 1.8,
+        opacity: 1,
+        fillOpacity: isSelected ? 1 : 0.95,
+      });
 
-        const popupContent = generatePopupHtml(item, activeTab);
-        circleMarker.bindPopup(popupContent, {
-          offset: [0, -6],
-          closeButton: true,
-          autoPan: true,
-          autoPanPadding: [24, 130]
-        });
+      const title = item.jobPostName || item.name || 'Opportunity';
+      const org = item.organisationName || item.currentInstitute || 'Institution';
+      const sal = item.salary ? formatCleanSalary(item.salary, true) : item.expectedSalary || '';
 
-        circleMarker.on('click', (ev) => {
-          L.DomEvent.stopPropagation(ev);
-          handleSelectCard(index);
-          circleMarker.openPopup();
-        });
+      circleMarker.bindTooltip(
+        `<div style="font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; color: #1e293b; padding: 2px 4px;">
+          <div style="font-weight: 700; color: #004A75; font-size: 12px; line-height: 1.2;">${title}</div>
+          <div style="color: #64748b; font-size: 10px; margin-top: 2px;">${org}</div>
+          ${sal ? `<div style="color: #137333; font-weight: 700; font-size: 10px; margin-top: 2px;">${sal}</div>` : ''}
+        </div>`,
+        { direction: 'top', offset: [0, -6] }
+      );
 
-        circleMarker.on('mouseover', () => {
-          circleMarker.openPopup();
-        });
+      const popupContent = generatePopupHtml(item, activeTab);
+      circleMarker.bindPopup(popupContent, {
+        offset: [0, -6],
+        closeButton: true,
+        autoPan: true,
+        autoPanPadding: [24, 130]
+      });
 
-        markersGroup.addLayer(circleMarker);
-        mounted.set(id, circleMarker);
-      } else {
-        // Already mounted! Update style only for selected / deselected marker
-        const marker = mounted.get(id);
-        if (marker && 'setStyle' in marker) {
-          marker.setStyle({
-            radius: isSelected ? 8.5 : 5.5,
-            fillColor: isSelected ? '#b91c1c' : '#ef4444',
-            weight: isSelected ? 2.5 : 1.5,
-            fillOpacity: isSelected ? 1 : 0.9,
-          });
-        }
-      }
+      circleMarker.on('click', (ev) => {
+        L.DomEvent.stopPropagation(ev);
+        handleSelectCard(idx);
+        circleMarker.openPopup();
+      });
+
+      layerGroup.addLayer(circleMarker);
     });
+
+    layerGroup.addTo(map);
+    markersLayerRef.current = layerGroup;
   }, [filteredItems, activeOpportunityIndex, activeTab, handleSelectCard]);
 
   // Handle batch increment / decrement
@@ -1095,7 +1099,7 @@ export default function FacultyJobMap({
             </button>
           </div>
 
-          {/* Vertical Distance Range Bar (1 to 50 km - STRICT UPPER LIMIT 50km) */}
+          {/* Vertical Distance Range Bar (1 to 70 km - Max 70km) */}
           <div className="flex flex-col items-center bg-white/95 backdrop-blur-md border border-[#dadce0] rounded-2xl py-1.5 px-1 sm:py-2 sm:px-1.5 shadow-[0_2px_8px_rgba(60,64,67,0.25)] select-none">
             <span className="text-[9.5px] font-extrabold text-[#006FCC] bg-[#eef3fc] px-1 py-0.5 rounded font-mono mb-1.5 whitespace-nowrap">
               {distanceRadius}k
@@ -1105,7 +1109,7 @@ export default function FacultyJobMap({
               <input
                 type="range"
                 min="1"
-                max="50"
+                max="70"
                 step="1"
                 value={distanceRadius}
                 onChange={(e) => setDistanceRadius(Number(e.target.value))}
@@ -1115,7 +1119,7 @@ export default function FacultyJobMap({
                   WebkitAppearance: 'slider-vertical',
                   direction: 'rtl',
                 }}
-                title={`Radius: ${distanceRadius} km (Max 50 km)`}
+                title={`Radius: ${distanceRadius} km (Max 70 km)`}
               />
             </div>
 
@@ -1162,9 +1166,9 @@ export default function FacultyJobMap({
             </div>
           </div>
 
-          {/* Radius Quick Pills (5k, 10k, 25k, 50k - strictly max 50km) */}
+          {/* Radius Quick Pills (10k, 25k, 50k, 70k) */}
           <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg border border-slate-200 shrink-0">
-            {[5, 10, 25, 50].map((km) => (
+            {[10, 25, 50, 70].map((km) => (
               <button
                 key={km}
                 type="button"

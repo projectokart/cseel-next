@@ -233,6 +233,7 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [copiedToastId, setCopiedToastId] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [isMobileSortOpen, setIsMobileSortOpen] = useState(false);
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
   
   // View mode supports 2 Cols, 3 Cols, Compact, and Map
@@ -2707,6 +2708,17 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               {/* ─── MOBILE VIEW (< 768px): Maximum Space Search Input with City Icon, Filter & Menu Icons ─── */}
               <div className="md:hidden flex flex-col gap-1 w-full">
                 <div className="flex items-center gap-1 w-full">
+                  {/* Home Icon for Map Mode */}
+                  {viewMode === 'map' && (
+                    <Link
+                      href="/"
+                      className="h-8 w-8 rounded-xl bg-gray-100/90 hover:bg-blue-50 text-gray-700 hover:text-[#004A75] flex items-center justify-center shrink-0 border border-gray-200 transition active:scale-95 cursor-pointer"
+                      title="CSEEL Home"
+                    >
+                      <Home size={15} />
+                    </Link>
+                  )}
+
                   {/* Unified Search Input Bar - takes maximum width */}
                   <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border border-gray-200 focus-within:bg-white focus-within:border-blue-500 transition-all min-w-0 ${
                     viewMode === 'map' ? 'h-8 py-0' : 'py-1.5'
@@ -2828,6 +2840,76 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                               <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-1.5 py-0.5 rounded-full">
                                 {allLoadedSchools.length} Schools
                               </span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Sort Icon & Trigger */}
+                  <div className="relative shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileSortOpen(!isMobileSortOpen);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`relative text-gray-700 hover:text-[#005689] active:scale-90 transition shrink-0 cursor-pointer rounded-xl bg-gray-100/90 hover:bg-blue-50 border border-gray-200 ${
+                        viewMode === 'map' ? 'h-8 w-8 flex items-center justify-center p-0' : 'p-2'
+                      }`}
+                      title="Sort Schools"
+                    >
+                      <ArrowUpDown size={14} className={sortBy !== 'popularity_desc' ? 'text-[#005689]' : 'text-gray-600'} />
+                    </button>
+
+                    {isMobileSortOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsMobileSortOpen(false)} />
+                        <div className="absolute top-full right-0 mt-1.5 w-44 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 p-2 text-left animate-in fade-in zoom-in-95">
+                          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-2 py-1 mb-1">
+                            Sort Schools
+                          </div>
+                          <div className="space-y-0.5">
+                            <button
+                              type="button"
+                              onClick={() => { setSortBy('popularity_desc'); handleFilterChange({ sortBy: 'popularity_desc' }); setIsMobileSortOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                                sortBy === 'popularity_desc' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span>Most Popular</span>
+                              {sortBy === 'popularity_desc' && <Check size={13} className="text-blue-600" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setSortBy('name_asc'); handleFilterChange({ sortBy: 'name_asc' }); setIsMobileSortOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                                sortBy === 'name_asc' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span>Name (A - Z)</span>
+                              {sortBy === 'name_asc' && <Check size={13} className="text-blue-600" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setSortBy('fee_asc'); handleFilterChange({ sortBy: 'fee_asc' }); setIsMobileSortOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                                sortBy === 'fee_asc' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span>Fee (Low to High)</span>
+                              {sortBy === 'fee_asc' && <Check size={13} className="text-blue-600" />}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setSortBy('fee_desc'); handleFilterChange({ sortBy: 'fee_desc' }); setIsMobileSortOpen(false); }}
+                              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                                sortBy === 'fee_desc' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                              }`}
+                            >
+                              <span>Fee (High to Low)</span>
+                              {sortBy === 'fee_desc' && <Check size={13} className="text-blue-600" />}
                             </button>
                           </div>
                         </div>

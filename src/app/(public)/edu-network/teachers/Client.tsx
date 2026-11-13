@@ -33,7 +33,8 @@ import {
   Calendar, Layers, Map as MapIcon, LayoutGrid,
   DollarSign, AlertCircle, RefreshCw, Share2, Flame, Zap, CheckCheck,
   SlidersHorizontal, Bookmark, ChevronDown, ChevronRight, ChevronLeft,
-  Columns3, Columns2, List, Maximize2, Minimize2, IndianRupee, Globe, Navigation, FileText, Bell
+  Columns3, Columns2, List, Maximize2, Minimize2, IndianRupee, Globe, Navigation, FileText, Bell,
+  Home, MoreVertical, PlusCircle
 } from 'lucide-react';
 import {
   FacultyJobItem,
@@ -204,12 +205,17 @@ export default function TeachersDirectoryClient({
   totalVacanciesCount = DEFAULT_JOB_FACETS.totalVacancies,
 }: TeachersDirectoryClientProps = {}) {
   const { user } = useAuth();
-  const latestUpdatedDate = useMemo(() => {
-    return new Date().toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
+  const [latestUpdatedDate, setLatestUpdatedDate] = useState<string>('13 Nov 2026');
+  useEffect(() => {
+    try {
+      setLatestUpdatedDate(
+        new Date().toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        })
+      );
+    } catch {}
   }, []);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -1143,26 +1149,25 @@ export default function TeachersDirectoryClient({
 
   const requestUserLocation = handleNearMeSort;
 
-  // Faculty list state initialized with custom registered faculty + admin verified overrides
-  const [facultyList, setFacultyList] = useState<VerifiedFacultyItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('cseel_custom_faculty');
-        const verifiedUsers: string[] = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
-        if (stored) {
-          const custom = JSON.parse(stored);
-          if (Array.isArray(custom) && custom.length > 0) {
-            const mappedCustom = custom.map((f: any) => ({
-              ...f,
-              verified: Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug) || verifiedUsers.includes(f.name))
-            }));
-            return [...mappedCustom, ...VERIFIED_FACULTY_MEMBERS];
-          }
+  // Faculty list state initialized cleanly for SSR and hydrated with custom registered faculty
+  const [facultyList, setFacultyList] = useState<VerifiedFacultyItem[]>(VERIFIED_FACULTY_MEMBERS);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('cseel_custom_faculty');
+      const verifiedUsers: string[] = JSON.parse(localStorage.getItem('cseel_admin_verified_users') || '[]');
+      if (stored) {
+        const custom = JSON.parse(stored);
+        if (Array.isArray(custom) && custom.length > 0) {
+          const mappedCustom = custom.map((f: any) => ({
+            ...f,
+            verified: Boolean(f.verified || verifiedUsers.includes(f.id) || verifiedUsers.includes(f.slug) || verifiedUsers.includes(f.name))
+          }));
+          setFacultyList([...mappedCustom, ...VERIFIED_FACULTY_MEMBERS]);
         }
-      } catch {}
-    }
-    return VERIFIED_FACULTY_MEMBERS;
-  });
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     try {
@@ -1456,8 +1461,41 @@ export default function TeachersDirectoryClient({
     selectedPortals.length > 0 ||
     minSalaryFilter > 0 ||
     urgentOnly ||
-    forLadyOnly
+    forLadyOnly ||
+    distanceRadiusFilter > 0
   );
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (searchQuery && searchQuery.trim() !== '') count++;
+    if (locationSearchInput && locationSearchInput.trim() !== '') count++;
+    count += selectedDesignations.length;
+    count += selectedSubjects.length;
+    count += selectedBoards.length;
+    count += selectedCities.length;
+    count += selectedStates.length;
+    count += selectedJobTypes.length;
+    count += selectedPortals.length;
+    if (minSalaryFilter > 0) count++;
+    if (urgentOnly) count++;
+    if (forLadyOnly) count++;
+    if (distanceRadiusFilter > 0) count++;
+    return count;
+  }, [
+    searchQuery,
+    locationSearchInput,
+    selectedDesignations,
+    selectedSubjects,
+    selectedBoards,
+    selectedCities,
+    selectedStates,
+    selectedJobTypes,
+    selectedPortals,
+    minSalaryFilter,
+    urgentOnly,
+    forLadyOnly,
+    distanceRadiusFilter
+  ]);
 
   // Dynamic multi-dimensional drill-down filter counts
   const dynamicCounts = useMemo(() => {
@@ -2358,12 +2396,264 @@ export default function TeachersDirectoryClient({
             </div>
           )}
 
-          {/* ── Top Bar Search & Control Card (Exact User Spec Design) ── */}
-          <div className={`transition-all duration-300 ${
-            viewMode === 'map'
-              ? 'fixed top-2.5 left-2.5 right-2.5 sm:left-4 sm:right-4 z-40 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-lg p-2.5 sm:p-3 max-w-2xl mx-auto flex flex-col gap-2 pointer-events-auto'
-              : 'bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 relative'
-          }`}>
+          {/* ── Top Bar Search & Control Card ── */}
+          {viewMode === 'map' ? (
+            /* ── MAP VIEW CUSTOM TOOLBAR (Simulates browser top bar with Home, Search, Sort, Filter, Menu) ── */
+            <div className="fixed top-1.5 inset-x-2 sm:inset-x-4 z-40 bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-slate-200/90 px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto max-w-3xl mx-auto">
+              {/* Home Icon */}
+              <Link
+                href="/"
+                className="h-8 w-8 rounded-xl bg-slate-100 hover:bg-[#EDF5FA] text-slate-700 hover:text-[#004A75] flex items-center justify-center shrink-0 border border-slate-200 transition active:scale-95 cursor-pointer"
+                title="CSEEL Home"
+              >
+                <Home size={15} />
+              </Link>
+
+              {/* Center: Unified Search Input Bar (Identical to School Map search bar) */}
+              <div className="relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border border-gray-200 focus-within:bg-white focus-within:border-[#004A75] focus-within:ring-1 focus-within:ring-[#004A75]/30 transition-all min-w-0 h-8 py-0">
+                {/* Select City Icon & Trigger */}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileCityDropdownOpen(!isMobileCityDropdownOpen)}
+                  className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition shrink-0 pr-1.5 border-r border-gray-300 cursor-pointer"
+                  title={selectedCities[0] ? `Selected City: ${selectedCities[0]}` : "Select City"}
+                >
+                  <MapPin size={13} className={selectedCities[0] ? 'text-blue-600' : 'text-gray-500'} />
+                  {selectedCities[0] && (
+                    <span className="text-[10px] font-bold text-blue-600 max-w-[50px] truncate">
+                      {selectedCities[0]}
+                    </span>
+                  )}
+                  <ChevronDown size={10} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Search Text Input */}
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder={selectedCities[0] ? `Search in ${selectedCities[0]}...` : "Search role, school, subject..."}
+                  value={searchInput}
+                  onChange={(e) => {
+                    setSearchInput(e.target.value);
+                    fetchTrendingSearches(e.target.value);
+                  }}
+                  onFocus={() => { setIsSearchFocused(true); fetchTrendingSearches(searchInput); }}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 250)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleExecuteSearch();
+                    }
+                  }}
+                  className="flex-1 bg-transparent px-2 py-0 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
+                />
+
+                {/* Clear Text Icon */}
+                {hasSearchText && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="p-1 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
+                    title="Clear search"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+
+                {/* Search Icon */}
+                <button
+                  type="button"
+                  onClick={() => handleExecuteSearch()}
+                  className="p-1 text-[#004A75] hover:text-blue-700 active:scale-90 transition shrink-0 cursor-pointer"
+                  title="Search"
+                >
+                  <Search size={14} />
+                </button>
+
+                {/* City Dropdown Menu for Mobile / Map */}
+                {isMobileCityDropdownOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsMobileCityDropdownOpen(false)} 
+                    />
+                    <div className="absolute top-full left-0 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in duration-150">
+                      <div className="p-2.5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Popular Cities</span>
+                        {selectedCities.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => { setSelectedCities([]); setIsMobileCityDropdownOpen(false); }}
+                            className="text-[11px] text-blue-600 font-bold hover:underline cursor-pointer"
+                          >
+                            Clear City
+                          </button>
+                        )}
+                      </div>
+                      <div className="p-2 grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto custom-scrollbar">
+                        {['Delhi NCR', 'Gurugram', 'Noida', 'Bengaluru', 'Mumbai', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Jaipur'].map((cName) => (
+                          <button
+                            key={cName}
+                            type="button"
+                            onClick={() => {
+                              setSelectedCities([cName]);
+                              setIsMobileCityDropdownOpen(false);
+                            }}
+                            className={`flex items-center justify-between gap-1.5 p-1.5 rounded-xl text-xs text-left transition cursor-pointer ${
+                              selectedCities.includes(cName)
+                                ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                                : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            <span className="truncate">{cName}</span>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="p-2 border-t border-gray-100 bg-gray-50">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCities([]);
+                            setIsMobileCityDropdownOpen(false);
+                          }}
+                          className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] rounded-xl transition-colors cursor-pointer"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <Globe size={13} className="text-[#0b57d0] shrink-0" />
+                            <span>All Cities (All India)</span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Right Side: Sort Button */}
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSortMenuOpen(!isSortMenuOpen);
+                    setIsMoreMenuOpen(false);
+                  }}
+                  className="h-8 w-8 rounded-xl bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 flex items-center justify-center border border-gray-200 transition cursor-pointer"
+                  title="Sort"
+                >
+                  <ArrowUpDown size={14} className={sortBy !== 'newest' ? 'text-blue-600' : 'text-gray-600'} />
+                </button>
+
+                {isSortMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsSortMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-1.5 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 p-2 text-left animate-in fade-in zoom-in-95">
+                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider px-2 py-1 mb-1">
+                        SORT LIST BY
+                      </div>
+                      <div className="space-y-0.5">
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('newest'); setIsSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                            sortBy === 'newest' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span>Newest First</span>
+                          {sortBy === 'newest' && <Check size={13} className="text-blue-600" />}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('salary'); setIsSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                            sortBy === 'salary' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span>Highest Salary</span>
+                          {sortBy === 'salary' && <Check size={13} className="text-blue-600" />}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setSortBy('near_me'); setIsSortMenuOpen(false); }}
+                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
+                            sortBy === 'near_me' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span>Near Me (Nearest)</span>
+                          {sortBy === 'near_me' && <Check size={13} className="text-blue-600" />}
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Filter Button with Badge */}
+              <button
+                type="button"
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="relative h-8 w-8 rounded-xl bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 flex items-center justify-center border border-gray-200 transition cursor-pointer shrink-0"
+                title="Filters"
+              >
+                <Filter size={14} className={hasActiveFilters ? 'text-blue-600' : 'text-gray-600'} />
+                {hasActiveFilters && (
+                  <span className="absolute -top-1 -right-1 min-w-[15px] h-[15px] rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center px-0.5 shadow-xs border border-white">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Three-dots Menu Popover */}
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMoreMenuOpen(!isMoreMenuOpen);
+                    setIsSortMenuOpen(false);
+                  }}
+                  className="h-8 w-8 rounded-xl bg-gray-100 hover:bg-blue-50 text-gray-700 hover:text-blue-600 flex items-center justify-center border border-gray-200 transition cursor-pointer"
+                  title="More Options"
+                >
+                  <MoreVertical size={15} />
+                </button>
+
+                {isMoreMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsMoreMenuOpen(false)} />
+                    <div className="absolute top-full right-0 mt-1.5 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50 text-left animate-in fade-in zoom-in-95">
+                      <button
+                        type="button"
+                        onClick={() => { setViewMode('grid'); setIsMoreMenuOpen(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 cursor-pointer"
+                      >
+                        <LayoutGrid size={14} className="text-blue-600" />
+                        <span>Switch to Cards List</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { resetAllFilters(); setIsMoreMenuOpen(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 cursor-pointer"
+                      >
+                        <RefreshCw size={13} />
+                        <span>Reset All Filters</span>
+                      </button>
+                      <div className="border-t border-gray-100 my-1 pt-1">
+                        <Link
+                          href="/edu-network/teachers/post-job"
+                          onClick={() => setIsMoreMenuOpen(false)}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-blue-600 hover:bg-blue-50"
+                        >
+                          <PlusCircle size={14} />
+                          <span>Post a Vacancy</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* ── LIST VIEW NORMAL TWO-ROW HEADER ── */
+            <div className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 relative">
             {/* Row 1: 100% Full-Width Block Search Bar */}
             <div className="w-full relative">
               <div className="w-full flex items-center bg-[#F4F6F8] rounded-xl pl-3 sm:pl-4 pr-1.5 py-1.5 border border-slate-200/80 focus-within:bg-white focus-within:border-[#004A75] focus-within:ring-2 focus-within:ring-[#004A75]/15 transition-all h-11 sm:h-12 shadow-2xs">
@@ -2656,11 +2946,7 @@ export default function TeachersDirectoryClient({
                           <button
                             type="button"
                             onClick={() => { handleViewModeChange('map'); setIsMoreMenuOpen(false); }}
-                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
-                              viewMode === 'map'
-                                ? 'bg-white text-[#004A75] shadow-2xs font-extrabold'
-                                : 'text-slate-600 hover:text-slate-900 font-medium'
-                            }`}
+                            className="flex-1 py-1.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer text-slate-600 hover:text-slate-900 font-medium"
                           >
                             <MapIcon size={13} />
                             <span>Map</span>
@@ -2686,6 +2972,7 @@ export default function TeachersDirectoryClient({
               </div>
             </div>
           </div>
+          )}
 
           {/* ── Main Flex Layout: Center Feed + Extra Right Panel ── */}
           <div className="w-full flex items-start gap-4 sm:gap-5 mt-2 sm:mt-3">

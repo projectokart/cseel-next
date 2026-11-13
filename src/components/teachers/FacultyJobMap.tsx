@@ -232,21 +232,21 @@ export default function FacultyJobMap({
 }: FacultyJobMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
-  const canvasRendererRef = useRef<L.Canvas | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const circleLayerRef = useRef<L.Circle | null>(null);
   const centerMarkerRef = useRef<L.Marker | null>(null);
   const mountedMarkersRef = useRef<Map<string, L.CircleMarker>>(new Map());
 
+  const [mapReady, setMapReady] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [displayMode, setDisplayMode] = useState<'points' | 'badges'>('points');
 
-  // STRICT REQUIREMENT: Radius limit is strictly 1 to 50 km (default 25km). NO ZERO (All India dump removed)!
-  const [distanceRadius, setDistanceRadius] = useState<number>(25);
+  // STRICT REQUIREMENT: Radius limit is strictly 1 to 70 km (default 70km per user directive).
+  const [distanceRadius, setDistanceRadius] = useState<number>(70);
 
-  // Pagination / Batch Rendering State: Default batch size is 25 points
-  const MAP_BATCH_SIZE = 25;
-  const [visibleBatchCount, setVisibleBatchCount] = useState<number>(25);
+  // Pagination / Batch Rendering State: Default batch size is 50 points
+  const MAP_BATCH_SIZE = 50;
+  const [visibleBatchCount, setVisibleBatchCount] = useState<number>(50);
 
   // Custom User Location Pin dropped by tapping anywhere on map
   const [customPin, setCustomPin] = useState<{ lat: number; lng: number } | null>(null);
@@ -323,11 +323,21 @@ export default function FacultyJobMap({
     );
   }, []);
 
+  // Master list of all items with valid lat/lng coordinates across the entire feed
+  const allValidItems = useMemo(() => {
+    const rawList = activeTab === 'jobs' ? jobs : faculty;
+    return rawList.filter((item) => {
+      const lat = getPointLat(item);
+      const lng = getPointLng(item);
+      return lat > 5 && lng > 5 && !isNaN(lat) && !isNaN(lng);
+    });
+  }, [activeTab, jobs, faculty]);
+
   // Filter items within distanceRadius (Max 70 km from center)
   const inRadiusItems = useMemo(() => {
     const rawList = activeTab === 'jobs' ? jobs : faculty;
     // Capped at 70km per user directive
-    const safeRadius = Math.min(Math.max(distanceRadius || 25, 1), 70);
+    const safeRadius = Math.min(Math.max(distanceRadius || 70, 1), 70);
 
     return rawList.filter((item) => {
       const lat = getPointLat(item);
@@ -343,7 +353,7 @@ export default function FacultyJobMap({
     });
   }, [activeTab, jobs, faculty, distanceRadius, currentCenter]);
 
-  // Batch rendering pagination: Limit visible items on map to visibleBatchCount (starts at 25)
+  // Batch rendering pagination: Limit visible items on map list to visibleBatchCount (starts at 50)
   const filteredItems = useMemo(() => {
     return inRadiusItems.slice(0, visibleBatchCount);
   }, [inRadiusItems, visibleBatchCount]);
@@ -363,22 +373,26 @@ export default function FacultyJobMap({
 
   // Reset batch count when center or radius changes
   useEffect(() => {
-    setVisibleBatchCount(25);
+    setVisibleBatchCount(50);
     setActiveOpportunityIndex(null);
   }, [distanceRadius, customPin]);
 
-  const handleSelectCard = useCallback((idx: number) => {
+  const handleSelectCard = useCallback((idx: number, customItem?: any) => {
     setActiveOpportunityIndex(idx);
-    const item: any = filteredItems[idx];
-    if (item && item.coordinates && mapInstanceRef.current) {
-      const zoom = Math.max(mapInstanceRef.current.getZoom(), 12);
-      const offsetLatLng = getOffsetLatLng(item.coordinates.lat, item.coordinates.lng, zoom);
-      mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
+    const item: any = customItem || filteredItems[idx];
+    if (item && mapInstanceRef.current) {
+      const lat = getPointLat(item);
+      const lng = getPointLng(item);
+      if (lat > 5 && lng > 5) {
+        const zoom = Math.max(mapInstanceRef.current.getZoom(), 12);
+        const offsetLatLng = getOffsetLatLng(lat, lng, zoom);
+        mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
+      }
     }
   }, [filteredItems, getOffsetLatLng]);
 
   const handleFlyToPin = (item: any, idx: number) => {
-    handleSelectCard(idx);
+    handleSelectCard(idx, item);
   };
 
   // Drag handling state for mobile bottom drawer
@@ -459,24 +473,19 @@ export default function FacultyJobMap({
     };
   }, []);
 
-  // Initialize Map with Hardware-Accelerated Canvas Renderer & Click-to-Drop Pin
+  // Initialize Map with SVG Renderer & Click-to-Drop Pin
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
-    // Use Canvas renderer with padding to eliminate DOM overhead completely (supports 10,000+ points at 60fps)
-    const canvasRenderer = L.canvas({ padding: 0.5 });
-    canvasRendererRef.current = canvasRenderer;
-
     const map = L.map(mapContainerRef.current, {
       center: [currentCenter.lat, currentCenter.lng],
-      zoom: 11,
+      zoom: 10,
       zoomControl: false,
       attributionControl: false,
       maxZoom: 18,
       minZoom: 4,
-      renderer: canvasRenderer,
-      preferCanvas: true,
+      preferCanvas: false,
     });
 
     // Clean OpenStreetMap tiles
@@ -488,29 +497,32 @@ export default function FacultyJobMap({
     const markersGroup = L.layerGroup().addTo(map);
     markersLayerRef.current = markersGroup;
     mapInstanceRef.current = map;
+    setMapReady(true);
 
     // USER DIRECTIVE: Touch or Click anywhere on the map to drop a custom pin & draw radius circle!
     map.on('click', (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
       setCustomPin({ lat, lng });
-      setVisibleBatchCount(25);
+      setVisibleBatchCount(50);
       setActiveOpportunityIndex(null);
     });
 
-    setTimeout(() => map.invalidateSize(), 80);
-    setTimeout(() => map.invalidateSize(), 300);
+    setTimeout(() => map.invalidateSize(), 100);
+    setTimeout(() => map.invalidateSize(), 400);
 
     return () => {
+      setMapReady(false);
       map.remove();
       mapInstanceRef.current = null;
+      markersLayerRef.current = null;
       mountedMarkersRef.current.clear();
     };
   }, []);
 
   // Update Center Marker & Radius Circle (Radar Ring) around currentCenter
   useEffect(() => {
+    if (!mapReady || !mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
-    if (!map) return;
 
     // Clear previous circle & center marker
     if (circleLayerRef.current) {
@@ -522,7 +534,7 @@ export default function FacultyJobMap({
       centerMarkerRef.current = null;
     }
 
-    const safeRadius = Math.min(Math.max(distanceRadius || 25, 1), 70);
+    const safeRadius = Math.min(Math.max(distanceRadius || 70, 1), 70);
 
     // Draw Radius Circle (Blue dashed boundary ring)
     const circle = L.circle([currentCenter.lat, currentCenter.lng], {
@@ -564,42 +576,29 @@ export default function FacultyJobMap({
 
     // Smooth auto-fit to circle bounds when center or radius changes
     if (activeOpportunityIndex === null) {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-      const containerHeight = mapContainerRef.current?.clientHeight || 800;
-      let paddingTop = 50;
-      let paddingBottom = 40;
-      if (isMobile && mobileSheetState === 'half') {
-        paddingTop = 60;
-        paddingBottom = Math.round(containerHeight * 0.50) + 10;
-      } else if (isMobile && mobileSheetState === 'full') {
-        paddingTop = 60;
-        paddingBottom = Math.round(containerHeight * 0.86) + 10;
-      }
-
       map.fitBounds(circle.getBounds(), {
-        paddingTopLeft: [25, paddingTop],
-        paddingBottomRight: [25, paddingBottom],
-        maxZoom: 13,
+        padding: [30, 30],
+        maxZoom: 12,
         animate: true,
       });
     }
-  }, [currentCenter, distanceRadius, customPin, userLocation, selectedCity, mobileSheetState]);
+  }, [mapReady, currentCenter, distanceRadius, customPin, userLocation, selectedCity]);
 
-  // High-Performance Hardware-Accelerated Canvas Rendering of all In-Radius Vacancies
+  // Bulletproof SVG Rendering of ALL Vacancy Red Dots across India
   useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
+    if (!mapReady || !mapInstanceRef.current || !markersLayerRef.current) return;
 
-    if (markersLayerRef.current) {
-      map.removeLayer(markersLayerRef.current);
-      markersLayerRef.current = null;
-    }
+    const layerGroup = markersLayerRef.current;
+    layerGroup.clearLayers();
 
-    const canvasRenderer = canvasRendererRef.current || L.canvas({ padding: 0.5, tolerance: 8 });
-    const layerGroup = L.layerGroup();
+    const safeRadius = Math.min(Math.max(distanceRadius || 70, 1), 70);
+    const centerLat = currentCenter.lat;
+    const centerLng = currentCenter.lng;
+
+    // Micro-offset counter for identical coordinates so stacked dots in same school/building are both visible
     const coordCounts: Record<string, number> = {};
 
-    filteredItems.forEach((item: any, idx: number) => {
+    allValidItems.forEach((item: any) => {
       let lat = getPointLat(item);
       let lng = getPointLng(item);
       if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat < 5) return;
@@ -615,16 +614,20 @@ export default function FacultyJobMap({
         lng += microRadius * Math.sin(angle);
       }
 
-      const isSelected = activeOpportunityIndex === idx;
+      const distKm = getDistanceKm(centerLat, centerLng, lat, lng);
+      const isInRadius = distKm <= safeRadius;
+
+      // Find if this item matches the active selected index in filteredItems
+      const inRadiusCardIndex = filteredItems.findIndex((fi: any) => fi.id === item.id);
+      const isSelected = inRadiusCardIndex !== -1 && activeOpportunityIndex === inRadiusCardIndex;
 
       const circleMarker = L.circleMarker([lat, lng], {
-        renderer: canvasRenderer,
-        radius: isSelected ? 8.5 : 6,
+        radius: isSelected ? 9 : isInRadius ? 6 : 4,
         fillColor: isSelected ? '#b91c1c' : '#ea4335',
         color: '#ffffff',
-        weight: isSelected ? 2.5 : 1.8,
+        weight: isSelected ? 2.5 : isInRadius ? 1.8 : 1.2,
         opacity: 1,
-        fillOpacity: isSelected ? 1 : 0.95,
+        fillOpacity: isSelected ? 1 : isInRadius ? 0.95 : 0.65,
       });
 
       const title = item.jobPostName || item.name || 'Opportunity';
@@ -650,16 +653,22 @@ export default function FacultyJobMap({
 
       circleMarker.on('click', (ev) => {
         L.DomEvent.stopPropagation(ev);
-        handleSelectCard(idx);
+        if (inRadiusCardIndex !== -1) {
+          handleSelectCard(inRadiusCardIndex);
+        } else {
+          setActiveOpportunityIndex(null);
+          if (mapInstanceRef.current) {
+            const zoom = Math.max(mapInstanceRef.current.getZoom(), 12);
+            const offsetLatLng = getOffsetLatLng(lat, lng, zoom);
+            mapInstanceRef.current.flyTo(offsetLatLng, zoom, { duration: 0.8 });
+          }
+        }
         circleMarker.openPopup();
       });
 
       layerGroup.addLayer(circleMarker);
     });
-
-    layerGroup.addTo(map);
-    markersLayerRef.current = layerGroup;
-  }, [filteredItems, activeOpportunityIndex, activeTab, handleSelectCard]);
+  }, [allValidItems, filteredItems, activeOpportunityIndex, activeTab, currentCenter, distanceRadius, mapReady, handleSelectCard, getOffsetLatLng]);
 
   // Handle batch increment / decrement
   const handleLoadNextBatch = () => {

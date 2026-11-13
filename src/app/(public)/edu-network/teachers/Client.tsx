@@ -464,6 +464,13 @@ export default function TeachersDirectoryClient({
           setViewMode(parsed.viewMode as any);
         }
       }
+      // Check query param ?view=... (URL priority over localStorage)
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlView = urlParams.get('view');
+      if (urlView === 'map' || urlView === 'grid' || urlView === 'grid3' || urlView === 'compact') {
+        setViewMode(urlView as any);
+        if (urlView === 'map') setIsSidebarMinimized(true);
+      }
     } catch (e) {
       console.warn('Failed to hydrate saved teacher filters:', e);
     } finally {

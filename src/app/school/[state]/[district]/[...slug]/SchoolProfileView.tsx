@@ -1360,8 +1360,11 @@ export default function SchoolProfileView({
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <MapPin className="w-3.5 h-3.5 text-[#006FCC] shrink-0" />
-                  <h3 className="!text-xs sm:!text-sm !font-medium !text-slate-700 truncate m-0">
-                    Nearby Schools{displayDistrict && displayDistrict.toLowerCase() !== 'district' ? ` in ${displayDistrict}` : (displayState ? ` in ${displayState}` : '')}
+                  <h3 className="!text-xs sm:!text-sm !font-semibold !text-slate-800 truncate m-0 flex items-center gap-1.5">
+                    <span>Nearby Schools within 5 km</span>
+                    <span className="text-[10px] font-normal text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full">
+                      Strict 5 km Radius
+                    </span>
                   </h3>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -1384,7 +1387,7 @@ export default function SchoolProfileView({
               </div>
 
               {/* Single Horizontal Swipeable Row: Image at Top, Text Below */}
-              {nearbyList.length > 0 && (
+              {nearbyList.length > 0 ? (
                 <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
                   {nearbyList.map((s: any, idx: number) => {
                     const sName = String(s.school_name || s.name || 'School').trim();
@@ -1395,18 +1398,19 @@ export default function SchoolProfileView({
                     const sBoard = cleanBoardName(String(s.board_10th || '')) || 'School';
                     const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
                     const nameSlug = toSlug(sName, 'school');
+                    const distBadge = s.distanceKm ? `${s.distanceKm} km away` : '';
                     const href = sCode
-                      ? `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${toSlug(sVill, 'main')}/${encodeURIComponent(sCode)}/${nameSlug}`
-                      : `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${toSlug(sVill, 'main')}/${nameSlug}`;
+                      ? `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${nameSlug}-${encodeURIComponent(sCode)}`
+                      : `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${nameSlug}`;
 
                     return (
                       <Link
                         key={sCode || `${nameSlug}-${idx}`}
                         href={href}
-                        className="group w-[138px] sm:w-[162px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
-                        title={`${sName} — ${sVill}, ${sDist}`}
+                        className="group w-[142px] sm:w-[165px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
+                        title={`${sName} — ${distBadge || `${sVill}, ${sDist}`}`}
                       >
-                        <div className="relative w-full h-[78px] sm:h-[90px] bg-slate-100 overflow-hidden shrink-0">
+                        <div className="relative w-full h-[82px] sm:h-[94px] bg-slate-100 overflow-hidden shrink-0">
                           <img
                             src={sImg}
                             alt={sName}
@@ -1416,14 +1420,20 @@ export default function SchoolProfileView({
                               (e.currentTarget as HTMLImageElement).src = '/images/default-school-placeholder.png?v=3';
                             }}
                           />
+                          {s.distanceKm && (
+                            <span className="absolute top-1.5 left-1.5 z-10 bg-slate-900/85 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
+                              <span>📍</span>
+                              <span>{s.distanceKm} km</span>
+                            </span>
+                          )}
                         </div>
                         <div className="p-2 sm:p-2.5 flex flex-col justify-between flex-1 gap-1.5">
                           <p className="!text-[11px] sm:!text-xs !font-medium !text-slate-700 group-hover:!text-[#006FCC] !leading-snug line-clamp-2 m-0">
                             {sName}
                           </p>
                           <div className="flex items-center justify-between gap-1 pt-0.5">
-                            <span className="text-[9px] sm:text-[10px] text-slate-500 font-normal truncate">
-                              {sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist}
+                            <span className="text-[9px] sm:text-[10px] text-emerald-700 font-semibold truncate flex items-center gap-0.5">
+                              {s.distanceKm ? `📍 ${s.distanceKm} km away` : (sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist)}
                             </span>
                             <span className="text-[8.5px] font-medium uppercase tracking-tight text-[#005689] bg-[#EDF5FA] px-1.5 py-0.5 rounded shrink-0">
                               {sBoard}
@@ -1433,6 +1443,10 @@ export default function SchoolProfileView({
                       </Link>
                     );
                   })}
+                </div>
+              ) : (
+                <div className="py-3 px-3.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-500 italic">
+                  No other verified schools found strictly within a 5 km radius of this campus.
                 </div>
               )}
 

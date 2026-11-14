@@ -258,8 +258,18 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // 9. Single-segment /school/[slug] fallback (e.g. /school/some-school-name)
+  // 9. School URL Normalization: Redirect legacy 4-segment /school/[state]/[district]/campus/[schoolSlug] to clean 3-segment SEO URL
   const segments = pathname.split('/').filter(Boolean);
+  if (
+    segments.length === 5 &&
+    segments[0] === 'school' &&
+    (segments[3].toLowerCase() === 'campus' || segments[3].toLowerCase() === 'main' || segments[3].toLowerCase() === 'village')
+  ) {
+    url.pathname = `/school/${segments[1]}/${segments[2]}/${segments[4]}`;
+    return NextResponse.redirect(url, 301);
+  }
+
+  // 10. Single-segment /school/[slug] fallback (e.g. /school/some-school-name)
   if (segments.length === 2 && segments[0] === 'school' && segments[1] !== 'india') {
     url.pathname = '/schools';
     url.searchParams.set('q', segments[1].replace(/\.html$/i, '').replace(/[-_]/g, ' '));

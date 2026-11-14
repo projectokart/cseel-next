@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { SchoolTemplateProvider, PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
 import { parseSchoolJsonToState } from '@/components/schools/template/SchoolJsonSchemaHelper';
-import SchoolProfileView from '@/app/school/[state]/[district]/[village]/[schoolSlug]/SchoolProfileView';
+import SchoolProfileView from '@/app/school/[state]/[district]/[...slug]/SchoolProfileView';
 import { Loader2 } from 'lucide-react';
 
 export default function SchoolTemplateClient() {

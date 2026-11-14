@@ -2,6 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import {
   schoolSearchSupabase,
+  calculateHaversineKm,
   cleanSchoolCategory,
   cleanManagementDesc,
   cleanRuralUrban,
@@ -11,6 +12,7 @@ import {
   cleanCodePrefix
 } from '@/integrations/supabase/schoolSearchClient';
 import { SCHOOLS_DATA, SchoolRecord } from '@/data/schoolFinderData';
+import { getAllSchoolsFromDatabase } from '@/integrations/supabase/schoolsDirectoryDb';
 import SchoolProfileView from './SchoolProfileView';
 import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
 import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/templateConstants';
@@ -120,8 +122,7 @@ interface PageProps {
   params: Promise<{
     state: string;
     district: string;
-    village: string;
-    schoolSlug: string;
+    slug: string[];
   }>;
 }
 
@@ -408,7 +409,8 @@ async function fetchSchoolRecord(state: string, district: string, village: strin
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const cleanSlug = decodeURIComponent(resolvedParams.schoolSlug || 'school').replace(/\.html$/i, '');
+  const slugArray = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [String(resolvedParams.slug || 'school')];
+  const cleanSlug = decodeURIComponent(slugArray[slugArray.length - 1] || 'school').replace(/\.html$/i, '');
   const digitsOnly = cleanSlug.replace(/\D/g, '');
   let defaultStateParam = 'Delhi';
   if (digitsOnly.startsWith('06')) defaultStateParam = 'Haryana';
@@ -416,7 +418,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const state = decodeURIComponent(resolvedParams.state || defaultStateParam);
   const district = decodeURIComponent(resolvedParams.district || 'District');
-  const village = decodeURIComponent(resolvedParams.village || 'Village');
+  const village = 'campus';
 
   // Fast path: Check local sync store first (0ms)
   const synced = getSyncedProfileData(digitsOnly, cleanSlug);
@@ -436,9 +438,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const pincode = (finalSynced?.contact?.campusLocation?.pincode || finalSynced?.pincode || dbSchool?.pincode ? String(finalSynced?.contact?.campusLocation?.pincode || finalSynced?.pincode || dbSchool.pincode).replace(/\.0$/, '') : '');
   const board = (finalSynced?.schoolIdentity?.board || finalSynced?.board || dbSchool?.board_12th || dbSchool?.board_10th || 'CBSE').replace(/^\d+-/, '');
 
-  const canonicalUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
+  const canonicalUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
   
-  // High-CTR, High Search-Intent Google Title (Fees, Admissions, Location & UDISE)
   const metaTitle = `${displayName}, ${displayVillage} (${displayDistrict}) - Fees, Admissions, UDISE & Info | CSEEL`;
   
   // Rich, Objective Google Snippet Description (No superlative claims)
@@ -529,18 +530,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function SchoolPage({ params }: PageProps) {
+export default async function SchoolCatchAllPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const rawSlug = decodeURIComponent(resolvedParams.schoolSlug || 'school');
-  const cleanSlug = rawSlug.replace(/\.html$/i, '');
-  const cleanDigits = (cleanSlug || '').replace(/\D/g, '');
+  const slugArray = Array.isArray(resolvedParams.slug) ? resolvedParams.slug : [String(resolvedParams.slug || 'school')];
+  const rawSlugFromParam = slugArray[slugArray.length - 1] || 'school';
+  const cleanDigits = (rawSlugFromParam || '').replace(/\D/g, '');
   let defaultStateParam = 'Delhi';
   if (cleanDigits.startsWith('06')) defaultStateParam = 'Haryana';
   else if (cleanDigits.startsWith('09')) defaultStateParam = 'Uttar Pradesh';
 
   const rawState = decodeURIComponent(resolvedParams.state || defaultStateParam);
   const rawDistrict = decodeURIComponent(resolvedParams.district || 'District');
-  const rawVillage = decodeURIComponent(resolvedParams.village || 'Village');
+  const rawVillage = 'campus';
+  const stateSlug = encodeURIComponent(rawState.toLowerCase().replace(/ /g, '-'));
+  const distSlug = encodeURIComponent(rawDistrict.toLowerCase().replace(/ /g, '-'));
+
+  // 1. Clean SEO URL Normalization: Remove /campus/ and legacy 4-segment paths with permanent 301 redirect
+  if (slugArray.length >= 2) {
+    const firstSeg = slugArray[0].toLowerCase();
+    const lastSeg = slugArray[slugArray.length - 1];
+
+    if (firstSeg === 'campus' || firstSeg === 'main' || firstSeg === 'village') {
+      redirect(`/school/${stateSlug}/${distSlug}/${encodeURIComponent(slugArray[1])}`);
+    } else if (/^\d+$/.test(firstSeg)) {
+      redirect(`/school/${stateSlug}/${distSlug}/${encodeURIComponent(slugArray[1])}-${encodeURIComponent(firstSeg)}`);
+    } else {
+      redirect(`/school/${stateSlug}/${distSlug}/${encodeURIComponent(lastSeg)}`);
+    }
+  }
+
+  const rawSlug = decodeURIComponent(slugArray[0] || 'school');
+  const cleanSlug = rawSlug.replace(/\.html$/i, '');
   const fallbackSchoolName = cleanSlug.replace(/[-_]/g, ' ');
 
   // Format variables strictly from Supabase record or template mode
@@ -591,105 +611,12 @@ export default async function SchoolPage({ params }: PageProps) {
       if (nameSlug && nameSlug !== cleanSlug) {
         const stateSlug = encodeURIComponent(rawState.toLowerCase().replace(/ /g, '-'));
         const distSlug = encodeURIComponent(rawDistrict.toLowerCase().replace(/ /g, '-'));
-        const villSlug = encodeURIComponent(rawVillage.toLowerCase().replace(/ /g, '-'));
-        redirect(`/school/${stateSlug}/${distSlug}/${villSlug}/${cleanSlug}/${nameSlug}`);
+        redirect(`/school/${stateSlug}/${distSlug}/${nameSlug}-${cleanSlug}`);
       }
     }
   }
 
-  // 3. Populate nearby location-matched sibling and cluster schools (Supabase district/state + local verified fallback)
-  const currentUdise = String(schoolData?.udise_code || preliminaryUdise || '').trim();
-  const currentName = (schoolData?.school_name || fallbackSchoolName).toLowerCase();
-  const resolvedDistrictForNearby = (schoolData?.district_name || rawDistrict || '').trim();
-  const resolvedStateForNearby = (schoolData?.state_name || rawState || '').trim();
-  const rawDistLower = resolvedDistrictForNearby.toLowerCase();
-  const rawStateLower = resolvedStateForNearby.toLowerCase();
-
-  let dbNearbyRows: any[] = [];
-  try {
-    if (resolvedDistrictForNearby && rawDistLower !== 'district') {
-      const { data: distRows } = await schoolSearchSupabase
-        .from('udise_private_schools')
-        .select('*')
-        .ilike('district_name', `%${resolvedDistrictForNearby}%`)
-        .limit(12);
-      if (Array.isArray(distRows)) {
-        dbNearbyRows = distRows;
-      }
-    }
-    if (dbNearbyRows.length < 6 && resolvedStateForNearby) {
-      const { data: stateRows } = await schoolSearchSupabase
-        .from('udise_private_schools')
-        .select('*')
-        .ilike('state_name', `%${resolvedStateForNearby}%`)
-        .limit(12);
-      if (Array.isArray(stateRows)) {
-        dbNearbyRows = [...dbNearbyRows, ...stateRows];
-      }
-    }
-  } catch {}
-
-  const districtMatches = SCHOOLS_DATA.filter((s) => {
-    const sU = s.udise_code || s.udiseCode;
-    const sN = (s.school_name || s.name || '').toLowerCase();
-    const dN = (s.district_name || s.city || '').toLowerCase();
-    return sU !== currentUdise && sN !== currentName && (dN.includes(rawDistLower) || rawDistLower.includes(dN));
-  });
-
-  const stateMatches = SCHOOLS_DATA.filter((s) => {
-    const sU = s.udise_code || s.udiseCode;
-    const sN = (s.school_name || s.name || '').toLowerCase();
-    const stN = (s.state_name || s.state || '').toLowerCase();
-    return sU !== currentUdise && sN !== currentName && !districtMatches.includes(s) && rawStateLower && stN.includes(rawStateLower);
-  });
-
-  const remainingMatches = SCHOOLS_DATA.filter((s) => {
-    const sU = s.udise_code || s.udiseCode;
-    const sN = (s.school_name || s.name || '').toLowerCase();
-    return sU !== currentUdise && sN !== currentName && !districtMatches.includes(s) && !stateMatches.includes(s);
-  });
-
-  const normalizeNearby = (s: any) => {
-    const rawImg = String(s.image_url || s.image || s.banner_url || s.logo_url || '').trim();
-    const safeImg = isValidSchoolImage(rawImg) ? rawImg : PLACEHOLDER_EMPTY_IMAGE;
-    return {
-      school_id: s.school_id || s.id || s.udise_code || s.udiseCode,
-      school_name: s.school_name || s.name || '',
-      district_name: s.district_name || s.city || resolvedDistrictForNearby || rawDistrict,
-      village_name: s.village_name || s.village_ward || s.locality || rawVillage,
-      state_name: s.state_name || s.state || resolvedStateForNearby || rawState,
-      udise_code: s.udise_code || s.udiseCode || '',
-      total_students: s.total_students || 0,
-      board_10th: s.board_10th || s.board_secondary_10th || s.board || '',
-      management_desc: s.management_desc || s.management_desc_state || s.management_type || '',
-      image_url: safeImg,
-      image: safeImg,
-    };
-  };
-
-  const mergedRaw = [
-    ...dbNearbyRows.map(normalizeNearby),
-    ...districtMatches.map(normalizeNearby),
-    ...stateMatches.map(normalizeNearby),
-    ...remainingMatches.map(normalizeNearby),
-  ];
-
-  const seenNearbyKeys = new Set<string>();
-  const allCandidateSiblings: any[] = [];
-  for (const item of mergedRaw) {
-    const itemUdise = String(item.udise_code || '').trim();
-    const itemNameLower = String(item.school_name || '').trim().toLowerCase();
-    if (!itemNameLower || itemNameLower === currentName) continue;
-    if (itemUdise && currentUdise && itemUdise === currentUdise) continue;
-    const dedupKey = itemUdise || itemNameLower;
-    if (seenNearbyKeys.has(dedupKey)) continue;
-    seenNearbyKeys.add(dedupKey);
-    allCandidateSiblings.push(item);
-    if (allCandidateSiblings.length >= 12) break;
-  }
-
-  const districtSchools = allCandidateSiblings.slice(0, 6);
-  const clusterSchools = allCandidateSiblings.slice(6, 10);
+    
 
   let dbProfileJson: any = null;
   if (profRow) {
@@ -828,7 +755,75 @@ export default async function SchoolPage({ params }: PageProps) {
     ? schoolData.address.split('\n')[0] 
     : `${displayVillage}, ${displayBlock ? `${displayBlock}, ` : ''}${displayDistrict}, ${displayState}${pincode ? ` - ${pincode}` : ''}`);
 
-  const pageUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState)}/${encodeURIComponent(displayDistrict)}/${encodeURIComponent(displayVillage)}/${cleanSlug}.html`;
+  const pageUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
+
+  // 3. Strict 5 KM Proximity Filtering: Only schools within 5 km of (lat, lng) are included
+  const currentUdise = String(schoolData?.udise_code || preliminaryUdise || '').trim();
+  const currentName = (schoolData?.school_name || fallbackSchoolName).toLowerCase();
+  const resolvedDistrictForNearby = (schoolData?.district_name || rawDistrict || '').trim();
+  const resolvedStateForNearby = (schoolData?.state_name || rawState || '').trim();
+  const STRICT_RADIUS_KM = 5.0; // Fixed 5 km radius
+
+  const normalizeNearby = (s: any) => {
+    const rawImg = String(s.image_url || s.image || s.banner_url || s.logo_url || '').trim();
+    let cleanImg = rawImg;
+    if (cleanImg.startsWith('=IMAGE("') && cleanImg.endsWith('")')) {
+      cleanImg = cleanImg.slice(8, -2);
+    }
+    const safeImg = isValidSchoolImage(cleanImg) ? cleanImg : PLACEHOLDER_EMPTY_IMAGE;
+    return {
+      school_id: s.school_id || s.id || s.udise_code || s.udiseCode,
+      school_name: s.school_name || s.name || '',
+      district_name: s.district_name || s.city || resolvedDistrictForNearby || rawDistrict,
+      village_name: s.village_name || s.village_ward || s.locality || 'Campus',
+      state_name: s.state_name || s.state || resolvedStateForNearby || rawState,
+      udise_code: s.udise_code || s.udiseCode || '',
+      total_students: s.total_students || 0,
+      board_10th: s.board_10th || s.board_secondary_10th || s.board || 'CBSE',
+      management_desc: s.management_desc || s.management_desc_state || s.management_type || 'Private',
+      image_url: safeImg,
+      image: safeImg,
+    };
+  };
+
+  const allDbSchools = getAllSchoolsFromDatabase();
+  const candidatePool = [...allDbSchools, ...SCHOOLS_DATA];
+
+  const nearbyCandidates = candidatePool
+    .filter((s: any) => {
+      const sU = String(s.udise_code || s.udiseCode || s.id || '').trim();
+      const sN = String(s.school_name || s.name || '').trim().toLowerCase();
+      if (!sN || sN === currentName) return false;
+      if (sU && currentUdise && sU === currentUdise) return false;
+      const sLat = Number(s.latitude || s.lat);
+      const sLng = Number(s.longitude || s.lng);
+      if (!sLat || !sLng || sLat === 0 || sLng === 0) return false;
+      const dist = calculateHaversineKm(lat, lng, sLat, sLng);
+      return dist > 0 && dist <= STRICT_RADIUS_KM; // STRICT 5 KM RADIUS!
+    })
+    .map((s: any) => {
+      const sLat = Number(s.latitude || s.lat);
+      const sLng = Number(s.longitude || s.lng);
+      const distKm = calculateHaversineKm(lat, lng, sLat, sLng);
+      return {
+        ...normalizeNearby(s),
+        distanceKm: distKm,
+        distanceText: `${distKm} km away`,
+      };
+    });
+
+  const seenKeys = new Set<string>();
+  const strict5KmSchools: any[] = [];
+  for (const s of nearbyCandidates.sort((a: any, b: any) => a.distanceKm - b.distanceKm)) {
+    const key = s.udise_code || s.school_name.toLowerCase();
+    if (!seenKeys.has(key)) {
+      seenKeys.add(key);
+      strict5KmSchools.push(s);
+    }
+  }
+
+  const districtSchools = strict5KmSchools.slice(0, 8);
+  const clusterSchools = strict5KmSchools.slice(8, 14);
 
   // Dynamic social profiles for Google Knowledge Graph
   const socialSameAs: string[] = [];
@@ -993,12 +988,6 @@ export default async function SchoolPage({ params }: PageProps) {
           {
             '@type': 'ListItem',
             position: 4,
-            name: displayVillage,
-            item: `https://schoolsearch.cseel.org/school-finder?city=${encodeURIComponent(displayDistrict)}&search=${encodeURIComponent(displayVillage)}`,
-          },
-          {
-            '@type': 'ListItem',
-            position: 5,
             name: displaySchoolName,
             item: pageUrl,
           },

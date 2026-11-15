@@ -1,1 +1,35 @@
-{}
+{
+  "claims": [
+    {
+      "id": "claim_1794682449978_dwm4a",
+      "udise_code": "06180101926",
+      "school_id": "06180101926",
+      "school_name": "Heritage Xperiential Learning School",
+      "claimant_name": "Dr. Ramesh Sharma",
+      "claimant_email": "principal@ggn.hxls.org",
+      "whatsapp_number": "9810012345",
+      "designation": "Principal / Head of School",
+      "note": "Official verification claim test by school management.",
+      "request_type": "claim",
+      "status": "approved",
+      "magic_key": "^$L=RNNfjv5h5!7q",
+      "visual_edit_token": "^$L=RNNfjv5h5!7q",
+      "visual_edit_url": "/school/delhi/new-delhi/new-delhi/heritage-xperiential-learning-school-06180101926?edit=true&magicKey=^$L=RNNfjv5h5!7q",
+      "created_at": "2026-11-14T18:54:09.982Z",
+      "approved_at": "2026-11-14T18:54:09.984Z",
+      "approved_by": "Auto-Approved (Verification Pipeline)",
+      "user_id": "claimant_7072696e63697061",
+      "state": "DELHI",
+      "district": "NEW DELHI",
+      "city": "NEW DELHI",
+      "pincode": "",
+      "affiliation_number": "",
+      "board": "CBSE",
+      "management": "Private",
+      "grades_level": "",
+      "principal_name": "",
+      "established_year": "",
+      "profile_path": "/school/delhi/new-delhi/new-delhi/heritage-xperiential-learning-school-06180101926"
+    }
+  ]
+}

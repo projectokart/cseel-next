@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PageTransition from '@/components/shared/PageTransition';
 import AdSenseBanner from '@/components/ads/AdSenseBanner';
+import ApplyResumeModal from '@/components/jobs/ApplyResumeModal';
 import {
   MapPin, Clock, ExternalLink, Share2, Check, CheckCheck,
   Building2, GraduationCap, Briefcase, Calendar, ShieldCheck,
@@ -20,6 +21,20 @@ interface Props {
 
 export default function SingleJobClient({ job, relatedJobs }: Props) {
   const [copied, setCopied] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+
+  // Auto-open Resume Modal on page open if not dismissed earlier
+  useEffect(() => {
+    try {
+      const isDismissed = localStorage.getItem('cseel_resume_modal_dismissed');
+      if (!isDismissed) {
+        const timer = setTimeout(() => {
+          setShowResumeModal(true);
+        }, 1200);
+        return () => clearTimeout(timer);
+      }
+    } catch {}
+  }, []);
 
   // Canonical defensive fallbacks for title, organization, salary, source, and apply link
   const rawJob = job as any;
@@ -231,6 +246,15 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     )}
                   </button>
 
+                  <button
+                    type="button"
+                    onClick={() => setShowResumeModal(true)}
+                    className="flex-1 sm:flex-initial py-2.5 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 shrink-0 text-amber-200" />
+                    <span>Add Your Resume</span>
+                  </button>
+
                   <a
                     href={applyLink}
                     target="_blank"
@@ -385,6 +409,15 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 </div>
 
                 <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowResumeModal(true)}
+                    className="flex-1 sm:flex-initial py-2.5 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 shrink-0 text-amber-200" />
+                    <span>Add Your Resume</span>
+                  </button>
+
                   <a
                     href={applyLink}
                     target="_blank"
@@ -577,6 +610,16 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Resume Application Modal */}
+        <ApplyResumeModal
+          isOpen={showResumeModal}
+          onClose={() => setShowResumeModal(false)}
+          jobTitle={displayTitle}
+          jobId={job.id}
+          schoolName={displayOrg}
+          defaultSubject={job.subject || ''}
+        />
 
       </div>
     </PageTransition>

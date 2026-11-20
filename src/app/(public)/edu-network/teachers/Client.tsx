@@ -34,7 +34,7 @@ import {
   DollarSign, AlertCircle, RefreshCw, Share2, Flame, Zap, CheckCheck,
   SlidersHorizontal, Bookmark, ChevronDown, ChevronRight, ChevronLeft,
   Columns3, Columns2, List, Maximize2, Minimize2, IndianRupee, Globe, Navigation, FileText, Bell,
-  Home, MoreVertical, PlusCircle
+  Home, MoreVertical, PlusCircle, Upload
 } from 'lucide-react';
 import {
   FacultyJobItem,
@@ -48,6 +48,7 @@ import {
 import { getAnnualSalaryNumber } from '@/lib/salaryUtils';
 import { formatStructuredAddress, formatCleanSalary, getSourceDisplayName, getSourceBadgeColor, getGoogleMapsSearchUrl, extractPureLocalAddress, getJobAgeInfo } from '@/lib/jobCardUtils';
 import { trackCseelEvent } from '@/components/analytics/AnalyticsScripts';
+import ApplyResumeModal from '@/components/jobs/ApplyResumeModal';
 import {
   calculateDynamicFacets,
   DEFAULT_JOB_FACETS,
@@ -386,6 +387,7 @@ export default function TeachersDirectoryClient({
 
   // Filter States (Typing updates searchInput; Search only runs on Enter or Button Click)
   const [searchInput, setSearchInput] = useState('');
+  const [showResumeModal, setShowResumeModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const hasSearchText = searchInput.trim().length > 0;
   // Active 45-Day Vacancies — starts empty, hydrated asynchronously from slim feed / IndexedDB
@@ -2662,7 +2664,33 @@ export default function TeachersDirectoryClient({
           ) : (
             /* ── LIST VIEW NORMAL TWO-ROW HEADER ── */
             <div className="bg-white rounded-2xl border border-gray-200/90 shadow-2xs p-3 sm:p-4 mb-2 sm:mb-3 flex flex-col gap-2.5 relative">
-            {/* Row 1: 100% Full-Width Block Search Bar */}
+              
+              {/* Top Banner / Button: Upload Your Resume (Direct School Matching) */}
+              <div className="w-full flex items-center justify-between gap-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200/80 rounded-xl px-3.5 py-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Sparkles className="w-4 h-4 text-amber-200" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-xs font-bold text-emerald-950 block truncate">
+                      Looking for a Teaching Job?
+                    </span>
+                    <span className="text-[11px] text-emerald-700/90 hidden sm:inline">
+                      Upload your resume directly • Verified school matching & instant review
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowResumeModal(true)}
+                  className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all shrink-0 cursor-pointer flex items-center gap-1.5 active:scale-95"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload Your Resume</span>
+                </button>
+              </div>
+
+              {/* Row 1: 100% Full-Width Block Search Bar */}
             <div className="w-full relative">
               <div className="w-full flex items-center bg-[#F4F6F8] rounded-xl pl-3 sm:pl-4 pr-1.5 py-1.5 border border-slate-200/80 focus-within:bg-white focus-within:border-[#004A75] focus-within:ring-2 focus-within:ring-[#004A75]/15 transition-all h-11 sm:h-12 shadow-2xs">
                 <input
@@ -4085,6 +4113,12 @@ export default function TeachersDirectoryClient({
             </div>
           </div>
         )}
+
+      {/* Global Apply / Upload Resume Modal */}
+      <ApplyResumeModal
+        isOpen={showResumeModal}
+        onClose={() => setShowResumeModal(false)}
+      />
     </>
   );
 }

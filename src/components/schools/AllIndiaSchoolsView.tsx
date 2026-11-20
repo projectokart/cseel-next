@@ -894,28 +894,15 @@ export default function AllIndiaSchoolsView({
         params.set('radius_km', String(mapRadiusKm));
       }
 
-      const cacheKey = `cseel_schools_cache_${params.toString()}`;
-      // Fast check in sessionStorage for back-navigation caching
-      if (typeof window !== 'undefined') {
-        try {
-          const cachedRaw = sessionStorage.getItem(cacheKey);
-          if (cachedRaw) {
-            const cached = JSON.parse(cachedRaw);
-            if (cached && Array.isArray(cached.schools) && Date.now() - (cached.timestamp || 0) < 600000) {
-              setSchools(cached.schools);
-              if (typeof cached.totalCount === 'number') setTotalCount(cached.totalCount);
-              if (typeof cached.totalPages === 'number') {
-                setTotalPages(Math.max(1, Math.min(10, cached.totalPages)));
-              }
-              setLoading(false);
-              return;
-            }
-          }
-        } catch {}
-      }
-
+      // Real-time fetch directly from Supabase (never serve stale cache)
       setLoading(true);
-      const res = await fetch(`/api/schools/all-india?${params.toString()}`);
+      const res = await fetch(`/api/schools/all-india?${params.toString()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       const data = await res.json();
       if (data.success) {
         const schoolsList = data.schools || [];
@@ -929,21 +916,6 @@ export default function AllIndiaSchoolsView({
         }
         setTotalCount(resolvedTotal);
         setTotalPages(resolvedPages);
-
-        // Store in sessionStorage for instantaneous back-navigation restore
-        if (typeof window !== 'undefined') {
-          try {
-            sessionStorage.setItem(
-              cacheKey,
-              JSON.stringify({
-                schools: schoolsList,
-                totalCount: resolvedTotal,
-                totalPages: resolvedPages,
-                timestamp: Date.now(),
-              })
-            );
-          } catch {}
-        }
       } else {
         setError(data.error || 'Unable to load schools');
       }
@@ -1566,64 +1538,85 @@ export default function AllIndiaSchoolsView({
                 {pageSubtitle}
               </p>
 
-              {/* Centered Hero Search Bar */}
-              <div className="w-full max-w-2xl flex items-center bg-white rounded-2xl shadow-xl p-1.5 border border-white/40">
-                <div className="relative flex-1 flex items-center px-3">
-                  <Search className="w-4 h-4 text-slate-400 shrink-0 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Search private schools by name, UDISE code, locality, or district..."
-                    value={draftSearch}
-                    onChange={(e) => setDraftSearch(e.target.value.replace(/[^a-zA-Z0-9\s]/g, ''))}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleApplyFilters();
-                      }
-                    }}
-                    className="w-full bg-transparent text-slate-900 text-xs sm:text-sm font-semibold outline-none placeholder-slate-400"
-                  />
-                  {draftSearch && (
+              {/* Centered Hero Search Bar (Styled exactly like Find the Best School Directory) */}
+              <div className="w-full max-w-3xl flex items-center gap-2">
+                <div className="flex-1 flex flex-row items-center bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.18)] px-3 sm:px-4 py-1.5 sm:py-2 border border-slate-200 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#0b57d0]">
+                  {/* Location Filter Trigger */}
+                  <div className="relative shrink-0 flex items-center">
                     <button
                       type="button"
-                      onClick={() => {
-                        setDraftSearch('');
-                        setActiveSearch('');
-                        setCurrentPage(1);
-                      }}
-                      className="text-slate-400 hover:text-slate-600 text-xs font-bold px-1.5"
+                      onClick={() => setIsMobileFilterOpen(true)}
+                      className="flex items-center gap-1 py-1 pr-1 transition-all duration-200 group cursor-pointer hover:opacity-80 active:scale-95 text-[#5f6368] hover:text-[#1f1f1f]"
+                      title={activeState || activeDistrict ? `${activeDistrict || activeState}` : "Select Location / Filter"}
                     >
-                      Clear
+                      <MapPin size={17} className={activeState || activeDistrict ? 'text-[#0b57d0]' : 'text-[#5f6368]'} />
+                      {activeDistrict || activeState ? (
+                        <span className="text-xs font-bold text-[#0b57d0] max-w-[80px] sm:max-w-[120px] truncate">
+                          {activeDistrict || activeState}
+                        </span>
+                      ) : null}
+                      <ChevronDown size={11} className="text-[#5f6368] shrink-0" />
                     </button>
-                  )}
+                    {/* Vertical Divider */}
+                    <div className="h-5 w-[1px] bg-slate-300 mx-2 shrink-0" aria-hidden="true" />
+                  </div>
+
+                  {/* Search Input: Clean Text Area */}
+                  <div className="flex-1 flex items-center min-w-0 border-0 border-none outline-none ring-0">
+                    <input
+                      type="text"
+                      placeholder="Search private schools by name, UDISE code, locality..."
+                      value={draftSearch}
+                      onChange={(e) => setDraftSearch(e.target.value.replace(/[^a-zA-Z0-9\s]/g, ''))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleApplyFilters();
+                        }
+                      }}
+                      className="bg-transparent w-full border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none text-xs sm:text-sm text-[#1f1f1f] placeholder-[#5f6368]/70 font-medium min-w-0"
+                    />
+                    {draftSearch && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDraftSearch('');
+                          setActiveSearch('');
+                          setCurrentPage(1);
+                        }}
+                        className="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-full shrink-0 cursor-pointer transition-colors mr-1"
+                        title="Clear search"
+                      >
+                        <X size={13} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Clickable Bare Blue Search Icon */}
+                  <button
+                    type="button"
+                    onClick={handleApplyFilters}
+                    className="p-1.5 text-[#0b57d0] hover:text-[#0842a0] hover:bg-blue-50/70 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90"
+                    title="Search schools"
+                  >
+                    <Search size={18} strokeWidth={2.2} />
+                  </button>
                 </div>
 
+                {/* Near Me GPS Companion Pill */}
                 <button
                   type="button"
                   onClick={handleLocateUser}
                   disabled={locatingUser}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 transition shadow-sm active:scale-98 mr-1.5 ${
+                  className={`h-10 sm:h-11 px-3.5 sm:px-4 text-xs sm:text-sm rounded-full inline-flex items-center justify-center gap-1.5 font-bold shrink-0 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm ${
                     userCoords
-                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                      ? 'bg-[#137333] text-white shadow-md'
+                      : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
                   }`}
                   title="Find private schools within 10 km radius of your location"
                 >
-                  <Navigation size={13} className={locatingUser ? 'animate-spin text-emerald-600' : userCoords ? 'text-white' : 'text-slate-600'} />
-                  <span className="hidden sm:inline">
-                    {locatingUser ? 'Locating...' : userCoords ? 'Near Me (Active)' : 'Schools Near Me'}
-                  </span>
-                  <span className="sm:hidden">
-                    {locatingUser ? '...' : userCoords ? 'Near Me' : 'Near Me'}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleApplyFilters}
-                  className="px-4 py-2 rounded-xl bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold flex items-center gap-1.5 shrink-0 transition shadow-sm active:scale-98"
-                >
-                  <Search size={13} />
-                  <span>Search</span>
+                  <Navigation size={15} className={locatingUser ? 'animate-spin text-amber-300' : userCoords ? 'text-white' : 'text-[#0b57d0]'} />
+                  <span className="hidden sm:inline">{locatingUser ? 'Locating...' : userCoords ? 'Near Me (Active)' : 'Near Me'}</span>
+                  <span className="sm:hidden">{locatingUser ? '...' : 'Near Me'}</span>
                 </button>
               </div>
 
@@ -1914,11 +1907,6 @@ export default function AllIndiaSchoolsView({
                     </span>
                   )}
                 </button>
-
-                {/* Page indicator */}
-                <div className="text-xs text-slate-600 font-semibold bg-[#F7F8F8] px-3 py-1.5 rounded-xl border border-[#E8E9E9]">
-                  Page {currentPage > 10 ? `${currentPage} (Exceeded)` : currentPage} of {totalPages.toLocaleString()}
-                </div>
               </div>
             </div>
 
@@ -2360,21 +2348,6 @@ export default function AllIndiaSchoolsView({
                 </div>
 
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  {/* First Page Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCurrentPage(1);
-                      const el = document.getElementById('schools-directory-content');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    disabled={currentPage <= 1}
-                    className="px-2.5 py-1.5 rounded-xl border border-[#E8E9E9] bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
-                    title="First Page"
-                  >
-                    <span>« First</span>
-                  </button>
-
                   {/* Previous Button */}
                   <button
                     type="button"
@@ -2432,21 +2405,6 @@ export default function AllIndiaSchoolsView({
                   >
                     <span>Next</span>
                     <ChevronRight size={14} />
-                  </button>
-
-                  {/* Last Page Button */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCurrentPage(totalPages);
-                      const el = document.getElementById('schools-directory-content');
-                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    disabled={currentPage >= totalPages}
-                    className="px-2.5 py-1.5 rounded-xl border border-[#E8E9E9] bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
-                    title="Last Page"
-                  >
-                    <span>Last »</span>
                   </button>
                 </div>
               </div>

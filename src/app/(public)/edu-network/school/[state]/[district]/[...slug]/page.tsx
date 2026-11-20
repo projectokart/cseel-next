@@ -438,7 +438,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const pincode = (finalSynced?.contact?.campusLocation?.pincode || finalSynced?.pincode || dbSchool?.pincode ? String(finalSynced?.contact?.campusLocation?.pincode || finalSynced?.pincode || dbSchool.pincode).replace(/\.0$/, '') : '');
   const board = (finalSynced?.schoolIdentity?.board || finalSynced?.board || dbSchool?.board_12th || dbSchool?.board_10th || 'CBSE').replace(/^\d+-/, '');
 
-  const canonicalUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
+  const canonicalUrl = `https://cseel.org/edu-network/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
   
   const metaTitle = `${displayName}, ${displayVillage} (${displayDistrict}) - Fees, Admissions, UDISE & Info | CSEEL`;
   
@@ -474,7 +474,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: metaTitle,
     description: metaDesc,
     keywords: keywordsList,
-    metadataBase: new URL('https://schoolsearch.cseel.org'),
+    metadataBase: new URL('https://cseel.org'),
     other: {
       'geo.region': `IN-${displayState}`,
       'geo.placename': `${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` ${pincode}` : ''}`,
@@ -768,9 +768,9 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
     ? schoolData.address.split('\n')[0] 
     : `${displayVillage}, ${displayBlock ? `${displayBlock}, ` : ''}${displayDistrict}, ${displayState}${pincode ? ` - ${pincode}` : ''}`);
 
-  const pageUrl = `https://schoolsearch.cseel.org/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
+  const pageUrl = `https://cseel.org/edu-network/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
 
-  // 3. Strict 5 KM Proximity Filtering: Only schools within 5 km of (lat, lng) are included
+  // 3. Strict 5 KM Proximity Filtering + Dynamic District Fallback from 4.4L Database
   const currentUdise = String(schoolData?.udise_code || preliminaryUdise || '').trim();
   const currentName = (schoolData?.school_name || fallbackSchoolName).toLowerCase();
   const resolvedDistrictForNearby = (schoolData?.district_name || rawDistrict || '').trim();
@@ -832,6 +832,41 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
     if (!seenKeys.has(key)) {
       seenKeys.add(key);
       strict5KmSchools.push(s);
+    }
+  }
+
+  // Ensure nearby school cards ALWAYS display by fetching from Supabase 4.4L database if pool has fewer than 6
+  if (strict5KmSchools.length < 6) {
+    try {
+      const targetDistrict = schoolData?.district_name || rawDistrict;
+      const targetState = schoolData?.state_name || rawState;
+      let query = schoolSearchSupabase
+        .from('udise_private_schools')
+        .select('udise_code, school_name, state_name, district_name, village_name, board_10th, management_desc, latitude, longitude, image_url')
+        .limit(10);
+
+      if (targetDistrict && targetDistrict.toLowerCase() !== 'district') {
+        query = query.ilike('district_name', `%${targetDistrict}%`);
+      } else if (targetState) {
+        query = query.ilike('state_name', `%${targetState}%`);
+      }
+
+      if (currentUdise) {
+        query = query.neq('udise_code', currentUdise);
+      }
+
+      const { data: dbNearby } = await query;
+      if (dbNearby && dbNearby.length > 0) {
+        for (const s of dbNearby) {
+          const key = s.udise_code || s.school_name.toLowerCase();
+          if (!seenKeys.has(key)) {
+            seenKeys.add(key);
+            strict5KmSchools.push(normalizeNearby(s));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Error fetching DB nearby schools:', e);
     }
   }
 
@@ -984,23 +1019,29 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://schoolsearch.cseel.org',
+            item: 'https://cseel.org',
           },
           {
             '@type': 'ListItem',
             position: 2,
-            name: displayState,
-            item: `https://schoolsearch.cseel.org/school-finder?state=${encodeURIComponent(displayState)}`,
+            name: 'All India Schools',
+            item: 'https://cseel.org/edu-network/all-india',
           },
           {
             '@type': 'ListItem',
             position: 3,
-            name: displayDistrict,
-            item: `https://schoolsearch.cseel.org/school-finder?city=${encodeURIComponent(displayDistrict)}`,
+            name: displayState,
+            item: `https://cseel.org/edu-network/all-india?state=${encodeURIComponent(displayState)}`,
           },
           {
             '@type': 'ListItem',
             position: 4,
+            name: displayDistrict,
+            item: `https://cseel.org/edu-network/all-india?district=${encodeURIComponent(displayDistrict)}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 5,
             name: displaySchoolName,
             item: pageUrl,
           },
@@ -1020,8 +1061,8 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
         inLanguage: ['en-IN', 'hi-IN'],
         isPartOf: {
           '@type': 'WebSite',
-          name: 'CSEEL School Directory',
-          url: 'https://schoolsearch.cseel.org',
+          name: 'CSEEL Educational Network',
+          url: 'https://cseel.org',
         },
       },
     ],

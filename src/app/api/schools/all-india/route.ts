@@ -540,6 +540,12 @@ export async function GET(request: Request) {
       totalPages: totalPages,
       limit: limit,
       hasMore: page < 10 && offset + limit < totalCount,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+        'CDN-Cache-Control': 'no-store',
+        'Cloudflare-CDN-Cache-Control': 'no-store'
+      }
     });
   } catch (error: any) {
     console.error('API /api/schools/all-india error:', error);

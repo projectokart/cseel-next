@@ -3221,13 +3221,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     </button>
                   )}
                 </div>
-
-                {/* Right/Bottom Section: Search Bar (When Hero is Minimized) */}
-                {isHeroMinimized && (
-                  <div className="flex-1 w-full xl:max-w-xl 2xl:max-w-2xl min-w-0">
-                    {renderSearchBar(true)}
-                  </div>
-                )}
               </div>
             </div>
           )}

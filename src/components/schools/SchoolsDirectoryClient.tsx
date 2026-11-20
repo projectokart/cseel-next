@@ -2711,135 +2711,219 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     </Link>
                   )}
 
-                  {/* Unified Search Input Bar - takes maximum width (Strictly no inner boundary on text area) */}
-                  <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border-0 border-none outline-none ring-0 shadow-none focus-within:border-none focus-within:ring-0 focus-within:outline-none transition-all min-w-0 ${
-                    viewMode === 'map' ? 'h-8 py-0' : 'py-1.5'
-                  }`}>
-                    {/* Select City Icon & Trigger */}
-                    <button
-                      type="button"
-                      onClick={() => setIsMobileCityDropdownOpen(!isMobileCityDropdownOpen)}
-                      className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition shrink-0 pr-1.5 border-r border-gray-300 cursor-pointer"
-                      title={selectedLocation ? `Selected City: ${selectedLocation}` : "Select City"}
-                    >
-                      <MapPin size={14} className={selectedLocation ? 'text-blue-600' : 'text-gray-500'} />
-                      {selectedLocation && (
-                        <span className="text-[10.5px] font-bold text-blue-600 max-w-[55px] truncate">
-                          {selectedLocation}
-                        </span>
-                      )}
-                      <ChevronDown size={10} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {/* Search Text Input (Strictly zero inner border/ring) */}
-                    <input
-                      type="text"
-                      data-clean-search="true"
-                      placeholder={selectedLocation ? `Search in ${selectedLocation}...` : "Search school, city, UDISE..."}
-                      value={searchMode === 'near_me' ? '' : searchTerm}
-                      onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleFilterChange({ q: searchTerm.trim() || undefined });
-                        }
-                      }}
-                      className="search-clean-input no-focus-ring flex-1 bg-transparent px-2 py-0 text-xs text-gray-800 placeholder-gray-400 font-medium border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0 min-w-0"
-                      style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
-                    />
-
-                    {/* Clear Text Icon */}
-                    {searchTerm.trim() && (
+                  {/* When Hero is Minimized or Map Mode: Show Compact Search Bar */}
+                  {(isHeroMinimized || viewMode === 'map') ? (
+                    <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border-0 border-none outline-none ring-0 shadow-none focus-within:border-none focus-within:ring-0 focus-within:outline-none transition-all min-w-0 ${
+                      viewMode === 'map' ? 'h-8 py-0' : 'py-1.5'
+                    }`}>
+                      {/* Select City Icon & Trigger */}
                       <button
                         type="button"
-                        onClick={() => {
-                          setSearchTerm('');
-                          handleFilterChange({ q: undefined });
-                        }}
-                        className="p-1 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
-                        title="Clear search"
+                        onClick={() => setIsMobileCityDropdownOpen(!isMobileCityDropdownOpen)}
+                        className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition shrink-0 pr-1.5 border-r border-gray-300 cursor-pointer"
+                        title={selectedLocation ? `Selected City: ${selectedLocation}` : "Select City"}
                       >
-                        <X size={12} />
+                        <MapPin size={14} className={selectedLocation ? 'text-blue-600' : 'text-gray-500'} />
+                        {selectedLocation && (
+                          <span className="text-[10.5px] font-bold text-blue-600 max-w-[55px] truncate">
+                            {selectedLocation}
+                          </span>
+                        )}
+                        <ChevronDown size={10} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
                       </button>
-                    )}
 
-                    {/* Search Icon (Clickable Icon - No Bulky Button) */}
-                    <button
-                      type="button"
-                      onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
-                      className="p-1 text-blue-600 hover:text-blue-700 active:scale-90 transition shrink-0 cursor-pointer"
-                      title="Search"
-                    >
-                      <Search size={15} />
-                    </button>
+                      {/* Search Text Input (Strictly zero inner border/ring) */}
+                      <input
+                        type="text"
+                        data-clean-search="true"
+                        placeholder={selectedLocation ? `Search in ${selectedLocation}...` : "Search school, city, UDISE..."}
+                        value={searchMode === 'near_me' ? '' : searchTerm}
+                        onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleFilterChange({ q: searchTerm.trim() || undefined });
+                          }
+                        }}
+                        className="search-clean-input no-focus-ring flex-1 bg-transparent px-2 py-0 text-xs text-gray-800 placeholder-gray-400 font-medium border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0 min-w-0"
+                        style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+                      />
 
-                    {/* City Dropdown Menu for Mobile */}
-                    {isMobileCityDropdownOpen && (
-                      <>
-                        <div 
-                          className="fixed inset-0 z-40" 
-                          onClick={() => setIsMobileCityDropdownOpen(false)} 
-                        />
-                        <div className="absolute top-full left-0 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in duration-150">
-                          <div className="p-2.5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Popular Cities</span>
-                            {selectedLocation && (
+                      {/* Clear Text Icon */}
+                      {searchTerm.trim() && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSearchTerm('');
+                            handleFilterChange({ q: undefined });
+                          }}
+                          className="p-1 text-gray-400 hover:text-gray-600 shrink-0 cursor-pointer"
+                          title="Clear search"
+                        >
+                          <X size={12} />
+                        </button>
+                      )}
+
+                      {/* Search Icon (Clickable Icon - No Bulky Button) */}
+                      <button
+                        type="button"
+                        onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
+                        className="p-1 text-blue-600 hover:text-blue-700 active:scale-90 transition shrink-0 cursor-pointer"
+                        title="Search"
+                      >
+                        <Search size={15} />
+                      </button>
+
+                      {/* City Dropdown Menu for Mobile */}
+                      {isMobileCityDropdownOpen && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-40" 
+                            onClick={() => setIsMobileCityDropdownOpen(false)} 
+                          />
+                          <div className="absolute top-full left-0 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in duration-150">
+                            <div className="p-2.5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Popular Cities</span>
+                              {selectedLocation && (
+                                <button
+                                  type="button"
+                                  onClick={handleResetToAllCities}
+                                  className="text-[11px] text-blue-600 font-bold hover:underline cursor-pointer"
+                                >
+                                  Clear City
+                                </button>
+                              )}
+                            </div>
+                            <div className="p-2 grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto custom-scrollbar">
+                              {dbCitiesList.map((city) => (
+                                <button
+                                  key={city.name}
+                                  type="button"
+                                  onClick={() => handleSelectCity(city)}
+                                  className={`flex items-center justify-between gap-1.5 p-1.5 rounded-xl text-xs text-left transition cursor-pointer ${
+                                    selectedLocation === city.name
+                                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                                      : 'text-gray-700 hover:bg-gray-50'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-1.5 min-w-0">
+                                    <img
+                                      src={city.icon}
+                                      alt=""
+                                      className="w-4 h-4 object-contain shrink-0"
+                                      onError={(e) => { (e.target as any).style.display = 'none'; }}
+                                    />
+                                    <span className="truncate">{city.name}</span>
+                                  </div>
+                                  {city.count > 0 && (
+                                    <span className="text-[9.5px] font-bold text-blue-600 bg-blue-50 px-1 rounded">
+                                      {city.count}
+                                    </span>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="p-2 border-t border-gray-100 bg-gray-50">
                               <button
                                 type="button"
                                 onClick={handleResetToAllCities}
-                                className="text-[11px] text-blue-600 font-bold hover:underline cursor-pointer"
+                                className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] rounded-xl transition-colors cursor-pointer"
                               >
-                                Clear City
-                              </button>
-                            )}
-                          </div>
-                          <div className="p-2 grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto custom-scrollbar">
-                            {dbCitiesList.map((city) => (
-                              <button
-                                key={city.name}
-                                type="button"
-                                onClick={() => handleSelectCity(city)}
-                                className={`flex items-center justify-between gap-1.5 p-1.5 rounded-xl text-xs text-left transition cursor-pointer ${
-                                  selectedLocation === city.name
-                                    ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
-                                    : 'text-gray-700 hover:bg-gray-50'
-                                }`}
-                              >
-                                <div className="flex items-center gap-1.5 min-w-0">
-                                  <img
-                                    src={city.icon}
-                                    alt=""
-                                    className="w-4 h-4 object-contain shrink-0"
-                                    onError={(e) => { (e.target as any).style.display = 'none'; }}
-                                  />
-                                  <span className="truncate">{city.name}</span>
+                                <div className="flex items-center gap-1.5">
+                                  <Globe size={13} className="text-[#0b57d0] shrink-0" />
+                                  <span>View All Cities</span>
                                 </div>
-                                {city.count > 0 && (
-                                  <span className="text-[9.5px] font-bold text-blue-600 bg-blue-50 px-1 rounded">
-                                    {city.count}
-                                  </span>
-                                )}
+                                <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-1.5 py-0.5 rounded-full">
+                                  {allLoadedSchools.length} Schools
+                                </span>
                               </button>
-                            ))}
+                            </div>
                           </div>
-                          <div className="p-2 border-t border-gray-100 bg-gray-50">
-                            <button
-                              type="button"
-                              onClick={handleResetToAllCities}
-                              className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] rounded-xl transition-colors cursor-pointer"
-                            >
-                              <div className="flex items-center gap-1.5">
-                                <Globe size={13} className="text-[#0b57d0] shrink-0" />
-                                <span>View All Cities</span>
-                              </div>
-                              <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-1.5 py-0.5 rounded-full">
-                                {allLoadedSchools.length} Schools
-                              </span>
-                            </button>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    /* When Hero is Expanded: Only Show Compact City Chip */
+                    <div className="relative flex-1 min-w-0">
+                      <button
+                        type="button"
+                        onClick={() => setIsMobileCityDropdownOpen(!isMobileCityDropdownOpen)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold cursor-pointer max-w-full"
+                        title={selectedLocation ? `Selected City: ${selectedLocation}` : "Select City"}
+                      >
+                        <MapPin size={13} className={selectedLocation ? 'text-blue-600' : 'text-gray-500'} />
+                        <span className="truncate text-xs font-bold text-gray-800">{selectedLocation || 'All Cities'}</span>
+                        <ChevronDown size={10} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {/* City Dropdown Menu for Mobile */}
+                      {isMobileCityDropdownOpen && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-40" 
+                            onClick={() => setIsMobileCityDropdownOpen(false)} 
+                          />
+                          <div className="absolute top-full left-0 mt-1.5 w-[280px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden text-left animate-in fade-in duration-150">
+                            <div className="p-2.5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Popular Cities</span>
+                              {selectedLocation && (
+                                <button
+                                  type="button"
+                                  onClick={handleResetToAllCities}
+                                  className="text-[11px] text-blue-600 font-bold hover:underline cursor-pointer"
+                                >
+                                  Clear City
+                                </button>
+                              )}
+                            </div>
+                            <div className="p-2 grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto custom-scrollbar">
+                              {dbCitiesList.map((city) => (
+                                <button
+                                  key={city.name}
+                                  type="button"
+                                  onClick={() => handleSelectCity(city)}
+                                  className={`flex items-center justify-between gap-1.5 p-1.5 rounded-xl text-xs text-left transition cursor-pointer ${
+                                    selectedLocation === city.name
+                                      ? 'bg-blue-50 text-blue-700 font-bold border border-blue-200'
+                                      : 'text-gray-700 hover:bg-gray-50'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-1.5 min-w-0">
+                                    <img
+                                      src={city.icon}
+                                      alt=""
+                                      className="w-4 h-4 object-contain shrink-0"
+                                      onError={(e) => { (e.target as any).style.display = 'none'; }}
+                                    />
+                                    <span className="truncate">{city.name}</span>
+                                  </div>
+                                  {city.count > 0 && (
+                                    <span className="text-[9.5px] font-bold text-blue-600 bg-blue-50 px-1 rounded">
+                                      {city.count}
+                                    </span>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="p-2 border-t border-gray-100 bg-gray-50">
+                              <button
+                                type="button"
+                                onClick={handleResetToAllCities}
+                                className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-[#0b57d0] hover:bg-[#0b57d0]/[0.08] rounded-xl transition-colors cursor-pointer"
+                              >
+                                <div className="flex items-center gap-1.5">
+                                  <Globe size={13} className="text-[#0b57d0] shrink-0" />
+                                  <span>View All Cities</span>
+                                </div>
+                                <span className="text-[10px] font-bold bg-[#c2e7ff] text-[#001d35] px-1.5 py-0.5 rounded-full">
+                                  {allLoadedSchools.length} Schools
+                                </span>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
+                        </>
+                      )}
+                    </div>
+                  )}
 
                   {/* Sort Icon & Trigger */}
                   <div className="relative shrink-0">

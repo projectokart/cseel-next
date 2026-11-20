@@ -139,8 +139,12 @@ export default function SchoolFooterSection({
 
   const LEGAL_POLICIES: Record<string, { title: string; content: string }> = {
     disclaimer: {
-      title: 'Legal Disclaimer & Public Data Disclosure',
-      content: `The institutional information displayed on this profile (including School Name, UDISE+ Code, Affiliation/Board, Management Category, and Geographic Coordinates) is strictly sourced from public domain disclosures maintained by the Unified District Information System for Education Plus (UDISE+), Department of School Education & Literacy, Ministry of Education, Government of India.\n\nCSEEL is an independent informational and education technology platform and is not affiliated with, endorsed by, or representing any government authority or private school board. Information is provided on an 'as is' basis for public convenience and informational reference only, without warranties of any kind. CSEEL assumes no liability for clerical or processing errors originating from public source data.\n\nAuthorized representatives of this institution may claim this profile at any time to verify, manage, or update their official listing.\n\nFor official updates, verification, or legal notices, contact: update@mailer.cseel.org.`
+      title: isClaimed
+        ? 'Official School Administration Disclosure / अधिकृत विद्यालय प्रबंधन घोषणा'
+        : 'Legal Disclaimer & Public Data Disclosure',
+      content: isClaimed
+        ? `यह प्रोफ़ाइल डेटा सीधे संबंधित विद्यालय प्रबंधन द्वारा अधिकृत रूप से अद्यतन किया गया है। प्रोफ़ाइल में दर्ज सभी जानकारियों, शुल्कों, सुविधाओं, अकादमिक विवरणों और दावों के लिए संबंधित विद्यालय स्वयं पूर्णतः उत्तरदायी है। CSEEL केवल एक तकनीकी मंच प्रदान करता है और विद्यालय प्रबंधन द्वारा दी गई जानकारियों के लिए किसी भी रूप में उत्तरदायी नहीं है।\n\nOfficial School Administration Disclosure:\nAll institutional information, academic boards, fee structures, facilities, and contact details displayed on this profile have been directly updated and maintained by the verified school administration. The school management is solely responsible for the authenticity, correctness, and legality of all data published herein.\n\nCSEEL functions purely as a digital directory and technical platform and assumes no liability for claims, clerical entries, or operational disclosures made by the school administration.\n\nFor institutional inquiries, contact the school directly or email: update@mailer.cseel.org.`
+        : `The institutional information displayed on this profile (including School Name, UDISE+ Code, Affiliation/Board, Management Category, and Geographic Coordinates) is strictly sourced from public domain disclosures maintained by the Unified District Information System for Education Plus (UDISE+), Department of School Education & Literacy, Ministry of Education, Government of India.\n\nCSEEL is an independent informational and education technology platform and is not affiliated with, endorsed by, or representing any government authority or private school board. Information is provided on an 'as is' basis for public convenience and informational reference only, without warranties of any kind. CSEEL assumes no liability for clerical or processing errors originating from public source data.\n\nAuthorized representatives of this institution may claim this profile at any time to verify, manage, or update their official listing.\n\nFor official updates, verification, or legal notices, contact: update@mailer.cseel.org.`
     },
     terms: {
       title: 'Terms of Service',
@@ -536,14 +540,33 @@ export default function SchoolFooterSection({
           </div>
         </div>
 
-        {/* Official Public Domain & UDISE Legal Safe Harbor Banner */}
+        {/* Official Public Domain & UDISE Legal Safe Harbor Banner or Verified School Disclosure */}
         <div className="mt-6 pt-4 border-t border-white/10 text-[11px] text-slate-300 leading-relaxed bg-white/5 p-4 sm:p-5 rounded-xl border border-white/10 space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="text-amber-300 font-semibold text-xs tracking-wide uppercase">Legal Disclaimer &amp; Public Data Disclosure</span>
-          </div>
-          <p className="m-0 text-slate-200">
-            The data provided on this school profile is compiled from UDISE public data for educational and reference purposes only. Data is processed from source as-is; CSEEL assumes no liability for clerical or processing errors. School representatives can update or verify details by claiming their profile. For any queries or corrections, contact <a href="mailto:update@mailer.cseel.org" className="text-sky-300 hover:text-white underline font-medium">update@mailer.cseel.org</a>.
-          </p>
+          {isClaimed ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 font-bold text-xs tracking-wide uppercase flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Official School Administration Disclosure / अधिकृत विद्यालय प्रबंधन घोषणा
+                </span>
+              </div>
+              <p className="m-0 text-slate-200">
+                यह प्रोफ़ाइल डेटा सीधे संबंधित विद्यालय प्रबंधन द्वारा अधिकृत रूप से अद्यतन किया गया है। प्रोफ़ाइल में दर्ज सभी जानकारियों, शुल्कों, सुविधाओं और दावों के लिए विद्यालय स्वयं पूर्णतः उत्तरदायी है। CSEEL केवल एक तकनीकी मंच प्रदान करता है और किसी भी दावे के लिए उत्तरदायी नहीं है।
+              </p>
+              <p className="m-0 text-slate-300 text-[10.5px]">
+                All profile information, facilities, academic boards, and fee disclosures displayed on this page have been directly provided and maintained by the verified school management. The institution is solely responsible for data authenticity and accuracy. CSEEL functions purely as a digital directory and technical platform.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-amber-300 font-semibold text-xs tracking-wide uppercase">Legal Disclaimer &amp; Public Data Disclosure</span>
+              </div>
+              <p className="m-0 text-slate-200">
+                The data provided on this school profile is compiled from UDISE public data for educational and reference purposes only. Data is processed from source as-is; CSEEL assumes no liability for clerical or processing errors. School representatives can update or verify details by claiming their profile. For any queries or corrections, contact <a href="mailto:update@mailer.cseel.org" className="text-sky-300 hover:text-white underline font-medium">update@mailer.cseel.org</a>.
+              </p>
+            </>
+          )}
         </div>
 
         {/* Clean Bottom Links Bar with Comprehensive Legal Policies */}

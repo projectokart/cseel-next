@@ -351,6 +351,7 @@ export default function AllIndiaSchoolsView({
   const [loadingDistricts, setLoadingDistricts] = useState<boolean>(false);
   const [loadingBlocks, setLoadingBlocks] = useState<boolean>(false);
   const [loadingClusters, setLoadingClusters] = useState<boolean>(false);
+  const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState<boolean>(false);
 
   // Dynamic Pagination (Strictly capped at 10 pages maximum)
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -994,6 +995,32 @@ export default function AllIndiaSchoolsView({
     setCurrentPage(1);
   };
 
+  const handleSelectStateQuick = (stateName: string) => {
+    setDraftState(stateName);
+    setActiveState(stateName);
+    setDraftDistrict('');
+    setActiveDistrict('');
+    setDraftBlock('');
+    setActiveBlock('');
+    setDraftCluster('');
+    setActiveCluster('');
+    setCurrentPage(1);
+    setIsLocationDropdownOpen(false);
+  };
+
+  const handleResetLocationQuick = () => {
+    setDraftState('');
+    setActiveState('');
+    setDraftDistrict('');
+    setActiveDistrict('');
+    setDraftBlock('');
+    setActiveBlock('');
+    setDraftCluster('');
+    setActiveCluster('');
+    setCurrentPage(1);
+    setIsLocationDropdownOpen(false);
+  };
+
   // Task 5: Handle Locate User (Schools Near Me)
   const handleLocateUser = () => {
     if (userCoords) {
@@ -1515,21 +1542,17 @@ export default function AllIndiaSchoolsView({
             </div>
 
             <div className="relative z-30 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
-              <div className="flex items-center justify-center gap-2 flex-wrap mb-3">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-cyan-300 text-xs font-bold shadow-sm">
-                  <span>All India Private Schools Directory (4.4+ Lakh UDISE Schools)</span>
-                </div>
-                <Link
-                  href="/edu-network"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 backdrop-blur-md border border-emerald-400/30 text-emerald-200 hover:text-white text-xs font-semibold transition-all shadow-sm group"
-                >
-                  <Building2 size={12} className="text-emerald-300" />
-                  <span>View Verified & Claimed Schools (2 Verified Profiles)</span>
-                  <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
-                </Link>
-              </div>
+              {/* Single Unified Directory Navigation Link (Matching Schools Directory) */}
+              <Link
+                href="/schools"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 hover:text-white border border-cyan-400/40 text-xs font-semibold backdrop-blur-md transition-all shadow-sm mb-3 group cursor-pointer"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Explore Top Verified Schools &amp; Campus Directory</span>
+                <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform text-cyan-300" />
+              </Link>
 
-              {/* Task 6: Honest Directory Title */}
+              {/* Task 6: Directory Title */}
               <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-2.5 drop-shadow-md">
                 {pageTitle}
               </h1>
@@ -1538,86 +1561,155 @@ export default function AllIndiaSchoolsView({
                 {pageSubtitle}
               </p>
 
-              {/* Centered Hero Search Bar (Styled exactly like Find the Best School Directory) */}
-              <div className="w-full max-w-3xl flex items-center gap-2">
-                <div className="flex-1 flex flex-row items-center bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.18)] px-3 sm:px-4 py-1.5 sm:py-2 border border-slate-200 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#0b57d0]">
-                  {/* Location Filter Trigger */}
-                  <div className="relative shrink-0 flex items-center">
-                    <button
-                      type="button"
-                      onClick={() => setIsMobileFilterOpen(true)}
-                      className="flex items-center gap-1 py-1 pr-1 transition-all duration-200 group cursor-pointer hover:opacity-80 active:scale-95 text-[#5f6368] hover:text-[#1f1f1f]"
-                      title={activeState || activeDistrict ? `${activeDistrict || activeState}` : "Select Location / Filter"}
-                    >
-                      <MapPin size={17} className={activeState || activeDistrict ? 'text-[#0b57d0]' : 'text-[#5f6368]'} />
-                      {activeDistrict || activeState ? (
-                        <span className="text-xs font-bold text-[#0b57d0] max-w-[80px] sm:max-w-[120px] truncate">
-                          {activeDistrict || activeState}
-                        </span>
-                      ) : null}
-                      <ChevronDown size={11} className="text-[#5f6368] shrink-0" />
-                    </button>
-                    {/* Vertical Divider */}
-                    <div className="h-5 w-[1px] bg-slate-300 mx-2 shrink-0" aria-hidden="true" />
-                  </div>
-
-                  {/* Search Input: Clean Text Area */}
-                  <div className="flex-1 flex items-center min-w-0 border-0 border-none outline-none ring-0">
-                    <input
-                      type="text"
-                      placeholder="Search private schools by name, UDISE code, locality..."
-                      value={draftSearch}
-                      onChange={(e) => setDraftSearch(e.target.value.replace(/[^a-zA-Z0-9\s]/g, ''))}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleApplyFilters();
-                        }
-                      }}
-                      className="bg-transparent w-full border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none text-xs sm:text-sm text-[#1f1f1f] placeholder-[#5f6368]/70 font-medium min-w-0"
-                    />
-                    {draftSearch && (
+              {/* Centered Hero Search Bar (Strictly matching SchoolsDirectoryClient layout) */}
+              <div className="w-full max-w-3xl flex justify-center relative z-40">
+                <div className="w-full flex items-center gap-2 max-w-2xl">
+                  <div className="flex-1 flex flex-row items-center bg-white rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.18)] px-3 sm:px-4 py-1.5 sm:py-2 border border-slate-200 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#0b57d0]">
+                    {/* Location Filter Dropdown Trigger with MapPin */}
+                    <div className="relative shrink-0 flex items-center">
                       <button
                         type="button"
-                        onClick={() => {
-                          setDraftSearch('');
-                          setActiveSearch('');
-                          setCurrentPage(1);
-                        }}
-                        className="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-full shrink-0 cursor-pointer transition-colors mr-1"
-                        title="Clear search"
+                        onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
+                        className="flex items-center gap-1 py-1 pr-1 transition-all duration-200 group cursor-pointer hover:opacity-80 active:scale-95 text-[#5f6368] hover:text-[#1f1f1f]"
+                        title={activeDistrict || activeState || "Select State / UT"}
                       >
-                        <X size={13} />
+                        <MapPin size={17} className={activeState || activeDistrict ? 'text-[#0b57d0]' : 'text-[#5f6368]'} />
+                        {activeDistrict || activeState ? (
+                          <span className="text-xs font-bold text-[#0b57d0] max-w-[80px] sm:max-w-[100px] truncate">
+                            {activeDistrict || activeState}
+                          </span>
+                        ) : null}
+                        <ChevronDown size={11} className={`text-[#5f6368] transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
                       </button>
-                    )}
+
+                      {/* Vertical Divider */}
+                      <div className="h-5 w-[1px] bg-slate-300 mx-2 shrink-0" aria-hidden="true" />
+
+                      {/* Location Dropdown Menu (Floats over all content, styled identical to SchoolsDirectoryClient) */}
+                      {isLocationDropdownOpen && (
+                        <>
+                          <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
+                          <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[340px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-[#E8E9E9] z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
+                            <div className="p-3 border-b border-[#E8E9E9] bg-[#F7F8F8] flex items-center justify-between">
+                              <span className="text-[11px] font-bold text-[#003C6E] uppercase tracking-wider font-['Montserrat',sans-serif]">Select State / UT</span>
+                              {(activeState || activeDistrict) && (
+                                <button
+                                  type="button"
+                                  onClick={handleResetLocationQuick}
+                                  className="text-[11px] text-[#006FCC] hover:underline font-bold cursor-pointer"
+                                >
+                                  Clear Location
+                                </button>
+                              )}
+                            </div>
+                            <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto custom-scrollbar">
+                              {states.map((st) => (
+                                <button
+                                  key={st.state_id}
+                                  type="button"
+                                  onClick={() => handleSelectStateQuick(st.state_name)}
+                                  className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-[12px] text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
+                                    activeState === st.state_name
+                                      ? 'bg-[#EDF5FA] text-[#006FCC] font-bold border border-[#DDF0FC]'
+                                      : 'text-[#1B1F23] hover:bg-[#F7F8F8] font-medium'
+                                  }`}
+                                >
+                                  <span className="truncate whitespace-nowrap">{st.state_name}</span>
+                                  {Boolean(st.total_schools) && (
+                                    <span className="text-[10px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
+                                      {st.total_schools}
+                                    </span>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="p-2.5 border-t border-[#E8E9E9] bg-slate-50 flex items-center justify-between gap-2">
+                              <button
+                                type="button"
+                                onClick={handleResetLocationQuick}
+                                className="flex-1 flex items-center justify-center px-3 py-1.5 text-xs font-bold text-[#006FCC] hover:bg-[#EDF5FA] active:bg-[#DDF0FC] rounded-[10px] transition-colors cursor-pointer"
+                              >
+                                All India
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setIsLocationDropdownOpen(false);
+                                  setIsMobileFilterOpen(true);
+                                }}
+                                className="flex-1 flex items-center justify-center px-3 py-1.5 text-xs font-bold bg-[#006FCC] text-white hover:bg-[#005399] rounded-[10px] transition-colors cursor-pointer"
+                              >
+                                More Filters
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Search Input: Clean Text Area (Strictly zero inner boundary, ring or outline) */}
+                    <div className="flex-1 flex items-center min-w-0 border-0 border-none outline-none ring-0">
+                      <input
+                        type="text"
+                        data-clean-search="true"
+                        placeholder="Search private schools by name, UDISE code, locality..."
+                        value={draftSearch}
+                        onChange={(e) => setDraftSearch(e.target.value.replace(/[^a-zA-Z0-9\s]/g, ''))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleApplyFilters();
+                          }
+                        }}
+                        className="search-clean-input no-focus-ring bg-transparent w-full border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0 text-xs sm:text-sm text-[#1f1f1f] placeholder-[#5f6368]/70 font-medium min-w-0"
+                        style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
+                      />
+                      {draftSearch && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDraftSearch('');
+                            setActiveSearch('');
+                            setCurrentPage(1);
+                          }}
+                          className="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-full shrink-0 cursor-pointer transition-colors mr-1"
+                          title="Clear search"
+                          aria-label="Clear search"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Clickable Bare Blue Search Icon */}
+                    <button
+                      type="button"
+                      onClick={handleApplyFilters}
+                      className="p-1.5 text-[#0b57d0] hover:text-[#0842a0] hover:bg-blue-50/70 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90"
+                      title="Search schools"
+                      aria-label="Search schools"
+                    >
+                      <Search size={18} strokeWidth={2.2} />
+                    </button>
                   </div>
 
-                  {/* Clickable Bare Blue Search Icon */}
+                  {/* Near Me GPS Companion Pill */}
                   <button
                     type="button"
-                    onClick={handleApplyFilters}
-                    className="p-1.5 text-[#0b57d0] hover:text-[#0842a0] hover:bg-blue-50/70 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90"
-                    title="Search schools"
+                    onClick={handleLocateUser}
+                    disabled={locatingUser}
+                    className={`h-10 sm:h-11 px-3.5 sm:px-4 text-xs sm:text-sm rounded-full inline-flex items-center justify-center gap-1.5 font-bold shrink-0 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm ${
+                      userCoords
+                        ? 'bg-[#137333] text-white shadow-md'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
+                    }`}
+                    title="Find private schools within 10 km radius of your location"
+                    aria-label="Search schools near your location"
                   >
-                    <Search size={18} strokeWidth={2.2} />
+                    <Navigation size={15} className={locatingUser ? 'animate-spin text-amber-300' : userCoords ? 'text-white' : 'text-[#0b57d0]'} />
+                    <span className="hidden sm:inline">{locatingUser ? 'Locating...' : userCoords ? 'Near Me (Active)' : 'Near Me'}</span>
+                    <span className="sm:hidden">{locatingUser ? '...' : 'Near Me'}</span>
                   </button>
                 </div>
-
-                {/* Near Me GPS Companion Pill */}
-                <button
-                  type="button"
-                  onClick={handleLocateUser}
-                  disabled={locatingUser}
-                  className={`h-10 sm:h-11 px-3.5 sm:px-4 text-xs sm:text-sm rounded-full inline-flex items-center justify-center gap-1.5 font-bold shrink-0 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm ${
-                    userCoords
-                      ? 'bg-[#137333] text-white shadow-md'
-                      : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
-                  }`}
-                  title="Find private schools within 10 km radius of your location"
-                >
-                  <Navigation size={15} className={locatingUser ? 'animate-spin text-amber-300' : userCoords ? 'text-white' : 'text-[#0b57d0]'} />
-                  <span className="hidden sm:inline">{locatingUser ? 'Locating...' : userCoords ? 'Near Me (Active)' : 'Near Me'}</span>
-                  <span className="sm:hidden">{locatingUser ? '...' : 'Near Me'}</span>
-                </button>
               </div>
 
               {/* Geolocation Active Badge */}

@@ -942,6 +942,13 @@ Thank you.`;
     const mailtoUrl = `mailto:update@cseel.org?subject=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
     const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=update@cseel.org&su=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
 
+    // On mobile devices, always trigger native mail app (Gmail, Apple Mail) via mailto
+    const isMobileDevice = typeof navigator !== 'undefined' && /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+    if (isMobileDevice) {
+      window.location.href = mailtoUrl;
+      return;
+    }
+
     try {
       const win = window.open(gmailWebUrl, '_blank');
       if (!win || win.closed || typeof win.closed === 'undefined') {
@@ -2052,7 +2059,7 @@ Thank you.`;
       <SchoolFooterSection
         displayName={displayName}
         templateData={templateData}
-        isClaimed={isVerifiedSchool}
+        isClaimed={isVerifiedSchool || isPublicClaimed}
         displayAddress={displayAddress}
         displayState={displayState}
         displayDistrict={displayDistrict}

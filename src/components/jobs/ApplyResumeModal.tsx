@@ -162,8 +162,12 @@ export default function ApplyResumeModal({
               <Sparkles className="w-5 h-5 text-amber-200" />
             </div>
             <div>
-              <h3 className="text-lg font-bold leading-tight">Add Your Resume</h3>
-              <p className="text-xs text-white/80 font-medium">Direct placement & verified school matching</p>
+              <h3 className="text-base sm:text-lg font-bold leading-tight">
+                Add Your Resume to Get Teaching Jobs Near You
+              </h3>
+              <p className="text-xs text-white/85 font-medium mt-0.5">
+                Direct placement & verified school matching in your area
+              </p>
             </div>
           </div>
           <button

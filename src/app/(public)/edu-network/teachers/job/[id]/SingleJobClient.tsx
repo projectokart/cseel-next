@@ -246,15 +246,6 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     )}
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setShowResumeModal(true)}
-                    className="flex-1 sm:flex-initial py-2.5 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4 shrink-0 text-amber-200" />
-                    <span>Add Your Resume</span>
-                  </button>
-
                   <a
                     href={applyLink}
                     target="_blank"
@@ -409,15 +400,6 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 </div>
 
                 <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowResumeModal(true)}
-                    className="flex-1 sm:flex-initial py-2.5 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 cursor-pointer"
-                  >
-                    <Sparkles className="w-4 h-4 shrink-0 text-amber-200" />
-                    <span>Add Your Resume</span>
-                  </button>
-
                   <a
                     href={applyLink}
                     target="_blank"

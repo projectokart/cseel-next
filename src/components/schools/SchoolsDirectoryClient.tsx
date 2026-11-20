@@ -13,7 +13,7 @@ import {
   Wifi, Bus, Bed, Utensils, Cross, Accessibility, Sun, Droplet, Palette, Music,
   Clapperboard, Medal, Leaf, Camera, UsersRound, Tent, ArrowUpDown, SlidersHorizontal,
   LayoutGrid, List, Columns3, Columns2, Lock, ShieldAlert, ShieldCheck, LogIn, Key, AlertCircle,
-  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle, Minus, Maximize2, Minimize2, ChevronUp, Menu, MoreVertical, Plus
+  RefreshCw, Loader2, Globe, ArrowRight, PlusCircle, Minus, Maximize2, Minimize2, ChevronUp, Menu, MoreVertical, Plus, Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SchoolsDirectoryResult } from '@/integrations/supabase/schoolsDirectoryDb';
@@ -21,7 +21,6 @@ import { SchoolRecord } from '@/data/schoolFinderData';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import { renderFacilityIcon, renderCategoryHeaderIcon, renderBoardLogo, renderClassIcon, renderSchoolTypeIcon, renderSpecialCategoryIcon } from './FacilityIcons';
-import AddSchoolModal from './AddSchoolModal';
 import ClaimSchoolModal from './ClaimSchoolModal';
 import SchoolFilterSheet from './SchoolFilterSheet';
 import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/SchoolTemplateContext';
@@ -41,7 +40,7 @@ const getSafeSchoolImage = (img?: string) => {
   return img;
 };
 
-const SchoolFinderMap = dynamic(() => import('@/components/school-finder/SchoolFinderMap'), {
+const SchoolFinderMap = dynamic(() => import('@/components/schools/SchoolFinderMap'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[600px] flex items-center justify-center bg-slate-50 rounded-3xl border border-slate-200">
@@ -203,6 +202,10 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
   const pathname = usePathname();
   const query = initialData.query;
 
+  // Track previous initialData signature to avoid spurious useEffect re-runs when
+  // the SSR page passes a structurally identical (but reference-new) initialData object.
+  const prevInitialDataSigRef = useRef<string>('');
+
   const [searchTerm, setSearchTerm] = useState('');
   const [searchMode, setSearchMode] = useState<'text' | 'near_me'>('text');
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
@@ -241,20 +244,9 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
     return initialViewMode || 'compact';
   });
 
-  // Sync viewMode from URL query (?view=map) or user's saved preference
-  useEffect(() => {
-    try {
-      const urlView = searchParams?.get('view') as any;
-      if (['grid', 'grid3', 'compact', 'map'].includes(urlView)) {
-        setViewMode(urlView);
-        return;
-      }
-      const saved = localStorage.getItem('cseel_school_view_mode') as any;
-      if (['grid', 'grid3', 'compact', 'map'].includes(saved)) {
-        setViewMode(saved);
-      }
-    } catch {}
-  }, [searchParams]);
+  // NOTE: viewMode is synced from URL/localStorage in the mount-only useEffect below (line ~589).
+  // Do NOT add a [searchParams]-dependent effect here — it causes infinite re-render loops
+  // because router.replace() in handleViewModeChange changes searchParams → fires this effect → loop.
 
   // Load liked schools safely after hydration
   useEffect(() => {
@@ -410,8 +402,14 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
   );
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 
-  // Sync with initialData whenever user triggers a backend filter or SSR navigation
+  // Sync with initialData whenever user triggers a backend filter or SSR navigation.
+  // Guard with a signature check so that structurally identical (but reference-new) initialData
+  // objects from SSR do NOT cause unnecessary state churn / re-render loops.
   useEffect(() => {
+    const sig = `${initialData.currentPage}|${initialData.totalCount}|${initialData.totalPages}|${(initialData.schools || []).length}|${(initialData.schools?.[0] as any)?.udise_code ?? ''}`;
+    if (sig === prevInitialDataSigRef.current) return; // same data, skip
+    prevInitialDataSigRef.current = sig;
+
     const pageSchools = (initialData.schools || []).slice(0, 50);
     const calcTotalPages = initialData.totalPages || Math.max(1, Math.ceil((initialData.totalCount || 0) / 50));
     const curPage = initialData.currentPage || 1;
@@ -637,9 +635,7 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
     return counts;
   }, [initialData.schools]);
   
-  // Modal States for Add School & Claim School
-  const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
-  const [isAddSchoolExpanded, setIsAddSchoolExpanded] = useState(false);
+  // Modal States for Claim School
   const [claimModalData, setClaimModalData] = useState<{
     isOpen: boolean;
     schoolName: string;
@@ -649,11 +645,6 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
     schoolName: '',
     udiseCode: '',
   });
-  
-  // Add School / Profile Button Handler
-  const handleAddSchoolClick = () => {
-    setIsAddSchoolModalOpen(true);
-  };
 
   // Hero Carousel & Minimized state
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
@@ -1305,7 +1296,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   };
 
   const getSchoolUrl = (s: SchoolRecord) => {
-    const rawUdise = String(s.udise_code || s.udiseCode || s.id || '');
+    const rawUdise = String(s.udise_code || s.udiseCode || s.id || '').trim();
     let derivedState = s.state_name || s.state || '';
     let derivedDistrict = s.district_name || s.city || '';
     if (!derivedState && rawUdise.startsWith('07')) {
@@ -1315,10 +1306,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       derivedState = 'Haryana';
       derivedDistrict = derivedDistrict || 'Gurugram';
     }
-    const stateSlug = (derivedState || 'delhi').toLowerCase().replace(/\s+/g, '-');
-    const districtSlug = (derivedDistrict || 'delhi').toLowerCase().replace(/\s+/g, '-');
-    const villageSlug = (s.village_ward || s.locality || 'main').toLowerCase().replace(/\s+/g, '-');
-    return `/school/${stateSlug}/${districtSlug}/${villageSlug}/${s.udise_code || s.id}`;
+    const stateSlug = (derivedState || 'delhi').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const districtSlug = (derivedDistrict || 'central').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const nameSlug = (s.school_name || s.name || 'school').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return `/edu-network/school/${stateSlug}/${districtSlug}/${rawUdise}/${nameSlug}`;
   };
 
   const openGoogleMaps = (school: SchoolRecord, e: React.MouseEvent) => {
@@ -2119,96 +2110,98 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
   // Unified Search Bar Helper (Official M3 Pill Search Bar across Full Hero and Compact Minimized Header)
   const renderSearchBar = (isCompact: boolean) => (
-    <div className={`w-full ${isCompact ? 'max-w-2xl' : 'max-w-3xl'} flex flex-row items-center bg-white rounded-full ${isCompact ? 'shadow-xs px-1.5 py-0.5 border border-[#c4c7c5]' : 'shadow-[0_4px_20px_rgba(0,0,0,0.2)] p-1.5 sm:p-2 border border-white/60'} divide-x divide-[#c4c7c5]/60 transition-all duration-200 focus-within:ring-2 focus-within:ring-[#0b57d0]`}>
-      {/* City Selector */}
-      <div className="relative shrink-0 z-50">
-        <button
-          type="button"
-          onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
-          className={`flex items-center justify-between gap-1 px-2.5 py-1.5 transition-all duration-200 group rounded-full hover:bg-[#1f1f1f]/[0.06] active:scale-[0.98] cursor-pointer ${isCompact ? 'text-xs w-[120px] sm:w-[135px]' : 'text-sm w-[135px] sm:w-[165px]'}`}
-        >
-          <div className="flex items-center gap-1.5 overflow-hidden">
-            <div className="p-1 rounded-full bg-[#e8f0fe] text-[#0b57d0] group-hover:scale-105 transition-transform shrink-0">
-              <MapPin size={isCompact ? 12 : 15} />
-            </div>
-            <span className="text-[11px] sm:text-xs font-semibold text-[#1f1f1f] truncate block">
-              {selectedLocation || 'Select City'}
-            </span>
-          </div>
-          <ChevronDown size={11} className={`text-[#444746] transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
+    <div className={`w-full ${isCompact ? 'max-w-2xl' : 'max-w-3xl'} flex items-center gap-2`}>
+      <div className={`flex-1 flex flex-row items-center bg-white rounded-full ${
+        isCompact 
+          ? 'shadow-xs px-2.5 py-1 border border-[#c4c7c5]' 
+          : 'shadow-[0_4px_20px_rgba(0,0,0,0.18)] px-3 sm:px-4 py-1.5 sm:py-2 border border-slate-200'
+      } transition-all duration-200 focus-within:ring-2 focus-within:ring-[#0b57d0]`}>
+        {/* City Selector: Grey MapPin + Small ChevronDown + Divider (No Background, No 'Select City' text) */}
+        <div className="relative shrink-0 z-50 flex items-center">
+          <button
+            type="button"
+            onClick={() => setIsLocationDropdownOpen(!isLocationDropdownOpen)}
+            className="flex items-center gap-1 py-1 pr-1 transition-all duration-200 group cursor-pointer hover:opacity-80 active:scale-95"
+            title={selectedLocation ? `Selected City: ${selectedLocation}` : "Select City"}
+          >
+            <MapPin size={isCompact ? 15 : 17} className="text-[#5f6368] group-hover:text-[#1f1f1f] shrink-0" />
+            <ChevronDown size={11} className={`text-[#5f6368] transition-transform shrink-0 ${isLocationDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
 
-        {/* City Dropdown Menu (Floats over all lower content) */}
-        {isLocationDropdownOpen && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
-            <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[340px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-[#E8E9E9] z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
-              <div className="p-3 border-b border-[#E8E9E9] bg-[#F7F8F8] flex items-center justify-between">
-                <span className="text-[11px] font-bold text-[#003C6E] uppercase tracking-wider font-['Montserrat',sans-serif]">Popular Cities</span>
-                {selectedLocation && (
+          {/* Vertical Divider */}
+          <div className="h-5 w-[1px] bg-slate-300 mx-2 shrink-0" aria-hidden="true" />
+
+          {/* City Dropdown Menu (Floats over all lower content) */}
+          {isLocationDropdownOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setIsLocationDropdownOpen(false)} />
+              <div className="absolute top-full left-0 mt-2 w-[280px] sm:w-[340px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.25)] border border-[#E8E9E9] z-50 overflow-hidden text-left animate-in fade-in zoom-in-95 duration-150">
+                <div className="p-3 border-b border-[#E8E9E9] bg-[#F7F8F8] flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-[#003C6E] uppercase tracking-wider font-['Montserrat',sans-serif]">Popular Cities</span>
+                  {selectedLocation && (
+                    <button
+                      type="button"
+                      onClick={handleResetToAllCities}
+                      className="text-[11px] text-[#006FCC] hover:underline font-bold cursor-pointer"
+                    >
+                      Clear Location
+                    </button>
+                  )}
+                </div>
+                <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto custom-scrollbar">
+                  {dbCitiesList.map((city) => (
+                    <button
+                      key={city.name}
+                      type="button"
+                      onClick={() => handleSelectCity(city)}
+                      className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-[12px] text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
+                        selectedLocation === city.name
+                          ? 'bg-[#EDF5FA] text-[#006FCC] font-bold border border-[#DDF0FC]'
+                          : 'text-[#1B1F23] hover:bg-[#F7F8F8] font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <img
+                          src={city.icon}
+                          alt={city.name}
+                          className="w-4 h-4 object-contain shrink-0"
+                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
+                        />
+                        <span className="truncate whitespace-nowrap">{city.name}</span>
+                      </div>
+                      {city.count > 0 && (
+                        <span className="text-[10px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
+                          {city.count}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <div className="p-2.5 border-t border-[#E8E9E9] bg-slate-50">
                   <button
                     type="button"
                     onClick={handleResetToAllCities}
-                    className="text-[11px] text-[#006FCC] hover:underline font-bold cursor-pointer"
+                    className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[#006FCC] hover:bg-[#EDF5FA] active:bg-[#DDF0FC] rounded-[12px] transition-colors cursor-pointer font-['Montserrat',sans-serif]"
                   >
-                    Clear Location
-                  </button>
-                )}
-              </div>
-              <div className="p-2.5 grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto custom-scrollbar">
-                {dbCitiesList.map((city) => (
-                  <button
-                    key={city.name}
-                    type="button"
-                    onClick={() => handleSelectCity(city)}
-                    className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-[12px] text-xs transition-all duration-200 text-left cursor-pointer active:scale-[0.98] ${
-                      selectedLocation === city.name
-                        ? 'bg-[#EDF5FA] text-[#006FCC] font-bold border border-[#DDF0FC]'
-                        : 'text-[#1B1F23] hover:bg-[#F7F8F8] font-medium'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <img
-                        src={city.icon}
-                        alt={city.name}
-                        className="w-4 h-4 object-contain shrink-0"
-                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://img.icons8.com/color/48/marker.png'; }}
-                      />
-                      <span className="truncate whitespace-nowrap">{city.name}</span>
+                    <div className="flex items-center gap-1.5">
+                      <Globe size={14} className="text-[#006FCC] shrink-0" />
+                      <span>View All Cities (All Schools)</span>
                     </div>
-                    {city.count > 0 && (
-                      <span className="text-[10px] font-bold text-[#006FCC] bg-[#EDF5FA] px-1.5 py-0.2 rounded-full shrink-0">
-                        {city.count}
-                      </span>
-                    )}
+                    <span className="text-[10px] font-bold bg-[#EDF5FA] text-[#006FCC] border border-[#DDF0FC] px-2 py-0.5 rounded-full">
+                      {allLoadedSchools.length} Schools
+                    </span>
                   </button>
-                ))}
+                </div>
               </div>
-              <div className="p-2.5 border-t border-[#E8E9E9] bg-slate-50">
-                <button
-                  type="button"
-                  onClick={handleResetToAllCities}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-[#006FCC] hover:bg-[#EDF5FA] active:bg-[#DDF0FC] rounded-[12px] transition-colors cursor-pointer font-['Montserrat',sans-serif]"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Globe size={14} className="text-[#006FCC] shrink-0" />
-                    <span>View All Cities (All Schools)</span>
-                  </div>
-                  <span className="text-[10px] font-bold bg-[#EDF5FA] text-[#006FCC] border border-[#DDF0FC] px-2 py-0.5 rounded-full">
-                    {allLoadedSchools.length} Schools
-                  </span>
-                </button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
 
-      {/* Search Input & Icon-Only Action Buttons (Search + Near Me GPS) */}
-      <div className="flex flex-1 items-center justify-between bg-transparent pl-2.5 pr-1 py-0.5 min-w-0 gap-1.5">
-        <div className="flex-1 flex items-center min-w-0">
+        {/* Search Input: Clean Text Area (Strictly zero inner boundary, ring or outline) */}
+        <div className="flex-1 flex items-center min-w-0 border-0 border-none outline-none ring-0">
           <input
             type="text"
+            data-clean-search="true"
             placeholder={isCompact ? "Search school, city, UDISE..." : "Search school, city, UDISE..."}
             value={searchMode === 'near_me' ? '' : searchTerm}
             onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
@@ -2218,7 +2211,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
               }
             }}
             disabled={searchMode === 'near_me'}
-            className="bg-transparent w-full focus:outline-none text-xs sm:text-sm text-[#1f1f1f] placeholder-[#444746]/70 font-medium min-w-0"
+            className="search-clean-input no-focus-ring bg-transparent w-full border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0 text-xs sm:text-sm text-[#1f1f1f] placeholder-[#5f6368]/70 font-medium min-w-0"
+            style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
           />
           {searchTerm.trim() && (
             <button
@@ -2227,7 +2221,7 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                 setSearchTerm('');
                 handleFilterChange({ q: undefined });
               }}
-              className="w-7 h-7 rounded-full hover:bg-[#1f1f1f]/[0.08] text-[#444746] hover:text-[#1f1f1f] flex items-center justify-center shrink-0 cursor-pointer transition-colors"
+              className="p-1 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-full shrink-0 cursor-pointer transition-colors mr-1"
               title="Clear search"
               aria-label="Clear search"
             >
@@ -2236,34 +2230,33 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           )}
         </div>
 
-        {/* Official M3 Pill Action Buttons: Search + Near Me GPS */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
-            className={`${isCompact ? 'w-8 h-8' : 'w-9 h-9'} rounded-full bg-[#0b57d0] hover:bg-[#0842a0] text-white flex items-center justify-center shrink-0 transition-all duration-200 shadow-xs cursor-pointer active:scale-[0.98]`}
-            title="Search schools"
-            aria-label="Search schools"
-          >
-            <Search size={isCompact ? 14 : 15} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setSearchMode('near_me'); handleNearMeSearch(); }}
-            className={`${isCompact ? 'h-8 px-2.5' : 'h-9 px-3.5'} rounded-full inline-flex items-center justify-center gap-1 text-xs font-semibold shrink-0 transition-all duration-200 cursor-pointer active:scale-[0.98] ${
-              searchMode === 'near_me'
-                ? 'bg-[#137333] text-white shadow-xs'
-                : 'bg-[#c2e7ff] text-[#001d35] hover:bg-[#b1defc]'
-            }`}
-            title="Near Me (GPS Location Search)"
-            aria-label="Search schools near your location"
-          >
-            <Navigation size={isCompact ? 12 : 13} />
-            <span className={isCompact ? "hidden lg:inline" : "hidden sm:inline"}>Near Me</span>
-          </button>
-        </div>
+        {/* Search Icon (Clickable Bare Blue Icon - No Solid Circular Button) */}
+        <button
+          type="button"
+          onClick={() => handleFilterChange({ q: searchTerm.trim() || undefined })}
+          className="p-1.5 text-[#0b57d0] hover:text-[#0842a0] hover:bg-blue-50/70 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer active:scale-90"
+          title="Search schools"
+          aria-label="Search schools"
+        >
+          <Search size={isCompact ? 16 : 18} strokeWidth={2.2} />
+        </button>
       </div>
+
+      {/* Near Me GPS Companion Pill */}
+      <button
+        type="button"
+        onClick={() => { setSearchMode('near_me'); handleNearMeSearch(); }}
+        className={`${isCompact ? 'h-9 px-3 text-xs' : 'h-10 sm:h-11 px-3.5 sm:px-4 text-xs sm:text-sm'} rounded-full inline-flex items-center justify-center gap-1.5 font-bold shrink-0 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm ${
+          searchMode === 'near_me'
+            ? 'bg-[#137333] text-white shadow-md'
+            : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300'
+        }`}
+        title="Near Me (GPS Location Search)"
+        aria-label="Search schools near your location"
+      >
+        <Navigation size={isCompact ? 13 : 15} className={searchMode === 'near_me' ? 'text-white' : 'text-[#0b57d0]'} />
+        <span className="hidden sm:inline">Near Me</span>
+      </button>
     </div>
   );
 
@@ -2392,17 +2385,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
             ))}
           </div>
 
-          {/* Top Controls: Compact Minimise & Add School (Top Right Corner) */}
+          {/* Top Controls: Compact Minimise (Top Right Corner) */}
           <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-4 z-30 flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={handleAddSchoolClick}
-              className="hidden sm:inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-amber-300 hover:text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs active:scale-95"
-            >
-              <PlusCircle size={11} className="text-amber-300" />
-              <span>Add School</span>
-            </button>
-
             <button
               type="button"
               onClick={() => setIsHeroMinimized(true)}
@@ -2416,6 +2400,14 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
 
           {/* Hero Content Overlay */}
           <div className="relative z-30 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
+            <Link
+              href="/edu-network/all-india"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 hover:text-white border border-cyan-400/40 text-xs font-semibold backdrop-blur-md transition-all shadow-sm mb-3 group cursor-pointer"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Looking for All India UDISE Directory? Search 4.4+ Lakh Schools</span>
+              <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform text-cyan-300" />
+            </Link>
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3 drop-shadow-md">
               Find the Best Schools for Your Child
             </h1>
@@ -2719,8 +2711,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     </Link>
                   )}
 
-                  {/* Unified Search Input Bar - takes maximum width */}
-                  <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border border-gray-200 focus-within:bg-white focus-within:border-blue-500 transition-all min-w-0 ${
+                  {/* Unified Search Input Bar - takes maximum width (Strictly no inner boundary on text area) */}
+                  <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border-0 border-none outline-none ring-0 shadow-none focus-within:border-none focus-within:ring-0 focus-within:outline-none transition-all min-w-0 ${
                     viewMode === 'map' ? 'h-8 py-0' : 'py-1.5'
                   }`}>
                     {/* Select City Icon & Trigger */}
@@ -2739,9 +2731,10 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       <ChevronDown size={10} className={`text-gray-400 transition-transform ${isMobileCityDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
 
-                    {/* Search Text Input */}
+                    {/* Search Text Input (Strictly zero inner border/ring) */}
                     <input
                       type="text"
+                      data-clean-search="true"
                       placeholder={selectedLocation ? `Search in ${selectedLocation}...` : "Search school, city, UDISE..."}
                       value={searchMode === 'near_me' ? '' : searchTerm}
                       onChange={(e) => { setSearchTerm(e.target.value); setSearchMode('text'); }}
@@ -2750,7 +2743,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                           handleFilterChange({ q: searchTerm.trim() || undefined });
                         }
                       }}
-                      className="flex-1 bg-transparent px-2 py-0 text-xs text-gray-800 placeholder-gray-400 font-medium focus:outline-none min-w-0"
+                      className="search-clean-input no-focus-ring flex-1 bg-transparent px-2 py-0 text-xs text-gray-800 placeholder-gray-400 font-medium border-0 border-none outline-none ring-0 shadow-none focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none focus-visible:ring-0 min-w-0"
+                      style={{ outline: 'none', border: 'none', boxShadow: 'none' }}
                     />
 
                     {/* Clear Text Icon */}
@@ -3226,53 +3220,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       <span className="text-[11px]">Banner</span>
                     </button>
                   )}
-
-                  {/* ─── 90-Degree Key Unlock Rotating Expandable "+ Add School" Button ─── */}
-                  <div className="relative inline-flex items-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (isAddSchoolExpanded) {
-                          handleAddSchoolClick();
-                        } else {
-                          setIsAddSchoolExpanded(true);
-                        }
-                      }}
-                      className={`h-8 rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-sm active:scale-95 ${
-                        isAddSchoolExpanded
-                          ? 'px-3.5 bg-gradient-to-r from-[#003c6e] to-[#005689] text-white ring-2 ring-blue-400/40 shadow-md gap-1.5'
-                          : 'w-8 bg-gradient-to-r from-[#005689] to-[#0077b6] hover:from-[#003c6e] hover:to-[#005689] text-white hover:shadow'
-                      }`}
-                      title={isAddSchoolExpanded ? "Click to Open School Registration Page" : "Click to unlock Add School"}
-                    >
-                      {/* Plus icon rotates 90 degrees like unlocking a lock key */}
-                      <span
-                        className={`inline-flex items-center justify-center transition-transform duration-300 ease-out ${
-                          isAddSchoolExpanded ? 'rotate-90 text-amber-300' : 'rotate-0 text-white'
-                        }`}
-                      >
-                        <Plus size={15} strokeWidth={2.8} />
-                      </span>
-                      {isAddSchoolExpanded && (
-                        <span className="text-xs font-black tracking-wide whitespace-nowrap animate-in fade-in duration-200">
-                          Add School
-                        </span>
-                      )}
-                    </button>
-                    {isAddSchoolExpanded && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsAddSchoolExpanded(false);
-                        }}
-                        className="ml-1 w-5 h-5 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center text-[10px] transition cursor-pointer"
-                        title="Close"
-                      >
-                        <X size={11} />
-                      </button>
-                    )}
-                  </div>
                 </div>
 
                 {/* Right/Bottom Section: Search Bar (When Hero is Minimized) */}
@@ -4157,61 +4104,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
           </div>
         </div>
       )}
-
-      {/* ── Floating Key-Unlock Expandable "+ Add School" Floating Action Button (Hidden in Map View to avoid control overlay) ── */}
-      {viewMode !== 'map' && (
-        <aside aria-label="Add School Floating Button" className="fixed bottom-6 right-6 z-40 flex items-center gap-1.5 animate-in fade-in slide-in-from-bottom-3 duration-300">
-          <button
-            type="button"
-            onClick={() => {
-              if (isAddSchoolExpanded) {
-                handleAddSchoolClick();
-              } else {
-                setIsAddSchoolExpanded(true);
-              }
-            }}
-            className={`rounded-full flex items-center justify-center transition-all duration-300 ease-out cursor-pointer shadow-2xl active:scale-95 border-2 border-white/50 ${
-              isAddSchoolExpanded
-                ? 'h-12 px-5 bg-gradient-to-r from-[#003c6e] via-[#005689] to-[#0284c7] text-white ring-4 ring-blue-500/30 gap-2 shadow-blue-900/40'
-                : 'w-12 h-12 bg-gradient-to-tr from-[#005689] to-[#0284c7] hover:from-[#003c6e] hover:to-[#005689] text-white hover:scale-105'
-            }`}
-            title={isAddSchoolExpanded ? "Click to open Add School page" : "Click to unlock Add School"}
-          >
-            {/* 90-degree key rotation animation like unlocking a lock key */}
-            <span
-              className={`inline-flex items-center justify-center transition-transform duration-300 ease-out ${
-                isAddSchoolExpanded ? 'rotate-90 text-amber-300' : 'rotate-0 text-white'
-              }`}
-            >
-              <Plus size={22} strokeWidth={2.8} />
-            </span>
-
-            {isAddSchoolExpanded && (
-              <span className="text-sm font-black tracking-wide whitespace-nowrap animate-in fade-in duration-200">
-                Add School
-              </span>
-            )}
-          </button>
-
-          {isAddSchoolExpanded && (
-            <button
-              type="button"
-              onClick={() => setIsAddSchoolExpanded(false)}
-              className="w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-90"
-              title="Minimize Add School button"
-            >
-              <X size={14} />
-            </button>
-          )}
-        </aside>
-      )}
-
-      {/* ── Add School Profile Modal ── */}
-      <AddSchoolModal
-        isOpen={isAddSchoolModalOpen}
-        onClose={() => setIsAddSchoolModalOpen(false)}
-        currentUser={user}
-      />
 
       {/* ── Claim School Profile Modal ── */}
       <ClaimSchoolModal

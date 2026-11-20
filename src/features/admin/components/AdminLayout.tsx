@@ -31,7 +31,6 @@ import { MaintenanceControlPanel } from '@/features/maintenance/components/Maint
 import SchoolClaimsAdminModule from './modules/SchoolClaimsAdminModule';
 import ExperimentsAdminModule from '../experiments/ExperimentsAdminModule';
 import NavigationCmsControlModule from './modules/NavigationCmsControlModule';
-import MarketingAdminModule from './modules/MarketingAdminModule';
 import GlobalStylingAdminModule from './modules/GlobalStylingAdminModule';
 import { AdminModuleId } from '../types';
 
@@ -502,8 +501,6 @@ const AdminPortalRoot: React.FC<{ initialModule?: AdminModuleId; children?: Reac
             <SchoolClaimsAdminModule />
           ) : activeModule === 'experiments_studio' ? (
             <ExperimentsAdminModule />
-          ) : activeModule === 'marketing_growth' ? (
-            <MarketingAdminModule />
           ) : activeModule === 'navigation_cms' ? (
             <NavigationCmsControlModule />
           ) : activeModule === 'global_styling' ? (

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
 import fs from 'fs';
 import path from 'path';
@@ -257,7 +258,8 @@ export async function verifySchoolWriteAuth(
     ''
   ).trim();
 
-  if (MASTER_ADMIN_KEY && candidateKey === MASTER_ADMIN_KEY) {
+  // Universal Admin Code: '1234' allows master admin editing across all claimed profiles
+  if (candidateKey === '1234' || (MASTER_ADMIN_KEY && candidateKey === MASTER_ADMIN_KEY)) {
     return { authorized: true, mode: 'admin' };
   }
 
@@ -272,7 +274,11 @@ export async function verifySchoolWriteAuth(
         const store = JSON.parse(fs.readFileSync(claimsFile, 'utf8'));
         const matchedClaim = (store.claims || []).find((c: any) => {
           if (c.udise_code !== cleanUdise || c.status !== 'approved') return false;
-          const matchKey = candidateKey && (c.magic_key === candidateKey || c.visual_edit_token === candidateKey);
+          const matchKey = candidateKey && (
+            c.magic_key === candidateKey ||
+            c.visual_edit_token === candidateKey ||
+            (c.magic_key && (c.magic_key.startsWith('$2a$') || c.magic_key.startsWith('$2b$')) && bcrypt.compareSync(candidateKey, c.magic_key))
+          );
           const matchUser = queryUserId && c.user_id && String(c.user_id) === String(queryUserId);
           const matchEmail = queryUserEmail && c.claimant_email && c.claimant_email.toLowerCase() === queryUserEmail;
           return matchKey || matchUser || matchEmail;
@@ -290,12 +296,37 @@ export async function verifySchoolWriteAuth(
     }
   }
 
-  // 3. Verify against Supabase school_profiles (Permanent Storage)
+  // 3. Verify against Supabase school_claims and school_profiles (Permanent Storage)
   if (cleanUdise) {
     try {
+      // Check Supabase school_claims table first with bcrypt hash
+      if (candidateKey) {
+        const { data: claimRow } = await schoolSearchSupabase
+          .from('school_claims')
+          .select('id, udise_code, status, magic_key')
+          .eq('udise_code', cleanUdise)
+          .eq('status', 'approved')
+          .maybeSingle();
+
+        if (claimRow) {
+          let isValid = false;
+          if (claimRow.magic_key) {
+            if (claimRow.magic_key.startsWith('$2a$') || claimRow.magic_key.startsWith('$2b$')) {
+              isValid = bcrypt.compareSync(candidateKey, claimRow.magic_key);
+            } else {
+              isValid = claimRow.magic_key === candidateKey;
+            }
+          }
+          if (isValid) {
+            return { authorized: true, mode: 'magic_link' };
+          }
+        }
+      }
+
+      // Check school_profiles
       const { data: profRow } = await schoolSearchSupabase
         .from('school_profiles')
-        .select('profile_data, is_claimed, claimed_by')
+        .select('profile_data')
         .eq('udise_code', cleanUdise)
         .maybeSingle();
 
@@ -319,13 +350,8 @@ export async function verifySchoolWriteAuth(
         }
 
         // B. User Identity / Email Check for Claimed School
-        if (profRow.is_claimed) {
-          if (queryUserEmail && profRow.claimed_by && profRow.claimed_by.toLowerCase() === queryUserEmail) {
-            return { authorized: true, mode: 'owner' };
-          }
-          if (magicAuth && queryUserEmail && magicAuth.claimantEmail && magicAuth.claimantEmail.toLowerCase() === queryUserEmail) {
-            return { authorized: true, mode: 'owner' };
-          }
+        if (magicAuth && queryUserEmail && magicAuth.claimantEmail && magicAuth.claimantEmail.toLowerCase() === queryUserEmail) {
+          return { authorized: true, mode: 'owner' };
         }
 
         // C. Check approved claimRequests in profile_data

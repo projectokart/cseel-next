@@ -38,49 +38,7 @@ export default function SchoolReviewsSection({
   const [visibleReviewsCount, setVisibleReviewsCount] = useState(4);
   const [userLikesMap, setUserLikesMap] = useState<Record<string | number, boolean>>({});
 
-  const sampleReviews = useMemo(() => [
-    {
-      id: 'sample-rev-1',
-      author: 'Suresh Patil',
-      role: 'Parent',
-      studentClass: 'Parent of Class 8 Student',
-      date: 'Verified Community Review',
-      createdAt: '2026-02-15T10:00:00.000Z',
-      rating: 5,
-      likes: 12,
-      comment:
-        'Dedicated teaching staff and disciplined environment. The administration maintains good communication with parents regarding academic progress and extracurricular growth.',
-      metrics: { academics: 5, infrastructure: 5, safety: 5, sports: 4, value: 5 },
-    },
-    {
-      id: 'sample-rev-2',
-      author: 'Ananya K.',
-      role: 'Student',
-      studentClass: 'Class 10 Student',
-      date: 'Verified Student Review',
-      createdAt: '2026-03-01T12:00:00.000Z',
-      rating: 5,
-      likes: 8,
-      comment:
-        'Teachers are supportive and explain concepts clearly, especially in science and mathematics. Good practical labs and supportive guidance for board preparation.',
-      metrics: { academics: 5, infrastructure: 4, safety: 5, sports: 5, value: 5 },
-    },
-    {
-      id: 'sample-rev-3',
-      author: 'Meenakshi Deshmukh',
-      role: 'Alumni',
-      studentClass: 'Alumnus (Batch 2023)',
-      date: 'Verified Alumni Review',
-      createdAt: '2026-01-20T14:00:00.000Z',
-      rating: 4,
-      likes: 6,
-      comment:
-        'Strong foundational values and balanced focus on academics and sports. Great school campus with attentive faculty members.',
-      metrics: { academics: 4, infrastructure: 4, safety: 5, sports: 4, value: 4 },
-    },
-  ], []);
-
-  const effectiveReviewsList = reviewsList.length > 0 ? reviewsList : sampleReviews;
+  const effectiveReviewsList = reviewsList;
 
   // User's own review
   const [userReview, setUserReview] = useState<any | null>(null);
@@ -517,186 +475,211 @@ export default function SchoolReviewsSection({
           </div>
         )}
 
-        {/* Compact Review Rating Overview (Clean, No Waste of Space) */}
-        <div className="bg-[#F8FAFC] rounded-2xl p-4 sm:p-5 border border-[#DCE2E8] mb-6 shadow-2xs">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
-            <div className="md:col-span-5 text-center md:text-left md:border-r border-slate-200 md:pr-6">
-              <div className="flex items-baseline justify-center md:justify-start gap-2">
-                <span className="text-4xl sm:text-5xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight">
-                  {(effectiveReviewsList.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / effectiveReviewsList.length).toFixed(1)}
-                </span>
-                <span className="text-base font-bold text-slate-400">/ 5.0</span>
-              </div>
-              <div className="flex items-center justify-center md:justify-start gap-1 text-amber-400 my-1.5">
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <div className="text-[11.5px] text-slate-600 font-medium">
-                Based on <strong>{effectiveReviewsList.length} Community Review{effectiveReviewsList.length > 1 ? 's' : ''}</strong>
-              </div>
-              <div className="inline-flex items-center gap-1.5 bg-[#e6f4ea] text-[#137333] text-[10.5px] font-semibold px-2.5 py-0.5 rounded-full mt-2">
-                <ShieldCheck className="w-3 h-3" /> Authenticated by CSEEL
+        {/* Conditional: Empty State vs. Authentic Reviews Overview & Grid */}
+        {effectiveReviewsList.length === 0 ? (
+          <div className="bg-[#F8FAFC] rounded-2xl p-8 sm:p-12 border border-[#DCE2E8] text-center max-w-xl mx-auto my-6 shadow-2xs">
+            <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200/60 text-amber-500 flex items-center justify-center mx-auto mb-4 shadow-2xs">
+              <Star className="w-7 h-7 fill-amber-400 text-amber-400" />
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-[#003C6E] font-['Montserrat',sans-serif] mb-1.5">
+              No Reviews Yet
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mb-5 leading-relaxed">
+              No public reviews have been submitted for {displayName} yet. Be the first verified parent, student, or alumnus to share authentic feedback.
+            </p>
+            <button
+              type="button"
+              onClick={() => handleOpenEditModal(userReview)}
+              className="bg-[#006FCC] hover:bg-[#005399] text-white font-bold font-['Montserrat',sans-serif] px-5 py-2.5 rounded-xl text-xs sm:text-sm inline-flex items-center gap-2 shadow-xs transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Write the First Review</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Compact Review Rating Overview (Clean, No Waste of Space) */}
+            <div className="bg-[#F8FAFC] rounded-2xl p-4 sm:p-5 border border-[#DCE2E8] mb-6 shadow-2xs">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+                <div className="md:col-span-5 text-center md:text-left md:border-r border-slate-200 md:pr-6">
+                  <div className="flex items-baseline justify-center md:justify-start gap-2">
+                    <span className="text-4xl sm:text-5xl font-bold font-['Montserrat',sans-serif] text-[#003C6E] tracking-tight">
+                      {(effectiveReviewsList.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / effectiveReviewsList.length).toFixed(1)}
+                    </span>
+                    <span className="text-base font-bold text-slate-400">/ 5.0</span>
+                  </div>
+                  <div className="flex items-center justify-center md:justify-start gap-1 text-amber-400 my-1.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className="w-4 h-4 fill-current" />
+                    ))}
+                  </div>
+                  <div className="text-[11.5px] text-slate-600 font-medium">
+                    Based on <strong>{effectiveReviewsList.length} Community Review{effectiveReviewsList.length > 1 ? 's' : ''}</strong>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 bg-[#e6f4ea] text-[#137333] text-[10.5px] font-semibold px-2.5 py-0.5 rounded-full mt-2">
+                    <ShieldCheck className="w-3 h-3" /> Authenticated by CSEEL
+                  </div>
+                </div>
+                <div className="md:col-span-7 space-y-1.5 text-xs text-slate-600">
+                  <h4 className="text-[10.5px] font-bold uppercase tracking-wider text-[#006FCC] mb-1 font-['Montserrat',sans-serif]">
+                    Community Rating Distribution
+                  </h4>
+                  {[5, 4, 3, 2, 1].map((star) => {
+                    const count = effectiveReviewsList.filter((r) => Number(r.rating) === star).length;
+                    const pct = Math.round((count / effectiveReviewsList.length) * 100);
+                    return (
+                      <div key={star} className="flex items-center gap-2">
+                        <span className="w-12 text-[11px] font-semibold text-slate-700">{star} Stars</span>
+                        <div className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                          <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
+                        </div>
+                        <span className="w-7 text-right text-[11px] font-bold text-slate-800">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-            <div className="md:col-span-7 space-y-1.5 text-xs text-slate-600">
-              <h4 className="text-[10.5px] font-bold uppercase tracking-wider text-[#006FCC] mb-1 font-['Montserrat',sans-serif]">
-                Community Rating Distribution
-              </h4>
-              {[5, 4, 3, 2, 1].map((star) => {
-                const count = effectiveReviewsList.filter((r) => Number(r.rating) === star).length;
-                const pct = Math.round((count / effectiveReviewsList.length) * 100);
+
+            {/* Filter Bar */}
+            <div className="bg-white p-3.5 sm:p-4 rounded-[14px] border border-[#E8E9E9] mb-6 shadow-xs flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 flex-wrap w-full">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-['Montserrat',sans-serif]">Filter:</span>
+                {(['all', 'Parent', 'Student', 'Alumni'] as const).map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => {
+                      setReviewRoleFilter(role);
+                      setVisibleReviewsCount(4);
+                    }}
+                    className={`text-xs px-4 py-2 rounded-[10px] font-bold transition-all cursor-pointer font-['Montserrat',sans-serif] ${
+                      reviewRoleFilter === role
+                        ? 'bg-[#006FCC] text-white shadow-xs'
+                        : 'bg-white text-slate-600 hover:bg-slate-50 border border-[#E8E9E9]'
+                    }`}
+                  >
+                    {role === 'all' ? 'All Reviews' : role}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Reviews Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+              {filteredReviewsList.slice(0, visibleReviewsCount).map((rev) => {
+                const isOwner = user && (rev.userId === user.id || rev.userId === user.uid || rev.userEmail === user.email);
                 return (
-                  <div key={star} className="flex items-center gap-2">
-                    <span className="w-12 text-[11px] font-semibold text-slate-700">{star} Stars</span>
-                    <div className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
-                      <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
+                  <div
+                    key={rev.id}
+                    className="bg-white rounded-[14px] p-6 border border-[#E8E9E9] shadow-xs hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 h-10 rounded-[10px] bg-[#EDF5FA] border border-[#D0E4F5] text-[#006FCC] font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs font-['Montserrat',sans-serif]">
+                            {(rev.author || 'P').charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <h4 className="font-bold text-[#003C6E] text-sm truncate font-['Montserrat',sans-serif]">{rev.author}</h4>
+                              <span className="inline-flex items-center gap-1 bg-[#EDF5FA] text-[#006FCC] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#D0E4F5]">
+                                <CheckCircle2 className="w-3 h-3 text-[#006FCC]" /> Verified {rev.role}
+                              </span>
+                              {isOwner && (
+                                <span className="bg-blue-100 text-[#006FCC] text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">
+                                  You
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                              <div className="flex items-center text-amber-400">
+                                {[...Array(Number(rev.rating) || 5)].map((_, i) => (
+                                  <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                                ))}
+                              </div>
+                              <span>•</span>
+                              <span className="font-medium">
+                                {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : rev.date || 'Recent'}
+                              </span>
+                              {rev.studentClass && (
+                                <>
+                                  <span className="hidden sm:inline">•</span>
+                                  <span className="hidden sm:inline text-slate-600 text-xs font-semibold truncate max-w-[150px]">{rev.studentClass}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Owner Action Buttons (Edit & Delete) */}
+                        {isOwner && (
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditModal(rev)}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-[#005689] hover:bg-blue-50 transition cursor-pointer"
+                              title="Edit your review"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteReview(rev.id)}
+                              className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                              title="Delete your review"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      <p className="!text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#3C4043] !leading-[1.68] line-clamp-3 sm:line-clamp-4 mt-2 mb-4 font-normal">
+                        "{rev.comment}"
+                      </p>
                     </div>
-                    <span className="w-7 text-right text-[11px] font-bold text-slate-800">{pct}%</span>
+
+                    <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleLike(rev.id)}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                          userLikesMap[rev.id]
+                            ? 'bg-blue-50 text-[#006FCC] border border-blue-200'
+                            : 'hover:bg-slate-100 text-slate-600 border border-slate-200/60'
+                        }`}
+                      >
+                        <ThumbsUp className={`w-3 h-3 ${userLikesMap[rev.id] ? 'fill-[#006FCC]' : ''}`} />
+                        <span>Helpful ({(rev.likes || 0) + (userLikesMap[rev.id] ? 1 : 0)})</span>
+                      </button>
+
+                      <span className="inline-flex items-center gap-1 text-[10.5px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                        <ShieldCheck className="w-3 h-3 text-emerald-600" /> 100% Authenticated
+                      </span>
+                    </div>
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </div>
 
-        {/* Filter Bar */}
-        <div className="bg-white p-3.5 sm:p-4 rounded-[14px] border border-[#E8E9E9] mb-6 shadow-xs flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 flex-wrap w-full">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-['Montserrat',sans-serif]">Filter:</span>
-            {(['all', 'Parent', 'Student', 'Alumni'] as const).map((role) => (
-              <button
-                key={role}
-                type="button"
-                onClick={() => {
-                  setReviewRoleFilter(role);
-                  setVisibleReviewsCount(4);
-                }}
-                className={`text-xs px-4 py-2 rounded-[10px] font-bold transition-all cursor-pointer font-['Montserrat',sans-serif] ${
-                  reviewRoleFilter === role
-                    ? 'bg-[#006FCC] text-white shadow-xs'
-                    : 'bg-white text-slate-600 hover:bg-slate-50 border border-[#E8E9E9]'
-                }`}
-              >
-                {role === 'all' ? 'All Reviews' : role}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-          {filteredReviewsList.slice(0, visibleReviewsCount).map((rev) => {
-            const isOwner = user && (rev.userId === user.id || rev.userId === user.uid || rev.userEmail === user.email);
-            return (
-              <div
-                key={rev.id}
-                className="bg-white rounded-[14px] p-6 border border-[#E8E9E9] shadow-xs hover:border-[#006FCC]/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-[10px] bg-[#EDF5FA] border border-[#D0E4F5] text-[#006FCC] font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs font-['Montserrat',sans-serif]">
-                        {(rev.author || 'P').charAt(0).toUpperCase()}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <h4 className="font-bold text-[#003C6E] text-sm truncate font-['Montserrat',sans-serif]">{rev.author}</h4>
-                          <span className="inline-flex items-center gap-1 bg-[#EDF5FA] text-[#006FCC] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#D0E4F5]">
-                            <CheckCircle2 className="w-3 h-3 text-[#006FCC]" /> Verified {rev.role}
-                          </span>
-                          {isOwner && (
-                            <span className="bg-blue-100 text-[#006FCC] text-[9.5px] font-bold px-1.5 py-0.5 rounded-md">
-                              You
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
-                          <div className="flex items-center text-amber-400">
-                            {[...Array(Number(rev.rating) || 5)].map((_, i) => (
-                              <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                            ))}
-                          </div>
-                          <span>•</span>
-                          <span className="font-medium">
-                            {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : rev.date || 'Recent'}
-                          </span>
-                          {rev.studentClass && (
-                            <>
-                              <span className="hidden sm:inline">•</span>
-                              <span className="hidden sm:inline text-slate-600 text-xs font-semibold truncate max-w-[150px]">{rev.studentClass}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Owner Action Buttons (Edit & Delete) */}
-                    {isOwner && (
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEditModal(rev)}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-[#005689] hover:bg-blue-50 transition cursor-pointer"
-                          title="Edit your review"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteReview(rev.id)}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
-                          title="Delete your review"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <p className="!text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#3C4043] !leading-[1.68] line-clamp-3 sm:line-clamp-4 mt-2 mb-4 font-normal">
-                    "{rev.comment}"
-                  </p>
-                </div>
-
-                <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+              {filteredReviewsList.length === 0 && reviewsList.length > 0 && (
+                <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200 col-span-2">
+                  <p className="text-sm text-gray-500 font-medium">No reviews match your selected filter.</p>
                   <button
                     type="button"
-                    onClick={() => handleToggleLike(rev.id)}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      userLikesMap[rev.id]
-                        ? 'bg-blue-50 text-[#006FCC] border border-blue-200'
-                        : 'hover:bg-slate-100 text-slate-600 border border-slate-200/60'
-                    }`}
+                    onClick={() => {
+                      setReviewRoleFilter('all');
+                      setReviewStarFilter('all');
+                    }}
+                    className="mt-2 text-xs font-bold text-[#005689] hover:underline"
                   >
-                    <ThumbsUp className={`w-3 h-3 ${userLikesMap[rev.id] ? 'fill-[#006FCC]' : ''}`} />
-                    <span>Helpful ({(rev.likes || 0) + (userLikesMap[rev.id] ? 1 : 0)})</span>
+                    Clear all filters
                   </button>
-
-                  <span className="inline-flex items-center gap-1 text-[10.5px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                    <ShieldCheck className="w-3 h-3 text-emerald-600" /> 100% Authenticated
-                  </span>
                 </div>
-              </div>
-            );
-          })}
-
-          {filteredReviewsList.length === 0 && reviewsList.length > 0 && (
-            <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200 col-span-2">
-              <p className="text-sm text-gray-500 font-medium">No reviews match your selected filter.</p>
-              <button
-                type="button"
-                onClick={() => {
-                  setReviewRoleFilter('all');
-                  setReviewStarFilter('all');
-                }}
-                className="mt-2 text-xs font-bold text-[#005689] hover:underline"
-              >
-                Clear all filters
-              </button>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* ─── POP-UP MODAL DIALOG: AUTHENTIC COMMUNITY FEEDBACK FORM ─── */}
@@ -705,7 +688,7 @@ export default function SchoolReviewsSection({
           role="dialog"
           aria-modal="true"
           aria-labelledby="review-dialog-title"
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-fade-in"
+          className="fixed inset-0 z-[99999] overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 animate-fade-in"
           onClick={(e) => {
             if (e.target === e.currentTarget && !isSubmitting && !isLoggingIn) {
               setIsWriteReviewOpen(false);

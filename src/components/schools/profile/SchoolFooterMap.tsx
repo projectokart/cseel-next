@@ -9,6 +9,7 @@ export interface SchoolFooterMapProps {
   displayAddress: string;
   lat: number;
   lng: number;
+  campusPhoto?: string;
 }
 
 export default function SchoolFooterMap({
@@ -16,6 +17,7 @@ export default function SchoolFooterMap({
   displayAddress,
   lat,
   lng,
+  campusPhoto,
 }: SchoolFooterMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -48,9 +50,12 @@ export default function SchoolFooterMap({
       const map = L.map(mapContainerRef.current, {
         center: [mapLat, mapLng],
         zoom: 14,
-        zoomControl: true,
+        zoomControl: false,
         scrollWheelZoom: false,
       });
+
+      // Shift zoom +/- buttons to bottom-right and keep them compact so they never overlap satellite/mode toggles
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       const tileUrls = {
         osm: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -81,11 +86,12 @@ export default function SchoolFooterMap({
 
       const marker = L.marker([mapLat, mapLng], { icon: customPin }).addTo(map);
       marker.bindPopup(`
-        <div style="font-family:system-ui,sans-serif;padding:2px;min-width:150px;">
-          <strong style="color:#003C6E;font-size:12px;display:block;margin-bottom:2px;">${displayName}</strong>
-          <span style="color:#475569;font-size:10.5px;display:block;margin-bottom:6px;">${displayAddress}</span>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${mapLat},${mapLng}" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#006FCC;color:#ffffff;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;">
-            Directions →
+        <div style="font-family:system-ui,sans-serif;padding:3px;min-width:170px;max-width:230px;">
+          ${campusPhoto ? `<img src="${campusPhoto}" alt="${displayName}" style="width:100%;height:75px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;" />` : ''}
+          <strong style="color:#003C6E;font-size:12px;display:block;line-height:1.25;margin-bottom:3px;">${displayName}</strong>
+          ${displayAddress ? `<span style="color:#475569;font-size:10.5px;display:block;line-height:1.3;margin-bottom:6px;">${displayAddress}</span>` : ''}
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${mapLat},${mapLng}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;background:#006FCC;color:#ffffff;padding:3.5px 9px;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none;">
+            Get Directions →
           </a>
         </div>
       `);
@@ -102,17 +108,17 @@ export default function SchoolFooterMap({
         mapInstanceRef.current = null;
       }
     };
-  }, [mapLat, mapLng, mapMode, displayName, displayAddress]);
+  }, [mapLat, mapLng, mapMode, displayName, displayAddress, campusPhoto]);
 
   return (
-    <div className="space-y-2">
+    <div className="relative isolate z-0 w-full">
       <div
         className={`relative overflow-hidden border border-white/20 bg-slate-900 shadow-lg ${
-          isFullscreen ? 'fixed inset-3 z-[9999] rounded-2xl' : 'h-[190px] sm:h-[215px] w-full rounded-xl'
-        }`}
+          isFullscreen ? 'fixed inset-3 z-[9999] rounded-2xl' : 'h-[210px] sm:h-[235px] w-full rounded-xl isolate relative z-0'
+        } [&_.leaflet-control-zoom]:!border-0 [&_.leaflet-control-zoom]:!shadow-md [&_.leaflet-control-zoom_a]:!w-6 [&_.leaflet-control-zoom_a]:!h-6 [&_.leaflet-control-zoom_a]:!leading-[24px] [&_.leaflet-control-zoom_a]:!text-xs [&_.leaflet-control-zoom_a]:!rounded-md`}
       >
         {/* Top Overlay Controls */}
-        <div className="absolute top-2.5 left-2.5 right-2.5 z-[400] flex items-center justify-between pointer-events-none">
+        <div className="absolute top-2.5 left-2.5 right-2.5 z-10 flex items-center justify-between pointer-events-none">
           <div className="flex items-center gap-1 bg-slate-950/85 backdrop-blur-md p-1 rounded-lg border border-white/15 pointer-events-auto">
             {(['osm', 'satellite', 'google'] as const).map((mode) => (
               <button
@@ -149,21 +155,6 @@ export default function SchoolFooterMap({
         </div>
 
         <div ref={mapContainerRef} className="w-full h-full" />
-      </div>
-
-      <div className="flex items-center justify-between gap-2 text-[10.5px]">
-        <span className="font-mono text-slate-200 bg-white/10 px-2 py-1 rounded-md border border-white/10">
-          {mapLat.toFixed(4)}°N, {mapLng.toFixed(4)}°E
-        </span>
-        <a
-          href={`https://www.google.com/maps/dir/?api=1&destination=${mapLat},${mapLng}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#006FCC] hover:bg-[#0056a3] text-white font-bold transition shadow-xs"
-        >
-          <Navigation className="w-3 h-3" />
-          <span>Get Directions</span>
-        </a>
       </div>
     </div>
   );

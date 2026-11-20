@@ -1,18 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { SchoolRecord } from '@/data/schoolFinderData';
 
-const NEW_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://iaqpumtwzqsdbfjmbvmv.supabase.co';
+const NEW_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_DIRECTORY_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vvdnsmrtockscarkybtf.supabase.co';
 const NEW_SUPABASE_ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_DIRECTORY_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  (process.env.SUPABASE_ANON_KEY || '');
+  '';
 
 export const schoolSearchSupabase = createClient(NEW_SUPABASE_URL, NEW_SUPABASE_ANON_KEY, {
   auth: { persistSession: false },
   global: {
     fetch: async (url, options: any = {}) => {
       const method = (options.method || 'GET').toUpperCase();
-      // Fast timeout: 800ms for GET reads, 2500ms for POST/mutations
-      const timeoutMs = method === 'GET' ? 800 : 2500;
+      // Standard timeout: 8000ms for GET reads, 10000ms for POST/mutations
+      const timeoutMs = method === 'GET' ? 8000 : 10000;
       const controller = new AbortController();
       let timedOut = false;
       const timer = setTimeout(() => {

@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic';
 import { X, CheckCircle2, Lock, Check, Play } from 'lucide-react';
 
 const ClaimSchoolModal = dynamic(() => import('@/components/schools/ClaimSchoolModal'), { ssr: false });
-const AddSchoolModal = dynamic(() => import('@/components/schools/AddSchoolModal'), { ssr: false });
 const AddCardModal = dynamic(() => import('@/components/schools/template/AddCardModal'), { ssr: false });
 const FacultyModal = dynamic(() => import('@/components/schools/template/FacultyModal'), { ssr: false });
 const GalleryModal = dynamic(() => import('@/components/schools/template/GalleryModal'), { ssr: false });
@@ -73,8 +72,6 @@ export interface SchoolProfileModalsProps {
 
   isClaimModalOpen: boolean;
   setIsClaimModalOpen: (v: boolean) => void;
-  isAddSchoolModalOpen: boolean;
-  setIsAddSchoolModalOpen: (v: boolean) => void;
 }
 
 export default function SchoolProfileModals(props: SchoolProfileModalsProps) {
@@ -131,14 +128,12 @@ export default function SchoolProfileModals(props: SchoolProfileModalsProps) {
     setEditingAward,
     isClaimModalOpen,
     setIsClaimModalOpen,
-    isAddSchoolModalOpen,
-    setIsAddSchoolModalOpen,
   } = props;
 
   return (
     <>
       {isApplyModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl relative border border-gray-100">
             <button
               onClick={() => setIsApplyModalOpen(false)}
@@ -272,7 +267,7 @@ export default function SchoolProfileModals(props: SchoolProfileModalsProps) {
       )}
 
       {isAdmissionConfigModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-7 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsAdmissionConfigModalOpen(false)}
@@ -356,7 +351,7 @@ export default function SchoolProfileModals(props: SchoolProfileModalsProps) {
       )}
 
       {isTourModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in">
           <div className="bg-white rounded-3xl max-w-3xl w-full p-5 shadow-2xl relative">
             <button
               onClick={() => setIsTourModalOpen(false)}
@@ -494,13 +489,6 @@ export default function SchoolProfileModals(props: SchoolProfileModalsProps) {
         onClose={() => setIsClaimModalOpen(false)}
         schoolName={displayName}
         udiseCode={displayUdise}
-      />
-
-      <AddSchoolModal
-        isOpen={isAddSchoolModalOpen}
-        onClose={() => setIsAddSchoolModalOpen(false)}
-        defaultUdise={displayUdise}
-        defaultSchoolName={displayName}
       />
     </>
   );

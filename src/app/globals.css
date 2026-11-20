@@ -1565,23 +1565,52 @@
 }
 
 /* Global Forms & Input Styling */
-input:not([type="checkbox"]):not([type="radio"]),
+input:not([type="checkbox"]):not([type="radio"]):not([type="search"]):not(.search-clean-input):not(.no-focus-ring):not([data-clean-search="true"]),
 select,
-textarea,
+textarea:not(.no-focus-ring),
 .w-input,
 .w-select {
   font-family: 'Lato', -apple-system, sans-serif;
   border-radius: 12px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-input:not([type="checkbox"]):not([type="radio"]):focus,
+input:not([type="checkbox"]):not([type="radio"]):not([type="search"]):not(.search-clean-input):not(.no-focus-ring):not([data-clean-search="true"]):focus,
 select:focus,
-textarea:focus,
+textarea:not(.no-focus-ring):focus,
 .w-input:focus,
 .w-select:focus {
   border-color: #006FCC !important;
   box-shadow: 0 0 0 3px rgba(0, 111, 204, 0.15) !important;
   outline: none !important;
+}
+
+/* Explicit Zero-Border & Zero-Glow Reset for Search Bar Inputs */
+.search-clean-input,
+.search-clean-input:focus,
+.search-clean-input:focus-visible,
+.search-clean-input:active,
+input.search-clean-input,
+input.search-clean-input:focus,
+input.search-clean-input:focus-visible,
+input.search-clean-input:active,
+input[data-clean-search="true"],
+input[data-clean-search="true"]:focus,
+input[data-clean-search="true"]:focus-visible,
+input[data-clean-search="true"]:active {
+  border: 0 none transparent !important;
+  border-width: 0 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  outline: 0 none transparent !important;
+  outline-width: 0 !important;
+  outline-offset: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
+  --tw-shadow: 0 0 #0000 !important;
 }
 
 /* Global Swiper Pagination (Labster Blue) */
@@ -1680,3 +1709,66 @@ a:hover h1, a:hover h2, a:hover h3, a:hover h4,
 :where([class*="text-white"]) :where(h1, h2, h3, h4, h5, h6, strong, b) {
   color: #ffffff !important;
 }
+
+/* Restrict Leaflet internal z-indexes so maps never bleed over modals or sticky headers */
+.leaflet-container {
+  z-index: 0 !important;
+  isolation: isolate !important;
+}
+.leaflet-pane,
+.leaflet-map-pane,
+.leaflet-tile-pane,
+.leaflet-overlay-pane,
+.leaflet-shadow-pane,
+.leaflet-marker-pane,
+.leaflet-tooltip-pane,
+.leaflet-popup-pane,
+.leaflet-zoom-box {
+  z-index: 1 !important;
+}
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control {
+  z-index: 2 !important;
+}
+
+
+/* Per-Section Preview: hide edit controls and outlines while previewing */
+.section-preview-active [data-edit-control='true'],
+.section-preview-active button[title*='Edit'],
+.section-preview-active button[title*='Change'],
+.section-preview-active button[title*='Delete'],
+.section-preview-active button[title*='Add'],
+.section-preview-active [data-button-controls='true'],
+.section-preview-active .edit-badge,
+.section-preview-active button:has(.lucide-trash-2),
+.section-preview-active button:has(.lucide-plus),
+.section-preview-active button:has(.lucide-edit-3),
+.section-preview-active button:has(.lucide-edit-2),
+.section-preview-active button:has(.lucide-camera) {
+  display: none !important;
+}
+
+.section-preview-active .border-dashed,
+.section-preview-active .ring-dashed,
+.section-preview-active span[class*='border-dashed'],
+.section-preview-active [title*='Click to edit'] span {
+  border-style: none !important;
+  border-color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.section-preview-active [title*='Click to edit'],
+.section-preview-active [title*='Click to change'] {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+.section-preview-active [title*='Click to edit'] .lucide-edit-2,
+.section-preview-active [title*='Click to edit'] .lucide-edit-3,
+.section-preview-active [title*='Click to edit'] .lucide-edit,
+.section-preview-active [title*='Click to edit'] span:last-child {
+  display: none !important;
+}
+

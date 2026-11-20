@@ -10,8 +10,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   useEffect(() => {
-    // Exclude /profile routes so users can start their setup flow
-    if (!loading && !user && pathname && !pathname.startsWith('/profile')) {
+    // Exclude /profile and /dashboard/school-profile routes so schools can use PIN verification flow
+    if (!loading && !user && pathname && !pathname.startsWith('/profile') && !pathname.includes('school-profile')) {
       router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
   }, [user, loading, router, pathname]);

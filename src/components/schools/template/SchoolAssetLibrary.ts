@@ -1,7 +1,7 @@
 export interface SchoolIconOption {
   id: string;
   name: string;
-  category: 'Labs & Tech' | 'Academics & Arts' | 'Sports & Fitness' | 'Campus Safety & Security' | 'Campus Infrastructure';
+  category: 'Boards' | 'Labs & Tech' | 'Academics & Arts' | 'Sports & Fitness' | 'Campus Safety & Security' | 'Campus Infrastructure';
   iconName: string;
   color: string;
 }
@@ -21,6 +21,16 @@ export interface CuratedPhotoOption {
 }
 
 export const SCHOOL_ICONS_COLLECTION: SchoolIconOption[] = [
+  // ─── 0. Official Educational Board Logos ───
+  { id: 'board-cbse', name: 'CBSE (Central Board of Secondary Education)', category: 'Boards', iconName: 'CBSE', color: '#003874' },
+  { id: 'board-hbse', name: 'HBSE / BSEH (Haryana Board of School Education)', category: 'Boards', iconName: 'HBSE', color: '#1E3A8A' },
+  { id: 'board-icse', name: 'ICSE / CISCE (Indian Certificate of Secondary Education)', category: 'Boards', iconName: 'ICSE', color: '#831843' },
+  { id: 'board-ib', name: 'IB (International Baccalaureate World School)', category: 'Boards', iconName: 'IB', color: '#0284C7' },
+  { id: 'board-cambridge', name: 'Cambridge Assessment (IGCSE / CIE)', category: 'Boards', iconName: 'Cambridge', color: '#B91C1C' },
+  { id: 'board-up', name: 'UPMSP (Uttar Pradesh Madhyamik Shiksha Parishad)', category: 'Boards', iconName: 'UPBoard', color: '#047857' },
+  { id: 'board-maha', name: 'MSBSHSE (Maharashtra State Board)', category: 'Boards', iconName: 'MaharashtraBoard', color: '#C2410C' },
+  { id: 'board-state', name: 'State Board (Department of School Education)', category: 'Boards', iconName: 'StateBoard', color: '#0F766E' },
+
   // ─── 1. Labs, STEM & Technology ───
   { id: 'chemistry', name: 'Chemistry Laboratory (Beakers & Reagents)', category: 'Labs & Tech', iconName: 'TestTubes', color: '#0284C7' },
   { id: 'physics', name: 'Physics Laboratory & Quantum Optics', category: 'Labs & Tech', iconName: 'Atom', color: '#7C3AED' },
@@ -82,7 +92,7 @@ export const SCHOOL_ICONS_COLLECTION: SchoolIconOption[] = [
   { id: 'hostel', name: 'Air-Conditioned Boys & Girls Hostel', category: 'Campus Infrastructure', iconName: 'Home', color: '#4338CA' },
   { id: 'canteen', name: 'Hygienic Dining Hall & Food Canteen', category: 'Campus Infrastructure', iconName: 'Utensils', color: '#F97316' },
   { id: 'bus-gps', name: 'GPS Fleet Buses with Real-Time Tracking', category: 'Campus Infrastructure', iconName: 'Bus', color: '#EAB308' },
-  { id: 'solar-campus', name: '100KW Rooftop Solar Power Plant', category: 'Campus Infrastructure', iconName: 'Sun', color: '#F59E0B' },
+  { id: 'solar-campus', name: '100KW Rooftop Solar Power Plant', category: 'Campus Infrastructure', iconName: 'SolarPanel', color: '#0284C7' },
   { id: 'green-campus', name: 'Eco-Friendly Botanical & Herbal Garden', category: 'Campus Infrastructure', iconName: 'Trees', color: '#15803D' },
   { id: 'wifi-campus', name: 'High-Speed Optical Fiber Wi-Fi Campus', category: 'Campus Infrastructure', iconName: 'Wifi', color: '#0284C7' },
   { id: 'ro-water', name: 'Multi-Stage RO Purified Chilled Drinking Water', category: 'Campus Infrastructure', iconName: 'Droplet', color: '#06B6D4' },

@@ -682,6 +682,92 @@ export function parseSchoolJsonToState(
       contentOverrides: { ...(currentState?.contentOverrides || {}) },
     } as any;
 
+    // Direct synthesis from Standard Profile (UDISE API) structures
+    const idObj = parsed.schoolIdentity || parsed.data?.schoolIdentity;
+    const heroObj = parsed.heroSection || parsed.data?.heroSection;
+    const campusLoc = parsed.contact?.campusLocation || parsed.data?.contact?.campusLocation;
+    const contactDesks = parsed.contact?.contactDesks || parsed.data?.contact?.contactDesks;
+
+    if (idObj && typeof idObj === 'object') {
+      if (idObj.schoolName) nextState.schoolName = limitLength(idObj.schoolName, 70);
+      if (idObj.udiseCode) nextState.udiseCode = limitLength(idObj.udiseCode, 15);
+      if (idObj.board) nextState.board = limitLength(idObj.board, 50);
+      if (idObj.mediumOfInstruction) nextState.medium = limitLength(idObj.mediumOfInstruction, 40);
+      if (idObj.establishedYear) nextState.establishedYear = limitLength(idObj.establishedYear, 12);
+      if (idObj.management) {
+        nextState.management = limitLength(idObj.management, 50);
+        nextState.schoolType = limitLength(idObj.management, 35);
+      }
+      if (idObj.schoolCategory) nextState.schoolCategory = limitLength(idObj.schoolCategory, 50);
+      if (idObj.genderType) nextState.genderType = limitLength(idObj.genderType, 25);
+      if (idObj.classFrom) nextState.classFrom = limitLength(idObj.classFrom, 20);
+      if (idObj.classTo) nextState.classTo = limitLength(idObj.classTo, 20);
+      if (idObj.affiliationNumber) nextState.affiliationNumber = limitLength(idObj.affiliationNumber, 30);
+    }
+
+    if (heroObj && typeof heroObj === 'object') {
+      if (heroObj.schoolName && !nextState.schoolName) nextState.schoolName = limitLength(heroObj.schoolName, 70);
+      if (heroObj.udiseCode && !nextState.udiseCode) nextState.udiseCode = limitLength(heroObj.udiseCode, 15);
+      if (heroObj.board && !nextState.board) nextState.board = limitLength(heroObj.board, 50);
+      if (heroObj.medium && !nextState.medium) nextState.medium = limitLength(heroObj.medium, 40);
+      if (heroObj.principalName) nextState.principalName = limitLength(heroObj.principalName, 45);
+      if (heroObj.establishedYear && !nextState.establishedYear) nextState.establishedYear = limitLength(heroObj.establishedYear, 12);
+      if (heroObj.campusArea) nextState.campusArea = limitLength(heroObj.campusArea, 25);
+      if (heroObj.totalStudents !== undefined) (nextState as any).totalStudents = heroObj.totalStudents;
+      if (heroObj.totalBoys !== undefined) (nextState as any).totalBoys = heroObj.totalBoys;
+      if (heroObj.totalGirls !== undefined) (nextState as any).totalGirls = heroObj.totalGirls;
+      if (heroObj.totalTeachers !== undefined) (nextState as any).totalTeachers = heroObj.totalTeachers;
+      if (heroObj.maleTeachers !== undefined) (nextState as any).maleTeachers = heroObj.maleTeachers;
+      if (heroObj.femaleTeachers !== undefined) (nextState as any).femaleTeachers = heroObj.femaleTeachers;
+      if (heroObj.totalClassrooms !== undefined) (nextState as any).totalClassrooms = heroObj.totalClassrooms;
+      if (heroObj.studentTeacherRatio) (nextState as any).studentTeacherRatio = heroObj.studentTeacherRatio;
+      if (heroObj.address && !nextState.address) nextState.address = limitLength(heroObj.address, 120);
+      if (heroObj.village && !nextState.village) nextState.village = limitLength(heroObj.village, 40);
+      if (heroObj.block && !nextState.blockName) nextState.blockName = limitLength(heroObj.block, 40);
+      if (heroObj.district && !nextState.district) nextState.district = limitLength(heroObj.district, 40);
+      if (heroObj.state && !nextState.state) nextState.state = limitLength(heroObj.state, 40);
+      if (heroObj.pincode && !nextState.pincode) nextState.pincode = limitLength(heroObj.pincode, 10);
+    }
+
+    if (campusLoc && typeof campusLoc === 'object') {
+      if (campusLoc.streetAddress) nextState.address = limitLength(campusLoc.streetAddress, 120);
+      if (campusLoc.district) nextState.district = limitLength(campusLoc.district, 40);
+      if (campusLoc.state) nextState.state = limitLength(campusLoc.state, 40);
+      if (campusLoc.pincode) nextState.pincode = limitLength(campusLoc.pincode, 10);
+      if (campusLoc.village) nextState.village = limitLength(campusLoc.village, 40);
+      if (campusLoc.locality) (nextState as any).locality = limitLength(campusLoc.locality, 60);
+      if (campusLoc.block) nextState.blockName = limitLength(campusLoc.block, 40);
+      if (campusLoc.websiteUrl) nextState.website = limitLength(campusLoc.websiteUrl, 70);
+    }
+
+    const geoLoc = parsed.contact?.geoLocation || parsed.data?.contact?.geoLocation || parsed.geoLocation || parsed.data?.geoLocation;
+    if (geoLoc && typeof geoLoc === 'object') {
+      if (geoLoc.latitude && !isNaN(Number(geoLoc.latitude))) {
+        (nextState as any).latitude = Number(geoLoc.latitude);
+        (nextState as any).lat = Number(geoLoc.latitude);
+      }
+      if (geoLoc.longitude && !isNaN(Number(geoLoc.longitude))) {
+        (nextState as any).longitude = Number(geoLoc.longitude);
+        (nextState as any).lng = Number(geoLoc.longitude);
+      }
+    }
+    if (heroObj?.latitude && !isNaN(Number(heroObj.latitude))) {
+      (nextState as any).latitude = Number(heroObj.latitude);
+      (nextState as any).lat = Number(heroObj.latitude);
+    }
+    if (heroObj?.longitude && !isNaN(Number(heroObj.longitude))) {
+      (nextState as any).longitude = Number(heroObj.longitude);
+      (nextState as any).lng = Number(heroObj.longitude);
+    }
+    if (heroObj?.locality) {
+      (nextState as any).locality = limitLength(heroObj.locality, 60);
+    }
+
+    if (Array.isArray(contactDesks) && contactDesks.length > 0) {
+      if (contactDesks[0]?.phone) nextState.phone = limitLength(contactDesks[0].phone, 30);
+      if (contactDesks[0]?.email) nextState.email = limitLength(contactDesks[0].email, 50);
+    }
+
     // ==========================================
     // TAB 1: HOME
     // ==========================================

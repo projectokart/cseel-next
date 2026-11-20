@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   HelpCircle,
   ChevronDown,
   Plus,
   Trash2,
-  Sparkles,
+  Check,
+  X,
   ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
@@ -35,6 +36,103 @@ export interface AuthenticFaqProps {
   computerIctLab?: string;
   atalStemLab?: string;
   playgroundAvailable?: string;
+}
+
+function FaqEditCard({
+  faq,
+  idx,
+  onSave,
+  onDelete,
+}: {
+  faq: SchoolFaqItem;
+  idx: number;
+  onSave: (q: string, a: string) => void;
+  onDelete: () => void;
+}) {
+  const [q, setQ] = useState(faq.q);
+  const [a, setA] = useState(faq.a);
+  const [justSaved, setJustSaved] = useState(false);
+
+  useEffect(() => {
+    setQ(faq.q);
+    setA(faq.a);
+  }, [faq.q, faq.a]);
+
+  const handleAutoSave = () => {
+    if (q !== faq.q || a !== faq.a) {
+      onSave(q, a);
+      setJustSaved(true);
+      setTimeout(() => setJustSaved(false), 2000);
+    }
+  };
+
+  return (
+    <div className="p-3.5 sm:p-5 rounded-2xl border-2 border-[#006FCC]/40 bg-white shadow-sm space-y-3.5">
+      <div className="flex items-center justify-between text-xs font-bold pb-2 border-b border-slate-100">
+        <span className="flex items-center gap-2 text-[#006FCC]">
+          <span className="w-5 h-5 rounded-full bg-[#EDF5FA] border border-[#D0E4F5] flex items-center justify-center text-[10.5px] font-black">
+            {idx + 1}
+          </span>
+          <span className="font-['Montserrat',sans-serif] uppercase tracking-wide">FAQ Question #{idx + 1}</span>
+        </span>
+
+        <div className="flex items-center gap-2">
+          {justSaved && (
+            <span className="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md text-[11px] font-bold flex items-center gap-1 border border-emerald-200">
+              <Check className="w-3 h-3" /> Auto-saved
+            </span>
+          )}
+
+          {/* Icon-Only Delete Button (no words, just clean trash icon) */}
+          <button
+            type="button"
+            onClick={onDelete}
+            className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+            title="Delete FAQ"
+            aria-label="Delete FAQ"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* 1. Question Text Area: Full width, spacious, entire question visible, auto-saves on blur */}
+      <div>
+        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+          Question Text
+        </label>
+        <textarea
+          rows={2}
+          value={q}
+          onChange={(e) => {
+            setQ(e.target.value);
+            setJustSaved(false);
+          }}
+          onBlur={handleAutoSave}
+          placeholder="Enter complete parent or student query here..."
+          className="w-full p-3 text-sm sm:text-[15px] font-medium text-slate-900 border border-slate-300 rounded-xl focus:outline-none focus:border-[#006FCC] focus:ring-2 focus:ring-[#006FCC]/20 transition-all bg-slate-50/50 leading-relaxed"
+        />
+      </div>
+
+      {/* 2. Institutional Answer Text Area: Full width, spacious, entire answer visible, auto-saves on blur */}
+      <div>
+        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+          Institutional Answer
+        </label>
+        <textarea
+          rows={3}
+          value={a}
+          onChange={(e) => {
+            setA(e.target.value);
+            setJustSaved(false);
+          }}
+          onBlur={handleAutoSave}
+          placeholder="Enter complete, authentic institutional answer..."
+          className="w-full p-3 text-sm sm:text-[15px] font-normal text-slate-800 border border-slate-300 rounded-xl focus:outline-none focus:border-[#006FCC] focus:ring-2 focus:ring-[#006FCC]/20 transition-all bg-slate-50/50 leading-relaxed"
+        />
+      </div>
+    </div>
+  );
 }
 
 export function buildAuthenticFaqs(props: AuthenticFaqProps): SchoolFaqItem[] {
@@ -137,8 +235,10 @@ export function buildAuthenticFaqs(props: AuthenticFaqProps): SchoolFaqItem[] {
 
   // 9. Digital & STEM Labs (Strictly from UDISE)
   const smartBoards = Number(props.workingSmartBoards) || 0;
-  const hasIct = (props.computerIctLab || '').toLowerCase().includes('yes') || (props.computerIctLab || '').toLowerCase().includes('avail');
-  const hasStem = (props.atalStemLab || '').toLowerCase().includes('yes') || (props.atalStemLab || '').toLowerCase().includes('avail');
+  const strIct = String(props.computerIctLab ?? '').toLowerCase();
+  const strStem = String(props.atalStemLab ?? '').toLowerCase();
+  const hasIct = strIct === 'true' || strIct.includes('yes') || strIct.includes('avail') || strIct === '1';
+  const hasStem = strStem === 'true' || strStem.includes('yes') || strStem.includes('avail') || strStem === '1';
   const facilitiesList: string[] = [];
   if (hasStem) facilitiesList.push('Atal Tinkering STEM Lab');
   if (hasIct) facilitiesList.push('Computer ICT Lab');
@@ -154,7 +254,8 @@ export function buildAuthenticFaqs(props: AuthenticFaqProps): SchoolFaqItem[] {
   }
 
   // 10. Dedicated Playground (Strictly from UDISE)
-  const hasPlayground = (props.playgroundAvailable || '').toLowerCase().includes('yes');
+  const strPlayground = String(props.playgroundAvailable ?? '').toLowerCase();
+  const hasPlayground = strPlayground === 'true' || strPlayground.includes('yes') || strPlayground.includes('avail') || strPlayground === '1';
   if (hasPlayground) {
     faqs.push({
       id: 'faq-playground',
@@ -172,6 +273,7 @@ export interface SchoolFaqSectionProps extends AuthenticFaqProps {
   className?: string;
   title?: string;
   subtitle?: string;
+  isEditMode?: boolean;
 }
 
 export default function SchoolFaqSection({
@@ -179,6 +281,7 @@ export default function SchoolFaqSection({
   className = '',
   title = 'Frequently Asked Questions',
   subtitle = 'Authentic questions and verified information derived directly from official government records.',
+  isEditMode: propIsEditMode,
   schoolName,
   board,
   udiseCode,
@@ -201,7 +304,7 @@ export default function SchoolFaqSection({
   playgroundAvailable,
 }: SchoolFaqSectionProps) {
   const ctx = useOptionalSchoolTemplate();
-  const isEditMode = ctx?.isEditMode ?? false;
+  const isEditMode = propIsEditMode !== undefined ? propIsEditMode : (ctx?.isEditMode ?? false);
 
   // Build authentic FAQs strictly from current real UDISE data
   const defaultUdiseFaqs = React.useMemo(() => {
@@ -252,12 +355,13 @@ export default function SchoolFaqSection({
   ]);
 
   // Use school's custom saved FAQs if present, otherwise fall back to authentic UDISE data (capped to 5 concise questions)
+  const MAX_FAQS_LIMIT = 10;
   const rawFaqs: SchoolFaqItem[] =
     ctx?.data?.faqs && ctx.data.faqs.length > 0
       ? ctx.data.faqs
       : defaultUdiseFaqs;
 
-  const faqs: SchoolFaqItem[] = isEditMode ? rawFaqs : rawFaqs.slice(0, 5);
+  const faqs: SchoolFaqItem[] = rawFaqs.slice(0, MAX_FAQS_LIMIT);
 
   // Track which FAQ items are open (accordion)
   const [openFaqIds, setOpenFaqIds] = useState<Record<string, boolean>>(() => {
@@ -288,35 +392,25 @@ export default function SchoolFaqSection({
     return item.category?.toLowerCase() === activeCategory.toLowerCase();
   });
 
-  // Edit Mode actions (School khud add/edit/delete karegi)
+  // Edit Mode actions (School khud add/edit/delete karegi - Max 10 Limit)
   const handleAddFaq = () => {
     if (!ctx?.addFaq) return;
+    if (rawFaqs.length >= MAX_FAQS_LIMIT) {
+      alert('Maximum 10 FAQ questions allowed.');
+      return;
+    }
     const newId = `faq-${Date.now().toString(36)}`;
     ctx.addFaq({
       q: 'Write parent or student query here?',
       a: 'Provide clear, authentic institutional information.',
       category: activeCategory !== 'All' ? activeCategory : 'General',
-    });
+    }, rawFaqs);
     setOpenFaqIds((prev) => ({ ...prev, [newId]: true }));
   };
 
   const handleDeleteFaq = (faqId: string) => {
     if (!ctx?.deleteFaq) return;
-    ctx.deleteFaq(faqId);
-  };
-
-  // 1-Click AI Auto-Generate FAQs from School Profile
-  const handleAiGenerateFaqs = () => {
-    if (!ctx) return;
-    defaultUdiseFaqs.forEach((item) => {
-      if (ctx.addFaq) {
-        ctx.addFaq({
-          q: item.q,
-          a: item.a,
-          category: item.category,
-        });
-      }
-    });
+    ctx.deleteFaq(faqId, rawFaqs);
   };
 
   if (faqs.length === 0 && !isEditMode) {
@@ -349,126 +443,103 @@ export default function SchoolFaqSection({
           </h2>
         </div>
 
-        {/* Compact App-Style FAQ Accordion List (Max 5 Questions) */}
-        <div className="space-y-1.5 sm:space-y-2">
-          {filteredFaqs.map((faq, idx) => {
-            const isOpen = !!openFaqIds[faq.id];
-
-            return (
-              <div
+        {/* FAQ List: Full-Width Editing Cards in Edit Mode, Interactive Accordions for Visitors */}
+        {isEditMode ? (
+          <div className="space-y-3.5">
+            {filteredFaqs.map((faq, idx) => (
+              <FaqEditCard
                 key={faq.id || idx}
-                className={`rounded-xl border transition-all duration-150 overflow-hidden ${
-                  isOpen
-                    ? 'bg-white border-[#006FCC]/45 shadow-xs'
-                    : 'bg-white border-[#E8EAED] hover:border-[#006FCC]/35'
-                }`}
-              >
-                {/* Accordion Header */}
+                faq={faq}
+                idx={idx}
+                onSave={(newQ, newA) => {
+                  if (!ctx?.updateFaq) return;
+                  ctx.updateFaq(faq.id, { q: newQ, a: newA }, rawFaqs);
+                }}
+                onDelete={() => handleDeleteFaq(faq.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-1.5 sm:space-y-2">
+            {filteredFaqs.map((faq, idx) => {
+              const isOpen = !!openFaqIds[faq.id];
+
+              return (
                 <div
-                  onClick={() => toggleFaq(faq.id)}
-                  className="w-full flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3 text-left cursor-pointer select-none group"
+                  key={faq.id || idx}
+                  className={`rounded-xl border transition-all duration-150 overflow-hidden ${
+                    isOpen
+                      ? 'bg-white border-[#006FCC]/45 shadow-xs'
+                      : 'bg-white border-[#E8EAED] hover:border-[#006FCC]/35'
+                  }`}
                 >
-                  <div className="flex items-center gap-2.5 pr-2 flex-1 min-w-0">
-                    <div
-                      className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors border ${
-                        isOpen 
-                          ? 'bg-[#006FCC] text-white border-[#006FCC]' 
-                          : 'bg-[#EDF5FA] text-[#006FCC] border-[#D0E4F5] group-hover:bg-[#006FCC] group-hover:text-white'
-                      }`}
-                    >
-                      <HelpCircle className="w-3.5 h-3.5" />
+                  {/* Accordion Header */}
+                  <div
+                    onClick={() => toggleFaq(faq.id)}
+                    className="w-full flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3 text-left cursor-pointer select-none group"
+                  >
+                    <div className="flex items-center gap-2.5 pr-2 flex-1 min-w-0">
+                      <div
+                        className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 transition-colors border ${
+                          isOpen 
+                            ? 'bg-[#006FCC] text-white border-[#006FCC]' 
+                            : 'bg-[#EDF5FA] text-[#006FCC] border-[#D0E4F5] group-hover:bg-[#006FCC] group-hover:text-white'
+                        }`}
+                      >
+                        <HelpCircle className="w-3.5 h-3.5" />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13.5px] sm:text-[14.5px] font-normal text-[#3C4043] group-hover:text-[#006FCC] transition-colors leading-snug">
+                          <span>{faq.q}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[13.5px] sm:text-[14.5px] font-normal text-[#3C4043] group-hover:text-[#006FCC] transition-colors leading-snug">
-                        {isEditMode ? (
-                          <EditableText
-                            contentKey={`faq_q_${faq.id}`}
-                            value={faq.q}
-                            maxLength={120}
-                            placeholder="Enter question..."
-                            className="inline-block"
-                          />
-                        ) : (
-                          <span>{faq.q}</span>
-                        )}
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-200 ${
+                          isOpen 
+                            ? 'rotate-180 bg-[#EDF5FA] text-[#006FCC]' 
+                            : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                        }`}
+                      >
+                        <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    {isEditMode && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteFaq(faq.id);
-                        }}
-                        className="p-1 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                        title="Delete question"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-200 ${
-                        isOpen 
-                          ? 'rotate-180 bg-[#EDF5FA] text-[#006FCC]' 
-                          : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
-                      }`}
-                    >
-                      <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Accordion Answer Content */}
-                {isOpen && (
-                  <div className="px-3 sm:px-4 pb-3 pt-0 border-t border-slate-100">
-                    <div className="pl-8.5 pt-2 !text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#3C4043] !leading-[1.68] font-normal">
-                      {isEditMode ? (
-                        <EditableText
-                          contentKey={`faq_a_${faq.id}`}
-                          value={faq.a}
-                          multiline
-                          rows={3}
-                          maxLength={350}
-                          placeholder="Enter clear, authentic answer..."
-                          className="inline-block"
-                        />
-                      ) : (
+                  {/* Accordion Answer Content */}
+                  {isOpen && (
+                    <div className="px-3 sm:px-4 pb-3 pt-0 border-t border-slate-100">
+                      <div className="pl-8.5 pt-2 !text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] text-[#3C4043] !leading-[1.68] font-normal">
                         <p className="m-0 !text-[15px] font-['Lato',var(--font-roboto),Roboto,sans-serif] !text-[#3C4043] !leading-[1.68] font-normal">{faq.a}</p>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-        {/* Edit Mode Actions (School Khud Dalega ya AI Likhega) */}
+        {/* Edit Mode Actions (School Manual FAQ Management - Max 10 Questions) */}
         {isEditMode && (
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={handleAddFaq}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#005689] text-white hover:bg-[#003c6e] font-bold text-xs shadow-xs transition cursor-pointer active:scale-95"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add Custom FAQ Question</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleAiGenerateFaqs}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 font-bold text-xs transition cursor-pointer active:scale-95"
-              title="Populate questions from verified school UDISE records"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-              <span>AI Generate from UDISE Profile</span>
-            </button>
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            {rawFaqs.length < MAX_FAQS_LIMIT ? (
+              <button
+                type="button"
+                onClick={handleAddFaq}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#005689] text-white hover:bg-[#003c6e] font-bold text-xs shadow-xs transition cursor-pointer active:scale-95"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Custom FAQ Question ({rawFaqs.length}/{MAX_FAQS_LIMIT})</span>
+              </button>
+            ) : (
+              <div className="px-4 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
+                Maximum limit of 10 FAQ questions reached ({rawFaqs.length}/{MAX_FAQS_LIMIT})
+              </div>
+            )}
           </div>
         )}
 

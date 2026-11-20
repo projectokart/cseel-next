@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Metadata } from 'next';
 import {
   schoolSearchSupabase,
@@ -545,28 +545,26 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
   const stateSlug = encodeURIComponent(rawState.toLowerCase().replace(/ /g, '-'));
   const distSlug = encodeURIComponent(rawDistrict.toLowerCase().replace(/ /g, '-'));
 
-  // 1. Clean SEO URL Normalization: Remove /campus/ and legacy 4-segment paths with permanent 301 redirect
+  // 1. Clean SEO URL Normalization: Remove legacy prefix segments (/campus/, /main/, /village/)
   if (slugArray.length >= 2) {
     const firstSeg = slugArray[0].toLowerCase();
-    const lastSeg = slugArray[slugArray.length - 1];
-
     if (firstSeg === 'campus' || firstSeg === 'main' || firstSeg === 'village') {
-      redirect(`/school/${stateSlug}/${distSlug}/${encodeURIComponent(slugArray[1])}`);
-    } else if (/^\d+$/.test(firstSeg)) {
-      redirect(`/school/${stateSlug}/${distSlug}/${encodeURIComponent(slugArray[1])}-${encodeURIComponent(firstSeg)}`);
-    } else {
-      redirect(`/school/${stateSlug}/${distSlug}/${encodeURIComponent(lastSeg)}`);
+      redirect(`/edu-network/school/${stateSlug}/${distSlug}/${slugArray.slice(1).map(encodeURIComponent).join('/')}`);
     }
   }
 
-  const rawSlug = decodeURIComponent(slugArray[0] || 'school');
+  // Extract clean slug and UDISE from slugArray (supports [udise, name-slug] or [name-slug])
+  const lastSeg = slugArray[slugArray.length - 1];
+  const firstSeg = slugArray[0];
+  const rawSlug = decodeURIComponent(lastSeg || 'school');
   const cleanSlug = rawSlug.replace(/\.html$/i, '');
   const fallbackSchoolName = cleanSlug.replace(/[-_]/g, ' ');
+  const detectedUdise = /^\d+$/.test(firstSeg) ? firstSeg : (cleanDigits || '');
 
   // Format variables strictly from Supabase record or template mode
   const isTemplate = cleanSlug === 'template' || cleanSlug === 'school-template';
   const rawCleanCode = (cleanSlug || '').replace(/\.html$/i, '').trim();
-  const preliminaryUdise = cleanDigits || rawCleanCode;
+  const preliminaryUdise = detectedUdise || cleanDigits || rawCleanCode;
   const canonicalUdise = preliminaryUdise.length === 10 ? '0' + preliminaryUdise : preliminaryUdise;
 
   // 1. Fetch main school record (resolved in ~0ms from in-memory cache)
@@ -611,7 +609,7 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
       if (nameSlug && nameSlug !== cleanSlug) {
         const stateSlug = encodeURIComponent(rawState.toLowerCase().replace(/ /g, '-'));
         const distSlug = encodeURIComponent(rawDistrict.toLowerCase().replace(/ /g, '-'));
-        redirect(`/school/${stateSlug}/${distSlug}/${nameSlug}-${cleanSlug}`);
+        redirect(`/edu-network/school/${stateSlug}/${distSlug}/${cleanSlug}/${nameSlug}`);
       }
     }
   }
@@ -620,56 +618,71 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
 
   let dbProfileJson: any = null;
   if (profRow) {
-        const rawProfile = typeof profRow.profile_data === 'string' ? JSON.parse(profRow.profile_data) : (profRow.profile_data || {});
-        // Priority: dedicated section columns override profile_data
-        dbProfileJson = {
-          ...rawProfile,
-          ...(profRow.basic_info && Object.keys(profRow.basic_info).length > 0 ? { basic_info: profRow.basic_info } : {}),
-          ...(profRow.hero && Object.keys(profRow.hero).length > 0 ? { hero: profRow.hero, ...profRow.hero } : {}),
-          ...(profRow.stats && Object.keys(profRow.stats).length > 0 ? { stats: profRow.stats, ...profRow.stats } : {}),
-          ...(profRow.about && Object.keys(profRow.about).length > 0 ? { about: profRow.about, ...profRow.about } : {}),
-          ...(profRow.principal && Object.keys(profRow.principal).length > 0 ? { principal: profRow.principal } : {}),
-          ...(profRow.management && Object.keys(profRow.management).length > 0 ? { management: profRow.management } : {}),
-          ...(profRow.academics && Object.keys(profRow.academics).length > 0 ? { academics: profRow.academics } : {}),
-          ...(profRow.results && Object.keys(profRow.results).length > 0 ? { results: profRow.results } : {}),
-          ...(profRow.facilities && (Array.isArray(profRow.facilities) ? profRow.facilities.length > 0 : Object.keys(profRow.facilities).length > 0)
-            ? {
-                facilities: Array.isArray(profRow.facilities)
-                  ? profRow.facilities
-                  : Array.isArray(profRow.facilities.facilities_list)
-                  ? profRow.facilities.facilities_list
-                  : rawProfile.facilities || [],
-                facilitiesMeta: !Array.isArray(profRow.facilities) ? profRow.facilities : undefined,
-              }
-            : {}),
-          ...(profRow.gallery && (Array.isArray(profRow.gallery) ? profRow.gallery.length > 0 : Object.keys(profRow.gallery).length > 0)
-            ? {
-                gallery: profRow.gallery,
-                galleryItems: Array.isArray(profRow.gallery)
-                  ? profRow.gallery
-                  : Array.isArray(profRow.gallery.gallery_items)
-                  ? profRow.gallery.gallery_items
-                  : rawProfile.galleryItems,
-              }
-            : {}),
-          ...(profRow.fees && Object.keys(profRow.fees).length > 0 ? { fees: profRow.fees } : {}),
-          ...(profRow.admissions && Object.keys(profRow.admissions).length > 0 ? { admissions: profRow.admissions } : {}),
-          ...(profRow.faqs && (Array.isArray(profRow.faqs) ? profRow.faqs.length > 0 : Object.keys(profRow.faqs).length > 0)
-            ? {
-                faqs: Array.isArray(profRow.faqs)
-                  ? profRow.faqs
-                  : Array.isArray(profRow.faqs.faq_items)
-                  ? profRow.faqs.faq_items
-                  : rawProfile.faqs || [],
-              }
-            : {}),
-          ...(profRow.contact && Object.keys(profRow.contact).length > 0 ? { contact: profRow.contact } : {}),
-          ...(profRow.careers && Object.keys(profRow.careers).length > 0 ? { careers: profRow.careers } : {}),
-          reviews: Array.isArray(profRow.reviews) && profRow.reviews.length > 0 ? profRow.reviews : (rawProfile.reviews || []),
-          likesCount: typeof profRow.likes_count === 'number' ? profRow.likes_count : (rawProfile.likesCount || 0),
-          sectionVisibility: profRow.section_visibility || rawProfile.sectionVisibility || {},
-        };
-      }
+    const rawProfile = typeof profRow.profile_data === 'string' ? JSON.parse(profRow.profile_data) : (profRow.profile_data || {});
+    const overviewData = (profRow.overview && typeof profRow.overview === 'object' && Object.keys(profRow.overview).length > 0 ? profRow.overview : null) || rawProfile.overview || {};
+    const admissionsData = (profRow.admissions && typeof profRow.admissions === 'object' && Object.keys(profRow.admissions).length > 0 ? profRow.admissions : null) || rawProfile.admissions || {};
+    const resultsData = (profRow.results && typeof profRow.results === 'object' && Object.keys(profRow.results).length > 0 ? profRow.results : null) || rawProfile.results || {};
+
+    // Priority: dedicated 3-tab columns (overview, admissions, results) and filter columns take highest precedence
+    dbProfileJson = {
+      ...rawProfile,
+      ...overviewData,
+      ...admissionsData,
+      ...resultsData,
+      isClaimed: true,
+      is_claimed: true,
+      board: profRow.board || rawProfile.board || overviewData.board,
+      schoolType: profRow.school_type || rawProfile.schoolType,
+      residentialSchool: profRow.residential_type || rawProfile.residential_type,
+      facility_ids: profRow.facility_ids || rawProfile.facility_ids,
+      aboutText: overviewData.aboutText || rawProfile.aboutText || profRow.about?.text || '',
+      visionText: overviewData.vision || rawProfile.vision || '',
+      missionText: overviewData.mission || rawProfile.mission || '',
+      establishedYear: overviewData.establishedYear || rawProfile.establishedYear || '',
+      campusArea: overviewData.campusArea || rawProfile.campusArea || '',
+      feeTableData: admissionsData.feeTable || rawProfile.feeTable || profRow.fees?.fee_table,
+      feeTable: admissionsData.feeTable || rawProfile.feeTable || profRow.fees?.fee_table,
+      feeColumns: admissionsData.feeColumns || rawProfile.feeColumns || undefined,
+      requiredDocuments: admissionsData.requiredDocuments || rawProfile.requiredDocuments || undefined,
+      boardResults: resultsData.boardResults || rawProfile.boardResults || profRow.results?.boardResults,
+      faqs: overviewData.faqs || rawProfile.faqs || profRow.faqs || [],
+      ...(profRow.basic_info && Object.keys(profRow.basic_info).length > 0 ? { basic_info: profRow.basic_info } : {}),
+      ...(profRow.hero && Object.keys(profRow.hero).length > 0 ? { hero: profRow.hero, ...profRow.hero } : {}),
+      ...(profRow.stats && Object.keys(profRow.stats).length > 0 ? { stats: profRow.stats, ...profRow.stats } : {}),
+      ...(profRow.about && Object.keys(profRow.about).length > 0 ? { about: profRow.about, ...profRow.about } : {}),
+      ...(profRow.principal && Object.keys(profRow.principal).length > 0 ? { principal: profRow.principal } : {}),
+      ...(profRow.management && Object.keys(profRow.management).length > 0 ? { management: profRow.management } : {}),
+      ...(profRow.academics && Object.keys(profRow.academics).length > 0 ? { academics: profRow.academics } : {}),
+      ...(profRow.results && Object.keys(profRow.results).length > 0 ? { results: profRow.results } : {}),
+      ...(profRow.facilities && (Array.isArray(profRow.facilities) ? profRow.facilities.length > 0 : Object.keys(profRow.facilities).length > 0)
+        ? {
+            facilities: Array.isArray(profRow.facilities)
+              ? profRow.facilities
+              : Array.isArray(profRow.facilities.facilities_list)
+              ? profRow.facilities.facilities_list
+              : rawProfile.facilities || [],
+            facilitiesMeta: !Array.isArray(profRow.facilities) ? profRow.facilities : undefined,
+          }
+        : {}),
+      ...(profRow.gallery && (Array.isArray(profRow.gallery) ? profRow.gallery.length > 0 : Object.keys(profRow.gallery).length > 0)
+        ? {
+            gallery: profRow.gallery,
+            galleryItems: Array.isArray(profRow.gallery)
+              ? profRow.gallery
+              : Array.isArray(profRow.gallery.gallery_items)
+              ? profRow.gallery.gallery_items
+              : rawProfile.galleryItems,
+          }
+        : {}),
+      ...(profRow.fees && Object.keys(profRow.fees).length > 0 ? { fees: profRow.fees } : {}),
+      ...(profRow.admissions && Object.keys(profRow.admissions).length > 0 ? { admissions: profRow.admissions } : {}),
+      ...(profRow.contact && Object.keys(profRow.contact).length > 0 ? { contact: profRow.contact } : {}),
+      ...(profRow.careers && Object.keys(profRow.careers).length > 0 ? { careers: profRow.careers } : {}),
+      reviews: Array.isArray(profRow.reviews) && profRow.reviews.length > 0 ? profRow.reviews : (rawProfile.reviews || []),
+      likesCount: typeof profRow.likes_count === 'number' ? profRow.likes_count : (rawProfile.likesCount || 0),
+      sectionVisibility: profRow.section_visibility || rawProfile.sectionVisibility || {},
+    };
+  }
 
   // 2. Fetch from local sync tokens store as fallback/base
   const localSyncedData = getSyncedProfileData(schoolData?.udise_code || rawCleanCode || cleanDigits, cleanSlug);
@@ -1121,6 +1134,7 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
           clusterSchools={clusterSchools}
           districtSchools={districtSchools}
           isTemplate={isTemplate}
+          isPublicClaimed={Boolean(profRow || syncedProfileData?.isClaimed)}
           initialProfileData={syncedProfileData}
           residentialSchool={residentialSchool}
           flipbookSlides={(syncedProfileData?.flipbookSlides || []).map((slide: any) => ({

@@ -7,9 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle, ArrowRight, Play, ChevronLeft, ChevronRight, School, GraduationCap, MapPin, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import PageTransition from "@/components/shared/PageTransition";
-import OffersSection from "@/components/offers/OffersSection";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
-import OfferPopup from "@/components/offers/OfferPopup";
 import { useHomepageCms } from "@/features/homepage-cms/hooks/useHomepageCms";
 import { 
   AdminVisualEditorBar, 
@@ -695,17 +693,7 @@ const Index = () => {
           </section>
         </SectionVisualWrapper>
 
-        {/* ─── Ad/Offer Slot #1: slot_after_hero ─── */}
-        <SectionVisualWrapper
-          sectionId="special_offers"
-          sectionName="Special Offers & Events Cards (slot_after_hero)"
-          isEditMode={isEditMode}
-          enabled={isSectionEnabled('special_offers')}
-          onToggleVisibility={() => toggleSection('special_offers')}
-          onOpenEdit={() => handleOpenEditSection('special_offers')}
-        >
-          <OffersSection slotId="slot_after_hero" />
-        </SectionVisualWrapper>
+
         {/* ─── Stats ─── */}
         <section id="cseel-research-backed-stats-section" aria-label="Why Hands-On Science Works" className="cseel-stats-section py-16 bg-slate-50/70 border-y border-slate-200/80">
           <div className="container mx-auto px-4">
@@ -730,8 +718,7 @@ const Index = () => {
           </div>
         </section>
 
-      {/* ─── Ad/Offer Slot #2: slot_after_stats ─── */}
-      <OffersSection slotId="slot_after_stats" />
+
 
       {/* ─── Trusted Schools Marquee Strip (logo + name together) ─── */}
       <SectionVisualWrapper
@@ -793,8 +780,7 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
-      {/* ─── Ad/Offer Slot #3: slot_after_partners ─── */}
-      <OffersSection slotId="slot_after_partners" />
+
 
       {/* ─── Key Metrics ─── */}
       <SectionVisualWrapper
@@ -845,8 +831,7 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
-      {/* ─── Ad/Offer Slot #4: slot_after_metrics ─── */}
-      <OffersSection slotId="slot_after_metrics" />
+
 
       {/* ─── Feature Rows ─── */}
       <SectionVisualWrapper
@@ -994,8 +979,7 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
-      {/* ─── Ad/Offer Slot #5: slot_after_outcomes ─── */}
-      <OffersSection slotId="slot_after_outcomes" />
+
 
       {/* ─── Subjects & Disciplines — 3 Domain Cards ─── */}
       <SectionVisualWrapper
@@ -1086,9 +1070,6 @@ const Index = () => {
         </section>
       </SectionVisualWrapper>
 
-      {/* ─── Ad/Offer Slot #6: slot_after_catalog ─── */}
-      <OffersSection slotId="slot_after_catalog" />
-
       {/* ─── Testimonial ─── */}
       <SectionVisualWrapper
         sectionId="testimonials"
@@ -1100,9 +1081,6 @@ const Index = () => {
       >
         <TestimonialSection />
       </SectionVisualWrapper>
-
-      {/* ─── Ad/Offer Slot #7: slot_after_testimonials ─── */}
-      <OffersSection slotId="slot_after_testimonials" />
 
       {/* ─── Awards ─── */}
       <SectionVisualWrapper
@@ -1127,9 +1105,6 @@ const Index = () => {
       >
         <EasySection />
       </SectionVisualWrapper>
-
-      {/* ─── Ad/Offer Slot #8: slot_before_footer ─── */}
-      <OffersSection slotId="slot_before_footer" />
 
       {/* ─── Final CTA ─── */}
       <SectionVisualWrapper

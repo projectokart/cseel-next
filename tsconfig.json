@@ -45,6 +45,7 @@
   "exclude": [
     "node_modules",
     ".next",
-    "archive_assets"
+    "archive_assets",
+    "archived_unused_pages"
   ]
 }

@@ -35,7 +35,7 @@ export default function EditableIcon({
     setMounted(true);
   }, []);
 
-  const categories = ['All', 'Labs & Tech', 'Academics & Arts', 'Sports & Fitness', 'Campus Safety & Security', 'Campus Infrastructure'];
+  const categories = ['All', 'Boards', 'Labs & Tech', 'Academics & Arts', 'Sports & Fitness', 'Campus Safety & Security', 'Campus Infrastructure'];
 
   const filteredIcons = SCHOOL_ICONS_COLLECTION.filter((item) => {
     if (selectedCategory === 'All') return true;

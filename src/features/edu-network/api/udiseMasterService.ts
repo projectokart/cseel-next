@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ukazkxthavxphibdbspd.supabase.co';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrYXprenRoYXZ4cGhpYmRic3BkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzc4ODUsImV4cCI6MjA4NzcxMzg4NX0.h4zZ4yWfVndY3m94cM569x07R2mU_R0t8qN63x03Z28';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vvdnsmrtockscarkybtf.supabase.co';
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export interface UdiseMasterRecord {
   id: string;

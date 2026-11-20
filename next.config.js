@@ -102,7 +102,11 @@ const nextConfig = {
       { source: '/settings', destination: '/user/settings', permanent: true },
       { source: '/searchschool', destination: '/school-finder', permanent: true },
       { source: '/schoolsearch', destination: '/school-finder', permanent: true },
-      { source: '/school-search', destination: '/school-finder', permanent: true },
+      { source: '/school-search', destination: '/edu-network', permanent: true },
+      { source: '/school-finder', destination: '/edu-network', permanent: true },
+      { source: '/schools', destination: '/edu-network', permanent: true },
+      { source: '/school/:path*', destination: '/edu-network/school/:path*', permanent: true },
+      { source: '/school-template', destination: '/edu-network/school-template', permanent: true },
       { source: '/projectokart', destination: 'https://projectokart.com', permanent: true },
       { source: '/projectocart', destination: 'https://projectokart.com', permanent: true },
       { source: '/subject', destination: '/domain/science', permanent: false },
@@ -111,14 +115,12 @@ const nextConfig = {
       { source: '/about-experiential-lab', destination: '/about', permanent: true },
       { source: '/match-your-syllabus', destination: '/materials', permanent: true },
       { source: '/composite-skill-lab', destination: '/composite-lab', permanent: true },
-      { source: '/edu-network', destination: '/schools', permanent: true },
-      { source: '/edu-network/schools', destination: '/schools', permanent: true },
-      { source: '/edu-network/schools/:slug*', destination: '/schools', permanent: true },
-      { source: '/edu-network/school/:slug*', destination: '/schools', permanent: true },
-      { source: '/edu-network/organisation/:slug*', destination: '/schools', permanent: true },
+      { source: '/edu-network/all-schools', destination: '/edu-network/all-india', permanent: true },
       { source: '/edu-network/jobs', destination: '/edu-network/jobs/manage', permanent: false },
       { source: '/edu-network/teacher-jobs', destination: '/careers', permanent: true },
       { source: '/makerspace/curriculam', destination: '/makerspace/curriculum', permanent: false },
+      { source: '/under-construction', destination: '/', permanent: false },
+      { source: '/demo', destination: '/', permanent: false },
     ];
   },
   async rewrites() {
@@ -165,6 +167,32 @@ const nextConfig = {
             key: 'Cache-Control',
             value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=2592000',
           },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'max-age=604800',
+          },
+          {
+            key: 'Cloudflare-CDN-Cache-Control',
+            value: 'max-age=604800',
+          },
+        ],
+      },
+      {
+        source: '/edu-network/school/:path*',
+        headers: [
+          ...securityHeaders,
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=2592000',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'max-age=604800',
+          },
+          {
+            key: 'Cloudflare-CDN-Cache-Control',
+            value: 'max-age=604800',
+          },
         ],
       },
       {
@@ -174,6 +202,14 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
+          },
+          {
+            key: 'CDN-Cache-Control',
+            value: 'max-age=86400',
+          },
+          {
+            key: 'Cloudflare-CDN-Cache-Control',
+            value: 'max-age=86400',
           },
         ],
       },

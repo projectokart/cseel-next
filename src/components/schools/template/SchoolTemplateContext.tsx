@@ -140,6 +140,11 @@ export interface SchoolTemplateState {
   schoolCategory: string;
   establishedYear: string;
   campusArea?: string;
+  latitude?: number;
+  longitude?: number;
+  lat?: number;
+  lng?: number;
+  locality?: string;
   phone: string;
   email: string;
   website: string;
@@ -339,9 +344,9 @@ interface SchoolTemplateContextType {
   addAwardCard: (card: Omit<AwardItem, 'id'>) => void;
   updateAwardCard: (id: string, card: Partial<AwardItem>) => void;
   deleteAwardCard: (id: string) => void;
-  addFaq?: (faq: Omit<SchoolFaqItem, 'id'>) => void;
-  updateFaq?: (id: string, faq: Partial<SchoolFaqItem>) => void;
-  deleteFaq?: (id: string) => void;
+  addFaq?: (faq: Omit<SchoolFaqItem, 'id'>, fallbackList?: SchoolFaqItem[]) => void;
+  updateFaq?: (id: string, faq: Partial<SchoolFaqItem>, fallbackList?: SchoolFaqItem[]) => void;
+  deleteFaq?: (id: string, fallbackList?: SchoolFaqItem[]) => void;
   resetToDefault: () => void;
   publishToSupabase: () => Promise<{ success: boolean; message: string; recordId?: string }>;
   importSchoolDataFromJson: (rawJson: any) => { success: boolean; message: string; summary?: ImportSummary };
@@ -381,7 +386,24 @@ export function SchoolTemplateProvider({
       ...(initialData?.tabVisibility || {}),
     },
   }));
-  const [isEditMode, setIsEditMode] = useState<boolean>(initialEditMode && canEdit);
+  const [isEditMode, setIsEditMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('edit') === 'true' || window.location.hash === '#edit' || localStorage.getItem('cseel_edit_mode') === 'true') {
+        return true;
+      }
+    }
+    return Boolean(initialEditMode && canEdit);
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('edit') === 'true' || window.location.hash === '#edit' || localStorage.getItem('cseel_edit_mode') === 'true') {
+        setIsEditMode(true);
+      }
+    }
+  }, []);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [isUdiseLoading, setIsUdiseLoading] = useState<boolean>(false);
@@ -404,7 +426,32 @@ export function SchoolTemplateProvider({
   useEffect(() => {
     try {
       if (initialData && Object.keys(initialData).length > 0) {
-        setData((prev) => ({ ...prev, ...initialData }));
+        let baseState: SchoolTemplateState = { ...DEFAULT_TEMPLATE_DATA, ...(initialData as any) };
+        // Overlay active localStorage draft for this school if present
+        if (typeof window !== 'undefined') {
+          const udiseMatch = initialData.udiseCode || window.location.pathname.match(/(\d{11})/)?.[1];
+          const draftKey = udiseMatch ? `cseel_school_draft_${udiseMatch}` : LOCAL_STORAGE_KEY;
+          const saved = localStorage.getItem(draftKey);
+          if (saved) {
+            try {
+              const parsed = JSON.parse(saved);
+              baseState = {
+                ...baseState,
+                ...parsed,
+                contentOverrides: { ...(baseState.contentOverrides || {}), ...(parsed.contentOverrides || {}) },
+                imageOverrides: { ...(baseState.imageOverrides || {}), ...(parsed.imageOverrides || {}) },
+                iconOverrides: { ...(baseState.iconOverrides || {}), ...(parsed.iconOverrides || {}) },
+                tabVisibility: { ...(baseState.tabVisibility || {}), ...(parsed.tabVisibility || {}) },
+                facilities: Array.isArray(parsed.facilities) && parsed.facilities.length > 0 ? parsed.facilities : baseState.facilities,
+                admissions: Array.isArray(parsed.admissions) && parsed.admissions.length > 0 ? parsed.admissions : baseState.admissions,
+              };
+              setLastSavedAt('Restored from LocalStorage draft');
+            } catch (err) {
+              console.warn('Failed to parse draft from localStorage:', err);
+            }
+          }
+        }
+        setData(baseState);
         setIsHydrated(true);
         return;
       }
@@ -413,10 +460,52 @@ export function SchoolTemplateProvider({
         const params = new URLSearchParams(window.location.search);
         const urlToken = params.get('token');
         const urlUdise = params.get('udise');
+        const isNew = params.get('new') === 'true';
 
-        if (urlToken || urlUdise) {
-          const fetchToken = urlToken || `csl_ai_magic_${urlUdise}`;
-          const extractedUdise = (urlUdise || (urlToken ? (urlToken.match(/\d{11}/)?.[0] || '') : '')).replace(/\D/g, '');
+        if (isNew) {
+          try {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+          } catch (_) {}
+          setData(DEFAULT_TEMPLATE_DATA);
+          setIsHydrated(true);
+          return;
+        }
+
+        // Direct UDISE Pre-fill Flow
+        if (urlUdise) {
+          const cleanUdise = urlUdise.replace(/\D/g, '');
+          if (cleanUdise.length === 11) {
+            fetch(`/api/udise/standard-profile?code=${cleanUdise}`)
+              .then((r) => r.json())
+              .then((res) => {
+                if (res && res.success && (res.data || res.heroSection)) {
+                  const parsed = parseSchoolJsonToState(res.data || res, DEFAULT_TEMPLATE_DATA);
+                  if (parsed.success && parsed.state) {
+                    setData(parsed.state);
+                    try {
+                      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed.state));
+                    } catch (_) {}
+                    setNotification({
+                      type: 'success',
+                      message: `✨ Loaded official verified UDISE data for "${parsed.state.schoolName}" (${cleanUdise})!`,
+                    });
+                    return;
+                  }
+                }
+              })
+              .catch((err) => {
+                console.error('Failed to load standard UDISE profile:', err);
+              })
+              .finally(() => {
+                setIsHydrated(true);
+              });
+            return;
+          }
+        }
+
+        if (urlToken) {
+          const fetchToken = urlToken;
+          const extractedUdise = (urlToken.match(/\d{11}/)?.[0] || '').replace(/\D/g, '');
 
           fetch(`/api/school-ai-sync?token=${encodeURIComponent(fetchToken)}`)
             .then((r) => r.json())
@@ -439,31 +528,20 @@ export function SchoolTemplateProvider({
               // Multi-layer fallback: If profileData not ready, query direct Government UDISE lookup
               if (extractedUdise && extractedUdise.length === 11) {
                 try {
-                  const uRes = await fetch(`/api/udise/lookup?code=${extractedUdise}`);
+                  const uRes = await fetch(`/api/udise/standard-profile?code=${extractedUdise}`);
                   const uData = await uRes.json();
-                  if (uData.success && uData.school) {
-                    const sch = uData.school;
-                    setData((prev) => {
-                      const updated = {
-                        ...prev,
-                        udiseCode: extractedUdise,
-                        schoolName: sch.schoolName || prev.schoolName,
-                        state: sch.state || prev.state,
-                        district: sch.district || prev.district,
-                        pincode: sch.pincode || prev.pincode,
-                        address: sch.address || `${sch.district}, ${sch.state} - ${sch.pincode}`,
-                        classFrom: sch.classFrom || prev.classFrom,
-                        classTo: sch.classTo || prev.classTo,
-                      };
+                  if (uData.success && (uData.data || uData.heroSection)) {
+                    const parsed = parseSchoolJsonToState(uData.data || uData, DEFAULT_TEMPLATE_DATA);
+                    if (parsed.success && parsed.state) {
+                      setData(parsed.state);
                       try {
-                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed.state));
                       } catch (_) {}
-                      return updated;
-                    });
-                    setNotification({
-                      type: 'success',
-                      message: `✨ Loaded verified institutional data for "${sch.schoolName}" (UDISE: ${extractedUdise})!`,
-                    });
+                      setNotification({
+                        type: 'success',
+                        message: `✨ Loaded verified institutional data for "${parsed.state.schoolName}" (UDISE: ${extractedUdise})!`,
+                      });
+                    }
                   }
                 } catch {}
               }
@@ -472,21 +550,13 @@ export function SchoolTemplateProvider({
               console.warn('Failed to auto-sync from token, attempting direct UDISE lookup:', err);
               if (extractedUdise && extractedUdise.length === 11) {
                 try {
-                  const uRes = await fetch(`/api/udise/lookup?code=${extractedUdise}`);
+                  const uRes = await fetch(`/api/udise/standard-profile?code=${extractedUdise}`);
                   const uData = await uRes.json();
-                  if (uData.success && uData.school) {
-                    const sch = uData.school;
-                    setData((prev) => ({
-                      ...prev,
-                      udiseCode: extractedUdise,
-                      schoolName: sch.schoolName || prev.schoolName,
-                      state: sch.state || prev.state,
-                      district: sch.district || prev.district,
-                      pincode: sch.pincode || prev.pincode,
-                      address: sch.address || `${sch.district}, ${sch.state} - ${sch.pincode}`,
-                      classFrom: sch.classFrom || prev.classFrom,
-                      classTo: sch.classTo || prev.classTo,
-                    }));
+                  if (uData.success && (uData.data || uData.heroSection)) {
+                    const parsed = parseSchoolJsonToState(uData.data || uData, DEFAULT_TEMPLATE_DATA);
+                    if (parsed.success && parsed.state) {
+                      setData(parsed.state);
+                    }
                   }
                 } catch {}
               }
@@ -496,27 +566,28 @@ export function SchoolTemplateProvider({
         }
       }
 
-      // Only restore localStorage draft if explicitly in offline /template mode without initialData
-      const isPureTemplateRoute = typeof window !== 'undefined' && window.location.pathname.includes('/template');
-      if (isPureTemplateRoute) {
-        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      // Restore draft from localStorage for this school if present (user draft before publishing)
+      if (typeof window !== 'undefined') {
+        const udiseMatch = window.location.pathname.match(/(\d{11})/)?.[1];
+        const draftKey = udiseMatch ? `cseel_school_draft_${udiseMatch}` : LOCAL_STORAGE_KEY;
+        const saved = localStorage.getItem(draftKey) || localStorage.getItem(LOCAL_STORAGE_KEY);
         if (saved) {
-          const parsed = JSON.parse(saved);
-          setData((prev) => ({
-            ...prev,
-            ...parsed,
-            tabVisibility: { ...prev.tabVisibility, ...(parsed.tabVisibility || {}) },
-            facilities: Array.isArray(parsed.facilities) ? parsed.facilities : [],
-            admissions: Array.isArray(parsed.admissions) ? parsed.admissions : [],
-          }));
-          setLastSavedAt('Loaded from local storage');
-        }
-      } else {
-        // Clear any old leftover local cache from past sessions
-        if (typeof window !== 'undefined') {
           try {
-            localStorage.removeItem(LOCAL_STORAGE_KEY);
-          } catch (_) {}
+            const parsed = JSON.parse(saved);
+            setData((prev) => ({
+              ...prev,
+              ...parsed,
+              contentOverrides: { ...(prev.contentOverrides || {}), ...(parsed.contentOverrides || {}) },
+              imageOverrides: { ...(prev.imageOverrides || {}), ...(parsed.imageOverrides || {}) },
+              iconOverrides: { ...(prev.iconOverrides || {}), ...(parsed.iconOverrides || {}) },
+              tabVisibility: { ...(prev.tabVisibility || {}), ...(parsed.tabVisibility || {}) },
+              facilities: Array.isArray(parsed.facilities) && parsed.facilities.length > 0 ? parsed.facilities : prev.facilities,
+              admissions: Array.isArray(parsed.admissions) && parsed.admissions.length > 0 ? parsed.admissions : prev.admissions,
+            }));
+            setLastSavedAt('Restored from LocalStorage draft');
+          } catch (err) {
+            console.warn('Failed to parse draft from localStorage:', err);
+          }
         }
       }
     } catch (e) {
@@ -524,18 +595,25 @@ export function SchoolTemplateProvider({
     } finally {
       setIsHydrated(true);
     }
-  }, []);
+  }, [initialData]);
 
-  // Debounced auto-save to localStorage only when explicitly on /template route
+  // Debounced auto-save to localStorage whenever in edit mode (prevent data loss across refresh)
   useEffect(() => {
     if (!isHydrated) return;
-    const isPureTemplateRoute = typeof window !== 'undefined' && window.location.pathname.includes('/template');
-    if (!isPureTemplateRoute) return; // Do NOT persist live school data to localStorage
+    if (typeof window === 'undefined') return;
+
+    // Persist draft to localStorage for the school
+    const isEditing = isEditMode || window.location.search.includes('edit=true') || window.location.pathname.includes('/template');
+    if (!isEditing) return;
 
     setIsSaving(true);
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+        const udiseMatch = data.udiseCode || window.location.pathname.match(/(\d{11})/)?.[1];
+        const draftKey = udiseMatch ? `cseel_school_draft_${udiseMatch}` : LOCAL_STORAGE_KEY;
+        const serialized = JSON.stringify(data);
+        localStorage.setItem(draftKey, serialized);
+        localStorage.setItem(LOCAL_STORAGE_KEY, serialized);
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         setLastSavedAt(timeStr);
       } catch (err) {
@@ -543,10 +621,10 @@ export function SchoolTemplateProvider({
       } finally {
         setIsSaving(false);
       }
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
-  }, [data, isHydrated]);
+  }, [data, isHydrated, isEditMode]);
 
   const updateField = useCallback(<K extends keyof SchoolTemplateState>(key: K, value: SchoolTemplateState[K]) => {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -557,23 +635,45 @@ export function SchoolTemplateProvider({
   }, []);
 
   const updateContentOverride = useCallback((key: string, value: string) => {
-    setData((prev) => ({
-      ...prev,
-      contentOverrides: {
-        ...(prev.contentOverrides || {}),
-        [key]: value
+    setData((prev) => {
+      const next = {
+        ...prev,
+        contentOverrides: {
+          ...(prev.contentOverrides || {}),
+          [key]: value,
+        },
+      };
+      if (typeof window !== 'undefined') {
+        try {
+          const udiseMatch = next.udiseCode || window.location.pathname.match(/(\d{11})/)?.[1];
+          const draftKey = udiseMatch ? `cseel_school_draft_${udiseMatch}` : LOCAL_STORAGE_KEY;
+          localStorage.setItem(draftKey, JSON.stringify(next));
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(next));
+        } catch (_) {}
       }
-    }));
+      return next;
+    });
   }, []);
 
   const updateImageOverride = useCallback((key: string, url: string) => {
-    setData((prev) => ({
-      ...prev,
-      imageOverrides: {
-        ...(prev.imageOverrides || {}),
-        [key]: url
+    setData((prev) => {
+      const next = {
+        ...prev,
+        imageOverrides: {
+          ...(prev.imageOverrides || {}),
+          [key]: url,
+        },
+      };
+      if (typeof window !== 'undefined') {
+        try {
+          const udiseMatch = next.udiseCode || window.location.pathname.match(/(\d{11})/)?.[1];
+          const draftKey = udiseMatch ? `cseel_school_draft_${udiseMatch}` : LOCAL_STORAGE_KEY;
+          localStorage.setItem(draftKey, JSON.stringify(next));
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(next));
+        } catch (_) {}
       }
-    }));
+      return next;
+    });
   }, []);
 
   const updateIconOverride = useCallback((key: string, iconName: string) => {
@@ -995,29 +1095,38 @@ export function SchoolTemplateProvider({
     }));
   }, []);
 
-  const addFaq = useCallback((faq: Omit<SchoolFaqItem, 'id'>) => {
+  const addFaq = useCallback((faq: Omit<SchoolFaqItem, 'id'>, fallbackList?: SchoolFaqItem[]) => {
     const newFaq: SchoolFaqItem = {
       ...faq,
       id: `faq-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
     };
-    setData((prev) => ({
-      ...prev,
-      faqs: [...(prev.faqs || []), newFaq],
-    }));
+    setData((prev) => {
+      const base = prev.faqs && prev.faqs.length > 0 ? prev.faqs : (fallbackList || []);
+      return {
+        ...prev,
+        faqs: [...base, newFaq],
+      };
+    });
   }, []);
 
-  const updateFaq = useCallback((id: string, card: Partial<SchoolFaqItem>) => {
-    setData((prev) => ({
-      ...prev,
-      faqs: (prev.faqs || []).map((f) => (f.id === id ? { ...f, ...card } : f)),
-    }));
+  const updateFaq = useCallback((id: string, card: Partial<SchoolFaqItem>, fallbackList?: SchoolFaqItem[]) => {
+    setData((prev) => {
+      const base = prev.faqs && prev.faqs.length > 0 ? prev.faqs : (fallbackList || []);
+      return {
+        ...prev,
+        faqs: base.map((f) => (f.id === id ? { ...f, ...card } : f)),
+      };
+    });
   }, []);
 
-  const deleteFaq = useCallback((id: string) => {
-    setData((prev) => ({
-      ...prev,
-      faqs: (prev.faqs || []).filter((f) => f.id !== id),
-    }));
+  const deleteFaq = useCallback((id: string, fallbackList?: SchoolFaqItem[]) => {
+    setData((prev) => {
+      const base = prev.faqs && prev.faqs.length > 0 ? prev.faqs : (fallbackList || []);
+      return {
+        ...prev,
+        faqs: base.filter((f) => f.id !== id),
+      };
+    });
   }, []);
 
   const resetToDefault = useCallback(() => {
@@ -1244,4 +1353,26 @@ export function useSchoolTemplate() {
 
 export function useOptionalSchoolTemplate() {
   return useContext(SchoolTemplateContext);
+}
+
+export function SchoolTemplateSectionScope({
+  isEditModeOverride,
+  children,
+}: {
+  isEditModeOverride?: boolean;
+  children: React.ReactNode;
+}) {
+  const parentCtx = useContext(SchoolTemplateContext);
+  if (!parentCtx || isEditModeOverride === undefined) {
+    return <>{children}</>;
+  }
+  const scopedCtx: SchoolTemplateContextType = {
+    ...parentCtx,
+    isEditMode: isEditModeOverride,
+  };
+  return (
+    <SchoolTemplateContext.Provider value={scopedCtx}>
+      {children}
+    </SchoolTemplateContext.Provider>
+  );
 }

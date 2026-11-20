@@ -1,3 +1,417 @@
 {
-  "tokens": {}
+  "tokens": {
+    "sync_07070399999": {
+      "token": "sync_07070399999",
+      "schoolId": "07070399999",
+      "schoolName": "CSEEL Global Education",
+      "isPermanent": true,
+      "isApproved": true,
+      "status": "approved",
+      "lastUpdatedAt": 1795107887238,
+      "lastUpdatedSource": "Supabase Profile Save (magic_link)",
+      "profileData": {
+        "lat": 28.6219,
+        "lng": 77.0878,
+        "faqs": [
+          {
+            "a": "We integrate regular CBSE curriculum with experiential learning, mandatory daily hands-on robotics, AI, and scientific experimentation in our proprietary composite lab facilities.",
+            "q": "What makes CSEEL Global Education curriculum unique?",
+            "id": "faq-1",
+            "category": "Academics"
+          },
+          {
+            "a": "Admissions are open for Nursery to Class 12th. Parents can apply directly via the CSEEL portal or schedule a campus walkthrough and assessment.",
+            "q": "How does admission at CSEEL Global Education work?",
+            "id": "faq-2",
+            "category": "Admissions"
+          }
+        ],
+        "board": "CBSE",
+        "email": "admissions@cseel.org",
+        "phone": "+91 98765 43210",
+        "state": "Delhi",
+        "medium": "English",
+        "address": "B-1 Block, Janakpuri, New Delhi, Delhi - 110058",
+        "classTo": "Class 12th",
+        "pincode": "110058",
+        "village": "B-1 Janakpuri",
+        "website": "https://www.cseel.org",
+        "district": "West B",
+        "latitude": 28.6219,
+        "locality": "B-1 Block, Janakpuri, New",
+        "aboutText": "CSEEL Global Education is a premier institution affiliated with CBSE, championing experiential pedagogy and state-of-the-art STEM laboratories.",
+        "blockName": "Janakpuri",
+        "classFrom": "Nursery",
+        "hasHostel": false,
+        "heroImage": "/images/default-school-placeholder.png?v=3",
+        "isClaimed": true,
+        "legalName": "CSEEL Global Education Private Limited",
+        "logoImage": "",
+        "longitude": 77.0878,
+        "magicAuth": {
+          "status": "approved",
+          "magicKey": "12345",
+          "isApproved": true,
+          "claimantName": "Devender",
+          "claimantEmail": "ptdevkaushik104@gmail.com"
+        },
+        "totalBoys": 0,
+        "udiseCode": "07070399999",
+        "admissions": [],
+        "awardCards": [],
+        "campusArea": "12.5 Acres",
+        "facilities": [
+          "Composite Science Lab",
+          "Atal Tinkering Lab (ATL)",
+          "Robotics & AI Studio",
+          "Smart Classrooms with Interactive Flat Panels",
+          "High-Speed Campus WiFi",
+          "Semi-Olympic Swimming Pool",
+          "FIFA Standard Football Turf",
+          "Full-Court Basketball & Tennis",
+          "Digital Library & E-Learning Portal",
+          "GPS-Tracked Air-Conditioned Fleet",
+          "Infirmary with Full-time Medical Officer",
+          "Cafeteria with Organic Nutrition",
+          {
+            "id": "fac-1795100825882-6myj",
+            "desc": "",
+            "icon": "https://img.icons8.com/?size=128&id=13203&format=png",
+            "badge": "Academic",
+            "title": "Smart Classes",
+            "points": []
+          },
+          {
+            "id": "fac-1795100826796-961x",
+            "desc": "",
+            "icon": "https://img.icons8.com/?size=128&id=13563&format=png",
+            "badge": "Academic",
+            "title": "AV / Media Room",
+            "points": []
+          },
+          {
+            "id": "fac-1795100827797-5u3y",
+            "desc": "",
+            "icon": "https://img.icons8.com/?size=128&id=14798&format=png",
+            "badge": "Academic",
+            "title": "Career Counseling / Pastoral Care",
+            "points": []
+          },
+          {
+            "id": "fac-1795100828851-yu1c",
+            "desc": "",
+            "icon": "https://img.icons8.com/?size=128&id=12300&format=png",
+            "badge": "Academic",
+            "title": "Library",
+            "points": []
+          },
+          {
+            "id": "fac-1795100829711-gtff",
+            "desc": "",
+            "icon": "https://img.icons8.com/?size=128&id=16951&format=png",
+            "badge": "Academic",
+            "title": "Competitive Exam Coaching",
+            "points": []
+          }
+        ],
+        "genderType": "Co-Educational",
+        "isVerified": true,
+        "management": "Private Unaided",
+        "ruralUrban": "Urban",
+        "schoolName": "CSEEL Global Education",
+        "schoolType": "",
+        "totalGirls": 0,
+        "visionText": "Empowering curious minds to lead global scientific and technological advancements with ethical integrity.",
+        "lastSavedAt": "2026-11-19T17:04:46.430Z",
+        "missionText": "To deliver experiential, holistic, and transdisciplinary education that blends academic mastery with practical inquiry.",
+        "socialLinks": {
+          "twitter": "https://twitter.com/aesdelhi",
+          "youtube": "https://youtube.com/@aesdelhi",
+          "facebook": "https://facebook.com/aesdelhi",
+          "linkedin": "https://linkedin.com/school/aesdelhi"
+        },
+        "boardResults": {
+          "class10Results": [
+            {
+              "year": "2025",
+              "topScore": "99.2%",
+              "passPercentage": "100%",
+              "studentsAppeared": 120
+            },
+            {
+              "year": "2024",
+              "topScore": "98.8%",
+              "passPercentage": "100%",
+              "studentsAppeared": 110
+            }
+          ],
+          "class12Results": [
+            {
+              "year": "2025",
+              "topScore": "99.4%",
+              "streamToppers": "Science: 99.4%, Commerce: 98.6%",
+              "passPercentage": "100%"
+            },
+            {
+              "year": "2024",
+              "topScore": "99.0%",
+              "streamToppers": "Science: 99.0%, Commerce: 98.2%",
+              "passPercentage": "100%"
+            }
+          ]
+        },
+        "careersEmail": "",
+        "careersPhone": "",
+        "facultyCards": [],
+        "feeTableData": {
+          "rows": [
+            [
+              "Primary Wing (Nursery - Grade 5)",
+              "₹24,000",
+              "₹15,000",
+              "₹6,000",
+              "₹1,17,000"
+            ],
+            [
+              "Middle Wing (Grades 6 - 8)",
+              "₹28,500",
+              "₹18,000",
+              "₹9,000",
+              "₹1,41,000"
+            ],
+            [
+              "Secondary Wing (Grades 9 & 10)",
+              "₹33,000",
+              "₹22,000",
+              "₹12,000",
+              "₹1,66,000"
+            ],
+            [
+              "Senior Secondary (Grades 11 & 12 - STEM/Robotics)",
+              "₹38,000",
+              "₹25,000",
+              "₹15,000",
+              "₹1,92,000"
+            ]
+          ],
+          "columns": [
+            "Class Level",
+            "Quarterly Tuition",
+            "Annual Composite Fee",
+            "Lab & Tech Fee",
+            "Total Annual (Est.)"
+          ]
+        },
+        "galleryItems": [],
+        "generalEmail": "",
+        "generalPhone": "",
+        "maleTeachers": 0,
+        "completedTabs": {},
+        "iconOverrides": {},
+        "isResidential": false,
+        "principalName": "Dr. Devender Kaushik",
+        "tabVisibility": {
+          "home": true,
+          "about": true,
+          "contact": true,
+          "faculty": true,
+          "gallery": true,
+          "reviews": true,
+          "academics": true,
+          "admissions": true,
+          "facilities": true
+        },
+        "totalStudents": 1450,
+        "totalTeachers": 85,
+        "admissionsOpen": true,
+        "femaleTeachers": 0,
+        "flipbookSlides": [],
+        "imageOverrides": {},
+        "principalEmail": "",
+        "principalPhone": "",
+        "schoolCategory": "Grades Nursery to 12th",
+        "verifiedFields": {},
+        "admissionsEmail": "",
+        "admissionsPhone": "",
+        "classroomsCount": 48,
+        "establishedYear": "2020",
+        "lastSavedByMode": "magic_link",
+        "showContactInfo": true,
+        "totalClassrooms": 0,
+        "contentOverrides": {
+          "apply_btn_hidden": "false",
+          "apply_btn_disabled": "false"
+        },
+        "affiliationNumber": "2130001",
+        "sectionVisibility": {
+          "faqs": true,
+          "fees": true,
+          "hero": true,
+          "about": true,
+          "stats": true,
+          "contact": true,
+          "gallery": true,
+          "results": true,
+          "academics": true,
+          "photobook": true,
+          "principal": true,
+          "admissions": true,
+          "basic_info": true,
+          "facilities": true,
+          "management": true,
+          "about_cards": true,
+          "campus_tour": true,
+          "important_info": true
+        },
+        "workingSmartBoards": 48,
+        "studentTeacherRatio": "1:17",
+        "includedAcademicFeatures": [],
+        "admissionStatus": "Open for 2026-27",
+        "academicSession": "2026-2027",
+        "feeTable": [
+          {
+            "className": "Nursery - UKG",
+            "admissionFee": "25000",
+            "tuitionFee": "4500",
+            "annualFee": "12000"
+          },
+          {
+            "className": "Class 1st - 5th",
+            "admissionFee": "30000",
+            "tuitionFee": "5500",
+            "annualFee": "14000"
+          },
+          {
+            "className": "Class 6th - 8th",
+            "admissionFee": "35000",
+            "tuitionFee": "6500",
+            "annualFee": "16000"
+          },
+          {
+            "className": "Class 9th - 10th",
+            "admissionFee": "40000",
+            "tuitionFee": "7500",
+            "annualFee": "18000"
+          },
+          {
+            "className": "Class 11th - 12th",
+            "admissionFee": "45000",
+            "tuitionFee": "9000",
+            "annualFee": "22000"
+          }
+        ]
+      }
+    },
+    "sync_07070388888": {
+      "token": "sync_07070388888",
+      "schoolId": "07070388888",
+      "schoolName": "School",
+      "isPermanent": true,
+      "isApproved": true,
+      "status": "approved",
+      "lastUpdatedAt": 1795112225422,
+      "lastUpdatedSource": "Supabase Profile Save (magic_link)",
+      "profileData": {
+        "board": "CBSE",
+        "results": {
+          "achievements": [],
+          "boardResults": []
+        },
+        "overview": {
+          "faqs": [],
+          "email": "",
+          "phone": "",
+          "vision": "",
+          "gallery": [],
+          "mission": "",
+          "website": "",
+          "aboutText": "",
+          "heroImage": "",
+          "logoImage": "",
+          "campusArea": "",
+          "establishedYear": ""
+        },
+        "heroImage": "",
+        "logoImage": "",
+        "udiseCode": "07070388888",
+        "admissions": {
+          "feeTable": [],
+          "feeColumns": [
+            "Class / Grade",
+            "Admission Fee (One Time)",
+            "Tuition Fee (Monthly)",
+            "Annual Charges"
+          ],
+          "ageCriteria": "",
+          "academicSession": "2026-2027",
+          "admissionStatus": "Closed",
+          "admissionProcess": "",
+          "requiredDocuments": [
+            "Official Birth Certificate copy",
+            "Student & Parents Aadhaar Card copy",
+            "Transfer Certificate (TC) from previous school",
+            "Previous Academic Year Report Card / Marksheet",
+            "Passport Size Photographs (4 Copies)"
+          ]
+        },
+        "lastSavedAt": "2026-11-19T18:17:04.675Z",
+        "school_type": "Senior Secondary",
+        "about_school": "School A is an authorized premiere institution in West Delhi, verified and managed directly via CSEEL Education Network.",
+        "facility_ids": [
+          "FAC_01",
+          "FAC_02",
+          "FAC_03",
+          "FAC_05",
+          "FAC_06"
+        ],
+        "fee_structure": [
+          {
+            "class_name": "Nursery - UKG",
+            "admission_fee": 15000,
+            "tuition_fee": 4500,
+            "annual_fee": 8000,
+            "other_fee": 2000,
+            "total_fee": 29500
+          },
+          {
+            "class_name": "Class 1st - 5th",
+            "admission_fee": 18000,
+            "tuition_fee": 5200,
+            "annual_fee": 9000,
+            "other_fee": 2500,
+            "total_fee": 34700
+          },
+          {
+            "class_name": "Class 6th - 8th",
+            "admission_fee": 20000,
+            "tuition_fee": 5800,
+            "annual_fee": 10000,
+            "other_fee": 3000,
+            "total_fee": 38800
+          },
+          {
+            "class_name": "Class 9th - 10th",
+            "admission_fee": 22000,
+            "tuition_fee": 6500,
+            "annual_fee": 11000,
+            "other_fee": 3500,
+            "total_fee": 43000
+          },
+          {
+            "class_name": "Class 11th - 12th",
+            "admission_fee": 25000,
+            "tuition_fee": 7500,
+            "annual_fee": 12000,
+            "other_fee": 4000,
+            "total_fee": 48500
+          }
+        ],
+        "school_gender": "Co-ed",
+        "lastSavedByMode": "magic_link",
+        "residential_type": "Day School",
+        "admission_process": "Admissions open for Academic Session 2026-27. Written test and personal interaction required.",
+        "results_highlights": "100% pass percentage in CBSE 10th and 12th Board examinations with 24 distinctions."
+      }
+    }
+  }
 }

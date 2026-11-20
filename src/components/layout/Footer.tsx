@@ -106,7 +106,7 @@ const Footer = () => {
               <div className="text-[15px] font-bold text-[#003C6E] pb-2 font-['Montserrat',sans-serif]">
                 Programs & Schools
               </div>
-              <Link href="/schools" className={getLinkClass('/schools')}>
+              <Link href="/edu-network" className={getLinkClass('/schools')}>
                 Schools Directory
               </Link>
               <Link href="/for-educators" className={getLinkClass('/for-educators')}>

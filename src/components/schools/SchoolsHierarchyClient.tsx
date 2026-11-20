@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -42,7 +42,11 @@ import {
   Flame,
   Microscope,
   IndianRupee,
-  Navigation
+  Navigation,
+  Plus,
+  PlusCircle,
+  Key,
+  Lock
 } from 'lucide-react';
 import { HierarchyPageData, HierarchyLocationItem } from '@/integrations/supabase/schoolsHierarchyDb';
 import { SchoolRecord } from '@/data/schoolFinderData';

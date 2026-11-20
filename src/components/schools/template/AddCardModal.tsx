@@ -80,6 +80,17 @@ import {
   PrincipalDeskIllustration,
   SchoolCampusIllustration
 } from '@/components/illustrations/FacilityIllustrations';
+import {
+  CbseLogo,
+  HbseLogo,
+  IcseLogo,
+  IbLogo,
+  CambridgeLogo,
+  UpBoardLogo,
+  MaharashtraBoardLogo,
+  StateBoardLogo,
+  SolarPanelIcon,
+} from './BoardLogos';
 
 export const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   FlaskConical,
@@ -134,7 +145,31 @@ export const ICON_MAP: Record<string, React.ComponentType<{ className?: string }
   Building,
   Sun,
   Wifi,
-  Droplet
+  Droplet,
+  // Official Educational Board Logos
+  CBSE: CbseLogo,
+  CbseLogo,
+  HBSE: HbseLogo,
+  BSEH: HbseLogo,
+  HbseLogo,
+  ICSE: IcseLogo,
+  CISCE: IcseLogo,
+  IcseLogo,
+  IB: IbLogo,
+  IbLogo,
+  Cambridge: CambridgeLogo,
+  CIE: CambridgeLogo,
+  CambridgeLogo,
+  UPBoard: UpBoardLogo,
+  UpBoardLogo,
+  MaharashtraBoard: MaharashtraBoardLogo,
+  Maharashtra: MaharashtraBoardLogo,
+  MaharashtraBoardLogo,
+  StateBoard: StateBoardLogo,
+  StateBoardLogo,
+  // Contextual Solar & Energy Icons
+  SolarPanel: SolarPanelIcon,
+  SolarPanelIcon,
 };
 
 export const ILLUSTRATION_MAP: Record<string, React.ComponentType<{ className?: string }>> = {

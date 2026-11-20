@@ -77,7 +77,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Disable all non-admin dashboards (parent, school, student, teacher)
+  // Allow /dashboard/school-profile (PIN-protected visual school profile editor)
+  if (pathname === '/dashboard/school-profile' || pathname.startsWith('/dashboard/school-profile/')) {
+    return NextResponse.next();
+  }
+
+  // Disable all other non-admin dashboards (parent, school, student, teacher)
   if (pathname === '/dashboard' || pathname.startsWith('/dashboard/')) {
     url.pathname = '/';
     return NextResponse.redirect(url);
@@ -265,15 +270,25 @@ export function middleware(request: NextRequest) {
     segments[0] === 'school' &&
     (segments[3].toLowerCase() === 'campus' || segments[3].toLowerCase() === 'main' || segments[3].toLowerCase() === 'village')
   ) {
-    url.pathname = `/school/${segments[1]}/${segments[2]}/${segments[4]}`;
+    url.pathname = `/edu-network/school/${segments[1]}/${segments[2]}/${segments[4]}`;
+    return NextResponse.redirect(url, 301);
+  }
+
+  if (
+    segments.length === 6 &&
+    segments[0] === 'edu-network' &&
+    segments[1] === 'school' &&
+    (segments[4].toLowerCase() === 'campus' || segments[4].toLowerCase() === 'main' || segments[4].toLowerCase() === 'village')
+  ) {
+    url.pathname = `/edu-network/school/${segments[2]}/${segments[3]}/${segments[5]}`;
     return NextResponse.redirect(url, 301);
   }
 
   // 10. Single-segment /school/[slug] fallback (e.g. /school/some-school-name)
   if (segments.length === 2 && segments[0] === 'school' && segments[1] !== 'india') {
-    url.pathname = '/schools';
+    url.pathname = '/edu-network';
     url.searchParams.set('q', segments[1].replace(/\.html$/i, '').replace(/[-_]/g, ' '));
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(url, 301);
   }
 
   return NextResponse.next();

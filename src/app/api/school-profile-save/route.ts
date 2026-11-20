@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     // Strict Authorization: Only Admin OR Verified School Owner OR Verified Magic Link key can save
     const authResult = await verifySchoolWriteAuth(req, udiseCode, {
-      magicKey: body.magicKey || body.token || body.syncToken,
+      magicKey: body.magicKey || body.token || body.syncToken || body.secret_key || body.secretKey,
       adminKey: body.adminKey,
       adminEmail: body.adminEmail,
       userId: body.userId || body.user_id,
@@ -265,8 +265,59 @@ export async function POST(req: NextRequest) {
         careers: true,
       };
 
+    // Extract facility IDs for direct array column
+    let facilityIds: string[] = [];
+    if (Array.isArray(mergedProfileData.facility_ids)) {
+      facilityIds = mergedProfileData.facility_ids.map(String);
+    } else if (Array.isArray(mergedProfileData.facilities)) {
+      facilityIds = mergedProfileData.facilities
+        .filter((f: any) => (typeof f === 'string' ? true : f.selected !== false))
+        .map((f: any) => (typeof f === 'string' ? f : f.id || f.code || f.key))
+        .filter(Boolean);
+    }
+
+    // 3. Extract 3-tab architecture distinct payloads (Overview, Admissions, Results)
+    const overviewPayload = {
+      aboutText: mergedProfileData.aboutText || mergedProfileData.about_school || compiledSections.about?.text || '',
+      vision: mergedProfileData.vision || '',
+      mission: mergedProfileData.mission || '',
+      establishedYear: mergedProfileData.establishedYear || '',
+      campusArea: mergedProfileData.campusArea || '',
+      website: mergedProfileData.website || '',
+      email: mergedProfileData.email || '',
+      phone: mergedProfileData.phone || '',
+      heroImage: resolvedHeroImage,
+      logoImage: resolvedLogo,
+      faqs: mergedProfileData.faqs || compiledSections.faqs?.faqs || [],
+      gallery: compiledSections.gallery?.images || mergedProfileData.gallery || [],
+    };
+
+    const admissionsPayload = {
+      admissionStatus: mergedProfileData.admissionStatus || (mergedProfileData.admissionsOpen ? 'Open' : 'Closed'),
+      academicSession: mergedProfileData.academicSession || '2026-2027',
+      ageCriteria: mergedProfileData.ageCriteria || '',
+      feeColumns: mergedProfileData.feeColumns || ['Class / Grade', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Annual Charges'],
+      feeTable: mergedProfileData.feeTable || mergedProfileData.fee_structure || compiledSections.fees?.table || [],
+      requiredDocuments: mergedProfileData.requiredDocuments || compiledSections.admissions?.required_documents || [],
+      admissionProcess: mergedProfileData.admissionProcess || mergedProfileData.admission_process || compiledSections.admissions?.process || '',
+    };
+
+    const resultsPayload = {
+      resultsHighlights: mergedProfileData.resultsHighlights || mergedProfileData.results_highlights || '',
+      boardResults: mergedProfileData.boardResults || compiledSections.results?.boardResults || [],
+      achievements: mergedProfileData.achievements || compiledSections.results?.achievements || [],
+    };
+
     const schoolProfilesPayload: Record<string, any> = {
       udise_code: udiseCode,
+      board: mergedProfileData.board || baseRow?.board_10th || 'CBSE',
+      school_type: mergedProfileData.schoolType || baseRow?.management_desc || 'Private Unaided',
+      residential_type: mergedProfileData.hasHostel ? 'Residential' : 'Day School',
+      school_gender: mergedProfileData.genderType || 'Co-educational',
+      facility_ids: facilityIds,
+      overview: overviewPayload,
+      admissions: admissionsPayload,
+      results: resultsPayload,
       basic_info: compiledSections.basic_info,
       hero: compiledSections.hero,
       stats: compiledSections.stats,
@@ -274,11 +325,11 @@ export async function POST(req: NextRequest) {
       principal: compiledSections.principal,
       management: compiledSections.management,
       academics: compiledSections.academics,
-      results: compiledSections.results,
+      results_section: compiledSections.results,
       facilities: compiledSections.facilities,
       gallery: compiledSections.gallery,
       fees: compiledSections.fees,
-      admissions: compiledSections.admissions,
+      admissions_section: compiledSections.admissions,
       faqs: compiledSections.faqs,
       contact: compiledSections.contact,
       careers: compiledSections.careers,
@@ -296,12 +347,23 @@ export async function POST(req: NextRequest) {
       profilesUpdated = true;
     } else {
       console.warn('[school-profile-save] school_profiles full upsert warning:', profErr.message);
+      const normalizedProfileData = {
+        ...mergedProfileData,
+        overview: overviewPayload,
+        admissions: admissionsPayload,
+        results: resultsPayload,
+        facility_ids: facilityIds,
+        board: mergedProfileData.board || baseRow?.board_10th || 'CBSE',
+        school_type: mergedProfileData.schoolType || baseRow?.management_desc || 'Private Unaided',
+        residential_type: mergedProfileData.hasHostel ? 'Residential' : 'Day School',
+        school_gender: mergedProfileData.genderType || 'Co-educational',
+      };
       const { error: fbErr } = await schoolSearchSupabase
         .from('school_profiles')
         .upsert(
           {
             udise_code: udiseCode,
-            profile_data: mergedProfileData,
+            profile_data: normalizedProfileData,
             section_visibility: sectionVisibility,
             updated_at: new Date().toISOString(),
           },

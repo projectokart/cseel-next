@@ -195,7 +195,7 @@ const navItems: NavItem[] = [
   {
     id: 'edu-network',
     label: 'Edu Network',
-    to: '/schools',
+    to: '/edu-network',
     enabled: false,
     hasDropdown: true,
     columns: [
@@ -204,21 +204,21 @@ const navItems: NavItem[] = [
         items: [
           {
             label: 'Schools Directory',
-            to: '/schools',
+            to: '/edu-network',
             desc: 'Explore 28,000+ verified schools equipped with modern experiential labs.',
             subItems: [
-              { label: 'Pan-India School Search', to: '/schools' },
-              { label: 'Search Schools Near Me', to: '/schools', badge: 'Near Me' },
-              { label: 'UDISE Verified Directory', to: '/schools' },
+              { label: 'Pan-India School Search', to: '/edu-network' },
+              { label: 'Search Schools Near Me', to: '/edu-network', badge: 'Near Me' },
+              { label: 'UDISE Verified Directory', to: '/edu-network' },
             ],
           },
           {
             label: 'Affiliation & Board Explorer',
-            to: '/schools',
+            to: '/edu-network',
             desc: 'Filter schools by CBSE, ICSE, Cambridge and State Board accreditations.',
             subItems: [
-              { label: 'CBSE Affiliated Labs', to: '/schools' },
-              { label: 'Composite Science Lab Schools', to: '/schools' },
+              { label: 'CBSE Affiliated Labs', to: '/edu-network' },
+              { label: 'Composite Science Lab Schools', to: '/edu-network' },
             ],
           },
         ],

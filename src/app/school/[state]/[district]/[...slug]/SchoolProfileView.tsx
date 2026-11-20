@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   CheckCircle2,
   ShieldCheck,
@@ -27,15 +28,32 @@ import {
   PlusCircle,
   Clock,
   MapPin,
-  Compass
+  Compass,
+  Headphones,
+  Flag,
+  Key,
+  Plus,
+  Navigation
 } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useOptionalSchoolTemplate } from '@/components/schools/template/SchoolTemplateContext';
+import { useOptionalSchoolTemplate, SchoolTemplateSectionScope } from '@/components/schools/template/SchoolTemplateContext';
 import AdSenseBanner from '@/components/ads/AdSenseBanner';
 import dynamic from 'next/dynamic';
 import VerifiedBadge from '@/components/schools/template/VerifiedBadge';
 import { cleanBoardName } from '@/integrations/supabase/schoolSearchClient';
+
+function toSlug(val: string, fallback = ''): string {
+  if (!val) return fallback;
+  const cleaned = val
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return cleaned || fallback;
+}
+
+const SchoolReviewModal = dynamic(() => import('@/components/schools/profile/SchoolReviewModal'), { ssr: false });
 
 // Critical Above-The-Fold & Core Eager Components
 import SchoolStatsSection from '@/components/schools/profile/SchoolStatsSection';
@@ -116,7 +134,10 @@ export interface SchoolProfileViewProps {
   computerIctLab?: string;
   atalStemLab?: string;
   playgroundAvailable?: string;
-  principalName: string;
+  clusterName?: string;
+  scienceLab?: string;
+  library?: string;
+  principalName?: string;
   rawPhone: string;
   rawEmail: string;
   website: string;
@@ -129,6 +150,17 @@ export interface SchoolProfileViewProps {
   clusterSchools?: any[];
   districtSchools?: any[];
   isTemplate?: boolean;
+  /**
+   * isPublicClaimed — PUBLIC VIEW of a claimed school profile.
+   * When true:
+   *  - Edit mode is PERMANENTLY DISABLED (no contenteditable, no save buttons, no admin UI)
+   *  - No DB writes can occur from this render
+   *  - Data is fetched from claimed_profile table (read-only)
+   *  - Used on /school/[...slug] when school has a claimed_profile row
+   *
+   * Edit mode is ONLY available via /dashboard/school-profile (DashboardSchoolProfileClient)
+   */
+  isPublicClaimed?: boolean;
   initialProfileData?: any;
   flipbookSlides?: any[];
   residentialSchool?: string;
@@ -137,15 +169,13 @@ export interface SchoolProfileViewProps {
 export type TabType =
   | 'home'
   | 'about'
-  | 'academics'
   | 'admissions'
-  | 'reviews';
+  | 'academics';
 
 const navTabs: { id: TabType; label: string; shortLabel: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: 'home', label: 'Home', shortLabel: 'Home', icon: Home },
-  { id: 'academics', label: 'Academic & Results', shortLabel: 'Academics', icon: BookOpen },
-  { id: 'admissions', label: 'Admissions & Fees', shortLabel: 'Admissions', icon: GraduationCap },
-  { id: 'reviews', label: 'Reviews & Ratings', shortLabel: 'Reviews', icon: Star },
+  { id: 'home', label: 'Overview', shortLabel: 'Overview', icon: Home },
+  { id: 'admissions', label: 'Admission', shortLabel: 'Admission', icon: GraduationCap },
+  { id: 'academics', label: 'Result', shortLabel: 'Result', icon: BookOpen },
 ];
 
 export default function SchoolProfileView({
@@ -173,6 +203,9 @@ export default function SchoolProfileView({
   computerIctLab,
   atalStemLab,
   playgroundAvailable,
+  clusterName,
+  scienceLab,
+  library,
   totalBoys,
   totalGirls,
   principalName,
@@ -188,19 +221,53 @@ export default function SchoolProfileView({
   clusterSchools = [],
   districtSchools = [],
   isTemplate = false,
+  isPublicClaimed = false,
   initialProfileData,
   flipbookSlides,
   residentialSchool,
 }: SchoolProfileViewProps) {
+  // ═══════════════════════════════════════════════════════
+  // PUBLIC CLAIMED GUARD — Permanent read-only enforcement
+  // isPublicClaimed=true means this is a PUBLIC render of a
+  // claimed school profile. Edit mode is IMPOSSIBLE here.
+  // All DB writes are blocked at this layer.
+  // Editing ONLY happens via /dashboard/school-profile
+  // ═══════════════════════════════════════════════════════
   // Navigation State
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLocatingForSearch, setIsLocatingForSearch] = useState(false);
+
+  const handleSearchSchoolsNearYou = () => {
+    setIsLocatingForSearch(true);
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setIsLocatingForSearch(false);
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          router.push(`/edu-network/all-india?nearMe=true&lat=${lat}&lng=${lng}`);
+        },
+        (err) => {
+          console.warn('Geolocation permission dismissed or denied:', err);
+          setIsLocatingForSearch(false);
+          router.push(`/edu-network/all-india?nearMe=true`);
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+      );
+    } else {
+      setIsLocatingForSearch(false);
+      router.push(`/edu-network/all-india?nearMe=true`);
+    }
+  };
 
   // Modal States
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [isAdmissionConfigModalOpen, setIsAdmissionConfigModalOpen] = useState(false);
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const [isTourModalOpen, setIsTourModalOpen] = useState(false);
+  const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
 
   // Admission application form state
   const [applicantName, setApplicantName] = useState('');
@@ -332,38 +399,190 @@ export default function SchoolProfileView({
     )
   );
 
-  const [canEditSchool, setCanEditSchool] = useState(isSuperAdminUser);
+  // isPublicClaimed HARD LOCK — public view of a claimed profile is ALWAYS read-only
+  // canEditSchool=false, isEditMode=false are enforced below regardless of user auth
+  const [canEditSchool, setCanEditSchool] = useState(isPublicClaimed ? false : isSuperAdminUser);
   const [authRole, setAuthRole] = useState<'admin' | 'owner' | 'magic_link' | 'unauthorized'>(
-    isSuperAdminUser ? 'admin' : 'unauthorized'
+    isPublicClaimed ? 'unauthorized' : (isSuperAdminUser ? 'admin' : 'unauthorized')
   );
   const [userSchoolClaim, setUserSchoolClaim] = useState<any | null>(null);
-  const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
 
   // Interactive Live Template Context
-  const templateCtx = useOptionalSchoolTemplate();
+  // When isPublicClaimed=true: templateCtx is ignored even if accidentally wrapped
+  const templateCtxRaw = useOptionalSchoolTemplate();
+  const templateCtx = isPublicClaimed ? null : templateCtxRaw;
   const templateData = templateCtx?.data || initialProfileData || null;
-  const isLiveTemplate = (isTemplate && !!templateCtx) || Boolean(initialProfileData);
+  const isLiveTemplate = !isPublicClaimed && !!templateCtx;
   const isAdmissionsOpen = Boolean(templateData?.admissionsOpen);
-  const isEditMode = false;
+  // isEditMode is PERMANENTLY FALSE for public claimed view
+  const isEditMode = isPublicClaimed ? false : Boolean(templateCtx?.isEditMode);
+
+  // Verified / Claimed state vs Unverified Public Directory state
+  const isVerifiedSchool = Boolean(
+    isPublicClaimed ||      // public claimed = verified school data
+    isTemplate ||
+    canEditSchool ||
+    isEditMode ||
+    templateData?.isVerified ||
+    templateData?.isClaimed ||
+    initialProfileData?.isVerified ||
+    initialProfileData?.isClaimed
+  );
+  const isUnverified = !isVerifiedSchool;
+
+  // Per-section live authentic preview states
+  const [previewSections, setPreviewSections] = useState<Record<string, boolean>>({});
+  const toggleSectionPreview = (sectionId: string) => {
+    setPreviewSections((prev) => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
+  // Sticky bottom action bar states
+  const [isContactMenuOpen, setIsContactMenuOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isSchoolMenuOpen, setIsSchoolMenuOpen] = useState(false);
+  const [isKeyPromptModalOpen, setIsKeyPromptModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [submissionKeyInput, setSubmissionKeyInput] = useState('');
+  const [keyVerificationError, setKeyVerificationError] = useState('');
+  const [isVerifyingKey, setIsVerifyingKey] = useState(false);
+  const [reportReason, setReportReason] = useState('Incorrect Contact / Address');
+  const [reportDetails, setReportDetails] = useState('');
+  const [isReportSubmitted, setIsReportSubmitted] = useState(false);
+
+  // Natural scroll hide/reveal for sticky bottom action bar
+  const [isFooterVisible, setIsFooterVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < 80) {
+        setIsFooterVisible(true);
+      } else if (currentScrollY > lastScrollY.current + 12) {
+        // Scrolling down -> hide footer to give unobstructed reading experience
+        setIsFooterVisible(false);
+        setIsContactMenuOpen(false);
+      } else if (currentScrollY < lastScrollY.current - 12) {
+        // Scrolling up -> reveal footer immediately
+        setIsFooterVisible(true);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auto-fill remembered submission key from this device
+  useEffect(() => {
+    if (typeof window !== 'undefined' && udiseCode) {
+      const cleanUdise = String(udiseCode || '').replace(/\D/g, '');
+      const savedKey = localStorage.getItem(`cseel_submission_key_${cleanUdise}`);
+      if (savedKey) {
+        setSubmissionKeyInput(savedKey);
+      }
+    }
+  }, [udiseCode]);
+
+  const handleVerifySubmissionKey = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const trimmedKey = submissionKeyInput.trim();
+    if (!trimmedKey) {
+      setKeyVerificationError('Please enter your submission key.');
+      return;
+    }
+    setIsVerifyingKey(true);
+    setKeyVerificationError('');
+    try {
+      const cleanUdise = String(udiseCode || '').replace(/\D/g, '');
+      const res = await fetch(`/api/school-claim/auth-status?udise=${cleanUdise}&magicKey=${encodeURIComponent(trimmedKey)}`);
+      const data = await res.json();
+      if (data.canEditCurrentSchool) {
+        setCanEditSchool(true);
+        if (templateCtx) {
+          templateCtx.setIsEditMode(true);
+        }
+        try {
+          localStorage.setItem(`cseel_submission_key_${cleanUdise}`, trimmedKey);
+        } catch {}
+        setIsKeyPromptModalOpen(false);
+        setKeyVerificationError('');
+      } else {
+        setKeyVerificationError('Invalid submission key for this school profile. Please check and try again.');
+      }
+    } catch {
+      setKeyVerificationError('Verification failed. Please check your connection.');
+    } finally {
+      setIsVerifyingKey(false);
+    }
+  };
+
+  const handleReportSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsReportSubmitted(true);
+    setTimeout(() => {
+      setIsReportModalOpen(false);
+      setIsReportSubmitted(false);
+      setReportDetails('');
+    }, 2000);
+  };
+
+  const handleToggleEditMode = () => {
+    if (templateCtx) {
+      if (!isEditMode && !canEditSchool) {
+        setIsKeyPromptModalOpen(true);
+      } else {
+        templateCtx.setIsEditMode(!isEditMode);
+      }
+    } else {
+      const url = new URL(window.location.href);
+      if (isEditMode) {
+        url.searchParams.delete('edit');
+      } else {
+        url.searchParams.set('edit', 'true');
+      }
+      window.location.href = url.toString();
+    }
+  };
 
   useEffect(() => {
     let isCancelled = false;
 
-    // Super Admin gets instant full editing privileges
-    if (isSuperAdminUser) {
+    // HARD LOCK: Public Claimed View can NEVER be edited or modified
+    if (isPublicClaimed) {
+      setCanEditSchool(false);
+      setAuthRole('unauthorized');
+      if (templateCtx) {
+        templateCtx.setIsEditMode(false);
+      }
+      return;
+    }
+
+    // Template preview or Super Admin gets instant full editing privileges
+    if (isTemplate || isSuperAdminUser) {
       setCanEditSchool(true);
       setAuthRole('admin');
-      const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-      if (searchParams?.get('edit') === 'true' && templateCtx) {
+      if (templateCtx) {
         templateCtx.setIsEditMode(true);
+      }
+      if (isTemplate) {
+        return;
       }
     }
 
     async function checkAuthorization() {
       try {
         const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-        const magicKey = searchParams?.get('magicKey') || searchParams?.get('token') || '';
+        let magicKey = searchParams?.get('magicKey') || searchParams?.get('token') || '';
         const cleanUdise = String(udiseCode || '').replace(/\D/g, '');
+
+        // Auto-check stored submission key on device
+        if (!magicKey && typeof window !== 'undefined' && cleanUdise) {
+          magicKey = localStorage.getItem(`cseel_submission_key_${cleanUdise}`) || '';
+        }
 
         const queryParams = new URLSearchParams({
           udise: cleanUdise,
@@ -381,6 +600,13 @@ export default function SchoolProfileView({
           setCanEditSchool(isAllowed);
           setAuthRole(isSuperAdminUser ? 'admin' : (authData.role || 'unauthorized'));
           setUserSchoolClaim(authData.primarySchool || null);
+
+          // Save valid submission key permanently to device localStorage
+          if (isAllowed && magicKey && typeof window !== 'undefined' && cleanUdise) {
+            try {
+              localStorage.setItem(`cseel_submission_key_${cleanUdise}`, magicKey);
+            } catch {}
+          }
 
           // If authorized and URL has edit=true, auto-enable edit mode
           if (isAllowed && searchParams?.get('edit') === 'true' && templateCtx) {
@@ -665,6 +891,58 @@ export default function SchoolProfileView({
   const displayClassFrom = isLiveTemplate
     ? (templateData?.classFrom || classFrom || '')
     : (classFrom || '');
+
+  // User Requested: Direct Gmail / Mail draft opening with pre-filled verification template
+  const handleOpenClaimEmail = () => {
+    const toSlugHelper = (val: string, fallback: string) =>
+      (val || fallback)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || fallback;
+
+    const currentProfileUrl = typeof window !== 'undefined'
+      ? window.location.href
+      : `https://www.cseel.org/school/${toSlugHelper(displayState, 'state')}/${toSlugHelper(displayDistrict, 'district')}/${toSlugHelper(blockName || 'block', 'block')}/${toSlugHelper(clusterName || village || 'cluster', 'cluster')}/${displayUdise}/${toSlugHelper(displayName, 'school').replace(/-\d{4,11}$/, '')}`;
+
+    const claimSubject = `Claim Official Profile Request: ${displayName} (UDISE: ${displayUdise})`;
+    const claimBody = `Hello CSEEL Team,
+
+I want to claim this official profile listed on CSEEL:
+
+• School Name: ${displayName}
+• UDISE Number: ${displayUdise}
+• State: ${displayState}
+• District: ${displayDistrict}
+• Block: ${blockName || 'N/A'}
+• Cluster: ${clusterName || village || 'N/A'}
+• Address: ${displayAddress}
+• Pin Code: ${pincode || 'N/A'}
+• School Profile URL: ${currentProfileUrl}
+• Board: ${displayBoard || 'CBSE'}
+
+Representative Contact Details:
+• Representative Name: 
+• Designation (Principal / Administrator / Trustee / Management): 
+• Contact Number: 
+• School Official Email ID: 
+• WhatsApp Number: 
+
+I am the Principal / Authorized Representative of the school. Please find attached proof of official verification (Affiliation Certificate / Official Letterhead).
+
+Thank you.`;
+
+    const mailtoUrl = `mailto:update@cseel.org?subject=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
+    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=update@cseel.org&su=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
+
+    try {
+      const win = window.open(gmailWebUrl, '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = mailtoUrl;
+      }
+    } catch {
+      window.location.href = mailtoUrl;
+    }
+  };
 
   const displayClassTo = isLiveTemplate
     ? (templateData?.classTo || classTo || '')
@@ -970,24 +1248,6 @@ export default function SchoolProfileView({
               
             </button>
 
-            {/* Super Admin Add School Button in Quick Actions */}
-            {isSuperAdminUser && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setIsAddSchoolModalOpen(true);
-                }}
-                className="w-full py-2.5 px-3 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-between shadow-xs transition-all cursor-pointer"
-              >
-                <span className="flex items-center gap-2">
-                  <PlusCircle className="w-4 h-4 text-emerald-100 stroke-[2.4]" />
-                  <span>+ Add New School Profile</span>
-                </span>
-                <ChevronRight className="w-3.5 h-3.5 text-emerald-100" />
-              </button>
-            )}
-
             {/* Claim School Button */}
             {!isTemplate && !isEditMode && !canEditSchool && !isSuperAdminUser && (
               <button
@@ -1074,23 +1334,7 @@ export default function SchoolProfileView({
                 </div>
               )}
 
-              {/* Dynamic Button: Super Admin can always add school; owners can view status */}
-              {isSuperAdminUser ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setIsAddSchoolModalOpen(true);
-                  }}
-                  className="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-between transition-colors cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <PlusCircle className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>+ Add New School Profile</span>
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-emerald-700" />
-                </button>
-              ) : userSchoolClaim && userSchoolClaim.status === 'pending' ? (
+              {userSchoolClaim && userSchoolClaim.status === 'pending' && (
                 <div className="p-2.5 text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
                   <Clock className="w-4 h-4 text-amber-600 shrink-0" />
                   <div className="min-w-0">
@@ -1098,21 +1342,6 @@ export default function SchoolProfileView({
                     <p className="text-[10px] font-medium text-amber-700 truncate">{userSchoolClaim.school_name || 'Admin verification in progress'}</p>
                   </div>
                 </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setIsAddSchoolModalOpen(true);
-                  }}
-                  className="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 flex items-center justify-between transition-colors cursor-pointer"
-                >
-                  <span className="flex items-center gap-2">
-                    <PlusCircle className="w-3.5 h-3.5 text-emerald-700" />
-                    <span>Add Your School Profile</span>
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-emerald-700" />
-                </button>
               )}
 
               {/* Log Out Button */}
@@ -1142,122 +1371,322 @@ export default function SchoolProfileView({
           {/* 1. ABOUT OUR INSTITUTION (ABOVE-THE-FOLD REPLACING HERO SECTION) */}
           {isSectionVisible('about') && (
             <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="about" sectionTitle="About Institution" />
-              <SchoolAboutSection
-                displayName={displayName}
-                displayUdise={displayUdise}
-                displayBoard={displayBoard}
-                isLiveTemplate={isLiveTemplate}
-                isEditMode={isEditMode}
-                templateData={templateData}
-                initialProfileData={initialProfileData}
-                imageUrl={imageUrl}
-                displayEstablished={displayEstablished}
-                displayStudents={displayStudents}
-                displayTeachers={displayTeachers}
-                displayCampusArea={displayCampusArea}
-                onApplyClick={() => setIsApplyModalOpen(true)}
+              <SectionVisibilityToggle
+                sectionId="about"
+                sectionTitle="About Institution"
+                isPreviewing={!!previewSections['about']}
+                onTogglePreview={() => toggleSectionPreview('about')}
               />
-            </div>
-          )}
-
-          {/* 1.5. DEDICATED STATISTICAL CARDS SECTION (SINGLE SOURCE OF TRUTH) */}
-          {isSectionVisible('stats') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="stats" sectionTitle="Key Statistics" />
-              <LazySection id="stats" minHeight="160px">
-                <SchoolStatsSection
-                  displayBoard={displayBoard}
+              <SchoolTemplateSectionScope isEditModeOverride={previewSections['about'] ? false : undefined}>
+                <SchoolAboutSection
+                  displayName={displayName}
                   displayUdise={displayUdise}
-                  totalStudents={totalStudents}
-                  totalTeachers={totalTeachers}
-                  classroomsCount={classroomsCount}
-                  schoolCategory={schoolCategory}
-                  classFrom={classFrom}
-                  classTo={classTo}
+                  displayBoard={displayBoard}
+                  isLiveTemplate={isLiveTemplate}
+                  isEditMode={isEditMode && !previewSections['about']}
                   templateData={templateData}
-                  residentialSchool={residentialSchool}
-                  schoolType={management}
-                  medium={medium}
-                  genderType={genderType}
-                  establishedYear={displayEstablished}
-                  campusArea={displayCampusArea}
-                  affiliationNumber={displayAffiliationNo}
+                  initialProfileData={initialProfileData}
+                  imageUrl={imageUrl}
+                  displayEstablished={displayEstablished}
+                  displayStudents={displayStudents}
+                  displayTeachers={displayTeachers}
+                  displayCampusArea={displayCampusArea}
+                  onApplyClick={() => {
+                    if (isUnverified) {
+                      handleOpenClaimEmail();
+                    } else {
+                      setIsApplyModalOpen(true);
+                    }
+                  }}
+                  onClaimClick={handleOpenClaimEmail}
+                  canEditSchool={canEditSchool}
                 />
-              </LazySection>
+              </SchoolTemplateSectionScope>
             </div>
           )}
 
-          {/* AdSense In-Profile Sponsor Banner */}
-          <div className="bg-white border-b border-[#E8EAED] py-3 sm:py-4">
-            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-              <AdSenseBanner label="Sponsored Education Partner" responsive={true} />
-            </div>
-          </div>
-
-          {/* 3. VIRTUAL CAMPUS TOUR & GALLERY UNIFIED SECTION */}
-          {(isSectionVisible('campus_tour') || isSectionVisible('gallery')) && (
-            <div id="campus-tour" className="relative group/sect">
-              <SectionVisibilityToggle sectionId="campus_tour" sectionTitle="Virtual Campus Tour & Gallery" />
-              <SchoolCampusSection
-                displayName={displayName}
-                videoUrl={campusVideoUrl}
-                onUpdateVideoUrl={(url) => {
-                  templateCtx?.updateField('campusVideoUrl' as any, url);
-                }}
-                isLiveTemplate={isLiveTemplate}
-                isEditMode={isEditMode}
+          {/* If the school has NOT been claimed / edited, show ONLY verified UDISE basics, indicators & Claim Profile workflow */}
+          {isUnverified ? (
+            <div className="space-y-0">
+              {/* 1.5. RESTRICTED SCHOOL SNAPSHOT & UDISE+ INDICATORS (9 FACTUAL ITEMS ONLY) */}
+              <SchoolStatsSection
+                displayBoard={displayBoard}
+                displayUdise={displayUdise}
+                totalStudents={0}
+                totalTeachers={0}
+                classroomsCount={0}
+                schoolCategory={schoolCategory}
+                classFrom={classFrom}
+                classTo={classTo}
                 templateData={templateData}
-                templateCtx={templateCtx}
-                onAddMediaClick={() => setIsGalleryModalOpen(true)}
-                onTourClick={() => setIsTourModalOpen(true)}
-                onApplyClick={() => setIsApplyModalOpen(true)}
+                residentialSchool={residentialSchool}
+                schoolType={management}
+                medium={medium}
+                genderType={genderType}
+                establishedYear={displayEstablished}
+                campusArea={displayCampusArea}
+                affiliationNumber={displayAffiliationNo}
+                isUnverified={true}
+                atalStemLab={atalStemLab}
+                scienceLab={scienceLab}
+                library={library}
+                computerIctLab={computerIctLab}
+                lat={lat}
+                lng={lng}
+                district={displayDistrict}
+                state={displayState}
+                blockName={blockName}
+                clusterName={clusterName}
+                village={village}
               />
-            </div>
-          )}
 
-          {/* 4. CAMPUS FACILITIES SECTION (ONE-SCREEN GLANCE INSIDE HOME TAB BEFORE FAQ) */}
-          {isSectionVisible('facilities') && (
-            <div id="facilities" className="relative group/sect">
-              <SectionVisibilityToggle sectionId="facilities" sectionTitle="School Facilities" />
-              <SchoolFacilitiesSection
-                isEditMode={isEditMode}
-                effectiveFacilities={effectiveFacilities}
-                templateCtx={templateCtx}
-              />
-            </div>
-          )}
+              {/* CENTERPIECE CLAIM PROFILE SHOWCASE */}
+              <div className="max-w-4xl mx-auto px-4 py-8">
+                <div className="bg-gradient-to-br from-slate-50 via-white to-sky-50/50 rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-8 text-center space-y-6">
+                  <div className="w-16 h-16 rounded-2xl bg-[#005689]/10 border border-[#005689]/20 flex items-center justify-center mx-auto text-[#005689]">
+                    <ShieldCheck className="w-9 h-9 text-[#005689]" />
+                  </div>
 
-          {/* 5. FAQ SECTION (COMPACT MAX 5 QUESTIONS) */}
-          {isSectionVisible('faqs') && (
-            <div className="relative group/sect">
-              <SectionVisibilityToggle sectionId="faqs" sectionTitle="Frequently Asked Questions" />
-              <LazySection id="home-faq" minHeight="320px">
-                <SchoolFaqSection
-                  id="home-faq"
-                  schoolName={displayName}
-                  board={displayBoard}
-                  udiseCode={displayUdise}
-                  address={displayAddress}
-                  state={state}
-                  district={district}
-                  village={village}
-                  pincode={pincode}
-                  classFrom={displayClassFrom}
-                  classTo={displayClassTo}
-                  schoolCategory={schoolCategory}
-                  management={displayManagementLabel}
-                  medium={displayMedium}
-                  genderType={genderType}
-                  totalStudents={totalStudents}
-                  totalTeachers={totalTeachers}
-                  workingSmartBoards={workingSmartBoards}
-                  computerIctLab={computerIctLab}
-                  atalStemLab={atalStemLab}
-                  playgroundAvailable={playgroundAvailable}
-                />
-              </LazySection>
+                  <div className="space-y-2">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Official Public Directory Listing</span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                      {displayName}
+                    </h2>
+                    <p className="text-sm text-slate-600 max-w-lg mx-auto">
+                      {displayAddress || `${displayDistrict}, ${displayState}`}
+                    </p>
+                  </div>
+
+                  {/* Verified Core Facts */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto pt-2">
+                    <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">UDISE+ Code</span>
+                      <span className="text-sm font-mono font-bold text-slate-900">{displayUdise || 'Verified'}</span>
+                    </div>
+                    <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Board / Curriculum</span>
+                      <span className="text-sm font-bold text-slate-900">{displayBoard || 'CBSE / State'}</span>
+                    </div>
+                    <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+                      <span className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Location</span>
+                      <span className="text-sm font-bold text-slate-900 truncate block">{displayDistrict}, {displayState}</span>
+                    </div>
+                  </div>
+
+                  {/* Prominent Claim Profile Action */}
+                  <div className="pt-4 border-t border-slate-200/80 max-w-md mx-auto space-y-3">
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      Are you the school principal, administrator, or official representative? Add your campus facilities, sports grounds, labs, and update school details directly.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setIsClaimModalOpen(true)}
+                      className="w-full py-3.5 px-6 rounded-2xl bg-[#005689] hover:bg-[#004168] active:scale-[0.99] text-white text-sm font-extrabold shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <ShieldCheck className="w-5 h-5 text-amber-300" />
+                      <span>Add School Facilities</span>
+                      <ArrowRight className="w-4 h-4 text-sky-200" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* UNVERIFIED GALLERY & VIDEO PLACEHOLDER WITH CLAIM TRIGGER BUTTONS */}
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div className="bg-slate-50/80 rounded-2xl border border-dashed border-slate-300 p-6 sm:p-8 text-center space-y-4">
+                  <div className="space-y-1">
+                    <h3 className="text-base font-bold text-slate-800 font-['Montserrat',sans-serif]">
+                      Campus Photos & Virtual Video Tour
+                    </h3>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto">
+                      Official high-resolution campus photography and video tour will be displayed here once verified by school authorities.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsClaimModalOpen(true)}
+                      className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 hover:text-[#005689] text-xs font-bold shadow-2xs transition-all inline-flex items-center gap-2 cursor-pointer"
+                    >
+                      <span>📷</span>
+                      <span>+ Add School Photo</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsClaimModalOpen(true)}
+                      className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 hover:text-[#005689] text-xs font-bold shadow-2xs transition-all inline-flex items-center gap-2 cursor-pointer"
+                    >
+                      <span>▶</span>
+                      <span>+ Add Campus Video</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* UDISE-BASED FAQS ONLY */}
+              <div className="relative group/sect">
+                <LazySection id="home-faq" minHeight="320px">
+                  <SchoolFaqSection
+                    id="home-faq"
+                    schoolName={displayName}
+                    board={displayBoard}
+                    udiseCode={displayUdise}
+                    address={displayAddress}
+                    state={state}
+                    district={district}
+                    village={village}
+                    pincode={pincode}
+                    classFrom={displayClassFrom}
+                    classTo={displayClassTo}
+                    schoolCategory={schoolCategory}
+                    management={displayManagementLabel}
+                    medium={displayMedium}
+                    genderType={genderType}
+                    totalStudents={0}
+                    totalTeachers={0}
+                    workingSmartBoards={0}
+                    computerIctLab=""
+                    atalStemLab={atalStemLab}
+                    playgroundAvailable=""
+                    isEditMode={false}
+                  />
+                </LazySection>
+              </div>
             </div>
+          ) : (
+            <>
+              {/* 1.5. DEDICATED STATISTICAL CARDS SECTION (SINGLE SOURCE OF TRUTH) */}
+              {isSectionVisible('stats') && (
+                <div className="relative group/sect">
+                  <SectionVisibilityToggle
+                    sectionId="stats"
+                    sectionTitle="Key Statistics"
+                    isPreviewing={!!previewSections['stats']}
+                    onTogglePreview={() => toggleSectionPreview('stats')}
+                  />
+                  <SchoolTemplateSectionScope isEditModeOverride={previewSections['stats'] ? false : undefined}>
+                    <LazySection id="stats" minHeight="160px">
+                      <SchoolStatsSection
+                        displayBoard={displayBoard}
+                        displayUdise={displayUdise}
+                        totalStudents={totalStudents}
+                        totalTeachers={totalTeachers}
+                        classroomsCount={classroomsCount}
+                        schoolCategory={schoolCategory}
+                        classFrom={classFrom}
+                        classTo={classTo}
+                        templateData={templateData}
+                        residentialSchool={residentialSchool}
+                        schoolType={management}
+                        medium={medium}
+                        genderType={genderType}
+                        establishedYear={displayEstablished}
+                        campusArea={displayCampusArea}
+                        affiliationNumber={displayAffiliationNo}
+                      />
+                    </LazySection>
+                  </SchoolTemplateSectionScope>
+                </div>
+              )}
+
+              {/* AdSense In-Profile Sponsor Banner */}
+              <div className="bg-white border-b border-[#E8EAED] py-3 sm:py-4">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                  <AdSenseBanner label="Sponsored Education Partner" responsive={true} />
+                </div>
+              </div>
+
+              {/* 3. VIRTUAL CAMPUS TOUR & GALLERY UNIFIED SECTION */}
+              {(isSectionVisible('campus_tour') || isSectionVisible('gallery')) && (
+                <div id="campus-tour" className="relative group/sect">
+                  <SectionVisibilityToggle
+                    sectionId="campus_tour"
+                    sectionTitle="Virtual Campus Tour & Gallery"
+                    isPreviewing={!!previewSections['campus_tour']}
+                    onTogglePreview={() => toggleSectionPreview('campus_tour')}
+                  />
+                  <SchoolTemplateSectionScope isEditModeOverride={previewSections['campus_tour'] ? false : undefined}>
+                    <SchoolCampusSection
+                      displayName={displayName}
+                      videoUrl={campusVideoUrl}
+                      onUpdateVideoUrl={(url) => {
+                        templateCtx?.updateField('campusVideoUrl' as any, url);
+                      }}
+                      isLiveTemplate={isLiveTemplate}
+                      isEditMode={isEditMode && !previewSections['campus_tour']}
+                      templateData={templateData}
+                      templateCtx={templateCtx}
+                      onAddMediaClick={() => setIsGalleryModalOpen(true)}
+                      onTourClick={() => setIsTourModalOpen(true)}
+                      onApplyClick={() => setIsApplyModalOpen(true)}
+                    />
+                  </SchoolTemplateSectionScope>
+                </div>
+              )}
+
+              {/* 4. CAMPUS FACILITIES SECTION (ONE-SCREEN GLANCE INSIDE HOME TAB BEFORE FAQ) */}
+              {isSectionVisible('facilities') && (
+                <div id="facilities" className="relative group/sect">
+                  <SectionVisibilityToggle
+                    sectionId="facilities"
+                    sectionTitle="School Facilities"
+                    isPreviewing={!!previewSections['facilities']}
+                    onTogglePreview={() => toggleSectionPreview('facilities')}
+                  />
+                  <SchoolTemplateSectionScope isEditModeOverride={previewSections['facilities'] ? false : undefined}>
+                    <SchoolFacilitiesSection
+                      isEditMode={isEditMode && !previewSections['facilities']}
+                      effectiveFacilities={effectiveFacilities}
+                      templateCtx={templateCtx}
+                      isTemplate={isTemplate}
+                    />
+                  </SchoolTemplateSectionScope>
+                </div>
+              )}
+
+              {/* 5. FAQ SECTION (COMPACT MAX 10 QUESTIONS) */}
+              {isSectionVisible('faqs') && (
+                <div className="relative group/sect">
+                  <SectionVisibilityToggle
+                    sectionId="faqs"
+                    sectionTitle="Frequently Asked Questions"
+                    isPreviewing={!!previewSections['faqs']}
+                    onTogglePreview={() => toggleSectionPreview('faqs')}
+                  />
+                  <SchoolTemplateSectionScope isEditModeOverride={previewSections['faqs'] ? false : undefined}>
+                    <LazySection id="home-faq" minHeight="320px">
+                      <SchoolFaqSection
+                        id="home-faq"
+                        schoolName={displayName}
+                        board={displayBoard}
+                        udiseCode={displayUdise}
+                        address={displayAddress}
+                        state={state}
+                        district={district}
+                        village={village}
+                        pincode={pincode}
+                        classFrom={displayClassFrom}
+                        classTo={displayClassTo}
+                        schoolCategory={schoolCategory}
+                        management={displayManagementLabel}
+                        medium={displayMedium}
+                        genderType={genderType}
+                        totalStudents={totalStudents}
+                        totalTeachers={totalTeachers}
+                        workingSmartBoards={workingSmartBoards}
+                        computerIctLab={computerIctLab}
+                        atalStemLab={atalStemLab}
+                        playgroundAvailable={playgroundAvailable}
+                        isEditMode={isEditMode && !previewSections['faqs']}
+                      />
+                    </LazySection>
+                  </SchoolTemplateSectionScope>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -1265,59 +1694,127 @@ export default function SchoolProfileView({
       {/* ─── TAB 2: ACADEMICS & RESULTS ─── */}
       {activeTab === 'academics' && (
         <div key="tab-academics" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="academics" sectionTitle="Academics & Curriculum" />
-          <SchoolAcademicsTab
-            displayName={displayName}
-            displayClassFrom={displayClassFrom}
-            displayClassTo={displayClassTo}
-            board={displayBoard}
-            isEditMode={isEditMode}
-            templateData={templateData}
-            initialProfileData={initialProfileData}
-            templateCtx={templateCtx}
-          />
+          {isUnverified ? (
+            <div className="max-w-4xl mx-auto px-4 py-12">
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-8 text-center space-y-5">
+                <div className="w-16 h-16 rounded-2xl bg-[#005689]/10 border border-[#005689]/20 flex items-center justify-center mx-auto text-[#005689]">
+                  <BookOpen className="w-8 h-8 text-[#005689]" />
+                </div>
+                <div className="space-y-1.5 max-w-md mx-auto">
+                  <h3 className="text-xl font-bold text-slate-900 font-['Montserrat',sans-serif]">
+                    Academic & Board Results
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Official board examination results, pass percentages, and subject streams are published directly by the school.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsClaimModalOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-[#005689] hover:bg-[#004168] text-white text-xs font-black shadow-md hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-amber-300" />
+                    <span>Update Result Data</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-sky-200" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <SectionVisibilityToggle
+                sectionId="academics"
+                sectionTitle="Academics & Curriculum"
+                isPreviewing={!!previewSections['academics']}
+                onTogglePreview={() => toggleSectionPreview('academics')}
+              />
+              <SchoolTemplateSectionScope isEditModeOverride={previewSections['academics'] ? false : undefined}>
+                <SchoolAcademicsTab
+                  displayName={displayName}
+                  displayClassFrom={displayClassFrom}
+                  displayClassTo={displayClassTo}
+                  board={displayBoard}
+                  isEditMode={isEditMode && !previewSections['academics']}
+                  templateData={templateData}
+                  initialProfileData={initialProfileData}
+                  templateCtx={templateCtx}
+                />
+              </SchoolTemplateSectionScope>
+            </>
+          )}
         </div>
       )}
 
       {/* ─── TAB 3: ADMISSIONS & FEES ─── */}
       {activeTab === 'admissions' && (
         <div key="tab-admissions" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="admissions" sectionTitle="Admissions & Fees" />
-          <SchoolFeeSection
-            displayName={displayName}
-            displayBoard={displayBoard}
-            displayUdise={displayUdise}
-            displayAddress={displayAddress}
-            state={state}
-            district={district}
-            village={village}
-            pincode={pincode}
-            classFrom={classFrom}
-            classTo={classTo}
-            schoolCategory={schoolCategory}
-            totalStudents={totalStudents}
-            totalTeachers={totalTeachers}
-            isEditMode={isEditMode}
-            templateData={templateData}
-            initialProfileData={initialProfileData}
-            admissionPhone={admissionPhone}
-            setAdmissionPhone={setAdmissionPhone}
-            admissionEmail={admissionEmail}
-            setAdmissionEmail={setAdmissionEmail}
-            feesTable={feesTable}
-            setFeesTable={setFeesTable}
-            extraChargesTable={extraChargesTable}
-            setExtraChargesTable={setExtraChargesTable}
-            templateCtx={templateCtx}
-          />
-        </div>
-      )}
-
-      {/* ─── TAB 6: REVIEWS & RATINGS ─── */}
-      {activeTab === 'reviews' && (
-        <div key="tab-reviews" className="relative group/sect animate-fade-in transition-opacity duration-300">
-          <SectionVisibilityToggle sectionId="reviews" sectionTitle="Reviews & Ratings" />
-          <SchoolReviewsSection displayName={displayName} udiseCode={displayUdise} />
+          {isUnverified ? (
+            <div className="max-w-4xl mx-auto px-4 py-12">
+              <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-8 text-center space-y-5">
+                <div className="w-16 h-16 rounded-2xl bg-[#005689]/10 border border-[#005689]/20 flex items-center justify-center mx-auto text-[#005689]">
+                  <GraduationCap className="w-8 h-8 text-[#005689]" />
+                </div>
+                <div className="space-y-1.5 max-w-md mx-auto">
+                  <h3 className="text-xl font-bold text-slate-900 font-['Montserrat',sans-serif]">
+                    Admission & Fee Structure
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Official fee schedules, admission criteria, and seat availability are published directly by the school.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsClaimModalOpen(true)}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-[#005689] hover:bg-[#004168] text-white text-xs font-black shadow-md hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-amber-300" />
+                    <span>Update Fee & Admission</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-sky-200" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <SectionVisibilityToggle
+                sectionId="admissions"
+                sectionTitle="Admissions & Fees"
+                isPreviewing={!!previewSections['admissions']}
+                onTogglePreview={() => toggleSectionPreview('admissions')}
+              />
+              <SchoolTemplateSectionScope isEditModeOverride={previewSections['admissions'] ? false : undefined}>
+                <SchoolFeeSection
+                  displayName={displayName}
+                  displayBoard={displayBoard}
+                  displayUdise={displayUdise}
+                  displayAddress={displayAddress}
+                  state={state}
+                  district={district}
+                  village={village}
+                  pincode={pincode}
+                  classFrom={classFrom}
+                  classTo={classTo}
+                  schoolCategory={schoolCategory}
+                  totalStudents={totalStudents}
+                  totalTeachers={totalTeachers}
+                  isEditMode={isEditMode && !previewSections['admissions']}
+                  templateData={templateData}
+                  initialProfileData={initialProfileData}
+                  admissionPhone={admissionPhone}
+                  setAdmissionPhone={setAdmissionPhone}
+                  admissionEmail={admissionEmail}
+                  setAdmissionEmail={setAdmissionEmail}
+                  feesTable={feesTable}
+                  setFeesTable={setFeesTable}
+                  extraChargesTable={extraChargesTable}
+                  setExtraChargesTable={setExtraChargesTable}
+                  templateCtx={templateCtx}
+                />
+              </SchoolTemplateSectionScope>
+            </>
+          )}
         </div>
       )}
 
@@ -1358,14 +1855,25 @@ export default function SchoolProfileView({
             <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 space-y-3.5">
               {/* Compact Heading + Directory / Home Links */}
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <MapPin className="w-3.5 h-3.5 text-[#006FCC] shrink-0" />
-                  <h3 className="!text-xs sm:!text-sm !font-semibold !text-slate-800 truncate m-0 flex items-center gap-1.5">
-                    <span>Nearby Schools within 5 km</span>
-                    <span className="text-[10px] font-normal text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded-full">
-                      Strict 5 km Radius
-                    </span>
-                  </h3>
+                <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-[#006FCC] shrink-0" />
+                    <h3 className="!text-xs sm:!text-sm !font-semibold !text-slate-800 truncate m-0">
+                      Nearby Schools
+                    </h3>
+                  </div>
+                  {!isPublicClaimed && (
+                    <button
+                      type="button"
+                      onClick={handleSearchSchoolsNearYou}
+                      disabled={isLocatingForSearch}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#006FCC] hover:bg-[#005399] text-white text-[10.5px] sm:text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer active:scale-95"
+                      title="Search schools near your live location"
+                    >
+                      <Navigation className={`w-3 h-3 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
+                      <span>{isLocatingForSearch ? 'Locating...' : 'Search school near you'}</span>
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <Link
@@ -1399,9 +1907,12 @@ export default function SchoolProfileView({
                     const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
                     const nameSlug = toSlug(sName, 'school');
                     const distBadge = s.distanceKm ? `${s.distanceKm} km away` : '';
+                    const sBlock = toSlug(s.block_name || sVill || 'block', 'block');
+                    const sCluster = toSlug(s.cluster_name || sVill || 'cluster', 'cluster');
+                    const cleanNameSlug = nameSlug.replace(/-\d{4,11}$/, '');
                     const href = sCode
-                      ? `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${nameSlug}-${encodeURIComponent(sCode)}`
-                      : `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${nameSlug}`;
+                      ? `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${sBlock}/${sCluster}/${encodeURIComponent(sCode)}/${cleanNameSlug}`
+                      : `/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${cleanNameSlug}`;
 
                     return (
                       <Link
@@ -1447,6 +1958,38 @@ export default function SchoolProfileView({
               ) : (
                 <div className="py-3 px-3.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-500 italic">
                   No other verified schools found strictly within a 5 km radius of this campus.
+                </div>
+              )}
+
+              {/* Dedicated "Search More Schools Near You" Action Card (Only on Unclaimed Profiles) */}
+              {!isPublicClaimed && (
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-slate-50 border border-sky-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="w-10 h-10 rounded-xl bg-[#006FCC] flex items-center justify-center text-white shrink-0 shadow-xs">
+                      <Navigation className={`w-5 h-5 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-800 m-0 flex items-center gap-1.5">
+                        <span>Search more schools near you</span>
+                        <span className="text-[10px] font-semibold text-sky-700 bg-sky-100/90 px-2 py-0.5 rounded-full">
+                          Live Proximity
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-slate-500 m-0 mt-0.5">
+                        Allow location access to view all nearby verified private schools within 10 km on the All India Directory.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSearchSchoolsNearYou}
+                    disabled={isLocatingForSearch}
+                    className="w-full sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all cursor-pointer shrink-0 active:scale-98"
+                  >
+                    <Navigation className={`w-3.5 h-3.5 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
+                    <span>{isLocatingForSearch ? 'Detecting Location...' : 'Search More Schools Near You'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               )}
 
@@ -1503,11 +2046,12 @@ export default function SchoolProfileView({
       <SchoolFooterSection
         displayName={displayName}
         templateData={templateData}
+        isClaimed={isVerifiedSchool}
         displayAddress={displayAddress}
         displayState={displayState}
         displayDistrict={displayDistrict}
-        village={village}
-        pincode={pincode}
+        village={village || templateData?.village || templateData?.locality}
+        pincode={pincode || templateData?.pincode}
         displayPhone={displayPhone}
         displayEmail={displayEmail}
         displayGeneralPhone={displayGeneralPhone}
@@ -1518,10 +2062,11 @@ export default function SchoolProfileView({
         displayPrincipalEmail={displayPrincipalEmail}
         displayCareersPhone={displayCareersPhone}
         displayCareersEmail={displayCareersEmail}
-        website={website}
-        lat={lat}
-        lng={lng}
+        website={website || templateData?.website}
+        lat={Number(templateData?.lat || templateData?.latitude || templateData?.contact?.geoLocation?.latitude || lat)}
+        lng={Number(templateData?.lng || templateData?.longitude || templateData?.contact?.geoLocation?.longitude || lng)}
         onTabSwitch={handleTabSwitch}
+        onReportClick={() => setIsReportModalOpen(true)}
       />
 
       {/* ========================================================= */}
@@ -1581,67 +2126,356 @@ export default function SchoolProfileView({
         setEditingAward={setEditingAward}
         isClaimModalOpen={isClaimModalOpen}
         setIsClaimModalOpen={setIsClaimModalOpen}
-        isAddSchoolModalOpen={isAddSchoolModalOpen}
-        setIsAddSchoolModalOpen={setIsAddSchoolModalOpen}
       />
 
-      {/* ─── STICKY FLOATING ACTION BAR (Call Icon + WhatsApp + Mail + Claim Profile) ─── */}
-      <div className="fixed bottom-0 inset-x-0 z-50 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-3 py-2 shadow-2xl safe-bottom">
-        <div className="flex items-center justify-center gap-2 max-w-lg mx-auto">
-          {displayPhone ? (
-            <a
-              href={`tel:${displayPhone.replace(/[^0-9+]/g, '')}`}
-              aria-label="Call School"
-              title={`Call School: ${displayPhone}`}
-              className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 active:scale-95 transition-all"
-            >
-              <Phone className="w-4 h-4" />
-            </a>
-          ) : (
-            <a
-              href="#contact"
-              aria-label="Contact School"
-              title="Contact School"
-              className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 active:scale-95 transition-all"
-            >
-              <Phone className="w-4 h-4" />
-            </a>
-          )}
+      {/* ─── FLOATING SPEED DIAL CONTACT OPTIONS (Opens Vertically on the RIGHT Above Contact Button) ─── */}
+      {isContactMenuOpen && (
+        <>
+          {/* Backdrop to close when clicking anywhere outside */}
+          <div
+            className="fixed inset-0 z-[8999]"
+            onClick={() => setIsContactMenuOpen(false)}
+          />
 
-          {/* WhatsApp Support Button (9050778830) */}
-          <a
-            href="https://wa.me/919050778830?text=Hi%20CSEEL%2C%20I%20have%20an%20inquiry%20regarding%20school%20profile"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Chat on WhatsApp"
-            title="Chat on WhatsApp: 9050778830"
-            className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] border border-[#25D366]/40 active:scale-95 transition-all"
+          <div
+            className="fixed bottom-[64px] right-3 sm:right-6 z-[9002] flex flex-col items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200 select-none"
+            onClick={(e) => e.stopPropagation()}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.57 20.15 9.12 19.76 7.85 19L7.55 18.82L4.43 19.64L5.26 16.6L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.05 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.05 20.15ZM16.57 14.36C16.32 14.23 15.1 13.63 14.88 13.55C14.65 13.47 14.49 13.43 14.32 13.68C14.16 13.93 13.68 14.49 13.53 14.66C13.39 14.82 13.24 14.84 12.99 14.72C12.75 14.59 11.95 14.33 11 13.49C10.26 12.83 9.76 12.02 9.61 11.77C9.47 11.53 9.6 11.39 9.72 11.27C9.83 11.16 9.97 10.98 10.1 10.83C10.22 10.68 10.26 10.58 10.34 10.41C10.43 10.25 10.38 10.1 10.32 9.98C10.26 9.85 9.77 8.65 9.56 8.16C9.36 7.68 9.16 7.74 9.01 7.73C8.87 7.73 8.71 7.72 8.54 7.72C8.38 7.72 8.11 7.78 7.89 8.03C7.66 8.27 7.02 8.87 7.02 10.1C7.02 11.32 7.91 12.5 8.03 12.67C8.16 12.83 9.78 15.34 12.27 16.41C12.86 16.67 13.32 16.82 13.68 16.94C14.28 17.13 14.82 17.1 15.26 17.04C15.75 16.97 16.76 16.42 16.97 15.83C17.18 15.24 17.18 14.74 17.11 14.63C17.05 14.52 16.82 14.48 16.57 14.36Z" />
-            </svg>
-          </a>
+            {/* 1. WhatsApp */}
+            {(() => {
+              const currentProfileUrl = typeof window !== 'undefined'
+                ? window.location.href
+                : `https://www.cseel.org/school/${toSlug(displayState, 'state')}/${toSlug(displayDistrict, 'district')}/${toSlug(blockName || 'block', 'block')}/${toSlug(clusterName || village || 'cluster', 'cluster')}/${displayUdise}/${toSlug(displayName, 'school').replace(/-\d{4,11}$/, '')}`;
 
-          {/* Mail Button (update@mailer.cseel.org) */}
-          <a
-            href="mailto:update@mailer.cseel.org?subject=School%20Profile%20Update%20Inquiry"
-            aria-label="Email Us"
-            title="Email: update@mailer.cseel.org"
-            className="w-10 h-10 shrink-0 inline-flex items-center justify-center rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-400 border border-sky-500/40 active:scale-95 transition-all"
-          >
-            <Mail className="w-4 h-4" />
-          </a>
+              const waMessage = `Hello Team,
 
+I want to claim / update the official profile for:
+• School Name: ${displayName}
+• UDISE Code: ${displayUdise}
+• Address: ${displayAddress}
+• State: ${displayState}
+• District: ${displayDistrict}
+• Block: ${blockName || 'N/A'}
+• Cluster: ${clusterName || village || 'N/A'}
+• Profile Link: ${currentProfileUrl}
+
+Please assist with verification.`;
+
+              return (
+                <a
+                  href={`https://wa.me/919050778830?text=${encodeURIComponent(waMessage)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Chat on WhatsApp"
+                  title="Chat on WhatsApp (+91 9050778830)"
+                  className="w-11 h-11 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all border border-white/20"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.57 20.15 9.12 19.76 7.85 19L7.55 18.82L4.43 19.64L5.26 16.6L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.68 12.05 3.68C14.25 3.68 16.31 4.54 17.87 6.1C19.42 7.66 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.05 20.15ZM16.57 14.36C16.32 14.23 15.1 13.63 14.88 13.55C14.65 13.47 14.49 13.43 14.32 13.68C14.16 13.93 13.68 14.49 13.53 14.66C13.39 14.82 13.24 14.84 12.99 14.72C12.75 14.59 11.95 14.33 11 13.49C10.26 12.83 9.76 12.02 9.61 11.77C9.47 11.53 9.6 11.39 9.72 11.27C9.83 11.16 9.97 10.98 10.1 10.83C10.22 10.68 10.26 10.58 10.34 10.41C10.43 10.25 10.38 10.1 10.32 9.98C10.26 9.85 9.77 8.65 9.56 8.16C9.36 7.68 9.16 7.74 9.01 7.73C8.87 7.73 8.71 7.72 8.54 7.72C8.38 7.72 8.11 7.78 7.89 8.03C7.66 8.27 7.02 8.87 7.02 10.1C7.02 11.32 7.91 12.5 8.03 12.67C8.16 12.83 9.78 15.34 12.27 16.41C12.86 16.67 13.32 16.82 13.68 16.94C14.28 17.13 14.82 17.1 15.26 17.04C15.75 16.97 16.76 16.42 16.97 15.83C17.18 15.24 17.18 14.74 17.11 14.63C17.05 14.52 16.82 14.48 16.57 14.36Z" />
+                  </svg>
+                </a>
+              );
+            })()}
+
+            {/* 2. Mail */}
+            <a
+              href={`mailto:update@cseel.org?subject=Inquiry%20regarding%20${encodeURIComponent(displayName)}%20(UDISE:%20${encodeURIComponent(displayUdise)})`}
+              aria-label="Email Us"
+              title="Email: update@cseel.org"
+              className="w-11 h-11 rounded-full bg-[#0284c7] hover:bg-[#0369a1] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all border border-white/20"
+            >
+              <Mail className="w-5 h-5" />
+            </a>
+          </div>
+        </>
+      )}
+
+
+
+      {/* ─── STICKY FLOATING ACTION BAR (Always visible, responsive, zero horizontal overflow) ─── */}
+      <div
+        className={`fixed bottom-0 inset-x-0 z-[9000] bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 sm:px-6 py-1.5 shadow-2xl safe-bottom transition-transform duration-300 ease-in-out ${
+          isFooterVisible ? 'translate-y-0' : 'translate-y-full pointer-events-none'
+        }`}
+      >
+        <div className="grid grid-cols-2 gap-3 max-w-xs sm:max-w-sm mx-auto items-center">
+          {/* 1. Report Outdated Information */}
           <button
             type="button"
-            onClick={() => setIsClaimModalOpen(true)}
-            className="flex-1 py-2.5 px-3.5 rounded-xl bg-[#006FCC] hover:bg-[#005499] text-white text-xs font-bold shadow-lg shadow-blue-900/30 active:scale-95 transition-all whitespace-nowrap inline-flex items-center justify-center gap-1.5 cursor-pointer font-['Montserrat',sans-serif]"
+            onClick={() => setIsReportModalOpen(true)}
+            aria-label="Report Outdated Information"
+            title="Report Outdated Information"
+            className="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl hover:bg-rose-50 text-rose-600 active:scale-95 transition-all cursor-pointer"
           >
-            <ShieldCheck className="w-4 h-4 shrink-0" />
-            <span>Claim Profile</span>
+            <div className="w-8 h-8 rounded-xl bg-rose-50 border border-rose-200/60 flex items-center justify-center text-rose-600 shadow-2xs">
+              <Flag className="w-4 h-4" />
+            </div>
+            <span className="text-[11px] font-bold text-slate-700 mt-1 leading-none">
+              Report
+            </span>
+          </button>
+
+          {/* 2. Contact for Claim */}
+          <button
+            type="button"
+            onClick={() => setIsContactMenuOpen((prev) => !prev)}
+            aria-label="Contact for Claim"
+            title={isContactMenuOpen ? "Close Contacts" : "Contact for Claim"}
+            className="flex flex-col items-center justify-center py-1.5 px-2 rounded-xl hover:bg-sky-50 text-[#005689] active:scale-95 transition-all cursor-pointer"
+          >
+            <div
+              className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors shadow-2xs ${
+                isContactMenuOpen ? 'bg-[#005689] text-white shadow-xs' : 'bg-sky-50 border border-sky-200/60 text-[#005689]'
+              }`}
+            >
+              {isContactMenuOpen ? <X className="w-4 h-4" /> : <Headphones className="w-4 h-4" />}
+            </div>
+            <span className="text-[11px] font-bold text-[#005689] mt-1 leading-none text-center">
+              Contact for Claim
+            </span>
           </button>
         </div>
       </div>
+
+      {/* Standalone Community Review Modal */}
+      <SchoolReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        displayName={displayName}
+        udiseCode={displayUdise}
+      />
+
+      {/* Submission Key Verification Modal */}
+      {isKeyPromptModalOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="bg-gradient-to-r from-[#005689] to-[#004168] p-4 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                  <Key className="w-4 h-4 text-amber-300" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm leading-tight">Edit School</h3>
+                  <p className="text-[11px] text-sky-100">Enter your secret key to open profile</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setIsKeyPromptModalOpen(false); setKeyVerificationError(''); }}
+                className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleVerifySubmissionKey} className="p-4 space-y-3.5">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Secret Key
+                </label>
+                <input
+                  type="text"
+                  value={submissionKeyInput}
+                  onChange={(e) => setSubmissionKeyInput(e.target.value)}
+                  placeholder="Enter secret key..."
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-[#005689] focus:ring-2 focus:ring-[#005689]/20 text-xs font-mono text-slate-900 placeholder:text-slate-400 outline-none transition-all"
+                  autoFocus
+                />
+                {keyVerificationError && (
+                  <p className="text-[11px] text-red-600 font-medium mt-1.5 flex items-center gap-1">
+                    <span>⚠️</span> {keyVerificationError}
+                  </p>
+                )}
+              </div>
+
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Enter your valid secret key to open your school profile.
+              </p>
+
+              <div className="flex items-center justify-between pt-0.5">
+                <a
+                  href={`mailto:support@cseel.org?subject=Forgot%20Submission%20Key%20for%20UDISE%20${displayUdise}&body=Hello%20CSEEL%20Support,%0A%0APlease%20help%20recover%20the%20submission%20key%20for%20our%20school:%0AName:%20${encodeURIComponent(displayName)}%0AUDISE:%20${displayUdise}%0A%0AThank%20you.`}
+                  className="text-[11px] font-medium text-[#005689] hover:underline"
+                >
+                  Forgot key? Request via email
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => { setIsKeyPromptModalOpen(false); setKeyVerificationError(''); }}
+                  className="flex-1 py-2 px-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-semibold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isVerifyingKey}
+                  className="flex-1 py-2 px-3 rounded-xl bg-[#005689] hover:bg-[#004168] disabled:opacity-50 text-white text-xs font-bold shadow-md transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
+                >
+                  {isVerifyingKey ? (
+                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Open Profile</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Report Profile Outdated Details Modal */}
+      {isReportModalOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="bg-gradient-to-r from-rose-600 to-rose-700 p-5 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+                  <Flag className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base leading-tight">Report Profile</h3>
+                  <p className="text-xs text-rose-100">Help us keep school information accurate</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsReportModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {isReportSubmitted ? (
+              <div className="p-8 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-7 h-7" />
+                </div>
+                <h4 className="text-sm font-bold text-slate-800">Report Received</h4>
+                <p className="text-xs text-slate-500">
+                  Thank you for helping us maintain high data quality. Our team will verify and update this record.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleReportSubmit} className="p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Issue Type
+                  </label>
+                  <select
+                    value={reportReason}
+                    onChange={(e) => setReportReason(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 outline-none focus:border-[#005689]"
+                  >
+                    <option>Incorrect Contact / Address</option>
+                    <option>Outdated Fee Structure</option>
+                    <option>Wrong School Name or Affiliation</option>
+                    <option>School Closed or Relocated</option>
+                    <option>Unauthorized Content / Impersonation</option>
+                    <option>Other Feedback</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Details (Optional)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={reportDetails}
+                    onChange={(e) => setReportDetails(e.target.value)}
+                    placeholder="Provide correct information or details..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs text-slate-800 outline-none focus:border-[#005689] resize-none"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsReportModalOpen(false)}
+                    className="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-semibold transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md transition-all cursor-pointer"
+                  >
+                    Submit Report
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 4. UNCLAIMED PROFILE UDISE PUBLIC NOTICE POPUP (Compact & Legally Protected) */}
+      {isNoticeModalOpen && isUnverified && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3.5 bg-slate-950/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#005689] to-[#004168] px-4 py-3 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-300 shrink-0" />
+                <h3 className="font-bold text-xs sm:text-sm leading-tight text-white tracking-tight">Public Directory Notice</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsNoticeModalOpen(false)}
+                className="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer transition-colors"
+                aria-label="Close Notice"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Content & Legal Safe-Harbor Disclaimer (Ultra-Compact) */}
+            <div className="p-3.5 space-y-2">
+              <div className="p-2.5 rounded-xl bg-sky-50/80 border border-sky-100 text-slate-800 text-xs leading-relaxed">
+                <p className="font-semibold text-[#005689]">
+                  The data provided on this school profile is based on UDISE public data.
+                </p>
+                <p className="text-[11px] text-slate-600 mt-1 leading-normal">
+                  Compiled strictly for educational and reference purposes. Processed as-is from public records; CSEEL assumes no liability for inadvertent clerical or processing errors.
+                </p>
+              </div>
+
+              <p className="text-[10.5px] text-slate-500 text-center leading-tight">
+                School management can claim this profile for free to verify or update records.
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-0.5">
+                <button
+                  type="button"
+                  onClick={() => setIsNoticeModalOpen(false)}
+                  className="flex-1 py-1.5 px-3 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 text-xs font-bold transition-all cursor-pointer text-center"
+                >
+                  I Understand / ठीक है
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsNoticeModalOpen(false);
+                    setIsClaimModalOpen(true);
+                  }}
+                  className="flex-1 py-1.5 px-3 rounded-xl bg-[#005689] hover:bg-[#004168] text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Claim Profile</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

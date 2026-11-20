@@ -7,7 +7,6 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import AnnouncementBar from "./AnnouncementBar";
 import ResearchRibbonBanner from "./ResearchRibbonBanner";
-import OfferPopup from "@/components/offers/OfferPopup";
 import { UserProfileModal } from "@/components/auth/UserProfileModal";
 
 import { NavigationProvider } from '@/contexts/NavigationContext';
@@ -66,7 +65,6 @@ const LayoutContent = ({ children }: LayoutProps) => {
         <TopBar />
         <Navbar />
       </div>
-      <OfferPopup />
       <UserProfileModal />
 
       <main className="flex-1 min-w-0 w-full [overflow-x:clip] print:overflow-visible print:min-h-0 print:h-auto print:block">{children}</main>

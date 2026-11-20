@@ -52,6 +52,64 @@ function cleanSchoolNameAndAddress(rawName: string, rawAddress?: string): { clea
   return { cleanName: name, cleanAddress: address };
 }
 
+let cachedSchoolsMap: Map<string, any> | null = null;
+function getCachedSchoolByUdise(cleanCode: string): any {
+  if (!cachedSchoolsMap) {
+    try {
+      const dbPath = path.join(process.cwd(), 'src', 'data', 'schools_database.json');
+      if (fs.existsSync(dbPath)) {
+        const raw = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+        cachedSchoolsMap = new Map();
+        if (Array.isArray(raw)) {
+          for (const item of raw) {
+            const c = String(item.udise_code || item.udiseCode || '').trim();
+            if (c) cachedSchoolsMap.set(c, item);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load schools_database.json:', e);
+      cachedSchoolsMap = new Map();
+    }
+  }
+  return cachedSchoolsMap?.get(cleanCode) || null;
+}
+
+function cleanLocalityFromAddress(rawAddress: string, district?: string, state?: string, pincode?: string): string {
+  if (!rawAddress) return '';
+  let cleaned = String(rawAddress);
+
+  const tokens: string[] = [];
+  if (pincode) tokens.push(String(pincode).trim());
+  if (district) tokens.push(String(district).trim());
+  if (state) tokens.push(String(state).trim());
+
+  if (district && district.toLowerCase() === 'gurugram') {
+    tokens.push('Gurgaon');
+  } else if (district && district.toLowerCase() === 'gurgaon') {
+    tokens.push('Gurugram');
+  }
+
+  // Sort tokens by length descending so longer words are removed first
+  tokens.sort((a, b) => b.length - a.length);
+
+  for (const token of tokens) {
+    if (!token || token.length < 2) continue;
+    const escaped = token.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    const rx = new RegExp(`(?:,\\s*|\\s+|-)?\\b${escaped}\\b(?:,\\s*|\\s+|-)?`, 'gi');
+    cleaned = cleaned.replace(rx, ', ');
+  }
+
+  cleaned = cleaned.replace(/\b\d{4,6}\b/g, '');
+  cleaned = cleaned.replace(/,\s*,/g, ',')
+                   .replace(/^\s*[,.\-\s]+/, '')
+                   .replace(/[,.\-\s]+$/, '')
+                   .replace(/\s{2,}/g, ' ')
+                   .trim();
+
+  return cleaned || rawAddress;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -155,17 +213,34 @@ export async function GET(req: NextRequest) {
     const isResidential = (resiDesc.includes('residential') && !resiDesc.includes('non')) || resiYn === 1 || resiYn === 2 || String(supabaseData?.residential_school).toLowerCase().includes('residential');
     const boardingType = isResidential ? (profile?.resiSchTypeName && profile.resiSchTypeName !== 'NA' ? profile.resiSchTypeName : 'Residential School') : 'Day School';
 
-    const affNumber = profile?.affilNoSec || profile?.affilNoHighSec || profile?.affNo || supabaseData?.affiliation_no || '';
-    const principalName = profile?.headMasterName || byYear?.headMasterName || profile?.respondentName || supabaseData?.principal_name || '';
-    const contactPhone = byYear?.respondentMobile || byYear?.mobileNumber || profile?.schPhone || supabaseData?.phone || '';
-    const contactEmail = byYear?.email || profile?.email || supabaseData?.email || '';
-    const websiteUrl = profile?.website || supabaseData?.website || '';
-    const streetAddress = extractedAddr || rawAddress || '';
-    const village = byYear?.villageName || profile?.villageName || reportCard?.villWardName || supabaseData?.village_name || '';
-    const block = byYear?.blockName || profile?.blockName || reportCard?.blockName || supabaseData?.block_name || '';
-    const district = byYear?.districtName || profile?.districtName || reportCard?.districtName || supabaseData?.district_name || '';
-    const state = byYear?.stateName || profile?.stateName || reportCard?.stateName || supabaseData?.state_name || '';
-    const pincode = String(byYear?.pincode || profile?.pincode || reportCard?.pincode || supabaseData?.pincode || '');
+    const localDbMatch = getCachedSchoolByUdise(cleanCode);
+
+    const affNumber = profile?.affilNoSec || profile?.affilNoHighSec || profile?.affNo || localDbMatch?.affiliation_number || supabaseData?.affiliation_no || '';
+    const principalName = profile?.headMasterName || byYear?.headMasterName || profile?.respondentName || localDbMatch?.principal_name || supabaseData?.principal_name || '';
+    // Privacy: Omit raw respondent mobile numbers
+    const contactPhone = '';
+    const contactEmail = byYear?.email || profile?.email || localDbMatch?.email || supabaseData?.email || '';
+    const websiteUrl = profile?.website || localDbMatch?.website || supabaseData?.website || '';
+
+    const district = byYear?.districtName || profile?.districtName || reportCard?.districtName || localDbMatch?.district_name || supabaseData?.district_name || '';
+    const state = byYear?.stateName || profile?.stateName || reportCard?.stateName || localDbMatch?.state_name || supabaseData?.state_name || '';
+    const pincode = String(byYear?.pincode || profile?.pincode || reportCard?.pincode || localDbMatch?.pincode || supabaseData?.pincode || '');
+
+    const rawStreetAddress = extractedAddr || rawAddress || localDbMatch?.address || '';
+    const cleanLocality = cleanLocalityFromAddress(rawStreetAddress, district, state, pincode) || byYear?.villageName || profile?.villageName || reportCard?.villWardName || localDbMatch?.village_name || supabaseData?.village_name || '';
+    const village = cleanLocality;
+    const block = byYear?.blockName || profile?.blockName || reportCard?.blockName || localDbMatch?.block_name || supabaseData?.block_name || '';
+    const streetAddress = cleanLocality;
+
+    // Accurate Coordinates: Lookup authentic geo-coordinates from UDISE, local schools database, or Supabase
+    let latitude = 28.6315;
+    let longitude = 77.2410;
+    const candidateLat = profile?.latitude || byYear?.latitude || localDbMatch?.latitude || localDbMatch?.lat || supabaseData?.latitude || supabaseData?.lat;
+    const candidateLng = profile?.longitude || byYear?.longitude || localDbMatch?.longitude || localDbMatch?.lng || supabaseData?.longitude || supabaseData?.lng;
+    if (candidateLat && candidateLng && !isNaN(Number(candidateLat)) && !isNaN(Number(candidateLng))) {
+      latitude = Number(candidateLat);
+      longitude = Number(candidateLng);
+    }
 
     const totalStudents = Number(stats?.totalCount || (Number(stats?.totalBoy || 0) + Number(stats?.totalGirl || 0)) || stats?.totalEnrolment || supabaseData?.total_students || 0);
     const totalBoys = Number(stats?.totalBoy || supabaseData?.total_boys || 0);
@@ -178,27 +253,163 @@ export async function GET(req: NextRequest) {
     const strRatio = totalTeachers > 0 && totalStudents > 0 ? `1:${Math.round(totalStudents / totalTeachers)}` : '';
     const campusArea = profile?.campusArea || supabaseData?.campus_area || '';
 
-    // 3. Evaluate all facilities from government records
+    // 3. Evaluate all facilities from government records (including UDISE+ and UP dataset)
     const verifiedFacilitiesSet = new Set<string>();
 
-    if (facilityData?.playgroundAvailable === '1' || facilityData?.playgroundAvailable === 1 || facilityData?.playgrndYn === 1) {
+    // Atal Tinkering Lab (ATL) & Robotics Lab
+    if (
+      facilityData?.tinkeringLabYn === 1 ||
+      facilityData?.tinkeringLabYn === '1' ||
+      facilityData?.atlLabYn === 1 ||
+      facilityData?.atlLabYn === '1' ||
+      facilityData?.stemLabYn === 1 ||
+      facilityData?.atal_stem_lab === 'Yes' ||
+      supabaseData?.atal_stem_lab === 'Yes'
+    ) {
+      verifiedFacilitiesSet.add('atl_tinkering_lab');
+      verifiedFacilitiesSet.add('robotics_lab');
+    }
+
+    // Integrated / Composite Science Lab
+    if (
+      facilityData?.integratedLabYn === 1 ||
+      facilityData?.integratedLabYn === '1' ||
+      facilityData?.scienceLabYn === 1 ||
+      facilityData?.compositeLabYn === 1 ||
+      supabaseData?.integrated_science_lab === 'Yes'
+    ) {
+      verifiedFacilitiesSet.add('composite_lab');
+      verifiedFacilitiesSet.add('science_lab');
+      verifiedFacilitiesSet.add('physics_lab');
+      verifiedFacilitiesSet.add('chemistry_lab');
+      verifiedFacilitiesSet.add('biology_lab');
+      verifiedFacilitiesSet.add('experiential_science_lab');
+    }
+
+    // Computer / ICT Lab
+    if (
+      facilityData?.ictLabYn === 1 ||
+      facilityData?.ictLabYn === '1' ||
+      facilityData?.compLabYn === 1 ||
+      supabaseData?.computer_ict_lab === 'Yes' ||
+      (Number(facilityData?.totLaptop || 0) + Number(facilityData?.totDesktop || 0)) > 0
+    ) {
+      verifiedFacilitiesSet.add('computer_lab');
+    }
+
+    // Playground & Outdoor Sports
+    if (
+      facilityData?.playgroundYn === 1 ||
+      facilityData?.playgroundYn === '1' ||
+      facilityData?.playgroundAvailable === '1' ||
+      facilityData?.playgroundAvailable === 1 ||
+      facilityData?.playgrndYn === 1 ||
+      supabaseData?.playground_available === 'Yes'
+    ) {
       verifiedFacilitiesSet.add('playground_outdoor_sports');
     }
-    if (facilityData?.libraryAvailable === '1' || facilityData?.libraryAvailable === 1 || facilityData?.libraryYn === 1) {
+
+    // Library
+    if (
+      facilityData?.libraryYn === 1 ||
+      facilityData?.libraryYn === '1' ||
+      facilityData?.libraryAvailable === '1' ||
+      facilityData?.libraryAvailable === 1 ||
+      supabaseData?.library === 'Yes' ||
+      Number(facilityData?.libBookTot || 0) > 0
+    ) {
       verifiedFacilitiesSet.add('library');
     }
-    if (facilityData?.drinkingWaterAvailable === '1' || facilityData?.drinkingWaterAvailable === 1 || facilityData?.drinkingWaterYn === 1) {
+
+    // RO / Drinking Water
+    if (
+      facilityData?.drinkWaterYn === 1 ||
+      facilityData?.drinkWaterYn === '1' ||
+      facilityData?.drinkingWaterAvailable === '1' ||
+      facilityData?.drinkingWaterAvailable === 1 ||
+      facilityData?.drinkingWaterYn === 1 ||
+      supabaseData?.ro_water === 'Yes'
+    ) {
       verifiedFacilitiesSet.add('ro_drinking_water');
     }
+
+    // CCTV Surveillance
     if (facilityData?.cctvAvailable === '1' || facilityData?.cctvAvailable === 1) {
       verifiedFacilitiesSet.add('cctv_surveillance');
     }
-    if (facilityData?.ictLabYn === 1 || facilityData?.compLabYn === 1) {
-      verifiedFacilitiesSet.add('computer_lab');
+
+    // Smart Digital Classrooms
+    if (
+      facilityData?.smartClassYn === 1 ||
+      facilityData?.digiClassYn === 1 ||
+      Number(facilityData?.digiBoardTot || 0) > 0 ||
+      Number(facilityData?.projectorTot || 0) > 0 ||
+      Number(supabaseData?.working_smart_boards || 0) > 0
+    ) {
+      verifiedFacilitiesSet.add('smart_classes');
+      verifiedFacilitiesSet.add('smart_classrooms');
     }
-    if (facilityData?.atlLabYn === 1 || facilityData?.stemLabYn === 1) {
-      verifiedFacilitiesSet.add('physics_lab');
-      verifiedFacilitiesSet.add('science_lab');
+
+    // Solar Power / Solar Energy
+    if (
+      facilityData?.solarpanelYn === 1 ||
+      facilityData?.solarpanelYn === '1' ||
+      facilityData?.solarPanelYn === 1
+    ) {
+      verifiedFacilitiesSet.add('solar_power_green_campus');
+      verifiedFacilitiesSet.add('solar_energy');
+    }
+
+    // Medical Checkup & Clinic
+    if (
+      facilityData?.medchkYn === 1 ||
+      facilityData?.medchkYn === '1' ||
+      facilityData?.medicalCheckupYn === 1
+    ) {
+      verifiedFacilitiesSet.add('medical_room_clinic');
+      verifiedFacilitiesSet.add('medical_clinic');
+    }
+
+    // Wheelchair Ramps & Accessibility
+    if (
+      facilityData?.rampsYn === 1 ||
+      facilityData?.rampsYn === '1' ||
+      facilityData?.rampsAvailable === '1' ||
+      facilityData?.rampsYn === 1
+    ) {
+      verifiedFacilitiesSet.add('disabled_friendly_ramps');
+      verifiedFacilitiesSet.add('wheelchair_ramps');
+    }
+
+    // Wi-Fi / Internet Campus
+    if (
+      facilityData?.internetYn === 1 ||
+      facilityData?.internetYn === '1' ||
+      facilityData?.wifiYn === 1
+    ) {
+      verifiedFacilitiesSet.add('wi_fi_campus');
+    }
+
+    // Auditorium
+    if (facilityData?.auditoriumYn === 1 || facilityData?.auditoriumYn === '1') {
+      verifiedFacilitiesSet.add('auditorium');
+    }
+
+    // Mid-Day Meals / Dining
+    if (facilityData?.mdmYn === 1 || facilityData?.kitchenShedYn === 1) {
+      verifiedFacilitiesSet.add('mid_day_meals_dining');
+    }
+
+    // Hostel & Boarding
+    if (isResidential || resiYn === 1 || resiYn === 2) {
+      verifiedFacilitiesSet.add('hostel_boarding');
+      verifiedFacilitiesSet.add('hostel_facility');
+      if (gender === 'Boys Only' || gender === 'Co-Educational') {
+        verifiedFacilitiesSet.add('boys_hostel');
+      }
+      if (gender === 'Girls Only' || gender === 'Co-Educational') {
+        verifiedFacilitiesSet.add('girls_hostel');
+      }
     }
 
     const standardizedFacilities = FACILITY_CATEGORIES.map((cat) => {
@@ -245,11 +456,16 @@ export async function GET(req: NextRequest) {
       boardingStatus: boardingType,
       principalName,
       address: streetAddress,
-      village,
+      village: cleanLocality,
+      locality: cleanLocality,
       block,
       district,
       state,
       pincode,
+      latitude,
+      longitude,
+      lat: latitude,
+      lng: longitude,
       cards: [
         { id: 'board', title: 'School Board', value: board || 'CBSE', icon: 'Award', color: 'amber' },
         { id: 'medium', title: 'Medium of Instruction', value: medium || 'Hindi', icon: 'BookOpen', color: 'blue' },
@@ -774,7 +990,7 @@ export async function GET(req: NextRequest) {
           ],
         },
         admissionsContact: {
-          helplinePhone: `+91 11 ${contactPhone}`,
+          helplinePhone: contactPhone ? `+91 ${contactPhone}` : '',
           email: contactEmail,
           officeHours: 'Monday to Saturday, 09:00 AM – 02:00 PM',
           location: 'Admissions Office, Administrative Block Ground Floor',
@@ -785,14 +1001,14 @@ export async function GET(req: NextRequest) {
       contact: {
         header: {
           title: 'Connect With Our Campus',
-          subtitle: `Get in touch with administrative desks, admissions counselors, or visit our central campus in New Delhi.`,
+          subtitle: `Get in touch with administrative desks, admissions counselors, or visit our campus in ${district}, ${state}.`,
         },
         contactDesks: [
           {
             deskId: 'desk_general',
             name: 'General Inquiries & Reception',
             role: 'Administrative Helpdesk',
-            phone: `+91 11 ${contactPhone}`,
+            phone: contactPhone ? `+91 ${contactPhone}` : '',
             email: contactEmail,
             availability: 'Mon - Sat: 08:30 AM - 03:00 PM',
           },
@@ -800,7 +1016,7 @@ export async function GET(req: NextRequest) {
             deskId: 'desk_admissions',
             name: 'Admissions & Enrollment Cell',
             role: 'New Student Registrations',
-            phone: `+91 11 ${contactPhone}`,
+            phone: contactPhone ? `+91 ${contactPhone}` : '',
             email: contactEmail,
             availability: 'Mon - Sat: 09:00 AM - 02:00 PM',
           },
@@ -808,7 +1024,7 @@ export async function GET(req: NextRequest) {
             deskId: 'desk_principal',
             name: "Principal's Secretariat",
             role: 'Head of Institution',
-            phone: `+91 11 ${contactPhone}`,
+            phone: contactPhone ? `+91 ${contactPhone}` : '',
             email: contactEmail,
             availability: 'By Prior Appointment Only',
           },
@@ -816,7 +1032,7 @@ export async function GET(req: NextRequest) {
             deskId: 'desk_careers',
             name: 'Careers & Faculty Recruitment',
             role: 'Human Resources',
-            phone: `+91 11 ${contactPhone}`,
+            phone: contactPhone ? `+91 ${contactPhone}` : '',
             email: contactEmail,
             availability: 'Mon - Fri: 10:00 AM - 04:00 PM',
           },
@@ -824,8 +1040,9 @@ export async function GET(req: NextRequest) {
         campusLocation: {
           udiseCode: cleanCode,
           schoolName,
-          streetAddress,
-          village,
+          streetAddress: cleanLocality,
+          village: cleanLocality,
+          locality: cleanLocality,
           block,
           district,
           state,
@@ -834,10 +1051,10 @@ export async function GET(req: NextRequest) {
           websiteUrl,
         },
         geoLocation: {
-          latitude: 28.6315,
-          longitude: 77.241,
-          googleMapsEmbedUrl: 'https://maps.google.com/maps?q=28.6315,77.2410&z=16&output=embed',
-          directionsUrl: 'https://www.google.com/maps/search/?api=1&query=28.6315,77.2410',
+          latitude,
+          longitude,
+          googleMapsEmbedUrl: `https://maps.google.com/maps?q=${latitude},${longitude}&z=16&output=embed`,
+          directionsUrl: `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`,
         },
         directInquiryForm: {
           isEnabled: true,

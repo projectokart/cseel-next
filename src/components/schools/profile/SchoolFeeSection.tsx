@@ -211,9 +211,17 @@ export default function SchoolFeeSection({
       return Array(rawCols.length).fill('');
     });
 
+    const default5Rows = [
+      ['Nursery - UKG', '', '', '', ''],
+      ['Class 1st - 5th', '', '', '', ''],
+      ['Class 6th - 8th', '', '', '', ''],
+      ['Class 9th - 10th', '', '', '', ''],
+      ['Class 11th - 12th', '', '', '', ''],
+    ];
+
     const safeData = {
       columns: rawCols,
-      rows: safeRows
+      rows: safeRows.length > 0 ? safeRows.slice(0, 15) : default5Rows
     };
 
     const maxCols = 5;
@@ -221,7 +229,7 @@ export default function SchoolFeeSection({
     const lastColIdx = safeData.columns.length - 1;
 
     const removeCol = (colIdx: number) => {
-      if (safeData.columns.length <= 2) return;
+      if (safeData.columns.length <= 1) return;
       setData({
         columns: safeData.columns.filter((_, i) => i !== colIdx),
         rows: safeData.rows.map(r => r.filter((_, i) => i !== colIdx))
@@ -237,7 +245,6 @@ export default function SchoolFeeSection({
     };
 
     const removeRow = (rowIdx: number) => {
-      if (safeData.rows.length <= 1) return;
       setData({
         columns: safeData.columns,
         rows: safeData.rows.filter((_, i) => i !== rowIdx)

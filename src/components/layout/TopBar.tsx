@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const AddSchoolModal = dynamic(() => import('@/components/schools/AddSchoolModal'), { ssr: false });
-
 const ROLE_COLORS: Record<string, string> = {
   organisation: "bg-purple-100 text-purple-700",
   teacher:      "bg-blue-100 text-blue-700",
@@ -37,7 +35,6 @@ const TopBar = () => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [userSchoolClaim, setUserSchoolClaim] = useState<any | null>(null);
-  const [isAddSchoolModalOpen, setIsAddSchoolModalOpen] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -230,16 +227,16 @@ const TopBar = () => {
           {/* ── RIGHT SIDE: CBSE SCHOOLS | TEACHING JOBS | CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold min-w-0">
             
-            {/* CBSE Schools Direct Directory Link */}
+            {/* Schools Direct Directory Link */}
             <Link
               href="/schools"
-              aria-label="CBSE Schools Directory"
-              className="inline-flex items-center gap-1 px-2 py-0.5 h-[20px] justify-center text-white/95 hover:text-white font-bold bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/35 hover:border-sky-400 rounded-full active:scale-95 transition-all shrink-0 touch-manipulation group"
-              title="Explore 33,000+ Verified CBSE Schools Across India"
+              aria-label="Schools Directory"
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 h-[20px] justify-center text-white/95 hover:text-white font-bold bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/35 hover:border-sky-400 rounded-full active:scale-95 transition-all shrink-0 touch-manipulation group"
+              title="Explore Verified Schools Across India"
             >
               <School className="w-3 h-3 text-sky-400 group-hover:text-white transition-colors shrink-0" />
               <span className="text-sky-300 group-hover:text-white font-bold text-[10.5px] xs:text-[11px] tracking-tight transition-colors whitespace-nowrap">
-                CBSE Schools
+                Schools
               </span>
             </Link>
 
@@ -405,12 +402,6 @@ const TopBar = () => {
 
         </div>
       </div>
-
-      {/* Structured School Registration / Claim Modal */}
-      <AddSchoolModal
-        isOpen={isAddSchoolModalOpen}
-        onClose={() => setIsAddSchoolModalOpen(false)}
-      />
     </div>
   );
 };

@@ -110,111 +110,91 @@ export default function EduNetworkHubClient() {
           </div>
         </section>
 
-        {/* ── 4 MAIN GATEWAY CARDS (ORGANISATION/SCHOOL, JOBS, TEACHERS, STUDENTS) ── */}
-        <section className="max-w-7xl mx-auto px-4 -mt-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* ── 3 MAIN GATEWAY CARDS: VERIFIED SCHOOLS, ALL INDIA SCHOOLS & TEACHER JOBS ── */}
+        <section className="max-w-6xl mx-auto px-4 -mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             
-            {/* Card 1: Schools & Institutions */}
+            {/* Card 1: Verified Schools Directory */}
             <Link
-              href="/schools"
-              className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
+              href="/edu-network/school"
+              className="bg-white rounded-3xl p-6 border-2 border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-emerald-500 hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
             >
-              <div className="space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform shadow-xs">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                    /edu-network/school
+                  </span>
+                  <h2 className="text-lg font-black text-slate-900 group-hover:text-emerald-600 transition-colors mt-2">
+                    Verified Schools
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    Browse accredited and claimed educational institutions with verified STEM labs, active fees, and institutional dashboards.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-emerald-700">
+                <span>Browse Verified Schools</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+              </div>
+            </Link>
+
+            {/* Card 2: All India Schools Directory */}
+            <Link
+              href="/edu-network/all-india"
+              className="bg-white rounded-3xl p-6 border-2 border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-blue-500 hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
+            >
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform shadow-xs">
                   <Building2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider">Official Schools Directory</span>
-                  <h2 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-                    Schools & Institutions
+                  <span className="text-[10px] font-black text-blue-600 uppercase tracking-wider bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md">
+                    /edu-network/all-india
+                  </span>
+                  <h2 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors mt-2">
+                    All India Directory
                   </h2>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Search and compare verified schools across India with board affiliations, facilities, and STEM lab setups.
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    Search 16.6+ lakh schools across all states and districts in India with GPS distance detection, cascading filters, and UDISE data.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-blue-600">
-                <span>Explore Schools</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-blue-600">
+                <span>Explore All India Schools</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </div>
             </Link>
 
-            {/* Card 2: Teaching & Lab Jobs */}
+            {/* Card 3: Teacher & Faculty Jobs */}
             <Link
-              href="/careers"
-              className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
+              href="/edu-network/teachers/job"
+              className="bg-white rounded-3xl p-6 border-2 border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-cyan-500 hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
             >
-              <div className="space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
+              <div className="space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform shadow-xs">
                   <Briefcase className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">CSEEL Careers</span>
-                  <h2 className="text-lg font-black text-slate-900 group-hover:text-emerald-600 transition-colors">
-                    Teaching & Lab Careers
+                  <span className="text-[10px] font-black text-cyan-600 uppercase tracking-wider bg-cyan-50 border border-cyan-200 px-2 py-0.5 rounded-md">
+                    /edu-network/teachers/job
+                  </span>
+                  <h2 className="text-lg font-black text-slate-900 group-hover:text-cyan-600 transition-colors mt-2">
+                    Teacher &amp; Faculty Jobs
                   </h2>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Active STEM faculty, physics, chemistry, biology educator positions, and hands-on laboratory coordinators.
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    Explore 5,000+ active school teaching jobs, PGT, TGT, PRT vacancies, STEM educator positions, and walk-in interviews across India.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-emerald-600">
-                <span>View Open Positions</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* Card 3: Verified Faculty */}
-            <Link
-              href="/edu-network/teachers"
-              className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
-                  <GraduationCap className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-black text-purple-600 uppercase tracking-wider">NEP-2020 Educators</span>
-                  <h2 className="text-lg font-black text-slate-900 group-hover:text-purple-600 transition-colors">
-                    Verified Faculty
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Connect with 50+ certified science educators, curriculum specialists, and experimental learning mentors across India.
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-purple-600">
-                <span>Explore Educators</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* Card 4: Student Innovators */}
-            <Link
-              href="/edu-network/students"
-              className="bg-white rounded-3xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-black group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-black text-amber-600 uppercase tracking-wider">ATL & Science Fairs</span>
-                  <h2 className="text-lg font-black text-slate-900 group-hover:text-amber-600 transition-colors">
-                    Student Innovators
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Showcasing 50+ award-winning STEM hardware prototypes, robotics projects, and verified research portfolios.
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-black text-amber-600">
-                <span>View Innovator Vault</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <div className="pt-4 mt-5 border-t border-slate-100 flex items-center justify-between text-xs font-black text-cyan-600">
+                <span>View Job Openings</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </div>
             </Link>
 
@@ -229,11 +209,10 @@ export default function EduNetworkHubClient() {
               <p className="text-xs text-slate-500">Select your city to view fees, CBSE/ICSE/IB boards, and laboratory facilities.</p>
             </div>
             <Link
-              href="/edu-network/organisation/school"
+              href="/edu-network/all-india"
               className="text-xs font-black text-blue-600 hover:underline flex items-center gap-1 shrink-0"
             >
-              <span>View All 11,900+ Listed Schools</span>
-              
+              <span>View All 16.6+ Lakh Listed Schools &rarr;</span>
             </Link>
           </div>
 

@@ -92,6 +92,7 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import AdminSchoolGovernanceModule from '@/features/admin/components/modules/AdminSchoolGovernanceModule';
 
 export type DashboardType =
   | 'home'
@@ -1815,54 +1816,7 @@ export default function AdminGovernanceConsoleClient({ initialDashboard = 'repor
                 LAYOUT 3: SCHOOL MANAGEMENT DASHBOARD LAYOUT
                ═════════════════════════════════════════════════════════════ */}
             {activeDashboard === 'schools' && (
-              <div className="space-y-3.5">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="bg-white p-3 rounded-lg border border-[#dadce0] shadow-[0_1px_2px_rgba(60,64,67,0.06)]">
-                    <p className="text-[11px] font-semibold text-[#5f6368] uppercase">15L+ UDISE Directory</p>
-                    <p className="text-xl font-semibold text-[#202124] mt-1">1,509,240</p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg border border-[#dadce0] shadow-[0_1px_2px_rgba(60,64,67,0.06)]">
-                    <p className="text-[11px] font-semibold text-[#5f6368] uppercase">Verified Lab Hubs</p>
-                    <p className="text-xl font-semibold text-emerald-600 mt-1">1,420 Schools</p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg border border-[#dadce0] shadow-[0_1px_2px_rgba(60,64,67,0.06)]">
-                    <p className="text-[11px] font-semibold text-[#5f6368] uppercase">Pending Claims</p>
-                    <p className="text-xl font-semibold text-amber-600 mt-1">8 Claims</p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg border border-[#dadce0] shadow-[0_1px_2px_rgba(60,64,67,0.06)]">
-                    <p className="text-[11px] font-semibold text-[#5f6368] uppercase">SARAS 49 Audits</p>
-                    <p className="text-xl font-semibold text-purple-700 mt-1">94.8% Pass</p>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-lg border border-[#dadce0] p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(60,64,67,0.06)] space-y-3">
-                  <h3 className="text-xs font-semibold text-[#202124] uppercase tracking-wider">
-                    School Affiliation Claims Queue
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs text-left">
-                      <thead className="bg-gray-50 border-b border-[#dadce0] text-[11px] text-[#5f6368] font-semibold uppercase">
-                        <tr>
-                          <th className="py-2 px-3">School Name</th>
-                          <th className="py-2 px-3">UDISE Code</th>
-                          <th className="py-2 px-3">Location</th>
-                          <th className="py-2 px-3 text-right">Verification</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        <tr className="hover:bg-gray-50/80">
-                          <td className="py-2 px-3 font-semibold text-[#202124]">Delhi Public School Sector 45</td>
-                          <td className="py-2 px-3 font-mono text-[#5f6368]">06180102914</td>
-                          <td className="py-2 px-3 text-[#5f6368]">Gurugram, Haryana</td>
-                          <td className="py-2 px-3 text-right">
-                            <button type="button" className="text-xs font-medium px-2.5 py-1 rounded-md bg-[#1a73e8] text-white cursor-pointer hover:bg-[#1557b0]">Approve</button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
+              <AdminSchoolGovernanceModule />
             )}
 
             {/* ═════════════════════════════════════════════════════════════

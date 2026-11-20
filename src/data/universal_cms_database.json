@@ -811,5 +811,149 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-11-08T16:33:44.978Z",
     "updatedBy": "Auto Init"
+  },
+  "edu-network:all-india": {
+    "pageKey": "edu-network:all-india",
+    "title": "Edu Network All India",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-17T04:12:44.270Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school": {
+    "pageKey": "edu-network:school",
+    "title": "Edu Network School",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-17T09:44:54.765Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:uttarakhand:udham-singh-nagar:05120208701:5th-centenary-school": {
+    "pageKey": "edu-network:school:uttarakhand:udham-singh-nagar:05120208701:5th-centenary-school",
+    "title": "Edu Network School Uttarakhand Udham Singh Nagar 05120208701 5th Centenary School",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-17T15:22:07.542Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:andhra-pradesh:anantapur:28222601026:hs-for-hearing-impaired-rdt": {
+    "pageKey": "edu-network:school:andhra-pradesh:anantapur:28222601026:hs-for-hearing-impaired-rdt",
+    "title": "Edu Network School Andhra Pradesh Anantapur 28222601026 Hs For Hearing Impaired Rdt",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-18T11:14:56.951Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:jammu-kashmir:kupwara:01010100106:army-goodwill-school-teetwal": {
+    "pageKey": "edu-network:school:jammu-kashmir:kupwara:01010100106:army-goodwill-school-teetwal",
+    "title": "Edu Network School Jammu Kashmir Kupwara 01010100106 Army Goodwill School Teetwal",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-18T14:02:27.569Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:jammu-kashmir:kupwara:01010300711:light-house-educational-institute-budnambal": {
+    "pageKey": "edu-network:school:jammu-kashmir:kupwara:01010300711:light-house-educational-institute-budnambal",
+    "title": "Edu Network School Jammu Kashmir Kupwara 01010300711 Light House Educational Institute Budnambal",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T02:50:46.660Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:andaman-nicobar-islands:andamans:35010103802:saraswati-shishu-mandir-senior-secondary-school": {
+    "pageKey": "edu-network:school:andaman-nicobar-islands:andamans:35010103802:saraswati-shishu-mandir-senior-secondary-school",
+    "title": "Edu Network School Andaman Nicobar Islands Andamans 35010103802 Saraswati Shishu Mandir Senior Secondary School",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T07:49:23.505Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:jammu-kashmir:kupwara:01010500207:mehboob-ul-alam": {
+    "pageKey": "edu-network:school:jammu-kashmir:kupwara:01010500207:mehboob-ul-alam",
+    "title": "Edu Network School Jammu Kashmir Kupwara 01010500207 Mehboob Ul Alam",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T08:19:42.248Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:jammu-kashmir:anantnag:01060301906:davood-honey-blossom-english-medium": {
+    "pageKey": "edu-network:school:jammu-kashmir:anantnag:01060301906:davood-honey-blossom-english-medium",
+    "title": "Edu Network School Jammu Kashmir Anantnag 01060301906 Davood Honey Blossom English Medium",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T09:14:59.298Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:new-delhi:070503ND901:sanskriti-school-dr-s-radhakrishnan-marg-chanakyapuri-new-delhi": {
+    "pageKey": "edu-network:school:delhi:new-delhi:070503ND901:sanskriti-school-dr-s-radhakrishnan-marg-chanakyapuri-new-delhi",
+    "title": "Edu Network School Delhi New Delhi 070503ND901 Sanskriti School Dr S Radhakrishnan Marg Chanakyapuri New Delhi",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T10:27:28.459Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:india:delhi:new-delhi": {
+    "pageKey": "edu-network:school:india:delhi:new-delhi",
+    "title": "Edu Network School India Delhi New Delhi",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T10:41:32.446Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:india:delhi": {
+    "pageKey": "edu-network:school:india:delhi",
+    "title": "Edu Network School India Delhi",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T10:41:46.270Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:janakpuri:07070399999:cseel-global-education": {
+    "pageKey": "edu-network:school:delhi:west-b:janakpuri:07070399999:cseel-global-education",
+    "title": "Edu Network School Delhi West B Janakpuri 07070399999 Cseel Global Education",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T15:04:25.997Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:cseel-global-education": {
+    "pageKey": "edu-network:school:delhi:west-b:cseel-global-education",
+    "title": "Edu Network School Delhi West B Cseel Global Education",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T15:04:30.724Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:b-1-janakpuri:07070399999": {
+    "pageKey": "edu-network:school:delhi:west-b:b-1-janakpuri:07070399999",
+    "title": "Edu Network School Delhi West B B 1 Janakpuri 07070399999",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T16:25:25.541Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:07070399999": {
+    "pageKey": "edu-network:school:delhi:west-b:07070399999",
+    "title": "Edu Network School Delhi West B 07070399999",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T16:25:26.856Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:cseel-global-education-07070399999": {
+    "pageKey": "edu-network:school:delhi:west-b:cseel-global-education-07070399999",
+    "title": "Edu Network School Delhi West B Cseel Global Education 07070399999",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-19T16:25:27.597Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:07070399999:cseel-global-education": {
+    "pageKey": "edu-network:school:delhi:west-b:07070399999:cseel-global-education",
+    "title": "Edu Network School Delhi West B 07070399999 Cseel Global Education",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-20T06:23:44.339Z",
+    "updatedBy": "Auto Init"
   }
 }

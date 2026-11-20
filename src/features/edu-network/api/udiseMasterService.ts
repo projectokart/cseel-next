@@ -1,7 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vvdnsmrtockscarkybtf.supabase.co';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const SUPABASE_URL =
+  process.env.NEXT_PUBLIC_SUPABASE_DIRECTORY_URL ||
+  process.env.SUPABASE_DIRECTORY_URL ||
+  'https://vvdnsmrtockscarkybtf.supabase.co';
+const SUPABASE_ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_DIRECTORY_ANON_KEY ||
+  process.env.SUPABASE_DIRECTORY_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  '';
 
 export interface UdiseMasterRecord {
   id: string;

@@ -6,8 +6,15 @@ try {
   dns.setDefaultResultOrder('ipv4first');
 } catch {}
 
-const UKAZ_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vvdnsmrtockscarkybtf.supabase.co';
-const UKAZ_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const UKAZ_SUPABASE_URL =
+  process.env.NEXT_PUBLIC_SUPABASE_DIRECTORY_URL ||
+  process.env.SUPABASE_DIRECTORY_URL ||
+  'https://vvdnsmrtockscarkybtf.supabase.co';
+const UKAZ_ANON_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_DIRECTORY_ANON_KEY ||
+  process.env.SUPABASE_DIRECTORY_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  '';
 
 export const dynamic = 'force-dynamic';
 

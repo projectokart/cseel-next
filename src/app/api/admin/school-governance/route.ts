@@ -326,13 +326,14 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ── 2. REJECT CLAIM ──
+    // ── 2. REJECT CLAIM (Revoke key and change status to rejected) ──
     if (action === 'reject_claim') {
       const udiseCode = String(body.udiseCode || body.udise_code || '').trim();
       const { error } = await schoolSearchSupabase
         .from('school_claims')
         .update({
           status: 'rejected',
+          key_hash: null, // Revoke secret access key
           approved_by: body.adminEmail || 'Super Admin',
           updated_at: new Date().toISOString(),
         })
@@ -342,7 +343,44 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
       }
 
-      return NextResponse.json({ success: true, message: 'Claim rejected.' });
+      // Reset claimed and verified status in directory master
+      try {
+        await schoolSearchSupabase
+          .from('school_directory_master')
+          .update({ is_claimed: false, is_verified: false })
+          .eq('udise_code', udiseCode);
+      } catch {}
+
+      return NextResponse.json({ success: true, message: `Claim for UDISE ${udiseCode} rejected and key revoked.` });
+    }
+
+    // ── 2B. DELETE CLAIM (Admin Full Power: Permanently Delete Claim Record) ──
+    if (action === 'delete_claim') {
+      const udiseCode = String(body.udiseCode || body.udise_code || '').trim();
+      const claimId = body.claimId || body.id;
+
+      let query = schoolSearchSupabase.from('school_claims').delete();
+      if (claimId) {
+        query = query.eq('id', claimId);
+      } else {
+        query = query.eq('udise_code', udiseCode);
+      }
+
+      const { error } = await query;
+
+      if (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+      }
+
+      // Reset claimed & verified status in directory master and school profile
+      try {
+        await schoolSearchSupabase
+          .from('school_directory_master')
+          .update({ is_claimed: false, is_verified: false })
+          .eq('udise_code', udiseCode);
+      } catch {}
+
+      return NextResponse.json({ success: true, message: `Claim for UDISE ${udiseCode} deleted successfully.` });
     }
 
     // ── 3. CREATE NEW SCHOOL IN UDISE MASTER TABLE ──

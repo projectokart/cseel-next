@@ -160,7 +160,7 @@ export default function AdminSchoolGovernanceModule() {
 
   // 4. Handle Reject Claim
   const handleRejectClaim = async (udiseCode: string) => {
-    if (!confirm(`Are you sure you want to reject the claim for UDISE ${udiseCode}?`)) return;
+    if (!confirm(`Are you sure you want to reject/revoke the claim for UDISE ${udiseCode}? This will revoke access.`)) return;
 
     try {
       const res = await fetch('/api/admin/school-governance', {
@@ -174,13 +174,44 @@ export default function AdminSchoolGovernanceModule() {
       });
       const json = await res.json();
       if (json.success) {
-        showFeedback(`Claim for UDISE ${udiseCode} rejected.`);
+        showFeedback(`Claim for UDISE ${udiseCode} rejected and key revoked.`);
         await fetchClaims();
       } else {
         showFeedback(json.error || 'Failed to reject claim.', 'error');
       }
     } catch {
       showFeedback('Network error.', 'error');
+    }
+  };
+
+  // 4B. Handle Delete Claim (Admin Full Power)
+  const handleDeleteClaim = async (claim: any) => {
+    const udise = claim.udise_code;
+    const name = claim.school_name || udise;
+    if (!confirm(`Are you sure you want to permanently DELETE the claim for "${name}" (UDISE: ${udise})? This will completely remove the claim record.`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/school-governance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_claim',
+          udiseCode: udise,
+          claimId: claim.id,
+          adminEmail: 'superadmin@cseel.org'
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showFeedback(`Claim for UDISE ${udise} permanently deleted.`);
+        await fetchClaims();
+      } else {
+        showFeedback(json.error || 'Failed to delete claim.', 'error');
+      }
+    } catch {
+      showFeedback('Network error during claim deletion.', 'error');
     }
   };
 
@@ -454,16 +485,50 @@ export default function AdminSchoolGovernanceModule() {
                             )}
 
                             {isApproved && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleApproveClaim(claim)}
+                                  className="px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium flex items-center gap-1 cursor-pointer"
+                                  title="Re-generate and overwrite secret key"
+                                >
+                                  <RefreshCw className="w-3 h-3" />
+                                  <span>Regen Key</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleRejectClaim(claim.udise_code)}
+                                  className="px-2 py-1 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-medium flex items-center gap-1 cursor-pointer"
+                                  title="Reject and revoke this approved claim"
+                                >
+                                  <XCircle className="w-3 h-3" />
+                                  <span>Reject</span>
+                                </button>
+                              </>
+                            )}
+
+                            {!isPending && !isApproved && (
                               <button
                                 type="button"
                                 onClick={() => handleApproveClaim(claim)}
-                                className="px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium flex items-center gap-1 cursor-pointer"
-                                title="Re-generate and overwrite secret key"
+                                className="px-2 py-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-medium flex items-center gap-1 cursor-pointer"
+                                title="Re-approve claim"
                               >
-                                <RefreshCw className="w-3 h-3" />
-                                <span>Regen Key</span>
+                                <Check className="w-3 h-3" />
+                                <span>Approve</span>
                               </button>
                             )}
+
+                            {/* Permanently Delete Claim Button (Admin Full Power) */}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteClaim(claim)}
+                              className="p-1 rounded text-red-500 hover:text-red-700 hover:bg-red-50 cursor-pointer transition-colors"
+                              title="Delete claim permanently from database"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
 
                             <a
                               href={`/dashboard/school-profile?udise=${claim.udise_code}`}

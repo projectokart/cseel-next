@@ -3115,7 +3115,7 @@ export default function TeachersDirectoryClient({
                             <AdSenseInFeedCard cardType="job" />
                           )}
                           <div
-                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-4 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-visible"
+                            className="bg-white border border-[#E7E7E7] hover:border-[#0A66C2] rounded-2xl p-3.5 sm:p-5 pb-3 sm:pb-3.5 transition-all duration-200 shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-md flex flex-col justify-between gap-3 group relative box-border overflow-hidden"
                           >
                           <div className="space-y-2.5 min-w-0">
                             {/* Row 1: Title, School & Single Compact School Logo/Image Thumbnail */}
@@ -3275,7 +3275,7 @@ export default function TeachersDirectoryClient({
                           </div>
 
                           {/* Row 5: Footer (Post Date on Left, Share + Save + Details + Apply on Right) */}
-                          <div className="pt-2 pb-0.5 border-t border-slate-100 flex items-center justify-between gap-1.5 mt-auto">
+                          <div className="pt-2 pb-0.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 mt-auto min-w-0">
                             {(() => {
                               const age = getJobAgeInfo(job.openingDate);
                               return (
@@ -3286,31 +3286,31 @@ export default function TeachersDirectoryClient({
                               );
                             })()}
 
-                            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 flex-wrap sm:flex-nowrap min-w-0 max-w-full">
                               {/* Share Button (Compact) */}
                               <button
                                 type="button"
                                 onClick={() => handleCopyJobUrl(job)}
-                                className="h-8 w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center shrink-0 cursor-pointer"
+                                className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center shrink-0 cursor-pointer"
                                 title="Share Vacancy"
                               >
-                                {copiedJobId === job.id ? <CheckCheck size={13} className="text-emerald-600" /> : <Share2 size={13} className="text-slate-400" />}
+                                {copiedJobId === job.id ? <CheckCheck size={12} className="text-emerald-600" /> : <Share2 size={12} className="text-slate-400" />}
                               </button>
 
                               {/* Save Button (Icon Only - Compact) */}
                               <button
                                 type="button"
                                 onClick={() => toggleSaveJob(job.id)}
-                                className="h-8 w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center cursor-pointer shrink-0"
+                                className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition inline-flex items-center justify-center cursor-pointer shrink-0"
                                 title={isSaved ? "Saved" : "Save Vacancy"}
                               >
-                                <Bookmark size={13} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
+                                <Bookmark size={12} className={isSaved ? "fill-[#0A66C2] text-[#0A66C2]" : "text-slate-400"} />
                               </button>
 
                               {/* Details Button (Compact) */}
                               <Link
                                 href={`/edu-network/teachers/job/${job.id}`}
-                                className="h-8 px-2.5 sm:px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-[11.5px] font-semibold transition inline-flex items-center justify-center shrink-0"
+                                className="h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-[11px] sm:text-[11.5px] font-semibold transition inline-flex items-center justify-center shrink-0"
                               >
                                 Details
                               </Link>
@@ -3331,10 +3331,10 @@ export default function TeachersDirectoryClient({
                                     source: job.source,
                                   });
                                 }}
-                                className="h-8 px-3 sm:px-3.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-[12px] font-bold shadow-2xs transition inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer"
+                                className="h-7 sm:h-8 px-2.5 sm:px-3 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-[11px] sm:text-[12px] font-bold shadow-2xs transition inline-flex items-center justify-center gap-1 shrink-0 cursor-pointer"
                               >
                                 <span>Apply</span>
-                                <ExternalLink size={11} className="shrink-0" />
+                                <ExternalLink size={10} className="shrink-0" />
                               </a>
                             </div>
                           </div>

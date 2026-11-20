@@ -40,7 +40,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: disallowedPaths,
     })),
-    sitemap: 'https://www.cseel.org/sitemap.xml',
-    host: 'https://www.cseel.org',
+    sitemap: 'https://cseel.org/sitemap.xml',
+    host: 'https://cseel.org',
   };
 }

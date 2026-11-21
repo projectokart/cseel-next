@@ -66,7 +66,7 @@ export function toLightweightJob(j: any): FacultyJobItem {
     city: j.city || '',
     state: j.state || '',
     district: j.district || '',
-    coordinates: j.coordinates || { lat: 28.6139, lng: 77.209 },
+    coordinates: (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') ? j.coordinates : undefined,
     minExperience: j.minExperience || j.experience_required || null,
     openingDate,
     lastDate: j.lastDate || j.deadline || '',
@@ -281,8 +281,8 @@ export function mapRawRowToFacultyJobItem(r: any): FacultyJobItem {
 
   const sMin = meta.salary_min ? parseInt(meta.salary_min, 10) : (r.salaryMin || undefined);
   const sMax = meta.salary_max ? parseInt(meta.salary_max, 10) : (r.salaryMax || undefined);
-  const lat = meta.lat ? parseFloat(meta.lat) : (r.coordinates?.lat || 28.6139);
-  const lng = meta.lng ? parseFloat(meta.lng) : (r.coordinates?.lng || 77.209);
+  const lat = meta.lat ? parseFloat(meta.lat) : (r.coordinates?.lat || undefined);
+  const lng = meta.lng ? parseFloat(meta.lng) : (r.coordinates?.lng || undefined);
 
   const job: FacultyJobItem = {
     id: r.slug || r.id || ('job-' + Math.random().toString(36).slice(2, 9)),
@@ -302,7 +302,7 @@ export function mapRawRowToFacultyJobItem(r: any): FacultyJobItem {
     city: r.city || 'India',
     state: r.state || 'India',
     district: meta.district || r.district || r.city,
-    coordinates: { lat, lng },
+    coordinates: (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) ? { lat, lng } : undefined,
     minExperience: r.experience_required || r.minExperience || '0-3 Yrs',
     openingDate: meta.opening_date || (r.posted_at ? r.posted_at.split('T')[0] : 'Today'),
     lastDate: r.deadline || r.lastDate || undefined,

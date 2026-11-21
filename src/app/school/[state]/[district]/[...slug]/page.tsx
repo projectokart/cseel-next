@@ -894,74 +894,84 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
   // Ensure nearby school cards ALWAYS display 10 verified nearby schools with reference point = current school
   if (strict5KmSchools.length < 10) {
     try {
-      const targetDistrict = (schoolData?.district_name || rawDistrict || '').trim();
-      const targetState = (schoolData?.state_name || rawState || '').trim();
-      let query = schoolSearchSupabase
-        .from('udise_private_schools')
-        .select('udise_code, school_id, school_name, state_name, district_name, block_name, cluster_name, village_name, board_10th, management_desc, latitude, longitude, total_students, established_year')
-        .limit(50);
+      const cleanDistrict = (schoolData?.district_name || rawDistrict || '')
+        .replace(/[-_]/g, ' ')
+        .replace(/\bdistrict\b/gi, '')
+        .trim();
+      const cleanState = (schoolData?.state_name || rawState || '')
+        .replace(/[-_]/g, ' ')
+        .trim();
 
-      if (targetDistrict && targetDistrict.toLowerCase() !== 'district') {
-        query = query.ilike('district_name', `%${targetDistrict}%`);
-      } else if (targetState) {
-        query = query.ilike('state_name', `%${targetState}%`);
-      }
+      // 1. First search by District
+      if (cleanDistrict && cleanDistrict.toLowerCase() !== 'district') {
+        let districtQuery = schoolSearchSupabase
+          .from('udise_private_schools')
+          .select('udise_code, school_id, school_name, state_name, district_name, block_name, cluster_name, village_name, board_10th, management_desc, latitude, longitude, total_students, established_year')
+          .ilike('district_name', `%${cleanDistrict}%`)
+          .limit(50);
 
-      if (currentUdise) {
-        query = query.neq('udise_code', currentUdise);
-      }
+        if (currentUdise) {
+          districtQuery = districtQuery.neq('udise_code', currentUdise);
+        }
 
-      const { data: dbNearby } = await query;
-      if (dbNearby && dbNearby.length > 0) {
-        const scoredNearby = dbNearby
-          .filter((s: any) => {
-            const sName = String(s.school_name || '').trim().toLowerCase();
-            const sU = String(s.udise_code || '').trim();
-            if (!sName || sName === currentName) return false;
-            if (sU && currentUdise && sU === currentUdise) return false;
-            return true;
-          })
-          .map((s: any) => {
-            const sLat = Number(s.latitude);
-            const sLng = Number(s.longitude);
-            let distKm: number | null = null;
-            if (lat && lng && sLat && sLng && (sLat !== 0 || sLng !== 0)) {
-              distKm = calculateHaversineKm(lat, lng, sLat, sLng);
-            }
-            return {
-              ...normalizeNearby({
-                ...s,
+        const { data: dbNearby } = await districtQuery;
+        if (dbNearby && dbNearby.length > 0) {
+          const scoredNearby = dbNearby
+            .filter((s: any) => {
+              const sName = String(s.school_name || '').trim().toLowerCase();
+              const sU = String(s.udise_code || '').trim();
+              if (!sName || sName === currentName) return false;
+              if (sU && currentUdise && sU === currentUdise) return false;
+              return true;
+            })
+            .map((s: any) => {
+              const sLat = Number(s.latitude);
+              const sLng = Number(s.longitude);
+              let distKm: number | null = null;
+              if (lat && lng && sLat && sLng && (sLat !== 0 || sLng !== 0)) {
+                distKm = calculateHaversineKm(lat, lng, sLat, sLng);
+              }
+              return {
+                ...normalizeNearby({
+                  ...s,
+                  distanceKm: distKm,
+                  distanceText: distKm != null ? `${distKm} km away` : '',
+                }),
                 distanceKm: distKm,
-                distanceText: distKm != null ? `${distKm} km away` : '',
-              }),
-              distanceKm: distKm,
-            };
+              };
+            });
+
+          scoredNearby.sort((a: any, b: any) => {
+            if (a.distanceKm != null && b.distanceKm != null) return a.distanceKm - b.distanceKm;
+            if (a.distanceKm != null) return -1;
+            if (b.distanceKm != null) return 1;
+            return 0;
           });
 
-        scoredNearby.sort((a: any, b: any) => {
-          if (a.distanceKm != null && b.distanceKm != null) return a.distanceKm - b.distanceKm;
-          if (a.distanceKm != null) return -1;
-          if (b.distanceKm != null) return 1;
-          return 0;
-        });
-
-        for (const s of scoredNearby) {
-          const key = s.udise_code || s.school_name.toLowerCase();
-          if (!seenKeys.has(key)) {
-            seenKeys.add(key);
-            strict5KmSchools.push(s);
+          for (const s of scoredNearby) {
+            const key = s.udise_code || s.school_name.toLowerCase();
+            if (!seenKeys.has(key)) {
+              seenKeys.add(key);
+              strict5KmSchools.push(s);
+            }
+            if (strict5KmSchools.length >= 14) break;
           }
-          if (strict5KmSchools.length >= 14) break;
         }
       }
 
-      if (strict5KmSchools.length < 10 && targetState) {
-        const { data: stateNearby } = await schoolSearchSupabase
+      // 2. If still < 10, search by State
+      if (strict5KmSchools.length < 10 && cleanState) {
+        let stateQuery = schoolSearchSupabase
           .from('udise_private_schools')
           .select('udise_code, school_id, school_name, state_name, district_name, block_name, cluster_name, village_name, board_10th, management_desc, latitude, longitude, total_students, established_year')
-          .ilike('state_name', `%${targetState}%`)
-          .limit(30);
+          .ilike('state_name', `%${cleanState}%`)
+          .limit(40);
 
+        if (currentUdise) {
+          stateQuery = stateQuery.neq('udise_code', currentUdise);
+        }
+
+        const { data: stateNearby } = await stateQuery;
         if (stateNearby && stateNearby.length > 0) {
           for (const s of stateNearby) {
             const sName = String(s.school_name || '').trim().toLowerCase();
@@ -971,14 +981,53 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
             const key = sU || sName;
             if (!seenKeys.has(key)) {
               seenKeys.add(key);
-              strict5KmSchools.push(normalizeNearby(s));
+              const sLat = Number(s.latitude);
+              const sLng = Number(s.longitude);
+              let distKm: number | null = null;
+              if (lat && lng && sLat && sLng && (sLat !== 0 || sLng !== 0)) {
+                distKm = calculateHaversineKm(lat, lng, sLat, sLng);
+              }
+              strict5KmSchools.push({
+                ...normalizeNearby(s),
+                distanceKm: distKm,
+                distanceText: distKm != null ? `${distKm} km away` : '',
+              });
             }
             if (strict5KmSchools.length >= 14) break;
           }
         }
       }
+
+      // 3. Fallback: If still < 10, backfill from candidatePool / SCHOOLS_DATA
+      if (strict5KmSchools.length < 10) {
+        for (const s of candidatePool) {
+          const sName = String(s.school_name || s.name || '').trim().toLowerCase();
+          const sU = String(s.udise_code || s.udiseCode || s.id || '').trim();
+          if (!sName || sName === currentName) continue;
+          if (sU && currentUdise && sU === currentUdise) continue;
+          const key = sU || sName;
+          if (!seenKeys.has(key)) {
+            seenKeys.add(key);
+            strict5KmSchools.push(normalizeNearby(s));
+          }
+          if (strict5KmSchools.length >= 10) break;
+        }
+      }
     } catch (e) {
       console.warn('Error fetching DB nearby schools:', e);
+      // Emergency local backfill
+      for (const s of candidatePool) {
+        const sName = String(s.school_name || s.name || '').trim().toLowerCase();
+        const sU = String(s.udise_code || s.udiseCode || s.id || '').trim();
+        if (!sName || sName === currentName) continue;
+        if (sU && currentUdise && sU === currentUdise) continue;
+        const key = sU || sName;
+        if (!seenKeys.has(key)) {
+          seenKeys.add(key);
+          strict5KmSchools.push(normalizeNearby(s));
+        }
+        if (strict5KmSchools.length >= 10) break;
+      }
     }
   }
 

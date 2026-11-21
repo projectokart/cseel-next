@@ -246,7 +246,7 @@ export default function TeachersDirectoryClient({
             const d = getDistanceKm(coords.lat, coords.lng, j.coordinates.lat, j.coordinates.lng);
             return { ...j, distanceKm: d };
           }
-          return j;
+          return { ...j, distanceKm: undefined };
         });
 
         // Persist updated distances asynchronously in IndexedDB
@@ -261,27 +261,32 @@ export default function TeachersDirectoryClient({
 
   const [isLocationPromptOpen, setIsLocationPromptOpen] = useState(false);
 
-  const handleRequestLocation = useCallback(() => {
+  const handleRequestLocation = useCallback((autoSort: boolean = false) => {
     if (typeof window === 'undefined' || !navigator.geolocation) {
       setGpsErrorMessage("Geolocation is not supported by your device or browser.");
       setGpsErrorModalOpen(true);
       return;
     }
 
+    setIsDetectingLocation(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }, false);
+        setIsDetectingLocation(false);
+        setIsLocationPromptOpen(false);
+        setGpsErrorModalOpen(false);
+        applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude }, autoSort);
       },
       (err) => {
+        setIsDetectingLocation(false);
         console.warn('[GPS Location Notice]', err.message);
         if (err.code === 1) {
           setGpsErrorMessage("Location access was disallowed. Please enable location permissions in your browser or device settings to view nearest vacancies.");
         } else {
-          setGpsErrorMessage("Could not detect location. Please check if device GPS / Location is turned ON.");
+          setGpsErrorMessage("Device GPS / Location is turned OFF. Please turn ON GPS in your phone settings and tap 'Turn ON GPS & Try Again'.");
         }
         setGpsErrorModalOpen(true);
       },
-      { timeout: 8000, enableHighAccuracy: true }
+      { timeout: 10000, enableHighAccuracy: true }
     );
   }, [applyGpsCoordinates]);
 
@@ -1133,28 +1138,13 @@ export default function TeachersDirectoryClient({
       return;
     }
 
-    if (typeof window === 'undefined' || !navigator.geolocation) {
-      setGpsErrorMessage("Geolocation is not supported by your device or browser.");
-      setGpsErrorModalOpen(true);
+    if (!userCoords) {
+      setIsLocationPromptOpen(true);
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        applyGpsCoordinates({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-      },
-      (err) => {
-        console.warn('[GPS Location Notice]', err.message);
-        if (err.code === 1) {
-          setGpsErrorMessage("Location access was disallowed. Please enable location permissions in your browser or device settings to view nearest vacancies.");
-        } else {
-          setGpsErrorMessage("Could not detect location. Please check if device GPS / Location is turned ON.");
-        }
-        setGpsErrorModalOpen(true);
-      },
-      { timeout: 8000, enableHighAccuracy: true }
-    );
-  }, [activeJobs, userCoords, applyGpsCoordinates]);
+    handleRequestLocation(true);
+  }, [activeJobs, userCoords, handleRequestLocation]);
 
   const requestUserLocation = handleNearMeSort;
 
@@ -1355,7 +1345,7 @@ export default function TeachersDirectoryClient({
               if (j.coordinates && typeof j.coordinates.lat === 'number' && typeof j.coordinates.lng === 'number') {
                 return { ...j, distanceKm: getDistanceKm(savedGps.lat, savedGps.lng, j.coordinates.lat, j.coordinates.lng) };
               }
-              return j;
+              return { ...j, distanceKm: undefined };
             });
           }
           setActiveJobs(freshJobs);
@@ -1411,9 +1401,9 @@ export default function TeachersDirectoryClient({
                       qualification: f.qualification || 'Post Graduate / B.Ed',
                       experienceYears: f.experienceYears || 3,
                       currentInstitute: f.currentInstitute || 'Senior Secondary School',
-                      city: f.city || 'Delhi NCR',
-                      state: f.state || 'Delhi NCR',
-                      coordinates: { lat: 28.6139, lng: 77.2090 },
+                      city: f.city || 'India',
+                      state: f.state || 'India',
+                      coordinates: (f.coordinates && typeof f.coordinates.lat === 'number') ? f.coordinates : undefined,
                       verified: isVer,
                       nepCertified: false,
                       rating: 5.0,
@@ -1828,9 +1818,9 @@ export default function TeachersDirectoryClient({
       qualification: teacherOnboardingForm.qualification || 'Post Graduate / B.Ed',
       experienceYears: Number(teacherOnboardingForm.experienceYears) || 3,
       currentInstitute: teacherOnboardingForm.pastSchools || 'Senior Secondary School',
-      city: teacherOnboardingForm.city || 'Delhi NCR',
-      state: teacherOnboardingForm.state || 'Delhi NCR',
-      coordinates: { lat: 28.6139, lng: 77.2090 },
+      city: teacherOnboardingForm.city || 'India',
+      state: teacherOnboardingForm.state || 'India',
+      coordinates: undefined,
       verified: true,
       nepCertified: true,
       rating: 5.0,
@@ -3233,9 +3223,15 @@ export default function TeachersDirectoryClient({
                               ) : (
                                 <button
                                   type="button"
-                                  onClick={handleRequestLocation}
+                                  onClick={() => {
+                                    if (!userCoords) {
+                                      setIsLocationPromptOpen(true);
+                                    } else {
+                                      handleRequestLocation(false);
+                                    }
+                                  }}
                                   className="text-[11px] font-semibold text-[#005689] bg-[#F0F7FB] hover:bg-[#E2F0F9] px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0 border border-[#CDE5F5] transition-colors cursor-pointer"
-                                  title="Tap to allow location & calculate exact distance"
+                                  title="Tap to turn on GPS & calculate exact distance"
                                 >
                                   <Navigation size={10} className="text-[#005689]" />
                                   <span>📍 Calculate Distance</span>
@@ -4007,28 +4003,37 @@ export default function TeachersDirectoryClient({
                 <X size={18} />
               </button>
 
-              <div className="w-14 h-14 bg-sky-50 text-[#005689] rounded-2xl flex items-center justify-center mx-auto border border-sky-100">
-                <MapPin size={28} className="text-[#005689] animate-bounce" />
+              <div className="w-16 h-16 bg-sky-50 text-[#005689] rounded-2xl flex items-center justify-center mx-auto border border-sky-100 relative">
+                <MapPin size={32} className="text-[#005689] animate-bounce" />
+                <span className="absolute top-1 right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
               </div>
 
-              <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-slate-900">Show Nearest Vacancies</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Allow location access to see the exact distance (in km) to every school & institute from your current location.
+              <div className="space-y-2">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                  Turn ON GPS & Calculate Distance
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  अपने फ़ोन / डिवाइस का GPS ऑन करें ताकि आपके आस-पास के सभी स्कूलों की exact दूरी (किमी में) कैलकुलेट हो सके।
+                </p>
+                <p className="text-[11px] text-slate-400 leading-tight">
+                  Please turn ON your phone GPS to calculate exact distances to nearby school vacancies.
                 </p>
               </div>
 
-              <div className="pt-2 flex flex-col gap-2">
+              <div className="pt-2 flex flex-col gap-2.5">
                 <button
                   type="button"
+                  disabled={isDetectingLocation}
                   onClick={() => {
-                    setIsLocationPromptOpen(false);
-                    handleRequestLocation();
+                    handleRequestLocation(true);
                   }}
-                  className="w-full py-2.5 px-4 bg-[#004A75] hover:bg-[#003859] text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 px-4 bg-[#004A75] hover:bg-[#003859] disabled:bg-slate-400 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <Navigation size={14} />
-                  <span>Allow Location</span>
+                  <Navigation size={14} className={isDetectingLocation ? "animate-spin" : ""} />
+                  <span>{isDetectingLocation ? "Connecting to Device GPS..." : "📍 Turn ON GPS & Allow Location"}</span>
                 </button>
                 <button
                   type="button"
@@ -4038,7 +4043,7 @@ export default function TeachersDirectoryClient({
                   }}
                   className="w-full py-2 px-4 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-xs font-semibold transition cursor-pointer"
                 >
-                  Maybe Later
+                  Cancel / Maybe Later
                 </button>
               </div>
             </div>
@@ -4048,24 +4053,47 @@ export default function TeachersDirectoryClient({
         {/* ─── GPS PERMISSION GUIDANCE MODAL ─── */}
         {gpsErrorModalOpen && (
           <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-            <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200">
-              <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto border border-amber-100">
-                <MapPin size={26} />
+            <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4 animate-in zoom-in-95 duration-200 relative">
+              <button
+                type="button"
+                onClick={() => setGpsErrorModalOpen(false)}
+                className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto border border-amber-100">
+                <MapPin size={30} className="text-amber-600" />
               </div>
-              <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-slate-900">Enable Location Access</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{gpsErrorMessage}</p>
+
+              <div className="space-y-2">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                  Turn ON Device GPS
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  {gpsErrorMessage}
+                </p>
+                <div className="p-2.5 rounded-xl bg-amber-50/90 border border-amber-200 text-left text-[11px] text-amber-900 space-y-1">
+                  <p className="font-bold flex items-center gap-1">
+                    <span>💡 आसान तरीका:</span>
+                  </p>
+                  <p>1. फ़ोन की Quick Settings से <strong>GPS (Location)</strong> ऑन करें।</p>
+                  <p>2. नीचे <strong>Turn ON GPS & Try Again</strong> पर टैप करके ब्राउज़र में <strong>Allow</strong> चुनें।</p>
+                </div>
               </div>
-              <div className="pt-2 flex flex-col gap-2">
+
+              <div className="pt-2 flex flex-col gap-2.5">
                 <button
                   type="button"
+                  disabled={isDetectingLocation}
                   onClick={() => {
-                    setGpsErrorModalOpen(false);
-                    handleNearMeSort();
+                    handleRequestLocation(true);
                   }}
-                  className="w-full py-2.5 px-4 bg-[#004A75] hover:bg-[#003859] text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+                  className="w-full py-2.5 px-4 bg-[#004A75] hover:bg-[#003859] disabled:bg-slate-400 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer flex items-center justify-center gap-2"
                 >
-                  Try Again / Allow
+                  <Navigation size={14} className={isDetectingLocation ? "animate-spin" : ""} />
+                  <span>{isDetectingLocation ? "Requesting GPS..." : "🔄 Turn ON GPS & Try Again"}</span>
                 </button>
                 <button
                   type="button"

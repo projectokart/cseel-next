@@ -42,6 +42,7 @@ import AdSenseBanner from '@/components/ads/AdSenseBanner';
 import dynamic from 'next/dynamic';
 import VerifiedBadge from '@/components/schools/template/VerifiedBadge';
 import { cleanBoardName } from '@/integrations/supabase/schoolSearchClient';
+import { SCHOOLS_DATA } from '@/data/schoolFinderData';
 
 function toSlug(val: string, fallback = ''): string {
   if (!val) return fallback;
@@ -1912,7 +1913,38 @@ Thank you.`;
           if (seenCodes.has(key)) return false;
           seenCodes.add(key);
           return true;
-        }).slice(0, 10);
+        });
+
+        // Ensure AT LEAST 10 cards are ALWAYS visible:
+        if (nearbyList.length < 10) {
+          for (const fb of SCHOOLS_DATA) {
+            const name = String(fb.school_name || fb.name || '').trim();
+            const code = String(fb.udise_code || fb.id || '').trim();
+            if (!name) continue;
+            if (code && displayUdise && code === displayUdise) continue;
+            if (name.toLowerCase() === displayName.toLowerCase()) continue;
+            const key = code || name.toLowerCase();
+            if (!seenCodes.has(key)) {
+              seenCodes.add(key);
+              nearbyList.push({
+                school_id: code,
+                udise_code: code,
+                school_name: name,
+                state_name: fb.state_name || displayState,
+                district_name: fb.district_name || displayDistrict,
+                village_name: fb.village_ward || fb.locality || 'Campus',
+                board_10th: fb.board_secondary_10th || fb.board || 'CBSE',
+                image_url: fb.image || '/images/default-school-placeholder.png?v=3',
+                image: fb.image || '/images/default-school-placeholder.png?v=3',
+                distanceKm: null,
+                distanceText: '',
+              });
+            }
+            if (nearbyList.length >= 10) break;
+          }
+        }
+
+        const finalNearbyList = nearbyList.slice(0, 10);
 
         const districtDirectorySlug = displayDistrict && displayDistrict.toLowerCase() !== 'district'
           ? toSlug(displayDistrict, '')
@@ -1999,69 +2031,63 @@ Thank you.`;
               </div>
 
               {/* 10 Verified Nearby School Cards Directly Below 'Search More Schools Near You' Card */}
-              {nearbyList.length > 0 ? (
-                <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
-                  {nearbyList.map((s: any, idx: number) => {
-                    const sName = String(s.school_name || s.name || 'School').trim();
-                    const sState = String(s.state_name || displayState || 'delhi').trim();
-                    const sDist = String(s.district_name || displayDistrict || 'delhi').trim();
-                    const sVill = String(s.village_name || village || 'main').trim();
-                    const sCode = String(s.udise_code || s.school_id || '').trim();
-                    const sBoard = cleanBoardName(String(s.board_10th || '')) || 'School';
-                    const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
-                    const nameSlug = toSlug(sName, 'school');
-                    const distBadge = s.distanceKm != null ? `${s.distanceKm} km away` : '';
-                    const cleanNameSlug = nameSlug.replace(/-\d{4,11}$/, '');
-                    const href = sCode
-                      ? `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${encodeURIComponent(sCode)}/${cleanNameSlug}`
-                      : `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${cleanNameSlug}`;
+              <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
+                {finalNearbyList.map((s: any, idx: number) => {
+                  const sName = String(s.school_name || s.name || 'School').trim();
+                  const sState = String(s.state_name || displayState || 'delhi').trim();
+                  const sDist = String(s.district_name || displayDistrict || 'delhi').trim();
+                  const sVill = String(s.village_name || village || 'main').trim();
+                  const sCode = String(s.udise_code || s.school_id || '').trim();
+                  const sBoard = cleanBoardName(String(s.board_10th || '')) || 'School';
+                  const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
+                  const nameSlug = toSlug(sName, 'school');
+                  const distBadge = s.distanceKm != null ? `${s.distanceKm} km away` : '';
+                  const cleanNameSlug = nameSlug.replace(/-\d{4,11}$/, '');
+                  const href = sCode
+                    ? `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${encodeURIComponent(sCode)}/${cleanNameSlug}`
+                    : `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${cleanNameSlug}`;
 
-                    return (
-                      <Link
-                        key={sCode || `${nameSlug}-${idx}`}
-                        href={href}
-                        className="group w-[142px] sm:w-[165px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
-                        title={`${sName} — ${distBadge || `${sVill}, ${sDist}`}`}
-                      >
-                        <div className="relative w-full h-[82px] sm:h-[94px] bg-slate-100 overflow-hidden shrink-0">
-                          <img
-                            src={sImg}
-                            alt={sName}
-                            loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = '/images/default-school-placeholder.png?v=3';
-                            }}
-                          />
-                          {s.distanceKm != null && (
-                            <span className="absolute top-1.5 left-1.5 z-10 bg-slate-900/85 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
-                              <span>📍</span>
-                              <span>{s.distanceKm} km</span>
-                            </span>
-                          )}
+                  return (
+                    <Link
+                      key={sCode || `${nameSlug}-${idx}`}
+                      href={href}
+                      className="group w-[142px] sm:w-[165px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
+                      title={`${sName} — ${distBadge || `${sVill}, ${sDist}`}`}
+                    >
+                      <div className="relative w-full h-[82px] sm:h-[94px] bg-slate-100 overflow-hidden shrink-0">
+                        <img
+                          src={sImg}
+                          alt={sName}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src = '/images/default-school-placeholder.png?v=3';
+                          }}
+                        />
+                        {s.distanceKm != null && (
+                          <span className="absolute top-1.5 left-1.5 z-10 bg-slate-900/85 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
+                            <span>📍</span>
+                            <span>{s.distanceKm} km</span>
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-2 sm:p-2.5 flex flex-col justify-between flex-1 gap-1.5">
+                        <p className="!text-[11px] sm:!text-xs !font-medium !text-slate-700 group-hover:!text-[#006FCC] !leading-snug line-clamp-2 m-0">
+                          {sName}
+                        </p>
+                        <div className="flex items-center justify-between gap-1 pt-0.5">
+                          <span className="text-[9px] sm:text-[10px] text-emerald-700 font-semibold truncate flex items-center gap-0.5">
+                            {s.distanceKm != null ? `📍 ${s.distanceKm} km away` : (sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist)}
+                          </span>
+                          <span className="text-[8.5px] font-medium uppercase tracking-tight text-[#005689] bg-[#EDF5FA] px-1.5 py-0.5 rounded shrink-0">
+                            {sBoard}
+                          </span>
                         </div>
-                        <div className="p-2 sm:p-2.5 flex flex-col justify-between flex-1 gap-1.5">
-                          <p className="!text-[11px] sm:!text-xs !font-medium !text-slate-700 group-hover:!text-[#006FCC] !leading-snug line-clamp-2 m-0">
-                            {sName}
-                          </p>
-                          <div className="flex items-center justify-between gap-1 pt-0.5">
-                            <span className="text-[9px] sm:text-[10px] text-emerald-700 font-semibold truncate flex items-center gap-0.5">
-                              {s.distanceKm != null ? `📍 ${s.distanceKm} km away` : (sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist)}
-                            </span>
-                            <span className="text-[8.5px] font-medium uppercase tracking-tight text-[#005689] bg-[#EDF5FA] px-1.5 py-0.5 rounded shrink-0">
-                              {sBoard}
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="py-3 px-3.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-500 italic">
-                  No other verified schools found strictly within proximity of this campus.
-                </div>
-              )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
 
               {/* Structured Step-by-Step Website Links Strip */}
               <div className="pt-2.5 border-t border-slate-200/70 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px]">

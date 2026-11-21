@@ -50,9 +50,9 @@ const ROLE_DECODE: Record<string, string> = {
 
 export function decodeSlimJob(s: Record<string, any>): FacultyJobItem {
   const id = s.id || '';
-  const coords = Array.isArray(s.co)
+  const coords = (Array.isArray(s.co) && typeof s.co[0] === 'number' && typeof s.co[1] === 'number')
     ? { lat: s.co[0], lng: s.co[1] }
-    : { lat: 28.6139, lng: 77.209 }; // Default: Delhi
+    : undefined; // Zero fake coordinates or hardcoded fallbacks
 
   const openingDate = s.od || '';
   const dateMs = openingDate ? (Date.parse(openingDate) || 0) : 0;

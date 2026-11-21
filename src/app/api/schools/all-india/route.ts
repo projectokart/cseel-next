@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dns from 'dns';
 import lookupsData from '@/data/privateSchoolLookups.json';
+import { fetchSchoolsFromNeon } from '@/lib/neonSchoolsDb';
 
 try {
   dns.setDefaultResultOrder('ipv4first');
@@ -422,47 +423,79 @@ export async function GET(request: Request) {
       queryParts.push('order=udise_code.asc');
     }
 
-    const restUrl = `${UKAZ_SUPABASE_URL}/rest/v1/udise_private_schools?${queryParts.join('&')}`;
+    // Primary Query Source: Neon PostgreSQL Database (blazingly fast & fully migrated)
+    let fetchedFromNeon = false;
+    try {
+      const neonRes = await fetchSchoolsFromNeon({
+        page,
+        limit,
+        state: stateParam,
+        district: districtParam,
+        block: blockParam,
+        cluster: clusterParam,
+        board: boardParam,
+        management: managementParam,
+        category: categoryParam,
+        medium: mediumParam,
+        search,
+        sort,
+        userLat,
+        userLng,
+        radiusKm,
+      });
 
-    let response = await fetch(restUrl, { headers, cache: 'no-store' });
-
-    if (!response.ok) {
-      // Automatic fallback without order if heavy sort occurred
-      const fallbackParts = queryParts.filter((p) => !p.startsWith('order='));
-      fallbackParts.push('order=udise_code.asc');
-      const fallbackUrl = `${UKAZ_SUPABASE_URL}/rest/v1/udise_private_schools?${fallbackParts.join('&')}`;
-      const retryRes = await fetch(fallbackUrl, { headers, cache: 'no-store' });
-      if (retryRes.ok) {
-        response = retryRes;
+      if (neonRes && Array.isArray(neonRes.schools)) {
+        rawSchools = neonRes.schools;
+        totalCount = neonRes.totalCount;
+        fetchedFromNeon = true;
       }
+    } catch (neonErr) {
+      console.warn('Neon database query error, fallback to Supabase:', neonErr);
     }
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('Supabase query error:', errText);
-      return NextResponse.json({ success: false, error: 'Failed to retrieve schools' }, { status: 500 });
-    }
+    if (!fetchedFromNeon) {
+      const restUrl = `${UKAZ_SUPABASE_URL}/rest/v1/udise_private_schools?${queryParts.join('&')}`;
 
-    // Extract exact count from Content-Range header if present
-    const contentRange = response.headers.get('content-range');
-    if (contentRange && contentRange.includes('/')) {
-      const totalPart = contentRange.split('/')[1];
-      if (totalPart && totalPart !== '*') {
-        const parsedCount = parseInt(totalPart, 10);
-        if (!isNaN(parsedCount)) {
-          totalCount = parsedCount;
+      let response = await fetch(restUrl, { headers, cache: 'no-store' });
+
+      if (!response.ok) {
+        // Automatic fallback without order if heavy sort occurred
+        const fallbackParts = queryParts.filter((p) => !p.startsWith('order='));
+        fallbackParts.push('order=udise_code.asc');
+        const fallbackUrl = `${UKAZ_SUPABASE_URL}/rest/v1/udise_private_schools?${fallbackParts.join('&')}`;
+        const retryRes = await fetch(fallbackUrl, { headers, cache: 'no-store' });
+        if (retryRes.ok) {
+          response = retryRes;
         }
       }
-    }
 
-    rawSchools = await response.json();
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error('Supabase query error:', errText);
+        return NextResponse.json({ success: false, error: 'Failed to retrieve schools' }, { status: 500 });
+      }
 
-    // If search was active and content-range wasn't computed, calibrate totalCount cleanly
-    if (search && (!contentRange || contentRange.includes('/*'))) {
-      if (rawSchools.length < limit) {
-        totalCount = offset + rawSchools.length;
-      } else {
-        totalCount = Math.min(250, offset + limit + 25);
+      // Extract exact count from Content-Range header if present
+      const contentRange = response.headers.get('content-range');
+      if (contentRange && contentRange.includes('/')) {
+        const totalPart = contentRange.split('/')[1];
+        if (totalPart && totalPart !== '*') {
+          const parsedCount = parseInt(totalPart, 10);
+          if (!isNaN(parsedCount)) {
+            totalCount = parsedCount;
+          }
+        }
+      }
+
+      rawSchools = await response.json();
+
+      // If search was active and content-range wasn't computed, calibrate totalCount cleanly
+      if (search && (!contentRange || contentRange.includes('/*'))) {
+        if (rawSchools.length < limit) {
+          totalCount = offset + rawSchools.length;
+        } else {
+          totalCount = Math.min(250, offset + limit + 25);
+        }
       }
     }
 

@@ -24,20 +24,24 @@ import {
  * DashboardSchoolProfileClient
  * 
  * Production Claimed School Profile Dashboard.
- * - Mandatory UDISE verification & access key (e.g. 12345 or universal 1234).
+ * - Mandatory UDISE verification & access key.
  * - Directly synced with Supabase (vvdnsmrtockscarkybtf).
  * - Verified against school_claims & school_profiles tables in Supabase.
  * - Saves updates exclusively to school_profiles (the claimed profile table).
- * - Locks the dashboard until a valid UDISE and key are validated.
+ * - Locks the dashboard until a valid UDISE and key are validated via API.
  */
+
+function toSlug(str: string): string {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
 export default function DashboardSchoolProfileClient() {
   const router = useRouter();
   const { user } = useAuth();
 
   // Verification & Form State
-  const [targetUdise, setTargetUdise] = useState<string>('07070399999');
-  const [inputUdise, setInputUdise] = useState<string>('07070399999');
-  const [accessCode, setAccessCode] = useState<string>('12345');
+  const [targetUdise, setTargetUdise] = useState<string>('');
+  const [inputUdise, setInputUdise] = useState<string>('');
+  const [accessCode, setAccessCode] = useState<string>('');
   const [isCodeModalOpen, setIsCodeModalOpen] = useState(true);
   const [codeError, setCodeError] = useState<string>('');
   const [isVerifying, setIsVerifying] = useState(false);
@@ -68,11 +72,14 @@ export default function DashboardSchoolProfileClient() {
       setAccessCode(codeParam);
     }
 
-    const savedCode = sessionStorage.getItem('cseel_admin_access_code') || localStorage.getItem('cseel_admin_access_code');
-    const savedUdise = sessionStorage.getItem('cseel_admin_target_udise') || udiseParam || '07070399999';
+    // BUG-10: Use sessionStorage only — localStorage persists across tabs and is XSS-accessible
+    const savedCode = sessionStorage.getItem('cseel_admin_access_code');
+    const savedUdise = sessionStorage.getItem('cseel_admin_target_udise') || udiseParam || '';
+    const effectiveCode = codeParam || savedCode || '';
 
-    if (savedCode && (savedCode === '12345' || savedCode === '1234')) {
-      verifyCode(savedCode, savedUdise);
+    if (effectiveCode && udiseParam && udiseParam.length >= 6) {
+      verifyCode(effectiveCode, udiseParam);
+      setIsCodeModalOpen(false);
     } else {
       setIsCodeModalOpen(true);
     }
@@ -82,8 +89,27 @@ export default function DashboardSchoolProfileClient() {
   const loadSchoolFromSupabase = async (udise: string) => {
     setIsLoadingSchool(true);
     try {
+      // Priority 1: Check if this school has a saved claimed profile in Supabase school_profiles table
+      const savedRes = await fetch(`/api/school-profile-save?udise=${udise}`);
+      const savedJson = await savedRes.json().catch(() => null);
+
+      if (savedJson?.success && savedJson?.found && savedJson?.profileData) {
+        const fallback = {};
+        const merged = { ...fallback, ...savedJson.profileData };
+        setSchoolData(merged);
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem(`cseel_school_draft_${udise}`, JSON.stringify(merged));
+            localStorage.setItem('cseel_school_template_draft', JSON.stringify(merged));
+            localStorage.setItem('cseel_school_template_draft_v1', JSON.stringify(merged));
+          } catch {}
+        }
+        return;
+      }
+
+      // Priority 2: Fall back to standard government/synthetic profile
       const res = await fetch(`/api/udise/standard-profile?code=${udise}`);
-      const json = await res.json();
+      const json = await res.json().catch(() => null);
       const raw = json?.data || json?.heroSection ? json.data || json : null;
 
       if (raw) {
@@ -94,14 +120,10 @@ export default function DashboardSchoolProfileClient() {
         }
       }
 
-      // Default fallback if loading fails
-      if (udise === '07070399999') {
-        setSchoolData(getCseelGlobalEducationTemplate());
-      }
+      // Default fallback if loading fails — show empty state
+      setSchoolData(null);
     } catch {
-      if (udise === '07070399999') {
-        setSchoolData(getCseelGlobalEducationTemplate());
-      }
+      setSchoolData(null);
     } finally {
       setIsLoadingSchool(false);
     }
@@ -129,7 +151,7 @@ export default function DashboardSchoolProfileClient() {
       const res = await fetch(`/api/school-claim/auth-status?udise=${cleanUdise}&magicKey=${encodeURIComponent(cleanCode)}`);
       const auth = await res.json();
 
-      if (auth.canEditCurrentSchool || cleanCode === '1234' || cleanCode === '12345') {
+      if (auth.canEditCurrentSchool) {
         setIsAuthorized(true);
         setAuthRole(auth.role || 'magic_link');
         setTargetUdise(cleanUdise);
@@ -137,26 +159,18 @@ export default function DashboardSchoolProfileClient() {
         setIsCodeModalOpen(false);
 
         try {
+          // BUG-10: sessionStorage only — expires when tab closes, never persists across sessions
           sessionStorage.setItem('cseel_admin_access_code', cleanCode);
           sessionStorage.setItem('cseel_admin_target_udise', cleanUdise);
-          localStorage.setItem('cseel_admin_access_code', cleanCode);
         } catch {}
 
         await loadSchoolFromSupabase(cleanUdise);
       } else {
-        setCodeError('Invalid Verification Key for this UDISE. Use key "12345" or "1234".');
+        setCodeError('Invalid Verification Key for this UDISE. Please check your key and try again.');
       }
     } catch {
-      // Fallback
-      if (cleanCode === '12345' || cleanCode === '1234') {
-        setIsAuthorized(true);
-        setAuthRole('magic_link');
-        setTargetUdise(cleanUdise);
-        setIsCodeModalOpen(false);
-        await loadSchoolFromSupabase(cleanUdise);
-      } else {
-        setCodeError('Network error during verification. Try again.');
-      }
+      // Always fail on network error — do NOT grant access when API is unreachable
+      setCodeError('Network error during verification. Please check your connection and try again.');
     } finally {
       setIsVerifying(false);
     }
@@ -183,7 +197,10 @@ export default function DashboardSchoolProfileClient() {
       // Gather current state from localStorage draft or in-memory
       let currentDraft = schoolData || {};
       if (typeof window !== 'undefined') {
-        const cached = localStorage.getItem(`cseel_school_draft_${targetUdise}`) || localStorage.getItem('cseel_school_template_draft');
+        const cached =
+          localStorage.getItem(`cseel_school_draft_${targetUdise}`) ||
+          localStorage.getItem('cseel_school_template_draft') ||
+          localStorage.getItem('cseel_school_template_draft_v1');
         if (cached) {
           try {
             currentDraft = { ...currentDraft, ...JSON.parse(cached) };
@@ -204,6 +221,7 @@ export default function DashboardSchoolProfileClient() {
       const result = await res.json();
 
       if (result.success) {
+        setSchoolData(currentDraft);
         setSaveSuccessMsg(`Successfully saved to Supabase claimed profiles table (vvdnsmrtockscarkybtf)!`);
         setTimeout(() => setSaveSuccessMsg(null), 5000);
       } else {
@@ -342,42 +360,42 @@ export default function DashboardSchoolProfileClient() {
               isTemplate={isAuthorized}
               isPublicClaimed={!isAuthorized}
               schoolName={currentSchool.schoolName}
-              schoolSlug="cseel-global-education"
-              state={currentSchool.state || 'Delhi'}
-              district={currentSchool.district || 'West B'}
-              blockName={currentSchool.blockName || 'Janakpuri'}
-              village={currentSchool.village || 'B-1 Janakpuri'}
-              pincode={currentSchool.pincode || '110058'}
+              schoolSlug={toSlug(currentSchool.schoolName || '') || 'school-profile'}
+              state={currentSchool.state || ''}
+              district={currentSchool.district || ''}
+              blockName={currentSchool.blockName || ''}
+              village={currentSchool.village || ''}
+              pincode={currentSchool.pincode || ''}
               udiseCode={targetUdise}
-              board={currentSchool.board || 'CBSE'}
-              affiliationNumber={currentSchool.affiliationNumber || '2130001'}
-              medium={currentSchool.medium || 'English'}
-              management={currentSchool.management || 'Private Unaided'}
-              establishedYear={currentSchool.establishedYear || '2020'}
-              schoolCategory={currentSchool.schoolCategory || 'Grades Nursery to 12th'}
-              classFrom={currentSchool.classFrom || 'Nursery'}
-              classTo={currentSchool.classTo || 'Class 12th'}
-              genderType={currentSchool.genderType || 'Co-Educational'}
-              ruralUrban={currentSchool.ruralUrban || 'Urban'}
-              totalStudents={currentSchool.totalStudents || 1450}
-              totalBoys={750}
-              totalGirls={700}
-              totalTeachers={currentSchool.totalTeachers || 85}
-              maleTeachers={35}
-              femaleTeachers={50}
-              classroomsCount={currentSchool.classroomsCount || 48}
-              workingSmartBoards={currentSchool.workingSmartBoards || 48}
-              computerIctLab="Yes"
-              atalStemLab="Yes"
-              playgroundAvailable="Yes"
+              board={currentSchool.board || ''}
+              affiliationNumber={currentSchool.affiliationNumber || ''}
+              medium={currentSchool.medium || ''}
+              management={currentSchool.management || ''}
+              establishedYear={currentSchool.establishedYear || ''}
+              schoolCategory={currentSchool.schoolCategory || ''}
+              classFrom={currentSchool.classFrom || ''}
+              classTo={currentSchool.classTo || ''}
+              genderType={currentSchool.genderType || ''}
+              ruralUrban={currentSchool.ruralUrban || ''}
+              totalStudents={currentSchool.totalStudents || 0}
+              totalBoys={currentSchool.totalBoys || 0}
+              totalGirls={currentSchool.totalGirls || 0}
+              totalTeachers={currentSchool.totalTeachers || 0}
+              maleTeachers={currentSchool.maleTeachers || 0}
+              femaleTeachers={currentSchool.femaleTeachers || 0}
+              classroomsCount={currentSchool.classroomsCount || 0}
+              workingSmartBoards={currentSchool.workingSmartBoards || 0}
+              computerIctLab={currentSchool.computerIctLab || ''}
+              atalStemLab={currentSchool.atalStemLab || ''}
+              playgroundAvailable={currentSchool.playgroundAvailable || ''}
               principalName={currentSchool.principalName || ''}
-              rawPhone={currentSchool.phone || '+91 98765 43210'}
-              rawEmail={currentSchool.email || 'admissions@cseel.org'}
-              website={currentSchool.website || 'https://www.cseel.org'}
-              rawAddress={currentSchool.address || 'B-1 Block, Janakpuri, New Delhi, Delhi - 110058'}
+              rawPhone={currentSchool.phone || ''}
+              rawEmail={currentSchool.email || ''}
+              website={currentSchool.website || ''}
+              rawAddress={currentSchool.address || ''}
               imageUrl={currentSchool.heroImage || PLACEHOLDER_EMPTY_IMAGE}
-              lat={28.6219}
-              lng={77.0878}
+              lat={currentSchool.lat || 0}
+              lng={currentSchool.lng || 0}
               clusterSchools={[]}
               districtSchools={[]}
             />
@@ -430,13 +448,13 @@ export default function DashboardSchoolProfileClient() {
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
                   <span>Verification Key / Number</span>
-                  <span className="text-[10px] text-emerald-600 font-semibold">Key: 12345</span>
+                  <span className="text-[10px] text-slate-400 font-normal">Your secret key</span>
                 </label>
                 <div className="relative">
                   <input
                     type="text"
                     id="modal-key-input"
-                    placeholder="Enter Key (e.g. 12345)"
+                    placeholder="Enter your Verification Key"
                     value={accessCode}
                     onChange={(e) => {
                       setAccessCode(e.target.value);
@@ -456,9 +474,8 @@ export default function DashboardSchoolProfileClient() {
               )}
 
               <div className="bg-sky-50 border border-sky-100 rounded-xl p-3 text-[11px] text-sky-900">
-                <p className="font-semibold text-sky-950 mb-0.5">Verified Supabase Credentials:</p>
-                <p>• UDISE: <span className="font-mono font-bold">07070399999</span> (CSEEL Global Education)</p>
-                <p>• Key: <span className="font-mono font-bold text-emerald-700">12345</span></p>
+                <p className="font-semibold text-sky-950 mb-0.5">🔒 Secure Access</p>
+                <p>Enter your school&apos;s UDISE code and the verification key provided during school claim approval.</p>
               </div>
 
               <div className="flex items-center gap-2 pt-1">

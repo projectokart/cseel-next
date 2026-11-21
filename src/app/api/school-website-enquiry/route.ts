@@ -3,10 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 
 const ENQUIRY_FILE = path.join(process.cwd(), 'src', 'data', 'school_website_enquiries.json');
 const LIMITS_FILE = path.join(process.cwd(), 'src', 'data', 'enquiry_rate_limits.json');
-const NOTIFICATION_EMAILS = ['dev@mailer.cseel.org', 'ptdevkaushik101@gmail.com'];
+const NOTIFICATION_EMAILS = ['dev@mailer.cseel.org'];
 const SENDER_EMAIL = 'webdesign@mailer.cseel.org';
 const REPLY_TO_EMAIL = 'webdesign@mailer.cseel.org';
 
@@ -303,6 +304,9 @@ async function sendEmailNotification(enquiry: SchoolWebsiteEnquiry) {
 // Main POST Handler
 // ----------------------------------------------------
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const {

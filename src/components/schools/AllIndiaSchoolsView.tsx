@@ -27,8 +27,6 @@ import {
   ArrowUpDown,
   Award,
   CheckCircle2,
-  Minimize2,
-  Maximize2,
   LayoutGrid,
   List,
   AlertCircle,
@@ -444,7 +442,6 @@ export default function AllIndiaSchoolsView({
   const [mapRadiusKm, setMapRadiusKm] = useState<number>(10);
 
   // UI Controls
-  const [isHeroMinimized, setIsHeroMinimized] = useState<boolean>(false);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState<boolean>(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
   const [currentHeroIndex, setCurrentHeroIndex] = useState<number>(0);
@@ -675,12 +672,11 @@ export default function AllIndiaSchoolsView({
 
   // Hero carousel auto-play
   useEffect(() => {
-    if (isHeroMinimized) return;
     const timer = setInterval(() => {
       setCurrentHeroIndex((prev) => (prev + 1) % HERO_IMAGES.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [isHeroMinimized]);
+  }, []);
 
   // Load Base Lookups on mount
   useEffect(() => {
@@ -1510,36 +1506,23 @@ export default function AllIndiaSchoolsView({
 
       <div className="min-h-screen bg-[#F8F9FA] text-slate-900 pb-20">
         {/* ── 1. HERO SECTION (Task 6: Directory with 4.4+ Lakh Private Schools, No 'Best' claims) ── */}
-        {!isHeroMinimized ? (
-          <div className="relative z-40 min-h-[300px] sm:min-h-[340px] w-full bg-slate-950 flex flex-col items-center justify-center transition-all duration-300">
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {HERO_IMAGES.map((img, idx) => (
-                <div
-                  key={img}
-                  className={`absolute inset-0 transition-opacity duration-1000 ${
-                    idx === currentHeroIndex ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
-                  <img src={img} alt="School Campus" className="w-full h-full object-cover" />
-                  <div
-                    className="absolute inset-0"
-                    style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-4 z-30 flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setIsHeroMinimized(true)}
-                className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/20 text-white/85 hover:text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs active:scale-95 group"
-                title="Minimise Banner"
+        <div className="relative z-40 min-h-[300px] sm:min-h-[340px] w-full bg-slate-950 flex flex-col items-center justify-center transition-all duration-300">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {HERO_IMAGES.map((img, idx) => (
+              <div
+                key={img}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  idx === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+                }`}
               >
-                <Minimize2 size={11} className="text-cyan-300 group-hover:scale-110 transition-transform" />
-                <span>Minimise</span>
-              </button>
-            </div>
+                <img src={img} alt="School Campus" className="w-full h-full object-cover" />
+                <div
+                  className="absolute inset-0"
+                  style={{ backgroundColor: 'rgba(0, 0, 0, 0.50)' }}
+                />
+              </div>
+            ))}
+          </div>
 
             <div className="relative z-30 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
               {/* Single Unified Directory Navigation Link (Matching Schools Directory) */}
@@ -1747,34 +1730,6 @@ export default function AllIndiaSchoolsView({
               </div>
             </div>
           </div>
-        ) : (
-          <div className="w-full bg-slate-900 text-white px-4 py-2.5 flex items-center justify-between border-b border-slate-800 shadow-sm">
-            <div className="flex items-center gap-3 flex-1 max-w-xl">
-              <span className="text-xs font-bold text-cyan-300 hidden sm:inline">Private Schools Directory</span>
-              <div className="relative flex-1">
-                <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search private schools..."
-                  value={draftSearch}
-                  onChange={(e) => setDraftSearch(e.target.value.replace(/[^a-zA-Z0-9\s]/g, ''))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleApplyFilters();
-                  }}
-                  className="w-full bg-slate-800 text-white pl-9 pr-3 py-1.5 rounded-xl text-xs outline-none border border-slate-700 focus:border-cyan-400"
-                />
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsHeroMinimized(false)}
-              className="text-xs font-bold text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 transition"
-            >
-              Expand Banner
-            </button>
-          </div>
-        )}
 
         {/* ── 2. MAIN LAYOUT: LEFT SIDEBAR FILTER + RIGHT SCHOOL CONTENT ── */}
         <div className="w-full flex flex-col md:flex-row gap-3 sm:gap-4 px-3 sm:px-4 md:pl-0 md:pr-4 lg:pr-5 pt-3 md:pt-4 pb-6 flex-1">

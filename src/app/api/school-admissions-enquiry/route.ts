@@ -4,9 +4,10 @@ import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 
 const ENQUIRIES_FILE = path.join(process.cwd(), 'src', 'data', 'school_admission_enquiries.json');
-const DEFAULT_FALLBACK_EMAIL = process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik104@gmail.com';
+const DEFAULT_FALLBACK_EMAIL = process.env.ADMIN_CLAIM_EMAIL || '';
 
 export interface AdmissionEnquiryRecord {
   id: string;
@@ -143,6 +144,9 @@ async function sendAdmissionEnquiryEmail(enquiry: AdmissionEnquiryRecord) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const {

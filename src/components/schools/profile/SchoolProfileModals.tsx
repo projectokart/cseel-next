@@ -3,6 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { X, CheckCircle2, Lock, Check, Play } from 'lucide-react';
+import { extractYouTubeEmbedUrl } from '@/components/schools/profile/SchoolCampusTourSection';
 
 const ClaimSchoolModal = dynamic(() => import('@/components/schools/ClaimSchoolModal'), { ssr: false });
 const AddCardModal = dynamic(() => import('@/components/schools/template/AddCardModal'), { ssr: false });
@@ -369,7 +370,7 @@ export default function SchoolProfileModals(props: SchoolProfileModalsProps) {
               <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black">
                 <iframe
                   className="w-full h-full"
-                  src={campusVideoUrl.includes('watch?v=') ? `https://www.youtube.com/embed/${campusVideoUrl.split('watch?v=')[1]?.split('&')[0]}` : campusVideoUrl}
+                  src={extractYouTubeEmbedUrl(campusVideoUrl)}
                   title="School Campus Walkthrough"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen

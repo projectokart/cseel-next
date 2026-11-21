@@ -4,15 +4,17 @@ import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcryptjs';
 import {
   checkRateLimitAndBots,
   sanitizePayloadDeep,
   generate16CharMixedMagicKey,
   isAdminRequest,
   isSuperAdminEmail,
+  checkCsrfOrigin,
 } from '@/lib/security/apiSecurityGuard';
 
-const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik101@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || '';
 const CLAIMS_FILE = path.join(process.cwd(), 'src', 'data', 'school_claims.json');
 
 export interface SchoolClaimRecord {
@@ -288,6 +290,9 @@ export async function POST(req: NextRequest) {
     blockScraperBots: true,
   });
   if (securityBlock) return securityBlock;
+
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
 
   try {
     const rawBody = await req.json().catch(() => ({}));
@@ -686,6 +691,9 @@ export async function PATCH(req: NextRequest) {
   });
   if (securityBlock) return securityBlock;
 
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const rawBody = await req.json().catch(() => ({}));
     const body = sanitizePayloadDeep(rawBody);
@@ -790,56 +798,18 @@ export async function PATCH(req: NextRequest) {
       const fullPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
       whatsappShareUrl = `https://wa.me/${fullPhone}?text=${encodeURIComponent(verificationMessage)}`;
 
-      // 1. Permanently store Magic Key & Magic Link in Supabase school_profiles & mark udise_private_schools verified
+      // 1. Permanently store Bcrypt-hashed Magic Key in Supabase school_claims & mark udise_private_schools verified
       try {
-        const { data: profRow } = await schoolSearchSupabase
-          .from('school_profiles')
-          .select('profile_data, section_visibility')
-          .eq('udise_code', claim.udise_code)
-          .maybeSingle();
-
-        const existingProfData =
-          typeof profRow?.profile_data === 'string'
-            ? JSON.parse(profRow.profile_data)
-            : profRow?.profile_data || {};
-
-        const prevRequests = Array.isArray(existingProfData.claimRequests)
-          ? existingProfData.claimRequests
-          : [];
-
-        const updatedProfData = {
-          ...existingProfData,
-          udiseCode: claim.udise_code,
-          schoolName: existingProfData.schoolName || claim.school_name,
-          latestClaimStatus: 'approved',
-          magicAuth: {
-            magicKey: generatedMagicKey,
-            magicLinkUrl: generatedMagicLinkUrl,
+        const hashedKey = bcrypt.hashSync(generatedMagicKey, 10);
+        await schoolSearchSupabase
+          .from('school_claims')
+          .update({
             status: 'approved',
-            isApproved: true,
-            isPermanent: true,
-            approvedAt: claim.approved_at,
-            claimantName: claim.claimant_name,
-            claimantEmail: claim.claimant_email,
-            whatsappNumber: claim.whatsapp_number,
-            designation: claim.designation,
-          },
-          claimRequests: [
-            claim,
-            ...prevRequests.filter((r: any) => r.id !== claim!.id),
-          ],
-        };
-
-        await schoolSearchSupabase.from('school_profiles').upsert(
-          {
-            udise_code: claim.udise_code,
-            is_claimed: true,
-            claimed_by: claim.claimant_email,
-            profile_data: updatedProfData,
+            magic_key: hashedKey,
+            key_hash: hashedKey,
             updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'udise_code' }
-        );
+          })
+          .eq('udise_code', claim.udise_code);
 
         await schoolSearchSupabase
           .from('udise_private_schools')
@@ -849,7 +819,7 @@ export async function PATCH(req: NextRequest) {
           })
           .eq('udise_code', claim.udise_code);
       } catch (supaErr) {
-        console.error('[school-claim PATCH] Error saving permanent magicAuth to Supabase:', supaErr);
+        console.error('[school-claim PATCH] Error saving claim status to Supabase:', supaErr);
       }
 
       // 2. Also persist in local sync tokens store for backward compatibility

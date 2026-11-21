@@ -31,6 +31,45 @@ export function getClientIp(req: NextRequest | Request): string {
   return '127.0.0.1';
 }
 
+// ── CSRF Origin Validation ──
+// Checks that POST/PUT/PATCH/DELETE requests come from allowed origins.
+// Allows: same-origin, configured NEXT_PUBLIC_APP_URL, localhost (dev).
+// Returns a 403 NextResponse if the origin is disallowed, or null if OK.
+export function checkCsrfOrigin(req: NextRequest | Request): NextResponse | null {
+  const method = req.method?.toUpperCase();
+  // Only apply to state-mutating methods
+  if (!method || !['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) return null;
+
+  const origin = req.headers.get('origin') || '';
+  const referer = req.headers.get('referer') || '';
+
+  // Build the list of allowed origins from env
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || '').replace(/\/$/, '');
+  const allowed = new Set<string>([
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://www.cseel.org',
+    'https://cseel.org',
+    'https://schoolsearch.cseel.org',
+  ]);
+  if (appUrl) allowed.add(appUrl);
+
+  // If no origin header present, check referer (server-to-server requests and form submissions)
+  const checkValue = origin || (referer ? new URL(referer).origin : '');
+
+  // Allow requests with no origin (e.g. server-side calls, curl with admin key)
+  if (!checkValue) return null;
+
+  if (!allowed.has(checkValue)) {
+    console.warn(`[CSRF] Blocked request from disallowed origin: ${checkValue} ${req.url}`);
+    return NextResponse.json(
+      { success: false, error: 'Forbidden: Cross-site request blocked.' },
+      { status: 403 }
+    );
+  }
+  return null;
+}
+
 // Known malicious/bulk scraping bot signatures
 const SCRAPER_BOT_SIGNATURES = [
   'scrapy',
@@ -258,8 +297,8 @@ export async function verifySchoolWriteAuth(
     ''
   ).trim();
 
-  // Universal Admin Code: '1234' allows master admin editing across all claimed profiles
-  if (candidateKey === '1234' || (MASTER_ADMIN_KEY && candidateKey === MASTER_ADMIN_KEY)) {
+  // Admin Code: Only the MASTER_ADMIN_KEY (from env) grants admin access — no hardcoded bypasses
+  if (MASTER_ADMIN_KEY && candidateKey === MASTER_ADMIN_KEY) {
     return { authorized: true, mode: 'admin' };
   }
 
@@ -323,7 +362,10 @@ export async function verifySchoolWriteAuth(
         }
       }
 
-      // Check school_profiles
+      // Check school_profiles — NOTE: 'profile_data' column was removed in the 16-col schema migration.
+      // This block is intentionally disabled. Auth relies on school_claims table (above) only.
+      // If needed in future, re-enable after schema supports it.
+      /*
       const { data: profRow } = await schoolSearchSupabase
         .from('school_profiles')
         .select('profile_data')
@@ -331,42 +373,9 @@ export async function verifySchoolWriteAuth(
         .maybeSingle();
 
       if (profRow) {
-        const pData =
-          typeof profRow.profile_data === 'string'
-            ? JSON.parse(profRow.profile_data)
-            : profRow.profile_data || {};
-
-        // A. Magic Key Check
-        const magicAuth = pData?.magicAuth;
-        if (
-          candidateKey &&
-          magicAuth &&
-          magicAuth.status === 'approved' &&
-          magicAuth.isApproved === true &&
-          magicAuth.magicKey &&
-          magicAuth.magicKey === candidateKey
-        ) {
-          return { authorized: true, mode: 'magic_link' };
-        }
-
-        // B. User Identity / Email Check for Claimed School
-        if (magicAuth && queryUserEmail && magicAuth.claimantEmail && magicAuth.claimantEmail.toLowerCase() === queryUserEmail) {
-          return { authorized: true, mode: 'owner' };
-        }
-
-        // C. Check approved claimRequests in profile_data
-        if (Array.isArray(pData.claimRequests)) {
-          const approvedReq = pData.claimRequests.find(
-            (cr: any) =>
-              cr.status === 'approved' &&
-              ((queryUserId && cr.user_id && String(cr.user_id) === String(queryUserId)) ||
-                (queryUserEmail && cr.claimant_email && cr.claimant_email.toLowerCase() === queryUserEmail))
-          );
-          if (approvedReq) {
-            return { authorized: true, mode: 'owner' };
-          }
-        }
+        // ... (disabled — column does not exist)
       }
+      */
     } catch (err) {
       console.warn('Error checking magicAuth in Supabase school_profiles:', err);
     }

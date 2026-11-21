@@ -60,7 +60,36 @@ export async function fetchSchoolFromSupabaseDirect(
       .eq('udise_code', udise)
       .limit(1);
 
-    const cp = claims && claims.length > 0 ? claims[0] : null;
+    let cp = claims && claims.length > 0 ? claims[0] : null;
+
+    // Fallback/Direct check on 16-column school_profiles table
+    if (!cp) {
+      const { data: profs } = await supabaseServer
+        .from('school_profiles')
+        .select('*')
+        .eq('udise_code', udise)
+        .limit(1);
+      if (profs && profs.length > 0) {
+        const p = profs[0];
+        cp = {
+          udise_code: p.udise_code,
+          is_claimed: true,
+          about_text: p.about,
+          logo_url: p.logo_url,
+          campus_image_url: p.campus_image_url,
+          faqs: p.faqs,
+          fee_table: p.fees_table,
+          facility_ids: p.facilities,
+          campus_images: p.video_gallery?.images,
+          campus_video_url: p.video_gallery?.video_url,
+          admission_status: p.important_dates_guidelines?.admission_status,
+          academic_session: p.important_dates_guidelines?.academic_session,
+          age_criteria: p.important_dates_guidelines?.age_criteria,
+          required_documents: p.important_dates_guidelines?.required_documents,
+          board_results: p.academic_results?.board_results,
+        };
+      }
+    }
 
     // Fetch facilities if claimed_profile specifies facility_ids
     let facilityItems: any[] = [];

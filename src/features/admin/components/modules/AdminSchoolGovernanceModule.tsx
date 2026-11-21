@@ -44,6 +44,13 @@ export default function AdminSchoolGovernanceModule() {
   const [totalSchools, setTotalSchools] = useState(0);
   const limit = 20;
 
+  // Multi-select & Bulk Delete State
+  const [selectedClaimIds, setSelectedClaimIds] = useState<Set<string>>(new Set());
+  const [isDeletingClaims, setIsDeletingClaims] = useState(false);
+
+  const [selectedUdiseCodes, setSelectedUdiseCodes] = useState<Set<string>>(new Set());
+  const [isDeletingSchools, setIsDeletingSchools] = useState(false);
+
   // Approval Modal State
   const [approvingClaim, setApprovingClaim] = useState<any | null>(null);
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
@@ -184,11 +191,11 @@ export default function AdminSchoolGovernanceModule() {
     }
   };
 
-  // 4B. Handle Delete Claim (Admin Full Power)
+  // 4B. Handle Delete Claim (Admin Full Power - Single Test/Real Delete)
   const handleDeleteClaim = async (claim: any) => {
     const udise = claim.udise_code;
     const name = claim.school_name || udise;
-    if (!confirm(`Are you sure you want to permanently DELETE the claim for "${name}" (UDISE: ${udise})? This will completely remove the claim record.`)) {
+    if (!confirm(`Are you sure you want to permanently DELETE the claim for "${name}" (UDISE: ${udise})? This will completely remove the claim record from Supabase database.`)) {
       return;
     }
 
@@ -205,13 +212,125 @@ export default function AdminSchoolGovernanceModule() {
       });
       const json = await res.json();
       if (json.success) {
-        showFeedback(`Claim for UDISE ${udise} permanently deleted.`);
+        showFeedback(json.message || `Claim for UDISE ${udise} permanently deleted from database.`);
+        setSelectedClaimIds(prev => {
+          const next = new Set(prev);
+          next.delete(claim.id || udise);
+          return next;
+        });
         await fetchClaims();
       } else {
         showFeedback(json.error || 'Failed to delete claim.', 'error');
       }
     } catch {
       showFeedback('Network error during claim deletion.', 'error');
+    }
+  };
+
+  // 4C. Handle Bulk Delete Selected Claims (Multi-select Delete)
+  const handleBulkDeleteClaims = async () => {
+    if (selectedClaimIds.size === 0) return;
+    const count = selectedClaimIds.size;
+    if (!confirm(`Are you sure you want to permanently DELETE ${count} selected claim(s) from Supabase database? This action cannot be undone.`)) {
+      return;
+    }
+
+    setIsDeletingClaims(true);
+    try {
+      const selectedList = claims.filter(c => selectedClaimIds.has(c.id || c.udise_code));
+      const claimIds = selectedList.map(c => c.id).filter(Boolean);
+      const udiseCodes = selectedList.map(c => c.udise_code).filter(Boolean);
+
+      const res = await fetch('/api/admin/school-governance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'batch_delete_claims',
+          claimIds,
+          udiseCodes,
+          adminEmail: 'superadmin@cseel.org'
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showFeedback(json.message || `${count} claims permanently deleted from Supabase database.`);
+        setSelectedClaimIds(new Set());
+        await fetchClaims();
+      } else {
+        showFeedback(json.error || 'Failed to delete claims.', 'error');
+      }
+    } catch {
+      showFeedback('Network error during bulk claim deletion.', 'error');
+    } finally {
+      setIsDeletingClaims(false);
+    }
+  };
+
+  // 5B. Handle Delete School (Single)
+  const handleDeleteSchool = async (school: any) => {
+    const udise = school.udise_code;
+    const name = school.school_name || udise;
+    if (!confirm(`Are you sure you want to permanently DELETE school "${name}" (UDISE: ${udise}) from master UDISE database?`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/admin/school-governance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_school',
+          udiseCode: udise
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showFeedback(json.message || `School ${name} permanently deleted from database.`);
+        setSelectedUdiseCodes(prev => {
+          const next = new Set(prev);
+          next.delete(udise);
+          return next;
+        });
+        await fetchSchools(searchQuery, page);
+      } else {
+        showFeedback(json.error || 'Failed to delete school.', 'error');
+      }
+    } catch {
+      showFeedback('Network error during school deletion.', 'error');
+    }
+  };
+
+  // 5C. Handle Bulk Delete Selected Schools (Multi-select Delete)
+  const handleBulkDeleteSchools = async () => {
+    if (selectedUdiseCodes.size === 0) return;
+    const count = selectedUdiseCodes.size;
+    if (!confirm(`Are you sure you want to permanently DELETE ${count} selected school(s) from master UDISE database?`)) {
+      return;
+    }
+
+    setIsDeletingSchools(true);
+    try {
+      const udiseCodes = Array.from(selectedUdiseCodes);
+      const res = await fetch('/api/admin/school-governance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'batch_delete_schools',
+          udiseCodes
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showFeedback(json.message || `${count} schools permanently deleted from database.`);
+        setSelectedUdiseCodes(new Set());
+        await fetchSchools(searchQuery, page);
+      } else {
+        showFeedback(json.error || 'Failed to delete schools.', 'error');
+      }
+    } catch {
+      showFeedback('Network error during bulk deletion.', 'error');
+    } finally {
+      setIsDeletingSchools(false);
     }
   };
 
@@ -392,6 +511,36 @@ export default function AdminSchoolGovernanceModule() {
             </button>
           </div>
 
+          {/* Multi-Selection Bulk Action Bar */}
+          {selectedClaimIds.size > 0 && (
+            <div className="bg-rose-50 border-b border-rose-200 px-4 py-2.5 flex items-center justify-between gap-3 text-xs animate-in fade-in">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-rose-900 bg-rose-200/70 px-2 py-0.5 rounded-full text-[11px]">
+                  {selectedClaimIds.size} Selected
+                </span>
+                <span className="text-rose-700 font-medium">Claims selected for permanent deletion from database</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedClaimIds(new Set())}
+                  className="px-2.5 py-1 text-xs font-semibold text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 transition cursor-pointer"
+                >
+                  Deselect All
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBulkDeleteClaims}
+                  disabled={isDeletingClaims}
+                  className="px-3.5 py-1 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer disabled:opacity-50"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>{isDeletingClaims ? 'Deleting...' : `Delete Selected (${selectedClaimIds.size})`}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Claims Table */}
           <div className="overflow-x-auto">
             {isLoadingClaims ? (
@@ -407,6 +556,21 @@ export default function AdminSchoolGovernanceModule() {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-gray-50/80 border-b border-gray-200 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="py-2.5 px-3 w-9">
+                      <input
+                        type="checkbox"
+                        checked={filteredClaims.length > 0 && filteredClaims.every(c => selectedClaimIds.has(c.id || c.udise_code))}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedClaimIds(new Set(filteredClaims.map(c => c.id || c.udise_code)));
+                          } else {
+                            setSelectedClaimIds(new Set());
+                          }
+                        }}
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                        title="Select / Deselect All Claims"
+                      />
+                    </th>
                     <th className="py-2.5 px-3">School Name &amp; UDISE</th>
                     <th className="py-2.5 px-3">Claimant Details</th>
                     <th className="py-2.5 px-3">Designation / Phone</th>
@@ -420,9 +584,26 @@ export default function AdminSchoolGovernanceModule() {
                     const isPending = claim.status === 'pending';
                     const isApproved = claim.status === 'approved';
                     const hasKeyHash = Boolean(claim.key_hash);
+                    const isSelected = selectedClaimIds.has(claim.id || claim.udise_code);
 
                     return (
-                      <tr key={claim.id || claim.udise_code} className="hover:bg-blue-50/40 transition-colors">
+                      <tr key={claim.id || claim.udise_code} className={`transition-colors ${isSelected ? 'bg-rose-50/60' : 'hover:bg-blue-50/40'}`}>
+                        <td className="py-3 px-3 w-9">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={(e) => {
+                              const key = claim.id || claim.udise_code;
+                              setSelectedClaimIds(prev => {
+                                const next = new Set(prev);
+                                if (e.target.checked) next.add(key);
+                                else next.delete(key);
+                                return next;
+                              });
+                            }}
+                            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          />
+                        </td>
                         <td className="py-3 px-3">
                           <p className="font-bold text-gray-900">{claim.school_name || 'School Profile'}</p>
                           <p className="font-mono text-[11px] text-gray-500 mt-0.5">UDISE: {claim.udise_code}</p>

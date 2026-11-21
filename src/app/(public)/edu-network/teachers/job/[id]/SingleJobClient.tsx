@@ -6,7 +6,7 @@ import PageTransition from '@/components/shared/PageTransition';
 import AdSenseBanner from '@/components/ads/AdSenseBanner';
 import ApplyResumeModal from '@/components/jobs/ApplyResumeModal';
 import {
-  MapPin, Clock, ExternalLink, Share2, Check, CheckCheck,
+  MapPin, Clock, ExternalLink, Check,
   Building2, GraduationCap, Briefcase, Calendar, ShieldCheck,
   Sparkles, Award, ArrowLeft, RefreshCw
 } from 'lucide-react';
@@ -20,20 +20,14 @@ interface Props {
 }
 
 export default function SingleJobClient({ job, relatedJobs }: Props) {
-  const [copied, setCopied] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
 
-  // Auto-open Resume Modal on page open if not dismissed earlier
+  // Open Resume Application Popup Modal on job page view
   useEffect(() => {
-    try {
-      const isDismissed = localStorage.getItem('cseel_resume_modal_dismissed');
-      if (!isDismissed) {
-        const timer = setTimeout(() => {
-          setShowResumeModal(true);
-        }, 1200);
-        return () => clearTimeout(timer);
-      }
-    } catch {}
+    const timer = setTimeout(() => {
+      setShowResumeModal(true);
+    }, 600);
+    return () => clearTimeout(timer);
   }, []);
 
   // Canonical defensive fallbacks for title, organization, salary, source, and apply link
@@ -55,14 +49,6 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
     '#';
   const fullDescription = rawJob.description || job.shortDescription || '';
   const showDesignationTag = Boolean(job.designation && job.designation.toLowerCase() !== job.jobPostName?.toLowerCase());
-
-  const handleShare = () => {
-    if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    }
-  };
 
   const formatCleanDescription = (desc: string) => {
     if (!desc) return '';
@@ -218,54 +204,13 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                 </div>
               </div>
 
-              {/* Action Buttons & Salary Strip */}
-              <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end gap-3 shrink-0">
+              {/* Offered Compensation Strip */}
+              <div className="flex flex-col items-start md:items-end gap-1 shrink-0">
                 <div className="text-left md:text-right">
                   <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">Offered Compensation</div>
                   <div className={`text-xl sm:text-2xl font-black ${job.salary && job.salary !== '---' && job.salary !== 'Not Disclosed' ? 'text-[#0F9D58]' : 'text-slate-700'}`}>
                     {formatCleanSalary(displaySalary, true)}
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2.5 w-full sm:w-auto">
-                  <button
-                    type="button"
-                    onClick={handleShare}
-                    className="flex-1 sm:flex-initial py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
-                  >
-                    {copied ? (
-                      <>
-                        <CheckCheck className="w-4 h-4 text-emerald-600" />
-                        <span className="text-[#0F9D58]">Link Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Share2 className="w-4 h-4 text-slate-500" />
-                        <span>Share Job</span>
-                      </>
-                    )}
-                  </button>
-
-                  <a
-                    href={applyLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      trackCseelEvent('job_apply_click', {
-                        job_id: job.id,
-                        job_title: job.jobPostName,
-                        school_name: job.organisationName,
-                        city: job.city,
-                        state: job.state,
-                        salary: job.salary,
-                        source: job.source,
-                      });
-                    }}
-                    className="flex-1 sm:flex-initial py-2.5 px-6 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98"
-                  >
-                    <ExternalLink className="w-4 h-4 shrink-0" />
-                    <span>{applyButtonText}</span>
-                  </a>
                 </div>
               </div>
 
@@ -398,29 +343,6 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
                     </div>
                   )}
                 </div>
-
-                <div className="pt-2">
-                  <a
-                    href={applyLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      trackCseelEvent('job_apply_click', {
-                        job_id: job.id,
-                        job_title: job.jobPostName,
-                        school_name: job.organisationName,
-                        city: job.city,
-                        state: job.state,
-                        salary: job.salary,
-                        source: job.source,
-                      });
-                    }}
-                    className="w-full py-3 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-xs"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>{applyButtonText}</span>
-                  </a>
-                </div>
               </div>
 
               {/* Reassurance Notice */}
@@ -548,50 +470,6 @@ export default function SingleJobClient({ job, relatedJobs }: Props) {
           )}
 
         </section>
-
-        {/* ─── MOBILE STICKY FLOATING ACTION BAR (70.8% Traffic Conversion Engine) ─── */}
-        <div className="fixed bottom-0 inset-x-0 z-50 md:hidden bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-4 py-3 shadow-2xl safe-bottom">
-          <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
-            <div className="min-w-0 flex-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block truncate">
-                {job.designation || 'Teaching Faculty'} • {formatCleanSalary(displaySalary, true)}
-              </span>
-              <span className="text-xs font-bold text-white truncate block">
-                {job.organisationName}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                type="button"
-                onClick={handleShare}
-                aria-label="Share Job"
-                className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 active:scale-95 transition-all"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-              </button>
-              <a
-                href={applyLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  trackCseelEvent('job_apply_click', {
-                    job_id: job.id,
-                    job_title: job.jobPostName,
-                    school_name: job.organisationName,
-                    city: job.city,
-                    state: job.state,
-                    salary: job.salary,
-                    source: job.source,
-                  });
-                }}
-                className="py-2.5 px-4 rounded-xl bg-[#005689] hover:bg-[#003c6e] text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-blue-900/30 active:scale-95 transition-all whitespace-nowrap"
-              >
-                <span>Apply Now</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
 
         {/* Resume Application Modal */}
         <ApplyResumeModal

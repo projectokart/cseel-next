@@ -5,6 +5,7 @@ import {
   checkRateLimitAndBots,
   sanitizePayloadDeep,
   verifySchoolWriteAuth,
+  checkCsrfOrigin,
 } from '@/lib/security/apiSecurityGuard';
 import {
   readSyncStore,
@@ -22,6 +23,9 @@ export async function POST(req: NextRequest) {
     blockScraperBots: true,
   });
   if (securityBlock) return securityBlock;
+
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
 
   try {
     const rawBody = await req.json().catch(() => ({}));
@@ -276,64 +280,104 @@ export async function POST(req: NextRequest) {
         .filter(Boolean);
     }
 
-    // 3. Extract 3-tab architecture distinct payloads (Overview, Admissions, Results)
-    const overviewPayload = {
-      aboutText: mergedProfileData.aboutText || mergedProfileData.about_school || compiledSections.about?.text || '',
-      vision: mergedProfileData.vision || '',
-      mission: mergedProfileData.mission || '',
-      establishedYear: mergedProfileData.establishedYear || '',
-      campusArea: mergedProfileData.campusArea || '',
-      website: mergedProfileData.website || '',
-      email: mergedProfileData.email || '',
-      phone: mergedProfileData.phone || '',
-      heroImage: resolvedHeroImage,
-      logoImage: resolvedLogo,
-      faqs: mergedProfileData.faqs || compiledSections.faqs?.faqs || [],
-      gallery: compiledSections.gallery?.images || mergedProfileData.gallery || [],
+    // 3. Extract 16-column modular architecture payloads
+    const snapshotPayload = {
+      established_year: String(mergedProfileData.establishedYear || baseRow?.established_year || '').trim(),
+      campus_area: String(mergedProfileData.campusArea || '').trim(),
+      board: String(mergedProfileData.board || baseRow?.board_10th || 'CBSE').trim(),
+      school_type: String(mergedProfileData.schoolType || baseRow?.management_desc || 'Private Unaided').trim(),
+      school_gender: String(mergedProfileData.genderType || mergedProfileData.school_gender || 'Co-Educational').trim(),
+      total_students: Number(mergedProfileData.totalStudents || baseRow?.total_students || 0),
+      total_teachers: Number(mergedProfileData.totalTeachers || baseRow?.total_teachers || 0),
+      student_teacher_ratio: String(mergedProfileData.studentTeacherRatio || '1:17').trim(),
+      class_from: String(mergedProfileData.classFrom || baseRow?.class_from || 'Nursery').trim(),
+      class_to: String(mergedProfileData.classTo || baseRow?.class_to || 'Class 12th').trim(),
     };
 
-    const admissionsPayload = {
-      admissionStatus: mergedProfileData.admissionStatus || (mergedProfileData.admissionsOpen ? 'Open' : 'Closed'),
-      academicSession: mergedProfileData.academicSession || '2026-2027',
-      ageCriteria: mergedProfileData.ageCriteria || '',
-      feeColumns: mergedProfileData.feeColumns || ['Class / Grade', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Annual Charges'],
-      feeTable: mergedProfileData.feeTable || mergedProfileData.fee_structure || compiledSections.fees?.table || [],
-      requiredDocuments: mergedProfileData.requiredDocuments || compiledSections.admissions?.required_documents || [],
-      admissionProcess: mergedProfileData.admissionProcess || mergedProfileData.admission_process || compiledSections.admissions?.process || '',
+    const videoGalleryPayload = {
+      video_url: String(mergedProfileData.campusVideoUrl || mergedProfileData.video_url || '').trim(),
+      images: Array.isArray(compiledSections.gallery?.images || mergedProfileData.gallery || mergedProfileData.galleryItems)
+        ? (compiledSections.gallery?.images || mergedProfileData.gallery || mergedProfileData.galleryItems)
+        : [],
     };
 
-    const resultsPayload = {
-      resultsHighlights: mergedProfileData.resultsHighlights || mergedProfileData.results_highlights || '',
-      boardResults: mergedProfileData.boardResults || compiledSections.results?.boardResults || [],
-      achievements: mergedProfileData.achievements || compiledSections.results?.achievements || [],
+    const importantDatesPayload = {
+      academic_session: String(mergedProfileData.academicSession || '2026-2027').trim(),
+      admission_status: String(mergedProfileData.admissionStatus || (mergedProfileData.admissionsOpen ? 'Open for 2026-27' : 'Closed')).trim(),
+      due_dates: Array.isArray(mergedProfileData.dueDates) && mergedProfileData.dueDates.length > 0
+        ? mergedProfileData.dueDates
+        : [
+            { title: 'Online Registration Opens', date: '01 Jan 2026' },
+            { title: 'First Admission List & Verification', date: '15 Feb 2026' },
+            { title: 'Session Orientation & Induction', date: '01 Apr 2026' }
+          ],
+      required_documents: Array.isArray(mergedProfileData.requiredDocuments || compiledSections.admissions?.required_documents)
+        ? (mergedProfileData.requiredDocuments || compiledSections.admissions?.required_documents)
+        : [],
+      guidelines: String(mergedProfileData.admissionProcess || mergedProfileData.guidelines || compiledSections.admissions?.process || '').trim(),
     };
+
+    const admissionDeskPayload = Array.isArray(mergedProfileData.admissionDeskContacts) && mergedProfileData.admissionDeskContacts.length > 0
+      ? mergedProfileData.admissionDeskContacts
+      : [
+          {
+            desk_name: 'Central Admissions Cell',
+            phone: String(mergedProfileData.phone || baseRow?.phone || '').trim(),
+            email: String(mergedProfileData.email || baseRow?.email || '').trim(),
+          },
+          {
+            desk_name: 'Principal Secretariat',
+            phone: String(mergedProfileData.principalPhone || '').trim(),
+            email: String(mergedProfileData.principalEmail || '').trim(),
+          }
+        ];
+
+    // Normalize boardResults: dashboard saves as {class10, class12} but component expects {class10Results, class12Results}
+    const rawBoardResults = mergedProfileData.boardResults || compiledSections.results?.boardResults || {};
+    const normalizedBoardResults = (() => {
+      if (!rawBoardResults || typeof rawBoardResults !== 'object') return {};
+      // If already correct format (has class10Results key), return as-is
+      if (rawBoardResults.class10Results !== undefined || rawBoardResults.class12Results !== undefined) {
+        return rawBoardResults;
+      }
+      // Dashboard format: {class10: {...}, class12: {...}} — convert to {class10Results: [...], class12Results: [...]}
+      if (rawBoardResults.class10 !== undefined || rawBoardResults.class12 !== undefined) {
+        return {
+          class10Results: Array.isArray(rawBoardResults.class10) ? rawBoardResults.class10 : (rawBoardResults.class10 ? [rawBoardResults.class10] : []),
+          class12Results: Array.isArray(rawBoardResults.class12) ? rawBoardResults.class12 : (rawBoardResults.class12 ? [rawBoardResults.class12] : []),
+        };
+      }
+      return rawBoardResults;
+    })();
+
+    const academicResultsPayload = {
+      lead_paragraph: String(mergedProfileData.resultsHighlights || mergedProfileData.academicResults?.lead_paragraph || '').trim(),
+      board_results: normalizedBoardResults,
+    };
+
+    const facilitiesPayload = facilityIds.length > 0
+      ? facilityIds
+      : Array.isArray(compiledSections.facilities?.facilities)
+      ? compiledSections.facilities.facilities
+      : (mergedProfileData.facilities || []);
 
     const schoolProfilesPayload: Record<string, any> = {
       udise_code: udiseCode,
-      board: mergedProfileData.board || baseRow?.board_10th || 'CBSE',
-      school_type: mergedProfileData.schoolType || baseRow?.management_desc || 'Private Unaided',
-      residential_type: mergedProfileData.hasHostel ? 'Residential' : 'Day School',
-      school_gender: mergedProfileData.genderType || 'Co-educational',
-      facility_ids: facilityIds,
-      overview: overviewPayload,
-      admissions: admissionsPayload,
-      results: resultsPayload,
-      basic_info: compiledSections.basic_info,
-      hero: compiledSections.hero,
-      stats: compiledSections.stats,
-      about: compiledSections.about,
-      principal: compiledSections.principal,
-      management: compiledSections.management,
-      academics: compiledSections.academics,
-      results_section: compiledSections.results,
-      facilities: compiledSections.facilities,
-      gallery: compiledSections.gallery,
-      fees: compiledSections.fees,
-      admissions_section: compiledSections.admissions,
-      faqs: compiledSections.faqs,
-      contact: compiledSections.contact,
-      careers: compiledSections.careers,
-      profile_data: mergedProfileData,
+      about: String(mergedProfileData.aboutText || mergedProfileData.about_school || compiledSections.about?.text || '').trim(),
+      logo_url: String(resolvedLogo || '').trim(),
+      campus_image_url: String(resolvedHeroImage || '').trim(),
+      school_snapshot: snapshotPayload,
+      video_gallery: videoGalleryPayload,
+      faqs: Array.isArray(mergedProfileData.faqs || compiledSections.faqs?.faqs)
+        ? (mergedProfileData.faqs || compiledSections.faqs?.faqs)
+        : [],
+      fees_table: Array.isArray(mergedProfileData.feeTable || mergedProfileData.feeTableData || mergedProfileData.fee_structure || compiledSections.fees?.table)
+        ? (mergedProfileData.feeTable || mergedProfileData.feeTableData || mergedProfileData.fee_structure || compiledSections.fees?.table)
+        : [],
+      important_dates_guidelines: importantDatesPayload,
+      admission_desk_contacts: admissionDeskPayload,
+      academic_results: academicResultsPayload,
+      facilities: facilitiesPayload,
       section_visibility: sectionVisibility,
       updated_at: new Date().toISOString(),
     };
@@ -346,30 +390,7 @@ export async function POST(req: NextRequest) {
     if (!profErr) {
       profilesUpdated = true;
     } else {
-      console.warn('[school-profile-save] school_profiles full upsert warning:', profErr.message);
-      const normalizedProfileData = {
-        ...mergedProfileData,
-        overview: overviewPayload,
-        admissions: admissionsPayload,
-        results: resultsPayload,
-        facility_ids: facilityIds,
-        board: mergedProfileData.board || baseRow?.board_10th || 'CBSE',
-        school_type: mergedProfileData.schoolType || baseRow?.management_desc || 'Private Unaided',
-        residential_type: mergedProfileData.hasHostel ? 'Residential' : 'Day School',
-        school_gender: mergedProfileData.genderType || 'Co-educational',
-      };
-      const { error: fbErr } = await schoolSearchSupabase
-        .from('school_profiles')
-        .upsert(
-          {
-            udise_code: udiseCode,
-            profile_data: normalizedProfileData,
-            section_visibility: sectionVisibility,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'udise_code' }
-        );
-      if (!fbErr) profilesUpdated = true;
+      console.warn('[school-profile-save] school_profiles 16-column upsert warning:', profErr.message);
     }
 
     // 4. Keep local sync store in sync as fallback cache
@@ -430,6 +451,167 @@ export async function POST(req: NextRequest) {
         error: 'SAVE_FAILED',
         message: err.message || 'Failed to save school profile to Supabase.',
       },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const udise = String(url.searchParams.get('udise') || url.searchParams.get('code') || '').replace(/\D/g, '').trim();
+
+    if (!udise || udise.length < 6) {
+      return NextResponse.json(
+        { success: false, error: 'INVALID_UDISE', message: 'Valid UDISE code is required' },
+        { status: 400 }
+      );
+    }
+
+    const { data: profRow, error } = await schoolSearchSupabase
+      .from('school_profiles')
+      .select('*')
+      .eq('udise_code', udise)
+      .maybeSingle();
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: 'DB_ERROR', message: error.message },
+        { status: 500 }
+      );
+    }
+
+    if (!profRow) {
+      const baseRow = await fetchBaseSchoolRow(udise);
+      if (baseRow) {
+        return NextResponse.json({
+          success: true,
+          found: true,
+          isCustomized: false,
+          udiseCode: udise,
+          profileData: {
+            udiseCode: udise,
+            schoolName: baseRow.school_name || '',
+            aboutText: '',
+            logoImage: '',
+            heroImage: '',
+            establishedYear: baseRow.year_established || '',
+            campusArea: '',
+            board: baseRow.board_12th || baseRow.board_10th || '',
+            schoolType: baseRow.school_management || 'Private Unaided',
+            school_gender: baseRow.school_type || 'Co-Educational',
+            genderType: baseRow.school_type || 'Co-Educational',
+            totalStudents: Number(baseRow.total_students) || 0,
+            totalTeachers: Number(baseRow.total_teachers) || 0,
+            studentTeacherRatio: (baseRow.total_students && baseRow.total_teachers) ? `1:${Math.round(baseRow.total_students / baseRow.total_teachers)}` : '',
+            classFrom: baseRow.class_from ? String(baseRow.class_from) : '',
+            classTo: baseRow.class_to ? String(baseRow.class_to) : '',
+            state: baseRow.state_name || '',
+            district: baseRow.district_name || '',
+            pincode: baseRow.pincode || '',
+            campusVideoUrl: '',
+            gallery: [],
+            galleryItems: [],
+            faqs: [],
+            feeTable: [],
+            feeTableData: [],
+            dueDates: [],
+            requiredDocuments: [],
+            admissionDeskContacts: [],
+            resultsHighlights: '',
+            boardResults: {},
+            facilities: [],
+            facility_ids: [],
+            sectionVisibility: {},
+          },
+          overview: {
+            aboutText: '',
+            heroImage: '',
+            logoImage: '',
+            gallery: [],
+            faqs: [],
+          },
+          gallery: [],
+        });
+      }
+
+      return NextResponse.json(
+        { success: false, found: false, message: `No profile or base school record found for UDISE ${udise}` },
+        { status: 404 }
+      );
+    }
+
+    // Assemble profile data cleanly from the 16 modular columns
+    const snapshot = (profRow.school_snapshot && typeof profRow.school_snapshot === 'object') ? profRow.school_snapshot : {};
+    const videoGallery = (profRow.video_gallery && typeof profRow.video_gallery === 'object') ? profRow.video_gallery : {};
+    const importantDates = (profRow.important_dates_guidelines && typeof profRow.important_dates_guidelines === 'object') ? profRow.important_dates_guidelines : {};
+    const academicResults = (profRow.academic_results && typeof profRow.academic_results === 'object') ? profRow.academic_results : {};
+    const deskContacts = Array.isArray(profRow.admission_desk_contacts) ? profRow.admission_desk_contacts : [];
+    const galleryImages = Array.isArray(videoGallery.images) ? videoGallery.images : [];
+
+    const compiledProfileData: Record<string, any> = {
+      udiseCode: udise,
+      aboutText: profRow.about || '',
+      logoImage: profRow.logo_url || '',
+      heroImage: profRow.campus_image_url || '',
+      establishedYear: snapshot.established_year || '',
+      campusArea: snapshot.campus_area || '',
+      board: snapshot.board || '',
+      schoolType: snapshot.school_type || 'Private Unaided',
+      school_gender: snapshot.school_gender || 'Co-Educational',
+      genderType: snapshot.school_gender || 'Co-Educational',
+      totalStudents: snapshot.total_students || 0,
+      totalTeachers: snapshot.total_teachers || 0,
+      studentTeacherRatio: snapshot.student_teacher_ratio || '',
+      classFrom: snapshot.class_from || '',
+      classTo: snapshot.class_to || '',
+
+      campusVideoUrl: videoGallery.video_url || '',
+      gallery: galleryImages,
+      galleryItems: galleryImages,
+
+      faqs: Array.isArray(profRow.faqs) ? profRow.faqs : [],
+      feeTable: Array.isArray(profRow.fees_table) ? profRow.fees_table : [],
+      feeTableData: Array.isArray(profRow.fees_table) ? profRow.fees_table : [],
+
+      academicSession: importantDates.academic_session || '2026-2027',
+      admissionStatus: importantDates.admission_status || 'Open',
+      dueDates: importantDates.due_dates || [],
+      requiredDocuments: importantDates.required_documents || [],
+      admissionProcess: importantDates.guidelines || '',
+
+      admissionDeskContacts: deskContacts,
+      phone: deskContacts[0]?.phone || '',
+      email: deskContacts[0]?.email || '',
+
+      resultsHighlights: academicResults.lead_paragraph || '',
+      boardResults: academicResults.board_results || academicResults.boardResults || {},
+
+      facilities: Array.isArray(profRow.facilities) ? profRow.facilities : [],
+      facility_ids: Array.isArray(profRow.facilities) ? profRow.facilities : [],
+
+      sectionVisibility: profRow.section_visibility || {},
+      updatedAt: profRow.updated_at,
+    };
+
+    return NextResponse.json({
+      success: true,
+      found: true,
+      udiseCode: udise,
+      profileData: compiledProfileData,
+      overview: {
+        aboutText: profRow.about || '',
+        heroImage: profRow.campus_image_url || '',
+        logoImage: profRow.logo_url || '',
+        gallery: galleryImages,
+        faqs: Array.isArray(profRow.faqs) ? profRow.faqs : [],
+      },
+      gallery: galleryImages,
+      updatedAt: profRow.updated_at,
+    });
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, error: 'SERVER_ERROR', message: err.message },
       { status: 500 }
     );
   }

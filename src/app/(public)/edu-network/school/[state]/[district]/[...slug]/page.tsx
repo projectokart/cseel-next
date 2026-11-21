@@ -17,7 +17,8 @@ import SchoolProfileView from './SchoolProfileView';
 import { SchoolTemplateProvider } from '@/components/schools/template/SchoolTemplateContext';
 import { PLACEHOLDER_EMPTY_IMAGE } from '@/components/schools/template/templateConstants';
 import { redirect } from 'next/navigation';
-import schoolAiSyncTokens from '@/data/school_ai_sync_tokens.json';
+import fs from 'fs';
+import path from 'path';
 
 
 function isValidSchoolImage(img: any): boolean {
@@ -38,12 +39,23 @@ function resolveHeroImage(syncedHero: any, dbImage: any): string {
   return PLACEHOLDER_EMPTY_IMAGE;
 }
 
-// 7 Days On-Demand ISR Cache (revalidates in background with zero CPU timeout)
-export const revalidate = 604800;
+// 24 Hours On-Demand ISR Cache (BUG-09: was 604800 = 7 days, reduced for fresher data)
+export const revalidate = 86400;
 
-// Direct zero-CPU in-memory static tokens store (0ms file read)
+// SEC-04: Lazy fs.readFileSync instead of static import — avoids bundling all tokens into server JS artifact
+let _cachedTokens: any = null;
 function getParsedTokensStore() {
-  return schoolAiSyncTokens;
+  if (_cachedTokens) return _cachedTokens;
+  try {
+    const filePath = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
+    if (fs.existsSync(filePath)) {
+      _cachedTokens = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      return _cachedTokens;
+    }
+  } catch (err) {
+    console.warn('Could not load school_ai_sync_tokens.json:', err);
+  }
+  return { tokens: {} };
 }
 
 // In-memory LRU cache for fetched school records to avoid redundant DB hits across metadata & page render
@@ -100,16 +112,33 @@ function getSyncedProfileData(udiseCode: string, cleanSlug: string): any {
       return mergeRecord(tokens[`sync_${targetCode}`]);
     }
 
-    for (const tKey of Object.keys(tokens)) {
-      const rec = tokens[tKey];
-      const recSchoolId = (rec.schoolId || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
-      const recUdise = (rec.profileData?.udiseCode || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+    // 1. Match by targetCode (UDISE)
+    if (targetCode && targetCode.length >= 6) {
+      for (const tKey of Object.keys(tokens)) {
+        const rec = tokens[tKey];
+        const recSchoolId = (rec.schoolId || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+        const recUdise = (rec.profileData?.udiseCode || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
 
-      if (
-        (targetCode && targetCode.length >= 6 && (recSchoolId === targetCode || recUdise === targetCode)) ||
-        (cleanSlugNorm && tKey.toLowerCase().includes(cleanSlugNorm))
-      ) {
-        return mergeRecord(rec);
+        if (recSchoolId === targetCode || recUdise === targetCode) {
+          return mergeRecord(rec);
+        }
+      }
+      // If a valid UDISE was provided, do not fall back to other schools via slug substring
+      return null;
+    }
+
+    // 2. Secondary fallback ONLY when no targetCode is provided
+    if (cleanSlugNorm && cleanSlugNorm.length >= 6) {
+      for (const tKey of Object.keys(tokens)) {
+        const rec = tokens[tKey];
+        const normKey = tKey.toLowerCase().replace(/[^a-z0-9]/gi, '');
+        if (
+          normKey === cleanSlugNorm ||
+          normKey === `csl_ai_magic_${cleanSlugNorm}` ||
+          normKey === `sync_${cleanSlugNorm}`
+        ) {
+          return mergeRecord(rec);
+        }
       }
     }
   } catch (err) {
@@ -436,7 +465,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const displayDistrict = finalSynced?.contact?.campusLocation?.district || finalSynced?.district || dbSchool?.district_name || district;
   const displayState = finalSynced?.contact?.campusLocation?.state || finalSynced?.state || dbSchool?.state_name || state;
   const pincode = (finalSynced?.contact?.campusLocation?.pincode || finalSynced?.pincode || dbSchool?.pincode ? String(finalSynced?.contact?.campusLocation?.pincode || finalSynced?.pincode || dbSchool.pincode).replace(/\.0$/, '') : '');
-  const board = (finalSynced?.schoolIdentity?.board || finalSynced?.board || dbSchool?.board_12th || dbSchool?.board_10th || 'CBSE').replace(/^\d+-/, '');
+  // BUG-12: No default 'CBSE' fallback — show actual board from DB only
+  const board = (finalSynced?.schoolIdentity?.board || finalSynced?.board || dbSchool?.board_12th || dbSchool?.board_10th || '').replace(/^\d+-/, '');
 
   const canonicalUrl = `https://cseel.org/edu-network/school/${encodeURIComponent(displayState.toLowerCase().replace(/ /g, '-'))}/${encodeURIComponent(displayDistrict.toLowerCase().replace(/ /g, '-'))}/${cleanSlug}`;
   
@@ -478,8 +508,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     other: {
       'geo.region': `IN-${displayState}`,
       'geo.placename': `${displayVillage}, ${displayDistrict}, ${displayState}${pincode ? ` ${pincode}` : ''}`,
-      'geo.position': `${dbSchool?.latitude || 28.1405};${dbSchool?.longitude || 77.3259}`,
-      'ICBM': `${dbSchool?.latitude || 28.1405}, ${dbSchool?.longitude || 77.3259}`,
+      'geo.position': dbSchool?.latitude && dbSchool?.longitude ? `${dbSchool.latitude};${dbSchool.longitude}` : undefined,
+      'ICBM': dbSchool?.latitude && dbSchool?.longitude ? `${dbSchool.latitude}, ${dbSchool.longitude}` : undefined,
       'subject': `School profile for ${displayName} in ${displayVillage}, ${displayDistrict}`,
       'Classification': 'Education / School Directory',
       'target': 'all',
@@ -623,7 +653,15 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
     const admissionsData = (profRow.admissions && typeof profRow.admissions === 'object' && Object.keys(profRow.admissions).length > 0 ? profRow.admissions : null) || rawProfile.admissions || {};
     const resultsData = (profRow.results && typeof profRow.results === 'object' && Object.keys(profRow.results).length > 0 ? profRow.results : null) || rawProfile.results || {};
 
-    // Priority: dedicated 3-tab columns (overview, admissions, results) and filter columns take highest precedence
+    // 16-Column Modular Schema unpack
+    const snapshot = (profRow.school_snapshot && typeof profRow.school_snapshot === 'object') ? profRow.school_snapshot : {};
+    const videoGallery = (profRow.video_gallery && typeof profRow.video_gallery === 'object') ? profRow.video_gallery : {};
+    const importantDates = (profRow.important_dates_guidelines && typeof profRow.important_dates_guidelines === 'object') ? profRow.important_dates_guidelines : {};
+    const academicResults = (profRow.academic_results && typeof profRow.academic_results === 'object') ? profRow.academic_results : {};
+    const deskContacts = Array.isArray(profRow.admission_desk_contacts) ? profRow.admission_desk_contacts : [];
+    const galleryImages = Array.isArray(videoGallery.images) ? videoGallery.images : [];
+
+    // Priority: dedicated 16 columns take highest precedence
     dbProfileJson = {
       ...rawProfile,
       ...overviewData,
@@ -631,56 +669,74 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
       ...resultsData,
       isClaimed: true,
       is_claimed: true,
-      board: profRow.board || rawProfile.board || overviewData.board,
-      schoolType: profRow.school_type || rawProfile.schoolType,
-      residentialSchool: profRow.residential_type || rawProfile.residential_type,
-      facility_ids: profRow.facility_ids || rawProfile.facility_ids,
-      aboutText: overviewData.aboutText || rawProfile.aboutText || profRow.about?.text || '',
+      aboutText: profRow.about || overviewData.aboutText || rawProfile.aboutText || '',
+      logoImage: profRow.logo_url || overviewData.logoImage || rawProfile.logoImage || '',
+      heroImage: profRow.campus_image_url || overviewData.heroImage || rawProfile.heroImage || '',
+      board: snapshot.board || profRow.board || rawProfile.board || overviewData.board || 'CBSE',
+      schoolType: snapshot.school_type || profRow.school_type || rawProfile.schoolType || 'Private Unaided',
+      residentialSchool: snapshot.residential_type || profRow.residential_type || rawProfile.residential_type,
+      school_gender: snapshot.school_gender || profRow.school_gender || rawProfile.school_gender || 'Co-Educational',
+      establishedYear: snapshot.established_year || overviewData.establishedYear || rawProfile.establishedYear || '',
+      campusArea: snapshot.campus_area || overviewData.campusArea || rawProfile.campusArea || '',
+      totalStudents: snapshot.total_students || rawProfile.totalStudents || 0,
+      totalTeachers: snapshot.total_teachers || rawProfile.totalTeachers || 0,
+      studentTeacherRatio: snapshot.student_teacher_ratio || rawProfile.studentTeacherRatio || '1:17',
+      classFrom: snapshot.class_from || rawProfile.classFrom || '',
+      classTo: snapshot.class_to || rawProfile.classTo || '',
+      
+      campusVideoUrl: videoGallery.video_url || rawProfile.campusVideoUrl || '',
+      gallery: galleryImages.length > 0 ? galleryImages : (overviewData.gallery || rawProfile.gallery || []),
+      galleryItems: galleryImages.length > 0 ? galleryImages : (overviewData.gallery || rawProfile.galleryItems || []),
+
+      faqs: (Array.isArray(profRow.faqs) && profRow.faqs.length > 0)
+        ? profRow.faqs
+        : (overviewData.faqs || rawProfile.faqs || []),
+
+      feeTableData: (Array.isArray(profRow.fees_table) && profRow.fees_table.length > 0)
+        ? profRow.fees_table
+        : (admissionsData.feeTable || rawProfile.feeTable || []),
+      feeTable: (Array.isArray(profRow.fees_table) && profRow.fees_table.length > 0)
+        ? profRow.fees_table
+        : (admissionsData.feeTable || rawProfile.feeTable || []),
+
+      academicSession: importantDates.academic_session || admissionsData.academicSession || rawProfile.academicSession || '2026-2027',
+      admissionStatus: importantDates.admission_status || admissionsData.admissionStatus || rawProfile.admissionStatus || 'Open',
+      dueDates: importantDates.due_dates || rawProfile.dueDates || [],
+      requiredDocuments: importantDates.required_documents || admissionsData.requiredDocuments || rawProfile.requiredDocuments || [],
+      admissionProcess: importantDates.guidelines || admissionsData.admissionProcess || rawProfile.admissionProcess || '',
+
+      admissionDeskContacts: deskContacts.length > 0 ? deskContacts : (rawProfile.admissionDeskContacts || []),
+      phone: deskContacts[0]?.phone || overviewData.phone || rawProfile.phone || '',
+      email: deskContacts[0]?.email || overviewData.email || rawProfile.email || '',
+
+      resultsHighlights: academicResults.lead_paragraph || resultsData.resultsHighlights || rawProfile.resultsHighlights || '',
+      boardResults: (() => {
+        // Normalize boardResults so component always gets { class10Results: [], class12Results: [] }
+        const raw = academicResults.board_results || academicResults.boardResults || resultsData.boardResults || rawProfile.boardResults || {};
+        // If already has class10Results key — it's correct format
+        if (raw.class10Results !== undefined || raw.class12Results !== undefined) return raw;
+        // Dashboard saves as class10/class12 (without "Results" suffix) — normalize it
+        if (raw.class10 !== undefined || raw.class12 !== undefined) {
+          return {
+            class10Results: Array.isArray(raw.class10) ? raw.class10 : (raw.class10 ? [raw.class10] : []),
+            class12Results: Array.isArray(raw.class12) ? raw.class12 : (raw.class12 ? [raw.class12] : []),
+          };
+        }
+        return raw;
+      })(),
+
+      facilities: (Array.isArray(profRow.facilities) && profRow.facilities.length > 0)
+        ? profRow.facilities
+        : (rawProfile.facilities || []),
+      facility_ids: (Array.isArray(profRow.facilities) && profRow.facilities.length > 0)
+        ? profRow.facilities
+        : (profRow.facility_ids || rawProfile.facility_ids || []),
+
       visionText: overviewData.vision || rawProfile.vision || '',
       missionText: overviewData.mission || rawProfile.mission || '',
-      establishedYear: overviewData.establishedYear || rawProfile.establishedYear || '',
-      campusArea: overviewData.campusArea || rawProfile.campusArea || '',
-      feeTableData: admissionsData.feeTable || rawProfile.feeTable || profRow.fees?.fee_table,
-      feeTable: admissionsData.feeTable || rawProfile.feeTable || profRow.fees?.fee_table,
-      feeColumns: admissionsData.feeColumns || rawProfile.feeColumns || undefined,
-      requiredDocuments: admissionsData.requiredDocuments || rawProfile.requiredDocuments || undefined,
-      boardResults: resultsData.boardResults || rawProfile.boardResults || profRow.results?.boardResults,
-      faqs: overviewData.faqs || rawProfile.faqs || profRow.faqs || [],
-      ...(profRow.basic_info && Object.keys(profRow.basic_info).length > 0 ? { basic_info: profRow.basic_info } : {}),
-      ...(profRow.hero && Object.keys(profRow.hero).length > 0 ? { hero: profRow.hero, ...profRow.hero } : {}),
-      ...(profRow.stats && Object.keys(profRow.stats).length > 0 ? { stats: profRow.stats, ...profRow.stats } : {}),
-      ...(profRow.about && Object.keys(profRow.about).length > 0 ? { about: profRow.about, ...profRow.about } : {}),
-      ...(profRow.principal && Object.keys(profRow.principal).length > 0 ? { principal: profRow.principal } : {}),
-      ...(profRow.management && Object.keys(profRow.management).length > 0 ? { management: profRow.management } : {}),
-      ...(profRow.academics && Object.keys(profRow.academics).length > 0 ? { academics: profRow.academics } : {}),
-      ...(profRow.results && Object.keys(profRow.results).length > 0 ? { results: profRow.results } : {}),
-      ...(profRow.facilities && (Array.isArray(profRow.facilities) ? profRow.facilities.length > 0 : Object.keys(profRow.facilities).length > 0)
-        ? {
-            facilities: Array.isArray(profRow.facilities)
-              ? profRow.facilities
-              : Array.isArray(profRow.facilities.facilities_list)
-              ? profRow.facilities.facilities_list
-              : rawProfile.facilities || [],
-            facilitiesMeta: !Array.isArray(profRow.facilities) ? profRow.facilities : undefined,
-          }
-        : {}),
-      ...(profRow.gallery && (Array.isArray(profRow.gallery) ? profRow.gallery.length > 0 : Object.keys(profRow.gallery).length > 0)
-        ? {
-            gallery: profRow.gallery,
-            galleryItems: Array.isArray(profRow.gallery)
-              ? profRow.gallery
-              : Array.isArray(profRow.gallery.gallery_items)
-              ? profRow.gallery.gallery_items
-              : rawProfile.galleryItems,
-          }
-        : {}),
-      ...(profRow.fees && Object.keys(profRow.fees).length > 0 ? { fees: profRow.fees } : {}),
-      ...(profRow.admissions && Object.keys(profRow.admissions).length > 0 ? { admissions: profRow.admissions } : {}),
-      ...(profRow.contact && Object.keys(profRow.contact).length > 0 ? { contact: profRow.contact } : {}),
-      ...(profRow.careers && Object.keys(profRow.careers).length > 0 ? { careers: profRow.careers } : {}),
-      reviews: Array.isArray(profRow.reviews) && profRow.reviews.length > 0 ? profRow.reviews : (rawProfile.reviews || []),
-      likesCount: typeof profRow.likes_count === 'number' ? profRow.likes_count : (rawProfile.likesCount || 0),
+      feeColumns: Array.isArray(admissionsData.feeColumns) ? admissionsData.feeColumns : (Array.isArray(rawProfile.feeColumns) ? rawProfile.feeColumns : []),
       sectionVisibility: profRow.section_visibility || rawProfile.sectionVisibility || {},
+      updatedAt: profRow.updated_at,
     };
   }
 
@@ -762,8 +818,9 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
   const rawEmail = syncedProfileData?.contact?.contactDesks?.[0]?.email || syncedProfileData?.email || schoolData?.email || '';
   const website = syncedProfileData?.contact?.website || syncedProfileData?.website || schoolData?.website || '';
   
-  const lat = Number(schoolData?.latitude) || 28.1405;
-  const lng = Number(schoolData?.longitude) || 77.3259;
+  // BUG-15: No default fallback coordinates — use 0 to indicate missing data
+  const lat = Number(schoolData?.latitude) || 0;
+  const lng = Number(schoolData?.longitude) || 0;
   const rawAddress = syncedProfileData?.contact?.campusLocation?.streetAddress || syncedProfileData?.address || (schoolData?.address 
     ? schoolData.address.split('\n')[0] 
     : `${displayVillage}, ${displayBlock ? `${displayBlock}, ` : ''}${displayDistrict}, ${displayState}${pincode ? ` - ${pincode}` : ''}`);
@@ -796,6 +853,8 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
       management_desc: s.management_desc || s.management_desc_state || s.management_type || 'Private',
       image_url: safeImg,
       image: safeImg,
+      distanceKm: s.distanceKm != null ? s.distanceKm : null,
+      distanceText: s.distanceText || (s.distanceKm != null ? `${s.distanceKm} km away` : ''),
     };
   };
 
@@ -835,15 +894,15 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
     }
   }
 
-  // Ensure nearby school cards ALWAYS display by fetching from Supabase 4.4L database if pool has fewer than 6
-  if (strict5KmSchools.length < 6) {
+  // Ensure nearby school cards ALWAYS display 10 verified nearby schools with reference point = current school
+  if (strict5KmSchools.length < 10) {
     try {
-      const targetDistrict = schoolData?.district_name || rawDistrict;
-      const targetState = schoolData?.state_name || rawState;
+      const targetDistrict = (schoolData?.district_name || rawDistrict || '').trim();
+      const targetState = (schoolData?.state_name || rawState || '').trim();
       let query = schoolSearchSupabase
         .from('udise_private_schools')
-        .select('udise_code, school_name, state_name, district_name, village_name, board_10th, management_desc, latitude, longitude, image_url')
-        .limit(10);
+        .select('udise_code, school_id, school_name, state_name, district_name, block_name, cluster_name, village_name, board_10th, management_desc, latitude, longitude, total_students, established_year')
+        .limit(50);
 
       if (targetDistrict && targetDistrict.toLowerCase() !== 'district') {
         query = query.ilike('district_name', `%${targetDistrict}%`);
@@ -857,11 +916,69 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
 
       const { data: dbNearby } = await query;
       if (dbNearby && dbNearby.length > 0) {
-        for (const s of dbNearby) {
+        const scoredNearby = dbNearby
+          .filter((s: any) => {
+            const sName = String(s.school_name || '').trim().toLowerCase();
+            const sU = String(s.udise_code || '').trim();
+            if (!sName || sName === currentName) return false;
+            if (sU && currentUdise && sU === currentUdise) return false;
+            return true;
+          })
+          .map((s: any) => {
+            const sLat = Number(s.latitude);
+            const sLng = Number(s.longitude);
+            let distKm: number | null = null;
+            if (lat && lng && sLat && sLng && (sLat !== 0 || sLng !== 0)) {
+              distKm = calculateHaversineKm(lat, lng, sLat, sLng);
+            }
+            return {
+              ...normalizeNearby({
+                ...s,
+                distanceKm: distKm,
+                distanceText: distKm != null ? `${distKm} km away` : '',
+              }),
+              distanceKm: distKm,
+            };
+          });
+
+        // Sort by distance ascending: closest schools first
+        scoredNearby.sort((a: any, b: any) => {
+          if (a.distanceKm != null && b.distanceKm != null) return a.distanceKm - b.distanceKm;
+          if (a.distanceKm != null) return -1;
+          if (b.distanceKm != null) return 1;
+          return 0;
+        });
+
+        for (const s of scoredNearby) {
           const key = s.udise_code || s.school_name.toLowerCase();
           if (!seenKeys.has(key)) {
             seenKeys.add(key);
-            strict5KmSchools.push(normalizeNearby(s));
+            strict5KmSchools.push(s);
+          }
+          if (strict5KmSchools.length >= 14) break;
+        }
+      }
+
+      // If still fewer than 10, fallback to state query
+      if (strict5KmSchools.length < 10 && targetState) {
+        const { data: stateNearby } = await schoolSearchSupabase
+          .from('udise_private_schools')
+          .select('udise_code, school_id, school_name, state_name, district_name, block_name, cluster_name, village_name, board_10th, management_desc, latitude, longitude, total_students, established_year')
+          .ilike('state_name', `%${targetState}%`)
+          .limit(30);
+
+        if (stateNearby && stateNearby.length > 0) {
+          for (const s of stateNearby) {
+            const sName = String(s.school_name || '').trim().toLowerCase();
+            const sU = String(s.udise_code || '').trim();
+            if (!sName || sName === currentName) continue;
+            if (sU && currentUdise && sU === currentUdise) continue;
+            const key = sU || sName;
+            if (!seenKeys.has(key)) {
+              seenKeys.add(key);
+              strict5KmSchools.push(normalizeNearby(s));
+            }
+            if (strict5KmSchools.length >= 14) break;
           }
         }
       }
@@ -870,8 +987,8 @@ export default async function SchoolCatchAllPage({ params }: PageProps) {
     }
   }
 
-  const districtSchools = strict5KmSchools.slice(0, 8);
-  const clusterSchools = strict5KmSchools.slice(8, 14);
+  const districtSchools = strict5KmSchools.slice(0, 10);
+  const clusterSchools = strict5KmSchools.slice(10, 20);
 
   // Dynamic social profiles for Google Knowledge Graph
   const socialSameAs: string[] = [];

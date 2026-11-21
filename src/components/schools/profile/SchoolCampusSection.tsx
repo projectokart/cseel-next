@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Trash2,
   Video,
@@ -139,30 +139,66 @@ export default function SchoolCampusSection({
   const effectiveEmbedUrl = extractYouTubeEmbedUrl(videoUrl);
 
   const handleSaveVideo = () => {
+    const trimmed = inputUrl.trim();
+    if (!trimmed || trimmed === '#' || trimmed.startsWith('#')) {
+      alert('Please enter a valid YouTube video URL or ID (e.g. https://www.youtube.com/watch?v=...)');
+      return;
+    }
     if (onUpdateVideoUrl) {
-      onUpdateVideoUrl(inputUrl);
+      onUpdateVideoUrl(trimmed);
+    }
+    if (templateCtx?.updateField) {
+      templateCtx.updateField('campusVideoUrl' as any, trimmed);
     }
     setIsEditingVideo(false);
   };
 
   // Build full 12-item grid
-  const customItems: any[] = Array.isArray(templateData?.galleryItems) && templateData.galleryItems.length > 0
-    ? templateData.galleryItems
-    : [];
+  const getResolvedGalleryItems = useCallback(() => {
+    let items: any[] = [];
+    if (Array.isArray(templateData?.galleryItems) && templateData.galleryItems.length > 0) {
+      items = templateData.galleryItems;
+    } else if (Array.isArray(templateCtx?.data?.galleryItems) && templateCtx.data.galleryItems.length > 0) {
+      items = templateCtx.data.galleryItems;
+    } else {
+      const rawOverride =
+        templateData?.contentOverrides?.gallery_custom_items ||
+        templateCtx?.data?.contentOverrides?.gallery_custom_items;
+      if (rawOverride) {
+        try {
+          const parsed = typeof rawOverride === 'string' ? JSON.parse(rawOverride) : rawOverride;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            items = parsed;
+          }
+        } catch {}
+      }
+    }
 
-  const [localItems, setLocalItems] = useState<any[]>(() => {
-    const combined = [...customItems];
+    const combined = [...items];
     for (let i = combined.length; i < 12; i++) {
-      combined.push(DEFAULT_12_GALLERY_ITEMS[i] || {
-        id: `campus-${i + 1}`,
-        type: 'image',
-        url: '',
-        title: `Campus Space ${i + 1}`,
-        category: 'Campus Area',
-      });
+      combined.push(
+        DEFAULT_12_GALLERY_ITEMS[i] || {
+          id: `campus-${i + 1}`,
+          type: 'image',
+          url: '',
+          title: `Campus Space ${i + 1}`,
+          category: 'Campus Area',
+        }
+      );
     }
     return combined.slice(0, 12);
-  });
+  }, [
+    templateData?.galleryItems,
+    templateData?.contentOverrides?.gallery_custom_items,
+    templateCtx?.data?.galleryItems,
+    templateCtx?.data?.contentOverrides?.gallery_custom_items,
+  ]);
+
+  const [localItems, setLocalItems] = useState<any[]>(getResolvedGalleryItems);
+
+  useEffect(() => {
+    setLocalItems(getResolvedGalleryItems());
+  }, [getResolvedGalleryItems]);
 
   const openChangeImageModal = (idx: number) => {
     const current = localItems[idx] || {};
@@ -198,14 +234,30 @@ export default function SchoolCampusSection({
       category: modalCategory,
     };
     setLocalItems(updated);
-    if (templateCtx?.setGalleryItems) {
-      templateCtx.setGalleryItems(updated);
+    if (templateCtx?.updateField) {
+      templateCtx.updateField('galleryItems' as any, updated);
     }
     if (templateCtx?.updateContentOverride) {
       templateCtx.updateContentOverride('gallery_custom_items', JSON.stringify(updated));
     }
     if (templateData) {
       templateData.galleryItems = updated;
+      if (!templateData.contentOverrides) templateData.contentOverrides = {};
+      templateData.contentOverrides.gallery_custom_items = JSON.stringify(updated);
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        const udiseCode = templateCtx?.data?.udiseCode || templateData?.udiseCode || '07070399999';
+        const draftKey = `cseel_school_draft_${udiseCode}`;
+        const existing = localStorage.getItem(draftKey);
+        const parsed = existing ? JSON.parse(existing) : {};
+        parsed.galleryItems = updated;
+        if (!parsed.contentOverrides) parsed.contentOverrides = {};
+        parsed.contentOverrides.gallery_custom_items = JSON.stringify(updated);
+        localStorage.setItem(draftKey, JSON.stringify(parsed));
+        localStorage.setItem('cseel_school_template_draft', JSON.stringify(parsed));
+        localStorage.setItem('cseel_school_template_draft_v1', JSON.stringify(parsed));
+      } catch {}
     }
     setEditingSlotIdx(null);
   };

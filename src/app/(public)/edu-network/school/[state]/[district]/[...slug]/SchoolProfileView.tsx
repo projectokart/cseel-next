@@ -53,6 +53,22 @@ function toSlug(val: string, fallback = ''): string {
   return cleaned || fallback;
 }
 
+function formatClassLabel(raw: string | number | undefined | null): string {
+  if (!raw && raw !== 0) return '';
+  const s = String(raw).trim();
+  if (!s) return '';
+  if (/^class\s+/i.test(s) || /nursery|kg|lkg|ukg|primary|secondary/i.test(s)) return s;
+  const num = parseInt(s, 10);
+  if (!isNaN(num)) {
+    if (num <= 0) return 'Pre-Primary';
+    if (num === 1) return 'Class 1st';
+    if (num === 2) return 'Class 2nd';
+    if (num === 3) return 'Class 3rd';
+    if (num >= 4 && num <= 12) return `Class ${num}th`;
+  }
+  return s.toLowerCase().startsWith('class') ? s : `Class ${s}`;
+}
+
 const SchoolReviewModal = dynamic(() => import('@/components/schools/profile/SchoolReviewModal'), { ssr: false });
 
 // Critical Above-The-Fold & Core Eager Components
@@ -293,7 +309,29 @@ export default function SchoolProfileView({
   const [isConfiguringAdmissions, setIsConfiguringAdmissions] = useState(false);
   const [configSuccessMessage, setConfigSuccessMessage] = useState('');
 
+  // ── Fee Table Normalizer ─────────────────────────────────────────
+  // Accepts BOTH formats:
+  //   1. { rows: string[][], columns: string[] }  (old format)
+  //   2. Array of flat objects: [{ className, admissionFee, tuitionFee, annualFee }]  (DB format)
   const normalizeFeeTable = (rawTable: any): { columns: string[]; rows: string[][] } | null => {
+    // Format 2: flat object array — this is what comes from the DB via fees_table column
+    if (Array.isArray(rawTable) && rawTable.length > 0) {
+      const first = rawTable[0];
+      if (typeof first === 'object' && first !== null) {
+        const cols = ['Class / Grade', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Annual Charges (One Time)'];
+        const rows: string[][] = rawTable.map((r: any) => [
+          String(r.className || r.class_name || r.class || r.grade || r.name || ''),
+          r.admissionFee ? `₹${r.admissionFee}` : (r.admission_fee ? `₹${r.admission_fee}` : ''),
+          r.tuitionFee ? `₹${r.tuitionFee}` : (r.tuition_fee ? `₹${r.tuition_fee}` : ''),
+          r.annualFee ? `₹${r.annualFee}` : (r.annual_fee ? `₹${r.annual_fee}` : ''),
+        ]);
+        // Filter out completely-empty rows
+        const nonEmpty = rows.filter(row => row.some(cell => cell.trim() !== ''));
+        return nonEmpty.length > 0 ? { columns: cols, rows: nonEmpty } : null;
+      }
+    }
+
+    // Format 1: { rows: [...], columns: [...] } — classic format
     if (!rawTable || !rawTable.rows || !Array.isArray(rawTable.rows) || rawTable.rows.length === 0) return null;
     const cols: string[] = Array.isArray(rawTable.columns) && rawTable.columns.length > 0
       ? rawTable.columns.map((c: any) => String(c ?? ''))
@@ -400,11 +438,8 @@ export default function SchoolProfileView({
   // School Authorization & RBAC State (Zero-Bypass)
   const userEmailClean = user?.email?.toLowerCase().trim() || '';
   const isSuperAdminUser = Boolean(
-    userEmailClean && (
-      userEmailClean === 'ptdevkaushik101@gmail.com' ||
-      userEmailClean === 'ptdevkaushik104@gmail.com' ||
-      userEmailClean.endsWith('@cseel.org')
-    )
+    userEmailClean &&
+    userEmailClean.endsWith('@cseel.org')
   );
 
   // isPublicClaimed HARD LOCK — public view of a claimed profile is ALWAYS read-only
@@ -896,9 +931,11 @@ export default function SchoolProfileView({
       : (state || 'State')
   );
 
-  const displayClassFrom = isLiveTemplate
-    ? (templateData?.classFrom || classFrom || '')
-    : (classFrom || '');
+  const displayClassFrom = formatClassLabel(
+    isLiveTemplate
+      ? (templateData?.classFrom || classFrom || '')
+      : (classFrom || '')
+  );
 
   // User Requested: Direct Gmail / Mail draft opening with pre-filled verification template
   const handleOpenClaimEmail = () => {
@@ -940,28 +977,25 @@ I am the Principal / Authorized Representative of the school. Please find attach
 Thank you.`;
 
     const mailtoUrl = `mailto:update@cseel.org?subject=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
-    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=update@cseel.org&su=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
 
-    // On mobile devices, always trigger native mail app (Gmail, Apple Mail) via mailto
-    const isMobileDevice = typeof navigator !== 'undefined' && /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
-    if (isMobileDevice) {
-      window.location.href = mailtoUrl;
-      return;
-    }
-
+    // Trigger device native email client (Gmail app, Apple Mail, Outlook, Windows Mail) directly on both mobile and desktop
     try {
-      const win = window.open(gmailWebUrl, '_blank');
-      if (!win || win.closed || typeof win.closed === 'undefined') {
-        window.location.href = mailtoUrl;
-      }
+      const tempLink = document.createElement('a');
+      tempLink.href = mailtoUrl;
+      tempLink.target = '_self';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
     } catch {
       window.location.href = mailtoUrl;
     }
   };
 
-  const displayClassTo = isLiveTemplate
-    ? (templateData?.classTo || classTo || '')
-    : (classTo || '');
+  const displayClassTo = formatClassLabel(
+    isLiveTemplate
+      ? (templateData?.classTo || classTo || '')
+      : (classTo || '')
+  );
 
   const displayClasses = (displayClassFrom && displayClassTo)
     ? `${displayClassFrom} to ${displayClassTo}`
@@ -1010,15 +1044,24 @@ Thank you.`;
           : (Array.isArray(initialProfileData?.facilities?.facilities_list) ? initialProfileData.facilities.facilities_list : []));
 
   const effectiveFacilities = rawFacilitiesList
-    .filter((f: any) => f && f.selected !== false)
-    .map((f: any) => ({
-      id: f.id || f.name,
-      name: f.title || f.name,
-      desc: f.desc || f.description || '',
-      category: f.badge || f.category || 'School Facility',
-      icon: f.icon,
-      _raw: f,
-    }));
+    .filter((f: any) => f != null)
+    .map((f: any) => {
+      // Handle plain string entries (from DB facilities column stored as string array)
+      if (typeof f === 'string') {
+        return { id: f, name: f, desc: '', category: 'School Facility', icon: undefined, _raw: f };
+      }
+      // Handle objects — skip if explicitly deselected
+      if (f.selected === false) return null;
+      return {
+        id: f.id || f.name || f.title || '',
+        name: f.title || f.name || f.label || '',
+        desc: f.desc || f.description || '',
+        category: f.badge || f.category || 'School Facility',
+        icon: f.icon,
+        _raw: f,
+      };
+    })
+    .filter(Boolean) as Array<{ id: string; name: string; desc: string; category: string; icon: any; _raw: any }>;
 
   const handleApplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1039,7 +1082,7 @@ Thank you.`;
           phoneNumber: applicantPhone.trim(),
           applyingClass: applicantClass,
           email: applicantEmail.trim(),
-          schoolTargetEmail: admissionEmail || rawEmail || 'ptdevkaushik104@gmail.com',
+          schoolTargetEmail: admissionEmail || rawEmail || '',
           schoolTargetPhone: admissionPhone || rawPhone || '',
         }),
       });
@@ -1100,7 +1143,23 @@ Thank you.`;
 
   return (
     <div id="school-profile-app" className="min-h-screen bg-white text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-clip">
-      
+
+      {/* BUG-08: Unverified / Unclaimed Profile Banner */}
+      {!isPublicClaimed && !isTemplate && (
+        <div className="w-full bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 text-xs text-amber-800 text-center">
+          <span>⚠️</span>
+          <span>
+            <strong>Unverified Profile:</strong> This school has not been officially claimed. Data is sourced from government UDISE records and may be outdated.{' '}
+            <button
+              onClick={handleOpenClaimEmail}
+              className="underline font-semibold hover:text-amber-900 cursor-pointer"
+            >
+              Claim this profile
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* 1. CONTAINER 1: SLIM LIGHT CSEEL TOP STRIP (School Logo/Name/Menu bar removed) */}
       <div id="school-top-bar" className="w-full bg-white border-b border-slate-200 z-40 relative font-['Hanken_Grotesk',sans-serif]">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-2">
@@ -1269,7 +1328,7 @@ Thank you.`;
                 type="button"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  setIsClaimModalOpen(true);
+                  handleOpenClaimEmail();
                 }}
                 className="w-full py-2.5 px-3 rounded-xl text-xs font-black bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 flex items-center justify-between shadow-2xs transition-all cursor-pointer"
               >
@@ -1909,73 +1968,6 @@ Thank you.`;
                 </div>
               </div>
 
-              {/* Single Horizontal Swipeable Row: Image at Top, Text Below */}
-              {nearbyList.length > 0 ? (
-                <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
-                  {nearbyList.map((s: any, idx: number) => {
-                    const sName = String(s.school_name || s.name || 'School').trim();
-                    const sState = String(s.state_name || displayState || 'delhi').trim();
-                    const sDist = String(s.district_name || displayDistrict || 'delhi').trim();
-                    const sVill = String(s.village_name || village || 'main').trim();
-                    const sCode = String(s.udise_code || s.school_id || '').trim();
-                    const sBoard = cleanBoardName(String(s.board_10th || '')) || 'School';
-                    const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
-                    const nameSlug = toSlug(sName, 'school');
-                    const distBadge = s.distanceKm ? `${s.distanceKm} km away` : '';
-                    const sBlock = toSlug(s.block_name || sVill || 'block', 'block');
-                    const sCluster = toSlug(s.cluster_name || sVill || 'cluster', 'cluster');
-                    const cleanNameSlug = nameSlug.replace(/-\d{4,11}$/, '');
-                    const href = sCode
-                      ? `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${encodeURIComponent(sCode)}/${cleanNameSlug}`
-                      : `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${cleanNameSlug}`;
-
-                    return (
-                      <Link
-                        key={sCode || `${nameSlug}-${idx}`}
-                        href={href}
-                        className="group w-[142px] sm:w-[165px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
-                        title={`${sName} — ${distBadge || `${sVill}, ${sDist}`}`}
-                      >
-                        <div className="relative w-full h-[82px] sm:h-[94px] bg-slate-100 overflow-hidden shrink-0">
-                          <img
-                            src={sImg}
-                            alt={sName}
-                            loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = '/images/default-school-placeholder.png?v=3';
-                            }}
-                          />
-                          {s.distanceKm && (
-                            <span className="absolute top-1.5 left-1.5 z-10 bg-slate-900/85 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
-                              <span>📍</span>
-                              <span>{s.distanceKm} km</span>
-                            </span>
-                          )}
-                        </div>
-                        <div className="p-2 sm:p-2.5 flex flex-col justify-between flex-1 gap-1.5">
-                          <p className="!text-[11px] sm:!text-xs !font-medium !text-slate-700 group-hover:!text-[#006FCC] !leading-snug line-clamp-2 m-0">
-                            {sName}
-                          </p>
-                          <div className="flex items-center justify-between gap-1 pt-0.5">
-                            <span className="text-[9px] sm:text-[10px] text-emerald-700 font-semibold truncate flex items-center gap-0.5">
-                              {s.distanceKm ? `📍 ${s.distanceKm} km away` : (sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist)}
-                            </span>
-                            <span className="text-[8.5px] font-medium uppercase tracking-tight text-[#005689] bg-[#EDF5FA] px-1.5 py-0.5 rounded shrink-0">
-                              {sBoard}
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="py-3 px-3.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-500 italic">
-                  No other verified schools found strictly within a 5 km radius of this campus.
-                </div>
-              )}
-
               {/* Dedicated "Search More Schools Near You" Action Card & GPS Proximity */}
               <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-slate-50 border border-sky-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -2005,6 +1997,71 @@ Thank you.`;
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
+
+              {/* 10 Verified Nearby School Cards Directly Below 'Search More Schools Near You' Card */}
+              {nearbyList.length > 0 ? (
+                <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
+                  {nearbyList.map((s: any, idx: number) => {
+                    const sName = String(s.school_name || s.name || 'School').trim();
+                    const sState = String(s.state_name || displayState || 'delhi').trim();
+                    const sDist = String(s.district_name || displayDistrict || 'delhi').trim();
+                    const sVill = String(s.village_name || village || 'main').trim();
+                    const sCode = String(s.udise_code || s.school_id || '').trim();
+                    const sBoard = cleanBoardName(String(s.board_10th || '')) || 'School';
+                    const sImg = String(s.image_url || s.image || '').trim() || '/images/default-school-placeholder.png?v=3';
+                    const nameSlug = toSlug(sName, 'school');
+                    const distBadge = s.distanceKm != null ? `${s.distanceKm} km away` : '';
+                    const cleanNameSlug = nameSlug.replace(/-\d{4,11}$/, '');
+                    const href = sCode
+                      ? `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${encodeURIComponent(sCode)}/${cleanNameSlug}`
+                      : `/edu-network/school/${toSlug(sState, 'delhi')}/${toSlug(sDist, 'delhi')}/${cleanNameSlug}`;
+
+                    return (
+                      <Link
+                        key={sCode || `${nameSlug}-${idx}`}
+                        href={href}
+                        className="group w-[142px] sm:w-[165px] shrink-0 snap-start rounded-xl border border-slate-200/90 bg-white hover:border-[#006FCC] shadow-2xs transition-all overflow-hidden flex flex-col"
+                        title={`${sName} — ${distBadge || `${sVill}, ${sDist}`}`}
+                      >
+                        <div className="relative w-full h-[82px] sm:h-[94px] bg-slate-100 overflow-hidden shrink-0">
+                          <img
+                            src={sImg}
+                            alt={sName}
+                            loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = '/images/default-school-placeholder.png?v=3';
+                            }}
+                          />
+                          {s.distanceKm != null && (
+                            <span className="absolute top-1.5 left-1.5 z-10 bg-slate-900/85 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
+                              <span>📍</span>
+                              <span>{s.distanceKm} km</span>
+                            </span>
+                          )}
+                        </div>
+                        <div className="p-2 sm:p-2.5 flex flex-col justify-between flex-1 gap-1.5">
+                          <p className="!text-[11px] sm:!text-xs !font-medium !text-slate-700 group-hover:!text-[#006FCC] !leading-snug line-clamp-2 m-0">
+                            {sName}
+                          </p>
+                          <div className="flex items-center justify-between gap-1 pt-0.5">
+                            <span className="text-[9px] sm:text-[10px] text-emerald-700 font-semibold truncate flex items-center gap-0.5">
+                              {s.distanceKm != null ? `📍 ${s.distanceKm} km away` : (sVill && sVill.toLowerCase() !== 'village' ? sVill : sDist)}
+                            </span>
+                            <span className="text-[8.5px] font-medium uppercase tracking-tight text-[#005689] bg-[#EDF5FA] px-1.5 py-0.5 rounded shrink-0">
+                              {sBoard}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-3 px-3.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-500 italic">
+                  No other verified schools found strictly within proximity of this campus.
+                </div>
+              )}
 
               {/* Structured Step-by-Step Website Links Strip */}
               <div className="pt-2.5 border-t border-slate-200/70 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px]">
@@ -2477,7 +2534,7 @@ Please assist with verification.`;
                   type="button"
                   onClick={() => {
                     setIsNoticeModalOpen(false);
-                    setIsClaimModalOpen(true);
+                    handleOpenClaimEmail();
                   }}
                   className="flex-1 py-1.5 px-3 rounded-xl bg-[#005689] hover:bg-[#004168] text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
                 >

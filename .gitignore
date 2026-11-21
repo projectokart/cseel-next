@@ -62,3 +62,6 @@ skills-lock.json
 
 .vercel
 .env*
+
+archived_unused_pages/
+cseel_all_routes.csv

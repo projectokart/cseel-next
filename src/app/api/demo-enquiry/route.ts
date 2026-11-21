@@ -4,9 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 
 const DEMO_LEADS_FILE = path.join(process.cwd(), 'src', 'data', 'demo_enquiries.json');
-const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik104@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || '';
 
 export interface DemoEnquiryRecord {
   id: string;
@@ -121,6 +122,9 @@ async function sendDemoNotificationEmail(lead: DemoEnquiryRecord) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const { name, contact, designation, schoolName, address, note, source } = body;

@@ -10,6 +10,7 @@ import {
   generateAiPromptForSchool,
 } from '@/components/schools/template/SchoolJsonSchemaHelper';
 import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 
 const DATA_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'school_ai_sync_tokens.json');
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
@@ -714,6 +715,9 @@ export async function GET(req: NextRequest) {
  * 4. Supports action="create" | "update" | "delete" | "read"
  */
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { searchParams } = new URL(req.url);
   const token = searchParams.get('token');
 

@@ -9,6 +9,7 @@ import {
   extractSectionsFromData,
   applySectionMutation,
 } from '@/lib/schools/schoolSectionsManager';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -169,6 +170,9 @@ export async function PATCH(req: NextRequest) {
  * Body: { udiseCode, section }
  */
 export async function DELETE(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const { searchParams } = new URL(req.url);
     const body = await req.json().catch(() => ({}));
@@ -220,6 +224,9 @@ export async function DELETE(req: NextRequest) {
 }
 
 async function handleBodyMutation(req: NextRequest, mode: 'replace' | 'patch') {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json().catch(() => ({}));
     const udiseCode = (body.udiseCode || body.code || '').trim();

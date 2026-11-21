@@ -304,8 +304,19 @@ ${schoolName}`;
       }
     } catch (_) {}
 
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=update@cseel.org&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(gmailUrl, '_blank');
+    const mailtoUrl = `mailto:update@cseel.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Trigger device native email client (Gmail app, Apple Mail, Outlook, Windows Mail) directly on both mobile and desktop
+    try {
+      const tempLink = document.createElement('a');
+      tempLink.href = mailtoUrl;
+      tempLink.target = '_self';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+    } catch {
+      window.location.href = mailtoUrl;
+    }
   };
 
   return (

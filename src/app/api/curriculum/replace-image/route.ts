@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 // dynamic import of sharp only when invoked in node environment
 // avoid hard top-level import so Cloudflare workers / esbuild don't fail bundling native .node binary
 
@@ -78,6 +79,9 @@ async function convertToAvifUnder10Kb(rawBuffer: Buffer): Promise<{ buffer: Buff
  * and permanently updates public/curriculum/grade-1.html
  */
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const {
@@ -90,12 +94,12 @@ export async function POST(req: NextRequest) {
       adminKey
     } = body;
 
-    // 1. Verification: ONLY ptdevkaushik101@gmail.com
+    // 1. Verification: Requires valid ADMIN_SECRET_KEY from environment
     if (!isAuthorizedAdmin(req, adminEmail, adminKey)) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Unauthorized: Only ptdevkaushik101@gmail.com is authorized to replace curriculum images.',
+          error: 'Unauthorized: A valid admin key is required to replace curriculum images.',
         },
         { status: 403 }
       );

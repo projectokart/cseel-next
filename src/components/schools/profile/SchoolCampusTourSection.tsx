@@ -15,13 +15,22 @@ export interface SchoolCampusTourSectionProps {
  * (watch?v=, youtu.be/, embed/, shorts/, or raw 11-char ID)
  */
 export function extractYouTubeEmbedUrl(inputUrl: string | undefined): string {
-  if (!inputUrl) return 'https://www.youtube.com/embed/ScMzIvxBSi4'; // Default clean tour embed
+  const fallback = 'https://www.youtube.com/embed/ScMzIvxBSi4'; // Default clean tour embed
+  if (!inputUrl) return fallback;
   const url = inputUrl.trim();
-  if (!url) return 'https://www.youtube.com/embed/ScMzIvxBSi4';
+  if (!url) return fallback;
+
+  // Guard against relative links, hash fragments (#), and script schemes that trigger self-referential iframe loading
+  if (url === '#' || url.startsWith('#') || url.startsWith('/') || url.startsWith('javascript:')) {
+    return fallback;
+  }
 
   // Already embed URL
   if (url.includes('youtube.com/embed/')) {
-    return url;
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      return url;
+    }
+    return `https://${url.replace(/^\/+/, '')}`;
   }
 
   // youtu.be/ID
@@ -47,7 +56,8 @@ export function extractYouTubeEmbedUrl(inputUrl: string | undefined): string {
     return `https://www.youtube.com/embed/${url}`;
   }
 
-  return url;
+  // Never return raw unvalidated string into iframe src (prevents recursive iframe nesting)
+  return fallback;
 }
 
 export default function SchoolCampusTourSection({

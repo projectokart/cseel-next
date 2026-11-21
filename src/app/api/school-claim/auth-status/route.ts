@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import { schoolSearchSupabase } from '@/integrations/supabase/schoolSearchClient';
-import { isAdminRequest, isSuperAdminEmail } from '@/lib/security/apiSecurityGuard';
+import { isAdminRequest, isSuperAdminEmail, checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 import { SchoolClaimRecord } from '../route';
 
 const CLAIMS_FILE = path.join(process.cwd(), 'src', 'data', 'school_claims.json');
@@ -45,16 +45,21 @@ export async function GET(req: NextRequest) {
     }
 
     // 2. Format user's schools
-    const ownedSchools = userClaims.map((c) => ({
-      id: c.id,
-      udise_code: c.udise_code,
-      school_name: c.school_name,
-      status: c.status,
-      isApproved: c.status === 'approved',
-      profile_path: c.profile_path || `/school/delhi/new-delhi/new-delhi/${c.udise_code}`,
-      magic_key: c.status === 'approved' ? c.magic_key : undefined,
-      created_at: c.created_at,
-    }));
+    const ownedSchools = userClaims.map((c) => {
+      const stateSlug = (c.state || 'delhi').toLowerCase().replace(/\s+/g, '-');
+      const districtSlug = (c.district || 'new-delhi').toLowerCase().replace(/\s+/g, '-');
+      const citySlug = (c.city || c.district || 'central').toLowerCase().replace(/\s+/g, '-');
+      return {
+        id: c.id,
+        udise_code: c.udise_code,
+        school_name: c.school_name,
+        status: c.status,
+        isApproved: c.status === 'approved',
+        profile_path: c.profile_path || `/edu-network/school/${stateSlug}/${districtSlug}/${c.udise_code}`,
+        magic_key: c.status === 'approved' ? c.magic_key : undefined,
+        created_at: c.created_at,
+      };
+    });
 
     const primarySchool = ownedSchools.length > 0 ? ownedSchools[0] : null;
     const hasSubmittedAnySchool = ownedSchools.length > 0;
@@ -66,8 +71,8 @@ export async function GET(req: NextRequest) {
 
     let matchedClaim: SchoolClaimRecord | null = null;
 
-    // Universal Admin Code: '1234' gives universal admin editing access across all schools
-    if (isCallerAdmin || candidateMagicKey === '1234') {
+    // Admin access is granted only via isSuperAdminEmail or isAdminRequest (env-based MASTER_ADMIN_KEY)
+    if (isCallerAdmin) {
       canEditCurrentSchool = true;
       role = 'admin';
       currentSchoolStatus = 'approved';
@@ -147,7 +152,7 @@ export async function GET(req: NextRequest) {
                   visual_edit_token: '••••••••',
                   visual_edit_url: '',
                   created_at: claim.created_at || new Date().toISOString(),
-                  profile_path: `/edu-network/school/delhi/west-b/janakpuri/${claim.udise_code}/cseel-global-education`,
+                  profile_path: claim.profile_path || `/edu-network/school/${(claim.state || 'delhi').toLowerCase().replace(/ /g, '-')}/${(claim.district || 'unknown').toLowerCase().replace(/ /g, '-')}/${claim.udise_code}`,
                 };
                 break;
               }
@@ -158,71 +163,8 @@ export async function GET(req: NextRequest) {
         }
       }
 
-      // Fallback check against Supabase school_profiles if not found
-      if (!canEditCurrentSchool && (targetUdise || candidateMagicKey)) {
-        try {
-          let query = schoolSearchSupabase
-            .from('school_profiles')
-            .select('udise_code, profile_data');
-          
-          if (targetUdise) {
-            query = query.eq('udise_code', targetUdise);
-          }
-
-          const { data: profRows } = await query;
-          const rowsList = Array.isArray(profRows) ? profRows : (profRows ? [profRows] : []);
-
-          for (const profRow of rowsList) {
-            if (profRow) {
-              const pData =
-                typeof profRow.profile_data === 'string'
-                  ? JSON.parse(profRow.profile_data)
-                  : profRow.profile_data || {};
-
-              // Check magic key in Supabase
-              if (
-                candidateMagicKey &&
-                pData?.magicAuth?.isApproved === true &&
-                pData?.magicAuth?.magicKey === candidateMagicKey
-              ) {
-                canEditCurrentSchool = true;
-                role = 'magic_link';
-                currentSchoolStatus = 'approved';
-                matchedClaim = {
-                  id: String(profRow.udise_code),
-                  udise_code: String(profRow.udise_code),
-                  school_id: String(profRow.udise_code),
-                  school_name: pData?.schoolName || 'School Profile',
-                  claimant_name: pData?.magicAuth?.claimantName || 'Verified School Owner',
-                  claimant_email: pData?.magicAuth?.claimantEmail || '',
-                  whatsapp_number: '',
-                  designation: 'Administrator',
-                  note: '',
-                  status: 'approved',
-                  visual_edit_token: candidateMagicKey,
-                  visual_edit_url: '',
-                  created_at: new Date().toISOString(),
-                  profile_path: `/school/delhi/new-delhi/new-delhi/${profRow.udise_code}`,
-                };
-                break;
-              }
-
-              // Check email ownership in Supabase
-              if (
-                !canEditCurrentSchool &&
-                queryEmail &&
-                pData?.magicAuth?.claimantEmail &&
-                pData.magicAuth.claimantEmail.toLowerCase() === queryEmail
-              ) {
-                canEditCurrentSchool = true;
-                role = 'owner';
-                currentSchoolStatus = 'approved';
-                break;
-              }
-            }
-          }
-        } catch (_) {}
-      }
+      // NOTE: `profile_data` column was removed in 16-column schema. Claims authentication
+      // is handled via `school_claims.json` and Supabase `school_claims` table above.
     }
 
     return NextResponse.json({
@@ -260,6 +202,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json().catch(() => ({}));
     const targetUdise = String(body.udise || body.udise_code || body.udiseCode || '').replace(/\D/g, '').trim();

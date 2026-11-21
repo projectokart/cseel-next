@@ -53,6 +53,22 @@ function toSlug(val: string, fallback = ''): string {
   return cleaned || fallback;
 }
 
+function formatClassLabel(raw: string | number | undefined | null): string {
+  if (!raw && raw !== 0) return '';
+  const s = String(raw).trim();
+  if (!s) return '';
+  if (/^class\s+/i.test(s) || /nursery|kg|lkg|ukg|primary|secondary/i.test(s)) return s;
+  const num = parseInt(s, 10);
+  if (!isNaN(num)) {
+    if (num <= 0) return 'Pre-Primary';
+    if (num === 1) return 'Class 1st';
+    if (num === 2) return 'Class 2nd';
+    if (num === 3) return 'Class 3rd';
+    if (num >= 4 && num <= 12) return `Class ${num}th`;
+  }
+  return s.toLowerCase().startsWith('class') ? s : `Class ${s}`;
+}
+
 const SchoolReviewModal = dynamic(() => import('@/components/schools/profile/SchoolReviewModal'), { ssr: false });
 
 // Critical Above-The-Fold & Core Eager Components
@@ -285,7 +301,28 @@ export default function SchoolProfileView({
   const [isConfiguringAdmissions, setIsConfiguringAdmissions] = useState(false);
   const [configSuccessMessage, setConfigSuccessMessage] = useState('');
 
+  // ── Fee Table Normalizer ─────────────────────────────────────────
+  // Accepts BOTH formats:
+  //   1. { rows: string[][], columns: string[] }  (old format)
+  //   2. Array of flat objects: [{ className, admissionFee, tuitionFee, annualFee }]  (DB format)
   const normalizeFeeTable = (rawTable: any): { columns: string[]; rows: string[][] } | null => {
+    // Format 2: flat object array — this is what comes from DB via fees_table column
+    if (Array.isArray(rawTable) && rawTable.length > 0) {
+      const first = rawTable[0];
+      if (typeof first === 'object' && first !== null) {
+        const cols = ['Class / Grade', 'Admission Fee (One Time)', 'Tuition Fee (Monthly)', 'Annual Charges (One Time)'];
+        const rows: string[][] = rawTable.map((r: any) => [
+          String(r.className || r.class_name || r.class || r.grade || r.name || ''),
+          r.admissionFee ? `₹${r.admissionFee}` : (r.admission_fee ? `₹${r.admission_fee}` : ''),
+          r.tuitionFee ? `₹${r.tuitionFee}` : (r.tuition_fee ? `₹${r.tuition_fee}` : ''),
+          r.annualFee ? `₹${r.annualFee}` : (r.annual_fee ? `₹${r.annual_fee}` : ''),
+        ]);
+        const nonEmpty = rows.filter(row => row.some(cell => cell.trim() !== ''));
+        return nonEmpty.length > 0 ? { columns: cols, rows: nonEmpty } : null;
+      }
+    }
+
+    // Format 1: { rows: [...], columns: [...] } — classic format
     if (!rawTable || !rawTable.rows || !Array.isArray(rawTable.rows) || rawTable.rows.length === 0) return null;
     const cols: string[] = Array.isArray(rawTable.columns) && rawTable.columns.length > 0
       ? rawTable.columns.map((c: any) => String(c ?? ''))
@@ -392,11 +429,8 @@ export default function SchoolProfileView({
   // School Authorization & RBAC State (Zero-Bypass)
   const userEmailClean = user?.email?.toLowerCase().trim() || '';
   const isSuperAdminUser = Boolean(
-    userEmailClean && (
-      userEmailClean === 'ptdevkaushik101@gmail.com' ||
-      userEmailClean === 'ptdevkaushik104@gmail.com' ||
-      userEmailClean.endsWith('@cseel.org')
-    )
+    userEmailClean &&
+    userEmailClean.endsWith('@cseel.org')
   );
 
   // isPublicClaimed HARD LOCK — public view of a claimed profile is ALWAYS read-only
@@ -888,9 +922,11 @@ export default function SchoolProfileView({
       : (state || 'State')
   );
 
-  const displayClassFrom = isLiveTemplate
-    ? (templateData?.classFrom || classFrom || '')
-    : (classFrom || '');
+  const displayClassFrom = formatClassLabel(
+    isLiveTemplate
+      ? (templateData?.classFrom || classFrom || '')
+      : (classFrom || '')
+  );
 
   // User Requested: Direct Gmail / Mail draft opening with pre-filled verification template
   const handleOpenClaimEmail = () => {
@@ -932,21 +968,25 @@ I am the Principal / Authorized Representative of the school. Please find attach
 Thank you.`;
 
     const mailtoUrl = `mailto:update@cseel.org?subject=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
-    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=update@cseel.org&su=${encodeURIComponent(claimSubject)}&body=${encodeURIComponent(claimBody)}`;
 
+    // Trigger device native email client (Gmail app, Apple Mail, Outlook, Windows Mail) directly on both mobile and desktop
     try {
-      const win = window.open(gmailWebUrl, '_blank');
-      if (!win || win.closed || typeof win.closed === 'undefined') {
-        window.location.href = mailtoUrl;
-      }
+      const tempLink = document.createElement('a');
+      tempLink.href = mailtoUrl;
+      tempLink.target = '_self';
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
     } catch {
       window.location.href = mailtoUrl;
     }
   };
 
-  const displayClassTo = isLiveTemplate
-    ? (templateData?.classTo || classTo || '')
-    : (classTo || '');
+  const displayClassTo = formatClassLabel(
+    isLiveTemplate
+      ? (templateData?.classTo || classTo || '')
+      : (classTo || '')
+  );
 
   const displayClasses = (displayClassFrom && displayClassTo)
     ? `${displayClassFrom} to ${displayClassTo}`
@@ -995,15 +1035,22 @@ Thank you.`;
           : (Array.isArray(initialProfileData?.facilities?.facilities_list) ? initialProfileData.facilities.facilities_list : []));
 
   const effectiveFacilities = rawFacilitiesList
-    .filter((f: any) => f && f.selected !== false)
-    .map((f: any) => ({
-      id: f.id || f.name,
-      name: f.title || f.name,
-      desc: f.desc || f.description || '',
-      category: f.badge || f.category || 'School Facility',
-      icon: f.icon,
-      _raw: f,
-    }));
+    .filter((f: any) => f != null)
+    .map((f: any) => {
+      if (typeof f === 'string') {
+        return { id: f, name: f, desc: '', category: 'School Facility', icon: undefined, _raw: f };
+      }
+      if (f.selected === false) return null;
+      return {
+        id: f.id || f.name || f.title || '',
+        name: f.title || f.name || f.label || '',
+        desc: f.desc || f.description || '',
+        category: f.badge || f.category || 'School Facility',
+        icon: f.icon,
+        _raw: f,
+      };
+    })
+    .filter(Boolean) as Array<{ id: string; name: string; desc: string; category: string; icon: any; _raw: any }>;
 
   const handleApplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1024,7 +1071,7 @@ Thank you.`;
           phoneNumber: applicantPhone.trim(),
           applyingClass: applicantClass,
           email: applicantEmail.trim(),
-          schoolTargetEmail: admissionEmail || rawEmail || 'ptdevkaushik104@gmail.com',
+          schoolTargetEmail: admissionEmail || rawEmail || '',
           schoolTargetPhone: admissionPhone || rawPhone || '',
         }),
       });
@@ -1085,7 +1132,23 @@ Thank you.`;
 
   return (
     <div id="school-profile-app" className="min-h-screen bg-white text-gray-900 antialiased selection:bg-blue-100 selection:text-blue-900 overflow-x-clip">
-      
+
+      {/* BUG-08: Unverified / Unclaimed Profile Banner */}
+      {!isPublicClaimed && !isTemplate && (
+        <div className="w-full bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-center gap-2 text-xs text-amber-800 text-center">
+          <span>⚠️</span>
+          <span>
+            <strong>Unverified Profile:</strong> This school has not been officially claimed. Data is sourced from government UDISE records and may be outdated.{' '}
+            <button
+              onClick={handleOpenClaimEmail}
+              className="underline font-semibold hover:text-amber-900 cursor-pointer"
+            >
+              Claim this profile
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* 1. CONTAINER 1: SLIM LIGHT CSEEL TOP STRIP (School Logo/Name/Menu bar removed) */}
       <div id="school-top-bar" className="w-full bg-white border-b border-slate-200 z-40 relative font-['Hanken_Grotesk',sans-serif]">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-2">
@@ -1254,7 +1317,7 @@ Thank you.`;
                 type="button"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  setIsClaimModalOpen(true);
+                  handleOpenClaimEmail();
                 }}
                 className="w-full py-2.5 px-3 rounded-xl text-xs font-black bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 flex items-center justify-between shadow-2xs transition-all cursor-pointer"
               >
@@ -1894,7 +1957,37 @@ Thank you.`;
                 </div>
               </div>
 
-              {/* Single Horizontal Swipeable Row: Image at Top, Text Below */}
+              {/* Dedicated "Search More Schools Near You" Action Card & GPS Proximity */}
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-slate-50 border border-sky-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="w-10 h-10 rounded-xl bg-[#006FCC] flex items-center justify-center text-white shrink-0 shadow-xs">
+                    <Navigation className={`w-5 h-5 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-800 m-0 flex items-center gap-1.5">
+                      <span>Search more schools near you</span>
+                      <span className="text-[10px] font-semibold text-sky-700 bg-sky-100/90 px-2 py-0.5 rounded-full">
+                        Live Proximity
+                      </span>
+                    </h4>
+                    <p className="text-[11px] text-slate-500 m-0 mt-0.5">
+                      Allow location access to view all nearby verified private schools within 10 km on the All India Directory.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSearchSchoolsNearYou}
+                  disabled={isLocatingForSearch}
+                  className="w-full sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all cursor-pointer shrink-0 active:scale-98"
+                >
+                  <Navigation className={`w-3.5 h-3.5 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
+                  <span>{isLocatingForSearch ? 'Detecting Location...' : 'Search More Schools Near You'}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* 10 Verified Nearby School Cards Directly Below 'Search More Schools Near You' Card */}
               {nearbyList.length > 0 ? (
                 <div className="flex flex-nowrap gap-2.5 overflow-x-auto overflow-y-hidden pb-2 custom-scrollbar snap-x snap-proximity w-full [touch-action:pan-x_pan-y] overscroll-x-contain">
                   {nearbyList.map((s: any, idx: number) => {
@@ -1958,38 +2051,6 @@ Thank you.`;
               ) : (
                 <div className="py-3 px-3.5 rounded-lg bg-slate-50 border border-slate-200/80 text-xs text-slate-500 italic">
                   No other verified schools found strictly within a 5 km radius of this campus.
-                </div>
-              )}
-
-              {/* Dedicated "Search More Schools Near You" Action Card (Only on Unclaimed Profiles) */}
-              {!isPublicClaimed && (
-                <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-slate-50 border border-sky-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <div className="w-10 h-10 rounded-xl bg-[#006FCC] flex items-center justify-center text-white shrink-0 shadow-xs">
-                      <Navigation className={`w-5 h-5 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-800 m-0 flex items-center gap-1.5">
-                        <span>Search more schools near you</span>
-                        <span className="text-[10px] font-semibold text-sky-700 bg-sky-100/90 px-2 py-0.5 rounded-full">
-                          Live Proximity
-                        </span>
-                      </h4>
-                      <p className="text-[11px] text-slate-500 m-0 mt-0.5">
-                        Allow location access to view all nearby verified private schools within 10 km on the All India Directory.
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleSearchSchoolsNearYou}
-                    disabled={isLocatingForSearch}
-                    className="w-full sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-[#006FCC] hover:bg-[#005399] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all cursor-pointer shrink-0 active:scale-98"
-                  >
-                    <Navigation className={`w-3.5 h-3.5 ${isLocatingForSearch ? 'animate-spin text-amber-300' : ''}`} />
-                    <span>{isLocatingForSearch ? 'Detecting Location...' : 'Search More Schools Near You'}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
                 </div>
               )}
 
@@ -2464,7 +2525,7 @@ Please assist with verification.`;
                   type="button"
                   onClick={() => {
                     setIsNoticeModalOpen(false);
-                    setIsClaimModalOpen(true);
+                    handleOpenClaimEmail();
                   }}
                   className="flex-1 py-1.5 px-3 rounded-xl bg-[#005689] hover:bg-[#004168] text-white text-xs font-bold shadow-xs hover:shadow transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
                 >

@@ -563,12 +563,12 @@ export async function fetchVerifiedClaimedSchools(seoQuery?: SchoolSeoQuery): Pr
       const block = uRow.block_name || p.blockName || 'Janakpuri';
       const address = uRow.address || p.address || `${district}, ${state}`;
       const pincode = String(uRow.pincode || p.pincode || '110058');
-      const lat = Number(uRow.latitude || p.latitude || p.lat || 28.6219);
-      const lng = Number(uRow.longitude || p.longitude || p.lng || 77.0878);
-      const board = uRow.board_10th || p.board || 'CBSE';
-      const rating = Number(uRow.rating || p.rating || 4.9);
-      const totalStudents = Number(uRow.total_students || p.totalStudents || 1200);
-      const totalTeachers = Number(uRow.total_teachers || p.totalTeachers || 65);
+      const lat = Number(uRow.latitude || p.latitude || p.lat || 0);
+      const lng = Number(uRow.longitude || p.longitude || p.lng || 0);
+      const board = uRow.board_10th || p.board || '';
+      const rating = Number(uRow.rating || p.rating || 0);
+      const totalStudents = Number(uRow.total_students || p.totalStudents || 0);
+      const totalTeachers = Number(uRow.total_teachers || p.totalTeachers || 0);
 
       records.push({
         id: udise,

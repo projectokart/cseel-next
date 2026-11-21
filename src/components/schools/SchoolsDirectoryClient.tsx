@@ -646,9 +646,8 @@ export default function SchoolsDirectoryClient({ initialData, initialViewMode }:
     udiseCode: '',
   });
 
-  // Hero Carousel & Minimized state
+  // Hero Carousel state
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-  const [isHeroMinimized, setIsHeroMinimized] = useState(false);
 
   // Filter Sidebar Minimized state (Desktop) - Closed / Minimized by default
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
@@ -2361,82 +2360,66 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
       {/* ── Top Nav / Breadcrumbs ── */}
 
 
-      {/* ── Hero Section (Carousel & Search) with Minimise Feature ── */}
-      {/* ── Hero Section (Carousel & Search) with Minimise Feature ── */}
-      {!isHeroMinimized && (
-        <div className={`relative z-40 min-h-[360px] sm:min-h-[400px] w-full bg-slate-950 flex flex-col items-center justify-center transition-all duration-300 ${
-          viewMode === 'map' ? 'hidden md:flex' : ''
-        }`}>
-          {/* Carousel Background Images with Clean 45% Dark Overlay (Clipped neatly with inner overflow-hidden) */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {HERO_IMAGES.map((img, idx) => (
+      {/* ── Hero Section (Carousel & Search) ── */}
+      <div className={`relative z-40 min-h-[360px] sm:min-h-[400px] w-full bg-slate-950 flex flex-col items-center justify-center transition-all duration-300 ${
+        viewMode === 'map' ? 'hidden md:flex' : ''
+      }`}>
+        {/* Carousel Background Images with Clean 45% Dark Overlay (Clipped neatly with inner overflow-hidden) */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {HERO_IMAGES.map((img, idx) => (
+            <div
+              key={img}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                idx === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <img src={img} alt="School Campus" className="w-full h-full object-cover" />
               <div
-                key={img}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  idx === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+                className="absolute inset-0"
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)' }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Hero Content Overlay */}
+        <div className="relative z-30 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
+          <Link
+            href="/edu-network/all-india"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 hover:text-white border border-cyan-400/40 text-xs font-semibold backdrop-blur-md transition-all shadow-sm mb-3 group cursor-pointer"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>Looking for All India UDISE Directory? Search 4.4+ Lakh Schools</span>
+            <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform text-cyan-300" />
+          </Link>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3 drop-shadow-md">
+            Find the Best Schools for Your Child
+          </h1>
+          <p className="text-xs sm:text-sm md:text-base text-slate-200/90 max-w-2xl mb-6 drop-shadow leading-relaxed">
+            Explore verified schools with comprehensive insights on STEM labs, facilities, admissions, fees, and academic boards across India.
+          </p>
+
+          {/* Centered Hero Search Bar */}
+          <div className="w-full max-w-3xl flex justify-center relative z-40">
+            {renderSearchBar(false)}
+          </div>
+
+          {/* Carousel Slide Indicators */}
+          <div className="flex items-center gap-1.5 mt-5">
+            {HERO_IMAGES.map((_, dotIdx) => (
+              <button
+                key={dotIdx}
+                type="button"
+                onClick={() => setCurrentHeroIndex(dotIdx)}
+                className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                  dotIdx === currentHeroIndex ? 'w-6 bg-cyan-400' : 'w-1.5 bg-white/40 hover:bg-white/70'
                 }`}
-              >
-                <img src={img} alt="School Campus" className="w-full h-full object-cover" />
-                <div
-                  className="absolute inset-0"
-                  style={{ backgroundColor: 'rgba(0, 0, 0, 0.45)' }}
-                />
-              </div>
+                title={`Slide ${dotIdx + 1}`}
+              />
             ))}
           </div>
-
-          {/* Top Controls: Compact Minimise (Top Right Corner) */}
-          <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-4 z-30 flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setIsHeroMinimized(true)}
-              className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full bg-black/45 hover:bg-black/75 backdrop-blur-md border border-white/20 text-white/85 hover:text-white text-[11px] font-semibold transition-all cursor-pointer shadow-xs active:scale-95 group"
-              title="Minimise Banner"
-            >
-              <Minimize2 size={11} className="text-cyan-300 group-hover:scale-110 transition-transform" />
-              <span>Minimise</span>
-            </button>
-          </div>
-
-          {/* Hero Content Overlay */}
-          <div className="relative z-30 w-full max-w-4xl px-4 py-8 flex flex-col items-center text-center">
-            <Link
-              href="/edu-network/all-india"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 hover:text-white border border-cyan-400/40 text-xs font-semibold backdrop-blur-md transition-all shadow-sm mb-3 group cursor-pointer"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Looking for All India UDISE Directory? Search 4.4+ Lakh Schools</span>
-              <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform text-cyan-300" />
-            </Link>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-3 drop-shadow-md">
-              Find the Best Schools for Your Child
-            </h1>
-            <p className="text-xs sm:text-sm md:text-base text-slate-200/90 max-w-2xl mb-6 drop-shadow leading-relaxed">
-              Explore verified schools with comprehensive insights on STEM labs, facilities, admissions, fees, and academic boards across India.
-            </p>
-
-            {/* Centered Hero Search Bar */}
-            <div className="w-full max-w-3xl flex justify-center relative z-40">
-              {renderSearchBar(false)}
-            </div>
-
-            {/* Carousel Slide Indicators */}
-            <div className="flex items-center gap-1.5 mt-5">
-              {HERO_IMAGES.map((_, dotIdx) => (
-                <button
-                  key={dotIdx}
-                  type="button"
-                  onClick={() => setCurrentHeroIndex(dotIdx)}
-                  className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                    dotIdx === currentHeroIndex ? 'w-6 bg-cyan-400' : 'w-1.5 bg-white/40 hover:bg-white/70'
-                  }`}
-                  title={`Slide ${dotIdx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
         </div>
-      )}
+      </div>
 
 
       {/* ── Admin Access & Directory Governance Control Bar ── */}
@@ -2711,8 +2694,8 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                     </Link>
                   )}
 
-                  {/* When Hero is Minimized or Map Mode: Show Compact Search Bar */}
-                  {(isHeroMinimized || viewMode === 'map') ? (
+                  {/* When Map Mode: Show Compact Search Bar */}
+                  {viewMode === 'map' ? (
                     <div className={`relative flex-1 flex items-center bg-gray-100/90 rounded-xl px-2 border-0 border-none outline-none ring-0 shadow-none focus-within:border-none focus-within:ring-0 focus-within:outline-none transition-all min-w-0 ${
                       viewMode === 'map' ? 'h-8 py-0' : 'py-1.5'
                     }`}>
@@ -3142,18 +3125,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                               )}
                               <span>{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</span>
                             </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setIsHeroMinimized(!isHeroMinimized);
-                                setIsMobileMenuOpen(false);
-                              }}
-                              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[11.5px] font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
-                            >
-                              <Layout size={14} className="text-gray-500 shrink-0" />
-                              <span>{isHeroMinimized ? 'Show Banner' : 'Hide Banner'}</span>
-                            </button>
                           </div>
                         </div>
                       </>
@@ -3291,19 +3262,6 @@ function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
                       </div>
                     </div>
                   </div>
-
-                  {/* Show Hero Carousel Banner Button */}
-                  {isHeroMinimized && (
-                    <button
-                      type="button"
-                      onClick={() => setIsHeroMinimized(false)}
-                      className="h-8 px-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 flex items-center gap-1.5 transition cursor-pointer text-xs font-semibold shrink-0 shadow-2xs"
-                      title="Show Hero Banner Carousel"
-                    >
-                      <Layout size={13} className="text-gray-600" />
-                      <span className="text-[11px]">Banner</span>
-                    </button>
-                  )}
                 </div>
               </div>
             </div>

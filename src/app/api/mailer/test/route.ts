@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail, getEmailTransporter, getDefaultFrom } from '@/lib/services/mailerService';
+import { checkCsrfOrigin } from '@/lib/security/apiSecurityGuard';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const authHeader = req.headers.get('authorization') || req.headers.get('x-admin-key');
     const secretKey = process.env.ADMIN_SECRET_KEY || process.env.CRON_SECRET;
@@ -34,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const to = body.to || process.env.ADMIN_CLAIM_EMAIL || 'ptdevkaushik104@gmail.com';
+    const to = body.to || process.env.ADMIN_CLAIM_EMAIL || '';
 
     const result = await sendEmail({
       to,

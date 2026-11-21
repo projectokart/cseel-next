@@ -444,6 +444,7 @@ export function SchoolTemplateProvider({
                 tabVisibility: { ...(baseState.tabVisibility || {}), ...(parsed.tabVisibility || {}) },
                 facilities: Array.isArray(parsed.facilities) && parsed.facilities.length > 0 ? parsed.facilities : baseState.facilities,
                 admissions: Array.isArray(parsed.admissions) && parsed.admissions.length > 0 ? parsed.admissions : baseState.admissions,
+                galleryItems: Array.isArray(parsed.galleryItems) && parsed.galleryItems.length > 0 ? parsed.galleryItems : baseState.galleryItems,
               };
               setLastSavedAt('Restored from LocalStorage draft');
             } catch (err) {
@@ -583,6 +584,7 @@ export function SchoolTemplateProvider({
               tabVisibility: { ...(prev.tabVisibility || {}), ...(parsed.tabVisibility || {}) },
               facilities: Array.isArray(parsed.facilities) && parsed.facilities.length > 0 ? parsed.facilities : prev.facilities,
               admissions: Array.isArray(parsed.admissions) && parsed.admissions.length > 0 ? parsed.admissions : prev.admissions,
+              galleryItems: Array.isArray(parsed.galleryItems) && parsed.galleryItems.length > 0 ? parsed.galleryItems : prev.galleryItems,
             }));
             setLastSavedAt('Restored from LocalStorage draft');
           } catch (err) {

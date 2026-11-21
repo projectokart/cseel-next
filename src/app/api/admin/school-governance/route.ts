@@ -354,16 +354,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, message: `Claim for UDISE ${udiseCode} rejected and key revoked.` });
     }
 
-    // ── 2B. DELETE CLAIM (Admin Full Power: Permanently Delete Claim Record) ──
-    if (action === 'delete_claim') {
-      const udiseCode = String(body.udiseCode || body.udise_code || '').trim();
-      const claimId = body.claimId || body.id;
+    // ── 2B. DELETE CLAIM / BATCH DELETE CLAIMS (Admin Full Power: Permanently Delete from Database) ──
+    if (action === 'delete_claim' || action === 'batch_delete_claims') {
+      const claimIds: string[] = Array.isArray(body.claimIds) ? body.claimIds : (body.claimId ? [body.claimId] : []);
+      const udiseCodes: string[] = Array.isArray(body.udiseCodes) ? body.udiseCodes : (body.udiseCode ? [body.udiseCode] : []);
 
       let query = schoolSearchSupabase.from('school_claims').delete();
-      if (claimId) {
-        query = query.eq('id', claimId);
+      if (claimIds.length > 0) {
+        query = query.in('id', claimIds);
+      } else if (udiseCodes.length > 0) {
+        query = query.in('udise_code', udiseCodes);
       } else {
-        query = query.eq('udise_code', udiseCode);
+        return NextResponse.json({ success: false, error: 'NO_CLAIMS_SPECIFIED' }, { status: 400 });
       }
 
       const { error } = await query;
@@ -372,15 +374,64 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
       }
 
-      // Reset claimed & verified status in directory master and school profile
+      // Reset claimed & verified status in directory master for all affected UDISEs
+      if (udiseCodes.length > 0) {
+        try {
+          await schoolSearchSupabase
+            .from('school_directory_master')
+            .update({ is_claimed: false, is_verified: false })
+            .in('udise_code', udiseCodes);
+        } catch {}
+      }
+
+      const count = Math.max(claimIds.length, udiseCodes.length);
+      return NextResponse.json({
+        success: true,
+        message: `${count} claim${count > 1 ? 's' : ''} permanently deleted from Supabase database.`,
+        deletedCount: count
+      });
+    }
+
+    // ── 2C. DELETE SCHOOL / BATCH DELETE SCHOOLS FROM UDISE DIRECTORY (Admin Full Power) ──
+    if (action === 'delete_school' || action === 'batch_delete_schools') {
+      const udiseCodes: string[] = Array.isArray(body.udiseCodes) ? body.udiseCodes : (body.udiseCode ? [body.udiseCode] : []);
+
+      if (udiseCodes.length === 0) {
+        return NextResponse.json({ success: false, error: 'NO_UDISE_SPECIFIED' }, { status: 400 });
+      }
+
+      // 1. Delete from udise_private_schools
+      const { error: delErr } = await schoolSearchSupabase
+        .from('udise_private_schools')
+        .delete()
+        .in('udise_code', udiseCodes);
+
+      if (delErr) {
+        return NextResponse.json({ success: false, error: delErr.message }, { status: 500 });
+      }
+
+      // 2. Also clean up any associated claims
+      try {
+        await schoolSearchSupabase
+          .from('school_claims')
+          .delete()
+          .in('udise_code', udiseCodes);
+      } catch {}
+
+      // 3. Also delete from directory master if present
       try {
         await schoolSearchSupabase
           .from('school_directory_master')
-          .update({ is_claimed: false, is_verified: false })
-          .eq('udise_code', udiseCode);
+          .delete()
+          .in('udise_code', udiseCodes);
       } catch {}
 
-      return NextResponse.json({ success: true, message: `Claim for UDISE ${udiseCode} deleted successfully.` });
+      const count = udiseCodes.length;
+      return NextResponse.json({
+        success: true,
+        message: `${count} school${count > 1 ? 's' : ''} permanently deleted from UDISE database.`,
+        deletedCount: count
+      });
     }
 
     // ── 3. CREATE NEW SCHOOL IN UDISE MASTER TABLE ──

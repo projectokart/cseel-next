@@ -15,6 +15,7 @@ import {
   checkRateLimitAndBots,
   sanitizePayloadDeep,
   verifySchoolWriteAuth,
+  checkCsrfOrigin,
 } from '@/lib/security/apiSecurityGuard';
 
 const CORS_HEADERS = {
@@ -44,6 +45,9 @@ export async function GET(req: NextRequest, context: RouteContext) {
     blockScraperBots: true,
   });
   if (securityBlock) return securityBlock;
+
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
 
   try {
     const { udiseCode: rawUdise } = await context.params;
@@ -171,6 +175,9 @@ async function handleBulkMutation(
   });
   if (securityBlock) return securityBlock;
 
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const { udiseCode: rawUdise } = await context.params;
     const cleanUdise = (rawUdise || '').trim();
@@ -264,6 +271,9 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
     blockScraperBots: true,
   });
   if (securityBlock) return securityBlock;
+
+  const csrfBlock = checkCsrfOrigin(req);
+  if (csrfBlock) return csrfBlock;
 
   try {
     const { udiseCode: rawUdise } = await context.params;

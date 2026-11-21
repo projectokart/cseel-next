@@ -963,5 +963,21 @@
     "subtitle": "Dynamic content driven by CSEEL Live CMS",
     "updatedAt": "2026-11-20T10:46:55.570Z",
     "updatedBy": "Auto Init"
+  },
+  "edu-network:teachers:job:li-8710007916955775666": {
+    "pageKey": "edu-network:teachers:job:li-8710007916955775666",
+    "title": "Edu Network Teachers Job Li 8710007916955775666",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-20T13:40:13.725Z",
+    "updatedBy": "Auto Init"
+  },
+  "edu-network:school:delhi:west-b:07070300101": {
+    "pageKey": "edu-network:school:delhi:west-b:07070300101",
+    "title": "Edu Network School Delhi West B 07070300101",
+    "eyebrow": "CSEEL Experiential Learning",
+    "subtitle": "Dynamic content driven by CSEEL Live CMS",
+    "updatedAt": "2026-11-20T17:34:14.600Z",
+    "updatedBy": "Auto Init"
   }
 }

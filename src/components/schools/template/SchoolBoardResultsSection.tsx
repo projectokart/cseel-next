@@ -171,6 +171,32 @@ export default function SchoolBoardResultsSection({
     if (onSaveResults) onSaveResults(next);
   };
 
+  const [selectedExamTab, setSelectedExamTab] = useState<'all' | '10th' | '12th'>('all');
+
+  const has10thData = c10Data.length > 0 && c10Data.some((r) => (Number(r.totalStudents) || 0) > 0 || (Number(r.passedStudents) || 0) > 0);
+  const has12thData = c12Data.length > 0 && c12Data.some((r) => {
+    const appeared = Number(r.totalStudents) || 0;
+    const streamsAppeared = Array.isArray(r.streams) && r.streams.some((s) => (Number(s.totalStudents) || 0) > 0 || (Number(s.passedStudents) || 0) > 0);
+    return appeared > 0 || streamsAppeared;
+  });
+
+  // In edit mode (Dashboard), both 10th and 12th buttons are ALWAYS shown so user can enter results
+  // In view mode (Public), show tab if user has entered results for it (or if senior secondary for 12th)
+  const show10thTab = isEditMode || has10thData;
+  const show12thTab = isEditMode || has12thData || (isSeniorSec && c12Data.length > 0);
+  const showAllTab = show10thTab && show12thTab;
+
+  useEffect(() => {
+    if (!show10thTab && show12thTab) {
+      setSelectedExamTab('12th');
+    } else if (show10thTab && !show12thTab) {
+      setSelectedExamTab('10th');
+    }
+  }, [show10thTab, show12thTab]);
+
+  const shouldRender10th = show10thTab && (selectedExamTab === 'all' || selectedExamTab === '10th');
+  const shouldRender12th = show12thTab && (selectedExamTab === 'all' || selectedExamTab === '12th');
+
   // Class 10 Handlers (Direct Table Editing)
   const update10thCell = (idx: number, field: keyof BoardExamYearResult, val: any) => {
     const updated = [...c10Data];
@@ -301,9 +327,83 @@ export default function SchoolBoardResultsSection({
           </div>
         </div>
 
+        {/* Class Selection Buttons / Tabs */}
+        {(show10thTab || show12thTab) && (
+          <div className="flex flex-wrap items-center gap-2 pt-1 pb-1">
+            {showAllTab && (
+              <button
+                type="button"
+                onClick={() => setSelectedExamTab('all')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                  selectedExamTab === 'all'
+                    ? 'bg-[#003C6E] text-white border-[#003C6E] shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5" />
+                <span>All Board Results</span>
+              </button>
+            )}
+
+            {show10thTab && (
+              <button
+                type="button"
+                onClick={() => setSelectedExamTab('10th')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                  selectedExamTab === '10th'
+                    ? 'bg-[#005689] text-white border-[#005689] shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                <span>Class 10th Result</span>
+                {c10Data.length > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                    selectedExamTab === '10th' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {c10Data.length} {c10Data.length === 1 ? 'Year' : 'Years'}
+                  </span>
+                )}
+              </button>
+            )}
+
+            {show12thTab && (
+              <button
+                type="button"
+                onClick={() => setSelectedExamTab('12th')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                  selectedExamTab === '12th'
+                    ? 'bg-emerald-800 text-white border-emerald-800 shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Class 12th Result</span>
+                {streamsList.length > 0 && (
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                    selectedExamTab === '12th' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {streamsList.length} Streams
+                  </span>
+                )}
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Empty State when no results published yet */}
+        {!isEditMode && !has10thData && !has12thData && (
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center text-slate-500 text-xs sm:text-sm">
+            <Award className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+            <p className="font-semibold text-slate-700">Official Board Results Not Yet Published</p>
+            <p className="text-slate-400 text-xs mt-1">Official examination results for graduating batches will be published directly by {schoolName}.</p>
+          </div>
+        )}
+
         {/* ========================================================= */}
         {/* TABLE 1: CLASS 10TH BOARD EXAMINATION RESULTS            */}
         {/* ========================================================= */}
+        {shouldRender10th && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
           <div className="px-5 py-3.5 bg-gradient-to-r from-[#002B49] via-[#005689] to-[#004168] text-white flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
@@ -471,12 +571,13 @@ export default function SchoolBoardResultsSection({
             </table>
           </div>
         </div>
+        )}
 
         {/* ========================================================= */}
         {/* TABLE 2: CLASS 12TH CONSOLIDATED STREAM-WISE RESULTS      */}
         {/* Single unified table with Science, Commerce & Humanities */}
         {/* ========================================================= */}
-        {isSeniorSec && (
+        {shouldRender12th && (
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
             <div className="px-5 py-3.5 bg-gradient-to-r from-emerald-950 via-[#0A4D68] to-slate-900 text-white flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">

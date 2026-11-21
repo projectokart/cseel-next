@@ -7,215 +7,25 @@
       "isPermanent": true,
       "isApproved": true,
       "status": "approved",
-      "lastUpdatedAt": 1795192661757,
-      "lastUpdatedSource": "Supabase Profile Save (admin)",
+      "lastUpdatedAt": 1795225341341,
+      "lastUpdatedSource": "Supabase Profile Save (magic_link)",
       "profileData": {
-        "schoolName": "CSEEL Global Education",
-        "legalName": "CSEEL Global Education Private Limited",
         "udiseCode": "07070399999",
-        "board": "CBSE",
-        "affiliationNumber": "2130001",
-        "medium": "English",
-        "management": "Private Unaided",
-        "establishedYear": "2020",
-        "schoolCategory": "Grades Nursery to 12th",
-        "classFrom": "1",
-        "classTo": "5",
-        "genderType": "Co-Educational",
-        "ruralUrban": "Urban",
-        "totalStudents": 1450,
-        "totalBoys": 750,
-        "totalGirls": 700,
-        "totalTeachers": 85,
-        "maleTeachers": 35,
-        "femaleTeachers": 50,
-        "classroomsCount": 48,
-        "workingSmartBoards": 48,
-        "principalName": "Dr. Devender Kaushik",
-        "phone": "+91-11-25501234",
-        "email": "admissions@cseel.org",
-        "website": "https://www.cseel.org",
-        "address": "B-1 Block, Janakpuri, New Delhi, Delhi - 110058",
-        "heroImage": "/images/default-school-placeholder.png?v=3",
-        "state": "Delhi",
-        "district": "West B",
-        "blockName": "Janakpuri",
-        "village": "B-1 Janakpuri",
-        "pincode": "110058",
         "aboutText": "CSEEL Global Education is an advanced STEM and innovation campus committed to holistic academic excellence, world-class composite labs, and experiential learning.",
-        "visionText": "Empowering curious minds to lead global scientific and technological advancements with ethical integrity.",
-        "missionText": "To deliver experiential, holistic, and transdisciplinary education that blends academic mastery with practical inquiry.",
-        "facilities": [
-          "Composite Practical Sciences Laboratory",
-          "Atal Tinkering & Robotics Lab",
-          "Interactive Smart Classrooms with 4K Panels",
-          "Olympic-standard All-Weather Sports Complex",
-          "High-speed Fiber Digital Media & AI Studio",
-          {
-            "title": "Smart Classes",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=13203&format=png",
-            "badge": "Academic",
-            "points": [],
-            "id": "fac-1795192314189-ytf0"
-          },
-          {
-            "title": "Library",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=12300&format=png",
-            "badge": "Academic",
-            "points": [],
-            "id": "fac-1795192314506-rqpw"
-          },
-          {
-            "title": "Science Lab",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=71261&format=png",
-            "badge": "Lab Facility",
-            "points": [],
-            "id": "fac-1795192314805-fosy"
-          },
-          {
-            "title": "Robotics Lab",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=JB5lRIhzKC0y&format=png",
-            "badge": "Lab Facility",
-            "points": [],
-            "id": "fac-1795192315106-ft3y"
-          },
-          {
-            "title": "Playground / Outdoor Sports",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=12012&format=png",
-            "badge": "Sports & Fitness",
-            "points": [],
-            "id": "fac-1795192329104-8d55"
-          },
-          {
-            "title": "Gymnasium",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=jjlVFSkHPQH5&format=png",
-            "badge": "Sports & Fitness",
-            "points": [],
-            "id": "fac-1795192333814-nisk"
-          },
-          {
-            "title": "GPS Enabled Transport",
-            "desc": "",
-            "icon": "https://img.icons8.com/?size=128&id=3514&format=png",
-            "badge": "Safety & Security",
-            "points": [],
-            "id": "fac-1795192339270-jvue"
-          }
-        ],
-        "feeTableData": [
-          {
-            "annualFee": "12000",
-            "className": "Nursery - UKG",
-            "tuitionFee": "4500",
-            "admissionFee": "25000"
-          },
-          {
-            "annualFee": "14000",
-            "className": "Class 1st - 5th",
-            "tuitionFee": "5500",
-            "admissionFee": "30000"
-          },
-          {
-            "annualFee": "16000",
-            "className": "Class 6th - 8th",
-            "tuitionFee": "6500",
-            "admissionFee": "35000"
-          },
-          {
-            "annualFee": "18000",
-            "className": "Class 9th - 10th",
-            "tuitionFee": "7500",
-            "admissionFee": "40000"
-          },
-          {
-            "annualFee": "22000",
-            "className": "Class 11th - 12th",
-            "tuitionFee": "9000",
-            "admissionFee": "45000"
-          }
-        ],
-        "boardResults": {
-          "class10Results": [
-            {
-              "year": "2024-25",
-              "totalStudents": 100,
-              "passPercentage": 100,
-              "passedStudents": 100,
-              "maxScorePercent": 99.2,
-              "above90PercentCount": 35
-            },
-            {
-              "year": "2023-24",
-              "totalStudents": 100,
-              "passPercentage": 98,
-              "passedStudents": 98,
-              "maxScorePercent": 98.4,
-              "above90PercentCount": 32
-            }
-          ],
-          "class12Results": [
-            {
-              "year": "2024-25",
-              "streams": [
-                {
-                  "streamName": "Science",
-                  "totalStudents": 50,
-                  "passPercentage": 98,
-                  "passedStudents": 49,
-                  "maxScorePercent": 99.2,
-                  "above90PercentCount": 28
-                },
-                {
-                  "streamName": "Commerce",
-                  "totalStudents": 40,
-                  "passPercentage": 97.5,
-                  "passedStudents": 39,
-                  "maxScorePercent": 97.6,
-                  "above90PercentCount": 16
-                },
-                {
-                  "streamName": "Humanities / Arts",
-                  "totalStudents": 30,
-                  "passPercentage": 100,
-                  "passedStudents": 30,
-                  "maxScorePercent": 98,
-                  "above90PercentCount": 8
-                }
-              ],
-              "totalStudents": 120,
-              "passPercentage": 98.3,
-              "passedStudents": 118,
-              "maxScorePercent": 99.2,
-              "above90PercentCount": 52
-            }
-          ]
-        },
-        "faqs": [
-          {
-            "a": "We integrate regular CBSE curriculum with experiential learning, mandatory daily hands-on robotics, AI, and scientific experimentation in our proprietary composite lab facilities.",
-            "q": "What makes CSEEL Global Education curriculum unique?",
-            "id": "faq-1",
-            "category": "Academics"
-          },
-          {
-            "a": "Admissions are open for Nursery to Class 12th. Parents can apply directly via the CSEEL portal or schedule a campus walkthrough and assessment.",
-            "q": "How does admission at CSEEL Global Education work?",
-            "id": "faq-2",
-            "category": "Admissions"
-          }
-        ],
         "logoImage": "/images/schools/default-logo.png",
+        "heroImage": "/images/default-school-placeholder.png?v=3",
+        "establishedYear": "2020",
         "campusArea": "4.5 Acres",
+        "board": "CBSE",
         "schoolType": "Private Unaided (Recognized)",
         "school_gender": "Co-Educational",
+        "genderType": "Co-Educational",
+        "totalStudents": 1450,
+        "totalTeachers": 85,
         "studentTeacherRatio": "1:17",
-        "campusVideoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "classFrom": "1",
+        "classTo": "5",
+        "campusVideoUrl": "no",
         "gallery": [
           {
             "id": "campus-1",
@@ -388,7 +198,53 @@
             "category": "Transport"
           }
         ],
+        "faqs": [
+          {
+            "a": "We integrate regular CBSE curriculum with experiential learning, mandatory daily hands-on robotics, AI, and scientific experimentation in our proprietary composite lab facilities.",
+            "q": "What makes CSEEL Global Education curriculum unique?",
+            "id": "faq-1",
+            "category": "Academics"
+          },
+          {
+            "a": "Admissions are open for Nursery to Class 12th. Parents can apply directly via the CSEEL portal or schedule a campus walkthrough and assessment.",
+            "q": "How does admission at CSEEL Global Education work?",
+            "id": "faq-2",
+            "category": "Admissions"
+          }
+        ],
         "feeTable": [
+          {
+            "annualFee": "12000",
+            "className": "Nursery - UKG",
+            "tuitionFee": "4500",
+            "admissionFee": "25000"
+          },
+          {
+            "annualFee": "14000",
+            "className": "Class 1st - 5th",
+            "tuitionFee": "5500",
+            "admissionFee": "30000"
+          },
+          {
+            "annualFee": "16000",
+            "className": "Class 6th - 8th",
+            "tuitionFee": "6500",
+            "admissionFee": "35000"
+          },
+          {
+            "annualFee": "18000",
+            "className": "Class 9th - 10th",
+            "tuitionFee": "7500",
+            "admissionFee": "40000"
+          },
+          {
+            "annualFee": "22000",
+            "className": "Class 11th - 12th",
+            "tuitionFee": "9000",
+            "admissionFee": "45000"
+          }
+        ],
+        "feeTableData": [
           {
             "annualFee": "12000",
             "className": "Nursery - UKG",
@@ -456,7 +312,72 @@
             "desk_name": "Principal Secretariat"
           }
         ],
+        "phone": "+91-11-25501234",
+        "email": "admissions@cseel.org",
         "resultsHighlights": "CSEEL Global Education maintains an exemplary academic legacy with 100% board passing results and high distinction rates in competitive STEM entrance streams.",
+        "boardResults": {
+          "class10Results": [
+            {
+              "year": "2024-25",
+              "totalStudents": 100,
+              "passPercentage": 100,
+              "passedStudents": 100,
+              "maxScorePercent": 99.2,
+              "above90PercentCount": 35
+            },
+            {
+              "year": "2023-24",
+              "totalStudents": 100,
+              "passPercentage": 98,
+              "passedStudents": 98,
+              "maxScorePercent": 98.4,
+              "above90PercentCount": 32
+            }
+          ],
+          "class12Results": [
+            {
+              "year": "2024-25",
+              "streams": [
+                {
+                  "streamName": "Science",
+                  "totalStudents": 50,
+                  "passPercentage": 98,
+                  "passedStudents": 49,
+                  "maxScorePercent": 99.2,
+                  "above90PercentCount": 28
+                },
+                {
+                  "streamName": "Commerce",
+                  "totalStudents": 40,
+                  "passPercentage": 97.5,
+                  "passedStudents": 39,
+                  "maxScorePercent": 97.6,
+                  "above90PercentCount": 16
+                },
+                {
+                  "streamName": "Humanities / Arts",
+                  "totalStudents": 30,
+                  "passPercentage": 100,
+                  "passedStudents": 30,
+                  "maxScorePercent": 98,
+                  "above90PercentCount": 8
+                }
+              ],
+              "totalStudents": 120,
+              "passPercentage": 98.3,
+              "passedStudents": 118,
+              "maxScorePercent": 99.2,
+              "above90PercentCount": 52
+            }
+          ]
+        },
+        "facilities": [
+          "Composite Practical Sciences Laboratory",
+          "Atal Tinkering & Robotics Lab",
+          "Interactive Smart Classrooms with 4K Panels",
+          "Olympic-standard All-Weather Sports Complex",
+          "High-speed Fiber Digital Media & AI Studio"
+        ],
         "facility_ids": [
           "Composite Practical Sciences Laboratory",
           "Atal Tinkering & Robotics Lab",
@@ -484,10 +405,29 @@
           "campus_tour": true,
           "important_info": true
         },
-        "updatedAt": "2026-11-20T16:18:43.306+00:00",
+        "updatedAt": "2026-11-20T16:37:41.545+00:00",
         "admissionsOpen": false,
+        "schoolName": "",
+        "medium": "",
+        "principalName": "",
+        "address": "",
+        "state": "",
+        "district": "",
+        "blockName": "",
+        "village": "",
+        "pincode": "",
+        "ruralUrban": "",
+        "totalBoys": 0,
+        "totalGirls": 0,
+        "maleTeachers": 0,
+        "femaleTeachers": 0,
+        "classroomsCount": 0,
+        "workingSmartBoards": 0,
         "isResidential": false,
         "hasHostel": false,
+        "management": "",
+        "schoolCategory": "",
+        "website": "",
         "generalPhone": "",
         "generalEmail": "",
         "admissionsPhone": "",
@@ -496,6 +436,8 @@
         "principalEmail": "",
         "careersPhone": "",
         "careersEmail": "",
+        "visionText": "",
+        "missionText": "",
         "admissions": [],
         "flipbookSlides": [],
         "includedAcademicFeatures": [],
@@ -516,12 +458,12 @@
         "completedTabs": {},
         "verifiedFields": {},
         "contentOverrides": {
-          "academics_chapter_content": "** Our Classes Offering\nAt CSEEL Global Education, we offer classes from ==class 1 to class 5== ([CBSE]), building strong foundations in languages, mathematics, scientific inquiry, and analytical problem-solving through continuous assessment and attentive classroom mentorship.\n\n** Streams and Subject Offerings\n## Science (Medical)\nIn the medical science stream, aspiring healthcare and life-sciences students study scientific principles and laboratory practice with subjects including **physics**, **chemistry**, **biology**, and **English core**.\n## Science (Non-Medical)\nIn the non-medical science stream, learners preparing for engineering, technology, and pure sciences explore quantitative concepts with subjects including **physics**, **chemistry**, **mathematics**, and **computer science**.\n## Commerce\nIn the commerce section, students develop financial literacy, commercial reasoning, and analytical decision-making with subjects including **accountancy**, **business studies**, **economics**, and **mathematics**.\n## Humanities / Arts\nIn humanities and arts, learners examine human society, governance, culture, and behavioral perspectives with subjects including **history**, **geography**, **political science**, and **psychology**.\n\n** Results Highlights\n==Outstanding 100% CBSE Board pass rate with multiple state toppers in STEM and Humanities.=="
+          "hero_stat_val_4": "1st - 1oth"
         },
         "imageOverrides": {},
         "iconOverrides": {},
-        "lastSavedAt": "2026-11-20T16:37:41.421Z",
-        "lastSavedByMode": "admin"
+        "lastSavedAt": "2026-11-21T01:42:21.034Z",
+        "lastSavedByMode": "magic_link"
       }
     },
     "sync_07070388888": {

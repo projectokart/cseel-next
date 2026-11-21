@@ -227,12 +227,12 @@ const TopBar = () => {
           {/* ── RIGHT SIDE: CBSE SCHOOLS | TEACHING JOBS | CAREERS | GET SUPPORT | CONTACT US | LOGIN / AVATAR ──── */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0 text-[11px] font-semibold min-w-0">
             
-            {/* Schools Direct Directory Link */}
+            {/* Schools Direct Directory Link -> All India Private Schools Directory */}
             <Link
-              href="/schools"
-              aria-label="Schools Directory"
+              href="/edu-network/all-india"
+              aria-label="All India School Directory"
               className="inline-flex items-center gap-1 px-2.5 py-0.5 h-[20px] justify-center text-white/95 hover:text-white font-bold bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/35 hover:border-sky-400 rounded-full active:scale-95 transition-all shrink-0 touch-manipulation group"
-              title="Explore Verified Schools Across India"
+              title="Explore All India Private Schools Directory"
             >
               <School className="w-3 h-3 text-sky-400 group-hover:text-white transition-colors shrink-0" />
               <span className="text-sky-300 group-hover:text-white font-bold text-[10.5px] xs:text-[11px] tracking-tight transition-colors whitespace-nowrap">

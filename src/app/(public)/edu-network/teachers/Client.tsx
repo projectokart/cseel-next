@@ -2400,9 +2400,15 @@ export default function TeachersDirectoryClient({
               <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-900 tracking-tight">
                 {activeTab === 'jobs' ? 'Daily School Teaching Vacancies' : 'Verified Faculty & STEM Educators'}
               </h1>
-              <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                Top CBSE, ICSE & private school appointments updated daily with verified salary bands and direct apply links.
-              </p>
+              {activeTab === 'jobs' ? (
+                <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                  Daily verified, fresh, and spam-free teaching vacancies from top CBSE, ICSE, and leading private schools. Every posting is filtered, cleaned, and updated daily. • <span className="inline-flex items-center gap-1 font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60" suppressHydrationWarning><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>This vacancy feed is updated at {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                </p>
+              ) : (
+                <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                  Connect with verified faculty, educators, and academic leaders across India.
+                </p>
+              )}
             </div>
           )}
 

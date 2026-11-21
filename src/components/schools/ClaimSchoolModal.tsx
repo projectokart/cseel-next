@@ -10,74 +10,14 @@ import {
   Phone,
   User,
   Briefcase,
-  Shield
+  Shield,
+  RotateCw
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 
 const CF_TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY || '0x4AAAAAAGLJXAKFK-3QTgsx';
-
-// ── Cloudflare Turnstile Widget Component ──
-// Uses Cloudflare's global `window.turnstile` object (loaded via script tag in layout).
-// Renders an invisible managed challenge — no checkbox shown unless risk is detected.
-function TurnstileWidget({
-  onVerify,
-  onExpire,
-  onError,
-}: {
-  onVerify: (token: string) => void;
-  onExpire: () => void;
-  onError: () => void;
-}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !containerRef.current) return;
-
-    const render = () => {
-      if (!containerRef.current || widgetIdRef.current) return;
-      if (typeof (window as any).turnstile === 'undefined') return;
-
-      widgetIdRef.current = (window as any).turnstile.render(containerRef.current, {
-        sitekey: CF_TURNSTILE_SITE_KEY,
-        callback: (token: string) => onVerify(token),
-        'expired-callback': () => { widgetIdRef.current = null; onExpire(); },
-        'error-callback': () => { widgetIdRef.current = null; onError(); },
-        theme: 'light',
-        size: 'compact',
-      });
-    };
-
-    // If turnstile script already loaded, render immediately
-    if (typeof (window as any).turnstile !== 'undefined') {
-      render();
-    } else {
-      // Poll until the script loads (max 10s)
-      let attempts = 0;
-      const interval = setInterval(() => {
-        attempts++;
-        if (typeof (window as any).turnstile !== 'undefined') {
-          clearInterval(interval);
-          render();
-        } else if (attempts > 100) {
-          clearInterval(interval);
-          onError();
-        }
-      }, 100);
-      return () => clearInterval(interval);
-    }
-
-    return () => {
-      if (widgetIdRef.current && typeof (window as any).turnstile !== 'undefined') {
-        try { (window as any).turnstile.remove(widgetIdRef.current); } catch {}
-        widgetIdRef.current = null;
-      }
-    };
-  }, [onVerify, onExpire, onError]);
-
-  return <div ref={containerRef} className="cf-turnstile" />;
-}
 
 interface ClaimSchoolModalProps {
   isOpen: boolean;
@@ -112,9 +52,10 @@ export default function ClaimSchoolModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Cloudflare Turnstile Anti-Bot State
+  // Cloudflare Turnstile Anti-Bot State (Authentic Verification)
   const [cfToken, setCfToken] = useState<string | null>(null);
   const [cfStatus, setCfStatus] = useState<'pending' | 'verified' | 'expired' | 'error'>('pending');
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const handleTurnstileVerify = useCallback((token: string) => {
     setCfToken(token);
@@ -126,9 +67,18 @@ export default function ClaimSchoolModal({
     setCfStatus('expired');
   }, []);
 
-  const handleTurnstileError = useCallback(() => {
+  const handleTurnstileError = useCallback((error?: any) => {
+    console.warn('[Cloudflare Turnstile] Verification challenge error:', error);
     setCfToken(null);
     setCfStatus('error');
+  }, []);
+
+  const handleTurnstileRetry = useCallback(() => {
+    setCfStatus('pending');
+    setCfToken(null);
+    try {
+      turnstileRef.current?.reset();
+    } catch (_) {}
   }, []);
 
   // Check login state upon modal opening
@@ -537,35 +487,72 @@ ${schoolName}`;
               <div className="pt-2 flex flex-col gap-2">
 
                 {/* Cloudflare Turnstile Anti-Bot Widget */}
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 flex items-center gap-3">
-                  <div className="shrink-0">
-                    <TurnstileWidget
-                      onVerify={handleTurnstileVerify}
-                      onExpire={handleTurnstileExpire}
-                      onError={handleTurnstileError}
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-3 flex flex-col gap-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                      <Shield className="w-3.5 h-3.5 text-[#005689]" />
+                      Anti-Bot Verification
+                    </span>
                     {cfStatus === 'verified' && (
-                      <div className="flex items-center gap-1.5 text-emerald-700">
-                        <Shield className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
-                        <span className="text-[11px] font-semibold">Security verification complete</span>
-                      </div>
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full border border-emerald-300">
+                        Human Verified ✓
+                      </span>
                     )}
                     {cfStatus === 'pending' && (
-                      <div className="flex items-center gap-1.5 text-slate-500">
-                        <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin shrink-0" />
-                        <span className="text-[11px]">Running security check...</span>
-                      </div>
+                      <span className="text-[11px] text-slate-500 flex items-center gap-1 font-medium">
+                        <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                        Verifying...
+                      </span>
                     )}
-                    {cfStatus === 'expired' && (
-                      <span className="text-[11px] text-amber-600 font-semibold">Security token expired — please reload the page.</span>
-                    )}
-                    {cfStatus === 'error' && (
-                      <span className="text-[11px] text-rose-600 font-semibold">Security check failed — please reload.</span>
-                    )}
-                    <p className="text-[10px] text-slate-400 mt-0.5">Protected by Cloudflare Turnstile</p>
                   </div>
+
+                  <div className="flex justify-center items-center py-1 min-h-[65px]">
+                    <Turnstile
+                      ref={turnstileRef}
+                      siteKey={CF_TURNSTILE_SITE_KEY}
+                      onSuccess={handleTurnstileVerify}
+                      onExpire={handleTurnstileExpire}
+                      onError={handleTurnstileError}
+                      options={{
+                        theme: 'light',
+                        size: 'normal',
+                        retry: 'auto',
+                        refreshExpired: 'auto',
+                      }}
+                    />
+                  </div>
+
+                  {cfStatus === 'error' && (
+                    <div className="flex items-center justify-between bg-rose-50 border border-rose-200 rounded-xl p-2.5 text-xs text-rose-700">
+                      <span>Verification challenge failed.</span>
+                      <button
+                        type="button"
+                        onClick={handleTurnstileRetry}
+                        className="font-bold underline text-rose-800 hover:text-rose-950 flex items-center gap-1 cursor-pointer"
+                      >
+                        <RotateCw className="w-3 h-3" />
+                        <span>Retry</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {cfStatus === 'expired' && (
+                    <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-xs text-amber-800">
+                      <span>Token expired.</span>
+                      <button
+                        type="button"
+                        onClick={handleTurnstileRetry}
+                        className="font-bold underline text-amber-900 hover:text-amber-950 flex items-center gap-1 cursor-pointer"
+                      >
+                        <RotateCw className="w-3 h-3" />
+                        <span>Refresh</span>
+                      </button>
+                    </div>
+                  )}
+
+                  <p className="text-[10px] text-slate-400 text-center">
+                    Protected by Cloudflare Turnstile • Authentic Anti-Bot Defense
+                  </p>
                 </div>
 
                 <button

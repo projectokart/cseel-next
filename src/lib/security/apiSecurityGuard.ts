@@ -56,18 +56,18 @@ export async function verifyCloudflareTurnstile(
   }
 
   try {
-    const body: Record<string, string> = {
-      secret: secretKey,
-      response: token.trim(),
-    };
-    if (remoteIp) body.remoteip = remoteIp;
+    const formData = new URLSearchParams();
+    formData.append('secret', secretKey.trim());
+    formData.append('response', token.trim());
+    if (remoteIp) {
+      formData.append('remoteip', remoteIp);
+    }
 
     const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      // 5 second timeout — Cloudflare siteverify is fast
-      signal: AbortSignal.timeout(5000),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString(),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!res.ok) {
@@ -83,9 +83,22 @@ export async function verifyCloudflareTurnstile(
     }
 
     // Verify the hostname matches — prevents tokens generated on other sites from being accepted
-    const allowedHostnames = new Set(['cseel.org', 'www.cseel.org', 'localhost', '127.0.0.1']);
-    if (result.hostname && !allowedHostnames.has(result.hostname)) {
-      console.warn('[Turnstile] Hostname mismatch:', result.hostname);
+    const allowedExactHostnames = new Set([
+      'cseel.org',
+      'www.cseel.org',
+      'localhost',
+      '127.0.0.1',
+    ]);
+
+    const resHostname = (result.hostname || '').toLowerCase();
+    const isHostnameValid =
+      !resHostname ||
+      allowedExactHostnames.has(resHostname) ||
+      resHostname.endsWith('.cseel.org') ||
+      resHostname.endsWith('.vercel.app');
+
+    if (!isHostnameValid) {
+      console.warn('[Turnstile] Hostname mismatch:', resHostname);
       return { success: false, errorCodes: ['hostname-mismatch'] };
     }
 

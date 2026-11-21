@@ -12,6 +12,8 @@ import {
   isAdminRequest,
   isSuperAdminEmail,
   checkCsrfOrigin,
+  verifyCloudflareTurnstile,
+  getClientIp,
 } from '@/lib/security/apiSecurityGuard';
 
 const ADMIN_EMAIL = process.env.ADMIN_CLAIM_EMAIL || '';
@@ -297,6 +299,23 @@ export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.json().catch(() => ({}));
     const body = sanitizePayloadDeep(rawBody);
+
+    // ── 0. Cloudflare Turnstile Anti-Bot Verification (MANDATORY — runs before ALL other logic) ──
+    // Tokens are single-use and expire in 5 min — no bot, AI, or headless browser can forge them.
+    const turnstileToken = body.cf_turnstile_token || req.headers.get('x-cf-turnstile-token');
+    const clientIp = getClientIp(req);
+    const turnstileResult = await verifyCloudflareTurnstile(turnstileToken, clientIp);
+    if (!turnstileResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'TURNSTILE_FAILED',
+          message: 'Security verification failed. Please reload the page and try again.',
+          errorCodes: turnstileResult.errorCodes,
+        },
+        { status: 403 }
+      );
+    }
 
     const {
       school_name,

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   ShieldCheck,
   X,
@@ -9,10 +9,75 @@ import {
   Mail,
   Phone,
   User,
-  Briefcase
+  Briefcase,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+
+const CF_TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_CF_TURNSTILE_SITE_KEY || '0x4AAAAAAGLJXAKFK-3QTgsx';
+
+// ── Cloudflare Turnstile Widget Component ──
+// Uses Cloudflare's global `window.turnstile` object (loaded via script tag in layout).
+// Renders an invisible managed challenge — no checkbox shown unless risk is detected.
+function TurnstileWidget({
+  onVerify,
+  onExpire,
+  onError,
+}: {
+  onVerify: (token: string) => void;
+  onExpire: () => void;
+  onError: () => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !containerRef.current) return;
+
+    const render = () => {
+      if (!containerRef.current || widgetIdRef.current) return;
+      if (typeof (window as any).turnstile === 'undefined') return;
+
+      widgetIdRef.current = (window as any).turnstile.render(containerRef.current, {
+        sitekey: CF_TURNSTILE_SITE_KEY,
+        callback: (token: string) => onVerify(token),
+        'expired-callback': () => { widgetIdRef.current = null; onExpire(); },
+        'error-callback': () => { widgetIdRef.current = null; onError(); },
+        theme: 'light',
+        size: 'compact',
+      });
+    };
+
+    // If turnstile script already loaded, render immediately
+    if (typeof (window as any).turnstile !== 'undefined') {
+      render();
+    } else {
+      // Poll until the script loads (max 10s)
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (typeof (window as any).turnstile !== 'undefined') {
+          clearInterval(interval);
+          render();
+        } else if (attempts > 100) {
+          clearInterval(interval);
+          onError();
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+
+    return () => {
+      if (widgetIdRef.current && typeof (window as any).turnstile !== 'undefined') {
+        try { (window as any).turnstile.remove(widgetIdRef.current); } catch {}
+        widgetIdRef.current = null;
+      }
+    };
+  }, [onVerify, onExpire, onError]);
+
+  return <div ref={containerRef} className="cf-turnstile" />;
+}
 
 interface ClaimSchoolModalProps {
   isOpen: boolean;
@@ -46,6 +111,25 @@ export default function ClaimSchoolModal({
   // Submission State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Cloudflare Turnstile Anti-Bot State
+  const [cfToken, setCfToken] = useState<string | null>(null);
+  const [cfStatus, setCfStatus] = useState<'pending' | 'verified' | 'expired' | 'error'>('pending');
+
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setCfToken(token);
+    setCfStatus('verified');
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setCfToken(null);
+    setCfStatus('expired');
+  }, []);
+
+  const handleTurnstileError = useCallback(() => {
+    setCfToken(null);
+    setCfStatus('error');
+  }, []);
 
   // Check login state upon modal opening
   useEffect(() => {
@@ -111,6 +195,12 @@ export default function ClaimSchoolModal({
       return;
     }
 
+    // Cloudflare Turnstile must be verified before submission
+    if (!cfToken || cfStatus !== 'verified') {
+      setErrorMsg('Security verification is pending. Please wait a moment and try again. / सुरक्षा जाँच पूरी नहीं हुई।');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -127,6 +217,7 @@ export default function ClaimSchoolModal({
           designation,
           note: `Claim Request for ${schoolName} (UDISE: ${udiseCode}) by ${claimantName.trim()} (${designation}, Email: ${claimantEmail.trim()}, Tel: ${whatsappNumber.trim()})`,
           user_id: currentUser?.id,
+          cf_turnstile_token: cfToken,
         }),
       }).catch(() => {});
 
@@ -444,10 +535,43 @@ ${schoolName}`;
 
               {/* Submit Action */}
               <div className="pt-2 flex flex-col gap-2">
+
+                {/* Cloudflare Turnstile Anti-Bot Widget */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 flex items-center gap-3">
+                  <div className="shrink-0">
+                    <TurnstileWidget
+                      onVerify={handleTurnstileVerify}
+                      onExpire={handleTurnstileExpire}
+                      onError={handleTurnstileError}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    {cfStatus === 'verified' && (
+                      <div className="flex items-center gap-1.5 text-emerald-700">
+                        <Shield className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
+                        <span className="text-[11px] font-semibold">Security verification complete</span>
+                      </div>
+                    )}
+                    {cfStatus === 'pending' && (
+                      <div className="flex items-center gap-1.5 text-slate-500">
+                        <div className="w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin shrink-0" />
+                        <span className="text-[11px]">Running security check...</span>
+                      </div>
+                    )}
+                    {cfStatus === 'expired' && (
+                      <span className="text-[11px] text-amber-600 font-semibold">Security token expired — please reload the page.</span>
+                    )}
+                    {cfStatus === 'error' && (
+                      <span className="text-[11px] text-rose-600 font-semibold">Security check failed — please reload.</span>
+                    )}
+                    <p className="text-[10px] text-slate-400 mt-0.5">Protected by Cloudflare Turnstile</p>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3 px-6 rounded-2xl bg-[#005689] hover:bg-[#003c6e] active:scale-[0.99] text-white font-black text-sm shadow-lg shadow-[#005689]/25 transition-all cursor-pointer flex items-center justify-center gap-2.5"
+                  disabled={isSubmitting || cfStatus !== 'verified'}
+                  className="w-full py-3 px-6 rounded-2xl bg-[#005689] hover:bg-[#003c6e] active:scale-[0.99] text-white font-black text-sm shadow-lg shadow-[#005689]/25 transition-all cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>

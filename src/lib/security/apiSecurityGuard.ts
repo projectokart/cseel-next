@@ -31,6 +31,73 @@ export function getClientIp(req: NextRequest | Request): string {
   return '127.0.0.1';
 }
 
+// ── Cloudflare Turnstile Server-Side Verification ──
+// Verifies the cf-turnstile-response token against Cloudflare's siteverify API.
+// Returns true only if the challenge was solved by a real human browser.
+// Tokens are single-use and expire in 5 minutes — no replay attacks possible.
+export async function verifyCloudflareTurnstile(
+  token: string | null | undefined,
+  remoteIp?: string
+): Promise<{ success: boolean; errorCodes?: string[] }> {
+  const secretKey = process.env.CF_TURNSTILE_SECRET_KEY;
+
+  // If secret key is not configured, fail open in development only
+  if (!secretKey) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[Turnstile] CF_TURNSTILE_SECRET_KEY not set — skipping verification in dev mode.');
+      return { success: true };
+    }
+    console.error('[Turnstile] CF_TURNSTILE_SECRET_KEY is required in production.');
+    return { success: false, errorCodes: ['missing-secret-key'] };
+  }
+
+  if (!token || typeof token !== 'string' || token.trim().length < 10) {
+    return { success: false, errorCodes: ['missing-input-response'] };
+  }
+
+  try {
+    const body: Record<string, string> = {
+      secret: secretKey,
+      response: token.trim(),
+    };
+    if (remoteIp) body.remoteip = remoteIp;
+
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      // 5 second timeout — Cloudflare siteverify is fast
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!res.ok) {
+      console.warn('[Turnstile] siteverify HTTP error:', res.status);
+      return { success: false, errorCodes: ['siteverify-http-error'] };
+    }
+
+    const result = await res.json();
+
+    if (!result.success) {
+      console.warn('[Turnstile] Verification failed. Error codes:', result['error-codes']);
+      return { success: false, errorCodes: result['error-codes'] || ['unknown'] };
+    }
+
+    // Verify the hostname matches — prevents tokens generated on other sites from being accepted
+    const allowedHostnames = new Set(['cseel.org', 'www.cseel.org', 'localhost', '127.0.0.1']);
+    if (result.hostname && !allowedHostnames.has(result.hostname)) {
+      console.warn('[Turnstile] Hostname mismatch:', result.hostname);
+      return { success: false, errorCodes: ['hostname-mismatch'] };
+    }
+
+    return { success: true };
+  } catch (err: any) {
+    console.error('[Turnstile] siteverify fetch error:', err?.message || err);
+    // On network error — fail closed in production, open in dev
+    if (process.env.NODE_ENV === 'development') return { success: true };
+    return { success: false, errorCodes: ['siteverify-network-error'] };
+  }
+}
+
 // ── CSRF Origin Validation ──
 // Checks that POST/PUT/PATCH/DELETE requests come from allowed origins.
 // Allows: same-origin, configured NEXT_PUBLIC_APP_URL, localhost (dev).

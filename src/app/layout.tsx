@@ -914,6 +914,14 @@ export default function RootLayout({
         </noscript>
         {/* End Google Tag Manager (noscript) */}
 
+        {/* Cloudflare Turnstile — loaded globally so it's ready when ClaimSchoolModal opens */}
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="lazyOnload"
+          async
+          defer
+        />
+
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2.5 focus:bg-sky-900 focus:text-white focus:rounded-md focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 font-medium text-sm transition-all"

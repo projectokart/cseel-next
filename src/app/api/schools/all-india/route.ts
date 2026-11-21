@@ -190,7 +190,9 @@ export async function GET(request: Request) {
       apikey: UKAZ_ANON_KEY,
       Authorization: `Bearer ${UKAZ_ANON_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: 'count=exact',
+      // Use count=planned (fast planner estimate) to avoid full-table-scan timeouts on 441K rows.
+      // Exact count is served from pre-computed lookups cache above; content-range updates it when available.
+      Prefer: 'count=planned',
     };
 
     let rawSchools: any[] = [];
